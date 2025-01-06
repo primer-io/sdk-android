@@ -1,8 +1,8 @@
 package io.primer.android.components.implementation.errors.domain.model
 
 import io.primer.android.analytics.domain.models.ErrorContextParams
-import io.primer.android.otp.PrimerOtpData
 import io.primer.android.components.domain.core.models.card.PrimerCardData
+import io.primer.android.otp.PrimerOtpData
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertNull
@@ -11,7 +11,6 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
 internal class HeadlessErrorTest {
-
     @Test
     fun `should create InitializationError with correct properties`() {
         // Arrange
@@ -51,24 +50,25 @@ internal class HeadlessErrorTest {
         val paymentMethodType = "PAYMENT_CARD"
 
         // Act
-        val error = HeadlessError.InvalidTokenizationInputDataError(
-            paymentMethodType = paymentMethodType,
-            requiredInputData = PrimerCardData::class,
-            inputData = PrimerOtpData::class
-        )
+        val error =
+            HeadlessError.InvalidTokenizationInputDataError(
+                paymentMethodType = paymentMethodType,
+                requiredInputData = PrimerCardData::class,
+                inputData = PrimerOtpData::class,
+            )
 
         // Assert
         assertEquals("invalid-raw-type-data", error.errorId)
         assertEquals(
             "PrimerHeadlessUniversalCheckout tokenization error for PAYMENT_CARD and input data PrimerOtpData",
-            error.description
+            error.description,
         )
         assertNotNull(error.diagnosticsId)
         assertTrue(error.diagnosticsId.isNotBlank())
         assertNull(error.errorCode)
         assertEquals(
             "Make sure you provide data of type PrimerCardData for payment method PAYMENT_CARD.",
-            error.recoverySuggestion
+            error.recoverySuggestion,
         )
         assertSame(error, error.exposedError)
 

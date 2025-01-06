@@ -8,5 +8,5 @@ internal class ThreeDsInvalidStatusException(
     val transactionId: String,
     val errorCode: String,
     val context: ThreeDsRuntimeFailureContextParams,
-    override val message: String?
+    override val message: String?,
 ) : CancellationException()

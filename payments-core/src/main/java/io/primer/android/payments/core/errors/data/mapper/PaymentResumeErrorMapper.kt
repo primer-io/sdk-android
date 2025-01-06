@@ -8,7 +8,6 @@ import io.primer.android.payments.core.errors.data.exception.PaymentResumeExcept
 import io.primer.android.payments.core.errors.domain.model.PaymentError
 
 internal class PaymentResumeErrorMapper : ErrorMapper {
-
     override fun getPrimerError(throwable: Throwable): PrimerError {
         when (throwable) {
             is PaymentResumeException -> {
@@ -20,8 +19,8 @@ internal class PaymentResumeErrorMapper : ErrorMapper {
                         cause.error.description,
                         PaymentError.PaymentResumeFailedError(
                             cause.error.description,
-                            cause.error.diagnosticsId
-                        )
+                            cause.error.diagnosticsId,
+                        ),
                     )
                 }
             }

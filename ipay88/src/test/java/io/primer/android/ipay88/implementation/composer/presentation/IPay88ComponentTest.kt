@@ -17,6 +17,7 @@ import io.primer.android.core.di.DependencyContainer
 import io.primer.android.core.di.SdkContainer
 import io.primer.android.core.extensions.getSerializableCompat
 import io.primer.android.core.utils.CoroutineScopeProvider
+import io.primer.android.domain.tokenization.models.PrimerPaymentMethodTokenData
 import io.primer.android.ipay88.InstantExecutorExtension
 import io.primer.android.ipay88.implementation.composer.ui.navigation.launcher.IPay88ActivityLauncherParams
 import io.primer.android.ipay88.implementation.composer.ui.navigation.launcher.IPay88MockActivityLauncherParams
@@ -28,7 +29,6 @@ import io.primer.android.paymentmethods.core.composer.composable.ComposerUiEvent
 import io.primer.android.payments.core.status.domain.AsyncPaymentMethodPollingInteractor
 import io.primer.android.payments.core.status.domain.model.AsyncStatus
 import io.primer.android.payments.core.status.domain.model.AsyncStatusParams
-import io.primer.android.domain.tokenization.models.PrimerPaymentMethodTokenData
 import io.primer.ipay88.api.ui.NativeIPay88Activity
 import io.primer.paymentMethodCoreUi.core.ui.navigation.launchers.PaymentMethodLauncherParams
 import kotlinx.coroutines.CoroutineScope
@@ -48,7 +48,6 @@ import kotlin.time.Duration.Companion.seconds
 @ExperimentalCoroutinesApi
 @ExtendWith(InstantExecutorExtension::class, MockKExtension::class)
 class IPay88ComponentTest {
-
     private lateinit var component: IPay88Component
     private val tokenizationDelegate: IPay88TokenizationDelegate = mockk(relaxed = true)
     private val pollingInteractor: AsyncPaymentMethodPollingInteractor = mockk(relaxed = true)
@@ -57,17 +56,19 @@ class IPay88ComponentTest {
 
     @BeforeEach
     fun setUp() {
-        DISdkContext.headlessSdkContainer = mockk<SdkContainer>(relaxed = true).also { sdkContainer ->
-            val cont = spyk<DependencyContainer>().also { container ->
-                container.registerFactory<CoroutineScopeProvider> {
-                    object : CoroutineScopeProvider {
-                        override val scope: CoroutineScope
-                            get() = TestScope()
+        DISdkContext.headlessSdkContainer =
+            mockk<SdkContainer>(relaxed = true).also { sdkContainer ->
+                val cont =
+                    spyk<DependencyContainer>().also { container ->
+                        container.registerFactory<CoroutineScopeProvider> {
+                            object : CoroutineScopeProvider {
+                                override val scope: CoroutineScope
+                                    get() = TestScope()
+                            }
+                        }
                     }
-                }
+                every { sdkContainer.containers }.returns(mutableMapOf(cont::class.simpleName.orEmpty() to cont))
             }
-            every { sdkContainer.containers }.returns(mutableMapOf(cont::class.simpleName.orEmpty() to cont))
-        }
         component = IPay88Component(tokenizationDelegate, pollingInteractor, paymentDelegate, mockConfigurationDelegate)
         coEvery { paymentDelegate.uiEvent } returns MutableSharedFlow()
     }
@@ -106,12 +107,14 @@ class IPay88ComponentTest {
 
     @Test
     fun `handleActivityResultIntent with RESULT_CANCELED should handle PaymentMethodCancelledException`() {
-        val params: PaymentMethodLauncherParams = mockk(relaxed = true) {
-            every { initialLauncherParams } returns mockk<RedirectLauncherParams>() {
-                every { statusUrl } returns "testStatusUrl"
-                every { paymentMethodType } returns "testPaymentMethod"
+        val params: PaymentMethodLauncherParams =
+            mockk(relaxed = true) {
+                every { initialLauncherParams } returns
+                    mockk<RedirectLauncherParams> {
+                        every { statusUrl } returns "testStatusUrl"
+                        every { paymentMethodType } returns "testPaymentMethod"
+                    }
             }
-        }
 
         runTest {
             component.handleActivityResultIntent(params, Activity.RESULT_CANCELED, null)
@@ -126,9 +129,10 @@ class IPay88ComponentTest {
     fun `handleActivityResultIntent with RESULT_ERROR_CODE should handle PaymentMethodCancelledException`() {
         val exception: Exception = mockk()
         val params: PaymentMethodLauncherParams = mockk(relaxed = true)
-        val intent = mockk<Intent> {
-            every { getSerializableCompat<Exception>(NativeIPay88Activity.ERROR_KEY) } returns exception
-        }
+        val intent =
+            mockk<Intent> {
+                every { getSerializableCompat<Exception>(NativeIPay88Activity.ERROR_KEY) } returns exception
+            }
 
         runTest {
             component.handleActivityResultIntent(params, IPay88ResumeHandler.RESULT_ERROR_CODE, intent)
@@ -141,12 +145,14 @@ class IPay88ComponentTest {
 
     @Test
     fun `handleActivityResultIntent with RESULT_OK should start polling`() {
-        val params: PaymentMethodLauncherParams = mockk(relaxed = true) {
-            every { initialLauncherParams } returns mockk<RedirectLauncherParams>() {
-                every { statusUrl } returns "testStatusUrl"
-                every { paymentMethodType } returns "testPaymentMethod"
+        val params: PaymentMethodLauncherParams =
+            mockk(relaxed = true) {
+                every { initialLauncherParams } returns
+                    mockk<RedirectLauncherParams> {
+                        every { statusUrl } returns "testStatusUrl"
+                        every { paymentMethodType } returns "testPaymentMethod"
+                    }
             }
-        }
         val resultCode = Activity.RESULT_OK
         val intent: Intent? = null
 
@@ -161,9 +167,10 @@ class IPay88ComponentTest {
 
     @Test
     fun `handleActivityStartEvent should open redirect screen`() {
-        val params: PaymentMethodLauncherParams = mockk(relaxed = true) {
-            every { initialLauncherParams } returns mockk<RedirectLauncherParams>(relaxed = true)
-        }
+        val params: PaymentMethodLauncherParams =
+            mockk(relaxed = true) {
+                every { initialLauncherParams } returns mockk<RedirectLauncherParams>(relaxed = true)
+            }
 
         runTest {
             component.handleActivityStartEvent(params)
@@ -215,7 +222,7 @@ class IPay88ComponentTest {
             // Then
             val events = component.uiEvent.toListDuring(1.0.seconds)
             Assertions.assertTrue(
-                events.any { it is ComposerUiEvent.Navigate && it.params is IPay88ActivityLauncherParams }
+                events.any { it is ComposerUiEvent.Navigate && it.params is IPay88ActivityLauncherParams },
             )
             verify { mockConfigurationDelegate.isMockedFlow() }
         }
@@ -232,16 +239,17 @@ class IPay88ComponentTest {
             // Then
             val events = component.uiEvent.toListDuring(1.0.seconds)
             Assertions.assertTrue(
-                events.any { it is ComposerUiEvent.Navigate && it.params is IPay88MockActivityLauncherParams }
+                events.any { it is ComposerUiEvent.Navigate && it.params is IPay88MockActivityLauncherParams },
             )
             verify { mockConfigurationDelegate.isMockedFlow() }
         }
 
         @Test
-        fun `close should emit Finish event`() = runTest {
-            component.close()
-            val events = component.uiEvent.toListDuring(1.0.seconds)
-            assertTrue(events.any { it == ComposerUiEvent.Finish })
-        }
+        fun `close should emit Finish event`() =
+            runTest {
+                component.close()
+                val events = component.uiEvent.toListDuring(1.0.seconds)
+                assertTrue(events.any { it == ComposerUiEvent.Finish })
+            }
     }
 }

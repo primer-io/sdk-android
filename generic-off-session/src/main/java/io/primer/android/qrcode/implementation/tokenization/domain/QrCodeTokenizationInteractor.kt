@@ -13,10 +13,10 @@ internal class DefaultQrCodeTokenizationInteractor(
     tokenizationRepository: TokenizationRepository<QrCodePaymentInstrumentParams>,
     tokenizedPaymentMethodRepository: TokenizedPaymentMethodRepository,
     preTokenizationHandler: PreTokenizationHandler,
-    logReporter: LogReporter
+    logReporter: LogReporter,
 ) : TokenizationInteractor<QrCodePaymentInstrumentParams>(
-    tokenizationRepository = tokenizationRepository,
-    tokenizedPaymentMethodRepository = tokenizedPaymentMethodRepository,
-    preTokenizationHandler = preTokenizationHandler,
-    logReporter = logReporter
-)
+        tokenizationRepository = tokenizationRepository,
+        tokenizedPaymentMethodRepository = tokenizedPaymentMethodRepository,
+        preTokenizationHandler = preTokenizationHandler,
+        logReporter = logReporter,
+    )

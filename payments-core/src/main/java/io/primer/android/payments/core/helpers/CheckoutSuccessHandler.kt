@@ -1,7 +1,7 @@
 package io.primer.android.payments.core.helpers
 
-import io.primer.android.payments.core.additionalInfo.PrimerCheckoutAdditionalInfo
 import io.primer.android.domain.payments.create.model.Payment
+import io.primer.android.payments.core.additionalInfo.PrimerCheckoutAdditionalInfo
 import kotlinx.coroutines.flow.Flow
 
 /**
@@ -16,5 +16,8 @@ interface CheckoutSuccessHandler {
     /**
      * Dispatches checkout completion including the given [additional info][additionalInfo] if non null.
      */
-    suspend fun handle(payment: Payment, additionalInfo: PrimerCheckoutAdditionalInfo?)
+    suspend fun handle(
+        payment: Payment,
+        additionalInfo: PrimerCheckoutAdditionalInfo?,
+    )
 }

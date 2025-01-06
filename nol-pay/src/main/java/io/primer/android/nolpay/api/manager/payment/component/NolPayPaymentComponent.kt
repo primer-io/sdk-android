@@ -33,15 +33,15 @@ class NolPayPaymentComponent internal constructor(
     errorLoggingDelegate: SdkAnalyticsErrorLoggingDelegate,
     validationErrorLoggingDelegate: SdkAnalyticsValidationErrorLoggingDelegate,
     validatorRegistry: NolPayPaymentDataValidatorRegistry,
-    errorMapperRegistry: ErrorMapperRegistry
+    errorMapperRegistry: ErrorMapperRegistry,
 ) : BaseNolPayComponent<NolPayPaymentCollectableData, NolPayPaymentStep>(
-    errorLoggingDelegate = errorLoggingDelegate,
-    validatorRegistry = validatorRegistry,
-    eventLoggingDelegate = eventLoggingDelegate,
-    validationErrorLoggingDelegate = validationErrorLoggingDelegate,
-    errorMapperRegistry = errorMapperRegistry
-) {
-    private val _collectedData: MutableSharedFlow<NolPayPaymentCollectableData> =
+        errorLoggingDelegate = errorLoggingDelegate,
+        validatorRegistry = validatorRegistry,
+        eventLoggingDelegate = eventLoggingDelegate,
+        validationErrorLoggingDelegate = validationErrorLoggingDelegate,
+        errorMapperRegistry = errorMapperRegistry,
+    ) {
+    private val collectedData: MutableSharedFlow<NolPayPaymentCollectableData> =
         MutableSharedFlow(replay = 1)
 
     override fun start() {
@@ -65,7 +65,7 @@ class NolPayPaymentComponent internal constructor(
 
     override fun updateCollectedData(collectedData: NolPayPaymentCollectableData) {
         logSdkFunctionCalls(NolPayAnalyticsConstants.PAYMENT_UPDATE_COLLECTED_DATA_METHOD)
-        viewModelScope.launch { _collectedData.emit(collectedData) }
+        viewModelScope.launch { this@NolPayPaymentComponent.collectedData.emit(collectedData) }
         viewModelScope.launch {
             onCollectableDataUpdated(collectedData)
         }
@@ -75,47 +75,45 @@ class NolPayPaymentComponent internal constructor(
         logSdkFunctionCalls(NolPayAnalyticsConstants.PAYMENT_SUBMIT_DATA_METHOD)
         viewModelScope.launch {
             handleCollectedCardData(
-                _collectedData.replayCache.lastOrNull()
+                collectedData.replayCache.lastOrNull(),
             ).onFailure { throwable ->
                 handleError(throwable)
             }
         }
     }
 
-    private suspend fun handleCollectedCardData(
-        collectedData: NolPayPaymentCollectableData?
-    ): Result<Unit> = runSuspendCatching {
-        return when (
-            val collectedDataUnwrapped =
-                requireNotNullCheck(collectedData, NolPayIllegalValueKey.COLLECTED_DATA)
-        ) {
-            // if there's a tokenization/payment error, we don't want to propagate that to the component's error
-            is NolPayPaymentCollectableData.NolPayCardAndPhoneData ->
-                tokenizationDelegate.tokenize(
-                    NolPayTokenizationInputable(
-                        mobileNumber = collectedDataUnwrapped.mobileNumber,
-                        nolPayCardNumber = collectedDataUnwrapped.nolPaymentCard.cardNumber,
-                        paymentMethodType = PaymentMethodType.NOL_PAY.name,
-                        primerSessionIntent = PrimerSessionIntent.CHECKOUT
-                    )
-                ).flatMap { paymentMethodTokenData ->
-                    paymentDelegate.handlePaymentMethodToken(paymentMethodTokenData, PrimerSessionIntent.CHECKOUT)
-                }.onFailure { throwable ->
-                    paymentDelegate.handleError(throwable)
-                }.map { }.recover { }
+    private suspend fun handleCollectedCardData(collectedData: NolPayPaymentCollectableData?): Result<Unit> =
+        runSuspendCatching {
+            return when (
+                val collectedDataUnwrapped =
+                    requireNotNullCheck(collectedData, NolPayIllegalValueKey.COLLECTED_DATA)
+            ) {
+                // if there's a tokenization/payment error, we don't want to propagate that to the component's error
+                is NolPayPaymentCollectableData.NolPayCardAndPhoneData ->
+                    tokenizationDelegate.tokenize(
+                        NolPayTokenizationInputable(
+                            mobileNumber = collectedDataUnwrapped.mobileNumber,
+                            nolPayCardNumber = collectedDataUnwrapped.nolPaymentCard.cardNumber,
+                            paymentMethodType = PaymentMethodType.NOL_PAY.name,
+                            primerSessionIntent = PrimerSessionIntent.CHECKOUT,
+                        ),
+                    ).flatMap { paymentMethodTokenData ->
+                        paymentDelegate.handlePaymentMethodToken(paymentMethodTokenData, PrimerSessionIntent.CHECKOUT)
+                    }.onFailure { throwable ->
+                        paymentDelegate.handleError(throwable)
+                    }.map { }.recover { }
 
-            is NolPayPaymentCollectableData.NolPayTagData ->
-                paymentDelegate.requestPayment(
-                    collectedData = collectedDataUnwrapped
-                ).onFailure { throwable -> handleError(throwable = throwable) }
-                    .flatMap {
-                        paymentDelegate.completePayment()
-                    }
+                is NolPayPaymentCollectableData.NolPayTagData ->
+                    paymentDelegate.requestPayment(
+                        collectedData = collectedDataUnwrapped,
+                    ).onFailure { throwable -> handleError(throwable = throwable) }
+                        .flatMap {
+                            paymentDelegate.completePayment()
+                        }
+            }
         }
-    }
 
     internal companion object {
-        fun getInstance(owner: ViewModelStoreOwner) =
-            NolPayStartPaymentComponentProvider().provideInstance(owner)
+        fun getInstance(owner: ViewModelStoreOwner) = NolPayStartPaymentComponentProvider().provideInstance(owner)
     }
 }

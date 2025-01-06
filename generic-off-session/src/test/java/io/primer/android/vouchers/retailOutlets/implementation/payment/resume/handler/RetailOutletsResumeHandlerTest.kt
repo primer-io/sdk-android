@@ -11,7 +11,6 @@ import io.primer.android.vouchers.retailOutlets.implementation.payment.resume.cl
 import io.primer.android.vouchers.retailOutlets.implementation.rpc.domain.models.RetailOutlet
 import io.primer.android.vouchers.retailOutlets.implementation.rpc.domain.repository.RetailOutletRepository
 import kotlinx.coroutines.test.runTest
-
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -20,7 +19,6 @@ import java.text.SimpleDateFormat
 import java.util.Locale
 
 internal class RetailOutletsResumeHandlerTest {
-
     private lateinit var clientTokenParser: RetailOutletsClientTokenParser
     private lateinit var validateClientTokenRepository: ValidateClientTokenRepository
     private lateinit var clientTokenRepository: ClientTokenRepository
@@ -37,14 +35,15 @@ internal class RetailOutletsResumeHandlerTest {
         retailOutletRepository = mockk()
         tokenizedPaymentMethodRepository = mockk()
         checkoutAdditionalInfoHandler = mockk()
-        handler = RetailOutletsResumeHandler(
-            clientTokenParser,
-            validateClientTokenRepository,
-            clientTokenRepository,
-            retailOutletRepository,
-            tokenizedPaymentMethodRepository,
-            checkoutAdditionalInfoHandler
-        )
+        handler =
+            RetailOutletsResumeHandler(
+                clientTokenParser,
+                validateClientTokenRepository,
+                clientTokenRepository,
+                retailOutletRepository,
+                tokenizedPaymentMethodRepository,
+                checkoutAdditionalInfoHandler,
+            )
     }
 
     @Test
@@ -56,40 +55,48 @@ internal class RetailOutletsResumeHandlerTest {
 
     @Test
     fun `getResumeDecision should correctly parse client token and return RetailOutletsDecision`() {
-        val clientToken = RetailOutletsClientToken(
-            clientTokenIntent = "PAYMENT_METHOD_VOUCHER",
-            expiresAt = "2024-07-10T00:00:00",
-            reference = "some-reference",
-            entity = "some-entity"
-        )
+        val clientToken =
+            RetailOutletsClientToken(
+                clientTokenIntent = "PAYMENT_METHOD_VOUCHER",
+                expiresAt = "2024-07-10T00:00:00",
+                reference = "some-reference",
+                entity = "some-entity",
+            )
 
-        every { retailOutletRepository.getCachedRetailOutlets() } returns listOf(
-            mockk<RetailOutlet> {
-                every { id } returns "some-id"
-                every { name } returns "some-name"
+        every { retailOutletRepository.getCachedRetailOutlets() } returns
+            listOf(
+                mockk<RetailOutlet> {
+                    every { id } returns "some-id"
+                    every { name } returns "some-name"
+                },
+            )
+
+        every { tokenizedPaymentMethodRepository.getPaymentMethod() } returns
+            mockk {
+                every { paymentInstrumentData?.sessionInfo?.retailOutlet } returns "some-id"
             }
-        )
 
-        every { tokenizedPaymentMethodRepository.getPaymentMethod() } returns mockk {
-            every { paymentInstrumentData?.sessionInfo?.retailOutlet } returns "some-id"
-        }
+        val expiresDateFormat =
+            DateFormat.getDateTimeInstance(
+                DateFormat.MEDIUM,
+                DateFormat.SHORT,
+            )
 
-        val expiresDateFormat = DateFormat.getDateTimeInstance(
-            DateFormat.MEDIUM,
-            DateFormat.SHORT
-        )
-
-        val expectedDecision = RetailOutletsDecision(
-            expiresAt = expiresDateFormat.format(
-                SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault()).parse(clientToken.expiresAt)
-            ),
-            reference = clientToken.reference,
-            entity = clientToken.entity,
-            retailerName = retailOutletRepository.getCachedRetailOutlets().first { retailOutlet ->
-                retailOutlet.id ==
-                    tokenizedPaymentMethodRepository.getPaymentMethod().paymentInstrumentData?.sessionInfo?.retailOutlet
-            }.name
-        )
+        val expectedDecision =
+            RetailOutletsDecision(
+                expiresAt =
+                    expiresDateFormat.format(
+                        SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault()).parse(clientToken.expiresAt),
+                    ),
+                reference = clientToken.reference,
+                entity = clientToken.entity,
+                retailerName =
+                    retailOutletRepository.getCachedRetailOutlets().first { retailOutlet ->
+                        retailOutlet.id ==
+                            tokenizedPaymentMethodRepository.getPaymentMethod()
+                                .paymentInstrumentData?.sessionInfo?.retailOutlet
+                    }.name,
+            )
 
         runTest {
             val result = handler.getResumeDecision(clientToken)

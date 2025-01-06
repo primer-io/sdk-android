@@ -26,9 +26,10 @@ import org.junit.jupiter.api.extension.ExtendWith
 class WebRedirectPaymentMethodWebViewClientTest {
     private val onBackPressedDispatcherMock = mockk<OnBackPressedDispatcher>()
     private lateinit var webViewClient: WebRedirectPaymentMethodWebViewClient
-    private val activity: WebViewActivity = mockk(relaxed = true) {
-        every { this@mockk.onBackPressedDispatcher } returns onBackPressedDispatcherMock
-    }
+    private val activity: WebViewActivity =
+        mockk(relaxed = true) {
+            every { this@mockk.onBackPressedDispatcher } returns onBackPressedDispatcherMock
+        }
     private val url = "https://example.com"
     private val returnUrl = "https://return.example.com"
 
@@ -89,9 +90,10 @@ class WebRedirectPaymentMethodWebViewClientTest {
     @Test
     fun `cannotHandleIntent should log error`() {
         mockkStatic(Log::class)
-        val intent = mockk<Intent> {
-            every { data } returns Uri.parse("https://example.com/cannot-handle")
-        }
+        val intent =
+            mockk<Intent> {
+                every { data } returns Uri.parse("https://example.com/cannot-handle")
+            }
         every { Log.e(any(), any()) } returns 0
 
         webViewClient.cannotHandleIntent(intent)

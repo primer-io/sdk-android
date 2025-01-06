@@ -16,7 +16,6 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 class ClientTokenDataRepositoryTest {
-
     private lateinit var clientTokenDataSource: LocalClientTokenDataSource
     private lateinit var clientTokenDataRepository: ClientTokenDataRepository
     private lateinit var clientToken: ClientToken
@@ -26,9 +25,10 @@ class ClientTokenDataRepositoryTest {
         MockKAnnotations.init(this, relaxed = true)
         clientTokenDataSource = mockk()
         clientTokenDataRepository = ClientTokenDataRepository(clientTokenDataSource)
-        clientToken = mockk<ClientToken> {
-            every { intent } returns "intent"
-        }
+        clientToken =
+            mockk<ClientToken> {
+                every { intent } returns "intent"
+            }
     }
 
     @AfterEach

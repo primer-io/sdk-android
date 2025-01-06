@@ -17,7 +17,6 @@ import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
 class KlarnaTokenizationParamsMapperTest {
-
     private lateinit var mapper: KlarnaTokenizationParamsMapper
 
     @BeforeEach
@@ -31,27 +30,31 @@ class KlarnaTokenizationParamsMapperTest {
         val klarnaAuthorizationToken = "klarnaToken"
         val klarnaSessionData = mockk<KlarnaSessionData>(relaxed = true)
 
-        val paymentInstrumentParams = KlarnaCheckoutPaymentInstrumentParams(
-            klarnaAuthorizationToken = klarnaAuthorizationToken,
-            sessionData = klarnaSessionData
-        )
-        val tokenizationParams = TokenizationParams<KlarnaPaymentInstrumentParams>(
-            paymentInstrumentParams = paymentInstrumentParams,
-            sessionIntent = PrimerSessionIntent.CHECKOUT
-        )
+        val paymentInstrumentParams =
+            KlarnaCheckoutPaymentInstrumentParams(
+                klarnaAuthorizationToken = klarnaAuthorizationToken,
+                sessionData = klarnaSessionData,
+            )
+        val tokenizationParams =
+            TokenizationParams<KlarnaPaymentInstrumentParams>(
+                paymentInstrumentParams = paymentInstrumentParams,
+                sessionIntent = PrimerSessionIntent.CHECKOUT,
+            )
 
         // Act
         val result = mapper.map(tokenizationParams)
 
         // Assert
-        val expectedRequest = KlarnaCheckoutPaymentInstrumentDataRequest(
-            klarnaAuthorizationToken = klarnaAuthorizationToken,
-            sessionData = klarnaSessionData
-        )
-        val expectedTokenizationRequest = TokenizationCheckoutRequestV2(
-            paymentInstrument = expectedRequest,
-            paymentInstrumentSerializer = KlarnaPaymentInstrumentDataRequest.serializer
-        )
+        val expectedRequest =
+            KlarnaCheckoutPaymentInstrumentDataRequest(
+                klarnaAuthorizationToken = klarnaAuthorizationToken,
+                sessionData = klarnaSessionData,
+            )
+        val expectedTokenizationRequest =
+            TokenizationCheckoutRequestV2(
+                paymentInstrument = expectedRequest,
+                paymentInstrumentSerializer = KlarnaPaymentInstrumentDataRequest.serializer,
+            )
         assertEquals(expectedTokenizationRequest, result)
     }
 
@@ -61,29 +64,33 @@ class KlarnaTokenizationParamsMapperTest {
         val klarnaAuthorizationToken = "klarnaToken"
         val klarnaSessionData = mockk<KlarnaSessionData>(relaxed = true)
 
-        val paymentInstrumentParams = KlarnaVaultPaymentInstrumentParams(
-            klarnaCustomerToken = klarnaAuthorizationToken,
-            sessionData = klarnaSessionData
-        )
-        val tokenizationParams = TokenizationParams<KlarnaPaymentInstrumentParams>(
-            paymentInstrumentParams = paymentInstrumentParams,
-            sessionIntent = PrimerSessionIntent.VAULT
-        )
+        val paymentInstrumentParams =
+            KlarnaVaultPaymentInstrumentParams(
+                klarnaCustomerToken = klarnaAuthorizationToken,
+                sessionData = klarnaSessionData,
+            )
+        val tokenizationParams =
+            TokenizationParams<KlarnaPaymentInstrumentParams>(
+                paymentInstrumentParams = paymentInstrumentParams,
+                sessionIntent = PrimerSessionIntent.VAULT,
+            )
 
         // Act
         val result = mapper.map(tokenizationParams)
 
         // Assert
-        val expectedRequest = KlarnaVaultPaymentInstrumentDataRequest(
-            klarnaCustomerToken = klarnaAuthorizationToken,
-            sessionData = klarnaSessionData
-        )
-        val expectedTokenizationRequest = TokenizationVaultRequestV2(
-            paymentInstrument = expectedRequest,
-            paymentInstrumentSerializer = KlarnaPaymentInstrumentDataRequest.serializer,
-            tokenType = "MULTI_USE",
-            paymentFlow = "VAULT"
-        )
+        val expectedRequest =
+            KlarnaVaultPaymentInstrumentDataRequest(
+                klarnaCustomerToken = klarnaAuthorizationToken,
+                sessionData = klarnaSessionData,
+            )
+        val expectedTokenizationRequest =
+            TokenizationVaultRequestV2(
+                paymentInstrument = expectedRequest,
+                paymentInstrumentSerializer = KlarnaPaymentInstrumentDataRequest.serializer,
+                tokenType = "MULTI_USE",
+                paymentFlow = "VAULT",
+            )
         assertEquals(expectedTokenizationRequest, result)
     }
 }

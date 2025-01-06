@@ -21,10 +21,11 @@ class StripeErrorMapperTest {
         val actualResult = errorMapper.getPrimerError(throwable)
         val expectedDescription =
             "Publishable key is invalid"
-        val expectedContext = ErrorContextParams(
-            "stripe-invalid-publishable-key",
-            PaymentMethodType.STRIPE_ACH.name
-        )
+        val expectedContext =
+            ErrorContextParams(
+                "stripe-invalid-publishable-key",
+                PaymentMethodType.STRIPE_ACH.name,
+            )
 
         assertTrue(actualResult is StripeError.StripeInvalidPublishableKeyError)
         assertEquals(expectedDescription, actualResult.description)
@@ -39,10 +40,11 @@ class StripeErrorMapperTest {
         val actualResult = errorMapper.getPrimerError(throwable)
         val expectedDescription =
             "Multiple errors occurred: $message"
-        val expectedContext = ErrorContextParams(
-            "stripe-sdk-error",
-            PaymentMethodType.STRIPE_ACH.name
-        )
+        val expectedContext =
+            ErrorContextParams(
+                "stripe-sdk-error",
+                PaymentMethodType.STRIPE_ACH.name,
+            )
 
         assertTrue(actualResult is StripeError.StripeSdkError)
         assertEquals(expectedDescription, actualResult.description)

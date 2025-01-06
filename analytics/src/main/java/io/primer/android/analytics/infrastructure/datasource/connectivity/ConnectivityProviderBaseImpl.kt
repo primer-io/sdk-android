@@ -32,5 +32,6 @@ internal abstract class ConnectivityProviderBaseImpl : ConnectivityProvider {
     }
 
     protected abstract fun subscribe()
+
     protected abstract fun unsubscribe()
 }

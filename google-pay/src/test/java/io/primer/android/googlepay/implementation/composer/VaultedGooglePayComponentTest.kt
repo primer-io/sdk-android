@@ -14,8 +14,8 @@ import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
 import io.mockk.mockkStatic
 import io.mockk.unmockkStatic
-import io.primer.android.core.extensions.getSerializableCompat
 import io.primer.android.PrimerSessionIntent
+import io.primer.android.core.extensions.getSerializableCompat
 import io.primer.android.errors.data.exception.PaymentMethodCancelledException
 import io.primer.android.googlepay.InstantExecutorExtension
 import io.primer.android.googlepay.implementation.errors.domain.exception.GooglePayException
@@ -42,7 +42,6 @@ import kotlin.time.Duration.Companion.seconds
 @ExtendWith(InstantExecutorExtension::class, MockKExtension::class)
 @ExperimentalCoroutinesApi
 internal class VaultedGooglePayComponentTest {
-
     @RelaxedMockK
     internal lateinit var paymentDelegate: GooglePayPaymentDelegate
 
@@ -51,9 +50,10 @@ internal class VaultedGooglePayComponentTest {
     @BeforeEach
     fun setUp() {
         MockKAnnotations.init(this, relaxed = true)
-        component = VaultedGooglePayComponent(
-            paymentDelegate = paymentDelegate
-        )
+        component =
+            VaultedGooglePayComponent(
+                paymentDelegate = paymentDelegate,
+            )
 
         coEvery { paymentDelegate.uiEvent } returns MutableSharedFlow()
 
@@ -127,13 +127,15 @@ internal class VaultedGooglePayComponentTest {
     fun `handleActivityResultIntent() should call resumePayment with correct resume token when initialLauncherParams is ThreeDsInitialLauncherParams`() {
         // Given
         val resumeToken = "resumeToken"
-        val params = mockk<PaymentMethodLauncherParams>(relaxed = true) {
-            every { initialLauncherParams } returns mockk<ThreeDsInitialLauncherParams>(relaxed = true)
-        }
+        val params =
+            mockk<PaymentMethodLauncherParams>(relaxed = true) {
+                every { initialLauncherParams } returns mockk<ThreeDsInitialLauncherParams>(relaxed = true)
+            }
         val resultCode = Activity.RESULT_OK
-        val intent = mockk<Intent>(relaxed = true) {
-            every { getStringExtra(ThreeDsActivity.RESUME_TOKEN_EXTRA_KEY) } returns resumeToken
-        }
+        val intent =
+            mockk<Intent>(relaxed = true) {
+                every { getStringExtra(ThreeDsActivity.RESUME_TOKEN_EXTRA_KEY) } returns resumeToken
+            }
 
         // When
         runTest {
@@ -149,11 +151,12 @@ internal class VaultedGooglePayComponentTest {
     fun `handleActivityStartEvent() should emit Navigate event for ThreeDsInitialLauncherParams`() {
         // Given
         val threeDsInitialLauncherParams = ThreeDsInitialLauncherParams(listOf("2.0.0", "2.1.0"))
-        val params = PaymentMethodLauncherParams(
-            paymentMethodType = "GOOGLE_PAY",
-            sessionIntent = PrimerSessionIntent.CHECKOUT,
-            initialLauncherParams = threeDsInitialLauncherParams
-        )
+        val params =
+            PaymentMethodLauncherParams(
+                paymentMethodType = "GOOGLE_PAY",
+                sessionIntent = PrimerSessionIntent.CHECKOUT,
+                initialLauncherParams = threeDsInitialLauncherParams,
+            )
 
         runTest {
             // When
@@ -169,17 +172,20 @@ internal class VaultedGooglePayComponentTest {
     @Test
     fun `handleActivityStartEvent() should emit Navigate event for ProcessorThreeDsInitialLauncherParams`() {
         // Given
-        val threeDsInitialLauncherParams = ProcessorThreeDsInitialLauncherParams(
-            processor3DS = Processor3DS(
-                redirectUrl = "https://www.example.com/redirect",
-                statusUrl = "https://www.example.com/status"
+        val threeDsInitialLauncherParams =
+            ProcessorThreeDsInitialLauncherParams(
+                processor3DS =
+                    Processor3DS(
+                        redirectUrl = "https://www.example.com/redirect",
+                        statusUrl = "https://www.example.com/status",
+                    ),
             )
-        )
-        val params = PaymentMethodLauncherParams(
-            paymentMethodType = "GOOGLE_PAY",
-            sessionIntent = PrimerSessionIntent.CHECKOUT,
-            initialLauncherParams = threeDsInitialLauncherParams
-        )
+        val params =
+            PaymentMethodLauncherParams(
+                paymentMethodType = "GOOGLE_PAY",
+                sessionIntent = PrimerSessionIntent.CHECKOUT,
+                initialLauncherParams = threeDsInitialLauncherParams,
+            )
 
         runTest {
             // When
@@ -196,13 +202,15 @@ internal class VaultedGooglePayComponentTest {
     fun `handleActivityResultIntent() should call resumePayment with correct resume token when initialLauncherParams is ProcessorThreeDsInitialLauncherParams`() {
         // Given
         val resumeToken = "resumeToken"
-        val params = mockk<PaymentMethodLauncherParams>(relaxed = true) {
-            every { initialLauncherParams } returns mockk<ProcessorThreeDsInitialLauncherParams>(relaxed = true)
-        }
+        val params =
+            mockk<PaymentMethodLauncherParams>(relaxed = true) {
+                every { initialLauncherParams } returns mockk<ProcessorThreeDsInitialLauncherParams>(relaxed = true)
+            }
         val resultCode = Activity.RESULT_OK
-        val intent = mockk<Intent>(relaxed = true) {
-            every { getStringExtra(Processor3dsWebViewActivity.RESUME_TOKEN_EXTRA_KEY) } returns resumeToken
-        }
+        val intent =
+            mockk<Intent>(relaxed = true) {
+                every { getStringExtra(Processor3dsWebViewActivity.RESUME_TOKEN_EXTRA_KEY) } returns resumeToken
+            }
 
         // When
         runTest {

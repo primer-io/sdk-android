@@ -5,13 +5,11 @@ import io.primer.android.bancontact.implementation.metadata.domain.model.PrimerB
 import io.primer.cardShared.CardNumberFormatter
 
 internal class BancontactCardDataMetadataRetriever {
-
-    suspend fun retrieveMetadata(
-        inputData: PrimerBancontactCardData
-    ) = PrimerBancontactCardMetadata(
-        CardNumberFormatter.fromString(
-            inputData.cardNumber,
-            replaceInvalid = false
-        ).getCardType()
-    )
+    suspend fun retrieveMetadata(inputData: PrimerBancontactCardData) =
+        PrimerBancontactCardMetadata(
+            CardNumberFormatter.fromString(
+                inputData.cardNumber,
+                replaceInvalid = false,
+            ).getCardType(),
+        )
 }

@@ -11,8 +11,6 @@ import io.primer.android.analytics.data.models.MessageType
 import io.primer.android.analytics.data.models.Severity
 import io.primer.android.analytics.domain.models.MessageAnalyticsParams
 import io.primer.android.analytics.domain.repository.AnalyticsRepository
-import io.primer.android.configuration.data.model.CardNetwork
-import io.primer.cardShared.InstantExecutorExtension
 import io.primer.android.components.domain.core.models.card.PrimerCardData
 import io.primer.android.components.domain.core.models.card.PrimerCardMetadataState
 import io.primer.android.components.domain.core.models.card.PrimerCardNetwork
@@ -20,7 +18,9 @@ import io.primer.android.components.domain.core.models.card.PrimerCardNetworksMe
 import io.primer.android.components.domain.core.models.card.PrimerCardNumberEntryMetadata
 import io.primer.android.components.domain.core.models.card.PrimerCardNumberEntryState
 import io.primer.android.components.domain.core.models.card.ValidationSource
+import io.primer.android.configuration.data.model.CardNetwork
 import io.primer.android.core.logging.internal.LogReporter
+import io.primer.cardShared.InstantExecutorExtension
 import io.primer.cardShared.binData.domain.CardMetadataStateRetriever.Companion.REMOTE_VALIDATION_FAILED_MESSAGE
 import io.primer.cardShared.networks.domain.repository.OrderedAllowedCardNetworksRepository
 import io.primer.cardShared.toListDuring
@@ -36,7 +36,6 @@ import kotlin.time.Duration.Companion.seconds
 @ExtendWith(InstantExecutorExtension::class, MockKExtension::class)
 @ExperimentalCoroutinesApi
 internal class DefaultCardMetadataStateRetrieverTest {
-
     @RelaxedMockK
     lateinit var cardBinMetadataRepository: CardBinMetadataRepository
 
@@ -56,13 +55,14 @@ internal class DefaultCardMetadataStateRetrieverTest {
 
     @BeforeEach
     fun setUp() {
-        metadataStateRetriever = CardMetadataStateRetriever(
-            cardBinMetadataRepository,
-            orderedAllowedCardNetworksRepository,
-            metadataCacheHelper,
-            analyticsRepository,
-            logReporter
-        )
+        metadataStateRetriever =
+            CardMetadataStateRetriever(
+                cardBinMetadataRepository,
+                orderedAllowedCardNetworksRepository,
+                metadataCacheHelper,
+                analyticsRepository,
+                logReporter,
+            )
     }
 
     @Test
@@ -74,32 +74,33 @@ internal class DefaultCardMetadataStateRetrieverTest {
         val cardBinMetadata = listOf(CARTES_BANCAIRES_CARD_BIN_METADATA, VISA_CARD_BIN_METADATA)
 
         coEvery { cardBinMetadataRepository.getBinMetadata(any(), any()) }.returns(
-            Result.success(cardBinMetadata)
+            Result.success(cardBinMetadata),
         )
 
         every { orderedAllowedCardNetworksRepository.getOrderedAllowedCardNetworks() }.returns(
-            listOf(CardNetwork.Type.VISA, CardNetwork.Type.CARTES_BANCAIRES, CardNetwork.Type.AMEX)
+            listOf(CardNetwork.Type.VISA, CardNetwork.Type.CARTES_BANCAIRES, CardNetwork.Type.AMEX),
         )
 
         val visaCardNetwork = PrimerCardNetwork(CardNetwork.Type.VISA, "VISA", true)
-        val cbCardNetwork = PrimerCardNetwork(
-            CardNetwork.Type.CARTES_BANCAIRES,
-            "CB",
-            true
-        )
+        val cbCardNetwork =
+            PrimerCardNetwork(
+                CardNetwork.Type.CARTES_BANCAIRES,
+                "CB",
+                true,
+            )
 
         val expectedNetworks = listOf(visaCardNetwork, cbCardNetwork)
         val expectedCardNumberEntryMetadata =
             PrimerCardNumberEntryMetadata(
                 PrimerCardNetworksMetadata(
                     expectedNetworks,
-                    expectedNetworks.firstOrNull()
+                    expectedNetworks.firstOrNull(),
                 ),
                 PrimerCardNetworksMetadata(
                     expectedNetworks,
-                    expectedNetworks.firstOrNull()
+                    expectedNetworks.firstOrNull(),
                 ),
-                source
+                source,
             )
 
         runTest {
@@ -112,22 +113,22 @@ internal class DefaultCardMetadataStateRetrieverTest {
                 listOf(
                     PrimerCardMetadataState.Fetching(
                         PrimerCardNumberEntryState(
-                            CARD_NUMBER
-                        )
+                            CARD_NUMBER,
+                        ),
                     ),
                     PrimerCardMetadataState.Fetched(
                         expectedCardNumberEntryMetadata,
-                        PrimerCardNumberEntryState(CARD_NUMBER)
-                    )
+                        PrimerCardNumberEntryState(CARD_NUMBER),
+                    ),
                 ),
-                metadataStates
+                metadataStates,
             )
         }
 
         coVerify {
             cardBinMetadataRepository.getBinMetadata(
                 CARD_NUMBER.take(MAX_BIN_LENGTH),
-                source
+                source,
             )
         }
 
@@ -136,15 +137,15 @@ internal class DefaultCardMetadataStateRetrieverTest {
                 MessageAnalyticsParams(
                     MessageType.INFO,
                     "Fetched card networks: $cardBinMetadata.",
-                    Severity.INFO
-                )
+                    Severity.INFO,
+                ),
             )
         }
 
         verify {
             metadataCacheHelper.saveCardNetworksMetadata(
                 CARD_NUMBER.take(MAX_BIN_LENGTH),
-                expectedCardNumberEntryMetadata
+                expectedCardNumberEntryMetadata,
             )
         }
     }
@@ -157,32 +158,34 @@ internal class DefaultCardMetadataStateRetrieverTest {
         val cardBinMetadata = listOf(VISA_CARD_BIN_METADATA, CARTES_BANCAIRES_CARD_BIN_METADATA)
 
         coEvery { cardBinMetadataRepository.getBinMetadata(any(), any()) }.returns(
-            Result.success(cardBinMetadata)
+            Result.success(cardBinMetadata),
         )
 
         every { orderedAllowedCardNetworksRepository.getOrderedAllowedCardNetworks() }.returns(
-            listOf(CardNetwork.Type.CARTES_BANCAIRES, CardNetwork.Type.AMEX)
+            listOf(CardNetwork.Type.CARTES_BANCAIRES, CardNetwork.Type.AMEX),
         )
 
-        val visaCardNetwork = PrimerCardNetwork(
-            CardNetwork.Type.VISA,
-            "VISA",
-            false
-        )
-        val cbCardNetwork = PrimerCardNetwork(
-            CardNetwork.Type.CARTES_BANCAIRES,
-            "CB",
-            true
-        )
+        val visaCardNetwork =
+            PrimerCardNetwork(
+                CardNetwork.Type.VISA,
+                "VISA",
+                false,
+            )
+        val cbCardNetwork =
+            PrimerCardNetwork(
+                CardNetwork.Type.CARTES_BANCAIRES,
+                "CB",
+                true,
+            )
 
         val expectedCardNumberEntryMetadata =
             PrimerCardNumberEntryMetadata(
                 null,
                 PrimerCardNetworksMetadata(
                     listOf(cbCardNetwork, visaCardNetwork),
-                    cbCardNetwork
+                    cbCardNetwork,
                 ),
-                ValidationSource.REMOTE
+                ValidationSource.REMOTE,
             )
 
         runTest {
@@ -195,22 +198,22 @@ internal class DefaultCardMetadataStateRetrieverTest {
                 listOf(
                     PrimerCardMetadataState.Fetching(
                         PrimerCardNumberEntryState(
-                            CARD_NUMBER
-                        )
+                            CARD_NUMBER,
+                        ),
                     ),
                     PrimerCardMetadataState.Fetched(
                         expectedCardNumberEntryMetadata,
-                        PrimerCardNumberEntryState(CARD_NUMBER)
-                    )
+                        PrimerCardNumberEntryState(CARD_NUMBER),
+                    ),
                 ),
-                metadataStates
+                metadataStates,
             )
         }
 
         coVerify {
             cardBinMetadataRepository.getBinMetadata(
                 CARD_NUMBER.take(MAX_BIN_LENGTH),
-                ValidationSource.REMOTE
+                ValidationSource.REMOTE,
             )
         }
 
@@ -219,15 +222,15 @@ internal class DefaultCardMetadataStateRetrieverTest {
                 MessageAnalyticsParams(
                     MessageType.INFO,
                     "Fetched card networks: $cardBinMetadata.",
-                    Severity.INFO
-                )
+                    Severity.INFO,
+                ),
             )
         }
 
         verify {
             metadataCacheHelper.saveCardNetworksMetadata(
                 CARD_NUMBER.take(MAX_BIN_LENGTH),
-                expectedCardNumberEntryMetadata
+                expectedCardNumberEntryMetadata,
             )
         }
     }
@@ -240,23 +243,23 @@ internal class DefaultCardMetadataStateRetrieverTest {
         coEvery {
             cardBinMetadataRepository.getBinMetadata(
                 any(),
-                ValidationSource.REMOTE
+                ValidationSource.REMOTE,
             )
         }.returns(
-            Result.failure(exception)
+            Result.failure(exception),
         )
 
         coEvery {
             cardBinMetadataRepository.getBinMetadata(
                 any(),
-                ValidationSource.LOCAL_FALLBACK
+                ValidationSource.LOCAL_FALLBACK,
             )
         }.returns(
-            Result.success(listOf(VISA_CARD_BIN_METADATA))
+            Result.success(listOf(VISA_CARD_BIN_METADATA)),
         )
 
         every { orderedAllowedCardNetworksRepository.getOrderedAllowedCardNetworks() }.returns(
-            listOf(CardNetwork.Type.VISA, CardNetwork.Type.CARTES_BANCAIRES, CardNetwork.Type.AMEX)
+            listOf(CardNetwork.Type.VISA, CardNetwork.Type.CARTES_BANCAIRES, CardNetwork.Type.AMEX),
         )
 
         val visaCardNetwork = PrimerCardNetwork(CardNetwork.Type.VISA, "VISA", true)
@@ -265,9 +268,9 @@ internal class DefaultCardMetadataStateRetrieverTest {
                 null,
                 PrimerCardNetworksMetadata(
                     listOf(visaCardNetwork),
-                    visaCardNetwork
+                    visaCardNetwork,
                 ),
-                ValidationSource.LOCAL_FALLBACK
+                ValidationSource.LOCAL_FALLBACK,
             )
 
         runTest {
@@ -280,28 +283,28 @@ internal class DefaultCardMetadataStateRetrieverTest {
                 listOf(
                     PrimerCardMetadataState.Fetching(
                         PrimerCardNumberEntryState(
-                            CARD_NUMBER
-                        )
+                            CARD_NUMBER,
+                        ),
                     ),
                     PrimerCardMetadataState.Fetched(
                         expectedCardNumberEntryMetadata,
-                        PrimerCardNumberEntryState(CARD_NUMBER)
-                    )
+                        PrimerCardNumberEntryState(CARD_NUMBER),
+                    ),
                 ),
-                metadataStates
+                metadataStates,
             )
         }
 
         coVerify {
             cardBinMetadataRepository.getBinMetadata(
                 CARD_NUMBER.take(MAX_BIN_LENGTH),
-                ValidationSource.REMOTE
+                ValidationSource.REMOTE,
             )
         }
         coVerify {
             cardBinMetadataRepository.getBinMetadata(
                 CARD_NUMBER.take(MAX_BIN_LENGTH),
-                ValidationSource.LOCAL_FALLBACK
+                ValidationSource.LOCAL_FALLBACK,
             )
         }
         verify {
@@ -309,8 +312,8 @@ internal class DefaultCardMetadataStateRetrieverTest {
                 MessageAnalyticsParams(
                     MessageType.ERROR,
                     "Failed to remotely validate card network: ${exception.message}",
-                    Severity.ERROR
-                )
+                    Severity.ERROR,
+                ),
             )
         }
         verify {
@@ -321,7 +324,7 @@ internal class DefaultCardMetadataStateRetrieverTest {
         verify {
             metadataCacheHelper.saveCardNetworksMetadata(
                 CARD_NUMBER.take(MAX_BIN_LENGTH),
-                expectedCardNumberEntryMetadata
+                expectedCardNumberEntryMetadata,
             )
         }
     }
@@ -334,38 +337,39 @@ internal class DefaultCardMetadataStateRetrieverTest {
         coEvery {
             cardBinMetadataRepository.getBinMetadata(
                 any(),
-                ValidationSource.REMOTE
+                ValidationSource.REMOTE,
             )
         }.returns(
-            Result.failure(exception)
+            Result.failure(exception),
         )
 
         coEvery {
             cardBinMetadataRepository.getBinMetadata(
                 any(),
-                ValidationSource.LOCAL_FALLBACK
+                ValidationSource.LOCAL_FALLBACK,
             )
         }.returns(
-            Result.success(listOf(VISA_CARD_BIN_METADATA))
+            Result.success(listOf(VISA_CARD_BIN_METADATA)),
         )
 
         every { orderedAllowedCardNetworksRepository.getOrderedAllowedCardNetworks() }.returns(
-            listOf(CardNetwork.Type.CARTES_BANCAIRES, CardNetwork.Type.AMEX)
+            listOf(CardNetwork.Type.CARTES_BANCAIRES, CardNetwork.Type.AMEX),
         )
 
-        val visaCardNetwork = PrimerCardNetwork(
-            CardNetwork.Type.VISA,
-            "VISA",
-            false
-        )
+        val visaCardNetwork =
+            PrimerCardNetwork(
+                CardNetwork.Type.VISA,
+                "VISA",
+                false,
+            )
         val expectedCardNumberEntryMetadata =
             PrimerCardNumberEntryMetadata(
                 null,
                 PrimerCardNetworksMetadata(
                     listOf(visaCardNetwork),
-                    null
+                    null,
                 ),
-                ValidationSource.LOCAL_FALLBACK
+                ValidationSource.LOCAL_FALLBACK,
             )
 
         runTest {
@@ -379,29 +383,29 @@ internal class DefaultCardMetadataStateRetrieverTest {
                 listOf(
                     PrimerCardMetadataState.Fetching(
                         PrimerCardNumberEntryState(
-                            CARD_NUMBER
-                        )
+                            CARD_NUMBER,
+                        ),
                     ),
                     PrimerCardMetadataState.Fetched(
                         expectedCardNumberEntryMetadata,
-                        PrimerCardNumberEntryState(CARD_NUMBER)
-                    )
+                        PrimerCardNumberEntryState(CARD_NUMBER),
+                    ),
                 ),
-                metadataStates
+                metadataStates,
             )
         }
 
         coVerify {
             cardBinMetadataRepository.getBinMetadata(
                 CARD_NUMBER.take(MAX_BIN_LENGTH),
-                ValidationSource.REMOTE
+                ValidationSource.REMOTE,
             )
         }
 
         coVerify {
             cardBinMetadataRepository.getBinMetadata(
                 CARD_NUMBER.take(MAX_BIN_LENGTH),
-                ValidationSource.LOCAL_FALLBACK
+                ValidationSource.LOCAL_FALLBACK,
             )
         }
         verify {
@@ -409,8 +413,8 @@ internal class DefaultCardMetadataStateRetrieverTest {
                 MessageAnalyticsParams(
                     MessageType.ERROR,
                     "Failed to remotely validate card network: ${exception.message}",
-                    Severity.ERROR
-                )
+                    Severity.ERROR,
+                ),
             )
         }
         verify {
@@ -420,7 +424,7 @@ internal class DefaultCardMetadataStateRetrieverTest {
         verify {
             metadataCacheHelper.saveCardNetworksMetadata(
                 CARD_NUMBER.take(MAX_BIN_LENGTH),
-                expectedCardNumberEntryMetadata
+                expectedCardNumberEntryMetadata,
             )
         }
     }
@@ -433,14 +437,14 @@ internal class DefaultCardMetadataStateRetrieverTest {
         coEvery {
             cardBinMetadataRepository.getBinMetadata(
                 any(),
-                ValidationSource.LOCAL
+                ValidationSource.LOCAL,
             )
         }.returns(
-            Result.success(listOf(VISA_CARD_BIN_METADATA))
+            Result.success(listOf(VISA_CARD_BIN_METADATA)),
         )
 
         every { orderedAllowedCardNetworksRepository.getOrderedAllowedCardNetworks() }.returns(
-            listOf(CardNetwork.Type.VISA, CardNetwork.Type.CARTES_BANCAIRES, CardNetwork.Type.AMEX)
+            listOf(CardNetwork.Type.VISA, CardNetwork.Type.CARTES_BANCAIRES, CardNetwork.Type.AMEX),
         )
 
         val visaCardNetwork = PrimerCardNetwork(CardNetwork.Type.VISA, "VISA", true)
@@ -449,9 +453,9 @@ internal class DefaultCardMetadataStateRetrieverTest {
                 null,
                 PrimerCardNetworksMetadata(
                     listOf(visaCardNetwork),
-                    visaCardNetwork
+                    visaCardNetwork,
                 ),
-                ValidationSource.LOCAL
+                ValidationSource.LOCAL,
             )
 
         runTest {
@@ -465,11 +469,11 @@ internal class DefaultCardMetadataStateRetrieverTest {
                     PrimerCardMetadataState.Fetched(
                         expectedCardNumberEntryMetadata,
                         PrimerCardNumberEntryState(
-                            CARD_NUMBER_SHORT
-                        )
-                    )
+                            CARD_NUMBER_SHORT,
+                        ),
+                    ),
                 ),
-                metadataStates
+                metadataStates,
             )
 
             assertEquals(cardData, metadataStateRetriever.lastInputData)
@@ -478,7 +482,7 @@ internal class DefaultCardMetadataStateRetrieverTest {
         coVerify {
             cardBinMetadataRepository.getBinMetadata(
                 CARD_NUMBER_SHORT,
-                ValidationSource.LOCAL
+                ValidationSource.LOCAL,
             )
         }
 
@@ -489,7 +493,7 @@ internal class DefaultCardMetadataStateRetrieverTest {
         verify {
             metadataCacheHelper.saveCardNetworksMetadata(
                 CARD_NUMBER_SHORT,
-                expectedCardNumberEntryMetadata
+                expectedCardNumberEntryMetadata,
             )
         }
     }
@@ -502,29 +506,30 @@ internal class DefaultCardMetadataStateRetrieverTest {
         coEvery {
             cardBinMetadataRepository.getBinMetadata(
                 any(),
-                ValidationSource.LOCAL
+                ValidationSource.LOCAL,
             )
         }.returns(
-            Result.success(listOf(VISA_CARD_BIN_METADATA))
+            Result.success(listOf(VISA_CARD_BIN_METADATA)),
         )
 
         every { orderedAllowedCardNetworksRepository.getOrderedAllowedCardNetworks() }.returns(
-            listOf(CardNetwork.Type.CARTES_BANCAIRES, CardNetwork.Type.AMEX)
+            listOf(CardNetwork.Type.CARTES_BANCAIRES, CardNetwork.Type.AMEX),
         )
 
-        val visaCardNetwork = PrimerCardNetwork(
-            CardNetwork.Type.VISA,
-            "VISA",
-            false
-        )
+        val visaCardNetwork =
+            PrimerCardNetwork(
+                CardNetwork.Type.VISA,
+                "VISA",
+                false,
+            )
         val expectedCardNumberEntryMetadata =
             PrimerCardNumberEntryMetadata(
                 null,
                 PrimerCardNetworksMetadata(
                     listOf(visaCardNetwork),
-                    null
+                    null,
                 ),
-                ValidationSource.LOCAL
+                ValidationSource.LOCAL,
             )
 
         runTest {
@@ -538,11 +543,11 @@ internal class DefaultCardMetadataStateRetrieverTest {
                     PrimerCardMetadataState.Fetched(
                         expectedCardNumberEntryMetadata,
                         PrimerCardNumberEntryState(
-                            CARD_NUMBER_SHORT
-                        )
-                    )
+                            CARD_NUMBER_SHORT,
+                        ),
+                    ),
                 ),
-                metadataStates
+                metadataStates,
             )
 
             assertEquals(cardData, metadataStateRetriever.lastInputData)
@@ -551,14 +556,14 @@ internal class DefaultCardMetadataStateRetrieverTest {
         coVerify {
             cardBinMetadataRepository.getBinMetadata(
                 CARD_NUMBER_SHORT,
-                ValidationSource.LOCAL
+                ValidationSource.LOCAL,
             )
         }
 
         verify {
             metadataCacheHelper.saveCardNetworksMetadata(
                 CARD_NUMBER_SHORT,
-                expectedCardNumberEntryMetadata
+                expectedCardNumberEntryMetadata,
             )
         }
     }
@@ -569,7 +574,7 @@ internal class DefaultCardMetadataStateRetrieverTest {
         every { cardData.cardNumber } returns "  "
 
         every { orderedAllowedCardNetworksRepository.getOrderedAllowedCardNetworks() }.returns(
-            listOf(CardNetwork.Type.CARTES_BANCAIRES, CardNetwork.Type.AMEX)
+            listOf(CardNetwork.Type.CARTES_BANCAIRES, CardNetwork.Type.AMEX),
         )
 
         runTest {
@@ -585,14 +590,14 @@ internal class DefaultCardMetadataStateRetrieverTest {
                             null,
                             PrimerCardNetworksMetadata(
                                 emptyList(),
-                                null
+                                null,
                             ),
-                            ValidationSource.LOCAL
+                            ValidationSource.LOCAL,
                         ),
-                        PrimerCardNumberEntryState("")
-                    )
+                        PrimerCardNumberEntryState(""),
+                    ),
                 ),
-                metadataStates
+                metadataStates,
             )
 
             assertEquals(cardData, metadataStateRetriever.lastInputData)
@@ -623,7 +628,6 @@ internal class DefaultCardMetadataStateRetrieverTest {
     }
 
     private companion object {
-
         const val CARD_NUMBER = "40355000000"
         const val CARD_NUMBER_SHORT = "40355"
 
@@ -631,7 +635,7 @@ internal class DefaultCardMetadataStateRetrieverTest {
         val CARTES_BANCAIRES_CARD_BIN_METADATA =
             CardBinMetadata(
                 "CB",
-                CardNetwork.Type.CARTES_BANCAIRES
+                CardNetwork.Type.CARTES_BANCAIRES,
             )
     }
 }

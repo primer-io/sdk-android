@@ -25,21 +25,22 @@ import org.junit.jupiter.api.extension.ExtendWith
 @OptIn(ExperimentalCoroutinesApi::class)
 @ExtendWith(InstantExecutorExtension::class)
 internal class WebRedirectTokenizationDelegateTest {
-
     private lateinit var configurationInteractor: WebRedirectConfigurationInteractor
     private lateinit var tokenizationInteractor: WebRedirectTokenizationInteractor
     private lateinit var deeplinkInteractor: RedirectDeeplinkInteractor
     private lateinit var platformResolver: PlatformResolver
     private lateinit var delegate: WebRedirectTokenizationDelegate
-    private val input = WebRedirectTokenizationInputable(
-        paymentMethodType = "REDIRECT",
-        primerSessionIntent = PrimerSessionIntent.CHECKOUT
-    )
+    private val input =
+        WebRedirectTokenizationInputable(
+            paymentMethodType = "REDIRECT",
+            primerSessionIntent = PrimerSessionIntent.CHECKOUT,
+        )
     private val webRedirectConfigParams = WebRedirectConfigParams(paymentMethodType = input.paymentMethodType)
-    private val webRedirectConfig = WebRedirectConfig(
-        paymentMethodConfigId = "web-redirect",
-        locale = "en"
-    )
+    private val webRedirectConfig =
+        WebRedirectConfig(
+            paymentMethodConfigId = "web-redirect",
+            locale = "en",
+        )
 
     @BeforeEach
     fun setUp() {
@@ -47,42 +48,45 @@ internal class WebRedirectTokenizationDelegateTest {
         tokenizationInteractor = mockk()
         deeplinkInteractor = mockk()
         platformResolver = mockk()
-        delegate = WebRedirectTokenizationDelegate(
-            configurationInteractor,
-            tokenizationInteractor,
-            deeplinkInteractor,
-            platformResolver
-        )
+        delegate =
+            WebRedirectTokenizationDelegate(
+                configurationInteractor,
+                tokenizationInteractor,
+                deeplinkInteractor,
+                platformResolver,
+            )
     }
 
     @Test
-    fun `mapTokenizationData returns success result when the configurationInteractor returns Result success`() = runTest {
-        every { deeplinkInteractor(None) } returns "https://example.com"
-        every {
-            platformResolver.getPlatform(paymentMethodType = input.paymentMethodType)
-        } returns PlatformResolver.ANDROID_PLATFORM
-        coEvery { configurationInteractor(webRedirectConfigParams) } returns Result.success(webRedirectConfig)
+    fun `mapTokenizationData returns success result when the configurationInteractor returns Result success`() =
+        runTest {
+            every { deeplinkInteractor(None) } returns "https://example.com"
+            every {
+                platformResolver.getPlatform(paymentMethodType = input.paymentMethodType)
+            } returns PlatformResolver.ANDROID_PLATFORM
+            coEvery { configurationInteractor(webRedirectConfigParams) } returns Result.success(webRedirectConfig)
 
-        val result = delegate.mapTokenizationData(input)
+            val result = delegate.mapTokenizationData(input)
 
-        assertTrue(result.isSuccess)
-        val tokenizationParams = result.getOrNull()!!
-        val paymentInstrumentParams = tokenizationParams.paymentInstrumentParams
+            assertTrue(result.isSuccess)
+            val tokenizationParams = result.getOrNull()!!
+            val paymentInstrumentParams = tokenizationParams.paymentInstrumentParams
 
-        assertEquals(input.paymentMethodType, paymentInstrumentParams.paymentMethodType)
-        coVerify { configurationInteractor(webRedirectConfigParams) }
-    }
+            assertEquals(input.paymentMethodType, paymentInstrumentParams.paymentMethodType)
+            coVerify { configurationInteractor(webRedirectConfigParams) }
+        }
 
     @Test
-    fun `mapTokenizationData returns failure result when the configurationInteractor returns Result failure`() = runTest {
-        val exception = Exception("Configuration error")
-        coEvery { configurationInteractor(webRedirectConfigParams) } returns Result.failure(exception)
+    fun `mapTokenizationData returns failure result when the configurationInteractor returns Result failure`() =
+        runTest {
+            val exception = Exception("Configuration error")
+            coEvery { configurationInteractor(webRedirectConfigParams) } returns Result.failure(exception)
 
-        val result = delegate.mapTokenizationData(input)
+            val result = delegate.mapTokenizationData(input)
 
-        assertTrue(result.isFailure)
-        assertEquals(exception, result.exceptionOrNull())
+            assertTrue(result.isFailure)
+            assertEquals(exception, result.exceptionOrNull())
 
-        coVerify { configurationInteractor(webRedirectConfigParams) }
-    }
+            coVerify { configurationInteractor(webRedirectConfigParams) }
+        }
 }

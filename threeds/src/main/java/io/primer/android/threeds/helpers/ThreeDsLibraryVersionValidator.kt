@@ -5,11 +5,11 @@ import io.primer.android.configuration.domain.repository.ConfigurationRepository
 import io.primer.android.threeds.BuildConfig
 
 internal class ThreeDsLibraryVersionValidator(
-    private val configurationRepository: ConfigurationRepository
+    private val configurationRepository: ConfigurationRepository,
 ) {
-
-    fun isValidVersion() = configurationRepository.getConfiguration().environment ==
-        Environment.PRODUCTION || BuildConfig.SDK_VERSION_STRING == getThreeDsIncludedVersion()
+    fun isValidVersion() =
+        configurationRepository.getConfiguration().environment ==
+            Environment.PRODUCTION || BuildConfig.SDK_VERSION_STRING == getThreeDsIncludedVersion()
 
     private fun getThreeDsIncludedVersion(): String? {
         return try {
@@ -23,7 +23,6 @@ internal class ThreeDsLibraryVersionValidator(
     }
 
     private companion object {
-
         const val THREE_DS_BUILD_CONFIG_PATH = "io.primer.android.threeds.BuildConfig"
         const val THREE_DS_SDK_VERSION_FIELD = "SDK_VERSION_STRING"
     }

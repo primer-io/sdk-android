@@ -1,7 +1,7 @@
 package io.primer.android.components.manager.core.composable
 
-import io.primer.android.domain.error.models.PrimerError
 import io.primer.android.components.domain.error.PrimerValidationError
+import io.primer.android.domain.error.models.PrimerError
 import io.primer.android.paymentmethods.manager.composable.PrimerCollectableData
 import kotlinx.coroutines.flow.Flow
 
@@ -10,7 +10,6 @@ import kotlinx.coroutines.flow.Flow
  * Instances of this interface can be used to indicate the result of validation operations.
  */
 sealed interface PrimerValidationStatus<T : PrimerCollectableData> {
-
     /**
      * Indicates that data is currently in the process of being validated.
      *
@@ -25,7 +24,7 @@ sealed interface PrimerValidationStatus<T : PrimerCollectableData> {
      * @param collectableData The successfully validated data.
      */
     data class Valid<T : PrimerCollectableData>(
-        val collectableData: PrimerCollectableData
+        val collectableData: PrimerCollectableData,
     ) : PrimerValidationStatus<T>
 
     /**
@@ -37,11 +36,11 @@ sealed interface PrimerValidationStatus<T : PrimerCollectableData> {
      */
     data class Invalid<T : PrimerCollectableData>(
         val validationErrors: List<PrimerValidationError>,
-        val collectableData: PrimerCollectableData
+        val collectableData: PrimerCollectableData,
     ) : PrimerValidationStatus<T> {
         constructor(
             validationError: PrimerValidationError,
-            collectableData: PrimerCollectableData
+            collectableData: PrimerCollectableData,
         ) : this(listOf(validationError), collectableData)
     }
 
@@ -53,7 +52,7 @@ sealed interface PrimerValidationStatus<T : PrimerCollectableData> {
      */
     data class Error<T : PrimerCollectableData>(
         val error: PrimerError,
-        val collectableData: PrimerCollectableData
+        val collectableData: PrimerCollectableData,
     ) : PrimerValidationStatus<T>
 }
 

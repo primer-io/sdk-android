@@ -1,7 +1,7 @@
 package io.primer.android.components.implementation.errors.domain.model
 
-import io.primer.android.analytics.domain.models.ErrorContextParams
 import io.primer.android.PrimerSessionIntent
+import io.primer.android.analytics.domain.models.ErrorContextParams
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
@@ -10,7 +10,6 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
 internal class PaymentMethodConfigurationErrorTest {
-
     @Test
     fun `should create MisConfiguredPaymentMethodError with correct properties`() {
         // Arrange
@@ -23,7 +22,7 @@ internal class PaymentMethodConfigurationErrorTest {
         assertEquals("misconfigured-payment-method", error.errorId)
         assertEquals(
             "Cannot present $paymentMethodType because it has not been configured correctly.",
-            error.description
+            error.description,
         )
         assertNotNull(error.diagnosticsId)
         assertTrue(error.diagnosticsId.isNotBlank())
@@ -33,7 +32,7 @@ internal class PaymentMethodConfigurationErrorTest {
         assertEquals(
             "Ensure that $paymentMethodType has been configured correctly " +
                 "on the dashboard (https://dashboard.primer.io/)",
-            error.recoverySuggestion
+            error.recoverySuggestion,
         )
     }
 
@@ -69,7 +68,7 @@ internal class PaymentMethodConfigurationErrorTest {
         assertEquals("unsupported-session-intent", error.errorId)
         assertEquals(
             "Cannot initialize the SDK because $paymentMethodType does not support $intent.",
-            error.description
+            error.description,
         )
         assertNotNull(error.diagnosticsId)
         assertTrue(error.diagnosticsId.isNotBlank())
@@ -79,7 +78,7 @@ internal class PaymentMethodConfigurationErrorTest {
         assertEquals(
             "Use a different payment method for $intent, or the same payment method " +
                 "with ${intent.oppositeIntent}.",
-            error.recoverySuggestion
+            error.recoverySuggestion,
         )
     }
 
@@ -87,10 +86,11 @@ internal class PaymentMethodConfigurationErrorTest {
     fun `diagnosticsId should be unique for each instance`() {
         // Act
         val error1 = PaymentMethodConfigurationError.MisConfiguredPaymentMethodError("credit-card")
-        val error2 = PaymentMethodConfigurationError.UnsupportedIntentPaymentMethodError(
-            "credit-card",
-            PrimerSessionIntent.CHECKOUT
-        )
+        val error2 =
+            PaymentMethodConfigurationError.UnsupportedIntentPaymentMethodError(
+                "credit-card",
+                PrimerSessionIntent.CHECKOUT,
+            )
 
         // Assert
         assertNotEquals(error1.diagnosticsId, error2.diagnosticsId)

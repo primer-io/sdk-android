@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.flow.retry
 
 internal class AnalyticsDataSender(
-    private val remoteAnalyticsDataSource: RemoteAnalyticsDataSource
+    private val remoteAnalyticsDataSource: RemoteAnalyticsDataSource,
 ) {
     @WorkerThread
     fun sendEvents(events: List<BaseAnalyticsEventRequest>): Flow<List<BaseAnalyticsEventRequest>> {
@@ -24,8 +24,8 @@ internal class AnalyticsDataSender(
                 remoteAnalyticsDataSource.execute(
                     BaseRemoteUrlRequest(
                         url = group.key,
-                        data = AnalyticsDataRequest(group.value.map { it.copy(newAnalyticsUrl = null) })
-                    )
+                        data = AnalyticsDataRequest(group.value.map { it.copy(newAnalyticsUrl = null) }),
+                    ),
                 ).map { chunk[group.key].orEmpty() }.retry(NUM_OF_RETRIES).catch {
                     emit(emptyList())
                 }

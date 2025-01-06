@@ -16,16 +16,16 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 internal class GooglePayProcessor3DSNavigatorTest {
-
     private lateinit var activity: Activity
     private lateinit var launcher: ActivityResultLauncher<Intent>
     private lateinit var navigator: GooglePayProcessor3DSNavigator
 
     @BeforeEach
     fun setUp() {
-        activity = mockk(relaxed = true) {
-            every { applicationContext } returns mockk(relaxed = true)
-        }
+        activity =
+            mockk(relaxed = true) {
+                every { applicationContext } returns mockk(relaxed = true)
+            }
         launcher = mockk(relaxed = true)
         navigator = GooglePayProcessor3DSNavigator(activity, launcher)
 
@@ -36,12 +36,13 @@ internal class GooglePayProcessor3DSNavigatorTest {
     @Test
     fun `navigate() should launch Processor3dsWebViewActivity with correct parameters`() {
         // Given
-        val params = GooglePayProcessor3DSActivityLauncherParams(
-            paymentMethodType = "google_pay",
-            redirectUrl = "https://www.example.com/redirect",
-            statusUrl = "https://www.example.com/status",
-            title = "3DS"
-        )
+        val params =
+            GooglePayProcessor3DSActivityLauncherParams(
+                paymentMethodType = "google_pay",
+                redirectUrl = "https://www.example.com/redirect",
+                statusUrl = "https://www.example.com/status",
+                title = "3DS",
+            )
         val expectedIntent = mockk<Intent>()
         every { Processor3dsWebViewActivity.getLaunchIntent(any(), any(), any(), any(), any()) } returns expectedIntent
 
@@ -60,12 +61,13 @@ internal class GooglePayProcessor3DSNavigatorTest {
     @Test
     fun `canHandle() should return true when the params received are of type GooglePayProcessor3DSActivityLauncherParams`() {
         // Given
-        val params = GooglePayProcessor3DSActivityLauncherParams(
-            paymentMethodType = "google_pay",
-            redirectUrl = "https://www.example.com/redirect",
-            statusUrl = "https://www.example.com/status",
-            title = "3DS"
-        )
+        val params =
+            GooglePayProcessor3DSActivityLauncherParams(
+                paymentMethodType = "google_pay",
+                redirectUrl = "https://www.example.com/redirect",
+                statusUrl = "https://www.example.com/status",
+                title = "3DS",
+            )
 
         // When
         val result = navigator.canHandle(params)

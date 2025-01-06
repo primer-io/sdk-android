@@ -18,7 +18,6 @@ internal class IdealBankSelectionFragment :
     BaseBankSelectionFragment(),
     BankSelectionAdapterListener,
     DISdkComponent {
-
     private var binding: FragmentIdealBankSelectionBinding by autoCleaned()
 
     override val baseBinding: BaseBankSelectionBinding by autoCleaned {
@@ -28,7 +27,7 @@ internal class IdealBankSelectionFragment :
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
         binding = FragmentIdealBankSelectionBinding.inflate(inflater, container, false)
         return binding.root
@@ -41,7 +40,7 @@ internal class IdealBankSelectionFragment :
                 R.drawable.ic_logo_ideal_dark
             } else {
                 R.drawable.ic_logo_ideal_light
-            }
+            },
         )
     }
 

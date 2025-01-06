@@ -3,7 +3,10 @@ package io.primer.android.core.data.serialization.json.extensions
 import org.json.JSONArray
 import org.json.JSONObject
 
-fun JSONObject.optNullableString(name: String, fallback: String? = null): String? {
+fun JSONObject.optNullableString(
+    name: String,
+    fallback: String? = null,
+): String? {
     return if (has(name) && !isNull(name)) {
         this.getString(name)
     } else {
@@ -11,7 +14,10 @@ fun JSONObject.optNullableString(name: String, fallback: String? = null): String
     }
 }
 
-fun JSONObject.optNullableBoolean(name: String, fallback: Boolean? = null): Boolean? {
+fun JSONObject.optNullableBoolean(
+    name: String,
+    fallback: Boolean? = null,
+): Boolean? {
     return if (has(name) && !isNull(name)) {
         this.getBoolean(name)
     } else {
@@ -19,7 +25,10 @@ fun JSONObject.optNullableBoolean(name: String, fallback: Boolean? = null): Bool
     }
 }
 
-fun JSONObject.optNullableFloat(name: String, fallback: Float? = null): Float? {
+fun JSONObject.optNullableFloat(
+    name: String,
+    fallback: Float? = null,
+): Float? {
     return if (has(name) && !isNull(name)) {
         getDouble(name).toFloat()
     } else {
@@ -27,7 +36,10 @@ fun JSONObject.optNullableFloat(name: String, fallback: Float? = null): Float? {
     }
 }
 
-fun JSONObject.optNullableInt(name: String, fallback: Int? = null): Int? {
+fun JSONObject.optNullableInt(
+    name: String,
+    fallback: Int? = null,
+): Int? {
     return if (has(name) && !isNull(name)) {
         getInt(name)
     } else {
@@ -35,7 +47,10 @@ fun JSONObject.optNullableInt(name: String, fallback: Int? = null): Int? {
     }
 }
 
-fun JSONObject.optNullableLong(name: String, fallback: Long? = null): Long? {
+fun JSONObject.optNullableLong(
+    name: String,
+    fallback: Long? = null,
+): Long? {
     return if (has(name) && !isNull(name)) {
         getLong(name)
     } else {
@@ -43,7 +58,10 @@ fun JSONObject.optNullableLong(name: String, fallback: Long? = null): Long? {
     }
 }
 
-fun JSONObject.optNullableObject(name: String, fallback: JSONObject? = null): JSONObject? {
+fun JSONObject.optNullableObject(
+    name: String,
+    fallback: JSONObject? = null,
+): JSONObject? {
     return if (has(name) && !isNull(name)) {
         getJSONObject(name)
     } else {

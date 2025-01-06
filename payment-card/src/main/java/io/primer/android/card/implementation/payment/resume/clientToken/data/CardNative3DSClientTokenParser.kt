@@ -10,14 +10,13 @@ import io.primer.android.processor3ds.domain.model.Processor3DS
 
 internal class CardNative3DSClientTokenParser :
     PaymentMethodClientTokenParser<Card3DSClientToken> {
-
     override fun parseClientToken(clientToken: String): Card3DSClientToken {
         return when (val clientTokenIntent = ClientToken.fromString(clientToken).intent) {
             ClientTokenIntent.`3DS_AUTHENTICATION`.name ->
                 CardNative3DSClientTokenData.fromString(clientToken).let { clientTokenData ->
                     Card3DSClientToken.CardNative3DSClientToken(
                         supportedThreeDsProtocolVersions = clientTokenData.supportedThreeDsProtocolVersions,
-                        clientTokenIntent = clientTokenData.intent
+                        clientTokenIntent = clientTokenData.intent,
                     )
                 }
 
@@ -25,10 +24,11 @@ internal class CardNative3DSClientTokenParser :
                 CardProcessor3dsClientTokenData.fromString(clientToken).let { clientTokenData ->
                     Card3DSClientToken.CardProcessor3DSClientToken(
                         clientTokenIntent = clientTokenData.intent,
-                        processor3DS = Processor3DS(
-                            statusUrl = clientTokenData.statusUrl,
-                            redirectUrl = clientTokenData.redirectUrl
-                        )
+                        processor3DS =
+                            Processor3DS(
+                                statusUrl = clientTokenData.statusUrl,
+                                redirectUrl = clientTokenData.redirectUrl,
+                            ),
                     )
                 }
 

@@ -18,6 +18,6 @@ interface PollingStartHandler {
 
     data class PollingStartData(
         val statusUrl: String,
-        val paymentMethodType: String
+        val paymentMethodType: String,
     )
 }

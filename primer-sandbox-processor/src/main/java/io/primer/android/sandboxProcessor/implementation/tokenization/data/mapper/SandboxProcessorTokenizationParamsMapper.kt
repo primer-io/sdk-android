@@ -11,17 +11,20 @@ import io.primer.android.sandboxProcessor.implementation.tokenization.domain.mod
 
 internal class SandboxProcessorTokenizationParamsMapper :
     TokenizationParamsMapper<SandboxProcessorPaymentInstrumentParams, SandboxProcessorPaymentInstrumentDataRequest> {
-    override fun map(params: TokenizationParams<SandboxProcessorPaymentInstrumentParams>):
-        TokenizationRequestV2<SandboxProcessorPaymentInstrumentDataRequest> {
+    override fun map(
+        params: TokenizationParams<SandboxProcessorPaymentInstrumentParams>,
+    ): TokenizationRequestV2<SandboxProcessorPaymentInstrumentDataRequest> {
         val paymentInstrumentParams = params.paymentInstrumentParams
-        val instrumentDataRequest = SandboxProcessorPaymentInstrumentDataRequest(
-            paymentMethodType = paymentInstrumentParams.paymentMethodType,
-            paymentMethodConfigId = paymentInstrumentParams.paymentMethodConfigId,
-            sessionInfo = SandboxProcessorSessionInfoDataRequest(
-                flowDecision = paymentInstrumentParams.flowDecision
-            ),
-            type = PaymentInstrumentType.OFF_SESSION_PAYMENT
-        )
+        val instrumentDataRequest =
+            SandboxProcessorPaymentInstrumentDataRequest(
+                paymentMethodType = paymentInstrumentParams.paymentMethodType,
+                paymentMethodConfigId = paymentInstrumentParams.paymentMethodConfigId,
+                sessionInfo =
+                    SandboxProcessorSessionInfoDataRequest(
+                        flowDecision = paymentInstrumentParams.flowDecision,
+                    ),
+                type = PaymentInstrumentType.OFF_SESSION_PAYMENT,
+            )
         return instrumentDataRequest.toTokenizationRequest(params.sessionIntent)
     }
 }

@@ -8,11 +8,11 @@ import io.mockk.mockk
 import io.mockk.mockkObject
 import io.mockk.unmockkObject
 import io.primer.android.analytics.domain.repository.AnalyticsRepository
-import io.primer.android.data.settings.PrimerPaymentHandling
-import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.components.InstantExecutorExtension
 import io.primer.android.components.PrimerHeadlessUniversalCheckout
 import io.primer.android.components.PrimerHeadlessUniversalCheckoutListener
+import io.primer.android.data.settings.PrimerPaymentHandling
+import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.domain.error.models.PrimerError
 import io.primer.android.domain.payments.create.model.Payment
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -27,7 +27,6 @@ import kotlin.test.assertEquals
 @ExperimentalCoroutinesApi
 @ExtendWith(InstantExecutorExtension::class, MockKExtension::class)
 class DefaultCheckoutErrorHandlerTest {
-
     @RelaxedMockK
     internal lateinit var analyticsRepository: AnalyticsRepository
 
@@ -42,17 +41,19 @@ class DefaultCheckoutErrorHandlerTest {
     }
 
     @Test
-    fun `handle should emit error to errors flow`() = runTest {
-        val error = mockk<PrimerError>(relaxed = true)
+    fun `handle should emit error to errors flow`() =
+        runTest {
+            val error = mockk<PrimerError>(relaxed = true)
 
-        val job = launch {
-            val emittedError = checkoutErrorHandler.errors.first()
-            assertEquals(error, emittedError)
+            val job =
+                launch {
+                    val emittedError = checkoutErrorHandler.errors.first()
+                    assertEquals(error, emittedError)
+                }
+
+            checkoutErrorHandler.handle(error, null)
+            job.cancel()
         }
-
-        checkoutErrorHandler.handle(error, null)
-        job.cancel()
-    }
 
     @Test
     fun `handle should call onFailed with correct data when payment is not null and payment handling is AUTO`() {
@@ -72,7 +73,7 @@ class DefaultCheckoutErrorHandlerTest {
         coVerify {
             checkoutListener.onFailed(
                 error = error,
-                checkoutData = match { it.payment == payment }
+                checkoutData = match { it.payment == payment },
             )
         }
 
@@ -96,7 +97,7 @@ class DefaultCheckoutErrorHandlerTest {
         coVerify {
             checkoutListener.onFailed(
                 error = error,
-                checkoutData = null
+                checkoutData = null,
             )
         }
 
@@ -119,7 +120,7 @@ class DefaultCheckoutErrorHandlerTest {
 
         coVerify {
             checkoutListener.onFailed(
-                error = error
+                error = error,
             )
         }
 

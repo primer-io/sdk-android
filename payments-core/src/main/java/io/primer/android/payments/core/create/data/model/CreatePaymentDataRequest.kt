@@ -6,16 +6,15 @@ import org.json.JSONObject
 
 internal data class CreatePaymentDataRequest(private val paymentMethodToken: String) :
     JSONObjectSerializable {
-
     companion object {
-
         private const val PAYMENT_METHOD_TOKEN_FILED = "paymentMethodToken"
 
         @JvmField
-        val serializer = JSONObjectSerializer<CreatePaymentDataRequest> { t ->
-            JSONObject().apply {
-                put(PAYMENT_METHOD_TOKEN_FILED, t.paymentMethodToken)
+        val serializer =
+            JSONObjectSerializer<CreatePaymentDataRequest> { t ->
+                JSONObject().apply {
+                    put(PAYMENT_METHOD_TOKEN_FILED, t.paymentMethodToken)
+                }
             }
-        }
     }
 }

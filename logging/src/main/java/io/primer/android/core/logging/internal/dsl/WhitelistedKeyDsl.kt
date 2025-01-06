@@ -13,7 +13,10 @@ class WhitelistedKeyBuilder {
         keys += WhitelistedKey.PrimitiveWhitelistedKey(value = value)
     }
 
-    fun nonPrimitiveKey(value: String, block: WhitelistedKeyBuilder.() -> Unit) {
+    fun nonPrimitiveKey(
+        value: String,
+        block: WhitelistedKeyBuilder.() -> Unit,
+    ) {
         val childWhitelistedKeyBuilder = WhitelistedKeyBuilder().apply(block)
         keys += WhitelistedKey.NonPrimitiveWhitelistedKey(value, childWhitelistedKeyBuilder.build())
     }

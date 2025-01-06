@@ -23,7 +23,6 @@ import kotlin.test.assertEquals
 @ExtendWith(InstantExecutorExtension::class, MockKExtension::class)
 @ExperimentalCoroutinesApi
 internal class FindVaultedPaymentMethodInteractorTest {
-
     @RelaxedMockK
     internal lateinit var vaultedPaymentMethodsRepository: VaultedPaymentMethodsRepository
 
@@ -32,9 +31,10 @@ internal class FindVaultedPaymentMethodInteractorTest {
     @BeforeEach
     fun setUp() {
         MockKAnnotations.init(this, relaxed = true)
-        interactor = FindVaultedPaymentMethodInteractor(
-            vaultedPaymentMethodsRepository = vaultedPaymentMethodsRepository
-        )
+        interactor =
+            FindVaultedPaymentMethodInteractor(
+                vaultedPaymentMethodsRepository = vaultedPaymentMethodsRepository,
+            )
     }
 
     @Test
@@ -42,7 +42,7 @@ internal class FindVaultedPaymentMethodInteractorTest {
         val params = mockk<VaultPaymentMethodIdParams>(relaxed = true)
         val vaultTokenInternal = mockk<PaymentMethodVaultTokenInternal>(relaxed = true)
         coEvery { vaultedPaymentMethodsRepository.getVaultedPaymentMethods(any()) }.returns(
-            Result.success(listOf(vaultTokenInternal))
+            Result.success(listOf(vaultTokenInternal)),
         )
         runTest {
             val result = interactor(params)
@@ -59,14 +59,15 @@ internal class FindVaultedPaymentMethodInteractorTest {
         val params = mockk<VaultPaymentMethodIdParams>(relaxed = true)
         val mockException = mockk<Exception>(relaxed = true)
         coEvery { vaultedPaymentMethodsRepository.getVaultedPaymentMethods(any()) }.returns(
-            Result.failure(mockException)
+            Result.failure(mockException),
         )
 
-        val exception = assertThrows<Exception> {
-            runTest {
-                interactor(params).getOrThrow()
+        val exception =
+            assertThrows<Exception> {
+                runTest {
+                    interactor(params).getOrThrow()
+                }
             }
-        }
 
         coVerify { vaultedPaymentMethodsRepository.getVaultedPaymentMethods(any()) }
 
@@ -77,14 +78,15 @@ internal class FindVaultedPaymentMethodInteractorTest {
     fun `execute() should return InvalidVaultedPaymentMethodIdException when getVaultedPaymentMethods is successful and token with provided id is not found`() {
         val params = mockk<VaultPaymentMethodIdParams>(relaxed = true)
         coEvery { vaultedPaymentMethodsRepository.getVaultedPaymentMethods(any()) }.returns(
-            Result.success(emptyList())
+            Result.success(emptyList()),
         )
 
-        val exception = assertThrows<InvalidVaultedPaymentMethodIdException> {
-            runTest {
-                interactor(params).getOrThrow()
+        val exception =
+            assertThrows<InvalidVaultedPaymentMethodIdException> {
+                runTest {
+                    interactor(params).getOrThrow()
+                }
             }
-        }
 
         coVerify { vaultedPaymentMethodsRepository.getVaultedPaymentMethods(any()) }
 

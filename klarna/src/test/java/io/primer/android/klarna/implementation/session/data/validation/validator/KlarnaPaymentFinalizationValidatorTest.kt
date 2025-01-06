@@ -25,9 +25,9 @@ class KlarnaPaymentFinalizationValidatorTest {
             PrimerValidationError(
                 errorId = KlarnaValidations.PAYMENT_ALREADY_FINALIZED_ERROR_ID,
                 description = "This payment was configured to finalized automatically.",
-                diagnosticsId = "uuid"
+                diagnosticsId = "uuid",
             ),
-            result
+            result,
         )
         unmockkStatic(UUID::class)
     }

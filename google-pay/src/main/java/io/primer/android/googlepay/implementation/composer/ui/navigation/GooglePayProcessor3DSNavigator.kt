@@ -9,9 +9,8 @@ import io.primer.paymentMethodCoreUi.core.ui.navigation.StartActivityForResultNa
 
 internal data class GooglePayProcessor3DSNavigator(
     private val context: Activity,
-    override val launcher: ActivityResultLauncher<Intent>
+    override val launcher: ActivityResultLauncher<Intent>,
 ) : StartActivityForResultNavigator<GooglePayProcessor3DSActivityLauncherParams>(launcher) {
-
     override fun navigate(params: GooglePayProcessor3DSActivityLauncherParams) {
         launcher.launch(
             Processor3dsWebViewActivity.getLaunchIntent(
@@ -19,8 +18,8 @@ internal data class GooglePayProcessor3DSNavigator(
                 paymentUrl = params.redirectUrl,
                 statusUrl = params.statusUrl,
                 title = params.title,
-                paymentMethodType = params.paymentMethodType
-            )
+                paymentMethodType = params.paymentMethodType,
+            ),
         )
     }
 

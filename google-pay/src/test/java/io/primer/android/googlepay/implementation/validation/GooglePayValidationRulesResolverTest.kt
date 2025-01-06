@@ -6,7 +6,6 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 internal class GooglePayValidationRulesResolverTest {
-
     private lateinit var validPaymentDataMethodRule: GooglePayValidPaymentDataMethodRule
     private lateinit var validationRulesResolver: GooglePayValidationRulesResolver
 

@@ -4,7 +4,6 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
 internal class RetailOutletDataRequestTest {
-
     @Test
     fun `test RetailOutletDataRequest serialization`() {
         val paymentMethodConfigId = "config_id_123"

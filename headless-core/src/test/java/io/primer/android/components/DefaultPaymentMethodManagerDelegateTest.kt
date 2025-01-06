@@ -19,7 +19,6 @@ import org.junit.jupiter.api.Test
 
 @ExperimentalCoroutinesApi
 class DefaultPaymentMethodManagerDelegateTest {
-
     private val testDispatcher = UnconfinedTestDispatcher()
     private lateinit var paymentMethodInitializer: PaymentMethodInitializer
     private lateinit var paymentMethodStarter: PaymentMethodStarter
@@ -30,10 +29,11 @@ class DefaultPaymentMethodManagerDelegateTest {
         Dispatchers.setMain(testDispatcher)
         paymentMethodInitializer = mockk(relaxed = true)
         paymentMethodStarter = mockk(relaxed = true)
-        paymentMethodManagerDelegate = DefaultPaymentMethodManagerDelegate(
-            paymentMethodInitializer = paymentMethodInitializer,
-            paymentMethodStarter = paymentMethodStarter
-        )
+        paymentMethodManagerDelegate =
+            DefaultPaymentMethodManagerDelegate(
+                paymentMethodInitializer = paymentMethodInitializer,
+                paymentMethodStarter = paymentMethodStarter,
+            )
     }
 
     @AfterEach
@@ -42,28 +42,30 @@ class DefaultPaymentMethodManagerDelegateTest {
     }
 
     @Test
-    fun `init should call paymentMethodInitializer with correct parameters`() = runTest {
-        val paymentMethodType = "sampleType"
-        val category = PrimerPaymentMethodManagerCategory.COMPONENT_WITH_REDIRECT
+    fun `init should call paymentMethodInitializer with correct parameters`() =
+        runTest {
+            val paymentMethodType = "sampleType"
+            val category = PrimerPaymentMethodManagerCategory.COMPONENT_WITH_REDIRECT
 
-        paymentMethodManagerDelegate.init(paymentMethodType, category)
+            paymentMethodManagerDelegate.init(paymentMethodType, category)
 
-        coVerify {
-            paymentMethodInitializer.init(paymentMethodType, category)
+            coVerify {
+                paymentMethodInitializer.init(paymentMethodType, category)
+            }
         }
-    }
 
     @Test
-    fun `start should call paymentMethodStarter with correct parameters`() = runTest {
-        val context = mockk<Context>(relaxed = true)
-        val paymentMethodType = "sampleType"
-        val sessionIntent = PrimerSessionIntent.CHECKOUT
-        val category = PrimerPaymentMethodManagerCategory.COMPONENT_WITH_REDIRECT
+    fun `start should call paymentMethodStarter with correct parameters`() =
+        runTest {
+            val context = mockk<Context>(relaxed = true)
+            val paymentMethodType = "sampleType"
+            val sessionIntent = PrimerSessionIntent.CHECKOUT
+            val category = PrimerPaymentMethodManagerCategory.COMPONENT_WITH_REDIRECT
 
-        paymentMethodManagerDelegate.start(context, paymentMethodType, sessionIntent, category)
+            paymentMethodManagerDelegate.start(context, paymentMethodType, sessionIntent, category)
 
-        coVerify {
-            paymentMethodStarter.start(context, paymentMethodType, sessionIntent, category, any())
+            coVerify {
+                paymentMethodStarter.start(context, paymentMethodType, sessionIntent, category, any())
+            }
         }
-    }
 }

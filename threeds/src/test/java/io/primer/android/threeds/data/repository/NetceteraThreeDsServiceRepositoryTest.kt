@@ -54,7 +54,6 @@ import kotlin.test.assertEquals
 @ExtendWith(InstantExecutorExtension::class, MockKExtension::class)
 @ExperimentalCoroutinesApi
 internal class NetceteraThreeDsServiceRepositoryTest {
-
     @RelaxedMockK
     lateinit var context: Context
 
@@ -101,209 +100,227 @@ internal class NetceteraThreeDsServiceRepositoryTest {
     }
 
     @Test
-    fun `initializeProvider should return ThreeDsConfigurationException KEYS_CONFIG_ERROR message when ThreeDsKeysParams are missing`() = runTest {
-        val result = repository.initializeProvider(
-            is3DSSanityCheckEnabled = false,
-            locale = Locale.getDefault(),
-            threeDsKeysParams = null
-        )
-        val exception = requireNotNull(result.exceptionOrNull())
-        assertEquals(ThreeDsConfigurationException::class, exception::class)
-        assertEquals(NetceteraThreeDsServiceRepository.KEYS_CONFIG_ERROR, exception.message)
-    }
+    fun `initializeProvider should return ThreeDsConfigurationException KEYS_CONFIG_ERROR message when ThreeDsKeysParams are missing`() =
+        runTest {
+            val result =
+                repository.initializeProvider(
+                    is3DSSanityCheckEnabled = false,
+                    locale = Locale.getDefault(),
+                    threeDsKeysParams = null,
+                )
+            val exception = requireNotNull(result.exceptionOrNull())
+            assertEquals(ThreeDsConfigurationException::class, exception::class)
+            assertEquals(NetceteraThreeDsServiceRepository.KEYS_CONFIG_ERROR, exception.message)
+        }
 
     @Test
-    fun `initializeProvider should return ThreeDsConfigurationException API_KEY_CONFIG_ERROR message when ThreeDsKeysParams licence is missing`() = runTest {
-        val keysParams = mockk<ThreeDsKeysParams>(relaxed = true)
-        every { keysParams.apiKey }.returns(null)
+    fun `initializeProvider should return ThreeDsConfigurationException API_KEY_CONFIG_ERROR message when ThreeDsKeysParams licence is missing`() =
+        runTest {
+            val keysParams = mockk<ThreeDsKeysParams>(relaxed = true)
+            every { keysParams.apiKey }.returns(null)
 
-        val result = repository.initializeProvider(
-            is3DSSanityCheckEnabled = false,
-            locale = Locale.getDefault(),
-            threeDsKeysParams = keysParams
-        )
+            val result =
+                repository.initializeProvider(
+                    is3DSSanityCheckEnabled = false,
+                    locale = Locale.getDefault(),
+                    threeDsKeysParams = keysParams,
+                )
 
-        val exception = requireNotNull(result.exceptionOrNull())
-        assertEquals(ThreeDsConfigurationException::class, exception::class)
-        assertEquals(NetceteraThreeDsServiceRepository.API_KEY_CONFIG_ERROR, exception.message)
-    }
-
-    @Test
-    fun `initializeProvider should return ThreeDsInitException with correct message when threeDS2Service initialize fails`() = runTest {
-        val keysParams = mockk<ThreeDsKeysParams>(relaxed = true)
-        val exception = mockk<InvalidInputException>(relaxed = true)
-        every { exception.message } returns "Failed to initialize 3DS SDK"
-
-        every {
-            threeDS2Service.initialize(
-                any(),
-                any(),
-                any(),
-                any<Map<UiCustomization.UiCustomizationType, UiCustomization>>()
-            )
-        } throws exception
-
-        val result = repository.initializeProvider(
-            is3DSSanityCheckEnabled = false,
-            locale = Locale.getDefault(),
-            threeDsKeysParams = keysParams
-        )
-
-        val resultException = requireNotNull(result.exceptionOrNull())
-        assertEquals(ThreeDsInitException::class, resultException::class)
-        assertEquals(exception.message, resultException.message)
-    }
+            val exception = requireNotNull(result.exceptionOrNull())
+            assertEquals(ThreeDsConfigurationException::class, exception::class)
+            assertEquals(NetceteraThreeDsServiceRepository.API_KEY_CONFIG_ERROR, exception.message)
+        }
 
     @Test
-    fun `initializeProvider should strip extensions from Locale in Android O and later`() = runTest {
-        val keysParams = mockk<ThreeDsKeysParams>(relaxed = true)
-        every { DeviceInfo.isSdkVersionAtLeast(Build.VERSION_CODES.O) } returns true
-        val locale = Locale.Builder()
-            .setLanguageTag("en-US")
-            .setExtension('u', "mu-celsius")
-            .build()
+    fun `initializeProvider should return ThreeDsInitException with correct message when threeDS2Service initialize fails`() =
+        runTest {
+            val keysParams = mockk<ThreeDsKeysParams>(relaxed = true)
+            val exception = mockk<InvalidInputException>(relaxed = true)
+            every { exception.message } returns "Failed to initialize 3DS SDK"
 
-        every {
-            threeDS2Service.initialize(
-                any(),
-                any(),
-                any(),
-                any<Map<UiCustomization.UiCustomizationType, UiCustomization>>()
-            )
-        } returns Unit
+            every {
+                threeDS2Service.initialize(
+                    any(),
+                    any(),
+                    any(),
+                    any<Map<UiCustomization.UiCustomizationType, UiCustomization>>(),
+                )
+            } throws exception
 
-        val result = repository.initializeProvider(
-            is3DSSanityCheckEnabled = false,
-            locale = locale,
-            threeDsKeysParams = keysParams
-        )
+            val result =
+                repository.initializeProvider(
+                    is3DSSanityCheckEnabled = false,
+                    locale = Locale.getDefault(),
+                    threeDsKeysParams = keysParams,
+                )
 
-        result.getOrThrow()
+            val resultException = requireNotNull(result.exceptionOrNull())
+            assertEquals(ThreeDsInitException::class, resultException::class)
+            assertEquals(exception.message, resultException.message)
+        }
 
-        verify {
-            threeDS2Service.initialize(
-                context,
-                any(),
-                "en_US",
-                emptyMap<UiCustomization.UiCustomizationType, UiCustomization>()
+    @Test
+    fun `initializeProvider should strip extensions from Locale in Android O and later`() =
+        runTest {
+            val keysParams = mockk<ThreeDsKeysParams>(relaxed = true)
+            every { DeviceInfo.isSdkVersionAtLeast(Build.VERSION_CODES.O) } returns true
+            val locale =
+                Locale.Builder()
+                    .setLanguageTag("en-US")
+                    .setExtension('u', "mu-celsius")
+                    .build()
+
+            every {
+                threeDS2Service.initialize(
+                    any(),
+                    any(),
+                    any(),
+                    any<Map<UiCustomization.UiCustomizationType, UiCustomization>>(),
+                )
+            } returns Unit
+
+            val result =
+                repository.initializeProvider(
+                    is3DSSanityCheckEnabled = false,
+                    locale = locale,
+                    threeDsKeysParams = keysParams,
+                )
+
+            result.getOrThrow()
+
+            verify {
+                threeDS2Service.initialize(
+                    context,
+                    any(),
+                    "en_US",
+                    emptyMap<UiCustomization.UiCustomizationType, UiCustomization>(),
+                )
+            }
+        }
+
+    @Test
+    fun `initializeProvider should not strip extensions from Locale in Android versions older than O`() =
+        runTest {
+            val keysParams = mockk<ThreeDsKeysParams>(relaxed = true)
+            every { DeviceInfo.isSdkVersionAtLeast(Build.VERSION_CODES.O) } returns false
+            val locale =
+                Locale.Builder()
+                    .setLanguageTag("en-US")
+                    .setExtension('u', "mu-celsius")
+                    .build()
+
+            every {
+                threeDS2Service.initialize(
+                    any(),
+                    any(),
+                    any(),
+                    any<Map<UiCustomization.UiCustomizationType, UiCustomization>>(),
+                )
+            } returns Unit
+
+            val result =
+                repository.initializeProvider(
+                    is3DSSanityCheckEnabled = false,
+                    locale = locale,
+                    threeDsKeysParams = keysParams,
+                )
+
+            result.getOrThrow()
+
+            verify {
+                threeDS2Service.initialize(
+                    context,
+                    any(),
+                    "en_US_#u-mu-celsius",
+                    emptyMap<UiCustomization.UiCustomizationType, UiCustomization>(),
+                )
+            }
+        }
+
+    @Test
+    fun `initializeProvider should continue flow when is3DSSanityCheckEnabled is not enabled `() =
+        runTest {
+            val keysParams = mockk<ThreeDsKeysParams>(relaxed = true)
+
+            every {
+                threeDS2Service.initialize(
+                    any(),
+                    any(),
+                    any(),
+                    any<Map<UiCustomization.UiCustomizationType, UiCustomization>>(),
+                )
+            } returns Unit
+
+            val result =
+                repository.initializeProvider(
+                    is3DSSanityCheckEnabled = false,
+                    locale = Locale.getDefault(),
+                    threeDsKeysParams = keysParams,
+                )
+
+            assertEquals(Unit, result.getOrThrow())
+        }
+
+    @Test
+    fun `initializeProvider should continue flow when is3DSSanityCheckEnabled is enabled and there are no warnings and initializing provider is successful`() =
+        runTest {
+            val keysParams = mockk<ThreeDsKeysParams>(relaxed = true)
+            every {
+                threeDS2Service.initialize(
+                    any(),
+                    any(),
+                    any(),
+                    any<Map<UiCustomization.UiCustomizationType, UiCustomization>>(),
+                )
+            } returns Unit
+
+            every { threeDS2Service.warnings }.returns(listOf())
+
+            val result =
+                repository.initializeProvider(
+                    is3DSSanityCheckEnabled = true,
+                    locale = Locale.getDefault(),
+                    threeDsKeysParams = keysParams,
+                )
+            assertEquals(Unit, result.getOrThrow())
+
+            verify { threeDS2Service.warnings }
+        }
+
+    @Test
+    fun `initializeProvider should return ThreeDsInitException with correct message when is3DSSanityCheckEnabled is enabled`() =
+        runTest {
+            val keysParams = mockk<ThreeDsKeysParams>(relaxed = true)
+            val warning = mock(Warning::class.java)
+
+            Mockito.`when`(warning.id).thenReturn("S01")
+
+            every { threeDS2Service.warnings }.returns(listOf(warning))
+
+            every {
+                threeDS2Service.initialize(
+                    any(),
+                    any(),
+                    any(),
+                    any<Map<UiCustomization.UiCustomizationType, UiCustomization>>(),
+                )
+            } returns Unit
+
+            val result =
+                repository.initializeProvider(
+                    is3DSSanityCheckEnabled = true,
+                    locale = Locale.getDefault(),
+                    threeDsKeysParams = keysParams,
+                )
+            val exception = result.exceptionOrNull()
+
+            verify { threeDS2Service.warnings }
+
+            assertEquals(
+                listOf(warning).joinToString(",") { "${it.severity}  ${it.message}" },
+                exception?.message,
             )
         }
-    }
-
-    @Test
-    fun `initializeProvider should not strip extensions from Locale in Android versions older than O`() = runTest {
-        val keysParams = mockk<ThreeDsKeysParams>(relaxed = true)
-        every { DeviceInfo.isSdkVersionAtLeast(Build.VERSION_CODES.O) } returns false
-        val locale = Locale.Builder()
-            .setLanguageTag("en-US")
-            .setExtension('u', "mu-celsius")
-            .build()
-
-        every {
-            threeDS2Service.initialize(
-                any(),
-                any(),
-                any(),
-                any<Map<UiCustomization.UiCustomizationType, UiCustomization>>()
-            )
-        } returns Unit
-
-        val result = repository.initializeProvider(
-            is3DSSanityCheckEnabled = false,
-            locale = locale,
-            threeDsKeysParams = keysParams
-        )
-
-        result.getOrThrow()
-
-        verify {
-            threeDS2Service.initialize(
-                context,
-                any(),
-                "en_US_#u-mu-celsius",
-                emptyMap<UiCustomization.UiCustomizationType, UiCustomization>()
-            )
-        }
-    }
-
-    @Test
-    fun `initializeProvider should continue flow when is3DSSanityCheckEnabled is not enabled `() = runTest {
-        val keysParams = mockk<ThreeDsKeysParams>(relaxed = true)
-
-        every {
-            threeDS2Service.initialize(
-                any(),
-                any(),
-                any(),
-                any<Map<UiCustomization.UiCustomizationType, UiCustomization>>()
-            )
-        } returns Unit
-
-        val result = repository.initializeProvider(
-            is3DSSanityCheckEnabled = false,
-            locale = Locale.getDefault(),
-            threeDsKeysParams = keysParams
-        )
-
-        assertEquals(Unit, result.getOrThrow())
-    }
-
-    @Test
-    fun `initializeProvider should continue flow when is3DSSanityCheckEnabled is enabled and there are no warnings and initializing provider is successful`() = runTest {
-        val keysParams = mockk<ThreeDsKeysParams>(relaxed = true)
-        every {
-            threeDS2Service.initialize(
-                any(),
-                any(),
-                any(),
-                any<Map<UiCustomization.UiCustomizationType, UiCustomization>>()
-            )
-        } returns Unit
-
-        every { threeDS2Service.warnings }.returns(listOf())
-
-        val result = repository.initializeProvider(
-            is3DSSanityCheckEnabled = true,
-            locale = Locale.getDefault(),
-            threeDsKeysParams = keysParams
-        )
-        assertEquals(Unit, result.getOrThrow())
-
-        verify { threeDS2Service.warnings }
-    }
-
-    @Test
-    fun `initializeProvider should return ThreeDsInitException with correct message when is3DSSanityCheckEnabled is enabled`() = runTest {
-        val keysParams = mockk<ThreeDsKeysParams>(relaxed = true)
-        val warning = mock(Warning::class.java)
-
-        Mockito.`when`(warning.id).thenReturn("S01")
-
-        every { threeDS2Service.warnings }.returns(listOf(warning))
-
-        every {
-            threeDS2Service.initialize(
-                any(),
-                any(),
-                any(),
-                any<Map<UiCustomization.UiCustomizationType, UiCustomization>>()
-            )
-        } returns Unit
-
-        val result = repository.initializeProvider(
-            is3DSSanityCheckEnabled = true,
-            locale = Locale.getDefault(),
-            threeDsKeysParams = keysParams
-        )
-        val exception = result.exceptionOrNull()
-
-        verify { threeDS2Service.warnings }
-
-        assertEquals(
-            listOf(warning).joinToString(",") { "${it.severity}  ${it.message}" },
-            exception?.message
-        )
-    }
 
     @Test
     fun `performProviderAuth should return Transaction object`() {
@@ -530,171 +547,184 @@ internal class NetceteraThreeDsServiceRepositoryTest {
     }
 
     @Test
-    fun `performChallenge should return ChallengeStatusData when transaction status is SUCCESS`() = runTest {
-        // Mock successful completion event
-        val mockCompletionEvent = mockk<CompletionEvent>()
-        every { mockCompletionEvent.transactionStatus } returns ChallengeStatusData.TRANSACTION_STATUS_SUCCESS
+    fun `performChallenge should return ChallengeStatusData when transaction status is SUCCESS`() =
+        runTest {
+            // Mock successful completion event
+            val mockCompletionEvent = mockk<CompletionEvent>()
+            every { mockCompletionEvent.transactionStatus } returns ChallengeStatusData.TRANSACTION_STATUS_SUCCESS
 
-        // Mock expected ChallengeStatusData
-        val expectedStatusData = ChallengeStatusData("", ChallengeStatusData.TRANSACTION_STATUS_SUCCESS)
+            // Mock expected ChallengeStatusData
+            val expectedStatusData = ChallengeStatusData("", ChallengeStatusData.TRANSACTION_STATUS_SUCCESS)
 
-        // Mock doChallenge to invoke the completion callback
-        every {
-            mockTransaction.doChallenge(any(), any(), any(), any())
-        } answers {
-            val callback = args[2] as ChallengeStatusReceiver
-            callback.completed(mockCompletionEvent)
+            // Mock doChallenge to invoke the completion callback
+            every {
+                mockTransaction.doChallenge(any(), any(), any(), any())
+            } answers {
+                val callback = args[2] as ChallengeStatusReceiver
+                callback.completed(mockCompletionEvent)
+            }
+
+            // Call performChallenge and collect the flow
+            val flow =
+                repository.performChallenge(
+                    mockActivity,
+                    mockTransaction,
+                    mockAuthResponse,
+                    mockThreeDsAppURL,
+                    mockInitProtocolVersion,
+                )
+            var result: ChallengeStatusData? = null
+            flow.collect {
+                result = it
+            }
+
+            // Assert that the emitted result matches the expected data
+            assertEquals(expectedStatusData, result)
         }
-
-        // Call performChallenge and collect the flow
-        val flow = repository.performChallenge(
-            mockActivity,
-            mockTransaction,
-            mockAuthResponse,
-            mockThreeDsAppURL,
-            mockInitProtocolVersion
-        )
-        var result: ChallengeStatusData? = null
-        flow.collect {
-            result = it
-        }
-
-        // Assert that the emitted result matches the expected data
-        assertEquals(expectedStatusData, result)
-    }
 
     @Test
-    fun `performChallenge should throw ThreeDsInvalidStatusException when transaction status is not SUCCESS`() = runTest {
-        // Mock successful completion event
-        val mockCompletionEvent = mockk<CompletionEvent>()
-        every { mockCompletionEvent.transactionStatus } returns "smth else"
-        every { mockCompletionEvent.sdkTransactionID } returns "mockTransactionID"
+    fun `performChallenge should throw ThreeDsInvalidStatusException when transaction status is not SUCCESS`() =
+        runTest {
+            // Mock successful completion event
+            val mockCompletionEvent = mockk<CompletionEvent>()
+            every { mockCompletionEvent.transactionStatus } returns "smth else"
+            every { mockCompletionEvent.sdkTransactionID } returns "mockTransactionID"
 
-        // Mock doChallenge to invoke the completion callback
-        every {
-            mockTransaction.doChallenge(any(), any(), any(), any())
-        } answers {
-            val callback = args[2] as ChallengeStatusReceiver
-            callback.completed(mockCompletionEvent)
-        }
+            // Mock doChallenge to invoke the completion callback
+            every {
+                mockTransaction.doChallenge(any(), any(), any(), any())
+            } answers {
+                val callback = args[2] as ChallengeStatusReceiver
+                callback.completed(mockCompletionEvent)
+            }
 
-        assertThrows<ThreeDsInvalidStatusException> {
-            // Call performChallenge and collect the flow
-            val flow = repository.performChallenge(
-                mockActivity,
-                mockTransaction,
-                mockAuthResponse,
-                mockThreeDsAppURL,
-                mockInitProtocolVersion
-            )
-            flow.collect {}
+            assertThrows<ThreeDsInvalidStatusException> {
+                // Call performChallenge and collect the flow
+                val flow =
+                    repository.performChallenge(
+                        mockActivity,
+                        mockTransaction,
+                        mockAuthResponse,
+                        mockThreeDsAppURL,
+                        mockInitProtocolVersion,
+                    )
+                flow.collect {}
+            }
         }
-    }
 
     @Test
-    fun `performChallenge should throw ThreeDsChallengeCancelledException when transaction status is cancelled`() = runTest {
-        // Mock cancellation scenario
-        every {
-            mockTransaction.doChallenge(any(), any(), any(), any())
-        } answers {
-            val callback = args[2] as ChallengeStatusReceiver
-            callback.cancelled()
-        }
+    fun `performChallenge should throw ThreeDsChallengeCancelledException when transaction status is cancelled`() =
+        runTest {
+            // Mock cancellation scenario
+            every {
+                mockTransaction.doChallenge(any(), any(), any(), any())
+            } answers {
+                val callback = args[2] as ChallengeStatusReceiver
+                callback.cancelled()
+            }
 
-        assertThrows<ThreeDsChallengeCancelledException> {
-            // Call performChallenge and collect the flow
-            val flow = repository.performChallenge(
-                mockActivity,
-                mockTransaction,
-                mockAuthResponse,
-                mockThreeDsAppURL,
-                mockInitProtocolVersion
-            )
-            flow.collect {}
+            assertThrows<ThreeDsChallengeCancelledException> {
+                // Call performChallenge and collect the flow
+                val flow =
+                    repository.performChallenge(
+                        mockActivity,
+                        mockTransaction,
+                        mockAuthResponse,
+                        mockThreeDsAppURL,
+                        mockInitProtocolVersion,
+                    )
+                flow.collect {}
+            }
         }
-    }
 
     @Test
-    fun `performChallenge should throw ThreeDsChallengeTimedOutException when transaction status is timedout`() = runTest {
-        // Mock timeout scenario
-        every {
-            mockTransaction.doChallenge(any(), any(), any(), any())
-        } answers {
-            val callback = args[2] as ChallengeStatusReceiver
-            callback.timedout()
-        }
+    fun `performChallenge should throw ThreeDsChallengeTimedOutException when transaction status is timedout`() =
+        runTest {
+            // Mock timeout scenario
+            every {
+                mockTransaction.doChallenge(any(), any(), any(), any())
+            } answers {
+                val callback = args[2] as ChallengeStatusReceiver
+                callback.timedout()
+            }
 
-        assertThrows<ThreeDsChallengeTimedOutException> {
-            // Call performChallenge and collect the flow
-            val flow = repository.performChallenge(
-                mockActivity,
-                mockTransaction,
-                mockAuthResponse,
-                mockThreeDsAppURL,
-                mockInitProtocolVersion
-            )
-            flow.collect {}
+            assertThrows<ThreeDsChallengeTimedOutException> {
+                // Call performChallenge and collect the flow
+                val flow =
+                    repository.performChallenge(
+                        mockActivity,
+                        mockTransaction,
+                        mockAuthResponse,
+                        mockThreeDsAppURL,
+                        mockInitProtocolVersion,
+                    )
+                flow.collect {}
+            }
         }
-    }
 
     @Test
-    fun `performChallenge should throw ThreeDsProtocolFailedException when protocol error occurs`() = runTest {
-        // Mock protocol error scenario
-        val mockErrorEvent = mockk<ProtocolErrorEvent>()
-        every { mockErrorEvent.errorMessage } returns mockk<ErrorMessage>() {
-            every { errorCode } returns "mockErrorCode"
-            every { errorDetails } returns "mockErrorDetails"
-            every { errorDescription } returns "mockErrorDescription"
-            every { errorMessageType } returns "mockErrorMessageType"
-            every { errorComponent } returns "mockErrorComponent"
-            every { transactionID } returns "mockTransactionID"
-            every { messageVersionNumber } returns "mockMessageVersionNumber"
-        }
+    fun `performChallenge should throw ThreeDsProtocolFailedException when protocol error occurs`() =
+        runTest {
+            // Mock protocol error scenario
+            val mockErrorEvent = mockk<ProtocolErrorEvent>()
+            every { mockErrorEvent.errorMessage } returns
+                mockk<ErrorMessage> {
+                    every { errorCode } returns "mockErrorCode"
+                    every { errorDetails } returns "mockErrorDetails"
+                    every { errorDescription } returns "mockErrorDescription"
+                    every { errorMessageType } returns "mockErrorMessageType"
+                    every { errorComponent } returns "mockErrorComponent"
+                    every { transactionID } returns "mockTransactionID"
+                    every { messageVersionNumber } returns "mockMessageVersionNumber"
+                }
 
-        every {
-            mockTransaction.doChallenge(any(), any(), any(), any())
-        } answers {
-            val callback = args[2] as ChallengeStatusReceiver
-            callback.protocolError(mockErrorEvent)
-        }
+            every {
+                mockTransaction.doChallenge(any(), any(), any(), any())
+            } answers {
+                val callback = args[2] as ChallengeStatusReceiver
+                callback.protocolError(mockErrorEvent)
+            }
 
-        assertThrows<ThreeDsProtocolFailedException> {
-            // Call performChallenge and collect the flow
-            val flow = repository.performChallenge(
-                mockActivity,
-                mockTransaction,
-                mockAuthResponse,
-                mockThreeDsAppURL,
-                mockInitProtocolVersion
-            )
-            flow.collect {}
+            assertThrows<ThreeDsProtocolFailedException> {
+                // Call performChallenge and collect the flow
+                val flow =
+                    repository.performChallenge(
+                        mockActivity,
+                        mockTransaction,
+                        mockAuthResponse,
+                        mockThreeDsAppURL,
+                        mockInitProtocolVersion,
+                    )
+                flow.collect {}
+            }
         }
-    }
 
     @Test
-    fun `performChallenge should throw ThreeDsRuntimeFailedException when runtime error occurs`() = runTest {
-        // Mock runtime error scenario
-        val mockErrorEvent = mockk<RuntimeErrorEvent>()
-        every { mockErrorEvent.errorCode } returns "mockErrorCode"
-        every { mockErrorEvent.errorMessage } returns "mockErrorMessage"
+    fun `performChallenge should throw ThreeDsRuntimeFailedException when runtime error occurs`() =
+        runTest {
+            // Mock runtime error scenario
+            val mockErrorEvent = mockk<RuntimeErrorEvent>()
+            every { mockErrorEvent.errorCode } returns "mockErrorCode"
+            every { mockErrorEvent.errorMessage } returns "mockErrorMessage"
 
-        every {
-            mockTransaction.doChallenge(any(), any(), any(), any())
-        } answers {
-            val callback = args[2] as ChallengeStatusReceiver
-            callback.runtimeError(mockErrorEvent)
-        }
+            every {
+                mockTransaction.doChallenge(any(), any(), any(), any())
+            } answers {
+                val callback = args[2] as ChallengeStatusReceiver
+                callback.runtimeError(mockErrorEvent)
+            }
 
-        assertThrows<ThreeDsRuntimeFailedException> {
-            // Call performChallenge and collect the flow
-            val flow = repository.performChallenge(
-                mockActivity,
-                mockTransaction,
-                mockAuthResponse,
-                mockThreeDsAppURL,
-                mockInitProtocolVersion
-            )
-            flow.collect {}
+            assertThrows<ThreeDsRuntimeFailedException> {
+                // Call performChallenge and collect the flow
+                val flow =
+                    repository.performChallenge(
+                        mockActivity,
+                        mockTransaction,
+                        mockAuthResponse,
+                        mockThreeDsAppURL,
+                        mockInitProtocolVersion,
+                    )
+                flow.collect {}
+            }
         }
-    }
 }

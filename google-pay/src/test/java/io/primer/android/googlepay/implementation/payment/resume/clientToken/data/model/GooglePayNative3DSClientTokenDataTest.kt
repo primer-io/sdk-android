@@ -14,7 +14,6 @@ import org.junit.jupiter.api.Test
 import kotlin.test.assertFailsWith
 
 internal class GooglePayNative3DSClientTokenDataTest {
-
     private val validEncodedString = "validEncodedString"
     private val decodedString = """
         {
@@ -38,10 +37,11 @@ internal class GooglePayNative3DSClientTokenDataTest {
         val result = GooglePayNative3DSClientTokenData.fromString(validEncodedString)
 
         // Then
-        val expected = GooglePayNative3DSClientTokenData(
-            intent = "testIntent",
-            supportedThreeDsProtocolVersions = listOf("1.0", "2.0")
-        )
+        val expected =
+            GooglePayNative3DSClientTokenData(
+                intent = "testIntent",
+                supportedThreeDsProtocolVersions = listOf("1.0", "2.0"),
+            )
         assertEquals(expected, result)
     }
 

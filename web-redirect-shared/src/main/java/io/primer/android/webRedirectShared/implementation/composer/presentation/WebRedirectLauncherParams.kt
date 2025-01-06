@@ -7,5 +7,5 @@ data class WebRedirectLauncherParams(
     val paymentMethodType: String,
     val redirectUrl: String,
     val statusUrl: String,
-    val returnUrl: String
+    val returnUrl: String,
 ) : InitialLauncherParams

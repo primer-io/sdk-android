@@ -4,7 +4,6 @@ import io.primer.android.assets.ui.model.Brand
 import io.primer.android.webredirect.R
 
 internal class OpenNodeBrand : Brand {
-
     override val iconResId: Int
         get() = R.drawable.ic_opennode_logo
     override val logoResId: Int

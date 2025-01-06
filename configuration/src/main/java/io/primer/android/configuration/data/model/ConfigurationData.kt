@@ -15,12 +15,13 @@ data class ConfigurationData(
     val clientSession: ClientSessionDataResponse,
     val environment: Environment,
     val primerAccountId: String?,
-    val iconsDisplayMetadata: List<Map<String, List<IconDisplayMetadata>>>
+    val iconsDisplayMetadata: List<Map<String, List<IconDisplayMetadata>>>,
 ) {
-    fun toConfiguration() = Configuration(
-        environment,
-        paymentMethods.map { it.toPaymentMethodConfig() },
-        clientSession.toClientSession(),
-        checkoutModules.map { it.toCheckoutModule() }
-    )
+    fun toConfiguration() =
+        Configuration(
+            environment,
+            paymentMethods.map { it.toPaymentMethodConfig() },
+            clientSession.toClientSession(),
+            checkoutModules.map { it.toCheckoutModule() },
+        )
 }

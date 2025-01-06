@@ -7,7 +7,6 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
 class BankIssuerFactoryTest {
-
     @Test
     fun `build should return Success with BankIssuerPaymentMethod`() {
         val paymentMethodType = "BANK"

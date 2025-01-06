@@ -9,14 +9,11 @@ internal data class AdyenBancontactSessionInfoDataRequest(
     val locale: String,
     val redirectionUrl: String,
     val userAgent: String,
-    val platform: String = "ANDROID"
+    val platform: String = "ANDROID",
 ) : JSONObjectSerializable {
-
     internal data class BrowserInfoDataRequest(private val userAgent: String) :
         JSONObjectSerializable {
-
         companion object {
-
             private const val USER_AGENT = "userAgent"
 
             @JvmField
@@ -30,7 +27,6 @@ internal data class AdyenBancontactSessionInfoDataRequest(
     }
 
     companion object {
-
         private const val PLATFORM_FIELD = "platform"
         private const val LOCALE_FIELD = "locale"
         private const val REDIRECTION_URL_FIELD = "redirectionUrl"
@@ -46,7 +42,7 @@ internal data class AdyenBancontactSessionInfoDataRequest(
                     put(
                         BROWSER_INFO,
                         JSONSerializationUtils.getJsonObjectSerializer<BrowserInfoDataRequest>()
-                            .serialize(BrowserInfoDataRequest(t.userAgent))
+                            .serialize(BrowserInfoDataRequest(t.userAgent)),
                     )
                 }
             }

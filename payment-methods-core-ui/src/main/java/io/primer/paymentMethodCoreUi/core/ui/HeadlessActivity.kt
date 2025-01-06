@@ -11,10 +11,10 @@ import io.primer.android.core.di.DISdkComponent
 import io.primer.android.core.di.extensions.inject
 import io.primer.android.core.extensions.getSerializableCompat
 import io.primer.android.paymentmethods.core.composer.PaymentMethodComposer
-import io.primer.android.paymentmethods.core.composer.registry.PaymentMethodComposerRegistry
-import io.primer.android.paymentmethods.core.composer.registry.VaultedPaymentMethodComposerRegistry
 import io.primer.android.paymentmethods.core.composer.composable.ComposerUiEvent
 import io.primer.android.paymentmethods.core.composer.composable.UiEventable
+import io.primer.android.paymentmethods.core.composer.registry.PaymentMethodComposerRegistry
+import io.primer.android.paymentmethods.core.composer.registry.VaultedPaymentMethodComposerRegistry
 import io.primer.android.paymentmethods.core.ui.navigation.PaymentMethodNavigationFactoryRegistry
 import io.primer.android.payments.core.tokenization.domain.repository.TokenizedPaymentMethodRepository
 import io.primer.paymentMethodCoreUi.core.ui.composable.ActivityResultIntentHandler
@@ -24,28 +24,30 @@ import io.primer.paymentMethodCoreUi.core.ui.navigation.launchers.PaymentMethodL
 import kotlinx.coroutines.launch
 
 class HeadlessActivity : BaseCheckoutActivity(), DISdkComponent {
-
     private val paymentMethodComposerRegistry: PaymentMethodComposerRegistry by inject()
     private val vaultedPaymentMethodComposerRegistry: VaultedPaymentMethodComposerRegistry by inject()
 
     private val paymentMethodNavigationFactoryRegistry: PaymentMethodNavigationFactoryRegistry by inject()
     private val tokenizedPaymentMethodRepository: TokenizedPaymentMethodRepository by inject()
 
-    private var resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-    }
+    private var resultLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+        }
 
     private lateinit var composer: PaymentMethodComposer
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val params = getLauncherParams() ?: run {
-            finish()
-            return
-        }
+        val params =
+            getLauncherParams() ?: run {
+                finish()
+                return
+            }
         runIfNotFinishing {
-            val isVaultedPaymentMethod = runCatching {
-                tokenizedPaymentMethodRepository.getPaymentMethod().isVaulted
-            }.getOrNull() ?: false
+            val isVaultedPaymentMethod =
+                runCatching {
+                    tokenizedPaymentMethodRepository.getPaymentMethod().isVaulted
+                }.getOrNull() ?: false
             composer = when (isVaultedPaymentMethod) {
                 false -> paymentMethodComposerRegistry[params.paymentMethodType]
                 true -> vaultedPaymentMethodComposerRegistry[params.paymentMethodType]
@@ -70,12 +72,13 @@ class HeadlessActivity : BaseCheckoutActivity(), DISdkComponent {
                     uiEventable.uiEvent.collect { event ->
                         when (event) {
                             is ComposerUiEvent.Finish -> finish()
-                            is ComposerUiEvent.Navigate -> (
-                                paymentMethodNavigationFactoryRegistry.create(
-                                    params.paymentMethodType
-                                ) as? PaymentMethodContextNavigationHandler
+                            is ComposerUiEvent.Navigate ->
+                                (
+                                    paymentMethodNavigationFactoryRegistry.create(
+                                        params.paymentMethodType,
+                                    ) as? PaymentMethodContextNavigationHandler
                                 )?.getSupportedNavigators(this@HeadlessActivity, resultLauncher)
-                                ?.firstOrNull { it.canHandle(event.params) }?.navigate(event.params)
+                                    ?.firstOrNull { it.canHandle(event.params) }?.navigate(event.params)
                         }
                     }
                 }
@@ -90,12 +93,16 @@ class HeadlessActivity : BaseCheckoutActivity(), DISdkComponent {
         super.onSaveInstanceState(outState)
         outState.putBoolean(
             LAUNCHED_BROWSER_KEY,
-            intent.getBooleanExtra(LAUNCHED_BROWSER_KEY, false)
+            intent.getBooleanExtra(LAUNCHED_BROWSER_KEY, false),
         )
     }
 
     @Deprecated("Deprecated in Java")
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+    override fun onActivityResult(
+        requestCode: Int,
+        resultCode: Int,
+        data: Intent?,
+    ) {
         super.onActivityResult(requestCode, resultCode, data)
         handleActivityResult(resultCode = resultCode, data = data)
     }
@@ -117,13 +124,16 @@ class HeadlessActivity : BaseCheckoutActivity(), DISdkComponent {
         }
     }
 
-    private fun handleActivityResult(resultCode: Int, data: Intent?) {
+    private fun handleActivityResult(
+        resultCode: Int,
+        data: Intent?,
+    ) {
         val activityResultIntentHandler = composer as ActivityResultIntentHandler
         getLauncherParams()?.let { params ->
             activityResultIntentHandler.handleActivityResultIntent(
                 params = params,
                 resultCode = resultCode,
-                intent = data
+                intent = data,
             )
         } ?: run { finish() }
     }
@@ -131,18 +141,17 @@ class HeadlessActivity : BaseCheckoutActivity(), DISdkComponent {
     private fun getLauncherParams() = intent.getSerializableCompat<PaymentMethodLauncherParams>(name = PARAMS_KEY)
 
     companion object {
-
         private const val PARAMS_KEY = "LAUNCHER_PARAMS"
         private const val ENTERED_NEW_INTENT_KEY = "ENTERED_NEW_INTENT"
         const val LAUNCHED_BROWSER_KEY = "LAUNCHED_BROWSER"
 
         fun getLaunchIntent(
             context: Context,
-            params: PaymentMethodLauncherParams
+            params: PaymentMethodLauncherParams,
         ): Intent {
             return Intent(context, HeadlessActivity::class.java).putExtra(
                 PARAMS_KEY,
-                params
+                params,
             )
         }
     }

@@ -6,17 +6,18 @@ import io.primer.android.core.domain.validation.ValidationResult
 import io.primer.android.core.domain.validation.ValidationRule
 
 internal class ValidPaymentMethodManagerRule(
-    private val paymentMethodManager: PrimerHeadlessUniversalCheckoutPaymentMethodMapper
+    private val paymentMethodManager: PrimerHeadlessUniversalCheckoutPaymentMethodMapper,
 ) : ValidationRule<PaymentMethodManagerInitValidationData> {
     override fun validate(t: PaymentMethodManagerInitValidationData): ValidationResult {
         return paymentMethodManager.getPrimerHeadlessUniversalCheckoutPaymentMethod(
-            t.paymentMethodType
+            t.paymentMethodType,
         ).let {
             when (it.paymentMethodManagerCategories.contains(t.category)) {
                 true -> ValidationResult.Success
-                false -> ValidationResult.Failure(
-                    UnsupportedPaymentMethodManagerException(t.paymentMethodType, t.category)
-                )
+                false ->
+                    ValidationResult.Failure(
+                        UnsupportedPaymentMethodManagerException(t.paymentMethodType, t.category),
+                    )
             }
         }
     }

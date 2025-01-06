@@ -10,36 +10,38 @@ import io.primer.android.payments.core.tokenization.domain.model.TokenizationPar
 import org.junit.jupiter.api.Test
 
 class BankIssuerTokenizationParamsMapperTest {
-
     private val mapper = BankIssuerTokenizationParamsMapper()
 
     @Test
     fun `map should correctly map TokenizationParams to TokenizationRequestV2`() {
         // Given
         val paymentMethodType = "BankIssuer"
-        val paymentInstrumentParams = BankIssuerPaymentInstrumentParams(
-            paymentMethodType = paymentMethodType,
-            paymentMethodConfigId = "testPaymentMethodConfigId",
-            locale = "testLocale",
-            redirectionUrl = "testRedirectionUrl",
-            bankIssuer = "testBankIssuer"
-        )
+        val paymentInstrumentParams =
+            BankIssuerPaymentInstrumentParams(
+                paymentMethodType = paymentMethodType,
+                paymentMethodConfigId = "testPaymentMethodConfigId",
+                locale = "testLocale",
+                redirectionUrl = "testRedirectionUrl",
+                bankIssuer = "testBankIssuer",
+            )
         val sessionIntent = PrimerSessionIntent.CHECKOUT
         val tokenizationParams = TokenizationParams(paymentInstrumentParams, sessionIntent)
 
         // When
         val result = mapper.map(tokenizationParams)
 
-        val instrumentRequest = BankIssuerPaymentInstrumentDataRequest(
-            paymentMethodType = paymentMethodType,
-            paymentMethodConfigId = "testPaymentMethodConfigId",
-            sessionInfo = BankIssuerSessionInfoDataRequest(
-                redirectionUrl = "testRedirectionUrl",
-                locale = "testLocale",
-                issuer = "testBankIssuer"
-            ),
-            type = PaymentInstrumentType.OFF_SESSION_PAYMENT
-        )
+        val instrumentRequest =
+            BankIssuerPaymentInstrumentDataRequest(
+                paymentMethodType = paymentMethodType,
+                paymentMethodConfigId = "testPaymentMethodConfigId",
+                sessionInfo =
+                    BankIssuerSessionInfoDataRequest(
+                        redirectionUrl = "testRedirectionUrl",
+                        locale = "testLocale",
+                        issuer = "testBankIssuer",
+                    ),
+                type = PaymentInstrumentType.OFF_SESSION_PAYMENT,
+            )
 
         // Then
         val expectedRequest = instrumentRequest.toTokenizationRequest(sessionIntent)

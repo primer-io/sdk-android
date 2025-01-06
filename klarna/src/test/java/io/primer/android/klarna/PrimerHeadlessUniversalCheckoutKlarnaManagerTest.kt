@@ -12,7 +12,6 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 class PrimerHeadlessUniversalCheckoutKlarnaManagerTest {
-
     private lateinit var viewModelStoreOwner: ViewModelStoreOwner
     private lateinit var primerSessionIntent: PrimerSessionIntent
     private lateinit var klarnaManager: PrimerHeadlessUniversalCheckoutKlarnaManager

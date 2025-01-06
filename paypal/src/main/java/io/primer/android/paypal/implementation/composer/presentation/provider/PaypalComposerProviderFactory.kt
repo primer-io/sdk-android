@@ -9,22 +9,26 @@ import io.primer.android.paypal.implementation.payment.presentation.delegate.pre
 import io.primer.android.paypal.implementation.tokenization.presentation.PaypalTokenizationDelegate
 
 internal class PaypalComposerProviderFactory : PaymentMethodComposerProvider.Factory {
-
-    override fun create(paymentMethodType: String, sessionIntent: PrimerSessionIntent): PaymentMethodComposer {
+    override fun create(
+        paymentMethodType: String,
+        sessionIntent: PrimerSessionIntent,
+    ): PaymentMethodComposer {
         return PaypalComponent(
             tokenizationCollectorDelegate = resolve(name = paymentMethodType),
-            tokenizationDelegate = PaypalTokenizationDelegate(
-                tokenizationInteractor = resolve(name = paymentMethodType),
-                paypalCreateOrderInteractor = resolve(),
-                confirmBillingAgreementInteractor = resolve()
-            ),
-            paymentDelegate = PaypalPaymentDelegate(
-                paymentMethodTokenHandler = resolve(),
-                resumePaymentHandler = resolve(),
-                successHandler = resolve(),
-                errorHandler = resolve(),
-                baseErrorResolver = resolve()
-            )
+            tokenizationDelegate =
+                PaypalTokenizationDelegate(
+                    tokenizationInteractor = resolve(name = paymentMethodType),
+                    paypalCreateOrderInteractor = resolve(),
+                    confirmBillingAgreementInteractor = resolve(),
+                ),
+            paymentDelegate =
+                PaypalPaymentDelegate(
+                    paymentMethodTokenHandler = resolve(),
+                    resumePaymentHandler = resolve(),
+                    successHandler = resolve(),
+                    errorHandler = resolve(),
+                    baseErrorResolver = resolve(),
+                ),
         )
     }
 }

@@ -9,17 +9,19 @@ import io.primer.android.payments.core.tokenization.domain.model.TokenizationPar
 
 internal class CardTokenizationParamsMapper :
     TokenizationParamsMapper<CardPaymentInstrumentParams, CardPaymentInstrumentDataRequest> {
-    override fun map(params: TokenizationParams<CardPaymentInstrumentParams>):
-        TokenizationRequestV2<CardPaymentInstrumentDataRequest> {
+    override fun map(
+        params: TokenizationParams<CardPaymentInstrumentParams>,
+    ): TokenizationRequestV2<CardPaymentInstrumentDataRequest> {
         val paymentInstrumentParams = params.paymentInstrumentParams
-        val instrumentDataRequest = CardPaymentInstrumentDataRequest(
-            number = paymentInstrumentParams.number,
-            expirationMonth = paymentInstrumentParams.expirationMonth,
-            expirationYear = paymentInstrumentParams.expirationYear,
-            cvv = paymentInstrumentParams.cvv,
-            cardholderName = paymentInstrumentParams.cardholderName,
-            preferredNetwork = paymentInstrumentParams.preferredNetwork
-        )
+        val instrumentDataRequest =
+            CardPaymentInstrumentDataRequest(
+                number = paymentInstrumentParams.number,
+                expirationMonth = paymentInstrumentParams.expirationMonth,
+                expirationYear = paymentInstrumentParams.expirationYear,
+                cvv = paymentInstrumentParams.cvv,
+                cardholderName = paymentInstrumentParams.cardholderName,
+                preferredNetwork = paymentInstrumentParams.preferredNetwork,
+            )
         return instrumentDataRequest.toTokenizationRequest(params.sessionIntent)
     }
 }

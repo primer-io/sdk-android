@@ -7,7 +7,6 @@ import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
 internal class PaypalCheckoutValidationRulesResolverTest {
-
     @MockK
     lateinit var orderTokenRule: PaypalValidOrderTokenRule
 

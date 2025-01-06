@@ -1,14 +1,14 @@
 package io.primer.android.configuration.data.model
 
-import io.primer.android.domain.action.models.PrimerFee
-import io.primer.android.domain.action.models.PrimerLineItem
-import io.primer.android.domain.action.models.PrimerOrder
 import io.primer.android.core.data.serialization.json.JSONDeserializable
 import io.primer.android.core.data.serialization.json.JSONObjectDeserializer
 import io.primer.android.core.data.serialization.json.JSONSerializationUtils.deserialize
 import io.primer.android.core.data.serialization.json.extensions.optNullableInt
 import io.primer.android.core.data.serialization.json.extensions.optNullableString
 import io.primer.android.core.data.serialization.json.extensions.sequence
+import io.primer.android.domain.action.models.PrimerFee
+import io.primer.android.domain.action.models.PrimerLineItem
+import io.primer.android.domain.action.models.PrimerOrder
 import io.primer.android.domain.action.models.PrimerShipping
 import org.json.JSONObject
 
@@ -20,9 +20,8 @@ data class OrderDataResponse(
     var countryCode: CountryCode? = null,
     var lineItems: List<LineItemDataResponse> = emptyList(),
     val fees: List<FeeDataResponse> = listOf(),
-    val shipping: ShippingDataResponse? = null
+    val shipping: ShippingDataResponse? = null,
 ) : JSONDeserializable {
-
     val currentAmount: Int
         @Throws
         get() = merchantAmount ?: totalOrderAmount ?: throw IllegalArgumentException(AMOUNT_EXCEPTION)
@@ -35,17 +34,18 @@ data class OrderDataResponse(
         val discountAmount: Int? = null,
         val taxAmount: Int? = null,
         val taxCode: String? = null,
-        val productType: String? = null
+        val productType: String? = null,
     ) : JSONDeserializable {
-        fun toLineItem() = PrimerLineItem(
-            itemId,
-            description,
-            unitAmount,
-            discountAmount,
-            quantity,
-            taxCode,
-            taxAmount
-        )
+        fun toLineItem() =
+            PrimerLineItem(
+                itemId,
+                description,
+                unitAmount,
+                discountAmount,
+                quantity,
+                taxCode,
+                taxAmount,
+            )
 
         companion object {
             const val ITEM_ID_FIELD = "itemId"
@@ -58,37 +58,38 @@ data class OrderDataResponse(
             private const val PRODUCT_TYPE_FIELD = "productType"
 
             @JvmField
-            val deserializer = JSONObjectDeserializer { t ->
-                LineItemDataResponse(
-                    t.optNullableString(ITEM_ID_FIELD),
-                    t.optNullableString(DESCRIPTION_FIELD),
-                    t.optNullableInt(UNIT_AMOUNT_FIELD),
-                    t.getInt(QUANTITY_FIELD),
-                    t.optNullableInt(DISCOUNT_AMOUNT_FIELD),
-                    t.optNullableInt(TAX_AMOUNT_FIELD),
-                    t.optNullableString(TAX_CODE_FIELD),
-                    t.optNullableString(PRODUCT_TYPE_FIELD)
-                )
-            }
+            val deserializer =
+                JSONObjectDeserializer { t ->
+                    LineItemDataResponse(
+                        t.optNullableString(ITEM_ID_FIELD),
+                        t.optNullableString(DESCRIPTION_FIELD),
+                        t.optNullableInt(UNIT_AMOUNT_FIELD),
+                        t.getInt(QUANTITY_FIELD),
+                        t.optNullableInt(DISCOUNT_AMOUNT_FIELD),
+                        t.optNullableInt(TAX_AMOUNT_FIELD),
+                        t.optNullableString(TAX_CODE_FIELD),
+                        t.optNullableString(PRODUCT_TYPE_FIELD),
+                    )
+                }
         }
     }
 
     data class FeeDataResponse(
         val type: String?,
-        val amount: Int
+        val amount: Int,
     ) : JSONDeserializable {
-
         companion object {
             private const val TYPE_FIELD = "type"
             private const val AMOUNT_FIELD = "amount"
 
             @JvmField
-            val deserializer = JSONObjectDeserializer { t ->
-                FeeDataResponse(
-                    t.optNullableString(TYPE_FIELD),
-                    t.getInt(AMOUNT_FIELD)
-                )
-            }
+            val deserializer =
+                JSONObjectDeserializer { t ->
+                    FeeDataResponse(
+                        t.optNullableString(TYPE_FIELD),
+                        t.getInt(AMOUNT_FIELD),
+                    )
+                }
         }
     }
 
@@ -96,15 +97,15 @@ data class OrderDataResponse(
         val amount: Int? = null,
         val methodId: String? = null,
         val methodName: String? = null,
-        val methodDescription: String? = null
+        val methodDescription: String? = null,
     ) : JSONDeserializable {
-
-        fun toShipping() = PrimerShipping(
-            amount = this.amount,
-            methodId = this.methodId,
-            methodName = this.methodName,
-            methodDescription = this.methodDescription
-        )
+        fun toShipping() =
+            PrimerShipping(
+                amount = this.amount,
+                methodId = this.methodId,
+                methodName = this.methodName,
+                methodDescription = this.methodDescription,
+            )
 
         companion object {
             private const val AMOUNT_FIELD = "amount"
@@ -113,14 +114,15 @@ data class OrderDataResponse(
             private const val METHOD_DESCRIPTION_FIELD = "methodDescription"
 
             @JvmField
-            val deserializer = JSONObjectDeserializer { t ->
-                ShippingDataResponse(
-                    t.optNullableInt(AMOUNT_FIELD),
-                    t.optNullableString(METHOD_ID_FIELD),
-                    t.optNullableString(METHOD_NAME_FIELD),
-                    t.optNullableString(METHOD_DESCRIPTION_FIELD)
-                )
-            }
+            val deserializer =
+                JSONObjectDeserializer { t ->
+                    ShippingDataResponse(
+                        t.optNullableInt(AMOUNT_FIELD),
+                        t.optNullableString(METHOD_ID_FIELD),
+                        t.optNullableString(METHOD_NAME_FIELD),
+                        t.optNullableString(METHOD_DESCRIPTION_FIELD),
+                    )
+                }
         }
     }
 
@@ -139,22 +141,23 @@ data class OrderDataResponse(
         const val SHIPPING_FIELD = "shipping"
 
         @JvmField
-        val deserializer = JSONObjectDeserializer { t ->
-            OrderDataResponse(
-                t.optNullableString(ORDER_ID_FIELD),
-                t.optNullableString(CURRENCY_CODE_FIELD),
-                t.optNullableInt(MERCHANT_AMOUNT_FIELD),
-                t.optNullableInt(TOTAL_ORDER_AMOUNT_FIELD),
-                t.optNullableString(COUNTRY_CODE_FIELD)?.let { CountryCode.valueOf(it) },
-                t.optJSONArray(LINE_ITEMS_FIELD)?.sequence<JSONObject>()?.map {
-                    it.deserialize<LineItemDataResponse>()
-                }?.toList().orEmpty(),
-                t.optJSONArray(FEES_FIELD)?.sequence<JSONObject>()?.map {
-                    it.deserialize<FeeDataResponse>()
-                }?.toList().orEmpty(),
-                t.optJSONObject(SHIPPING_FIELD)?.deserialize()
-            )
-        }
+        val deserializer =
+            JSONObjectDeserializer { t ->
+                OrderDataResponse(
+                    t.optNullableString(ORDER_ID_FIELD),
+                    t.optNullableString(CURRENCY_CODE_FIELD),
+                    t.optNullableInt(MERCHANT_AMOUNT_FIELD),
+                    t.optNullableInt(TOTAL_ORDER_AMOUNT_FIELD),
+                    t.optNullableString(COUNTRY_CODE_FIELD)?.let { CountryCode.valueOf(it) },
+                    t.optJSONArray(LINE_ITEMS_FIELD)?.sequence<JSONObject>()?.map {
+                        it.deserialize<LineItemDataResponse>()
+                    }?.toList().orEmpty(),
+                    t.optJSONArray(FEES_FIELD)?.sequence<JSONObject>()?.map {
+                        it.deserialize<FeeDataResponse>()
+                    }?.toList().orEmpty(),
+                    t.optJSONObject(SHIPPING_FIELD)?.deserialize(),
+                )
+            }
 
         private const val EXCEPTION_MESSAGE = "required but not found. Please set this value"
         private const val DOCS_REFERENCE = """when generating the client session with 

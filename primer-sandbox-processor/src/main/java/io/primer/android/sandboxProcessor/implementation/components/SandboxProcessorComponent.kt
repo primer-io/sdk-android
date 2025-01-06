@@ -20,7 +20,7 @@ import kotlin.properties.Delegates
 
 class ProcessorTestComponent internal constructor(
     private val tokenizationDelegate: SandboxProcessorTokenizationDelegate,
-    private val paymentDelegate: SandboxProcessorPaymentDelegate
+    private val paymentDelegate: SandboxProcessorPaymentDelegate,
 ) : InternalNativeUiPaymentMethodComponent(),
     PrimerHeadlessDataCollectable<ProcessorTestCollectableData>,
     PrimerHeadlessSteppable<ProcessorTestStep> {
@@ -35,7 +35,7 @@ class ProcessorTestComponent internal constructor(
 
     override fun start(
         paymentMethodType: String,
-        primerSessionIntent: PrimerSessionIntent
+        primerSessionIntent: PrimerSessionIntent,
     ) {
         _componentStep.tryEmit(ProcessorTestStep.Started)
         this.paymentMethodType = paymentMethodType
@@ -43,46 +43,50 @@ class ProcessorTestComponent internal constructor(
         tokenize()
     }
 
-    private fun tokenize() = composerScope.launch {
-        runCatching {
-            decisionType
-        }
-            .flatMap {
-                tokenizationDelegate.tokenize(
-                    SandboxProcessorTokenizationInputable(
-                        paymentMethodType = paymentMethodType,
-                        primerSessionIntent = primerSessionIntent,
-                        decisionType = it
+    private fun tokenize() =
+        composerScope.launch {
+            runCatching {
+                decisionType
+            }
+                .flatMap {
+                    tokenizationDelegate.tokenize(
+                        SandboxProcessorTokenizationInputable(
+                            paymentMethodType = paymentMethodType,
+                            primerSessionIntent = primerSessionIntent,
+                            decisionType = it,
+                        ),
                     )
-                )
-            }
-            .onSuccess {
-                _componentStep.emit(ProcessorTestStep.Tokenized)
-            }
-            .flatMap { paymentMethodTokenData ->
-                paymentDelegate.handlePaymentMethodToken(
-                    paymentMethodTokenData = paymentMethodTokenData,
-                    primerSessionIntent = primerSessionIntent
-                )
-                    .onSuccess {
-                        _componentStep.emit(ProcessorTestStep.Finished)
-                    }
-            }.onFailure { throwable ->
-                paymentDelegate.handleError(throwable)
-            }
-    }
+                }
+                .onSuccess {
+                    _componentStep.emit(ProcessorTestStep.Tokenized)
+                }
+                .flatMap { paymentMethodTokenData ->
+                    paymentDelegate.handlePaymentMethodToken(
+                        paymentMethodTokenData = paymentMethodTokenData,
+                        primerSessionIntent = primerSessionIntent,
+                    )
+                        .onSuccess {
+                            _componentStep.emit(ProcessorTestStep.Finished)
+                        }
+                }.onFailure { throwable ->
+                    paymentDelegate.handleError(throwable)
+                }
+        }
 
     companion object : DISdkComponent {
-        fun provideInstance(): ProcessorTestComponent = ProcessorTestComponent(
-            tokenizationDelegate = resolve(),
-            paymentDelegate = resolve()
-        )
+        fun provideInstance(): ProcessorTestComponent =
+            ProcessorTestComponent(
+                tokenizationDelegate = resolve(),
+                paymentDelegate = resolve(),
+            )
     }
 }
 
 sealed interface ProcessorTestStep : PrimerHeadlessStep {
     data object Started : ProcessorTestStep
+
     data object Tokenized : ProcessorTestStep
+
     data object Finished : ProcessorTestStep
 }
 

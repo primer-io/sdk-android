@@ -4,5 +4,5 @@ import io.primer.android.analytics.domain.models.ThreeDsFailureContextParams
 
 internal class ThreeDsConfigurationException(
     override val message: String?,
-    val context: ThreeDsFailureContextParams
+    val context: ThreeDsFailureContextParams,
 ) : IllegalArgumentException()

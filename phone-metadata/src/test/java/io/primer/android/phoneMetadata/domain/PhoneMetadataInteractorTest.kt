@@ -19,7 +19,6 @@ import kotlin.test.assertEquals
 @ExtendWith(MockKExtension::class)
 @ExperimentalCoroutinesApi
 internal class PhoneMetadataInteractorTest {
-
     @RelaxedMockK
     lateinit var phoneMetadataRepository: PhoneMetadataRepository
 
@@ -36,8 +35,8 @@ internal class PhoneMetadataInteractorTest {
         val phoneMetadata = mockk<PhoneMetadata>(relaxed = true)
         coEvery { phoneMetadataRepository.getPhoneMetadata(any()) }.returns(
             Result.success(
-                phoneMetadata
-            )
+                phoneMetadata,
+            ),
         )
 
         runTest {
@@ -53,16 +52,17 @@ internal class PhoneMetadataInteractorTest {
         val expectedException = mockk<PhoneValidationException>(relaxed = true)
         coEvery { phoneMetadataRepository.getPhoneMetadata(any()) }.returns(
             Result.failure(
-                expectedException
-            )
+                expectedException,
+            ),
         )
-        val exception = assertThrows<PhoneValidationException> {
-            runTest {
-                val result = interactor(params)
-                assert(result.isFailure)
-                result.getOrThrow()
+        val exception =
+            assertThrows<PhoneValidationException> {
+                runTest {
+                    val result = interactor(params)
+                    assert(result.isFailure)
+                    result.getOrThrow()
+                }
             }
-        }
 
         assertEquals(expectedException, exception)
     }

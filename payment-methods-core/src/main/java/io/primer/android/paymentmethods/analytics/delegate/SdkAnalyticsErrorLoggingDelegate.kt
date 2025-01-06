@@ -7,15 +7,16 @@ import io.primer.android.analytics.domain.models.MessageAnalyticsParams
 import io.primer.android.domain.error.models.PrimerError
 
 class SdkAnalyticsErrorLoggingDelegate(
-    private val analyticsInteractor: AnalyticsInteractor
+    private val analyticsInteractor: AnalyticsInteractor,
 ) {
-    suspend fun logSdkAnalyticsErrors(error: PrimerError) = analyticsInteractor(
-        MessageAnalyticsParams(
-            messageType = MessageType.ERROR,
-            message = error.description,
-            severity = Severity.ERROR,
-            diagnosticsId = error.diagnosticsId,
-            context = error.context
+    suspend fun logSdkAnalyticsErrors(error: PrimerError) =
+        analyticsInteractor(
+            MessageAnalyticsParams(
+                messageType = MessageType.ERROR,
+                message = error.description,
+                severity = Severity.ERROR,
+                diagnosticsId = error.diagnosticsId,
+                context = error.context,
+            ),
         )
-    )
 }

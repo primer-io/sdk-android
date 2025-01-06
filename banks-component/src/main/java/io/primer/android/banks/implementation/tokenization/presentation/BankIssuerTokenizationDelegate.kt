@@ -22,10 +22,10 @@ internal class BankIssuerTokenizationDelegate(
     tokenizationInteractor: BankIssuerTokenizationInteractor,
     private val primerSettings: PrimerSettings,
     private val actionInteractor: ActionInteractor,
-    private val deeplinkInteractor: RedirectDeeplinkInteractor
+    private val deeplinkInteractor: RedirectDeeplinkInteractor,
 ) : PaymentMethodTokenizationDelegate<BankIssuerTokenizationInputable, BankIssuerPaymentInstrumentParams>(
-    tokenizationInteractor
-),
+        tokenizationInteractor,
+    ),
     TokenizationCollectedDataMapper<BankIssuerTokenizationInputable, BankIssuerPaymentInstrumentParams> {
     override suspend fun mapTokenizationData(input: BankIssuerTokenizationInputable) =
         if (primerSettings.sdkIntegrationType == SdkIntegrationType.HEADLESS) {
@@ -36,25 +36,27 @@ internal class BankIssuerTokenizationDelegate(
             configurationInteractor(BankIssuerConfigParams(paymentMethodType = input.paymentMethodType))
         }.map { configuration ->
             TokenizationParams(
-                paymentInstrumentParams = BankIssuerPaymentInstrumentParams(
-                    paymentMethodType = input.paymentMethodType,
-                    paymentMethodConfigId = configuration.paymentMethodConfigId,
-                    locale = configuration.locale.toLanguageTag(),
-                    redirectionUrl = deeplinkInteractor(None),
-                    bankIssuer = input.bankIssuer
-                ),
-                sessionIntent = input.primerSessionIntent
+                paymentInstrumentParams =
+                    BankIssuerPaymentInstrumentParams(
+                        paymentMethodType = input.paymentMethodType,
+                        paymentMethodConfigId = configuration.paymentMethodConfigId,
+                        locale = configuration.locale.toLanguageTag(),
+                        redirectionUrl = deeplinkInteractor(None),
+                        bankIssuer = input.bankIssuer,
+                    ),
+                sessionIntent = input.primerSessionIntent,
             )
         }
 
-    private suspend fun updateSelectedPaymentMethodParams(paymentMethodType: String) = actionInteractor(
-        MultipleActionUpdateParams(
-            listOf(
-                ActionUpdateSelectPaymentMethodParams(
-                    paymentMethodType = paymentMethodType,
-                    cardNetwork = null
-                )
-            )
+    private suspend fun updateSelectedPaymentMethodParams(paymentMethodType: String) =
+        actionInteractor(
+            MultipleActionUpdateParams(
+                listOf(
+                    ActionUpdateSelectPaymentMethodParams(
+                        paymentMethodType = paymentMethodType,
+                        cardNetwork = null,
+                    ),
+                ),
+            ),
         )
-    )
 }

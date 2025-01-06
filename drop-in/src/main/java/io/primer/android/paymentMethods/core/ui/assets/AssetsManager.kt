@@ -9,46 +9,54 @@ import io.primer.android.configuration.data.model.CardNetwork
 import io.primer.android.displayMetadata.domain.model.ImageColor
 
 internal interface AssetsManager {
-
     fun getPaymentMethodImage(
         context: Context,
         paymentMethodType: String,
-        imageColor: ImageColor
+        imageColor: ImageColor,
     ): Drawable?
 
     fun getCardNetworkImage(
         context: Context,
-        network: CardNetwork.Type
+        network: CardNetwork.Type,
     ): Drawable?
 
     fun getPaymentMethodResource(
         context: Context,
-        paymentMethodType: String
+        paymentMethodType: String,
     ): PrimerPaymentMethodResource
 }
 
 internal class DefaultPrimerAssetsManager(
-    private val headlessUniversalCheckoutAssetsManager: PrimerHeadlessUniversalCheckoutAssetsManager.Companion
+    private val headlessUniversalCheckoutAssetsManager: PrimerHeadlessUniversalCheckoutAssetsManager.Companion,
 ) : AssetsManager {
-
-    override fun getPaymentMethodImage(context: Context, paymentMethodType: String, imageColor: ImageColor): Drawable? {
+    override fun getPaymentMethodImage(
+        context: Context,
+        paymentMethodType: String,
+        imageColor: ImageColor,
+    ): Drawable? {
         return headlessUniversalCheckoutAssetsManager.getPaymentMethodAsset(
             context = context,
-            paymentMethodType = paymentMethodType
+            paymentMethodType = paymentMethodType,
         ).paymentMethodLogo.get(imageColor)
     }
 
-    override fun getCardNetworkImage(context: Context, network: CardNetwork.Type): Drawable? {
+    override fun getCardNetworkImage(
+        context: Context,
+        network: CardNetwork.Type,
+    ): Drawable? {
         return headlessUniversalCheckoutAssetsManager.getCardNetworkAsset(
             context = context,
-            cardNetwork = network
+            cardNetwork = network,
         ).cardImage
     }
 
-    override fun getPaymentMethodResource(context: Context, paymentMethodType: String): PrimerPaymentMethodResource {
+    override fun getPaymentMethodResource(
+        context: Context,
+        paymentMethodType: String,
+    ): PrimerPaymentMethodResource {
         return headlessUniversalCheckoutAssetsManager.getPaymentMethodResource(
             context = context,
-            paymentMethodType = paymentMethodType
+            paymentMethodType = paymentMethodType,
         )
     }
 }

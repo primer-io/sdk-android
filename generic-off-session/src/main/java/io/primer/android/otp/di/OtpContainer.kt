@@ -26,22 +26,21 @@ import io.primer.android.payments.core.tokenization.data.datasource.BaseRemoteTo
 
 internal class OtpContainer(private val sdk: () -> SdkContainer, private val paymentMethodType: String) :
     DependencyContainer() {
-
     override fun registerInitialDependencies() {
         registerFactory(name = paymentMethodType) {
             PaymentMethodSdkAnalyticsEventLoggingDelegate(
                 primerPaymentMethodManagerCategory =
-                PrimerPaymentMethodManagerCategory.RAW_DATA.name,
-                analyticsInteractor = sdk().resolve()
+                    PrimerPaymentMethodManagerCategory.RAW_DATA.name,
+                analyticsInteractor = sdk().resolve(),
             )
         }
 
         registerFactory<PaymentMethodConfigurationRepository<OtpConfig, OtpConfigParams>>(
-            name = paymentMethodType
+            name = paymentMethodType,
         ) {
             OtpConfigurationDataRepository(
                 configurationDataSource = sdk().resolve(ConfigurationCoreContainer.CACHED_CONFIGURATION_DI_KEY),
-                settings = sdk().resolve()
+                settings = sdk().resolve(),
             )
         }
 
@@ -50,7 +49,7 @@ internal class OtpContainer(private val sdk: () -> SdkContainer, private val pay
         }
 
         registerFactory<BaseRemoteTokenizationDataSource<OtpPaymentInstrumentDataRequest>>(
-            name = paymentMethodType
+            name = paymentMethodType,
         ) {
             OtpRemoteTokenizationDataSource(primerHttpClient = sdk().resolve())
         }
@@ -63,14 +62,15 @@ internal class OtpContainer(private val sdk: () -> SdkContainer, private val pay
 
         registerFactory<OtpTokenizationInteractor>(name = paymentMethodType) {
             DefaultOtpTokenizationInteractor(
-                tokenizationRepository = OtpTokenizationDataRepository(
-                    remoteTokenizationDataSource = sdk().resolve(paymentMethodType),
-                    configurationDataSource = sdk().resolve(ConfigurationCoreContainer.CACHED_CONFIGURATION_DI_KEY),
-                    tokenizationParamsMapper = resolve()
-                ),
+                tokenizationRepository =
+                    OtpTokenizationDataRepository(
+                        remoteTokenizationDataSource = sdk().resolve(paymentMethodType),
+                        configurationDataSource = sdk().resolve(ConfigurationCoreContainer.CACHED_CONFIGURATION_DI_KEY),
+                        tokenizationParamsMapper = resolve(),
+                    ),
                 tokenizedPaymentMethodRepository = sdk().resolve(),
                 preTokenizationHandler = sdk().resolve(),
-                logReporter = sdk().resolve()
+                logReporter = sdk().resolve(),
             )
         }
 
@@ -84,7 +84,7 @@ internal class OtpContainer(private val sdk: () -> SdkContainer, private val pay
                 validateClientTokenRepository = sdk().resolve(),
                 clientTokenRepository = sdk().resolve(),
                 checkoutAdditionalInfoHandler = sdk().resolve(),
-                tokenizedPaymentMethodRepository = sdk().resolve()
+                tokenizedPaymentMethodRepository = sdk().resolve(),
             )
         }
     }

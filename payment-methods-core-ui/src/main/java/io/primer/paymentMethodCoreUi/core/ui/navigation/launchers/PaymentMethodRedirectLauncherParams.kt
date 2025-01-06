@@ -4,5 +4,5 @@ import io.primer.android.PrimerSessionIntent
 
 open class PaymentMethodRedirectLauncherParams(
     paymentMethodType: String,
-    sessionIntent: PrimerSessionIntent
+    sessionIntent: PrimerSessionIntent,
 ) : ActivityLauncherParams(paymentMethodType, sessionIntent)

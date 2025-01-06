@@ -25,9 +25,8 @@ internal data class PaypalTokenizationCollectorParams(val primerSessionIntent: P
 internal class PaypalTokenizationCollectorDelegate(
     private val configurationInteractor: PaypalConfigurationInteractor,
     private val createOrderInteractor: PaypalCreateOrderInteractor,
-    private val createBillingAgreementInteractor: PaypalCreateBillingAgreementInteractor
+    private val createBillingAgreementInteractor: PaypalCreateBillingAgreementInteractor,
 ) : PaymentMethodTokenizationCollectorDelegate<PaypalTokenizationCollectorParams>, UiEventable {
-
     private val _uiEvent = MutableSharedFlow<ComposerUiEvent>()
     override val uiEvent: SharedFlow<ComposerUiEvent> = _uiEvent
 
@@ -35,51 +34,53 @@ internal class PaypalTokenizationCollectorDelegate(
         return configurationInteractor(PaypalConfigParams(sessionIntent = params.primerSessionIntent))
             .flatMap { configuration ->
                 when (configuration) {
-                    is PaypalConfig.PaypalCheckoutConfiguration -> createOrderInteractor(
-                        PaypalCreateOrderParams(
-                            paymentMethodConfigId = configuration.paymentMethodConfigId,
-                            amount = configuration.amount,
-                            currencyCode = configuration.currencyCode,
-                            successUrl = configuration.successUrl,
-                            cancelUrl = configuration.cancelUrl
-                        )
-                    ).map { order ->
-                        PaymentMethodLauncherParams(
-                            paymentMethodType = PaymentMethodType.PAYPAL.name,
-                            sessionIntent = params.primerSessionIntent,
-                            RedirectLauncherParams(
-                                url = order.approvalUrl,
-                                successUrl = order.successUrl,
-                                paymentMethodType = PaymentMethodType.PAYPAL.name,
+                    is PaypalConfig.PaypalCheckoutConfiguration ->
+                        createOrderInteractor(
+                            PaypalCreateOrderParams(
                                 paymentMethodConfigId = configuration.paymentMethodConfigId,
-                                sessionIntent = params.primerSessionIntent
+                                amount = configuration.amount,
+                                currencyCode = configuration.currencyCode,
+                                successUrl = configuration.successUrl,
+                                cancelUrl = configuration.cancelUrl,
+                            ),
+                        ).map { order ->
+                            PaymentMethodLauncherParams(
+                                paymentMethodType = PaymentMethodType.PAYPAL.name,
+                                sessionIntent = params.primerSessionIntent,
+                                RedirectLauncherParams(
+                                    url = order.approvalUrl,
+                                    successUrl = order.successUrl,
+                                    paymentMethodType = PaymentMethodType.PAYPAL.name,
+                                    paymentMethodConfigId = configuration.paymentMethodConfigId,
+                                    sessionIntent = params.primerSessionIntent,
+                                ),
                             )
-                        )
-                    }
+                        }
 
-                    is PaypalConfig.PaypalVaultConfiguration -> createBillingAgreementInteractor(
-                        PaypalCreateBillingAgreementParams(
-                            paymentMethodConfigId = configuration.paymentMethodConfigId,
-                            successUrl = configuration.successUrl,
-                            cancelUrl = configuration.cancelUrl
-                        )
-                    ).map { order ->
-                        PaymentMethodLauncherParams(
-                            paymentMethodType = PaymentMethodType.PAYPAL.name,
-                            sessionIntent = params.primerSessionIntent,
-                            RedirectLauncherParams(
-                                url = order.approvalUrl,
-                                successUrl = order.successUrl,
-                                paymentMethodType = PaymentMethodType.PAYPAL.name,
+                    is PaypalConfig.PaypalVaultConfiguration ->
+                        createBillingAgreementInteractor(
+                            PaypalCreateBillingAgreementParams(
                                 paymentMethodConfigId = configuration.paymentMethodConfigId,
-                                sessionIntent = params.primerSessionIntent
+                                successUrl = configuration.successUrl,
+                                cancelUrl = configuration.cancelUrl,
+                            ),
+                        ).map { order ->
+                            PaymentMethodLauncherParams(
+                                paymentMethodType = PaymentMethodType.PAYPAL.name,
+                                sessionIntent = params.primerSessionIntent,
+                                RedirectLauncherParams(
+                                    url = order.approvalUrl,
+                                    successUrl = order.successUrl,
+                                    paymentMethodType = PaymentMethodType.PAYPAL.name,
+                                    paymentMethodConfigId = configuration.paymentMethodConfigId,
+                                    sessionIntent = params.primerSessionIntent,
+                                ),
                             )
-                        )
-                    }
+                        }
                 }
             }.map { launcherParams ->
                 _uiEvent.emit(
-                    ComposerUiEvent.Navigate(launcherParams)
+                    ComposerUiEvent.Navigate(launcherParams),
                 )
             }
     }

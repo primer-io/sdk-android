@@ -12,7 +12,6 @@ import org.junit.jupiter.api.Test
 import kotlin.test.assertFailsWith
 
 class QrCodeClientTokenParserTest {
-
     private val validEncodedString = "validEncodedString"
 
     @BeforeEach

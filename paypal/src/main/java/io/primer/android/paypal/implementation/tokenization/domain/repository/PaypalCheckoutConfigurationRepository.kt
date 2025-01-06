@@ -4,6 +4,5 @@ import io.primer.android.paypal.implementation.tokenization.domain.model.PaypalC
 import kotlinx.coroutines.flow.Flow
 
 internal interface PaypalCheckoutConfigurationRepository {
-
     fun getPaypalConfiguration(): Flow<PaypalCheckoutConfiguration>
 }

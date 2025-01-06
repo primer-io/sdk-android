@@ -8,15 +8,17 @@ import io.primer.android.payments.core.create.data.model.PaymentDataResponse
 import io.primer.android.payments.core.resume.data.model.ResumePaymentDataRequest
 
 internal class ResumePaymentDataSource(private val primerHttpClient: PrimerHttpClient) :
-    BaseSuspendDataSource<PaymentDataResponse,
-        BaseRemoteHostRequest<Pair<String, ResumePaymentDataRequest>>> {
-
-    override suspend fun execute(input: BaseRemoteHostRequest<Pair<String, ResumePaymentDataRequest>>):
-        PaymentDataResponse {
+    BaseSuspendDataSource<
+        PaymentDataResponse,
+        BaseRemoteHostRequest<Pair<String, ResumePaymentDataRequest>>,
+        > {
+    override suspend fun execute(
+        input: BaseRemoteHostRequest<Pair<String, ResumePaymentDataRequest>>,
+    ): PaymentDataResponse {
         return primerHttpClient.suspendPost<ResumePaymentDataRequest, PaymentDataResponse>(
             url = "${input.host}/payments/${input.data.first}/resume",
             request = input.data.second,
-            headers = mapOf(SDK_API_VERSION_HEADER to PAYMENTS_VERSION)
+            headers = mapOf(SDK_API_VERSION_HEADER to PAYMENTS_VERSION),
         ).body
     }
 

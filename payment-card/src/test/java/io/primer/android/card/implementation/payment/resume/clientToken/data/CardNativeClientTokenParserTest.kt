@@ -17,7 +17,6 @@ import org.junit.jupiter.api.Test
 import kotlin.test.assertFailsWith
 
 internal class CardNativeClientTokenParserTest {
-
     private val validEncodedString = "validEncodedString"
 
     @BeforeEach
@@ -35,9 +34,10 @@ internal class CardNativeClientTokenParserTest {
     @Test
     fun `parseClientToken should correctly parse when called with a valid Native 3DS client token`() {
         // Given
-        every { ClientToken.fromString(validEncodedString) } returns mockk<ClientToken> {
-            every { this@mockk.intent } returns ClientTokenIntent.`3DS_AUTHENTICATION`.name
-        }
+        every { ClientToken.fromString(validEncodedString) } returns
+            mockk<ClientToken> {
+                every { this@mockk.intent } returns ClientTokenIntent.`3DS_AUTHENTICATION`.name
+            }
         every { CardNative3DSClientTokenData.fromString(validEncodedString) } returns
             CardNative3DSClientTokenData("testIntent", listOf("1.0", "2.0"))
 
@@ -47,24 +47,26 @@ internal class CardNativeClientTokenParserTest {
         val result = parser.parseClientToken(validEncodedString)
 
         // Then
-        val expected = Card3DSClientToken.CardNative3DSClientToken(
-            "testIntent",
-            listOf("1.0", "2.0")
-        )
+        val expected =
+            Card3DSClientToken.CardNative3DSClientToken(
+                "testIntent",
+                listOf("1.0", "2.0"),
+            )
         assertEquals(expected, result)
     }
 
     @Test
     fun `parseClientToken should correctly parse when called with a valid Processor 3DS client token`() {
         // Given
-        every { ClientToken.fromString(validEncodedString) } returns mockk<ClientToken> {
-            every { this@mockk.intent } returns ClientTokenIntent.PROCESSOR_3DS.name
-        }
+        every { ClientToken.fromString(validEncodedString) } returns
+            mockk<ClientToken> {
+                every { this@mockk.intent } returns ClientTokenIntent.PROCESSOR_3DS.name
+            }
         every { CardProcessor3dsClientTokenData.fromString(validEncodedString) } returns
             CardProcessor3dsClientTokenData(
                 intent = "testIntent",
                 statusUrl = "https://www.example.com/status",
-                redirectUrl = "https://www.example.com/redirect"
+                redirectUrl = "https://www.example.com/redirect",
             )
 
         val parser = CardNative3DSClientTokenParser()
@@ -73,22 +75,25 @@ internal class CardNativeClientTokenParserTest {
         val result = parser.parseClientToken(validEncodedString)
 
         // Then
-        val expected = Card3DSClientToken.CardProcessor3DSClientToken(
-            clientTokenIntent = "testIntent",
-            processor3DS = Processor3DS(
-                statusUrl = "https://www.example.com/status",
-                redirectUrl = "https://www.example.com/redirect"
+        val expected =
+            Card3DSClientToken.CardProcessor3DSClientToken(
+                clientTokenIntent = "testIntent",
+                processor3DS =
+                    Processor3DS(
+                        statusUrl = "https://www.example.com/status",
+                        redirectUrl = "https://www.example.com/redirect",
+                    ),
             )
-        )
         assertEquals(expected, result)
     }
 
     @Test
     fun `parseClientToken should throw exception when called with an invalid client token`() {
         // Given
-        every { ClientToken.fromString(validEncodedString) } returns mockk<ClientToken> {
-            every { this@mockk.intent } returns ClientTokenIntent.`3DS_AUTHENTICATION`.name
-        }
+        every { ClientToken.fromString(validEncodedString) } returns
+            mockk<ClientToken> {
+                every { this@mockk.intent } returns ClientTokenIntent.`3DS_AUTHENTICATION`.name
+            }
         every { CardNative3DSClientTokenData.fromString(validEncodedString) } throws IllegalArgumentException()
         every { CardProcessor3dsClientTokenData.fromString(validEncodedString) } throws IllegalArgumentException()
 

@@ -10,12 +10,11 @@ import io.primer.paymentMethodCoreUi.core.ui.navigation.StartActivityForResultNa
 
 internal data class IPay88MockNavigator(
     private val context: Context,
-    override val launcher: ActivityResultLauncher<Intent>
+    override val launcher: ActivityResultLauncher<Intent>,
 ) : StartActivityForResultNavigator<IPay88MockActivityLauncherParams>(launcher) {
-
     override fun navigate(params: IPay88MockActivityLauncherParams) {
         launcher.launch(
-            PaymentMethodMockActivity.getLaunchIntent(context, params.paymentMethodType)
+            PaymentMethodMockActivity.getLaunchIntent(context, params.paymentMethodType),
         )
     }
 

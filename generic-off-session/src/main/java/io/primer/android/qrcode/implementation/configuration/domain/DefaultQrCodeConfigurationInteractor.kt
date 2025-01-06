@@ -9,7 +9,7 @@ internal typealias QrCodeConfigurationInteractor =
     PaymentMethodConfigurationInteractor<QrCodeConfig, QrCodeConfigParams>
 
 internal class DefaultQrCodeConfigurationInteractor(
-    configurationRepository: PaymentMethodConfigurationRepository<QrCodeConfig, QrCodeConfigParams>
+    configurationRepository: PaymentMethodConfigurationRepository<QrCodeConfig, QrCodeConfigParams>,
 ) : PaymentMethodConfigurationInteractor<QrCodeConfig, QrCodeConfigParams>(
-    configurationRepository
-)
+        configurationRepository,
+    )

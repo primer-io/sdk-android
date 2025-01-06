@@ -14,19 +14,19 @@ import io.primer.android.core.extensions.runSuspendCatching
 internal class IssuingBankDataRepository(
     private val remoteIssuingSuspendDataSource: RemoteIssuingBankSuspendDataSource,
     private val localIssuingBankDataSource: LocalIssuingBankDataSource,
-    private val configurationDataSource: BaseCacheDataSource<ConfigurationData, ConfigurationData>
+    private val configurationDataSource: BaseCacheDataSource<ConfigurationData, ConfigurationData>,
 ) : IssuingBankRepository {
-
-    override suspend fun getIssuingBanks(params: IssuingBankParams) = runSuspendCatching {
-        remoteIssuingSuspendDataSource.execute(
-            BaseRemoteHostRequest(
-                configurationDataSource.get().coreUrl,
-                params.toIssuingBankRequest()
+    override suspend fun getIssuingBanks(params: IssuingBankParams) =
+        runSuspendCatching {
+            remoteIssuingSuspendDataSource.execute(
+                BaseRemoteHostRequest(
+                    configurationDataSource.get().coreUrl,
+                    params.toIssuingBankRequest(),
+                ),
             )
-        )
-            .also { localIssuingBankDataSource.update(it.result) }
-            .result.map { it.toIssuingBank() }
-    }
+                .also { localIssuingBankDataSource.update(it.result) }
+                .result.map { it.toIssuingBank() }
+        }
 
     override suspend fun getCachedIssuingBanks() =
         runSuspendCatching {

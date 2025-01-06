@@ -38,10 +38,11 @@ import kotlin.coroutines.cancellation.CancellationException
 internal class BankWebRedirectComposer(
     private val tokenizationDelegate: BankIssuerTokenizationDelegate,
     private val pollingInteractor: AsyncPaymentMethodPollingInteractor,
-    private val paymentDelegate: BankIssuerPaymentDelegate
+    private val paymentDelegate: BankIssuerPaymentDelegate,
 ) : BaseWebRedirectComposer {
-
     override val scope: CoroutineScope = CoroutineScope(Dispatchers.Main)
+
+    @Suppress("ktlint:standard:property-naming")
     override val _uiEvent: MutableSharedFlow<ComposerUiEvent> = MutableSharedFlow()
 
     override fun cancel() {
@@ -51,7 +52,7 @@ internal class BankWebRedirectComposer(
     override fun onResultCancelled(params: WebRedirectLauncherParams) {
         scope.launch {
             paymentDelegate.handleError(
-                throwable = PaymentMethodCancelledException(paymentMethodType = params.paymentMethodType)
+                throwable = PaymentMethodCancelledException(paymentMethodType = params.paymentMethodType),
             )
         }
     }
@@ -63,22 +64,23 @@ internal class BankWebRedirectComposer(
     internal suspend fun startPaymentFlow(inputable: BankIssuerTokenizationInputable) =
         try {
             tokenizationDelegate.tokenize(
-                input = BankIssuerTokenizationInputable(
-                    paymentMethodType = inputable.paymentMethodType,
-                    primerSessionIntent = inputable.primerSessionIntent,
-                    bankIssuer = inputable.bankIssuer
-                )
+                input =
+                    BankIssuerTokenizationInputable(
+                        paymentMethodType = inputable.paymentMethodType,
+                        primerSessionIntent = inputable.primerSessionIntent,
+                        bankIssuer = inputable.bankIssuer,
+                    ),
             ).flatMap { paymentMethodTokenData ->
                 paymentDelegate.handlePaymentMethodToken(
                     paymentMethodTokenData = paymentMethodTokenData,
-                    primerSessionIntent = inputable.primerSessionIntent
+                    primerSessionIntent = inputable.primerSessionIntent,
                 )
             }.onFailure {
                 paymentDelegate.handleError(it)
             }
         } catch (e: CancellationException) {
             paymentDelegate.handleError(
-                throwable = PaymentMethodCancelledException(paymentMethodType = inputable.paymentMethodType)
+                throwable = PaymentMethodCancelledException(paymentMethodType = inputable.paymentMethodType),
             )
             Result.failure(e)
         }
@@ -91,52 +93,59 @@ internal class BankWebRedirectComposer(
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
-    internal fun startPolling(statusUrl: String, paymentMethodType: String) =
-        scope.launch {
-            pollingInteractor.execute(
-                AsyncStatusParams(statusUrl, paymentMethodType)
-            ).mapLatest { status ->
-                paymentDelegate.resumePayment(status.resumeToken)
-            }.catch {
-                paymentDelegate.handleError(it)
-            }.collect()
-        }
+    internal fun startPolling(
+        statusUrl: String,
+        paymentMethodType: String,
+    ) = scope.launch {
+        pollingInteractor.execute(
+            AsyncStatusParams(statusUrl, paymentMethodType),
+        ).mapLatest { status ->
+            paymentDelegate.resumePayment(status.resumeToken)
+        }.catch {
+            paymentDelegate.handleError(it)
+        }.collect()
+    }
 }
 
 object BanksComponentProvider : DISdkComponent {
     fun provideInstance(
         owner: ViewModelStoreOwner,
         paymentMethodType: String,
-        onFinished: () -> Unit
+        onFinished: () -> Unit,
     ): BanksComponent {
         val rpcContainer = RpcContainer { getSdkContainer() }
         getSdkContainer().registerContainer(rpcContainer)
         getSdkContainer().registerContainer(WebRedirectContainer { getSdkContainer() })
 
-        val viewModel = ViewModelProvider(
-            owner = owner,
-            factory = object : ViewModelProvider.Factory {
-                @Suppress("UNCHECKED_CAST")
-                override fun <T : ViewModel> create(
-                    modelClass: Class<T>,
-                    extras: CreationExtras
-                ): T = DefaultBanksComponent(
-                    paymentMethodType = paymentMethodType,
-                    redirectComposer = resolve(name = paymentMethodType),
-                    getBanksDelegate = resolve(),
-                    eventLoggingDelegate = resolve(
-                        name = paymentMethodType
-                    ),
-                    errorLoggingDelegate = resolve(name = paymentMethodType),
-                    validationErrorLoggingDelegate = resolve(PaymentMethodType.ADYEN_IDEAL.name),
-                    errorMapperRegistry = resolve(),
-                    savedStateHandle = runCatching {
-                        extras.createSavedStateHandle()
-                    }.getOrDefault(SavedStateHandle()),
-                    onFinished = onFinished
-                ) as T
-            }
-        )[DefaultBanksComponent::class.java]
+        val viewModel =
+            ViewModelProvider(
+                owner = owner,
+                factory =
+                    object : ViewModelProvider.Factory {
+                        @Suppress("UNCHECKED_CAST")
+                        override fun <T : ViewModel> create(
+                            modelClass: Class<T>,
+                            extras: CreationExtras,
+                        ): T =
+                            DefaultBanksComponent(
+                                paymentMethodType = paymentMethodType,
+                                redirectComposer = resolve(name = paymentMethodType),
+                                getBanksDelegate = resolve(),
+                                eventLoggingDelegate =
+                                    resolve(
+                                        name = paymentMethodType,
+                                    ),
+                                errorLoggingDelegate = resolve(name = paymentMethodType),
+                                validationErrorLoggingDelegate = resolve(PaymentMethodType.ADYEN_IDEAL.name),
+                                errorMapperRegistry = resolve(),
+                                savedStateHandle =
+                                    runCatching {
+                                        extras.createSavedStateHandle()
+                                    }.getOrDefault(SavedStateHandle()),
+                                onFinished = onFinished,
+                            ) as T
+                    },
+            )[DefaultBanksComponent::class.java]
 
         viewModel.addCloseable {
             getSdkContainer().unregisterContainer<RpcContainer>()

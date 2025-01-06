@@ -7,7 +7,6 @@ import io.primer.android.paymentmethods.common.data.model.PaymentMethodType
 import java.util.UUID
 
 internal class NolPayError(override val errorCode: String, errorMessage: String?) : PrimerError() {
-
     override val errorId = "nol-pay-sdk-error"
     override val description = "Nol SDK encountered an error $errorCode. $errorMessage"
     override val diagnosticsId = UUID.randomUUID().toString()

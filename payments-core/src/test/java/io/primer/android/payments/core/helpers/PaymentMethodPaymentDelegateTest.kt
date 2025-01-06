@@ -11,21 +11,20 @@ import io.mockk.spyk
 import io.mockk.verify
 import io.primer.android.PrimerSessionIntent
 import io.primer.android.domain.error.models.PrimerError
+import io.primer.android.domain.payments.create.model.Payment
+import io.primer.android.domain.tokenization.models.PrimerPaymentMethodTokenData
 import io.primer.android.errors.domain.BaseErrorResolver
 import io.primer.android.payments.core.create.data.model.PaymentStatus
 import io.primer.android.payments.core.create.domain.handler.PaymentMethodTokenHandler
-import io.primer.android.domain.payments.create.model.Payment
 import io.primer.android.payments.core.create.domain.model.PaymentDecision
 import io.primer.android.payments.core.errors.domain.model.PaymentError
 import io.primer.android.payments.core.resume.domain.handler.PaymentResumeHandler
-import io.primer.android.domain.tokenization.models.PrimerPaymentMethodTokenData
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 internal class PaymentMethodPaymentDelegateTest {
-
     private lateinit var paymentMethodTokenHandler: PaymentMethodTokenHandler
     private lateinit var resumePaymentHandler: PaymentResumeHandler
     private lateinit var successHandler: CheckoutSuccessHandler
@@ -42,20 +41,24 @@ internal class PaymentMethodPaymentDelegateTest {
         errorHandler = mockk()
         baseErrorResolver = mockk()
 
-        paymentMethodPaymentDelegate = spyk(
-            object : PaymentMethodPaymentDelegate(
-                paymentMethodTokenHandler = paymentMethodTokenHandler,
-                resumePaymentHandler = resumePaymentHandler,
-                successHandler = successHandler,
-                errorHandler = errorHandler,
-                baseErrorResolver = baseErrorResolver
-            ) {
-                override suspend fun handleNewClientToken(clientToken: String, payment: Payment?): Result<Unit> {
-                    // Mock implementation for testing
-                    return Result.success(Unit)
-                }
-            }
-        )
+        paymentMethodPaymentDelegate =
+            spyk(
+                object : PaymentMethodPaymentDelegate(
+                    paymentMethodTokenHandler = paymentMethodTokenHandler,
+                    resumePaymentHandler = resumePaymentHandler,
+                    successHandler = successHandler,
+                    errorHandler = errorHandler,
+                    baseErrorResolver = baseErrorResolver,
+                ) {
+                    override suspend fun handleNewClientToken(
+                        clientToken: String,
+                        payment: Payment?,
+                    ): Result<Unit> {
+                        // Mock implementation for testing
+                        return Result.success(Unit)
+                    }
+                },
+            )
     }
 
     @AfterEach

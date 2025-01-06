@@ -52,10 +52,11 @@ class PrimerStripeOptionsTest {
     fun `should read publishable key from parcel when createFromParcel() is called`() {
         val publishableKey = "pk"
         val mandateData = PrimerStripeOptions.MandateData.FullMandateData(0)
-        val parcel = mockk<Parcel>(relaxed = true) {
-            every { readString() } returns publishableKey
-            every { readParcelable<Parcelable>() } returns mandateData
-        }
+        val parcel =
+            mockk<Parcel>(relaxed = true) {
+                every { readString() } returns publishableKey
+                every { readParcelable<Parcelable>() } returns mandateData
+            }
 
         val options = PrimerStripeOptions.CREATOR.createFromParcel(parcel)
 

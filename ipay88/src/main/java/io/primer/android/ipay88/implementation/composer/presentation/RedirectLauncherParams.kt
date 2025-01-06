@@ -21,5 +21,5 @@ internal data class RedirectLauncherParams(
     val deeplinkUrl: String,
     val errorCode: Int,
     val paymentMethodType: String,
-    val sessionIntent: PrimerSessionIntent
+    val sessionIntent: PrimerSessionIntent,
 ) : InitialLauncherParams

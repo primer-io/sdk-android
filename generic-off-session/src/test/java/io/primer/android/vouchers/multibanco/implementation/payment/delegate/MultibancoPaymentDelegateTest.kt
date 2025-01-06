@@ -50,126 +50,133 @@ class MultibancoPaymentDelegateTest {
         baseErrorResolver = mockk()
         resumeHandler = mockk()
 
-        multibancoPaymentDelegate = MultibancoPaymentDelegate(
-            paymentMethodTokenHandler,
-            resumePaymentHandler,
-            config,
-            successHandler,
-            manualFlowSuccessHandler,
-            pendingResumeHandler,
-            errorHandler,
-            baseErrorResolver,
-            resumeHandler
-        )
-    }
-
-    @Test
-    fun `handleNewClientToken should handle token and return success when in auto payment mode`() = runTest {
-        // Arrange
-        every { config.settings.paymentHandling } returns PrimerPaymentHandling.AUTO
-        val clientToken = "client_token"
-        val payment = mockk<Payment>()
-        val decision = mockk<MultibancoDecision> {
-            every { expiresAt } returns "expires_at"
-            every { reference } returns "reference"
-            every { entity } returns "entity"
-        }
-        val result = Result.success(decision)
-
-        coEvery { resumeHandler.continueWithNewClientToken(clientToken) } returns result
-        coEvery { successHandler.handle(payment, any()) } just Runs
-
-        // Act
-        val handleNewClientTokenResult = multibancoPaymentDelegate.handleNewClientToken(clientToken, payment)
-
-        // Assert
-        assertTrue(handleNewClientTokenResult.isSuccess)
-        coVerify {
-            successHandler.handle(
-                payment = payment,
-                additionalInfo = MultibancoCheckoutAdditionalInfo("expires_at", "reference", "entity")
+        multibancoPaymentDelegate =
+            MultibancoPaymentDelegate(
+                paymentMethodTokenHandler,
+                resumePaymentHandler,
+                config,
+                successHandler,
+                manualFlowSuccessHandler,
+                pendingResumeHandler,
+                errorHandler,
+                baseErrorResolver,
+                resumeHandler,
             )
-        }
-        verify { config.settings.paymentHandling }
-        coVerify(exactly = 0) {
-            manualFlowSuccessHandler.handle(any())
-            pendingResumeHandler.handle(any())
-        }
     }
 
     @Test
-    fun `handleNewClientToken should handle token and return failure when in auto payment mode`() = runTest {
-        // Arrange
-        val clientToken = "client_token"
-        val payment = mockk<Payment>()
-        val exception = Exception("An error occurred")
-        val result = Result.failure<MultibancoDecision>(exception)
+    fun `handleNewClientToken should handle token and return success when in auto payment mode`() =
+        runTest {
+            // Arrange
+            every { config.settings.paymentHandling } returns PrimerPaymentHandling.AUTO
+            val clientToken = "client_token"
+            val payment = mockk<Payment>()
+            val decision =
+                mockk<MultibancoDecision> {
+                    every { expiresAt } returns "expires_at"
+                    every { reference } returns "reference"
+                    every { entity } returns "entity"
+                }
+            val result = Result.success(decision)
 
-        coEvery { resumeHandler.continueWithNewClientToken(clientToken) } returns result
+            coEvery { resumeHandler.continueWithNewClientToken(clientToken) } returns result
+            coEvery { successHandler.handle(payment, any()) } just Runs
 
-        // Act
-        val handleNewClientTokenResult = multibancoPaymentDelegate.handleNewClientToken(clientToken, payment)
+            // Act
+            val handleNewClientTokenResult = multibancoPaymentDelegate.handleNewClientToken(clientToken, payment)
 
-        // Assert
-        assertTrue(handleNewClientTokenResult.isFailure)
-        coVerify(exactly = 0) {
-            successHandler.handle(any(), any())
-            manualFlowSuccessHandler.handle(any())
-            pendingResumeHandler.handle(any())
+            // Assert
+            assertTrue(handleNewClientTokenResult.isSuccess)
+            coVerify {
+                successHandler.handle(
+                    payment = payment,
+                    additionalInfo = MultibancoCheckoutAdditionalInfo("expires_at", "reference", "entity"),
+                )
+            }
+            verify { config.settings.paymentHandling }
+            coVerify(exactly = 0) {
+                manualFlowSuccessHandler.handle(any())
+                pendingResumeHandler.handle(any())
+            }
         }
-        verify(exactly = 0) { config.settings.paymentHandling }
-    }
 
     @Test
-    fun `handleNewClientToken should handle token and return success when in manual payment mode`() = runTest {
-        // Arrange
-        every { config.settings.paymentHandling } returns PrimerPaymentHandling.MANUAL
-        val clientToken = "client_token"
-        val payment = mockk<Payment>()
-        val decision = mockk<MultibancoDecision> {
-            every { expiresAt } returns "expires_at"
-            every { reference } returns "reference"
-            every { entity } returns "entity"
+    fun `handleNewClientToken should handle token and return failure when in auto payment mode`() =
+        runTest {
+            // Arrange
+            val clientToken = "client_token"
+            val payment = mockk<Payment>()
+            val exception = Exception("An error occurred")
+            val result = Result.failure<MultibancoDecision>(exception)
+
+            coEvery { resumeHandler.continueWithNewClientToken(clientToken) } returns result
+
+            // Act
+            val handleNewClientTokenResult = multibancoPaymentDelegate.handleNewClientToken(clientToken, payment)
+
+            // Assert
+            assertTrue(handleNewClientTokenResult.isFailure)
+            coVerify(exactly = 0) {
+                successHandler.handle(any(), any())
+                manualFlowSuccessHandler.handle(any())
+                pendingResumeHandler.handle(any())
+            }
+            verify(exactly = 0) { config.settings.paymentHandling }
         }
-        val result = Result.success(decision)
-
-        coEvery { resumeHandler.continueWithNewClientToken(clientToken) } returns result
-        coEvery { manualFlowSuccessHandler.handle(any()) } just Runs
-        coEvery { pendingResumeHandler.handle(any()) } returns mockk()
-
-        // Act
-        val handleNewClientTokenResult = multibancoPaymentDelegate.handleNewClientToken(clientToken, payment)
-
-        // Assert
-        assertTrue(handleNewClientTokenResult.isSuccess)
-        coVerify {
-            manualFlowSuccessHandler.handle(MultibancoCheckoutAdditionalInfo("expires_at", "reference", "entity"))
-            pendingResumeHandler.handle(MultibancoCheckoutAdditionalInfo("expires_at", "reference", "entity"))
-        }
-        coVerify(exactly = 0) { successHandler.handle(any(), any()) }
-        verify { config.settings.paymentHandling }
-    }
 
     @Test
-    fun `handleNewClientToken should handle token and return failure when in manual payment mode`() = runTest {
-        // Arrange
-        val clientToken = "client_token"
-        val payment = mockk<Payment>()
-        val exception = Exception("An error occurred")
-        val result = Result.failure<MultibancoDecision>(exception)
+    fun `handleNewClientToken should handle token and return success when in manual payment mode`() =
+        runTest {
+            // Arrange
+            every { config.settings.paymentHandling } returns PrimerPaymentHandling.MANUAL
+            val clientToken = "client_token"
+            val payment = mockk<Payment>()
+            val decision =
+                mockk<MultibancoDecision> {
+                    every { expiresAt } returns "expires_at"
+                    every { reference } returns "reference"
+                    every { entity } returns "entity"
+                }
+            val result = Result.success(decision)
 
-        coEvery { resumeHandler.continueWithNewClientToken(clientToken) } returns result
+            coEvery { resumeHandler.continueWithNewClientToken(clientToken) } returns result
+            coEvery { manualFlowSuccessHandler.handle(any()) } just Runs
+            coEvery { pendingResumeHandler.handle(any()) } returns mockk()
 
-        // Act
-        val handleNewClientTokenResult = multibancoPaymentDelegate.handleNewClientToken(clientToken, payment)
+            // Act
+            val handleNewClientTokenResult = multibancoPaymentDelegate.handleNewClientToken(clientToken, payment)
 
-        // Assert
-        assertTrue(handleNewClientTokenResult.isFailure)
-        coVerify(exactly = 0) {
-            successHandler.handle(any(), any())
-            manualFlowSuccessHandler.handle(any())
-            pendingResumeHandler.handle(any())
+            // Assert
+            assertTrue(handleNewClientTokenResult.isSuccess)
+            coVerify {
+                manualFlowSuccessHandler.handle(MultibancoCheckoutAdditionalInfo("expires_at", "reference", "entity"))
+                pendingResumeHandler.handle(MultibancoCheckoutAdditionalInfo("expires_at", "reference", "entity"))
+            }
+            coVerify(exactly = 0) { successHandler.handle(any(), any()) }
+            verify { config.settings.paymentHandling }
         }
-        verify(exactly = 0) { config.settings.paymentHandling }
-    }
+
+    @Test
+    fun `handleNewClientToken should handle token and return failure when in manual payment mode`() =
+        runTest {
+            // Arrange
+            val clientToken = "client_token"
+            val payment = mockk<Payment>()
+            val exception = Exception("An error occurred")
+            val result = Result.failure<MultibancoDecision>(exception)
+
+            coEvery { resumeHandler.continueWithNewClientToken(clientToken) } returns result
+
+            // Act
+            val handleNewClientTokenResult = multibancoPaymentDelegate.handleNewClientToken(clientToken, payment)
+
+            // Assert
+            assertTrue(handleNewClientTokenResult.isFailure)
+            coVerify(exactly = 0) {
+                successHandler.handle(any(), any())
+                manualFlowSuccessHandler.handle(any())
+                pendingResumeHandler.handle(any())
+            }
+            verify(exactly = 0) { config.settings.paymentHandling }
+        }
 }

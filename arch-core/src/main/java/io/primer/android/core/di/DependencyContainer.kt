@@ -3,7 +3,6 @@ package io.primer.android.core.di
 import kotlin.reflect.KClass
 
 abstract class DependencyContainer {
-
     data class Key(val name: String, val type: KClass<*>)
 
     abstract fun registerInitialDependencies()
@@ -14,7 +13,10 @@ abstract class DependencyContainer {
         dependencies[Key(T::class.java.name, T::class)] = lazy(factory)
     }
 
-    inline fun <reified T : Any> registerSingleton(name: String, noinline factory: () -> T) {
+    inline fun <reified T : Any> registerSingleton(
+        name: String,
+        noinline factory: () -> T,
+    ) {
         dependencies[Key(name, T::class)] = lazy(factory)
     }
 
@@ -22,7 +24,10 @@ abstract class DependencyContainer {
         dependencies[Key(T::class.java.name, T::class)] = factory
     }
 
-    inline fun <reified T : Any> registerFactory(name: String, noinline factory: () -> T) {
+    inline fun <reified T : Any> registerFactory(
+        name: String,
+        noinline factory: () -> T,
+    ) {
         dependencies[Key(name, T::class)] = factory
     }
 

@@ -6,23 +6,28 @@ package io.primer.android.paymentmethods
  * availability can be evaluated when necessary. See [PaymentMethodChecker].
  */
 interface PaymentMethodCheckerRegistry {
-
     val checkers: Map<String, PaymentMethodChecker>
 
-    fun register(id: String, checker: PaymentMethodChecker)
+    fun register(
+        id: String,
+        checker: PaymentMethodChecker,
+    )
+
     fun unregister(id: String)
 
     operator fun get(id: String): PaymentMethodChecker? = checkers[id]
 }
 
 object PrimerPaymentMethodCheckerRegistry : PaymentMethodCheckerRegistry {
-
     private val _checkers: MutableMap<String, PaymentMethodChecker> =
         mutableMapOf()
     override val checkers: Map<String, PaymentMethodChecker>
         get() = _checkers
 
-    override fun register(id: String, checker: PaymentMethodChecker) {
+    override fun register(
+        id: String,
+        checker: PaymentMethodChecker,
+    ) {
         _checkers[id] = checker
     }
 

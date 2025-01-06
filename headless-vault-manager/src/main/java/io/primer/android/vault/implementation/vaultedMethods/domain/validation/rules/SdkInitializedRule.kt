@@ -12,7 +12,7 @@ internal class SdkInitializedRule(private val configurationRepository: Configura
             configurationRepository.getConfiguration()
         }.fold(
             { ValidationResult.Success },
-            { ValidationResult.Failure(SdkUninitializedException()) }
+            { ValidationResult.Failure(SdkUninitializedException()) },
         )
     }
 }

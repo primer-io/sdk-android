@@ -4,7 +4,6 @@ import io.primer.android.payments.core.tokenization.data.model.PaymentMethodToke
 import io.primer.android.payments.core.tokenization.domain.repository.TokenizedPaymentMethodRepository
 
 internal class TokenizedPaymentMethodDataRepository : TokenizedPaymentMethodRepository {
-
     private lateinit var paymentMethodTokenInternal: PaymentMethodTokenInternal
 
     override fun getPaymentMethod() = paymentMethodTokenInternal

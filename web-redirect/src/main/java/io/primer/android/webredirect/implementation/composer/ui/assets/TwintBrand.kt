@@ -4,7 +4,6 @@ import io.primer.android.assets.ui.model.Brand
 import io.primer.android.webredirect.R
 
 internal class TwintBrand : Brand {
-
     override val iconResId: Int
         get() = R.drawable.ic_logo_twint
     override val logoResId: Int

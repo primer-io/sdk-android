@@ -9,8 +9,10 @@ import io.primer.android.paymentmethods.core.composer.provider.PaymentMethodComp
 import io.primer.android.payments.core.helpers.PaymentMethodPaymentDelegate
 
 internal class CardComposerProviderFactory : PaymentMethodComposerProvider.Factory {
-
-    override fun create(paymentMethodType: String, sessionIntent: PrimerSessionIntent): PaymentMethodComposer {
+    override fun create(
+        paymentMethodType: String,
+        sessionIntent: PrimerSessionIntent,
+    ): PaymentMethodComposer {
         return CardComponent(
             tokenizationDelegate = resolve(),
             paymentDelegate = resolve<PaymentMethodPaymentDelegate>(name = paymentMethodType) as CardPaymentDelegate,
@@ -18,7 +20,7 @@ internal class CardComposerProviderFactory : PaymentMethodComposerProvider.Facto
             cardDataMetadataStateRetriever = resolve(),
             cardInputDataValidator = resolve(name = paymentMethodType),
             sdkAnalyticsEventLoggingDelegate = resolve(name = paymentMethodType),
-            mockConfigurationDelegate = resolve()
+            mockConfigurationDelegate = resolve(),
         )
     }
 }

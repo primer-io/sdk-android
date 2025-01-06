@@ -1,6 +1,7 @@
 package io.primer.android.nolpay.implementation.paymentCard.payment.delegate
 
 import io.primer.android.core.extensions.mapSuspendCatching
+import io.primer.android.domain.payments.create.model.Payment
 import io.primer.android.errors.domain.BaseErrorResolver
 import io.primer.android.nolpay.api.manager.payment.composable.NolPayPaymentCollectableData
 import io.primer.android.nolpay.api.manager.payment.composable.NolPayPaymentStep
@@ -13,7 +14,6 @@ import io.primer.android.nolpay.implementation.paymentCard.payment.resume.handle
 import io.primer.android.paymentmethods.common.data.model.PaymentMethodType
 import io.primer.android.paymentmethods.manager.composable.PrimerHeadlessSteppable
 import io.primer.android.payments.core.create.domain.handler.PaymentMethodTokenHandler
-import io.primer.android.domain.payments.create.model.Payment
 import io.primer.android.payments.core.helpers.CheckoutErrorHandler
 import io.primer.android.payments.core.helpers.CheckoutSuccessHandler
 import io.primer.android.payments.core.helpers.PaymentMethodPaymentDelegate
@@ -36,22 +36,24 @@ internal class NolPayPaymentDelegate(
     successHandler: CheckoutSuccessHandler,
     errorHandler: CheckoutErrorHandler,
     baseErrorResolver: BaseErrorResolver,
-    private val resumeHandler: NolPayResumeHandler
+    private val resumeHandler: NolPayResumeHandler,
 ) : PaymentMethodPaymentDelegate(
-    paymentMethodTokenHandler,
-    resumePaymentHandler,
-    successHandler,
-    errorHandler,
-    baseErrorResolver
-),
+        paymentMethodTokenHandler,
+        resumePaymentHandler,
+        successHandler,
+        errorHandler,
+        baseErrorResolver,
+    ),
     PrimerHeadlessSteppable<NolPayPaymentStep> {
-
     private lateinit var resumeDecision: NolPayResumeDecision
 
     private val _componentStep: MutableSharedFlow<NolPayPaymentStep> = MutableSharedFlow()
     override val componentStep: Flow<NolPayPaymentStep> = _componentStep
 
-    override suspend fun handleNewClientToken(clientToken: String, payment: Payment?): Result<Unit> {
+    override suspend fun handleNewClientToken(
+        clientToken: String,
+        payment: Payment?,
+    ): Result<Unit> {
         return resumeHandler.continueWithNewClientToken(clientToken)
             .mapSuspendCatching { decision ->
                 resumeDecision = decision
@@ -59,21 +61,20 @@ internal class NolPayPaymentDelegate(
             }
     }
 
-    internal suspend fun requestPayment(
-        collectedData: NolPayPaymentCollectableData.NolPayTagData
-    ) = requestPaymentInteractor(
-        NolPayRequestPaymentParams(
-            tag = collectedData.tag,
-            transactionNo = resumeDecision.transactionNumber
+    internal suspend fun requestPayment(collectedData: NolPayPaymentCollectableData.NolPayTagData) =
+        requestPaymentInteractor(
+            NolPayRequestPaymentParams(
+                tag = collectedData.tag,
+                transactionNo = resumeDecision.transactionNumber,
+            ),
         )
-    )
 
     @OptIn(ExperimentalCoroutinesApi::class)
     internal suspend fun completePayment() =
         completePaymentInteractor(NolPayCompletePaymentParams(resumeDecision.completeUrl))
             .mapSuspendCatching {
                 pollingInteractor(
-                    AsyncStatusParams(url = resumeDecision.statusUrl, PaymentMethodType.NOL_PAY.name)
+                    AsyncStatusParams(url = resumeDecision.statusUrl, PaymentMethodType.NOL_PAY.name),
                 ).mapLatest { status ->
                     resumePayment(status.resumeToken)
                 }.catch { throwable ->

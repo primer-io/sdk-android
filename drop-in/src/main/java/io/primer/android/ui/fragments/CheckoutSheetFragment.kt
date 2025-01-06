@@ -30,19 +30,20 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 internal class CheckoutSheetFragment :
     BottomSheetDialogFragment(),
     DISdkComponent {
-
     companion object {
-
         @JvmStatic
         fun newInstance() = CheckoutSheetFragment()
     }
 
     private val theme: PrimerTheme by inject()
     private val viewModel: PrimerViewModel by
-    activityViewModel<PrimerViewModel, PrimerViewModelFactory>()
+        activityViewModel<PrimerViewModel, PrimerViewModelFactory>()
 
     @SuppressLint("RestrictedApi")
-    override fun setupDialog(dialog: Dialog, style: Int) {
+    override fun setupDialog(
+        dialog: Dialog,
+        style: Int,
+    ) {
         super.setupDialog(dialog, style)
         (dialog as ComponentDialog).onBackPressedDispatcher.addCallback(this, true) {
             val canGoBack = childFragmentManager.backStackEntryCount > 0
@@ -52,7 +53,7 @@ internal class CheckoutSheetFragment :
                     /*
                     Remove all fragments which aren't tied to a back stack entry so that they don't cause visual
                     artifacts.
-                    */
+                     */
                     childFragmentManager.fragments.forEach(::remove)
                 }
                 childFragmentManager.popBackStackImmediate()
@@ -66,10 +67,13 @@ internal class CheckoutSheetFragment :
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View = inflater.inflate(R.layout.fragment_bottom_sheet, container, false)
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onViewCreated(
+        view: View,
+        savedInstanceState: Bundle?,
+    ) {
         super.onViewCreated(view, savedInstanceState)
 
         ViewCompat.setOnApplyWindowInsetsListener(view.rootView) { _, insets ->
@@ -115,18 +119,19 @@ internal class CheckoutSheetFragment :
         }
     }
 
-    private val disableBackPressedCallback = object : OnBackPressedCallback(true) {
-        override fun handleOnBackPressed() {
-            // Do nothing
+    private val disableBackPressedCallback =
+        object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                // Do nothing
+            }
         }
-    }
 
     fun disableDismiss(disabled: Boolean) {
         (dialog as? ComponentDialog)?.apply {
             if (disabled) {
                 onBackPressedDispatcher.addCallback(
                     this,
-                    disableBackPressedCallback
+                    disableBackPressedCallback,
                 )
             } else {
                 disableBackPressedCallback.remove()

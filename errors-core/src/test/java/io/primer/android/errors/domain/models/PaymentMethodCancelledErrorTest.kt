@@ -8,7 +8,6 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
 internal class PaymentMethodCancelledErrorTest {
-
     @Test
     fun `should create PaymentMethodCancelledError with correct properties`() {
         // Arrange
@@ -21,7 +20,7 @@ internal class PaymentMethodCancelledErrorTest {
         assertEquals("payment-cancelled", error.errorId)
         assertEquals(
             "Vaulting/Checking out for $paymentMethodType was cancelled by the user.",
-            error.description
+            error.description,
         )
         assertNotNull(error.diagnosticsId)
         assertTrue(error.diagnosticsId.isNotBlank())

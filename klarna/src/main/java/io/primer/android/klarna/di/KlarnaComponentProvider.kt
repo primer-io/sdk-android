@@ -12,10 +12,9 @@ import io.primer.android.klarna.api.component.KlarnaComponent
 import io.primer.android.paymentmethods.common.data.model.PaymentMethodType
 
 internal class KlarnaComponentProvider : DISdkComponent {
-
     fun provideInstance(
         owner: ViewModelStoreOwner,
-        primerSessionIntent: PrimerSessionIntent
+        primerSessionIntent: PrimerSessionIntent,
     ): KlarnaComponent {
         return ViewModelProvider(
             owner,
@@ -23,7 +22,7 @@ internal class KlarnaComponentProvider : DISdkComponent {
                 @Suppress("UNCHECKED_CAST")
                 override fun <T : ViewModel> create(
                     modelClass: Class<T>,
-                    extras: CreationExtras
+                    extras: CreationExtras,
                 ): T {
                     val paymentMethodType = PaymentMethodType.KLARNA.name
                     return KlarnaComponent(
@@ -41,14 +40,14 @@ internal class KlarnaComponentProvider : DISdkComponent {
                                 context = context,
                                 category = paymentCategory,
                                 callback = callback,
-                                returnURL = returnUrl
+                                returnURL = returnUrl,
                             )
                         },
                         primerSettings = resolve(),
-                        primerSessionIntent = primerSessionIntent
+                        primerSessionIntent = primerSessionIntent,
                     ) as T
                 }
-            }
+            },
         )[KlarnaComponent::class.java]
     }
 }

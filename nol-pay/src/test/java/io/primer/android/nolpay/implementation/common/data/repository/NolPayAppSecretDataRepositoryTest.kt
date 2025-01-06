@@ -22,7 +22,6 @@ import org.junit.jupiter.api.extension.ExtendWith
 @ExperimentalCoroutinesApi
 @ExtendWith(MockKExtension::class)
 internal class NolPayAppSecretDataRepositoryTest {
-
     private lateinit var repository: NolPayAppSecretDataRepository
     private val configurationDataSource: CacheConfigurationDataSource = mockk()
     private val nolPaySecretDataSource: RemoteNolPaySecretDataSource = mockk()
@@ -33,39 +32,42 @@ internal class NolPayAppSecretDataRepositoryTest {
     }
 
     @Test
-    fun `getAppSecret should return sdkSecret from NolPaySecretDataSource`() = runTest {
-        // Given
-        val sdkId = "testSdkId"
-        val appId = "testAppId"
-        val url = "https://example.com"
-        val sdkSecret = "testSdkSecret"
-        val manufacturer = "Samsung"
-        val model = "S20"
+    fun `getAppSecret should return sdkSecret from NolPaySecretDataSource`() =
+        runTest {
+            // Given
+            val sdkId = "testSdkId"
+            val appId = "testAppId"
+            val url = "https://example.com"
+            val sdkSecret = "testSdkSecret"
+            val manufacturer = "Samsung"
+            val model = "S20"
 
-        modifyClassProperty<Build>("MANUFACTURER", manufacturer)
-        modifyClassProperty<Build>("MODEL", model)
+            modifyClassProperty<Build>("MANUFACTURER", manufacturer)
+            modifyClassProperty<Build>("MODEL", model)
 
-        val configuration = mockk<ConfigurationData>(relaxed = true) {
-            every { coreUrl } returns url
+            val configuration =
+                mockk<ConfigurationData>(relaxed = true) {
+                    every { coreUrl } returns url
+                }
+            val requestData =
+                NolPaySecretDataRequest(
+                    sdkId = sdkId,
+                    appId = appId,
+                    deviceVendor = manufacturer,
+                    deviceModel = model,
+                )
+            val request = BaseRemoteHostRequest(url, requestData)
+            val expectedResponse = NolPaySecretDataResponse(sdkSecret)
+
+            coEvery { configurationDataSource.get() } returns configuration
+            coEvery { nolPaySecretDataSource.execute(request) } returns expectedResponse
+
+            // When
+            val result = repository.getAppSecret(sdkId, appId).getOrThrow()
+
+            // Then
+            assertEquals(sdkSecret, result)
+            coVerify(exactly = 1) { configurationDataSource.get() }
+            coVerify(exactly = 1) { nolPaySecretDataSource.execute(request) }
         }
-        val requestData = NolPaySecretDataRequest(
-            sdkId = sdkId,
-            appId = appId,
-            deviceVendor = manufacturer,
-            deviceModel = model
-        )
-        val request = BaseRemoteHostRequest(url, requestData)
-        val expectedResponse = NolPaySecretDataResponse(sdkSecret)
-
-        coEvery { configurationDataSource.get() } returns configuration
-        coEvery { nolPaySecretDataSource.execute(request) } returns expectedResponse
-
-        // When
-        val result = repository.getAppSecret(sdkId, appId).getOrThrow()
-
-        // Then
-        assertEquals(sdkSecret, result)
-        coVerify(exactly = 1) { configurationDataSource.get() }
-        coVerify(exactly = 1) { nolPaySecretDataSource.execute(request) }
-    }
 }

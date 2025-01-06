@@ -13,33 +13,36 @@ import org.junit.jupiter.api.extension.ExtendWith
 class WhitelistedKeyBuilderTest {
     @Test
     fun `whitelistedKeys returns the same keys that are used in the building block`() {
-        val result = whitelistedKeys {
-            nonPrimitiveKey("sessionData") {
-                primitiveKey("description")
-                nonPrimitiveKey("orderLines") {
-                    primitiveKey("type")
-                    primitiveKey("name")
+        val result =
+            whitelistedKeys {
+                nonPrimitiveKey("sessionData") {
+                    primitiveKey("description")
+                    nonPrimitiveKey("orderLines") {
+                        primitiveKey("type")
+                        primitiveKey("name")
+                    }
                 }
             }
-        }
 
         assertEquals(
             listOf(
                 WhitelistedKey.NonPrimitiveWhitelistedKey(
                     value = "sessionData",
-                    children = listOf(
-                        WhitelistedKey.PrimitiveWhitelistedKey(value = "description"),
-                        WhitelistedKey.NonPrimitiveWhitelistedKey(
-                            value = "orderLines",
-                            children = listOf(
-                                WhitelistedKey.PrimitiveWhitelistedKey(value = "type"),
-                                WhitelistedKey.PrimitiveWhitelistedKey(value = "name")
-                            )
-                        )
-                    )
-                )
+                    children =
+                        listOf(
+                            WhitelistedKey.PrimitiveWhitelistedKey(value = "description"),
+                            WhitelistedKey.NonPrimitiveWhitelistedKey(
+                                value = "orderLines",
+                                children =
+                                    listOf(
+                                        WhitelistedKey.PrimitiveWhitelistedKey(value = "type"),
+                                        WhitelistedKey.PrimitiveWhitelistedKey(value = "name"),
+                                    ),
+                            ),
+                        ),
+                ),
             ),
-            result
+            result,
         )
     }
 }

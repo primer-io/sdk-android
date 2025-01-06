@@ -40,7 +40,7 @@ internal class DefaultBanksComponent(
     private val validationErrorLoggingDelegate: SdkAnalyticsValidationErrorLoggingDelegate,
     private val errorMapperRegistry: ErrorMapperRegistry,
     private val savedStateHandle: SavedStateHandle,
-    private val onFinished: () -> Unit
+    private val onFinished: () -> Unit,
 ) : ViewModel(), BanksComponent {
     @VisibleForTesting
     var banks: List<IssuingBank>? = null
@@ -79,7 +79,7 @@ internal class DefaultBanksComponent(
             launch {
                 eventLoggingDelegate.logSdkAnalyticsEvent(
                     methodName = BanksAnalyticsConstants.BANKS_START_METHOD,
-                    paymentMethodType = paymentMethodType
+                    paymentMethodType = paymentMethodType,
                 )
             }
             launch {
@@ -92,7 +92,7 @@ internal class DefaultBanksComponent(
         viewModelScope.launch {
             eventLoggingDelegate.logSdkAnalyticsEvent(
                 methodName = BanksAnalyticsConstants.BANKS_COLLECTED_DATA_METHOD,
-                paymentMethodType = paymentMethodType
+                paymentMethodType = paymentMethodType,
             )
         }
         onCollectableDataUpdated(collectedData)
@@ -102,18 +102,19 @@ internal class DefaultBanksComponent(
         viewModelScope.launch {
             eventLoggingDelegate.logSdkAnalyticsEvent(
                 methodName = BanksAnalyticsConstants.BANKS_SUBMIT_DATA_METHOD,
-                paymentMethodType = paymentMethodType
+                paymentMethodType = paymentMethodType,
             )
 
             runSuspendCatching {
                 requireNotNullCheck(value = bankId, key = BanksIllegalValueKey.BANK_ID)
             }.flatMap { bankId ->
                 redirectComposer.startPaymentFlow(
-                    inputable = BankIssuerTokenizationInputable(
-                        paymentMethodType = paymentMethodType,
-                        primerSessionIntent = PrimerSessionIntent.CHECKOUT,
-                        bankIssuer = bankId
-                    )
+                    inputable =
+                        BankIssuerTokenizationInputable(
+                            paymentMethodType = paymentMethodType,
+                            primerSessionIntent = PrimerSessionIntent.CHECKOUT,
+                            bankIssuer = bankId,
+                        ),
                 )
             }
                 .onSuccess { onFinished() }
@@ -134,19 +135,19 @@ internal class DefaultBanksComponent(
 
     private suspend fun onCollectFilter(filter: BanksCollectableData.Filter) {
         _componentValidationStatus.emit(
-            PrimerValidationStatus.Validating(collectableData = filter)
+            PrimerValidationStatus.Validating(collectableData = filter),
         )
         if (banks == null) {
             validationErrorLoggingDelegate.logSdkAnalyticsError(banksNotLoadedPrimerValidationError)
             _componentValidationStatus.emit(
                 PrimerValidationStatus.Invalid(
                     validationErrors = listOf(banksNotLoadedPrimerValidationError),
-                    collectableData = filter
-                )
+                    collectableData = filter,
+                ),
             )
         } else {
             _componentValidationStatus.emit(
-                PrimerValidationStatus.Valid(collectableData = filter)
+                PrimerValidationStatus.Valid(collectableData = filter),
             )
             getBanks(query = filter.text)
         }
@@ -154,36 +155,38 @@ internal class DefaultBanksComponent(
 
     private suspend fun onCollectBankId(bankId: BanksCollectableData.BankId) {
         _componentValidationStatus.emit(
-            PrimerValidationStatus.Validating(collectableData = bankId)
+            PrimerValidationStatus.Validating(collectableData = bankId),
         )
 
         val banks = this.banks
 
-        val validationError = BankIdValidator.validate(
-            banks = banks,
-            bankId = bankId.id
-        )
+        val validationError =
+            BankIdValidator.validate(
+                banks = banks,
+                bankId = bankId.id,
+            )
 
         _componentValidationStatus.emit(
             if (validationError != null) {
                 validationErrorLoggingDelegate.logSdkAnalyticsError(validationError)
                 PrimerValidationStatus.Invalid(
                     validationErrors = listOf(validationError),
-                    collectableData = bankId
+                    collectableData = bankId,
                 )
             } else {
                 this.bankId = bankId.id
                 PrimerValidationStatus.Valid(collectableData = bankId)
-            }
+            },
         )
     }
 
-    private fun handleError(throwable: Throwable) = viewModelScope.launch {
-        errorMapperRegistry.getPrimerError(throwable)
-            .also { error ->
-                _componentError.emit(error)
-                errorLoggingDelegate.logSdkAnalyticsErrors(error = error)
-            }
-    }
+    private fun handleError(throwable: Throwable) =
+        viewModelScope.launch {
+            errorMapperRegistry.getPrimerError(throwable)
+                .also { error ->
+                    _componentError.emit(error)
+                    errorLoggingDelegate.logSdkAnalyticsErrors(error = error)
+                }
+        }
     // endregion
 }

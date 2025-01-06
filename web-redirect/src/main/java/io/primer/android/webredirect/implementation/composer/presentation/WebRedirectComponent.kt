@@ -2,14 +2,14 @@ package io.primer.android.webredirect.implementation.composer.presentation
 
 import androidx.annotation.VisibleForTesting
 import io.primer.android.PrimerSessionIntent
-import io.primer.android.webRedirectShared.implementation.composer.presentation.BaseWebRedirectComposer
-import io.primer.android.webRedirectShared.implementation.composer.presentation.WebRedirectLauncherParams
 import io.primer.android.core.extensions.flatMap
 import io.primer.android.errors.data.exception.PaymentMethodCancelledException
 import io.primer.android.paymentmethods.core.composer.InternalNativeUiPaymentMethodComponent
 import io.primer.android.paymentmethods.core.composer.composable.ComposerUiEvent
 import io.primer.android.payments.core.status.domain.AsyncPaymentMethodPollingInteractor
 import io.primer.android.payments.core.status.domain.model.AsyncStatusParams
+import io.primer.android.webRedirectShared.implementation.composer.presentation.BaseWebRedirectComposer
+import io.primer.android.webRedirectShared.implementation.composer.presentation.WebRedirectLauncherParams
 import io.primer.android.webredirect.implementation.payment.presentation.delegate.presentation.WebRedirectPaymentDelegate
 import io.primer.android.webredirect.implementation.tokenization.presentation.WebRedirectTokenizationDelegate
 import io.primer.android.webredirect.implementation.tokenization.presentation.model.WebRedirectTokenizationInputable
@@ -26,15 +26,20 @@ import kotlinx.coroutines.launch
 internal class WebRedirectComponent(
     private val tokenizationDelegate: WebRedirectTokenizationDelegate,
     private val pollingInteractor: AsyncPaymentMethodPollingInteractor,
-    private val paymentDelegate: WebRedirectPaymentDelegate
+    private val paymentDelegate: WebRedirectPaymentDelegate,
 ) : InternalNativeUiPaymentMethodComponent(),
     BaseWebRedirectComposer {
     override val scope: CoroutineScope
         get() = composerScope
+
+    @Suppress("ktlint:standard:property-naming")
     override val _uiEvent: MutableSharedFlow<ComposerUiEvent> = MutableSharedFlow()
     override val uiEvent: SharedFlow<ComposerUiEvent> = _uiEvent
 
-    override fun start(paymentMethodType: String, primerSessionIntent: PrimerSessionIntent) {
+    override fun start(
+        paymentMethodType: String,
+        primerSessionIntent: PrimerSessionIntent,
+    ) {
         this.paymentMethodType = paymentMethodType
         this.primerSessionIntent = primerSessionIntent
         composerScope.launch {
@@ -49,8 +54,8 @@ internal class WebRedirectComponent(
         composerScope.launch {
             paymentDelegate.handleError(
                 PaymentMethodCancelledException(
-                    params.paymentMethodType
-                )
+                    params.paymentMethodType,
+                ),
             )
         }
     }
@@ -61,29 +66,31 @@ internal class WebRedirectComponent(
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
-    internal fun startPolling(statusUrl: String, paymentMethodType: String) =
-        composerScope.launch {
-            pollingInteractor.execute(
-                AsyncStatusParams(statusUrl, paymentMethodType)
-            ).mapLatest { status ->
-                paymentDelegate.resumePayment(status.resumeToken)
-            }.catch {
-                paymentDelegate.handleError(it)
-            }.collect()
-        }
+    internal fun startPolling(
+        statusUrl: String,
+        paymentMethodType: String,
+    ) = composerScope.launch {
+        pollingInteractor.execute(
+            AsyncStatusParams(statusUrl, paymentMethodType),
+        ).mapLatest { status ->
+            paymentDelegate.resumePayment(status.resumeToken)
+        }.catch {
+            paymentDelegate.handleError(it)
+        }.collect()
+    }
 
     private fun tokenize(paymentMethodType: String) =
         composerScope.launch {
             tokenizationDelegate.tokenize(
                 WebRedirectTokenizationInputable(
                     paymentMethodType = paymentMethodType,
-                    primerSessionIntent = primerSessionIntent
-                )
+                    primerSessionIntent = primerSessionIntent,
+                ),
             )
                 .flatMap { paymentMethodTokenData ->
                     paymentDelegate.handlePaymentMethodToken(
                         paymentMethodTokenData = paymentMethodTokenData,
-                        primerSessionIntent = primerSessionIntent
+                        primerSessionIntent = primerSessionIntent,
                     )
                 }.onFailure { throwable ->
                     paymentDelegate.handleError(throwable)

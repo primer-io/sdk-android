@@ -2,8 +2,8 @@ package io.primer.android.vault.implementation.vaultedMethods.domain.validation.
 
 import io.mockk.MockKAnnotations
 import io.mockk.mockk
-import io.primer.android.vault.implementation.vaultedMethods.domain.PrimerVaultedPaymentMethodAdditionalData
 import io.primer.android.components.domain.payments.vault.model.card.PrimerVaultedCardAdditionalData
+import io.primer.android.vault.implementation.vaultedMethods.domain.PrimerVaultedPaymentMethodAdditionalData
 import io.primer.android.vault.implementation.vaultedMethods.domain.validation.additionalData.card.VaultedCardAdditionalDataValidator
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
@@ -12,7 +12,6 @@ import org.junit.jupiter.api.assertThrows
 import kotlin.test.assertEquals
 
 internal class VaultedPaymentMethodAdditionalDataValidatorRegistryTest {
-
     private lateinit var registry: VaultedPaymentMethodAdditionalDataValidatorRegistry
 
     @BeforeEach

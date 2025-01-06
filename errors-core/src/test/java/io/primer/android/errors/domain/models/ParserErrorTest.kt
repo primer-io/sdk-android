@@ -8,7 +8,6 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
 class ParserErrorTest {
-
     @Test
     fun `should create EncodeError with correct properties`() {
         // Arrange
@@ -24,7 +23,7 @@ class ParserErrorTest {
         assertTrue(error.diagnosticsId.isNotBlank())
         assertNull(error.errorCode)
         assertTrue(
-            error.exposedError.message.contains("Please contact us with diagnosticsId")
+            error.exposedError.message.contains("Please contact us with diagnosticsId"),
         )
         assertEquals("Check underlying message for more info.", error.recoverySuggestion)
     }
@@ -44,7 +43,7 @@ class ParserErrorTest {
         assertTrue(error.diagnosticsId.isNotBlank())
         assertNull(error.errorCode)
         assertTrue(
-            error.exposedError.message.contains("Please contact us with diagnosticsId")
+            error.exposedError.message.contains("Please contact us with diagnosticsId"),
         )
         assertEquals("Check underlying message for more info.", error.recoverySuggestion)
     }

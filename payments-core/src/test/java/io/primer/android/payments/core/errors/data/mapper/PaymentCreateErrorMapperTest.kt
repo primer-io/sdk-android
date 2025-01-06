@@ -12,7 +12,6 @@ import org.junit.jupiter.api.Test
 import kotlin.test.assertFailsWith
 
 class PaymentCreateErrorMapperTest {
-
     private val errorMapper = PaymentCreateErrorMapper()
 
     @Test
@@ -48,9 +47,10 @@ class PaymentCreateErrorMapperTest {
         val unsupportedException = Exception("Unsupported exception")
 
         // Act & Assert
-        val exception = assertFailsWith<IllegalArgumentException> {
-            errorMapper.getPrimerError(unsupportedException)
-        }
+        val exception =
+            assertFailsWith<IllegalArgumentException> {
+                errorMapper.getPrimerError(unsupportedException)
+            }
         assertTrue(exception.message!!.contains("Unsupported mapping for"))
     }
 }

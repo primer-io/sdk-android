@@ -24,7 +24,7 @@ import io.primer.android.displayMetadata.infrastructure.files.ImagesFileProvider
 class ConfigurationCoreContainer(private val sdk: () -> SdkContainer) : DependencyContainer() {
     override fun registerInitialDependencies() {
         registerSingleton<BaseCacheDataSource<ConfigurationData, ConfigurationData>>(
-            CACHED_CONFIGURATION_DI_KEY
+            CACHED_CONFIGURATION_DI_KEY,
         ) {
             LocalConfigurationDataSource()
         }
@@ -49,7 +49,7 @@ class ConfigurationCoreContainer(private val sdk: () -> SdkContainer) : Dependen
             RemoteConfigurationResourcesDataSource(
                 okHttpClient = sdk().resolve(IMAGE_LOADING_CLIENT_NAME),
                 imagesFileProvider = sdk().resolve(),
-                timerEventProvider = sdk().resolve(TIMER_PROPERTIES_PROVIDER_DI_KEY)
+                timerEventProvider = sdk().resolve(TIMER_PROPERTIES_PROVIDER_DI_KEY),
             )
         }
 
@@ -62,14 +62,14 @@ class ConfigurationCoreContainer(private val sdk: () -> SdkContainer) : Dependen
                 clientTokenProvider = sdk().resolve(CLIENT_TOKEN_PROVIDER_DI_KEY),
                 globalConfigurationCache = resolve(GLOBAL_CACHED_CONFIGURATION_DI_KEY),
                 logReporter = sdk().resolve(),
-                timerEventProvider = sdk().resolve(TIMER_PROPERTIES_PROVIDER_DI_KEY)
+                timerEventProvider = sdk().resolve(TIMER_PROPERTIES_PROVIDER_DI_KEY),
             )
         }
 
         registerSingleton<ConfigurationInteractor>(name = CONFIGURATION_INTERACTOR_DI_KEY) {
             DefaultConfigurationInteractor(
                 configurationRepository = resolve(),
-                logReporter = sdk.invoke().resolve()
+                logReporter = sdk.invoke().resolve(),
             )
         }
 
@@ -79,7 +79,6 @@ class ConfigurationCoreContainer(private val sdk: () -> SdkContainer) : Dependen
     }
 
     companion object {
-
         const val CACHED_CONFIGURATION_DI_KEY = "CACHED_CONFIGURATION"
         const val GLOBAL_CACHED_CONFIGURATION_DI_KEY = "GLOBAL_CACHED_CONFIGURATION"
         const val CONFIGURATION_URL_PROVIDER_DI_KEY = "CONFIGURATION_URL_PROVIDER"

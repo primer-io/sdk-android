@@ -8,7 +8,6 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
 class DefaultRedirectDeeplinkInteractorTest {
-
     @Test
     fun `execute should return the deeplink URL from the repository`() {
         // Arrange

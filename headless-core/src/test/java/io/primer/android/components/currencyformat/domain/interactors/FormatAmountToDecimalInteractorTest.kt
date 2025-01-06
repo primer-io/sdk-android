@@ -4,11 +4,11 @@ import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.junit5.MockKExtension
-import io.primer.android.data.settings.PrimerSettings
-import io.primer.android.data.settings.internal.MonetaryAmount
 import io.primer.android.components.currencyformat.domain.models.CurrencyFormat
 import io.primer.android.components.currencyformat.domain.models.FormatCurrencyParams
 import io.primer.android.components.currencyformat.domain.repository.CurrencyFormatRepository
+import io.primer.android.data.settings.PrimerSettings
+import io.primer.android.data.settings.internal.MonetaryAmount
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions
@@ -42,9 +42,9 @@ internal class FormatAmountToDecimalInteractorTest {
             listOf(
                 CurrencyFormat(
                     "EUR",
-                    2
-                )
-            )
+                    2,
+                ),
+            ),
         )
 
         runTest {

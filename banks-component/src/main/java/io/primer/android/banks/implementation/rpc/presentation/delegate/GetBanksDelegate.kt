@@ -14,7 +14,7 @@ internal class GetBanksDelegate(
     private val paymentMethodType: String,
     private val banksInteractor: BanksInteractor,
     private val banksFilterInteractor: BanksFilterInteractor,
-    private val configurationInteractor: BankIssuerConfigurationInteractor
+    private val configurationInteractor: BankIssuerConfigurationInteractor,
 ) {
     private var config: BankIssuerConfig? = null
 
@@ -27,8 +27,8 @@ internal class GetBanksDelegate(
                     IssuingBankParams(
                         paymentMethodConfigId = config.paymentMethodConfigId,
                         paymentMethod = paymentMethodType,
-                        locale = config.locale
-                    )
+                        locale = config.locale,
+                    ),
                 )
             }
         } else {

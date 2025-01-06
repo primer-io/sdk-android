@@ -9,7 +9,7 @@ internal typealias WebRedirectConfigurationInteractor =
     PaymentMethodConfigurationInteractor<WebRedirectConfig, WebRedirectConfigParams>
 
 internal class DefaultWebRedirectConfigurationInteractor(
-    configurationRepository: PaymentMethodConfigurationRepository<WebRedirectConfig, WebRedirectConfigParams>
+    configurationRepository: PaymentMethodConfigurationRepository<WebRedirectConfig, WebRedirectConfigParams>,
 ) : PaymentMethodConfigurationInteractor<WebRedirectConfig, WebRedirectConfigParams>(
-    configurationRepository
-)
+        configurationRepository,
+    )

@@ -1,7 +1,6 @@
 package io.primer.android.analytics.utils
 
 object RawDataManagerAnalyticsConstants {
-
     // PrimerHeadlessUniversalCheckoutRawDataManager
     const val NEW_INSTANCE_METHOD = "PrimerHeadlessUniversalCheckoutRawDataManager.newInstance"
     const val CONFIGURE_METHOD = "PrimerHeadlessUniversalCheckoutRawDataManager.configure"

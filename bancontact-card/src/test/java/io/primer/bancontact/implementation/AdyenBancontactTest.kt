@@ -21,7 +21,6 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 internal class AdyenBancontactTest {
-
     private val paymentMethodType = PaymentMethodType.ADYEN_BANCONTACT_CARD.name
     private lateinit var adyenBancontact: AdyenBancontact
     private lateinit var mockContext: Context
@@ -69,7 +68,7 @@ internal class AdyenBancontactTest {
         verify {
             mockPaymentMethodDescriptorFactoryRegistry.register(
                 paymentMethodType,
-                any<AdyenBancontactPaymentMethodDescriptorFactory>()
+                any<AdyenBancontactPaymentMethodDescriptorFactory>(),
             )
         }
     }
@@ -81,7 +80,7 @@ internal class AdyenBancontactTest {
         verify {
             mockPaymentMethodProviderFactoryRegistry.register(
                 paymentMethodType,
-                AdyenBancontactComposerProviderFactory::class.java
+                AdyenBancontactComposerProviderFactory::class.java,
             )
         }
     }
@@ -89,7 +88,7 @@ internal class AdyenBancontactTest {
     @Test
     fun `module registerSavedPaymentMethodProviderFactory does not perform any operations`() {
         adyenBancontact.module.registerSavedPaymentMethodProviderFactory(
-            mockVaultedPaymentMethodProviderFactoryRegistry
+            mockVaultedPaymentMethodProviderFactoryRegistry,
         )
         // no specific behavior to verify
     }

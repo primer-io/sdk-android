@@ -9,7 +9,6 @@ import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
 internal class NolPayUnlinkOtpDataValidatorTest {
-
     @Test
     fun `validate should return error for blank OTP code`() {
         val validator = NolPayUnlinkOtpDataValidator()

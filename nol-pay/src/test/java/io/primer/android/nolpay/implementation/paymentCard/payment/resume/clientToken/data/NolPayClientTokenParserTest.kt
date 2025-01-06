@@ -14,7 +14,6 @@ import org.junit.jupiter.api.Test
 import kotlin.test.assertFailsWith
 
 internal class NolPayClientTokenParserTest {
-
     @BeforeEach
     fun setUp() {
         mockkObject(NolPayClientTokenData.Companion)
@@ -30,18 +29,20 @@ internal class NolPayClientTokenParserTest {
     @Test
     fun `parseClientToken should correctly parse a valid client token string`() {
         // Given
-        val expectedClientTokenData = NolPayClientTokenData(
-            intent = "intent",
-            transactionNumber = "transactionNumber",
-            statusUrl = "https://example.com/status",
-            completeUrl = "https://example.com/complete"
-        )
-        val expectedClientToken = NolPayClientToken(
-            clientTokenIntent = expectedClientTokenData.intent,
-            transactionNumber = expectedClientTokenData.transactionNumber,
-            statusUrl = expectedClientTokenData.statusUrl,
-            completeUrl = expectedClientTokenData.completeUrl
-        )
+        val expectedClientTokenData =
+            NolPayClientTokenData(
+                intent = "intent",
+                transactionNumber = "transactionNumber",
+                statusUrl = "https://example.com/status",
+                completeUrl = "https://example.com/complete",
+            )
+        val expectedClientToken =
+            NolPayClientToken(
+                clientTokenIntent = expectedClientTokenData.intent,
+                transactionNumber = expectedClientTokenData.transactionNumber,
+                statusUrl = expectedClientTokenData.statusUrl,
+                completeUrl = expectedClientTokenData.completeUrl,
+            )
 
         val token = "eyJhY2Nlc3NUb2tlbiI6ICJ5b3VyX3Rva2VuX2hlcmUifQ=="
 

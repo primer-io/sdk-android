@@ -14,7 +14,6 @@ import org.junit.jupiter.api.Test
 import kotlin.test.assertFailsWith
 
 class GooglePayClientTokenParserTest {
-
     private val validEncodedString = "validEncodedString"
 
     @BeforeEach
@@ -40,10 +39,11 @@ class GooglePayClientTokenParserTest {
         val result = parser.parseClientToken(validEncodedString)
 
         // Then
-        val expected = GooglePayClientToken.GooglePayNative3DSClientToken(
-            "testIntent",
-            listOf("1.0", "2.0")
-        )
+        val expected =
+            GooglePayClientToken.GooglePayNative3DSClientToken(
+                "testIntent",
+                listOf("1.0", "2.0"),
+            )
         assertEquals(expected, result)
     }
 
@@ -54,7 +54,7 @@ class GooglePayClientTokenParserTest {
             GooglePayProcessor3DSClientTokenData(
                 intent = "testIntent",
                 statusUrl = "https://www.example.com/status",
-                redirectUrl = "https://www.example.com/redirect"
+                redirectUrl = "https://www.example.com/redirect",
             )
 
         val parser = GooglePayClientTokenParser()
@@ -63,13 +63,15 @@ class GooglePayClientTokenParserTest {
         val result = parser.parseClientToken(validEncodedString)
 
         // Then
-        val expected = GooglePayClientToken.GooglePayProcessor3DSClientToken(
-            clientTokenIntent = "testIntent",
-            processor3DS = Processor3DS(
-                statusUrl = "https://www.example.com/status",
-                redirectUrl = "https://www.example.com/redirect"
+        val expected =
+            GooglePayClientToken.GooglePayProcessor3DSClientToken(
+                clientTokenIntent = "testIntent",
+                processor3DS =
+                    Processor3DS(
+                        statusUrl = "https://www.example.com/status",
+                        redirectUrl = "https://www.example.com/redirect",
+                    ),
             )
-        )
         assertEquals(expected, result)
     }
 

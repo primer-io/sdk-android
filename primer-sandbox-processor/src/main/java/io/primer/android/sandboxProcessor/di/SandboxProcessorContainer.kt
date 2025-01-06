@@ -23,22 +23,21 @@ import io.primer.android.sandboxProcessor.implementation.tokenization.presentati
 
 internal class SandboxProcessorContainer(private val sdk: () -> SdkContainer, private val paymentMethodType: String) :
     DependencyContainer() {
-
     override fun registerInitialDependencies() {
         registerFactory(name = paymentMethodType) {
             PaymentMethodSdkAnalyticsEventLoggingDelegate(
                 primerPaymentMethodManagerCategory =
-                PrimerPaymentMethodManagerCategory.NATIVE_UI.name,
-                analyticsInteractor = sdk().resolve()
+                    PrimerPaymentMethodManagerCategory.NATIVE_UI.name,
+                analyticsInteractor = sdk().resolve(),
             )
         }
 
         registerFactory<PaymentMethodConfigurationRepository<SandboxProcessorConfig, SandboxProcessorConfigParams>>(
-            name = paymentMethodType
+            name = paymentMethodType,
         ) {
             SandboxProcessorConfigurationDataRepository(
                 configurationDataSource = sdk().resolve(ConfigurationCoreContainer.CACHED_CONFIGURATION_DI_KEY),
-                settings = sdk().resolve()
+                settings = sdk().resolve(),
             )
         }
 
@@ -47,7 +46,7 @@ internal class SandboxProcessorContainer(private val sdk: () -> SdkContainer, pr
         }
 
         registerFactory<BaseRemoteTokenizationDataSource<SandboxProcessorPaymentInstrumentDataRequest>>(
-            name = paymentMethodType
+            name = paymentMethodType,
         ) {
             SandboxProcessorRemoteTokenizationDataSource(primerHttpClient = sdk().resolve())
         }
@@ -56,21 +55,22 @@ internal class SandboxProcessorContainer(private val sdk: () -> SdkContainer, pr
 
         registerFactory<ProcessorTestTokenizationInteractor>(name = paymentMethodType) {
             DefaultProcessorTestTokenizationInteractor(
-                tokenizationRepository = SandboxProcessorTokenizationDataRepository(
-                    remoteTokenizationDataSource = sdk().resolve(paymentMethodType),
-                    configurationDataSource = sdk().resolve(ConfigurationCoreContainer.CACHED_CONFIGURATION_DI_KEY),
-                    tokenizationParamsMapper = resolve()
-                ),
+                tokenizationRepository =
+                    SandboxProcessorTokenizationDataRepository(
+                        remoteTokenizationDataSource = sdk().resolve(paymentMethodType),
+                        configurationDataSource = sdk().resolve(ConfigurationCoreContainer.CACHED_CONFIGURATION_DI_KEY),
+                        tokenizationParamsMapper = resolve(),
+                    ),
                 tokenizedPaymentMethodRepository = sdk().resolve(),
                 preTokenizationHandler = sdk().resolve(),
-                logReporter = sdk().resolve()
+                logReporter = sdk().resolve(),
             )
         }
 
         registerFactory {
             SandboxProcessorTokenizationDelegate(
                 configurationInteractor = resolve(name = paymentMethodType),
-                tokenizationInteractor = resolve(name = paymentMethodType)
+                tokenizationInteractor = resolve(name = paymentMethodType),
             )
         }
 
@@ -81,7 +81,7 @@ internal class SandboxProcessorContainer(private val sdk: () -> SdkContainer, pr
                 successHandler = sdk().resolve(),
                 errorHandler = sdk().resolve(),
                 baseErrorResolver = sdk().resolve(),
-                tokenizedPaymentMethodRepository = sdk().resolve()
+                tokenizedPaymentMethodRepository = sdk().resolve(),
             )
         }
     }

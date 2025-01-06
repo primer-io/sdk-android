@@ -4,15 +4,14 @@ import com.ipay.IPayIH
 import io.mockk.MockKAnnotations
 import io.mockk.impl.annotations.MockK
 import io.primer.android.components.domain.core.models.PrimerPaymentMethodManagerCategory
-import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.configuration.data.model.PaymentMethodConfigDataResponse
+import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.paymentmethods.VaultCapability
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 internal class IPay88PaymentMethodDescriptorTest {
-
     @MockK
     private lateinit var options: IPay88PaymentMethod
 

@@ -5,6 +5,5 @@ import io.primer.android.payments.core.tokenization.domain.model.TokenizationPar
 import io.primer.android.payments.core.tokenization.domain.model.paymentInstruments.BasePaymentInstrumentParams
 
 fun interface TokenizationRepository<T : BasePaymentInstrumentParams> {
-
     suspend fun tokenize(params: TokenizationParams<T>): Result<PaymentMethodTokenInternal>
 }

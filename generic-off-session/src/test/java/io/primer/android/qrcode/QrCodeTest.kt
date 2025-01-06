@@ -18,7 +18,6 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 internal class QrCodeTest {
-
     private val paymentMethodType = "qrCode"
     private lateinit var qrCode: QrCode
     private lateinit var mockContext: Context
@@ -66,7 +65,7 @@ internal class QrCodeTest {
         verify {
             mockPaymentMethodDescriptorFactoryRegistry.register(
                 paymentMethodType,
-                any<QrCodeDescriptorFactory>()
+                any<QrCodeDescriptorFactory>(),
             )
         }
     }
@@ -78,7 +77,7 @@ internal class QrCodeTest {
         verify {
             mockPaymentMethodProviderFactoryRegistry.register(
                 paymentMethodType,
-                QrCodeComposerProviderFactory::class.java
+                QrCodeComposerProviderFactory::class.java,
             )
         }
     }

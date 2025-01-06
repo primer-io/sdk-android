@@ -1,12 +1,12 @@
 package io.primer.android.ipay88.implementation.payment.resume.handler
 
 import io.primer.android.PrimerSessionIntent
-import io.primer.android.data.settings.internal.MonetaryAmount
 import io.primer.android.clientToken.core.token.domain.repository.ClientTokenRepository
 import io.primer.android.clientToken.core.validation.domain.repository.ValidateClientTokenRepository
 import io.primer.android.configuration.domain.repository.ConfigurationRepository
 import io.primer.android.core.domain.validation.ValidationResult
 import io.primer.android.core.utils.BaseDataWithInputProvider
+import io.primer.android.data.settings.internal.MonetaryAmount
 import io.primer.android.errors.data.exception.IllegalClientSessionValueException
 import io.primer.android.ipay88.implementation.deeplink.domain.repository.IPay88DeeplinkRepository
 import io.primer.android.ipay88.implementation.payment.resume.clientToken.data.IPay88ClientTokenParser
@@ -36,7 +36,7 @@ internal data class IPay88Decision(
     val deeplinkUrl: String,
     val errorCode: Int,
     val paymentMethodType: String,
-    val sessionIntent: PrimerSessionIntent
+    val sessionIntent: PrimerSessionIntent,
 ) : PaymentMethodResumeDecision
 
 internal class IPay88ResumeHandler(
@@ -48,14 +48,13 @@ internal class IPay88ResumeHandler(
     validateClientTokenRepository: ValidateClientTokenRepository,
     private val formattedAmountProvider: BaseDataWithInputProvider<MonetaryAmount, String>,
     clientTokenRepository: ClientTokenRepository,
-    checkoutAdditionalInfoHandler: CheckoutAdditionalInfoHandler
+    checkoutAdditionalInfoHandler: CheckoutAdditionalInfoHandler,
 ) : PrimerResumeDecisionHandlerV2<IPay88Decision, IPay88ClientToken>(
-    clientTokenRepository = clientTokenRepository,
-    validateClientTokenRepository = validateClientTokenRepository,
-    clientTokenParser = clientTokenParser,
-    checkoutAdditionalInfoHandler = checkoutAdditionalInfoHandler
-) {
-
+        clientTokenRepository = clientTokenRepository,
+        validateClientTokenRepository = validateClientTokenRepository,
+        clientTokenParser = clientTokenParser,
+        checkoutAdditionalInfoHandler = checkoutAdditionalInfoHandler,
+    ) {
     override val supportedClientTokenIntents: () -> List<String> = {
         listOf(tokenizedPaymentMethodRepository.getPaymentMethod().paymentMethodType.orEmpty())
             .map { paymentMethodType -> "${paymentMethodType}_REDIRECTION" }
@@ -66,10 +65,11 @@ internal class IPay88ResumeHandler(
         iPay88ValidationRulesResolver.resolve().rules.map {
             it.validate(
                 IPay88ValidationData(
-                    clientSession = configurationRepository.getConfiguration().clientSession
-                        .clientSessionDataResponse.toClientSessionData(),
-                    clientToken = clientToken
-                )
+                    clientSession =
+                        configurationRepository.getConfiguration().clientSession
+                            .clientSessionDataResponse.toClientSessionData(),
+                    clientToken = clientToken,
+                ),
             )
         }.filterIsInstance<ValidationResult.Failure>().forEach {
             throw it.exception
@@ -79,19 +79,21 @@ internal class IPay88ResumeHandler(
         val order =
             requireNotNull(configurationRepository.getConfiguration().clientSession.clientSessionDataResponse.order)
 
-        val amount = MonetaryAmount.create(
-            order.currencyCode,
-            order.currentAmount
-        )
+        val amount =
+            MonetaryAmount.create(
+                order.currencyCode,
+                order.currentAmount,
+            )
 
         val amountString = amount?.let { formattedAmountProvider.provide(input = amount) }.orEmpty()
 
         val paymentMethodType = tokenizedPaymentMethodRepository.getPaymentMethod().paymentMethodType
-        val merchantId = requireNotNull(
-            configurationRepository.getConfiguration().paymentMethods.first { paymentMethodConfig ->
-                paymentMethodConfig.type == paymentMethodType
-            }.options?.merchantId
-        )
+        val merchantId =
+            requireNotNull(
+                configurationRepository.getConfiguration().paymentMethods.first { paymentMethodConfig ->
+                    paymentMethodConfig.type == paymentMethodType
+                }.options?.merchantId,
+            )
 
         return IPay88Decision(
             statusUrl = clientToken.statusUrl,
@@ -111,12 +113,11 @@ internal class IPay88ResumeHandler(
             deeplinkUrl = iPay88DeeplinkRepository.getDeeplinkUrl(),
             errorCode = RESULT_ERROR_CODE,
             paymentMethodType = tokenizedPaymentMethodRepository.getPaymentMethod().paymentMethodType.orEmpty(),
-            sessionIntent = PrimerSessionIntent.CHECKOUT
+            sessionIntent = PrimerSessionIntent.CHECKOUT,
         )
     }
 
     companion object {
-
         const val RESULT_ERROR_CODE = 1234
     }
 }

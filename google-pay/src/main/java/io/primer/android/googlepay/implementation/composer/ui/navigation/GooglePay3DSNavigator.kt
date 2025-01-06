@@ -12,35 +12,35 @@ import io.primer.paymentMethodCoreUi.core.ui.navigation.launchers.PaymentMethodR
 
 internal data class GooglePayNative3DSActivityLauncherParams(
     override val paymentMethodType: String,
-    val supportedThreeDsVersions: List<String>
+    val supportedThreeDsVersions: List<String>,
 ) : PaymentMethodRedirectLauncherParams(
-    paymentMethodType,
-    PrimerSessionIntent.CHECKOUT
-)
+        paymentMethodType,
+        PrimerSessionIntent.CHECKOUT,
+    )
 
 internal data class GooglePayProcessor3DSActivityLauncherParams(
     override val paymentMethodType: String,
     val redirectUrl: String,
     val statusUrl: String,
-    val title: String
+    val title: String,
 ) : PaymentMethodRedirectLauncherParams(
-    paymentMethodType,
-    PrimerSessionIntent.CHECKOUT
-)
+        paymentMethodType,
+        PrimerSessionIntent.CHECKOUT,
+    )
 
 internal data class GooglePay3DSNavigator(
     private val context: Activity,
-    override val launcher: ActivityResultLauncher<Intent>
+    override val launcher: ActivityResultLauncher<Intent>,
 ) : StartActivityForResultNavigator<GooglePayNative3DSActivityLauncherParams>(launcher) {
-
     override fun navigate(params: GooglePayNative3DSActivityLauncherParams) {
         launcher.launch(
             ThreeDsActivity.getLaunchIntent(
                 context = context,
-                params = ThreeDsActivityLauncherParams(
-                    supportedThreeDsProtocolVersions = params.supportedThreeDsVersions
-                )
-            )
+                params =
+                    ThreeDsActivityLauncherParams(
+                        supportedThreeDsProtocolVersions = params.supportedThreeDsVersions,
+                    ),
+            ),
         )
     }
 

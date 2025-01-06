@@ -6,9 +6,8 @@ import io.primer.android.paymentmethods.common.utils.Constants
 import io.primer.android.webRedirectShared.implementation.deeplink.domain.repository.RedirectDeeplinkRepository
 
 class RedirectDeeplinkDataRepository(
-    private val applicationIdProvider: BaseDataProvider<String>
+    private val applicationIdProvider: BaseDataProvider<String>,
 ) : RedirectDeeplinkRepository {
-
     override fun getDeeplinkUrl(): String {
         return Uri.Builder()
             .scheme(Constants.PRIMER_REDIRECT_SCHEMA)

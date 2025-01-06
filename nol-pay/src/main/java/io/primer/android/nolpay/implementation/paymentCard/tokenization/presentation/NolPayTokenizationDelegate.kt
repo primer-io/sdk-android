@@ -15,28 +15,29 @@ import io.primer.android.phoneMetadata.domain.model.PhoneMetadataParams
 internal class NolPayTokenizationDelegate(
     private val phoneMetadataInteractor: PhoneMetadataInteractor,
     private val configurationInteractor: NolPayConfigurationInteractor,
-    tokenizationInteractor: NolPayTokenizationInteractor
+    tokenizationInteractor: NolPayTokenizationInteractor,
 ) : PaymentMethodTokenizationDelegate<NolPayTokenizationInputable, NolPayPaymentInstrumentParams>(
-    tokenizationInteractor
-),
+        tokenizationInteractor,
+    ),
     TokenizationCollectedDataMapper<NolPayTokenizationInputable, NolPayPaymentInstrumentParams> {
-
-    override suspend fun mapTokenizationData(input: NolPayTokenizationInputable):
-        Result<TokenizationParams<NolPayPaymentInstrumentParams>> = configurationInteractor(
-        NolPayConfigParams(paymentMethodType = input.paymentMethodType)
-    ).zipWith(
-        phoneMetadataInteractor(PhoneMetadataParams(input.mobileNumber))
-    ) { configuration, phoneMetadata ->
-        TokenizationParams(
-            NolPayPaymentInstrumentParams(
-                paymentMethodType = input.paymentMethodType,
-                paymentMethodConfigId = configuration.paymentMethodConfigId,
-                locale = configuration.locale,
-                mobileCountryCode = phoneMetadata.countryCode,
-                mobileNumber = phoneMetadata.nationalNumber,
-                nolPayCardNumber = input.nolPayCardNumber
-            ),
-            input.primerSessionIntent
-        )
-    }
+    override suspend fun mapTokenizationData(
+        input: NolPayTokenizationInputable,
+    ): Result<TokenizationParams<NolPayPaymentInstrumentParams>> =
+        configurationInteractor(
+            NolPayConfigParams(paymentMethodType = input.paymentMethodType),
+        ).zipWith(
+            phoneMetadataInteractor(PhoneMetadataParams(input.mobileNumber)),
+        ) { configuration, phoneMetadata ->
+            TokenizationParams(
+                NolPayPaymentInstrumentParams(
+                    paymentMethodType = input.paymentMethodType,
+                    paymentMethodConfigId = configuration.paymentMethodConfigId,
+                    locale = configuration.locale,
+                    mobileCountryCode = phoneMetadata.countryCode,
+                    mobileNumber = phoneMetadata.nationalNumber,
+                    nolPayCardNumber = input.nolPayCardNumber,
+                ),
+                input.primerSessionIntent,
+            )
+        }
 }

@@ -5,5 +5,5 @@ import io.primer.android.threeds.helpers.ProtocolVersion
 
 internal data class ThreeDsAuthParams(
     val environment: Environment,
-    val protocolVersions: List<ProtocolVersion>
+    val protocolVersions: List<ProtocolVersion>,
 )

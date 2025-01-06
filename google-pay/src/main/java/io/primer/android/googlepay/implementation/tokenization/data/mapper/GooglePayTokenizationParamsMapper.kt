@@ -12,23 +12,25 @@ import org.json.JSONObject
 
 internal class GooglePayTokenizationParamsMapper :
     TokenizationParamsMapper<GooglePayPaymentInstrumentParams, GooglePayPaymentInstrumentDataRequest> {
-    override fun map(params: TokenizationParams<GooglePayPaymentInstrumentParams>):
-        TokenizationRequestV2<GooglePayPaymentInstrumentDataRequest> {
-        val token = JSONObject(params.paymentInstrumentParams.paymentData.toJson())
-            .getJSONObject(PAYMENT_METHOD_DATA_FIELD)
-            .getJSONObject(TOKENIZATION_DATA_FIELD)
-            .getString(TOKENIZATION_FIELD)
-        val instrumentDataRequest = GooglePayPaymentInstrumentDataRequest(
-            params.paymentInstrumentParams.merchantId,
-            Base64.encodeToString(token.toByteArray(), Base64.NO_WRAP),
-            params.paymentInstrumentParams.flow
-        )
+    override fun map(
+        params: TokenizationParams<GooglePayPaymentInstrumentParams>,
+    ): TokenizationRequestV2<GooglePayPaymentInstrumentDataRequest> {
+        val token =
+            JSONObject(params.paymentInstrumentParams.paymentData.toJson())
+                .getJSONObject(PAYMENT_METHOD_DATA_FIELD)
+                .getJSONObject(TOKENIZATION_DATA_FIELD)
+                .getString(TOKENIZATION_FIELD)
+        val instrumentDataRequest =
+            GooglePayPaymentInstrumentDataRequest(
+                params.paymentInstrumentParams.merchantId,
+                Base64.encodeToString(token.toByteArray(), Base64.NO_WRAP),
+                params.paymentInstrumentParams.flow,
+            )
         return instrumentDataRequest.toTokenizationRequest(params.sessionIntent)
     }
 
     @VisibleForTesting
     internal companion object {
-
         const val PAYMENT_METHOD_DATA_FIELD = "paymentMethodData"
         const val TOKENIZATION_DATA_FIELD = "tokenizationData"
         const val TOKENIZATION_FIELD = "token"

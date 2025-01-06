@@ -9,15 +9,14 @@ import kotlinx.coroutines.Dispatchers
 
 internal class NolPayUnlinkPaymentCardInteractor(
     private val nolPay: PrimerNolPay,
-    override val dispatcher: CoroutineDispatcher = Dispatchers.IO
+    override val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : BaseSuspendInteractor<Boolean, NolPayUnlinkCardParams>() {
-
     override suspend fun performAction(params: NolPayUnlinkCardParams): Result<Boolean> =
         runSuspendCatching {
             nolPay.unlinkPaymentCard(
                 params.cardNumber,
                 params.otpCode,
-                params.unlinkToken
+                params.unlinkToken,
             )
         }
 }

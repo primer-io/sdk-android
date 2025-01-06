@@ -10,10 +10,9 @@ internal data class NolPaySessionInfoDataRequest(
     private val nolPayCardNumber: String,
     val deviceVendor: String,
     val deviceModel: String,
-    val platform: String = "ANDROID"
+    val platform: String = "ANDROID",
 ) : JSONObjectSerializable {
     companion object {
-
         private const val PLATFORM_FIELD = "platform"
         private const val MOBILE_COUNTRY_CODE_FIELD = "mobileCountryCode"
         private const val MOBILE_NUMBER_FIELD = "mobileNumber"
@@ -22,15 +21,16 @@ internal data class NolPaySessionInfoDataRequest(
         private const val PHONE_MODEL_FIELD = "phoneModel"
 
         @JvmField
-        val serializer = JSONObjectSerializer<NolPaySessionInfoDataRequest> { t ->
-            JSONObject().apply {
-                put(PLATFORM_FIELD, t.platform)
-                put(MOBILE_COUNTRY_CODE_FIELD, t.mobileCountryCode)
-                put(MOBILE_NUMBER_FIELD, t.mobileNumber)
-                put(CARD_NUMBER_FIELD, t.nolPayCardNumber)
-                put(PHONE_VENDOR_FIELD, t.deviceVendor)
-                put(PHONE_MODEL_FIELD, t.deviceModel)
+        val serializer =
+            JSONObjectSerializer<NolPaySessionInfoDataRequest> { t ->
+                JSONObject().apply {
+                    put(PLATFORM_FIELD, t.platform)
+                    put(MOBILE_COUNTRY_CODE_FIELD, t.mobileCountryCode)
+                    put(MOBILE_NUMBER_FIELD, t.mobileNumber)
+                    put(CARD_NUMBER_FIELD, t.nolPayCardNumber)
+                    put(PHONE_VENDOR_FIELD, t.deviceVendor)
+                    put(PHONE_MODEL_FIELD, t.deviceModel)
+                }
             }
-        }
     }
 }

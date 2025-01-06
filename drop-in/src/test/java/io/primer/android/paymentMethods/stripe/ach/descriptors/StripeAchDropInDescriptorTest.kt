@@ -43,12 +43,14 @@ class StripeAchDropInDescriptorTest {
         assertNull(descriptor.loadingState)
     }
 
-    private fun createDescriptor(isStandalonePaymentMethod: Boolean = false) = StripeAchDropInDescriptor(
-        paymentMethodType = paymentMethodType,
-        uiOptions = UiOptions(
-            isStandalonePaymentMethod = isStandalonePaymentMethod,
-            isInitScreenEnabled = false,
-            isDarkMode = null
+    private fun createDescriptor(isStandalonePaymentMethod: Boolean = false) =
+        StripeAchDropInDescriptor(
+            paymentMethodType = paymentMethodType,
+            uiOptions =
+                UiOptions(
+                    isStandalonePaymentMethod = isStandalonePaymentMethod,
+                    isInitScreenEnabled = false,
+                    isDarkMode = null,
+                ),
         )
-    )
 }

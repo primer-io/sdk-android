@@ -47,78 +47,82 @@ internal class WebRedirectLoggingDelegateTest {
         delegate =
             WebRedirectLoggingDelegate(
                 logReporter = logReporter,
-                analyticsInteractor = analyticsInteractor
+                analyticsInteractor = analyticsInteractor,
             )
     }
 
     @Test
-    fun `logError() logs error via log reporter and analytics interactor when called`() = runTest {
-        val error = mockk<PrimerError> {
-            every { errorId } returns "errorId"
-            every { description } returns "description"
-            every { diagnosticsId } returns "diagnosticsId"
-        }
-        coEvery { analyticsInteractor(any()) } returns Result.success(Unit)
-        every { logReporter.error(any()) } just Runs
+    fun `logError() logs error via log reporter and analytics interactor when called`() =
+        runTest {
+            val error =
+                mockk<PrimerError> {
+                    every { errorId } returns "errorId"
+                    every { description } returns "description"
+                    every { diagnosticsId } returns "diagnosticsId"
+                }
+            coEvery { analyticsInteractor(any()) } returns Result.success(Unit)
+            every { logReporter.error(any()) } just Runs
 
-        delegate.logError(error = error, paymentMethodType = paymentMethodType)
+            delegate.logError(error = error, paymentMethodType = paymentMethodType)
 
-        coVerify(exactly = 1) {
-            analyticsInteractor(
-                MessageAnalyticsParams(
-                    messageType = MessageType.ERROR,
-                    message = "$paymentMethodType: description",
-                    severity = Severity.ERROR,
-                    diagnosticsId = "diagnosticsId",
-                    context = ErrorContextParams(
-                        errorId = "errorId",
-                        paymentMethodType = paymentMethodType
-                    )
+            coVerify(exactly = 1) {
+                analyticsInteractor(
+                    MessageAnalyticsParams(
+                        messageType = MessageType.ERROR,
+                        message = "$paymentMethodType: description",
+                        severity = Severity.ERROR,
+                        diagnosticsId = "diagnosticsId",
+                        context =
+                            ErrorContextParams(
+                                errorId = "errorId",
+                                paymentMethodType = paymentMethodType,
+                            ),
+                    ),
                 )
-            )
-            logReporter.error("description")
+                logReporter.error("description")
+            }
         }
-    }
 
     @ParameterizedTest
     @MethodSource("provideSteps")
-    fun `logStep() logs steps via log reporter and analytics interactor when called`(
-        step: WebRedirectStep
-    ) = runTest {
-        mockkStatic(UUID::class)
-        every { UUID.randomUUID().toString() } returns "uuid"
-        coEvery { analyticsInteractor(any()) } returns Result.success(Unit)
-        every { logReporter.info(any()) } just Runs
+    fun `logStep() logs steps via log reporter and analytics interactor when called`(step: WebRedirectStep) =
+        runTest {
+            mockkStatic(UUID::class)
+            every { UUID.randomUUID().toString() } returns "uuid"
+            coEvery { analyticsInteractor(any()) } returns Result.success(Unit)
+            every { logReporter.info(any()) } just Runs
 
-        delegate.logStep(webRedirectStep = step, paymentMethodType = paymentMethodType)
+            delegate.logStep(webRedirectStep = step, paymentMethodType = paymentMethodType)
 
-        val message = when (step) {
-            WebRedirectStep.Loading -> "Web redirect is loading for '$paymentMethodType'"
-            WebRedirectStep.Loaded -> "Web redirect has loaded for '$paymentMethodType'"
-            WebRedirectStep.Dismissed -> "Payment for '$paymentMethodType' was dismissed by user"
-            WebRedirectStep.Success -> "Payment for '$paymentMethodType' was successful"
-        }
-        coVerify(exactly = 1) {
-            analyticsInteractor(
-                MessageAnalyticsParams(
-                    messageType = MessageType.INFO,
-                    message = message,
-                    severity = Severity.INFO,
-                    diagnosticsId = "uuid"
+            val message =
+                when (step) {
+                    WebRedirectStep.Loading -> "Web redirect is loading for '$paymentMethodType'"
+                    WebRedirectStep.Loaded -> "Web redirect has loaded for '$paymentMethodType'"
+                    WebRedirectStep.Dismissed -> "Payment for '$paymentMethodType' was dismissed by user"
+                    WebRedirectStep.Success -> "Payment for '$paymentMethodType' was successful"
+                }
+            coVerify(exactly = 1) {
+                analyticsInteractor(
+                    MessageAnalyticsParams(
+                        messageType = MessageType.INFO,
+                        message = message,
+                        severity = Severity.INFO,
+                        diagnosticsId = "uuid",
+                    ),
                 )
-            )
-            logReporter.info(message)
+                logReporter.info(message)
+            }
+            unmockkStatic(UUID::class)
         }
-        unmockkStatic(UUID::class)
-    }
 
     companion object {
         @JvmStatic
-        fun provideSteps() = listOf(
-            WebRedirectStep.Loading,
-            WebRedirectStep.Loaded,
-            WebRedirectStep.Success,
-            WebRedirectStep.Dismissed
-        ).map { Arguments.of(it) }
+        fun provideSteps() =
+            listOf(
+                WebRedirectStep.Loading,
+                WebRedirectStep.Loaded,
+                WebRedirectStep.Success,
+                WebRedirectStep.Dismissed,
+            ).map { Arguments.of(it) }
     }
 }

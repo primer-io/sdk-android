@@ -12,13 +12,15 @@ import kotlin.time.Duration
 @ExperimentalCoroutinesApi
 suspend fun <T> Flow<T>.toListDuring(
     duration: Duration,
-    dispatcher: TestDispatcher = UnconfinedTestDispatcher()
-): List<T> = coroutineScope {
-    val result = mutableListOf<T>()
-    val job = launch(dispatcher) {
-        this@toListDuring.collect(result::add)
+    dispatcher: TestDispatcher = UnconfinedTestDispatcher(),
+): List<T> =
+    coroutineScope {
+        val result = mutableListOf<T>()
+        val job =
+            launch(dispatcher) {
+                this@toListDuring.collect(result::add)
+            }
+        delay(duration)
+        job.cancel()
+        return@coroutineScope result
     }
-    delay(duration)
-    job.cancel()
-    return@coroutineScope result
-}

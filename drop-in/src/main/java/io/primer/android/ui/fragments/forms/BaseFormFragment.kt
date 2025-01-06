@@ -27,7 +27,6 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 @ExperimentalCoroutinesApi
 internal abstract class BaseFormFragment : Fragment(), DISdkComponent {
-
     protected val theme: PrimerTheme by inject()
     protected abstract val baseFormBinding: BaseFormBinding
 
@@ -35,7 +34,10 @@ internal abstract class BaseFormFragment : Fragment(), DISdkComponent {
 
     protected val viewModel: FormsViewModel by viewModel<FormsViewModel, FormsViewModelFactory>()
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onViewCreated(
+        view: View,
+        savedInstanceState: Bundle?,
+    ) {
         super.onViewCreated(view, savedInstanceState)
         logAnalyticsViewed()
 
@@ -43,7 +45,7 @@ internal abstract class BaseFormFragment : Fragment(), DISdkComponent {
             setupForm(form)
         }
         viewModel.getForms(
-            primerViewModel.selectedPaymentMethod.value?.paymentMethodType.orEmpty()
+            primerViewModel.selectedPaymentMethod.value?.paymentMethodType.orEmpty(),
         )
     }
 
@@ -52,8 +54,8 @@ internal abstract class BaseFormFragment : Fragment(), DISdkComponent {
         backIcon.setColorFilter(
             theme.titleText.defaultColor.getColor(
                 requireContext(),
-                theme.isDarkMode
-            )
+                theme.isDarkMode,
+            ),
         )
         backIcon.setOnClickListener {
             logAnalyticsBackPressed()
@@ -97,41 +99,43 @@ internal abstract class BaseFormFragment : Fragment(), DISdkComponent {
         formIcon.setImageResource(logo)
     }
 
-    private fun logAnalyticsViewed() = viewModel.addAnalyticsEvent(
-        UIAnalyticsParams(
-            AnalyticsAction.VIEW,
-            ObjectType.VIEW,
-            Place.DYNAMIC_FORM,
-            ObjectId.VIEW,
-            primerViewModel.selectedPaymentMethod.value?.paymentMethodType?.let {
-                PaymentMethodContextParams(it)
-            }
+    private fun logAnalyticsViewed() =
+        viewModel.addAnalyticsEvent(
+            UIAnalyticsParams(
+                AnalyticsAction.VIEW,
+                ObjectType.VIEW,
+                Place.DYNAMIC_FORM,
+                ObjectId.VIEW,
+                primerViewModel.selectedPaymentMethod.value?.paymentMethodType?.let {
+                    PaymentMethodContextParams(it)
+                },
+            ),
         )
-    )
 
-    protected fun logAnalyticsBackPressed() = viewModel.addAnalyticsEvent(
-        UIAnalyticsParams(
-            AnalyticsAction.CLICK,
-            ObjectType.BUTTON,
-            Place.DYNAMIC_FORM,
-            ObjectId.BACK,
-            primerViewModel.selectedPaymentMethod.value?.paymentMethodType?.let {
-                PaymentMethodContextParams(it)
-            }
+    protected fun logAnalyticsBackPressed() =
+        viewModel.addAnalyticsEvent(
+            UIAnalyticsParams(
+                AnalyticsAction.CLICK,
+                ObjectType.BUTTON,
+                Place.DYNAMIC_FORM,
+                ObjectId.BACK,
+                primerViewModel.selectedPaymentMethod.value?.paymentMethodType?.let {
+                    PaymentMethodContextParams(it)
+                },
+            ),
         )
-    )
 
     private fun popBackStack() {
         parentFragmentManager.popBackStackImmediate(
             SelectPaymentMethodFragment.TAG,
-            FragmentManager.POP_BACK_STACK_INCLUSIVE
+            FragmentManager.POP_BACK_STACK_INCLUSIVE,
         )
         runCatching {
             parentFragmentManager.commit {
                 /*
                 Manually remove this fragment as it is not added to the backstack,
                 therefore it won't get removed automatically on pop.
-                */
+                 */
                 remove(this@BaseFormFragment)
             }
         }

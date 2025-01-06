@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
 class SofortBrandTest {
-
     private val sofortBrand = SofortBrand()
 
     @Test

@@ -27,7 +27,6 @@ import org.junit.jupiter.api.extension.ExtendWith
 
 @ExtendWith(MockKExtension::class)
 class StripeAchTokenizationInteractorTest {
-
     @MockK
     private lateinit var tokenizationRepository: TokenizationRepository<StripeAchPaymentInstrumentParams>
 
@@ -44,92 +43,98 @@ class StripeAchTokenizationInteractorTest {
     private lateinit var interactor: StripeAchTokenizationInteractor
 
     @Test
-    fun `invoke() should return successful result when tokenization is successful`() = runTest {
-        val params = mockk<TokenizationParams<StripeAchPaymentInstrumentParams>> {
-            every { paymentInstrumentParams.paymentMethodType } returns PaymentMethodType.STRIPE_ACH.name
-            every { sessionIntent } returns PrimerSessionIntent.CHECKOUT
-        }
-        val tokenizedPaymentMethod = mockk<PaymentMethodTokenInternal>()
+    fun `invoke() should return successful result when tokenization is successful`() =
+        runTest {
+            val params =
+                mockk<TokenizationParams<StripeAchPaymentInstrumentParams>> {
+                    every { paymentInstrumentParams.paymentMethodType } returns PaymentMethodType.STRIPE_ACH.name
+                    every { sessionIntent } returns PrimerSessionIntent.CHECKOUT
+                }
+            val tokenizedPaymentMethod = mockk<PaymentMethodTokenInternal>()
 
-        coEvery { preTokenizationHandler.handle(any(), any()) } returns Result.success(Unit)
-        coEvery { tokenizationRepository.tokenize(params) } returns Result.success(tokenizedPaymentMethod)
-        every { logReporter.info(any()) } just Runs
-        every { tokenizedPaymentMethodRepository.setPaymentMethod(tokenizedPaymentMethod) } just Runs
+            coEvery { preTokenizationHandler.handle(any(), any()) } returns Result.success(Unit)
+            coEvery { tokenizationRepository.tokenize(params) } returns Result.success(tokenizedPaymentMethod)
+            every { logReporter.info(any()) } just Runs
+            every { tokenizedPaymentMethodRepository.setPaymentMethod(tokenizedPaymentMethod) } just Runs
 
-        val result = interactor.invoke(params)
+            val result = interactor.invoke(params)
 
-        assertTrue(result.isSuccess)
-        assertEquals(tokenizedPaymentMethod, result.getOrNull())
-        coVerify {
-            preTokenizationHandler.handle(
-                paymentMethodType = PaymentMethodType.STRIPE_ACH.name,
-                sessionIntent = PrimerSessionIntent.CHECKOUT
-            )
-            tokenizationRepository.tokenize(params)
+            assertTrue(result.isSuccess)
+            assertEquals(tokenizedPaymentMethod, result.getOrNull())
+            coVerify {
+                preTokenizationHandler.handle(
+                    paymentMethodType = PaymentMethodType.STRIPE_ACH.name,
+                    sessionIntent = PrimerSessionIntent.CHECKOUT,
+                )
+                tokenizationRepository.tokenize(params)
+            }
+            verify {
+                logReporter.info("Started tokenization for STRIPE_ACH payment method.")
+                logReporter.info("Tokenization successful for STRIPE_ACH payment method.")
+                tokenizedPaymentMethodRepository.setPaymentMethod(tokenizedPaymentMethod)
+            }
         }
-        verify {
-            logReporter.info("Started tokenization for STRIPE_ACH payment method.")
-            logReporter.info("Tokenization successful for STRIPE_ACH payment method.")
-            tokenizedPaymentMethodRepository.setPaymentMethod(tokenizedPaymentMethod)
-        }
-    }
-
-    @Test
-    fun `invoke() should return failure result when tokenization is preTokenizationHandler fails`() = runTest {
-        val params = mockk<TokenizationParams<StripeAchPaymentInstrumentParams>> {
-            every { paymentInstrumentParams.paymentMethodType } returns PaymentMethodType.STRIPE_ACH.name
-            every { sessionIntent } returns PrimerSessionIntent.CHECKOUT
-        }
-        val error = Exception()
-        coEvery { preTokenizationHandler.handle(any(), any()) } returns Result.failure(error)
-
-        val result = interactor.invoke(params)
-
-        assertTrue(result.isFailure)
-        assertEquals(error, result.exceptionOrNull())
-        coVerify {
-            preTokenizationHandler.handle(
-                paymentMethodType = PaymentMethodType.STRIPE_ACH.name,
-                sessionIntent = PrimerSessionIntent.CHECKOUT
-            )
-        }
-        coVerify(exactly = 0) {
-            tokenizationRepository.tokenize(any())
-        }
-        verify(exactly = 0) {
-            logReporter.info(any())
-            tokenizedPaymentMethodRepository.setPaymentMethod(any())
-        }
-    }
 
     @Test
-    fun `invoke() should return failure result when tokenization is tokenizationRepository fails`() = runTest {
-        val params = mockk<TokenizationParams<StripeAchPaymentInstrumentParams>> {
-            every { paymentInstrumentParams.paymentMethodType } returns PaymentMethodType.STRIPE_ACH.name
-            every { sessionIntent } returns PrimerSessionIntent.CHECKOUT
-        }
-        val error = Exception()
-        coEvery { preTokenizationHandler.handle(any(), any()) } returns Result.success(Unit)
-        coEvery { tokenizationRepository.tokenize(params) } returns Result.failure(error)
-        every { logReporter.info(any()) } just Runs
+    fun `invoke() should return failure result when tokenization is preTokenizationHandler fails`() =
+        runTest {
+            val params =
+                mockk<TokenizationParams<StripeAchPaymentInstrumentParams>> {
+                    every { paymentInstrumentParams.paymentMethodType } returns PaymentMethodType.STRIPE_ACH.name
+                    every { sessionIntent } returns PrimerSessionIntent.CHECKOUT
+                }
+            val error = Exception()
+            coEvery { preTokenizationHandler.handle(any(), any()) } returns Result.failure(error)
 
-        val result = interactor.invoke(params)
+            val result = interactor.invoke(params)
 
-        assertTrue(result.isFailure)
-        assertEquals(error, result.exceptionOrNull())
-        coVerify {
-            preTokenizationHandler.handle(
-                paymentMethodType = PaymentMethodType.STRIPE_ACH.name,
-                sessionIntent = PrimerSessionIntent.CHECKOUT
-            )
-            tokenizationRepository.tokenize(any())
+            assertTrue(result.isFailure)
+            assertEquals(error, result.exceptionOrNull())
+            coVerify {
+                preTokenizationHandler.handle(
+                    paymentMethodType = PaymentMethodType.STRIPE_ACH.name,
+                    sessionIntent = PrimerSessionIntent.CHECKOUT,
+                )
+            }
+            coVerify(exactly = 0) {
+                tokenizationRepository.tokenize(any())
+            }
+            verify(exactly = 0) {
+                logReporter.info(any())
+                tokenizedPaymentMethodRepository.setPaymentMethod(any())
+            }
         }
-        verify {
-            logReporter.info("Started tokenization for STRIPE_ACH payment method.")
+
+    @Test
+    fun `invoke() should return failure result when tokenization is tokenizationRepository fails`() =
+        runTest {
+            val params =
+                mockk<TokenizationParams<StripeAchPaymentInstrumentParams>> {
+                    every { paymentInstrumentParams.paymentMethodType } returns PaymentMethodType.STRIPE_ACH.name
+                    every { sessionIntent } returns PrimerSessionIntent.CHECKOUT
+                }
+            val error = Exception()
+            coEvery { preTokenizationHandler.handle(any(), any()) } returns Result.success(Unit)
+            coEvery { tokenizationRepository.tokenize(params) } returns Result.failure(error)
+            every { logReporter.info(any()) } just Runs
+
+            val result = interactor.invoke(params)
+
+            assertTrue(result.isFailure)
+            assertEquals(error, result.exceptionOrNull())
+            coVerify {
+                preTokenizationHandler.handle(
+                    paymentMethodType = PaymentMethodType.STRIPE_ACH.name,
+                    sessionIntent = PrimerSessionIntent.CHECKOUT,
+                )
+                tokenizationRepository.tokenize(any())
+            }
+            verify {
+                logReporter.info("Started tokenization for STRIPE_ACH payment method.")
+            }
+            verify(exactly = 0) {
+                logReporter.info("Tokenization successful for STRIPE_ACH payment method.")
+                tokenizedPaymentMethodRepository.setPaymentMethod(any())
+            }
         }
-        verify(exactly = 0) {
-            logReporter.info("Tokenization successful for STRIPE_ACH payment method.")
-            tokenizedPaymentMethodRepository.setPaymentMethod(any())
-        }
-    }
 }

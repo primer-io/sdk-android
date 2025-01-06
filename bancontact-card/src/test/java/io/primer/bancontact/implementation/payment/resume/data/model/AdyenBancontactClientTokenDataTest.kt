@@ -13,15 +13,15 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 
 class AdyenBancontactClientTokenDataTest {
-
     private val encodedToken = "encodedToken"
-    private val decodedToken = """
+    private val decodedToken =
+        """
         {
             "intent": "AYDEN_BANCONTACT",
             "statusUrl": "http://status.url",
             "redirectUrl": "http://redirect.url"
         }
-    """.trimIndent()
+        """.trimIndent()
 
     @BeforeEach
     fun setUp() {

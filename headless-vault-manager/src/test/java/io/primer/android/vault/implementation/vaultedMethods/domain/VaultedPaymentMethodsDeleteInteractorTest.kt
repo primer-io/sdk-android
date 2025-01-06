@@ -23,7 +23,6 @@ import org.junit.jupiter.api.extension.ExtendWith
 @ExtendWith(InstantExecutorExtension::class, MockKExtension::class)
 @ExperimentalCoroutinesApi
 internal class VaultedPaymentMethodsDeleteInteractorTest {
-
     @RelaxedMockK
     internal lateinit var vaultedPaymentMethodsRepository: VaultedPaymentMethodsRepository
 
@@ -35,17 +34,18 @@ internal class VaultedPaymentMethodsDeleteInteractorTest {
     @BeforeEach
     fun setUp() {
         MockKAnnotations.init(this, relaxed = true)
-        interactor = VaultedPaymentMethodsDeleteInteractor(
-            vaultedPaymentMethodsRepository,
-            logReporter
-        )
+        interactor =
+            VaultedPaymentMethodsDeleteInteractor(
+                vaultedPaymentMethodsRepository,
+                logReporter,
+            )
     }
 
     @Test
     fun `execute() should return success when deleteVaultedPaymentMethod was success`() {
         val params = mockk<VaultDeleteParams>(relaxed = true)
         coEvery { vaultedPaymentMethodsRepository.deleteVaultedPaymentMethod(any()) }.returns(
-            Result.success(Unit)
+            Result.success(Unit),
         )
         runTest {
             interactor(params)
@@ -60,7 +60,7 @@ internal class VaultedPaymentMethodsDeleteInteractorTest {
         val exception = mockk<Exception>(relaxed = true)
         every { exception.message } returns "Delete failed."
         coEvery { vaultedPaymentMethodsRepository.deleteVaultedPaymentMethod(any()) }.returns(
-            Result.failure(exception)
+            Result.failure(exception),
         )
         runTest {
             interactor(params)

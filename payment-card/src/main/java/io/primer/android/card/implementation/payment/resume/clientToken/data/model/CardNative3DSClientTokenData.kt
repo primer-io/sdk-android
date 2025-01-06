@@ -11,11 +11,9 @@ import org.json.JSONObject
 
 internal data class CardNative3DSClientTokenData(
     val intent: String,
-    val supportedThreeDsProtocolVersions: List<String>
+    val supportedThreeDsProtocolVersions: List<String>,
 ) : JSONDeserializable {
-
     companion object {
-
         @Throws(InvalidClientTokenException::class, ExpiredClientTokenException::class)
         fun fromString(encoded: String): CardNative3DSClientTokenData {
             ClientTokenDecoder.decode(encoded).let { decoded ->
@@ -30,13 +28,15 @@ internal data class CardNative3DSClientTokenData(
             "supportedThreeDsProtocolVersions"
 
         @JvmField
-        val deserializer = JSONObjectDeserializer { t ->
-            CardNative3DSClientTokenData(
-                intent = t.getString(INTENT_FIELD),
-                supportedThreeDsProtocolVersions = t.getJSONArray(SUPPORTED_THREE_DS_PROTOCOL_VERSIONS_FIELD)
-                    .sequence<String>()
-                    .toList()
-            )
-        }
+        val deserializer =
+            JSONObjectDeserializer { t ->
+                CardNative3DSClientTokenData(
+                    intent = t.getString(INTENT_FIELD),
+                    supportedThreeDsProtocolVersions =
+                        t.getJSONArray(SUPPORTED_THREE_DS_PROTOCOL_VERSIONS_FIELD)
+                            .sequence<String>()
+                            .toList(),
+                )
+            }
     }
 }

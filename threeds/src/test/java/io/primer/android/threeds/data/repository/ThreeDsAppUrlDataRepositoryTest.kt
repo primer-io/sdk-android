@@ -22,15 +22,14 @@ import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
-import org.mockito.Mockito.`when`
 import org.mockito.Mockito.mock
+import org.mockito.Mockito.`when`
 import java.util.UUID
 import kotlin.test.assertEquals
 
 @ExtendWith(InstantExecutorExtension::class, MockKExtension::class)
 @ExperimentalCoroutinesApi
 internal class ThreeDsAppUrlDataRepositoryTest {
-
     @RelaxedMockK
     internal lateinit var primerSettings: PrimerSettings
 
@@ -78,7 +77,7 @@ internal class ThreeDsAppUrlDataRepositoryTest {
             val threeDAppRequestorUrl = repository.getAppUrl(transaction)
             assertEquals(
                 "$VALID_APP_LINK_URL?transID=$SDK_TRANSACTION_ID",
-                threeDAppRequestorUrl
+                threeDAppRequestorUrl,
             )
         }
 
@@ -111,7 +110,7 @@ internal class ThreeDsAppUrlDataRepositoryTest {
             val threeDAppRequestorUrl = repository.getAppUrl(transaction)
             assertEquals(
                 null,
-                threeDAppRequestorUrl
+                threeDAppRequestorUrl,
             )
         }
 
@@ -127,14 +126,14 @@ internal class ThreeDsAppUrlDataRepositoryTest {
 
         val transaction = mockk<Transaction>()
         every { transaction.authenticationRequestParameters.sdkTransactionID }.returns(
-            SDK_TRANSACTION_ID
+            SDK_TRANSACTION_ID,
         )
 
         runTest {
             val threeDAppRequestorUrl = repository.getAppUrl(transaction)
             assertEquals(
                 null,
-                threeDAppRequestorUrl
+                threeDAppRequestorUrl,
             )
         }
 
@@ -144,9 +143,10 @@ internal class ThreeDsAppUrlDataRepositoryTest {
 
     @Test
     fun `getAppUrl() should return null when PrimerThreeDsOptions contains invalid App link`() {
-        val threeDsOptions = mockk<PrimerThreeDsOptions>(relaxed = true) {
-            every { threeDsAppRequestorUrl }.returns(DEEPLINK_URL)
-        }
+        val threeDsOptions =
+            mockk<PrimerThreeDsOptions>(relaxed = true) {
+                every { threeDsAppRequestorUrl }.returns(DEEPLINK_URL)
+            }
         every { primerSettings.paymentMethodOptions.threeDsOptions }.returns(threeDsOptions)
 
         mockkStatic(URLUtil::class).also {
@@ -156,14 +156,14 @@ internal class ThreeDsAppUrlDataRepositoryTest {
         val transaction = mockk<Transaction>(relaxed = true)
         val authenticationRequestParameters = mockk<AuthenticationRequestParameters>(relaxed = true)
         every { transaction.authenticationRequestParameters }.returns(
-            authenticationRequestParameters
+            authenticationRequestParameters,
         )
 
         runTest {
             val threeDsAppRequestorUrl = repository.getAppUrl(transaction)
             assertEquals(
                 null,
-                threeDsAppRequestorUrl
+                threeDsAppRequestorUrl,
             )
         }
 
@@ -172,7 +172,6 @@ internal class ThreeDsAppUrlDataRepositoryTest {
     }
 
     private companion object {
-
         val SDK_TRANSACTION_ID = UUID.randomUUID().toString()
         const val VALID_APP_LINK_URL = "https://primer.io/"
         const val INVALID_HTTPS_APP_LINK_URL = "https://prime r.io/"

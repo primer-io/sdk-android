@@ -12,7 +12,6 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 class WebRedirectNavigationHandlerTest {
-
     private lateinit var navigationHandler: WebRedirectNavigationHandler
     private lateinit var context: Context
     private lateinit var activity: Activity

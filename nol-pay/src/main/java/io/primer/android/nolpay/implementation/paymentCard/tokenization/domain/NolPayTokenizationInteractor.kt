@@ -13,10 +13,10 @@ internal class DefaultNolPayTokenizationInteractor(
     tokenizationRepository: TokenizationRepository<NolPayPaymentInstrumentParams>,
     tokenizedPaymentMethodRepository: TokenizedPaymentMethodRepository,
     preTokenizationHandler: PreTokenizationHandler,
-    logReporter: LogReporter
+    logReporter: LogReporter,
 ) : TokenizationInteractor<NolPayPaymentInstrumentParams>(
-    tokenizationRepository = tokenizationRepository,
-    tokenizedPaymentMethodRepository = tokenizedPaymentMethodRepository,
-    preTokenizationHandler = preTokenizationHandler,
-    logReporter = logReporter
-)
+        tokenizationRepository = tokenizationRepository,
+        tokenizedPaymentMethodRepository = tokenizedPaymentMethodRepository,
+        preTokenizationHandler = preTokenizationHandler,
+        logReporter = logReporter,
+    )

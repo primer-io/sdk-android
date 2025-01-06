@@ -26,83 +26,92 @@ class StripeAchCompletePaymentDataRepositoryTest {
     private lateinit var repository: StripeAchCompletePaymentDataRepository
 
     @Test
-    fun `completePayment() should return success when data source call succeeds and payment method id is not null`() = runTest {
-        coEvery { completePaymentDataSource.execute(any()) } returns EmptyDataResponse()
+    fun `completePayment() should return success when data source call succeeds and payment method id is not null`() =
+        runTest {
+            coEvery { completePaymentDataSource.execute(any()) } returns EmptyDataResponse()
 
-        val result = repository.completePayment(
-            "completeUrl",
-            "mandateTimestamp",
-            "paymentMethodId"
-        )
-
-        assertEquals(
-            Result.success(Unit),
-            result
-        )
-        coVerify {
-            completePaymentDataSource.execute(
-                BaseRemoteUrlRequest(
-                    url = "completeUrl",
-                    data = StripeAchCompletePaymentDataRequest(
-                        mandateTimestamp = "mandateTimestamp",
-                        paymentMethodId = "paymentMethodId"
-                    )
+            val result =
+                repository.completePayment(
+                    "completeUrl",
+                    "mandateTimestamp",
+                    "paymentMethodId",
                 )
+
+            assertEquals(
+                Result.success(Unit),
+                result,
             )
+            coVerify {
+                completePaymentDataSource.execute(
+                    BaseRemoteUrlRequest(
+                        url = "completeUrl",
+                        data =
+                            StripeAchCompletePaymentDataRequest(
+                                mandateTimestamp = "mandateTimestamp",
+                                paymentMethodId = "paymentMethodId",
+                            ),
+                    ),
+                )
+            }
+            confirmVerified(completePaymentDataSource)
         }
-        confirmVerified(completePaymentDataSource)
-    }
 
     @Test
-    fun `completePayment() should return success when data source call succeeds and payment method id is null`() = runTest {
-        coEvery { completePaymentDataSource.execute(any()) } returns EmptyDataResponse()
+    fun `completePayment() should return success when data source call succeeds and payment method id is null`() =
+        runTest {
+            coEvery { completePaymentDataSource.execute(any()) } returns EmptyDataResponse()
 
-        val result = repository.completePayment(
-            completeUrl = "completeUrl",
-            mandateTimestamp = "mandateTimestamp",
-            paymentMethodId = null
-        )
-
-        assertEquals(
-            Result.success(Unit),
-            result
-        )
-        coVerify {
-            completePaymentDataSource.execute(
-                BaseRemoteUrlRequest(
-                    url = "completeUrl",
-                    data = StripeAchCompletePaymentDataRequest(
-                        mandateTimestamp = "mandateTimestamp",
-                        paymentMethodId = null
-                    )
+            val result =
+                repository.completePayment(
+                    completeUrl = "completeUrl",
+                    mandateTimestamp = "mandateTimestamp",
+                    paymentMethodId = null,
                 )
+
+            assertEquals(
+                Result.success(Unit),
+                result,
             )
+            coVerify {
+                completePaymentDataSource.execute(
+                    BaseRemoteUrlRequest(
+                        url = "completeUrl",
+                        data =
+                            StripeAchCompletePaymentDataRequest(
+                                mandateTimestamp = "mandateTimestamp",
+                                paymentMethodId = null,
+                            ),
+                    ),
+                )
+            }
+            confirmVerified(completePaymentDataSource)
         }
-        confirmVerified(completePaymentDataSource)
-    }
 
     @Test
-    fun `completePayment() should return failure when data source call fails`() = runTest {
-        coEvery { completePaymentDataSource.execute(any()) } throws Exception()
+    fun `completePayment() should return failure when data source call fails`() =
+        runTest {
+            coEvery { completePaymentDataSource.execute(any()) } throws Exception()
 
-        val result = repository.completePayment(
-            "completeUrl",
-            "mandateTimestamp",
-            "paymentMethodId"
-        )
-
-        assert(result.isFailure)
-        coVerify {
-            completePaymentDataSource.execute(
-                BaseRemoteUrlRequest(
-                    url = "completeUrl",
-                    data = StripeAchCompletePaymentDataRequest(
-                        mandateTimestamp = "mandateTimestamp",
-                        paymentMethodId = "paymentMethodId"
-                    )
+            val result =
+                repository.completePayment(
+                    "completeUrl",
+                    "mandateTimestamp",
+                    "paymentMethodId",
                 )
-            )
+
+            assert(result.isFailure)
+            coVerify {
+                completePaymentDataSource.execute(
+                    BaseRemoteUrlRequest(
+                        url = "completeUrl",
+                        data =
+                            StripeAchCompletePaymentDataRequest(
+                                mandateTimestamp = "mandateTimestamp",
+                                paymentMethodId = "paymentMethodId",
+                            ),
+                    ),
+                )
+            }
+            confirmVerified(completePaymentDataSource)
         }
-        confirmVerified(completePaymentDataSource)
-    }
 }

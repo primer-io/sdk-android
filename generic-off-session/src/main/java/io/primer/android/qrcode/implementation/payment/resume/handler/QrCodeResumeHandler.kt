@@ -16,7 +16,7 @@ internal data class QrCodeDecision(
     val statusUrl: String,
     val expiresAt: String?,
     val qrCodeUrl: String?,
-    val qrCodeBase64: String
+    val qrCodeBase64: String,
 ) : PaymentMethodResumeDecision
 
 internal class QrCodeResumeHandler(
@@ -24,19 +24,19 @@ internal class QrCodeResumeHandler(
     private val tokenizedPaymentMethodRepository: TokenizedPaymentMethodRepository,
     private val validateClientTokenRepository: ValidateClientTokenRepository,
     private val clientTokenRepository: ClientTokenRepository,
-    checkoutAdditionalInfoHandler: CheckoutAdditionalInfoHandler
+    checkoutAdditionalInfoHandler: CheckoutAdditionalInfoHandler,
 ) : PrimerResumeDecisionHandlerV2<QrCodeDecision, QrCodeClientToken>(
-    clientTokenRepository = clientTokenRepository,
-    validateClientTokenRepository = validateClientTokenRepository,
-    clientTokenParser = clientTokenParser,
-    checkoutAdditionalInfoHandler = checkoutAdditionalInfoHandler
-) {
-
+        clientTokenRepository = clientTokenRepository,
+        validateClientTokenRepository = validateClientTokenRepository,
+        clientTokenParser = clientTokenParser,
+        checkoutAdditionalInfoHandler = checkoutAdditionalInfoHandler,
+    ) {
     private val dateFormatISO = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
-    private val expiresDateFormat = DateFormat.getDateTimeInstance(
-        DateFormat.MEDIUM,
-        DateFormat.SHORT
-    )
+    private val expiresDateFormat =
+        DateFormat.getDateTimeInstance(
+            DateFormat.MEDIUM,
+            DateFormat.SHORT,
+        )
 
     override val supportedClientTokenIntents: () -> List<String> = {
         listOf(tokenizedPaymentMethodRepository.getPaymentMethod().paymentMethodType.orEmpty())
@@ -46,13 +46,14 @@ internal class QrCodeResumeHandler(
     override suspend fun getResumeDecision(clientToken: QrCodeClientToken): QrCodeDecision {
         return QrCodeDecision(
             statusUrl = clientToken.statusUrl,
-            expiresAt = clientToken.expiresAt?.let {
-                dateFormatISO.parse(it)?.let { parsedExpiresAt ->
-                    expiresDateFormat.format(parsedExpiresAt)
-                }
-            },
+            expiresAt =
+                clientToken.expiresAt?.let {
+                    dateFormatISO.parse(it)?.let { parsedExpiresAt ->
+                        expiresDateFormat.format(parsedExpiresAt)
+                    }
+                },
             qrCodeUrl = clientToken.qrCodeUrl,
-            qrCodeBase64 = clientToken.qrCodeBase64
+            qrCodeBase64 = clientToken.qrCodeBase64,
         )
     }
 }

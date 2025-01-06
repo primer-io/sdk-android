@@ -5,6 +5,5 @@ interface PaymentMethodTokenizationCollectorParams
 object NoOpPaymentMethodTokenizationCollectorParams : PaymentMethodTokenizationCollectorParams
 
 interface PaymentMethodTokenizationCollectorDelegate<in P : PaymentMethodTokenizationCollectorParams> {
-
     suspend fun startDataCollection(params: P): Result<Unit>
 }

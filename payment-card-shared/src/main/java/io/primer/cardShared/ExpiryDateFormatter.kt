@@ -14,9 +14,8 @@ private const val MAXIMUM_YEAR_LENGTH = 4
 class ExpiryDateFormatter private constructor(
     private var month: String = "",
     private var year: String = "",
-    private var separator: Boolean = false
+    private var separator: Boolean = false,
 ) {
-
     override fun toString(): String {
         return buildString {
             if (month.isNotEmpty()) {
@@ -65,8 +64,10 @@ class ExpiryDateFormatter private constructor(
     }
 
     companion object {
-
-        fun fromString(value: String, autoInsert: Boolean = false): ExpiryDateFormatter {
+        fun fromString(
+            value: String,
+            autoInsert: Boolean = false,
+        ): ExpiryDateFormatter {
             val tokens = tokenize(value)
             val exp = ExpiryDateFormatter()
 
@@ -89,7 +90,10 @@ class ExpiryDateFormatter private constructor(
             return exp
         }
 
-        fun getDate(month: Int? = null, year: Int? = null): Calendar {
+        fun getDate(
+            month: Int? = null,
+            year: Int? = null,
+        ): Calendar {
             return Calendar.getInstance().apply {
                 set(Calendar.HOUR_OF_DAY, 0)
                 set(Calendar.MINUTE, 0)
@@ -107,11 +111,11 @@ class ExpiryDateFormatter private constructor(
         private fun tokenize(value: String): List<String> {
             val sanitized = value.replace(INVALID_CHARACTER, "").trim()
 
-            var tokens: List<String> = when {
-                sanitized.isEmpty() -> emptyList()
-
-                else -> sanitized.split(SEPARATOR_CHAR)
-            }
+            var tokens: List<String> =
+                when {
+                    sanitized.isEmpty() -> emptyList()
+                    else -> sanitized.split(SEPARATOR_CHAR)
+                }
 
             tokens = tokens.filter { it.isNotEmpty() }
             tokens = tokens.subList(0, min(tokens.size, 2))
@@ -119,7 +123,10 @@ class ExpiryDateFormatter private constructor(
             return tokens
         }
 
-        private fun parseMonth(str: String, autoInsert: Boolean): String {
+        private fun parseMonth(
+            str: String,
+            autoInsert: Boolean,
+        ): String {
             var sanitized = str.trim()
 
             if (sanitized.isEmpty()) {

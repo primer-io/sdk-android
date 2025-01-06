@@ -1,10 +1,10 @@
 package io.primer.android.sandboxProcessor.implementation.components.ui.assets
 
 import io.mockk.MockKAnnotations
+import io.primer.android.sandboxProcessor.R
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import io.primer.android.sandboxProcessor.R
 
 class SandboxProcessorKlarnaBrandSandbox {
     private lateinit var klarnaBrand: SandboxProcessorKlarnaBrand

@@ -9,8 +9,8 @@ import io.primer.android.R
 import io.primer.android.assets.ui.model.Brand
 import io.primer.android.assets.ui.registry.BrandRegistry
 import io.primer.android.payment.NewFragmentBehaviour
-import io.primer.android.paymentMethods.PaymentMethodUiType
 import io.primer.android.paymentMethods.PaymentMethodBehaviour
+import io.primer.android.paymentMethods.PaymentMethodUiType
 import io.primer.android.paymentMethods.core.ui.descriptors.UiOptions
 import io.primer.android.paymentmethods.common.data.model.PaymentMethodType
 import io.primer.android.ui.fragments.forms.DynamicFormFragment
@@ -24,9 +24,10 @@ import kotlin.test.assertIs
 
 class PhoneNumberDropInDescriptorTest {
     private val brand = mockk<Brand>(relaxed = true)
-    private val brandRegistry = mockk<BrandRegistry> {
-        every { getBrand(any()) } returns brand
-    }
+    private val brandRegistry =
+        mockk<BrandRegistry> {
+            every { getBrand(any()) } returns brand
+        }
 
     @Test
     fun `paymentMethodType returns ADYEN_MBWAY when payment method type is ADYEN_MBWAY`() {
@@ -58,10 +59,11 @@ class PhoneNumberDropInDescriptorTest {
 
     @Test
     fun `selectedBehaviour returns correct NewFragmentBehaviour when isStandalonePaymentMethod is true`() {
-        val descriptor = createDescriptor(
-            paymentMethodType = PaymentMethodType.ADYEN_MBWAY,
-            isStandalonePaymentMethod = true
-        )
+        val descriptor =
+            createDescriptor(
+                paymentMethodType = PaymentMethodType.ADYEN_MBWAY,
+                isStandalonePaymentMethod = true,
+            )
 
         val selectedBehaviour = descriptor.selectedBehaviour
 
@@ -71,10 +73,11 @@ class PhoneNumberDropInDescriptorTest {
 
     @Test
     fun `selectedBehaviour returns correct NewFragmentBehaviour when isStandalonePaymentMethod is false`() {
-        val descriptor = createDescriptor(
-            paymentMethodType = PaymentMethodType.ADYEN_MBWAY,
-            isStandalonePaymentMethod = false
-        )
+        val descriptor =
+            createDescriptor(
+                paymentMethodType = PaymentMethodType.ADYEN_MBWAY,
+                isStandalonePaymentMethod = false,
+            )
 
         val selectedBehaviour = descriptor.selectedBehaviour
 
@@ -95,10 +98,11 @@ class PhoneNumberDropInDescriptorTest {
     fun `loadingState returns correct LoadingState in dark mode when payment method type is ADYEN_MBWAY`() {
         every { brand.iconDarkResId } returns R.drawable.ic_logo_mbway_dark
         every { brandRegistry.getBrand(PaymentMethodType.ADYEN_MBWAY.name) } returns brand
-        val descriptor = createDescriptor(
-            paymentMethodType = PaymentMethodType.ADYEN_MBWAY,
-            isDarkMode = true
-        )
+        val descriptor =
+            createDescriptor(
+                paymentMethodType = PaymentMethodType.ADYEN_MBWAY,
+                isDarkMode = true,
+            )
 
         val loadingState = descriptor.loadingState
 
@@ -113,10 +117,11 @@ class PhoneNumberDropInDescriptorTest {
     fun `loadingState returns correct LoadingState in light mode when payment method type is ADYEN_MBWAY`() {
         every { brand.iconResId } returns R.drawable.ic_logo_mbway_light
         every { brandRegistry.getBrand(PaymentMethodType.ADYEN_MBWAY.name) } returns brand
-        val descriptor = createDescriptor(
-            paymentMethodType = PaymentMethodType.ADYEN_MBWAY,
-            isDarkMode = false
-        )
+        val descriptor =
+            createDescriptor(
+                paymentMethodType = PaymentMethodType.ADYEN_MBWAY,
+                isDarkMode = false,
+            )
 
         val loadingState = descriptor.loadingState
 
@@ -157,9 +162,10 @@ class PhoneNumberDropInDescriptorTest {
 
     @Test
     fun `uiType returns correct PaymentMethodUiType when payment method type is ADYEN_MBWAY`() {
-        val descriptor = createDescriptor(
-            paymentMethodType = PaymentMethodType.ADYEN_MBWAY
-        )
+        val descriptor =
+            createDescriptor(
+                paymentMethodType = PaymentMethodType.ADYEN_MBWAY,
+            )
 
         assertEquals(PaymentMethodUiType.FORM, descriptor.uiType)
     }
@@ -176,15 +182,16 @@ class PhoneNumberDropInDescriptorTest {
     private fun createDescriptor(
         paymentMethodType: PaymentMethodType,
         isDarkMode: Boolean = false,
-        isStandalonePaymentMethod: Boolean = false
+        isStandalonePaymentMethod: Boolean = false,
     ) = PhoneNumberDropInDescriptor(
         paymentMethodType = paymentMethodType.name,
-        uiOptions = UiOptions(
-            isDarkMode = isDarkMode,
-            isInitScreenEnabled = false,
-            isStandalonePaymentMethod = isStandalonePaymentMethod
-        ),
+        uiOptions =
+            UiOptions(
+                isDarkMode = isDarkMode,
+                isInitScreenEnabled = false,
+                isStandalonePaymentMethod = isStandalonePaymentMethod,
+            ),
         brandRegistry = brandRegistry,
-        paymentMethodName = paymentMethodType.name
+        paymentMethodName = paymentMethodType.name,
     )
 }

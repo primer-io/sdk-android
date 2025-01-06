@@ -7,7 +7,7 @@ internal object LastNameValidator {
         if (value.isBlank()) {
             PrimerValidationError(
                 errorId = StripeAchUserDetailsValidations.INVALID_CUSTOMER_LAST_NAME_ERROR_ID,
-                description = "The last name may not be blank."
+                description = "The last name may not be blank.",
             )
         } else {
             null

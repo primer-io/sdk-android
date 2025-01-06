@@ -9,10 +9,10 @@ internal data class NolPayPaymentInstrumentParams(
     override val locale: String,
     val mobileCountryCode: String,
     val mobileNumber: String,
-    val nolPayCardNumber: String
+    val nolPayCardNumber: String,
 ) : BaseAsyncPaymentInstrumentParams(
-    paymentMethodType,
-    paymentMethodConfigId,
-    locale,
-    PaymentInstrumentType.OFF_SESSION_PAYMENT
-)
+        paymentMethodType,
+        paymentMethodConfigId,
+        locale,
+        PaymentInstrumentType.OFF_SESSION_PAYMENT,
+    )

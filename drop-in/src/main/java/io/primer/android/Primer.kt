@@ -21,14 +21,13 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
 class Primer private constructor() : PrimerInterface, DISdkComponent {
-
     internal var listener: PrimerCheckoutListener? = null
     private var config: PrimerConfig = PrimerConfig()
 
     @Throws(IllegalArgumentException::class)
     override fun configure(
         settings: PrimerSettings?,
-        listener: PrimerCheckoutListener?
+        listener: PrimerCheckoutListener?,
     ) {
         listener?.let { l -> setListener(l) }
         settings?.let {
@@ -37,8 +36,8 @@ class Primer private constructor() : PrimerInterface, DISdkComponent {
         addAnalyticsEvent(
             SdkFunctionParams(
                 "configure",
-                mapOf("settings" to PrimerSettings.serializer.serialize(this.config.settings))
-            )
+                mapOf("settings" to PrimerSettings.serializer.serialize(this.config.settings)),
+            ),
         )
     }
 
@@ -48,13 +47,19 @@ class Primer private constructor() : PrimerInterface, DISdkComponent {
         listener = null
     }
 
-    override fun showUniversalCheckout(context: Context, clientToken: String) {
+    override fun showUniversalCheckout(
+        context: Context,
+        clientToken: String,
+    ) {
         addAnalyticsEvent(SdkFunctionParams("showUniversalCheckout"))
         config.intent = PrimerIntent(PrimerSessionIntent.CHECKOUT)
         show(context, clientToken)
     }
 
-    override fun showVaultManager(context: Context, clientToken: String) {
+    override fun showVaultManager(
+        context: Context,
+        clientToken: String,
+    ) {
         addAnalyticsEvent(SdkFunctionParams("showVaultManager"))
         config.intent = PrimerIntent(PrimerSessionIntent.VAULT)
         show(context, clientToken)
@@ -64,13 +69,13 @@ class Primer private constructor() : PrimerInterface, DISdkComponent {
         context: Context,
         clientToken: String,
         paymentMethod: String,
-        intent: PrimerSessionIntent
+        intent: PrimerSessionIntent,
     ) {
         addAnalyticsEvent(
             SdkFunctionParams(
                 "showPaymentMethod",
-                mapOf("paymentMethodType" to paymentMethod, "intent" to intent.name)
-            )
+                mapOf("paymentMethodType" to paymentMethod, "intent" to intent.name),
+            ),
         )
 
         config.intent = PrimerIntent(intent, paymentMethod)
@@ -88,7 +93,10 @@ class Primer private constructor() : PrimerInterface, DISdkComponent {
     /**
      * Private method to instantiate [CheckoutSheetActivity] and initialise the SDK.
      */
-    private fun show(context: Context, clientToken: String) {
+    private fun show(
+        context: Context,
+        clientToken: String,
+    ) {
         try {
             setupAndVerifyClientToken(clientToken)
             Intent(context, CheckoutSheetActivity::class.java)
@@ -123,27 +131,29 @@ class Primer private constructor() : PrimerInterface, DISdkComponent {
 
     private fun emitError(error: PrimerError) {
         when (config.settings.paymentHandling) {
-            PrimerPaymentHandling.AUTO -> listener?.onFailed(
-                error = error,
-                checkoutData = null,
-                errorHandler = null
-            )
+            PrimerPaymentHandling.AUTO ->
+                listener?.onFailed(
+                    error = error,
+                    checkoutData = null,
+                    errorHandler = null,
+                )
 
-            PrimerPaymentHandling.MANUAL -> listener?.onFailed(
-                error = error,
-                errorHandler = null
-            )
+            PrimerPaymentHandling.MANUAL ->
+                listener?.onFailed(
+                    error = error,
+                    errorHandler = null,
+                )
         }
     }
 
-    private fun clearGlobalCache() = runCatching {
-        resolve<GlobalCacheConfigurationCacheDataSource>(
-            ConfigurationCoreContainer.GLOBAL_CACHED_CONFIGURATION_DI_KEY
-        ).clear()
-    }
+    private fun clearGlobalCache() =
+        runCatching {
+            resolve<GlobalCacheConfigurationCacheDataSource>(
+                ConfigurationCoreContainer.GLOBAL_CACHED_CONFIGURATION_DI_KEY,
+            ).clear()
+        }
 
     companion object {
-
         /**
          * Singleton instance of [Primer]. Use this to call SDK methods.
          */

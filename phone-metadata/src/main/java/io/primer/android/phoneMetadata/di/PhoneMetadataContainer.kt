@@ -11,14 +11,14 @@ class PhoneMetadataContainer(private val sdk: () -> SdkContainer) : DependencyCo
     override fun registerInitialDependencies() {
         registerSingleton {
             RemotePhoneMetadataDataSource(
-                httpClient = sdk().resolve()
+                httpClient = sdk().resolve(),
             )
         }
 
         registerFactory<PhoneMetadataRepository> {
             PhoneMetadataDataRepository(
                 configurationDataSource = sdk().resolve(ConfigurationCoreContainer.CACHED_CONFIGURATION_DI_KEY),
-                remoteMetadataDataSource = resolve()
+                remoteMetadataDataSource = resolve(),
             )
         }
     }

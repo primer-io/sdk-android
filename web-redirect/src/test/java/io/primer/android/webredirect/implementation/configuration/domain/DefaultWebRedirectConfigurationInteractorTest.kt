@@ -21,9 +21,10 @@ import kotlin.test.assertFailsWith
 @OptIn(ExperimentalCoroutinesApi::class)
 @ExtendWith(InstantExecutorExtension::class, MockKExtension::class)
 class DefaultWebRedirectConfigurationInteractorTest {
-
-    private lateinit var configurationRepository: PaymentMethodConfigurationRepository<WebRedirectConfig,
-        WebRedirectConfigParams>
+    private lateinit var configurationRepository: PaymentMethodConfigurationRepository<
+        WebRedirectConfig,
+        WebRedirectConfigParams,
+        >
     private lateinit var interactor: DefaultWebRedirectConfigurationInteractor
 
     @BeforeEach
@@ -38,37 +39,41 @@ class DefaultWebRedirectConfigurationInteractorTest {
     }
 
     @Test
-    fun `performAction should return WebRedirectConfig when repository succeeds`() = runBlocking {
-        // Arrange
-        val params = WebRedirectConfigParams("TEST_PAYMENT_METHOD")
-        val expectedConfig = WebRedirectConfig(paymentMethodConfigId = "12345", locale = "en-US")
+    fun `performAction should return WebRedirectConfig when repository succeeds`() =
+        runBlocking {
+            // Arrange
+            val params = WebRedirectConfigParams("TEST_PAYMENT_METHOD")
+            val expectedConfig = WebRedirectConfig(paymentMethodConfigId = "12345", locale = "en-US")
 
-        coEvery { configurationRepository.getPaymentMethodConfiguration(params) } returns Result.success(expectedConfig)
+            coEvery { configurationRepository.getPaymentMethodConfiguration(params) } returns
+                Result.success(expectedConfig)
 
-        // Act
-        val result = interactor(params).getOrThrow()
+            // Act
+            val result = interactor(params).getOrThrow()
 
-        // Assert
-        assertEquals(expectedConfig, result)
-        coVerify { configurationRepository.getPaymentMethodConfiguration(params) }
-    }
-
-    @Test
-    fun `performAction should throw exception when repository fails`() = runBlocking {
-        // Arrange
-        val params = WebRedirectConfigParams(paymentMethodType = "TEST_PAYMENT_METHOD")
-        val expectedException = Exception("Repository failed")
-
-        coEvery {
-            configurationRepository.getPaymentMethodConfiguration(params)
-        } returns Result.failure(expectedException)
-
-        // Act & Assert
-        val exception = assertFailsWith<Exception> {
-            interactor(params).getOrThrow()
+            // Assert
+            assertEquals(expectedConfig, result)
+            coVerify { configurationRepository.getPaymentMethodConfiguration(params) }
         }
 
-        assertEquals(expectedException.message, exception.message)
-        coVerify { configurationRepository.getPaymentMethodConfiguration(params) }
-    }
+    @Test
+    fun `performAction should throw exception when repository fails`() =
+        runBlocking {
+            // Arrange
+            val params = WebRedirectConfigParams(paymentMethodType = "TEST_PAYMENT_METHOD")
+            val expectedException = Exception("Repository failed")
+
+            coEvery {
+                configurationRepository.getPaymentMethodConfiguration(params)
+            } returns Result.failure(expectedException)
+
+            // Act & Assert
+            val exception =
+                assertFailsWith<Exception> {
+                    interactor(params).getOrThrow()
+                }
+
+            assertEquals(expectedException.message, exception.message)
+            coVerify { configurationRepository.getPaymentMethodConfiguration(params) }
+        }
 }

@@ -8,5 +8,5 @@ internal data class RedirectLauncherParams(
     val successUrl: String,
     val paymentMethodConfigId: String,
     val paymentMethodType: String,
-    val sessionIntent: PrimerSessionIntent
+    val sessionIntent: PrimerSessionIntent,
 ) : InitialLauncherParams

@@ -12,7 +12,6 @@ import org.junit.jupiter.api.extension.ExtendWith
 
 @ExtendWith(MockKExtension::class)
 internal class GlobalConfigurationCacheDataSourceTest {
-
     private val testConfigurationCache = ConfigurationCache(validUntil = 123456789L, clientToken = "testToken")
 
     @RelaxedMockK

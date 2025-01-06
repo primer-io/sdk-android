@@ -75,7 +75,6 @@ import java.util.TreeMap
 @ExperimentalCoroutinesApi
 @Suppress("TooManyFunctions")
 internal class CardFormFragment : BaseFragment() {
-
     private var cardInputFields: TreeMap<PrimerInputElementType, TextInputWidget> by autoCleaned()
     private var binding: FragmentCardFormBinding by autoCleaned()
 
@@ -99,13 +98,16 @@ internal class CardFormFragment : BaseFragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
         binding = FragmentCardFormBinding.inflate(inflater, container, false)
         return binding.root
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onViewCreated(
+        view: View,
+        savedInstanceState: Bundle?,
+    ) {
         super.onViewCreated(view, savedInstanceState)
 
         isBeingDismissed = false
@@ -135,7 +137,7 @@ internal class CardFormFragment : BaseFragment() {
             validateAndShowErrorFields()
         }
 
-        primerViewModel.selectCountryCode.observe(viewLifecycleOwner) { country ->
+        primerViewModel.selectedCountryCode.observe(viewLifecycleOwner) { country ->
             country ?: return@observe
             binding.billingAddressForm.onSelectCountry(country)
         }
@@ -157,7 +159,7 @@ internal class CardFormFragment : BaseFragment() {
     private fun validateAndShowErrorFields() {
         val billingAddressErrors = primerViewModel.validateBillingAddress()
         cardViewModel.updateValidationErrors(
-            billingAddressErrors
+            billingAddressErrors,
         )
     }
 
@@ -183,16 +185,12 @@ internal class CardFormFragment : BaseFragment() {
     private fun bindViewComponents() {
         cardInputFields = TreeMap()
         cardInputFields.putAll(
-            /**
-             * All inputs from UI with safe a sequence, for handle focus of keyboard
-             * and IME option.
-             */
             arrayOf(
                 PrimerInputElementType.CARD_NUMBER to binding.cardFormCardNumber,
                 PrimerInputElementType.EXPIRY_DATE to binding.cardFormCardExpiry,
                 PrimerInputElementType.CVV to binding.cardFormCardCvv,
-                PrimerInputElementType.CARDHOLDER_NAME to binding.cardFormCardholderName
-            )
+                PrimerInputElementType.CARDHOLDER_NAME to binding.cardFormCardholderName,
+            ),
         )
     }
 
@@ -211,12 +209,13 @@ internal class CardFormFragment : BaseFragment() {
         binding.ivBack.apply {
             isVisible = localConfig.isStandalonePaymentMethod.not()
 
-            imageTintList = ColorStateList.valueOf(
-                theme.titleText.defaultColor.getColor(
-                    requireContext(),
-                    theme.isDarkMode
+            imageTintList =
+                ColorStateList.valueOf(
+                    theme.titleText.defaultColor.getColor(
+                        requireContext(),
+                        theme.isDarkMode,
+                    ),
                 )
-            )
 
             setOnClickListener {
                 primerViewModel.addAnalyticsEvent(
@@ -224,8 +223,8 @@ internal class CardFormFragment : BaseFragment() {
                         AnalyticsAction.CLICK,
                         ObjectType.BUTTON,
                         localConfig.toPlace(),
-                        ObjectId.BACK
-                    )
+                        ObjectId.BACK,
+                    ),
                 )
                 parentFragmentManager.popBackStack()
                 primerViewModel.clearSelectedCountry()
@@ -251,9 +250,10 @@ internal class CardFormFragment : BaseFragment() {
         }
     }
 
-    private fun focusFirstInput() = FieldFocuser.focus(
-        cardInputFields[PrimerInputElementType.CARD_NUMBER]?.editText
-    )
+    private fun focusFirstInput() =
+        FieldFocuser.focus(
+            cardInputFields[PrimerInputElementType.CARD_NUMBER]?.editText,
+        )
 
     private fun renderCardNumberInput() {
         val cardNumberInput = cardInputFields[PrimerInputElementType.CARD_NUMBER]
@@ -265,7 +265,7 @@ internal class CardFormFragment : BaseFragment() {
         if (state != null) {
             updateCardNetworkViews(
                 state.networks.map { it.network },
-                state.selectedNetwork
+                state.selectedNetwork,
             ) { network ->
                 cardViewModel.setSelectedNetwork(network)
             }
@@ -278,7 +278,7 @@ internal class CardFormFragment : BaseFragment() {
     private fun updateCardNetworkViews(
         networks: List<CardNetwork.Type>,
         selectedNetwork: CardNetwork.Type?,
-        onNetworkSelected: (CardNetwork.Type) -> Unit
+        onNetworkSelected: (CardNetwork.Type) -> Unit,
     ) {
         when (networks.size) {
             0 -> showSingleCard(null)
@@ -298,7 +298,7 @@ internal class CardFormFragment : BaseFragment() {
     private fun showCoBadgeCardDropdown(
         networks: List<CardNetwork.Type>,
         selectedNetwork: CardNetwork.Type,
-        onNetworkSelected: (CardNetwork.Type) -> Unit
+        onNetworkSelected: (CardNetwork.Type) -> Unit,
     ) {
         with(binding) {
             cardNetworkContainer.setOnClickListener {
@@ -312,7 +312,7 @@ internal class CardFormFragment : BaseFragment() {
     private fun showCardSelectPopup(
         networks: List<CardNetwork.Type>,
         selectedNetwork: CardNetwork.Type,
-        onNetworkSelected: (CardNetwork.Type) -> Unit
+        onNetworkSelected: (CardNetwork.Type) -> Unit,
     ) {
         val offset = requireContext().getDimensionAsPx(R.dimen.primer_card_network_popup_offset)
         ListPopupWindow(requireContext()).apply {
@@ -321,7 +321,7 @@ internal class CardFormFragment : BaseFragment() {
             width = ViewGroup.LayoutParams.WRAP_CONTENT
             height = ViewGroup.LayoutParams.WRAP_CONTENT
             setBackgroundDrawable(
-                AppCompatResources.getDrawable(requireContext(), R.drawable.background_card_select_menu)
+                AppCompatResources.getDrawable(requireContext(), R.drawable.background_card_select_menu),
             )
             verticalOffset = offset
             setOnItemClickListener { _, _, position, _ ->
@@ -339,14 +339,15 @@ internal class CardFormFragment : BaseFragment() {
         } ?: AppCompatResources.getDrawable(requireContext(), R.drawable.ic_generic_card)
 
     private fun emitCardNetworkAction(cardType: CardNetwork.Type?) {
-        val actionParams = if (cardType == null || cardType == CardNetwork.Type.OTHER) {
-            ActionUpdateUnselectPaymentMethodParams
-        } else {
-            ActionUpdateSelectPaymentMethodParams(
-                PaymentMethodType.PAYMENT_CARD.name,
-                cardType.name
-            )
-        }
+        val actionParams =
+            if (cardType == null || cardType == CardNetwork.Type.OTHER) {
+                ActionUpdateUnselectPaymentMethodParams
+            } else {
+                ActionUpdateSelectPaymentMethodParams(
+                    PaymentMethodType.PAYMENT_CARD.name,
+                    cardType.name,
+                )
+            }
 
         primerViewModel.dispatchAction(actionParams) {
             lifecycleScope.launchWhenStarted {
@@ -357,8 +358,9 @@ internal class CardFormFragment : BaseFragment() {
 
     private fun setInputFieldPadding(view: View) {
         val res = requireContext().resources
-        val horizontalPadding = res
-            .getDimensionPixelSize(R.dimen.primer_underlined_input_padding_horizontal)
+        val horizontalPadding =
+            res
+                .getDimensionPixelSize(R.dimen.primer_underlined_input_padding_horizontal)
 
         view.setPadding(horizontalPadding, 0, horizontalPadding, 0)
     }
@@ -388,10 +390,10 @@ internal class CardFormFragment : BaseFragment() {
     @SuppressLint("ClickableViewAccessibility")
     private fun addInputFieldListeners(fields: Map<PrimerInputElementType, TextInputWidget>) {
         fields[PrimerInputElementType.EXPIRY_DATE]?.editText?.addTextChangedListener(
-            TextInputMask.ExpiryDate()
+            TextInputMask.ExpiryDate(),
         )
         fields[PrimerInputElementType.CARD_NUMBER]?.editText?.addTextChangedListener(
-            TextInputMask.CardNumber()
+            TextInputMask.CardNumber(),
         )
         fields.entries.forEach {
             it.value.editText?.addTextChangedListener(createCardInfoTextWatcher())
@@ -418,8 +420,8 @@ internal class CardFormFragment : BaseFragment() {
             NewFragmentBehaviour(
                 { SelectCountryFragment.newInstance() },
                 returnToPreviousOnBack = true,
-                tag = null
-            )
+                tag = null,
+            ),
         )
     }
 
@@ -440,12 +442,13 @@ internal class CardFormFragment : BaseFragment() {
         val uxMode = localConfig.paymentMethodIntent
         val context = requireContext()
 
-        binding.btnSubmitForm.text = when (uxMode) {
-            PrimerSessionIntent.VAULT -> context.getString(R.string.add_card)
-            PrimerSessionIntent.CHECKOUT -> {
-                String.format(getString(R.string.pay_specific_amount), primerViewModel.getTotalAmountFormatted())
+        binding.btnSubmitForm.text =
+            when (uxMode) {
+                PrimerSessionIntent.VAULT -> context.getString(R.string.add_card)
+                PrimerSessionIntent.CHECKOUT -> {
+                    String.format(getString(R.string.pay_specific_amount), primerViewModel.getTotalAmountFormatted())
+                }
             }
-        }
 
         binding.btnSubmitForm.setOnClickListener { onSubmitButtonPressed() }
     }
@@ -463,8 +466,8 @@ internal class CardFormFragment : BaseFragment() {
                     AnalyticsAction.CLICK,
                     ObjectType.BUTTON,
                     localConfig.toPlace(),
-                    ObjectId.PAY
-                )
+                    ObjectId.PAY,
+                ),
             )
             cardViewModel.submit()
         }
@@ -537,27 +540,34 @@ internal class CardFormFragment : BaseFragment() {
                 s: CharSequence?,
                 start: Int,
                 count: Int,
-                after: Int
+                after: Int,
             ) = Unit
 
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+            override fun onTextChanged(
+                s: CharSequence?,
+                start: Int,
+                before: Int,
+                count: Int,
+            ) {
                 cardViewModel.onCardDataChanged(
                     PrimerCardData(
-                        cardNumber = cardInputFields[PrimerInputElementType.CARD_NUMBER]?.editText?.text.toString()
-                            .sanitizedCardNumber(),
+                        cardNumber =
+                            cardInputFields[PrimerInputElementType.CARD_NUMBER]?.editText?.text.toString()
+                                .sanitizedCardNumber(),
                         cvv = cardInputFields[PrimerInputElementType.CVV]?.editText?.text.toString(),
-                        expiryDate = cardInputFields[PrimerInputElementType.EXPIRY_DATE]?.editText?.text.toString()
-                            .let {
-                                val parts = it.split("/")
-                                if (parts.size != 2) {
-                                    it
-                                } else {
-                                    "${parts[0]}/20${parts[1]}"
-                                }
-                            },
+                        expiryDate =
+                            cardInputFields[PrimerInputElementType.EXPIRY_DATE]?.editText?.text.toString()
+                                .let {
+                                    val parts = it.split("/")
+                                    if (parts.size != 2) {
+                                        it
+                                    } else {
+                                        "${parts[0]}/20${parts[1]}"
+                                    }
+                                },
                         cardHolderName =
-                        cardInputFields[PrimerInputElementType.CARDHOLDER_NAME]?.editText?.text.toString()
-                    )
+                            cardInputFields[PrimerInputElementType.CARDHOLDER_NAME]?.editText?.text.toString(),
+                    ),
                 )
                 validateAndShowErrorFields()
             }
@@ -570,7 +580,10 @@ internal class CardFormFragment : BaseFragment() {
         }
     }
 
-    private fun handleInputFocuseByName(inputElementType: PrimerInputElementType, hasFocus: Boolean) {
+    private fun handleInputFocuseByName(
+        inputElementType: PrimerInputElementType,
+        hasFocus: Boolean,
+    ) {
         var skip = false
 
         if (!hasFocus && firstMount && inputElementType == PrimerInputElementType.CARD_NUMBER) {
@@ -611,12 +624,12 @@ internal class CardFormFragment : BaseFragment() {
         }
     }
 
-    private fun takeFocusCardholderName() =
-        FieldFocuser.focus(cardInputFields[PrimerInputElementType.CARDHOLDER_NAME])
+    private fun takeFocusCardholderName() = FieldFocuser.focus(cardInputFields[PrimerInputElementType.CARDHOLDER_NAME])
 
     private fun setValidationErrors() {
-        val errors = cardViewModel.cardValidationErrors.value
-            .plus(cardViewModel.billingAddressValidationErrors.value)
+        val errors =
+            cardViewModel.cardValidationErrors.value
+                .plus(cardViewModel.billingAddressValidationErrors.value)
 
         binding.btnSubmitForm.isEnabled = cardViewModel.isValid()
 
@@ -630,7 +643,7 @@ internal class CardFormFragment : BaseFragment() {
                 setValidationErrorState(
                     it.value,
                     if (focused) null else errors.find { err -> err.inputElementType == it.key },
-                    it.key
+                    it.key,
                 )
             }
         }
@@ -641,7 +654,7 @@ internal class CardFormFragment : BaseFragment() {
         var lastValidationErrors = emptySet<SyncValidationError>()
         cardViewModel.cardValidationErrors
             .combine(
-                cardViewModel.billingAddressValidationErrors
+                cardViewModel.billingAddressValidationErrors,
             ) { cardValidationErrors, billingAddressValidationErrors ->
                 val validationErrors = cardValidationErrors.plus(billingAddressValidationErrors)
                 val validationErrorsDiff = validationErrors.minus(lastValidationErrors)
@@ -652,8 +665,8 @@ internal class CardFormFragment : BaseFragment() {
                             messageType = MessageType.VALIDATION_FAILED,
                             message = validationError.inputElementType.name,
                             severity = Severity.WARN,
-                            context = ErrorContextParams(errorId = validationError.errorId)
-                        )
+                            context = ErrorContextParams(errorId = validationError.errorId),
+                        ),
                     )
                 }
             }.collect()
@@ -662,7 +675,7 @@ internal class CardFormFragment : BaseFragment() {
     private fun setValidationErrorState(
         input: TextInputWidget,
         error: SyncValidationError?,
-        type: PrimerInputElementType
+        type: PrimerInputElementType,
     ) {
         val isEnableError = error != null
         input.isErrorEnabled = isEnableError
@@ -679,8 +692,8 @@ internal class CardFormFragment : BaseFragment() {
                         MessageAnalyticsParams(
                             MessageType.VALIDATION_FAILED,
                             input.error.toString(),
-                            Severity.INFO
-                        )
+                            Severity.INFO,
+                        ),
                     )
                 }
                 .run {
@@ -714,7 +727,6 @@ internal class CardFormFragment : BaseFragment() {
     }
 
     companion object {
-
         private const val ALPHA_HALF = 0.5f
         private const val ALPHA_VISIBLE = 1f
 

@@ -25,77 +25,82 @@ import org.junit.jupiter.api.extension.ExtendWith
 
 @ExtendWith(MockKExtension::class)
 class StripeAchTokenizationDataRepositoryTest {
-
     @MockK
-    private lateinit var remoteTokenizationDataSource: BaseRemoteTokenizationDataSource<StripeAchPaymentInstrumentDataRequest>
+    private lateinit var remoteTokenizationDataSource:
+        BaseRemoteTokenizationDataSource<StripeAchPaymentInstrumentDataRequest>
 
     @MockK
     private lateinit var localConfigurationDataSource: BaseCacheDataSource<ConfigurationData, ConfigurationData>
 
     @MockK
-    private lateinit var tokenizationParamsMapper: TokenizationParamsMapper<StripeAchPaymentInstrumentParams, StripeAchPaymentInstrumentDataRequest>
+    private lateinit var tokenizationParamsMapper:
+        TokenizationParamsMapper<StripeAchPaymentInstrumentParams, StripeAchPaymentInstrumentDataRequest>
 
     @InjectMockKs
     private lateinit var repository: StripeAchTokenizationDataRepository
 
     @Test
-    fun `tokenize() returns success result when data source executes successfully`() = runBlocking {
-        val params = mockk<TokenizationParams<StripeAchPaymentInstrumentParams>>()
-        val expectedRequest = mockk<TokenizationRequestV2<StripeAchPaymentInstrumentDataRequest>>()
-        val expectedResponse = mockk<PaymentMethodTokenInternal>()
-        val configurationData = mockk<ConfigurationData> {
-            every { pciUrl } returns "pciUrl"
-        }
+    fun `tokenize() returns success result when data source executes successfully`() =
+        runBlocking {
+            val params = mockk<TokenizationParams<StripeAchPaymentInstrumentParams>>()
+            val expectedRequest = mockk<TokenizationRequestV2<StripeAchPaymentInstrumentDataRequest>>()
+            val expectedResponse = mockk<PaymentMethodTokenInternal>()
+            val configurationData =
+                mockk<ConfigurationData> {
+                    every { pciUrl } returns "pciUrl"
+                }
 
-        every { localConfigurationDataSource.get() } returns configurationData
-        every { tokenizationParamsMapper.map(params) } returns expectedRequest
-        coEvery { remoteTokenizationDataSource.execute(any()) } returns expectedResponse
+            every { localConfigurationDataSource.get() } returns configurationData
+            every { tokenizationParamsMapper.map(params) } returns expectedRequest
+            coEvery { remoteTokenizationDataSource.execute(any()) } returns expectedResponse
 
-        val response = repository.tokenize(params)
+            val response = repository.tokenize(params)
 
-        assertEquals(Result.success(expectedResponse), response)
-        verify {
-            localConfigurationDataSource.get()
-            tokenizationParamsMapper.map(params)
-            configurationData.pciUrl
-        }
-        coVerify {
-            remoteTokenizationDataSource.execute(
-                BaseRemoteHostRequest(
-                    host = "pciUrl",
-                    data = expectedRequest
+            assertEquals(Result.success(expectedResponse), response)
+            verify {
+                localConfigurationDataSource.get()
+                tokenizationParamsMapper.map(params)
+                configurationData.pciUrl
+            }
+            coVerify {
+                remoteTokenizationDataSource.execute(
+                    BaseRemoteHostRequest(
+                        host = "pciUrl",
+                        data = expectedRequest,
+                    ),
                 )
-            )
+            }
         }
-    }
 
     @Test
-    fun `tokenize() returns failure result when data source execution fails`() = runBlocking {
-        val params = mockk<TokenizationParams<StripeAchPaymentInstrumentParams>>()
-        val expectedRequest = mockk<TokenizationRequestV2<StripeAchPaymentInstrumentDataRequest>>()
-        val configurationData = mockk<ConfigurationData> {
-            every { pciUrl } returns "pciUrl"
-        }
-        val exception = Exception("Execution failed")
+    fun `tokenize() returns failure result when data source execution fails`() =
+        runBlocking {
+            val params = mockk<TokenizationParams<StripeAchPaymentInstrumentParams>>()
+            val expectedRequest = mockk<TokenizationRequestV2<StripeAchPaymentInstrumentDataRequest>>()
+            val configurationData =
+                mockk<ConfigurationData> {
+                    every { pciUrl } returns "pciUrl"
+                }
+            val exception = Exception("Execution failed")
 
-        every { localConfigurationDataSource.get() } returns configurationData
-        every { tokenizationParamsMapper.map(params) } returns expectedRequest
-        coEvery { remoteTokenizationDataSource.execute(any()) } throws exception
+            every { localConfigurationDataSource.get() } returns configurationData
+            every { tokenizationParamsMapper.map(params) } returns expectedRequest
+            coEvery { remoteTokenizationDataSource.execute(any()) } throws exception
 
-        val response = repository.tokenize(params)
+            val response = repository.tokenize(params)
 
-        assertEquals(Result.failure<Any>(exception), response)
-        verify {
-            localConfigurationDataSource.get()
-            tokenizationParamsMapper.map(params)
-        }
-        coVerify {
-            remoteTokenizationDataSource.execute(
-                BaseRemoteHostRequest(
-                    host = "pciUrl",
-                    data = expectedRequest
+            assertEquals(Result.failure<Any>(exception), response)
+            verify {
+                localConfigurationDataSource.get()
+                tokenizationParamsMapper.map(params)
+            }
+            coVerify {
+                remoteTokenizationDataSource.execute(
+                    BaseRemoteHostRequest(
+                        host = "pciUrl",
+                        data = expectedRequest,
+                    ),
                 )
-            )
+            }
         }
-    }
 }

@@ -19,22 +19,29 @@ import java.io.BufferedInputStream
 import java.util.WeakHashMap
 
 class ImageLoader internal constructor(private val okHttpClient: OkHttpClient) {
-
     private val jobs = WeakHashMap<ImageView, Job>()
     private val scope =
         CoroutineScope(Dispatchers.Main + SupervisorJob())
 
-    fun loadImage(url: String, target: ImageView) = loadImage(url, null, target)
+    fun loadImage(
+        url: String,
+        target: ImageView,
+    ) = loadImage(url, null, target)
 
-    fun loadImage(url: String, placeholder: Drawable?, target: ImageView) {
+    fun loadImage(
+        url: String,
+        placeholder: Drawable?,
+        target: ImageView,
+    ) {
         target.setImageDrawable(placeholder)
-        jobs[target] = scope.launch {
-            try {
-                target.setImageBitmap(loadImage(url))
-            } catch (_: Exception) {
-                clear(target)
+        jobs[target] =
+            scope.launch {
+                try {
+                    target.setImageBitmap(loadImage(url))
+                } catch (_: Exception) {
+                    clear(target)
+                }
             }
-        }
     }
 
     fun clear(target: ImageView) = jobs.remove(target)?.cancel()
@@ -44,19 +51,22 @@ class ImageLoader internal constructor(private val okHttpClient: OkHttpClient) {
         scope.cancel()
     }
 
-    private suspend fun loadImage(url: String) = withContext<Bitmap>(Dispatchers.IO) {
-        val request = Request.Builder()
-            .url(url)
-            .get()
-            .build()
+    private suspend fun loadImage(url: String) =
+        withContext<Bitmap>(Dispatchers.IO) {
+            val request =
+                Request.Builder()
+                    .url(url)
+                    .get()
+                    .build()
 
-        val response: Response = okHttpClient
-            .newCall(request)
-            .await()
+            val response: Response =
+                okHttpClient
+                    .newCall(request)
+                    .await()
 
-        val bufferedInputStream = BufferedInputStream(response.body?.byteStream())
-        bufferedInputStream.use {
-            BitmapFactory.decodeStream(bufferedInputStream)
+            val bufferedInputStream = BufferedInputStream(response.body?.byteStream())
+            bufferedInputStream.use {
+                BitmapFactory.decodeStream(bufferedInputStream)
+            }
         }
-    }
 }

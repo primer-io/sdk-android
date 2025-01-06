@@ -11,7 +11,7 @@ internal data class Form(
     val inputs: List<FormInput>? = null,
     val accountNumber: String? = null,
     val expiration: String? = null,
-    val inputPrefix: FormInputPrefix? = null
+    val inputPrefix: FormInputPrefix? = null,
 )
 
 internal data class FormInput(
@@ -22,7 +22,7 @@ internal data class FormInput(
     val inputCharacters: String?,
     val maxInputLength: Int?,
     val regex: Regex?,
-    val inputPrefix: FormInputPrefix?
+    val inputPrefix: FormInputPrefix?,
 )
 
 internal interface FormInputPrefix

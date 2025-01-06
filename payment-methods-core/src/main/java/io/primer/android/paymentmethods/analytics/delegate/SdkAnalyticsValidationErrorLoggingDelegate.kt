@@ -6,30 +6,32 @@ import io.primer.android.analytics.domain.AnalyticsInteractor
 import io.primer.android.analytics.domain.models.BaseContextParams
 import io.primer.android.analytics.domain.models.ErrorContextParams
 import io.primer.android.analytics.domain.models.MessageAnalyticsParams
-import io.primer.android.domain.error.models.PrimerError
 import io.primer.android.components.domain.error.PrimerValidationError
+import io.primer.android.domain.error.models.PrimerError
 
 class SdkAnalyticsValidationErrorLoggingDelegate(
-    private val analyticsInteractor: AnalyticsInteractor
+    private val analyticsInteractor: AnalyticsInteractor,
 ) {
-    suspend fun logSdkAnalyticsError(error: PrimerError) = logSdkAnalyticsError(
-        description = error.description,
-        diagnosticsId = error.diagnosticsId,
-        errorId = error.errorId,
-        context = error.context
-    )
+    suspend fun logSdkAnalyticsError(error: PrimerError) =
+        logSdkAnalyticsError(
+            description = error.description,
+            diagnosticsId = error.diagnosticsId,
+            errorId = error.errorId,
+            context = error.context,
+        )
 
-    suspend fun logSdkAnalyticsError(error: PrimerValidationError) = logSdkAnalyticsError(
-        description = error.description,
-        diagnosticsId = error.diagnosticsId,
-        errorId = error.errorId
-    )
+    suspend fun logSdkAnalyticsError(error: PrimerValidationError) =
+        logSdkAnalyticsError(
+            description = error.description,
+            diagnosticsId = error.diagnosticsId,
+            errorId = error.errorId,
+        )
 
     private suspend fun logSdkAnalyticsError(
         description: String,
         diagnosticsId: String,
         errorId: String,
-        context: BaseContextParams? = null
+        context: BaseContextParams? = null,
     ) {
         analyticsInteractor(
             MessageAnalyticsParams(
@@ -37,8 +39,8 @@ class SdkAnalyticsValidationErrorLoggingDelegate(
                 message = description,
                 severity = Severity.WARN,
                 diagnosticsId = diagnosticsId,
-                context = context ?: ErrorContextParams(errorId = errorId)
-            )
+                context = context ?: ErrorContextParams(errorId = errorId),
+            ),
         )
     }
 }

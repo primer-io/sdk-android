@@ -22,17 +22,19 @@ internal class QrCodeComponent(
     private val tokenizationDelegate: QrCodeTokenizationDelegate,
     private val pollingInteractor: AsyncPaymentMethodPollingInteractor,
     private val paymentDelegate: QrCodePaymentDelegate,
-    private val pollingStartHandler: PollingStartHandler
+    private val pollingStartHandler: PollingStartHandler,
 ) : InternalNativeUiPaymentMethodComponent() {
-
-    override fun start(paymentMethodType: String, primerSessionIntent: PrimerSessionIntent) {
+    override fun start(
+        paymentMethodType: String,
+        primerSessionIntent: PrimerSessionIntent,
+    ) {
         this.paymentMethodType = paymentMethodType
         this.primerSessionIntent = primerSessionIntent
         composerScope.launch {
             pollingStartHandler.startPolling.collectLatest { pollingStartData ->
                 startPolling(
                     url = pollingStartData.statusUrl,
-                    paymentMethodType = pollingStartData.paymentMethodType
+                    paymentMethodType = pollingStartData.paymentMethodType,
                 )
             }
         }
@@ -41,33 +43,36 @@ internal class QrCodeComponent(
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
-    internal fun startPolling(url: String, paymentMethodType: String) =
-        composerScope.launch {
-            runCatching {
-                pollingInteractor.execute(
-                    AsyncStatusParams(url, paymentMethodType)
-                ).mapLatest { status ->
-                    paymentDelegate.resumePayment(status.resumeToken)
-                }.catch {
-                    paymentDelegate.handleError(it)
-                }.collect()
-            }.onFailureWithCancellation(paymentMethodType, paymentDelegate::handleError)
-        }
-
-    private fun tokenize() = composerScope.launch {
-        tokenizationDelegate.tokenize(
-            QrCodeTokenizationInputable(
-                paymentMethodType = paymentMethodType,
-                primerSessionIntent = primerSessionIntent
-            )
-        )
-            .flatMap { paymentMethodTokenData ->
-                paymentDelegate.handlePaymentMethodToken(
-                    paymentMethodTokenData = paymentMethodTokenData,
-                    primerSessionIntent = primerSessionIntent
-                )
-            }.onFailure { throwable ->
-                paymentDelegate.handleError(throwable)
-            }
+    internal fun startPolling(
+        url: String,
+        paymentMethodType: String,
+    ) = composerScope.launch {
+        runCatching {
+            pollingInteractor.execute(
+                AsyncStatusParams(url, paymentMethodType),
+            ).mapLatest { status ->
+                paymentDelegate.resumePayment(status.resumeToken)
+            }.catch {
+                paymentDelegate.handleError(it)
+            }.collect()
+        }.onFailureWithCancellation(paymentMethodType, paymentDelegate::handleError)
     }
+
+    private fun tokenize() =
+        composerScope.launch {
+            tokenizationDelegate.tokenize(
+                QrCodeTokenizationInputable(
+                    paymentMethodType = paymentMethodType,
+                    primerSessionIntent = primerSessionIntent,
+                ),
+            )
+                .flatMap { paymentMethodTokenData ->
+                    paymentDelegate.handlePaymentMethodToken(
+                        paymentMethodTokenData = paymentMethodTokenData,
+                        primerSessionIntent = primerSessionIntent,
+                    )
+                }.onFailure { throwable ->
+                    paymentDelegate.handleError(throwable)
+                }
+        }
 }

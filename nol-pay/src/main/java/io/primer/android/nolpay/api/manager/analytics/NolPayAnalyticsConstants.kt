@@ -1,7 +1,6 @@
 package io.primer.android.nolpay.api.manager.analytics
 
 internal object NolPayAnalyticsConstants {
-
     // link component
     const val LINK_CARD_START_METHOD = "NolPayLinkCardComponent.start()"
     const val LINK_CARD_UPDATE_COLLECTED_DATA_METHOD =

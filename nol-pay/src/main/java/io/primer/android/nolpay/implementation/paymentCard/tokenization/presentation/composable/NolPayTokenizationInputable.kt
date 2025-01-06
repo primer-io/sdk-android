@@ -7,5 +7,5 @@ internal data class NolPayTokenizationInputable(
     val mobileNumber: String,
     val nolPayCardNumber: String,
     override val paymentMethodType: String,
-    override val primerSessionIntent: PrimerSessionIntent
+    override val primerSessionIntent: PrimerSessionIntent,
 ) : TokenizationInputable

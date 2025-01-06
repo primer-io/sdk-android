@@ -6,17 +6,18 @@ import io.primer.android.stripe.ach.implementation.payment.confirmation.domain.m
 import java.util.Date
 
 internal class CompleteStripeAchPaymentSessionDelegate(
-    private val stripeAchCompletePaymentInteractor: StripeAchCompletePaymentInteractor
+    private val stripeAchCompletePaymentInteractor: StripeAchCompletePaymentInteractor,
 ) {
     suspend operator fun invoke(
         completeUrl: String,
         paymentMethodId: String?,
-        mandateTimestamp: Date
-    ): Result<Unit> = stripeAchCompletePaymentInteractor.invoke(
-        StripeAchCompletePaymentParams(
-            completeUrl = completeUrl,
-            mandateTimestamp = mandateTimestamp.toIso8601String(),
-            paymentMethodId = paymentMethodId
+        mandateTimestamp: Date,
+    ): Result<Unit> =
+        stripeAchCompletePaymentInteractor.invoke(
+            StripeAchCompletePaymentParams(
+                completeUrl = completeUrl,
+                mandateTimestamp = mandateTimestamp.toIso8601String(),
+                paymentMethodId = paymentMethodId,
+            ),
         )
-    )
 }

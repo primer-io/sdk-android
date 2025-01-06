@@ -13,21 +13,21 @@ import kotlinx.coroutines.launch
 
 internal class FormsViewModel(
     private val formsInteractor: FormsInteractor,
-    analyticsInteractor: AnalyticsInteractor
+    analyticsInteractor: AnalyticsInteractor,
 ) : BaseViewModel(analyticsInteractor) {
-
     private val inputStates: MutableMap<String, InputState> = mutableMapOf()
 
     private val _formLiveData = MutableLiveData<Form>()
     val formLiveData: LiveData<Form> = _formLiveData
 
-    fun getForms(type: String) = viewModelScope.launch {
-        formsInteractor(FormInputParams(type))
-            .onEach { it.inputs?.forEach { input -> inputStates[input.id] = InputState(null, false) } }
-            .collect {
-                _formLiveData.postValue(it)
-            }
-    }
+    fun getForms(type: String) =
+        viewModelScope.launch {
+            formsInteractor(FormInputParams(type))
+                .onEach { it.inputs?.forEach { input -> inputStates[input.id] = InputState(null, false) } }
+                .collect {
+                    _formLiveData.postValue(it)
+                }
+        }
 
     private data class InputState(val input: CharSequence?, val validated: Boolean)
 }

@@ -27,9 +27,8 @@ internal class DefaultHeadlessUniversalCheckoutDelegate(
     private val paymentsTypesInteractor: PaymentsTypesInteractor,
     private val analyticsInteractor: AnalyticsInteractor,
     private val globalCacheConfigurationCacheDataSource: GlobalCacheConfigurationCacheDataSource,
-    private val scopeProvider: CoroutineScopeProvider
+    private val scopeProvider: CoroutineScopeProvider,
 ) : HeadlessUniversalCheckoutDelegate {
-
     private val scope: CoroutineScope = scopeProvider.scope
 
     override fun start() {
@@ -39,16 +38,16 @@ internal class DefaultHeadlessUniversalCheckoutDelegate(
             addAnalyticsEvent(
                 TimerAnalyticsParams(
                     id = TimerId.HEADLESS_LOADING,
-                    timerType = TimerType.START
-                )
+                    timerType = TimerType.START,
+                ),
             )
             paymentsTypesInteractor(None)
             addAnalyticsEvent(
                 TimerAnalyticsParams(
                     id = TimerId.HEADLESS_LOADING,
                     timerType = TimerType.END,
-                    duration = (timeSource.markNow() - start).inWholeMilliseconds
-                )
+                    duration = (timeSource.markNow() - start).inWholeMilliseconds,
+                ),
             )
         }
     }

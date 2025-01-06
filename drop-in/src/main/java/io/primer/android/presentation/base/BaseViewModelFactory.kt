@@ -6,8 +6,8 @@ import io.primer.android.analytics.domain.AnalyticsInteractor
 
 internal class BaseViewModelFactory(private val analyticsInteractor: AnalyticsInteractor) :
     ViewModelProvider.Factory {
-
-    override fun <T : ViewModel> create(modelClass: Class<T>): T = BaseViewModel(
-        analyticsInteractor
-    ) as T
+    override fun <T : ViewModel> create(modelClass: Class<T>): T =
+        BaseViewModel(
+            analyticsInteractor,
+        ) as T
 }

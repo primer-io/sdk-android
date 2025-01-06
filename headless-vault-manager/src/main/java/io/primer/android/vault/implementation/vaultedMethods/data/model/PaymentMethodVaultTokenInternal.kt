@@ -14,9 +14,8 @@ internal data class PaymentMethodVaultTokenInternal(
     override val vaultData: VaultDataResponse?,
     override val threeDSecureAuthentication: AuthenticationDetailsDataResponse?,
     override val isVaulted: Boolean,
-    val analyticsId: String
+    val analyticsId: String,
 ) : BasePaymentToken() {
-
     override val token: String = id
 
     companion object {
@@ -30,28 +29,29 @@ internal data class PaymentMethodVaultTokenInternal(
         private const val ANALYTICS_ID_FIELD = "analyticsId"
 
         @JvmField
-        val deserializer = JSONObjectDeserializer { t ->
-            PaymentMethodVaultTokenInternal(
-                t.getString(ID_FIELD),
-                t.getString(PAYMENT_METHOD_TYPE_FIELD),
-                t.getString(PAYMENT_INSTRUMENT_TYPE_FIELD),
-                t.optJSONObject(PAYMENT_INSTRUMENT_DATA_FIELD)?.let {
-                    JSONSerializationUtils.getJsonObjectDeserializer<PaymentInstrumentData>()
-                        .deserialize(it)
-                },
-                t.optJSONObject(VAULT_DATA_FIELD)?.let {
-                    JSONSerializationUtils.getJsonObjectDeserializer<VaultDataResponse>()
-                        .deserialize(it)
-                },
-                t.optJSONObject(THREE_DS_AUTHENTICATION_FIELD)?.let {
-                    JSONSerializationUtils
-                        .getJsonObjectDeserializer<AuthenticationDetailsDataResponse>()
-                        .deserialize(it)
-                },
-                t.getBoolean(IS_VAULTED_FIELD),
-                t.optString(ANALYTICS_ID_FIELD)
-            )
-        }
+        val deserializer =
+            JSONObjectDeserializer { t ->
+                PaymentMethodVaultTokenInternal(
+                    t.getString(ID_FIELD),
+                    t.getString(PAYMENT_METHOD_TYPE_FIELD),
+                    t.getString(PAYMENT_INSTRUMENT_TYPE_FIELD),
+                    t.optJSONObject(PAYMENT_INSTRUMENT_DATA_FIELD)?.let {
+                        JSONSerializationUtils.getJsonObjectDeserializer<PaymentInstrumentData>()
+                            .deserialize(it)
+                    },
+                    t.optJSONObject(VAULT_DATA_FIELD)?.let {
+                        JSONSerializationUtils.getJsonObjectDeserializer<VaultDataResponse>()
+                            .deserialize(it)
+                    },
+                    t.optJSONObject(THREE_DS_AUTHENTICATION_FIELD)?.let {
+                        JSONSerializationUtils
+                            .getJsonObjectDeserializer<AuthenticationDetailsDataResponse>()
+                            .deserialize(it)
+                    },
+                    t.getBoolean(IS_VAULTED_FIELD),
+                    t.optString(ANALYTICS_ID_FIELD),
+                )
+            }
     }
 }
 
@@ -61,31 +61,33 @@ internal fun PaymentMethodVaultTokenInternal.toVaultedPaymentMethod() =
         analyticsId = analyticsId,
         paymentInstrumentType = paymentInstrumentType,
         paymentMethodType = paymentMethodType,
-        paymentInstrumentData = requireNotNull(paymentInstrumentData).let { paymentInstrumentData ->
-            PaymentInstrumentData(
-                network = paymentInstrumentData.network,
-                cardholderName = paymentInstrumentData.cardholderName,
-                first6Digits = paymentInstrumentData.first6Digits,
-                last4Digits = paymentInstrumentData.last4Digits,
-                accountNumberLast4Digits = paymentInstrumentData.accountNumberLast4Digits,
-                expirationMonth = paymentInstrumentData.expirationMonth,
-                expirationYear = paymentInstrumentData.expirationYear,
-                externalPayerInfo = paymentInstrumentData.externalPayerInfo,
-                klarnaCustomerToken = paymentInstrumentData.klarnaCustomerToken,
-                sessionData = paymentInstrumentData.sessionData,
-                paymentMethodType = paymentInstrumentData.paymentMethodType,
-                sessionInfo = paymentInstrumentData.sessionInfo,
-                binData = paymentInstrumentData.binData,
-                bankName = paymentInstrumentData.bankName
-            )
-        },
-        threeDSecureAuthentication = threeDSecureAuthentication?.let {
-            PrimerVaultedPaymentMethod.AuthenticationDetails(
-                it.responseCode,
-                it.reasonCode,
-                it.reasonText,
-                it.protocolVersion,
-                it.challengeIssued
-            )
-        }
+        paymentInstrumentData =
+            requireNotNull(paymentInstrumentData).let { paymentInstrumentData ->
+                PaymentInstrumentData(
+                    network = paymentInstrumentData.network,
+                    cardholderName = paymentInstrumentData.cardholderName,
+                    first6Digits = paymentInstrumentData.first6Digits,
+                    last4Digits = paymentInstrumentData.last4Digits,
+                    accountNumberLast4Digits = paymentInstrumentData.accountNumberLast4Digits,
+                    expirationMonth = paymentInstrumentData.expirationMonth,
+                    expirationYear = paymentInstrumentData.expirationYear,
+                    externalPayerInfo = paymentInstrumentData.externalPayerInfo,
+                    klarnaCustomerToken = paymentInstrumentData.klarnaCustomerToken,
+                    sessionData = paymentInstrumentData.sessionData,
+                    paymentMethodType = paymentInstrumentData.paymentMethodType,
+                    sessionInfo = paymentInstrumentData.sessionInfo,
+                    binData = paymentInstrumentData.binData,
+                    bankName = paymentInstrumentData.bankName,
+                )
+            },
+        threeDSecureAuthentication =
+            threeDSecureAuthentication?.let {
+                PrimerVaultedPaymentMethod.AuthenticationDetails(
+                    it.responseCode,
+                    it.reasonCode,
+                    it.reasonText,
+                    it.protocolVersion,
+                    it.challengeIssued,
+                )
+            },
     )

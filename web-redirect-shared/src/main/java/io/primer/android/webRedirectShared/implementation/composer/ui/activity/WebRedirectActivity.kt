@@ -16,7 +16,6 @@ import io.primer.android.webRedirectShared.implementation.composer.presentation.
 import io.primer.paymentMethodCoreUi.core.ui.webview.WebViewActivity
 
 class WebRedirectActivity : WebViewActivity() {
-
     private val viewModel: WebRedirectViewModel
         by viewModel<WebRedirectViewModel, WebRedirectViewModelFactory>()
 
@@ -34,7 +33,7 @@ class WebRedirectActivity : WebViewActivity() {
         super.onNewIntent(intent)
         when (
             intent?.data?.pathSegments?.contains(
-                WebRedirectPaymentMethodWebViewClient.CANCEL_STATE_QUERY_PARAM
+                WebRedirectPaymentMethodWebViewClient.CANCEL_STATE_QUERY_PARAM,
             )
         ) {
             true -> setResult(RESULT_CANCELED)
@@ -52,43 +51,46 @@ class WebRedirectActivity : WebViewActivity() {
     override fun setupWebViewClient() {
         val url = intent.extras?.getString(PAYMENT_URL_KEY)
         val captureUrl = intent.extras?.getString(CAPTURE_URL_KEY)
-        webView.webViewClient = WebRedirectPaymentMethodWebViewClient(
-            activity = this,
-            url = url,
-            returnUrl = captureUrl
-        )
+        webView.webViewClient =
+            WebRedirectPaymentMethodWebViewClient(
+                activity = this,
+                url = url,
+                returnUrl = captureUrl,
+            )
     }
 
-    private fun logAnalyticsViewed() = viewModel.addAnalyticsEvent(
-        UIAnalyticsParams(
-            AnalyticsAction.VIEW,
-            ObjectType.WEB_PAGE,
-            Place.PAYMENT_METHOD_POPUP,
-            context = UrlContextParams(
-                Uri.parse(
-                    intent.extras?.getString(PAYMENT_URL_KEY).orEmpty()
-                ).host.orEmpty()
-            )
+    private fun logAnalyticsViewed() =
+        viewModel.addAnalyticsEvent(
+            UIAnalyticsParams(
+                AnalyticsAction.VIEW,
+                ObjectType.WEB_PAGE,
+                Place.PAYMENT_METHOD_POPUP,
+                context =
+                    UrlContextParams(
+                        Uri.parse(
+                            intent.extras?.getString(PAYMENT_URL_KEY).orEmpty(),
+                        ).host.orEmpty(),
+                    ),
+            ),
         )
-    )
 
-    private fun logBackPressed() = viewModel.addAnalyticsEvent(
-        UIAnalyticsParams(
-            AnalyticsAction.CLICK,
-            ObjectType.BUTTON,
-            Place.PAYMENT_METHOD_POPUP,
-            ObjectId.BACK
+    private fun logBackPressed() =
+        viewModel.addAnalyticsEvent(
+            UIAnalyticsParams(
+                AnalyticsAction.CLICK,
+                ObjectType.BUTTON,
+                Place.PAYMENT_METHOD_POPUP,
+                ObjectId.BACK,
+            ),
         )
-    )
 
     companion object {
-
         fun getLaunchIntent(
             context: Context,
             paymentUrl: String,
             deeplinkUrl: String,
             title: String,
-            paymentMethodType: String
+            paymentMethodType: String,
         ): Intent {
             return Intent(context, WebRedirectActivity::class.java).apply {
                 putExtra(PAYMENT_URL_KEY, paymentUrl)

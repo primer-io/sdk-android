@@ -14,6 +14,7 @@ internal interface ConnectivityProvider {
     }
 
     fun addListener(listener: ConnectivityStateListener)
+
     fun removeListener(listener: ConnectivityStateListener)
 
     fun getNetworkState(): NetworkState
@@ -22,14 +23,13 @@ internal interface ConnectivityProvider {
         data object NotConnectedState : NetworkState()
 
         sealed class ConnectedState(val networkType: NetworkType) : NetworkState() {
-
             data class Connected(val networkCapabilities: NetworkCapabilities) : ConnectedState(
-                networkCapabilities.toNetworkType()
+                networkCapabilities.toNetworkType(),
             )
 
             @Suppress("DEPRECATION")
             data class ConnectedLegacy(val networkInfo: NetworkInfo) : ConnectedState(
-                networkInfo.toNetworkType()
+                networkInfo.toNetworkType(),
             )
         }
     }
@@ -46,17 +46,19 @@ internal interface ConnectivityProvider {
     }
 }
 
-internal fun NetworkCapabilities.toNetworkType() = when {
-    hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> NetworkType.WIFI
-    hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> NetworkType.CELLULAR
-    hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) -> NetworkType.ETHERNET
-    else -> NetworkType.OTHER
-}
+internal fun NetworkCapabilities.toNetworkType() =
+    when {
+        hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> NetworkType.WIFI
+        hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> NetworkType.CELLULAR
+        hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) -> NetworkType.ETHERNET
+        else -> NetworkType.OTHER
+    }
 
 @Suppress("DEPRECATION")
-internal fun NetworkInfo.toNetworkType() = when (type) {
-    ConnectivityManager.TYPE_WIFI -> NetworkType.WIFI
-    ConnectivityManager.TYPE_MOBILE -> NetworkType.CELLULAR
-    ConnectivityManager.TYPE_ETHERNET -> NetworkType.ETHERNET
-    else -> NetworkType.OTHER
-}
+internal fun NetworkInfo.toNetworkType() =
+    when (type) {
+        ConnectivityManager.TYPE_WIFI -> NetworkType.WIFI
+        ConnectivityManager.TYPE_MOBILE -> NetworkType.CELLULAR
+        ConnectivityManager.TYPE_ETHERNET -> NetworkType.ETHERNET
+        else -> NetworkType.OTHER
+    }

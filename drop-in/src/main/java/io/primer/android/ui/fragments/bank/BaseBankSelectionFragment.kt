@@ -47,7 +47,6 @@ import kotlinx.coroutines.launch
 @Suppress("detekt:TooManyFunctions")
 @ExperimentalCoroutinesApi
 internal abstract class BaseBankSelectionFragment : BaseFragment(), BankSelectionAdapterListener {
-
     private val imageLoader: ImageLoader by inject()
 
     private val isStandalonePaymentMethod
@@ -57,7 +56,7 @@ internal abstract class BaseBankSelectionFragment : BaseFragment(), BankSelectio
         BankSelectionAdapter(
             listener = this,
             imageLoader = imageLoader,
-            theme = theme
+            theme = theme,
         )
     }
 
@@ -88,7 +87,10 @@ internal abstract class BaseBankSelectionFragment : BaseFragment(), BankSelectio
         outState.putBoolean(IS_BANK_SELECTED_KEY, isBankSelected)
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onViewCreated(
+        view: View,
+        savedInstanceState: Bundle?,
+    ) {
         super.onViewCreated(view, savedInstanceState)
         logAnalyticsViewed()
         setupViews()
@@ -105,7 +107,7 @@ internal abstract class BaseBankSelectionFragment : BaseFragment(), BankSelectio
 
     override fun onBankSelected(issuerId: String) {
         component.updateCollectedData(
-            BanksCollectableData.BankId(issuerId)
+            BanksCollectableData.BankId(issuerId),
         )
     }
 
@@ -113,8 +115,8 @@ internal abstract class BaseBankSelectionFragment : BaseFragment(), BankSelectio
         baseBinding.chooseBankTitle.setTextColor(
             theme.titleText.defaultColor.getColor(
                 requireContext(),
-                theme.isDarkMode
-            )
+                theme.isDarkMode,
+            ),
         )
 
         baseBinding.paymentMethodBack.isVisible =
@@ -125,15 +127,15 @@ internal abstract class BaseBankSelectionFragment : BaseFragment(), BankSelectio
         baseBinding.paymentMethodBack.setColorFilter(
             theme.titleText.defaultColor.getColor(
                 requireContext(),
-                theme.isDarkMode
-            )
+                theme.isDarkMode,
+            ),
         )
 
         baseBinding.progressBar.indeterminateDrawable.setTint(
             theme.primaryColor.getColor(
                 requireContext(),
-                theme.isDarkMode
-            )
+                theme.isDarkMode,
+            ),
         )
 
         baseBinding.progressBar.updateLayoutParams<RelativeLayout.LayoutParams> {
@@ -143,13 +145,13 @@ internal abstract class BaseBankSelectionFragment : BaseFragment(), BankSelectio
         baseBinding.recyclerView.addItemDecoration(
             DividerItemDecoration(
                 requireContext(),
-                DividerItemDecoration.VERTICAL
+                DividerItemDecoration.VERTICAL,
             ).apply {
                 ContextCompat.getDrawable(requireContext(), R.drawable.divider_bank_selection)
                     ?.let {
                         setDrawable(it)
                     }
-            }
+            },
         )
         adapter = BankSelectionAdapter(this, imageLoader, theme)
         baseBinding.recyclerView.adapter = adapter
@@ -157,13 +159,13 @@ internal abstract class BaseBankSelectionFragment : BaseFragment(), BankSelectio
         baseBinding.searchBar.setTextColor(
             theme.input.text.defaultColor.getColor(
                 requireContext(),
-                theme.isDarkMode
-            )
+                theme.isDarkMode,
+            ),
         )
 
         baseBinding.searchBar.doAfterTextChanged { newText ->
             component.updateCollectedData(
-                BanksCollectableData.Filter(newText.toString())
+                BanksCollectableData.Filter(newText.toString()),
             )
             baseBinding.chooseBankDividerBottom.visibility =
                 when (newText.isNullOrBlank()) {
@@ -206,13 +208,14 @@ internal abstract class BaseBankSelectionFragment : BaseFragment(), BankSelectio
 
                 is BanksStep.BanksRetrieved -> {
                     onLoading(false)
-                    adapter.items = bankStep.banks.map { issuingBank ->
-                        BankItem(
-                            id = issuingBank.id,
-                            name = issuingBank.name,
-                            logoUrl = issuingBank.iconUrl
-                        )
-                    }.also { banks = it }
+                    adapter.items =
+                        bankStep.banks.map { issuingBank ->
+                            BankItem(
+                                id = issuingBank.id,
+                                name = issuingBank.name,
+                                logoUrl = issuingBank.iconUrl,
+                            )
+                        }.also { banks = it }
                     onLoadingSuccess()
                 }
             }
@@ -235,13 +238,14 @@ internal abstract class BaseBankSelectionFragment : BaseFragment(), BankSelectio
 
                 val issuerId = (it.collectableData as BanksCollectableData.BankId).id
 
-                adapter.items = banks.orEmpty().map { bankItem ->
-                    if (bankItem.id == issuerId) {
-                        bankItem.toLoadingBankItem()
-                    } else {
-                        bankItem.toDisabledBankItem()
+                adapter.items =
+                    banks.orEmpty().map { bankItem ->
+                        if (bankItem.id == issuerId) {
+                            bankItem.toLoadingBankItem()
+                        } else {
+                            bankItem.toDisabledBankItem()
+                        }
                     }
-                }
                 onLoadingSuccess()
                 logAnalyticsBankSelected(issuerId)
 
@@ -259,16 +263,21 @@ internal abstract class BaseBankSelectionFragment : BaseFragment(), BankSelectio
         baseBinding.errorLayout.tryAgain.setOnClickListener {
             loadData()
         }
-        baseBinding.recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
-                super.onScrollStateChanged(recyclerView, newState)
-                baseBinding.chooseBankDividerBottom.visibility =
-                    when (newState == RecyclerView.SCROLL_STATE_IDLE) {
-                        true -> View.INVISIBLE
-                        false -> View.VISIBLE
-                    }
-            }
-        })
+        baseBinding.recyclerView.addOnScrollListener(
+            object : RecyclerView.OnScrollListener() {
+                override fun onScrollStateChanged(
+                    recyclerView: RecyclerView,
+                    newState: Int,
+                ) {
+                    super.onScrollStateChanged(recyclerView, newState)
+                    baseBinding.chooseBankDividerBottom.visibility =
+                        when (newState == RecyclerView.SCROLL_STATE_IDLE) {
+                            true -> View.INVISIBLE
+                            false -> View.VISIBLE
+                        }
+                }
+            },
+        )
     }
 
     private fun popBackStack() {
@@ -278,7 +287,7 @@ internal abstract class BaseBankSelectionFragment : BaseFragment(), BankSelectio
                 /*
                 Bank was selected, this is considered a cancellation. This fragment isn't on the backstack,
                 remove it (along with any other fragments) to trigger the cancellation code in the component.
-                */
+                 */
                 with(requireParentFragment().childFragmentManager) {
                     commit { fragments.forEach(::remove) }
                 }
@@ -290,7 +299,7 @@ internal abstract class BaseBankSelectionFragment : BaseFragment(), BankSelectio
                 /*
                 Bank was selected, this is considered a cancellation. Pop everything all fragments in the
                 parent fragment.
-                */
+                 */
                 (parentFragment as? CheckoutSheetFragment)?.popBackStackToRoot()
             } else {
                 parentFragmentManager.popBackStack()
@@ -325,53 +334,56 @@ internal abstract class BaseBankSelectionFragment : BaseFragment(), BankSelectio
             ColorStateList.valueOf(
                 theme.titleText.defaultColor.getColor(
                     requireContext(),
-                    theme.isDarkMode
-                )
+                    theme.isDarkMode,
+                ),
             )
 
         baseBinding.errorLayout.errorMessage.setTextColor(
             ColorStateList.valueOf(
                 theme.titleText.defaultColor.getColor(
                     requireContext(),
-                    theme.isDarkMode
-                )
-            )
+                    theme.isDarkMode,
+                ),
+            ),
         )
     }
 
-    private fun logAnalyticsViewed() = addAnalyticsEvent(
-        UIAnalyticsParams(
-            AnalyticsAction.VIEW,
-            ObjectType.VIEW,
-            Place.BANK_SELECTION_LIST,
-            ObjectId.VIEW,
-            primerViewModel.selectedPaymentMethod.value?.paymentMethodType?.let {
-                PaymentMethodContextParams(it)
-            }
+    private fun logAnalyticsViewed() =
+        addAnalyticsEvent(
+            UIAnalyticsParams(
+                AnalyticsAction.VIEW,
+                ObjectType.VIEW,
+                Place.BANK_SELECTION_LIST,
+                ObjectId.VIEW,
+                primerViewModel.selectedPaymentMethod.value?.paymentMethodType?.let {
+                    PaymentMethodContextParams(it)
+                },
+            ),
         )
-    )
 
-    private fun logAnalyticsBackPressed() = addAnalyticsEvent(
-        UIAnalyticsParams(
-            AnalyticsAction.CLICK,
-            ObjectType.BUTTON,
-            Place.BANK_SELECTION_LIST,
-            ObjectId.BACK,
-            primerViewModel.selectedPaymentMethod.value?.paymentMethodType?.let {
-                PaymentMethodContextParams(it)
-            }
+    private fun logAnalyticsBackPressed() =
+        addAnalyticsEvent(
+            UIAnalyticsParams(
+                AnalyticsAction.CLICK,
+                ObjectType.BUTTON,
+                Place.BANK_SELECTION_LIST,
+                ObjectId.BACK,
+                primerViewModel.selectedPaymentMethod.value?.paymentMethodType?.let {
+                    PaymentMethodContextParams(it)
+                },
+            ),
         )
-    )
 
-    private fun logAnalyticsBankSelected(issuerId: String) = addAnalyticsEvent(
-        UIAnalyticsParams(
-            AnalyticsAction.CLICK,
-            ObjectType.LIST_ITEM,
-            Place.BANK_SELECTION_LIST,
-            ObjectId.SELECT,
-            BankIssuerContextParams(issuerId)
+    private fun logAnalyticsBankSelected(issuerId: String) =
+        addAnalyticsEvent(
+            UIAnalyticsParams(
+                AnalyticsAction.CLICK,
+                ObjectType.LIST_ITEM,
+                Place.BANK_SELECTION_LIST,
+                ObjectId.SELECT,
+                BankIssuerContextParams(issuerId),
+            ),
         )
-    )
 
     private fun addAnalyticsEvent(params: UIAnalyticsParams) {
         primerViewModel.addAnalyticsEvent(params)

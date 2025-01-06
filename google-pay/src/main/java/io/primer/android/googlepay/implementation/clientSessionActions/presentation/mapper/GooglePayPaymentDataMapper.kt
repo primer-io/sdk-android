@@ -30,8 +30,7 @@ private const val PHONE_NUMBER_KEY = "phoneNumber"
 
 private const val EMAIL_KEY = "email"
 
-internal fun PaymentData?.mapToClientSessionUpdateParams():
-    ActionUpdateBillingAddressParams? {
+internal fun PaymentData?.mapToClientSessionUpdateParams(): ActionUpdateBillingAddressParams? {
     return this?.toJson()?.let { paymentInformation ->
         val paymentMethodData =
             JSONObject(paymentInformation).getJSONObject(PAYMENT_METHOD_DATA_KEY)
@@ -47,7 +46,7 @@ internal fun PaymentData?.mapToClientSessionUpdateParams():
                 billingAddress.optString(LOCALITY_FIELD),
                 billingAddress.optString(POSTAL_CODE_FIELD),
                 billingAddress.optString(COUNTRY_CODE_FIELD),
-                billingAddress.optString(ADMINISTRATIVE_AREA_FIELD)
+                billingAddress.optString(ADMINISTRATIVE_AREA_FIELD),
             )
         }
     }
@@ -85,7 +84,7 @@ internal fun PaymentData?.mapToShippingAddressParams(): ActionUpdateShippingAddr
                 city = address.optString(LOCALITY_FIELD),
                 postalCode = address.optString(POSTAL_CODE_FIELD),
                 countryCode = address.optString(COUNTRY_CODE_FIELD),
-                state = address.optString(ADMINISTRATIVE_AREA_FIELD)
+                state = address.optString(ADMINISTRATIVE_AREA_FIELD),
             )
         }
     }
@@ -108,12 +107,13 @@ private fun splitName(name: String): Pair<String?, String?> {
 }
 
 internal fun PaymentData?.mapToMultipleActionUpdateParams(): MultipleActionUpdateParams? {
-    val actions = listOfNotNull(
-        mapToClientSessionUpdateParams(),
-        mapToMobileNumberParams(),
-        mapToShippingAddressParams(),
-        mapToEmailAddressParams()
-    )
+    val actions =
+        listOfNotNull(
+            mapToClientSessionUpdateParams(),
+            mapToMobileNumberParams(),
+            mapToShippingAddressParams(),
+            mapToEmailAddressParams(),
+        )
     return if (actions.isEmpty()) {
         null
     } else {

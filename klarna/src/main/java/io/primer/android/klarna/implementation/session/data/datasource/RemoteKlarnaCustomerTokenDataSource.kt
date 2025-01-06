@@ -7,13 +7,18 @@ import io.primer.android.klarna.implementation.session.data.models.CreateCustome
 import io.primer.android.klarna.implementation.session.data.models.CreateCustomerTokenDataResponse
 
 internal class RemoteKlarnaCustomerTokenDataSource(private val primerHttpClient: PrimerHttpClient) :
-    BaseSuspendDataSource<CreateCustomerTokenDataResponse,
-        BaseRemoteHostRequest<CreateCustomerTokenDataRequest>> {
-    override suspend fun execute(input: BaseRemoteHostRequest<CreateCustomerTokenDataRequest>):
-        CreateCustomerTokenDataResponse = primerHttpClient.suspendPost<
-        CreateCustomerTokenDataRequest, CreateCustomerTokenDataResponse
-        >(
-        "${input.host}/klarna/customer-tokens",
-        input.data
-    ).body
+    BaseSuspendDataSource<
+        CreateCustomerTokenDataResponse,
+        BaseRemoteHostRequest<CreateCustomerTokenDataRequest>,
+        > {
+    override suspend fun execute(
+        input: BaseRemoteHostRequest<CreateCustomerTokenDataRequest>,
+    ): CreateCustomerTokenDataResponse =
+        primerHttpClient.suspendPost<
+            CreateCustomerTokenDataRequest,
+            CreateCustomerTokenDataResponse,
+            >(
+            "${input.host}/klarna/customer-tokens",
+            input.data,
+        ).body
 }

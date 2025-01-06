@@ -10,26 +10,29 @@ internal class BaseFormBinding(
     val formBackIcon: ImageView,
     val formIcon: ImageView,
     val formTitle: TextView,
-    val formDescription: TextView
+    val formDescription: TextView,
 )
 
-internal fun FragmentDynamicFormBinding.toBaseFormBinding() = BaseFormBinding(
-    formBackIcon,
-    formIcon,
-    formTitle,
-    formDescription
-)
+internal fun FragmentDynamicFormBinding.toBaseFormBinding() =
+    BaseFormBinding(
+        formBackIcon,
+        formIcon,
+        formTitle,
+        formDescription,
+    )
 
-internal fun FragmentQrCodeBinding.toBaseFormBinding() = BaseFormBinding(
-    ivBack,
-    ivPaymentMethodIcon,
-    tvTitleComplete,
-    tvDescription
-)
+internal fun FragmentQrCodeBinding.toBaseFormBinding() =
+    BaseFormBinding(
+        ivBack,
+        ivPaymentMethodIcon,
+        tvTitleComplete,
+        tvDescription,
+    )
 
-internal fun FragmentMultibancoPaymentBinding.toBaseFormBinding() = BaseFormBinding(
-    ivBack,
-    ivPaymentMethodIcon,
-    tvTitleComplete,
-    tvDescription
-)
+internal fun FragmentMultibancoPaymentBinding.toBaseFormBinding() =
+    BaseFormBinding(
+        ivBack,
+        ivPaymentMethodIcon,
+        tvTitleComplete,
+        tvDescription,
+    )

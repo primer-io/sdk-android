@@ -17,7 +17,6 @@ import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 class IPay88PaymentMethodFactoryTest {
-
     private lateinit var factory: IPay88PaymentMethodFactory
     private val type = "someType"
     private val configurationDataSource: CacheConfigurationDataSource = mockk()
@@ -36,16 +35,20 @@ class IPay88PaymentMethodFactoryTest {
     @Test
     fun `build returns Failure when IPaySdk is not included`() {
         every { anyConstructed<IPay88SdkClassValidator>().isIPaySdkIncluded() } returns false
-        val clientSessionDataResponse = mockk<ClientSessionDataResponse> {
-            every { order } returns mockk {
-                every { countryCode } returns mockk {
-                    every { name } returns "US"
-                }
+        val clientSessionDataResponse =
+            mockk<ClientSessionDataResponse> {
+                every { order } returns
+                    mockk {
+                        every { countryCode } returns
+                            mockk {
+                                every { name } returns "US"
+                            }
+                    }
             }
-        }
-        val configurationData = mockk<ConfigurationData> {
-            every { clientSession } returns clientSessionDataResponse
-        }
+        val configurationData =
+            mockk<ConfigurationData> {
+                every { clientSession } returns clientSessionDataResponse
+            }
         every { configurationDataSource.get() } returns configurationData
 
         val result = factory.build()
@@ -55,8 +58,8 @@ class IPay88PaymentMethodFactoryTest {
         assertTrue(exception is IllegalStateException)
         assertTrue(
             exception.message!!.contains(
-                IPay88SdkClassValidator.I_PAY_CLASS_NOT_LOADED_ERROR.format(type, "us", "us", type)
-            )
+                IPay88SdkClassValidator.I_PAY_CLASS_NOT_LOADED_ERROR.format(type, "us", "us", type),
+            ),
         )
     }
 

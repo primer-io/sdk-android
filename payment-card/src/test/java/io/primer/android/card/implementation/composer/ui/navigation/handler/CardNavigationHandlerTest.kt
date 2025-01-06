@@ -18,7 +18,6 @@ import kotlin.test.assertEquals
 
 @ExtendWith(MockKExtension::class)
 internal class CardNavigationHandlerTest {
-
     @RelaxedMockK
     private lateinit var context: Context
 

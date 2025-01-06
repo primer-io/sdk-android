@@ -18,7 +18,6 @@ import org.junit.rules.TestRule
 @OptIn(ExperimentalCoroutinesApi::class)
 @ExtendWith(InstantExecutorExtension::class, MockKExtension::class)
 internal class WebRedirectViewModelTest {
-
     @get:Rule
     var instantExecutorRule: TestRule = InstantTaskExecutorRule()
 

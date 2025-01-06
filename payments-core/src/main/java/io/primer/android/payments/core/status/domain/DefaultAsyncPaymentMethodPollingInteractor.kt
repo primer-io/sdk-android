@@ -15,19 +15,19 @@ typealias AsyncPaymentMethodPollingInteractor = BaseFlowInteractor<AsyncStatus, 
 
 internal class DefaultAsyncPaymentMethodPollingInteractor(
     private val paymentMethodStatusRepository: AsyncPaymentMethodStatusRepository,
-    override val dispatcher: CoroutineDispatcher = Dispatchers.IO
+    override val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : BaseFlowInteractor<AsyncStatus, AsyncStatusParams>() {
+    override fun execute(params: AsyncStatusParams) =
+        paymentMethodStatusRepository.getAsyncStatus(
+            params.url,
+        ).flowOn(dispatcher)
+            .onError { throwable ->
+                when (throwable) {
+                    is CancellationException -> throw PaymentMethodCancelledException(
+                        params.paymentMethodType,
+                    )
 
-    override fun execute(params: AsyncStatusParams) = paymentMethodStatusRepository.getAsyncStatus(
-        params.url
-    ).flowOn(dispatcher)
-        .onError { throwable ->
-            when (throwable) {
-                is CancellationException -> throw PaymentMethodCancelledException(
-                    params.paymentMethodType
-                )
-
-                else -> throw throwable
+                    else -> throw throwable
+                }
             }
-        }
 }

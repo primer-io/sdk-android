@@ -29,34 +29,37 @@ class OtpResumeHandlerTest {
         tokenizedPaymentMethodRepository = mockk()
         checkoutAdditionalInfoHandler = mockk()
 
-        resumeHandler = OtpResumeHandler(
-            clientTokenParser,
-            tokenizedPaymentMethodRepository,
-            validateClientTokenRepository,
-            clientTokenRepository,
-            checkoutAdditionalInfoHandler
-        )
+        resumeHandler =
+            OtpResumeHandler(
+                clientTokenParser,
+                tokenizedPaymentMethodRepository,
+                validateClientTokenRepository,
+                clientTokenRepository,
+                checkoutAdditionalInfoHandler,
+            )
     }
 
     @Test
-    fun `getResumeDecision should return correct OtpDecision`() = runTest {
-        // Given
-        val clientToken = OtpClientToken(
-            statusUrl = "statusUrl",
-            clientTokenIntent = "clientTokenIntent"
-        )
+    fun `getResumeDecision should return correct OtpDecision`() =
+        runTest {
+            // Given
+            val clientToken =
+                OtpClientToken(
+                    statusUrl = "statusUrl",
+                    clientTokenIntent = "clientTokenIntent",
+                )
 
-        // When
-        val result = resumeHandler.getResumeDecision(clientToken)
+            // When
+            val result = resumeHandler.getResumeDecision(clientToken)
 
-        // Then
-        assertEquals(
-            OtpDecision(
-                statusUrl = clientToken.statusUrl
-            ),
-            result
-        )
-    }
+            // Then
+            assertEquals(
+                OtpDecision(
+                    statusUrl = clientToken.statusUrl,
+                ),
+                result,
+            )
+        }
 
     @Test
     fun `supportedClientTokenIntents should return correct list of intents`() {

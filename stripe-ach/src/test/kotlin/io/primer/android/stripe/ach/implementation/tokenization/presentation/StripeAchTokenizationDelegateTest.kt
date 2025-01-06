@@ -59,215 +59,235 @@ class StripeAchTokenizationDelegateTest {
     }
 
     @Test
-    fun `invoke() should perform tokenization via interactor, select payment method and return success when interactor calls succeed and integration type is headless`() = runTest {
-        every { primerSettings.sdkIntegrationType } returns SdkIntegrationType.HEADLESS
-        mockkStatic("io.primer.android.payments.core.tokenization.data.model.PaymentMethodTokenInternalKt")
-        coEvery { actionInteractor(any()) } returns Result.success(mockk())
-        coEvery { configurationInteractor(any()) } returns Result.success(
-            mockk<StripeAchConfig> {
-                every { this@mockk.paymentMethodConfigId } returns "config_id"
-                every { this@mockk.locale.toLanguageTag() } returns "language_tag"
-            }
-        )
-        val paymentMethodTokenInternal = mockk<PaymentMethodTokenInternal>()
-        coEvery { tokenizationInteractor.invoke(any()) } returns Result.success(paymentMethodTokenInternal)
-        val paymentMethodTokenData = mockk<PrimerPaymentMethodTokenData>()
-        every { paymentMethodTokenInternal.toPaymentMethodToken() } returns paymentMethodTokenData
-
-        val result = delegate.tokenize(
-            StripeAchTokenizationInputable(
-                paymentMethodType = PaymentMethodType.STRIPE_ACH.name,
-                primerSessionIntent = PrimerSessionIntent.CHECKOUT
-            )
-        )
-
-        assertEquals(paymentMethodTokenData, result.getOrNull())
-        coVerify {
-            actionInteractor(
-                MultipleActionUpdateParams(
-                    params = listOf(
-                        ActionUpdateSelectPaymentMethodParams(
-                            paymentMethodType = PaymentMethodType.STRIPE_ACH.name,
-                            cardNetwork = null
-                        )
-                    )
+    fun `invoke() should perform tokenization via interactor, select payment method and return success when interactor calls succeed and integration type is headless`() =
+        runTest {
+            every { primerSettings.sdkIntegrationType } returns SdkIntegrationType.HEADLESS
+            mockkStatic("io.primer.android.payments.core.tokenization.data.model.PaymentMethodTokenInternalKt")
+            coEvery { actionInteractor(any()) } returns Result.success(mockk())
+            coEvery { configurationInteractor(any()) } returns
+                Result.success(
+                    mockk<StripeAchConfig> {
+                        every { this@mockk.paymentMethodConfigId } returns "config_id"
+                        every { this@mockk.locale.toLanguageTag() } returns "language_tag"
+                    },
                 )
-            )
-            configurationInteractor.invoke(StripeAchConfigParams(PaymentMethodType.STRIPE_ACH.name))
-            tokenizationInteractor(
-                TokenizationParams(
-                    paymentInstrumentParams = StripeAchPaymentInstrumentParams(
-                        paymentMethodConfigId = "config_id",
-                        locale = "language_tag"
+            val paymentMethodTokenInternal = mockk<PaymentMethodTokenInternal>()
+            coEvery { tokenizationInteractor.invoke(any()) } returns Result.success(paymentMethodTokenInternal)
+            val paymentMethodTokenData = mockk<PrimerPaymentMethodTokenData>()
+            every { paymentMethodTokenInternal.toPaymentMethodToken() } returns paymentMethodTokenData
+
+            val result =
+                delegate.tokenize(
+                    StripeAchTokenizationInputable(
+                        paymentMethodType = PaymentMethodType.STRIPE_ACH.name,
+                        primerSessionIntent = PrimerSessionIntent.CHECKOUT,
                     ),
-                    sessionIntent = PrimerSessionIntent.CHECKOUT
                 )
-            )
-        }
-        verify {
-            paymentMethodTokenInternal.toPaymentMethodToken()
-            primerSettings.sdkIntegrationType
-        }
-        unmockkStatic("io.primer.android.payments.core.tokenization.data.model.PaymentMethodTokenInternalKt")
-    }
 
-    @Test
-    fun `invoke() should perform tokenization via interactor, not select payment method and return success when interactor calls succeed and integration type is drop-in`() = runTest {
-        every { primerSettings.sdkIntegrationType } returns SdkIntegrationType.DROP_IN
-        mockkStatic("io.primer.android.payments.core.tokenization.data.model.PaymentMethodTokenInternalKt")
-        coEvery { configurationInteractor(any()) } returns Result.success(
-            mockk<StripeAchConfig> {
-                every { this@mockk.paymentMethodConfigId } returns "config_id"
-                every { this@mockk.locale.toLanguageTag() } returns "language_tag"
-            }
-        )
-        val paymentMethodTokenInternal = mockk<PaymentMethodTokenInternal>()
-        coEvery { tokenizationInteractor.invoke(any()) } returns Result.success(paymentMethodTokenInternal)
-        val paymentMethodTokenData = mockk<PrimerPaymentMethodTokenData>()
-        every { paymentMethodTokenInternal.toPaymentMethodToken() } returns paymentMethodTokenData
-
-        val result = delegate.tokenize(
-            StripeAchTokenizationInputable(
-                paymentMethodType = PaymentMethodType.STRIPE_ACH.name,
-                primerSessionIntent = PrimerSessionIntent.CHECKOUT
-            )
-        )
-
-        assertEquals(paymentMethodTokenData, result.getOrNull())
-        coVerify {
-            configurationInteractor.invoke(StripeAchConfigParams(PaymentMethodType.STRIPE_ACH.name))
-            tokenizationInteractor(
-                TokenizationParams(
-                    paymentInstrumentParams = StripeAchPaymentInstrumentParams(
-                        paymentMethodConfigId = "config_id",
-                        locale = "language_tag"
+            assertEquals(paymentMethodTokenData, result.getOrNull())
+            coVerify {
+                actionInteractor(
+                    MultipleActionUpdateParams(
+                        params =
+                            listOf(
+                                ActionUpdateSelectPaymentMethodParams(
+                                    paymentMethodType = PaymentMethodType.STRIPE_ACH.name,
+                                    cardNetwork = null,
+                                ),
+                            ),
                     ),
-                    sessionIntent = PrimerSessionIntent.CHECKOUT
                 )
-            )
-        }
-        coVerify(exactly = 0) {
-            actionInteractor(any())
-        }
-        verify {
-            paymentMethodTokenInternal.toPaymentMethodToken()
-            primerSettings.sdkIntegrationType
-        }
-        unmockkStatic("io.primer.android.payments.core.tokenization.data.model.PaymentMethodTokenInternalKt")
-    }
-
-    @Test
-    fun `invoke() should return failure when the action interactor call fails`() = runTest {
-        val exception = Exception()
-        every { primerSettings.sdkIntegrationType } returns SdkIntegrationType.HEADLESS
-        coEvery { actionInteractor(any()) } returns Result.failure(exception)
-
-        val result = delegate.tokenize(
-            StripeAchTokenizationInputable(
-                paymentMethodType = PaymentMethodType.STRIPE_ACH.name,
-                primerSessionIntent = PrimerSessionIntent.CHECKOUT
-            )
-        ).exceptionOrNull()
-
-        assertEquals(exception, result)
-        coVerify {
-            actionInteractor(
-                MultipleActionUpdateParams(
-                    params = listOf(
-                        ActionUpdateSelectPaymentMethodParams(
-                            paymentMethodType = PaymentMethodType.STRIPE_ACH.name,
-                            cardNetwork = null
-                        )
-                    )
-                )
-            )
-        }
-        verify {
-            primerSettings.sdkIntegrationType
-        }
-    }
-
-    @Test
-    fun `invoke() should return failure when the tokenization interactor call fails`() = runTest {
-        every { primerSettings.sdkIntegrationType } returns SdkIntegrationType.HEADLESS
-        coEvery { actionInteractor(any()) } returns Result.success(mockk())
-        coEvery { configurationInteractor(any()) } returns Result.success(
-            mockk<StripeAchConfig> {
-                every { this@mockk.paymentMethodConfigId } returns "config_id"
-                every { this@mockk.locale.toLanguageTag() } returns "language_tag"
-            }
-        )
-        val exception = Exception()
-        coEvery { tokenizationInteractor.invoke(any()) } returns Result.failure(exception)
-
-        val result = delegate.tokenize(
-            StripeAchTokenizationInputable(
-                paymentMethodType = PaymentMethodType.STRIPE_ACH.name,
-                primerSessionIntent = PrimerSessionIntent.CHECKOUT
-            )
-        )
-
-        assertEquals(exception, result.exceptionOrNull())
-        coVerify {
-            actionInteractor(
-                MultipleActionUpdateParams(
-                    params = listOf(
-                        ActionUpdateSelectPaymentMethodParams(
-                            paymentMethodType = PaymentMethodType.STRIPE_ACH.name,
-                            cardNetwork = null
-                        )
-                    )
-                )
-            )
-            configurationInteractor.invoke(StripeAchConfigParams(PaymentMethodType.STRIPE_ACH.name))
-            tokenizationInteractor(
-                TokenizationParams(
-                    paymentInstrumentParams = StripeAchPaymentInstrumentParams(
-                        paymentMethodConfigId = "config_id",
-                        locale = "language_tag"
+                configurationInteractor.invoke(StripeAchConfigParams(PaymentMethodType.STRIPE_ACH.name))
+                tokenizationInteractor(
+                    TokenizationParams(
+                        paymentInstrumentParams =
+                            StripeAchPaymentInstrumentParams(
+                                paymentMethodConfigId = "config_id",
+                                locale = "language_tag",
+                            ),
+                        sessionIntent = PrimerSessionIntent.CHECKOUT,
                     ),
-                    sessionIntent = PrimerSessionIntent.CHECKOUT
                 )
-            )
+            }
+            verify {
+                paymentMethodTokenInternal.toPaymentMethodToken()
+                primerSettings.sdkIntegrationType
+            }
+            unmockkStatic("io.primer.android.payments.core.tokenization.data.model.PaymentMethodTokenInternalKt")
         }
-        verify {
-            primerSettings.sdkIntegrationType
-        }
-    }
 
     @Test
-    fun `invoke() should return failure when the configuration interactor call fails`() = runTest {
-        every { primerSettings.sdkIntegrationType } returns SdkIntegrationType.HEADLESS
-        coEvery { actionInteractor(any()) } returns Result.success(mockk())
-        val exception = Exception()
-        coEvery { configurationInteractor(any()) } returns Result.failure(exception)
-
-        val result = delegate.tokenize(
-            StripeAchTokenizationInputable(
-                paymentMethodType = PaymentMethodType.STRIPE_ACH.name,
-                primerSessionIntent = PrimerSessionIntent.CHECKOUT
-            )
-        )
-
-        assertEquals(exception, result.exceptionOrNull())
-        coVerify {
-            actionInteractor(
-                MultipleActionUpdateParams(
-                    params = listOf(
-                        ActionUpdateSelectPaymentMethodParams(
-                            paymentMethodType = PaymentMethodType.STRIPE_ACH.name,
-                            cardNetwork = null
-                        )
-                    )
+    fun `invoke() should perform tokenization via interactor, not select payment method and return success when interactor calls succeed and integration type is drop-in`() =
+        runTest {
+            every { primerSettings.sdkIntegrationType } returns SdkIntegrationType.DROP_IN
+            mockkStatic("io.primer.android.payments.core.tokenization.data.model.PaymentMethodTokenInternalKt")
+            coEvery { configurationInteractor(any()) } returns
+                Result.success(
+                    mockk<StripeAchConfig> {
+                        every { this@mockk.paymentMethodConfigId } returns "config_id"
+                        every { this@mockk.locale.toLanguageTag() } returns "language_tag"
+                    },
                 )
-            )
-            configurationInteractor.invoke(StripeAchConfigParams(PaymentMethodType.STRIPE_ACH.name))
+            val paymentMethodTokenInternal = mockk<PaymentMethodTokenInternal>()
+            coEvery { tokenizationInteractor.invoke(any()) } returns Result.success(paymentMethodTokenInternal)
+            val paymentMethodTokenData = mockk<PrimerPaymentMethodTokenData>()
+            every { paymentMethodTokenInternal.toPaymentMethodToken() } returns paymentMethodTokenData
+
+            val result =
+                delegate.tokenize(
+                    StripeAchTokenizationInputable(
+                        paymentMethodType = PaymentMethodType.STRIPE_ACH.name,
+                        primerSessionIntent = PrimerSessionIntent.CHECKOUT,
+                    ),
+                )
+
+            assertEquals(paymentMethodTokenData, result.getOrNull())
+            coVerify {
+                configurationInteractor.invoke(StripeAchConfigParams(PaymentMethodType.STRIPE_ACH.name))
+                tokenizationInteractor(
+                    TokenizationParams(
+                        paymentInstrumentParams =
+                            StripeAchPaymentInstrumentParams(
+                                paymentMethodConfigId = "config_id",
+                                locale = "language_tag",
+                            ),
+                        sessionIntent = PrimerSessionIntent.CHECKOUT,
+                    ),
+                )
+            }
+            coVerify(exactly = 0) {
+                actionInteractor(any())
+            }
+            verify {
+                paymentMethodTokenInternal.toPaymentMethodToken()
+                primerSettings.sdkIntegrationType
+            }
+            unmockkStatic("io.primer.android.payments.core.tokenization.data.model.PaymentMethodTokenInternalKt")
         }
-        coVerify(exactly = 0) {
-            tokenizationInteractor(any())
+
+    @Test
+    fun `invoke() should return failure when the action interactor call fails`() =
+        runTest {
+            val exception = Exception()
+            every { primerSettings.sdkIntegrationType } returns SdkIntegrationType.HEADLESS
+            coEvery { actionInteractor(any()) } returns Result.failure(exception)
+
+            val result =
+                delegate.tokenize(
+                    StripeAchTokenizationInputable(
+                        paymentMethodType = PaymentMethodType.STRIPE_ACH.name,
+                        primerSessionIntent = PrimerSessionIntent.CHECKOUT,
+                    ),
+                ).exceptionOrNull()
+
+            assertEquals(exception, result)
+            coVerify {
+                actionInteractor(
+                    MultipleActionUpdateParams(
+                        params =
+                            listOf(
+                                ActionUpdateSelectPaymentMethodParams(
+                                    paymentMethodType = PaymentMethodType.STRIPE_ACH.name,
+                                    cardNetwork = null,
+                                ),
+                            ),
+                    ),
+                )
+            }
+            verify {
+                primerSettings.sdkIntegrationType
+            }
         }
-        verify {
-            primerSettings.sdkIntegrationType
+
+    @Test
+    fun `invoke() should return failure when the tokenization interactor call fails`() =
+        runTest {
+            every { primerSettings.sdkIntegrationType } returns SdkIntegrationType.HEADLESS
+            coEvery { actionInteractor(any()) } returns Result.success(mockk())
+            coEvery { configurationInteractor(any()) } returns
+                Result.success(
+                    mockk<StripeAchConfig> {
+                        every { this@mockk.paymentMethodConfigId } returns "config_id"
+                        every { this@mockk.locale.toLanguageTag() } returns "language_tag"
+                    },
+                )
+            val exception = Exception()
+            coEvery { tokenizationInteractor.invoke(any()) } returns Result.failure(exception)
+
+            val result =
+                delegate.tokenize(
+                    StripeAchTokenizationInputable(
+                        paymentMethodType = PaymentMethodType.STRIPE_ACH.name,
+                        primerSessionIntent = PrimerSessionIntent.CHECKOUT,
+                    ),
+                )
+
+            assertEquals(exception, result.exceptionOrNull())
+            coVerify {
+                actionInteractor(
+                    MultipleActionUpdateParams(
+                        params =
+                            listOf(
+                                ActionUpdateSelectPaymentMethodParams(
+                                    paymentMethodType = PaymentMethodType.STRIPE_ACH.name,
+                                    cardNetwork = null,
+                                ),
+                            ),
+                    ),
+                )
+                configurationInteractor.invoke(StripeAchConfigParams(PaymentMethodType.STRIPE_ACH.name))
+                tokenizationInteractor(
+                    TokenizationParams(
+                        paymentInstrumentParams =
+                            StripeAchPaymentInstrumentParams(
+                                paymentMethodConfigId = "config_id",
+                                locale = "language_tag",
+                            ),
+                        sessionIntent = PrimerSessionIntent.CHECKOUT,
+                    ),
+                )
+            }
+            verify {
+                primerSettings.sdkIntegrationType
+            }
         }
-    }
+
+    @Test
+    fun `invoke() should return failure when the configuration interactor call fails`() =
+        runTest {
+            every { primerSettings.sdkIntegrationType } returns SdkIntegrationType.HEADLESS
+            coEvery { actionInteractor(any()) } returns Result.success(mockk())
+            val exception = Exception()
+            coEvery { configurationInteractor(any()) } returns Result.failure(exception)
+
+            val result =
+                delegate.tokenize(
+                    StripeAchTokenizationInputable(
+                        paymentMethodType = PaymentMethodType.STRIPE_ACH.name,
+                        primerSessionIntent = PrimerSessionIntent.CHECKOUT,
+                    ),
+                )
+
+            assertEquals(exception, result.exceptionOrNull())
+            coVerify {
+                actionInteractor(
+                    MultipleActionUpdateParams(
+                        params =
+                            listOf(
+                                ActionUpdateSelectPaymentMethodParams(
+                                    paymentMethodType = PaymentMethodType.STRIPE_ACH.name,
+                                    cardNetwork = null,
+                                ),
+                            ),
+                    ),
+                )
+                configurationInteractor.invoke(StripeAchConfigParams(PaymentMethodType.STRIPE_ACH.name))
+            }
+            coVerify(exactly = 0) {
+                tokenizationInteractor(any())
+            }
+            verify {
+                primerSettings.sdkIntegrationType
+            }
+        }
 }

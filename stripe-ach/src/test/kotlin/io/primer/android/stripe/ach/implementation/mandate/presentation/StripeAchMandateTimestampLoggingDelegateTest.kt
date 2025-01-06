@@ -36,28 +36,30 @@ class StripeAchMandateTimestampLoggingDelegateTest {
     private lateinit var delegate: StripeAchMandateTimestampLoggingDelegate
 
     @Test
-    fun `logTimestamp() should log via analytics interactor and log reporter`() = runTest {
-        mockkStatic(UUID::class)
-        every { UUID.randomUUID().toString() } returns "UUID"
-        every { logReporter.info(message = any()) } just Runs
-        coEvery { analyticsInteractor(any()) } returns Result.success(Unit)
+    fun `logTimestamp() should log via analytics interactor and log reporter`() =
+        runTest {
+            mockkStatic(UUID::class)
+            every { UUID.randomUUID().toString() } returns "UUID"
+            every { logReporter.info(message = any()) } just Runs
+            coEvery { analyticsInteractor(any()) } returns Result.success(Unit)
 
-        val date = Calendar.getInstance().apply { set(2024, 4, 10) }.time
-        delegate.logTimestamp(stripePaymentIntentId = "id", date = date)
+            val date = Calendar.getInstance().apply { set(2024, 4, 10) }.time
+            delegate.logTimestamp(stripePaymentIntentId = "id", date = date)
 
-        val message = "Stripe ACH mandate for payment intent with id " +
-            "'id' was approved at '${date.toIso8601String()}'"
-        coVerify {
-            analyticsInteractor(
-                MessageAnalyticsParams(
-                    messageType = MessageType.INFO,
-                    message = message,
-                    severity = Severity.INFO,
-                    diagnosticsId = "UUID"
+            val message =
+                "Stripe ACH mandate for payment intent with id " +
+                    "'id' was approved at '${date.toIso8601String()}'"
+            coVerify {
+                analyticsInteractor(
+                    MessageAnalyticsParams(
+                        messageType = MessageType.INFO,
+                        message = message,
+                        severity = Severity.INFO,
+                        diagnosticsId = "UUID",
+                    ),
                 )
-            )
-            logReporter.info(message)
+                logReporter.info(message)
+            }
+            unmockkStatic(UUID::class)
         }
-        unmockkStatic(UUID::class)
-    }
 }

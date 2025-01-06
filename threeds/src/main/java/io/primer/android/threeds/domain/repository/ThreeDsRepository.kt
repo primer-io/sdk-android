@@ -6,14 +6,13 @@ import io.primer.android.threeds.domain.models.BaseThreeDsContinueAuthParams
 import io.primer.android.threeds.domain.models.BaseThreeDsParams
 
 internal interface ThreeDsRepository {
-
     suspend fun begin3DSAuth(
         token: String,
-        threeDsParams: BaseThreeDsParams
+        threeDsParams: BaseThreeDsParams,
     ): Result<BeginAuthResponse>
 
     suspend fun continue3DSAuth(
         token: String,
-        continueAuthParams: BaseThreeDsContinueAuthParams
+        continueAuthParams: BaseThreeDsContinueAuthParams,
     ): Result<PostAuthResponse>
 }

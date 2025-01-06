@@ -34,7 +34,6 @@ import kotlin.time.Duration.Companion.seconds
 @OptIn(ExperimentalCoroutinesApi::class)
 @ExtendWith(InstantExecutorExtension::class, MockKExtension::class)
 internal class NolPayUnlinkCardComponentTest {
-
     @RelaxedMockK
     lateinit var unlinkPaymentCardDelegate: NolPayUnlinkPaymentCardDelegate
 
@@ -60,15 +59,16 @@ internal class NolPayUnlinkCardComponentTest {
 
     @BeforeEach
     fun setUp() {
-        component = NolPayUnlinkCardComponent(
-            unlinkPaymentCardDelegate = unlinkPaymentCardDelegate,
-            eventLoggingDelegate = eventLoggingDelegate,
-            errorLoggingDelegate = errorLoggingDelegate,
-            validationErrorLoggingDelegate = validationErrorLoggingDelegate,
-            validatorRegistry = dataValidatorRegistry,
-            errorMapperRegistry = errorMapperRegistry,
-            savedStateHandle = savedStateHandle
-        )
+        component =
+            NolPayUnlinkCardComponent(
+                unlinkPaymentCardDelegate = unlinkPaymentCardDelegate,
+                eventLoggingDelegate = eventLoggingDelegate,
+                errorLoggingDelegate = errorLoggingDelegate,
+                validationErrorLoggingDelegate = validationErrorLoggingDelegate,
+                validatorRegistry = dataValidatorRegistry,
+                errorMapperRegistry = errorMapperRegistry,
+                savedStateHandle = savedStateHandle,
+            )
     }
 
     @Test
@@ -83,7 +83,7 @@ internal class NolPayUnlinkCardComponentTest {
             eventLoggingDelegate.logSdkAnalyticsEvent(
                 PaymentMethodType.NOL_PAY.name,
                 NolPayAnalyticsConstants.UNLINK_CARD_START_METHOD,
-                hashMapOf()
+                hashMapOf(),
             )
         }
     }
@@ -95,7 +95,7 @@ internal class NolPayUnlinkCardComponentTest {
             component.start()
             assertEquals(
                 NolPayUnlinkCardStep.CollectCardAndPhoneData,
-                component.componentStep.first()
+                component.componentStep.first(),
             )
         }
 
@@ -116,8 +116,8 @@ internal class NolPayUnlinkCardComponentTest {
         coVerify {
             errorLoggingDelegate.logSdkAnalyticsErrors(
                 errorMapperRegistry.getPrimerError(
-                    exception
-                )
+                    exception,
+                ),
             )
         }
     }
@@ -136,7 +136,7 @@ internal class NolPayUnlinkCardComponentTest {
         coVerify {
             eventLoggingDelegate.logSdkAnalyticsEvent(
                 PaymentMethodType.NOL_PAY.name,
-                NolPayAnalyticsConstants.UNLINK_CARD_UPDATE_COLLECTED_DATA_METHOD
+                NolPayAnalyticsConstants.UNLINK_CARD_UPDATE_COLLECTED_DATA_METHOD,
             )
         }
     }
@@ -154,9 +154,9 @@ internal class NolPayUnlinkCardComponentTest {
             assertEquals(
                 listOf(
                     PrimerValidationStatus.Validating(collectableData),
-                    PrimerValidationStatus.Valid(collectableData)
+                    PrimerValidationStatus.Valid(collectableData),
                 ),
-                validationStatuses
+                validationStatuses,
             )
         }
 
@@ -177,9 +177,9 @@ internal class NolPayUnlinkCardComponentTest {
             assertEquals(
                 listOf(
                     PrimerValidationStatus.Validating(collectableData),
-                    PrimerValidationStatus.Invalid(listOf(validationError), collectableData)
+                    PrimerValidationStatus.Invalid(listOf(validationError), collectableData),
                 ),
-                validationStatuses
+                validationStatuses,
             )
         }
 
@@ -203,10 +203,10 @@ internal class NolPayUnlinkCardComponentTest {
                     PrimerValidationStatus.Validating(collectableData),
                     PrimerValidationStatus.Error(
                         errorMapperRegistry.getPrimerError(exception),
-                        collectableData
-                    )
+                        collectableData,
+                    ),
                 ),
-                validationStatuses
+                validationStatuses,
             )
         }
 
@@ -223,7 +223,7 @@ internal class NolPayUnlinkCardComponentTest {
         coEvery {
             unlinkPaymentCardDelegate.handleCollectedCardData(
                 any(),
-                any()
+                any(),
             )
         }.returns(Result.success(step))
 
@@ -235,7 +235,7 @@ internal class NolPayUnlinkCardComponentTest {
             eventLoggingDelegate.logSdkAnalyticsEvent(
                 PaymentMethodType.NOL_PAY.name,
                 NolPayAnalyticsConstants.UNLINK_CARD_SUBMIT_DATA_METHOD,
-                hashMapOf()
+                hashMapOf(),
             )
         }
     }
@@ -246,7 +246,7 @@ internal class NolPayUnlinkCardComponentTest {
         coEvery {
             unlinkPaymentCardDelegate.handleCollectedCardData(
                 any(),
-                any()
+                any(),
             )
         }.returns(Result.success(step))
 
@@ -259,7 +259,7 @@ internal class NolPayUnlinkCardComponentTest {
         coVerify(exactly = 0) { errorMapperRegistry.getPrimerError(any()) }
         coVerify(exactly = 0) {
             errorLoggingDelegate.logSdkAnalyticsErrors(
-                errorMapperRegistry.getPrimerError(any())
+                errorMapperRegistry.getPrimerError(any()),
             )
         }
     }
@@ -270,7 +270,7 @@ internal class NolPayUnlinkCardComponentTest {
         coEvery {
             unlinkPaymentCardDelegate.handleCollectedCardData(
                 any(),
-                any()
+                any(),
             )
         }.returns(Result.failure(exception))
 
@@ -283,7 +283,7 @@ internal class NolPayUnlinkCardComponentTest {
         coVerify { errorMapperRegistry.getPrimerError(exception) }
         coVerify {
             errorLoggingDelegate.logSdkAnalyticsErrors(
-                errorMapperRegistry.getPrimerError(exception)
+                errorMapperRegistry.getPrimerError(exception),
             )
         }
     }

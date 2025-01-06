@@ -8,7 +8,6 @@ import io.primer.android.nolpay.api.manager.core.composable.NolPayCollectableDat
  * This data includes information related to the linking process.
  */
 sealed interface NolPayLinkCollectableData : NolPayCollectableData {
-
     /**
      * Data class representing Nol Pay tag data collected during the linking process.
      *
@@ -23,7 +22,7 @@ sealed interface NolPayLinkCollectableData : NolPayCollectableData {
      * in E.164 format.
      */
     data class NolPayPhoneData(
-        val mobileNumber: String
+        val mobileNumber: String,
     ) : NolPayLinkCollectableData
 
     /**

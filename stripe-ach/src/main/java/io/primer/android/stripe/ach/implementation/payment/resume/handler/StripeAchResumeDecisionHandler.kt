@@ -15,7 +15,7 @@ import io.primer.android.stripe.ach.implementation.session.data.exception.Stripe
 internal data class StripeAchDecision(
     val sdkCompleteUrl: String,
     val stripePaymentIntentId: String,
-    val stripeClientSecret: String
+    val stripeClientSecret: String,
 ) : PaymentMethodResumeDecision
 
 internal class StripeAchResumeDecisionHandler(
@@ -23,13 +23,13 @@ internal class StripeAchResumeDecisionHandler(
     tokenizedPaymentMethodRepository: TokenizedPaymentMethodRepository,
     validateClientTokenRepository: ValidateClientTokenRepository,
     clientTokenRepository: ClientTokenRepository,
-    checkoutAdditionalInfoHandler: CheckoutAdditionalInfoHandler
+    checkoutAdditionalInfoHandler: CheckoutAdditionalInfoHandler,
 ) : PrimerResumeDecisionHandlerV2<StripeAchDecision, StripeAchClientToken>(
-    clientTokenRepository = clientTokenRepository,
-    validateClientTokenRepository = validateClientTokenRepository,
-    checkoutAdditionalInfoHandler = checkoutAdditionalInfoHandler,
-    clientTokenParser = clientTokenParser
-) {
+        clientTokenRepository = clientTokenRepository,
+        validateClientTokenRepository = validateClientTokenRepository,
+        checkoutAdditionalInfoHandler = checkoutAdditionalInfoHandler,
+        clientTokenParser = clientTokenParser,
+    ) {
     override var checkoutAdditionalInfo: PrimerCheckoutAdditionalInfo? = null
         private set
 
@@ -40,18 +40,21 @@ internal class StripeAchResumeDecisionHandler(
 
     override suspend fun getResumeDecision(clientToken: StripeAchClientToken): StripeAchDecision {
         return StripeAchDecision(
-            sdkCompleteUrl = requireNotNullCheck(
-                value = clientToken.sdkCompleteUrl,
-                key = StripeIllegalValueKey.MISSING_COMPLETION_URL
-            ),
-            stripePaymentIntentId = requireNotNullCheck(
-                value = clientToken.stripePaymentIntentId,
-                key = StripeIllegalValueKey.MISSING_PAYMENT_INTENT_ID
-            ),
-            stripeClientSecret = requireNotNullCheck(
-                value = clientToken.stripeClientSecret,
-                key = StripeIllegalValueKey.MISSING_CLIENT_SECRET
-            )
+            sdkCompleteUrl =
+                requireNotNullCheck(
+                    value = clientToken.sdkCompleteUrl,
+                    key = StripeIllegalValueKey.MISSING_COMPLETION_URL,
+                ),
+            stripePaymentIntentId =
+                requireNotNullCheck(
+                    value = clientToken.stripePaymentIntentId,
+                    key = StripeIllegalValueKey.MISSING_PAYMENT_INTENT_ID,
+                ),
+            stripeClientSecret =
+                requireNotNullCheck(
+                    value = clientToken.stripeClientSecret,
+                    key = StripeIllegalValueKey.MISSING_CLIENT_SECRET,
+                ),
         )
     }
 }

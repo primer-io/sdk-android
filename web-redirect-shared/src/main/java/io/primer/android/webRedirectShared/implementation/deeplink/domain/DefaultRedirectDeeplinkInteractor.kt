@@ -7,7 +7,7 @@ import io.primer.android.webRedirectShared.implementation.deeplink.domain.reposi
 typealias RedirectDeeplinkInteractor = BaseInteractor<String, None>
 
 class DefaultRedirectDeeplinkInteractor(
-    private val deeplinkRepository: RedirectDeeplinkRepository
+    private val deeplinkRepository: RedirectDeeplinkRepository,
 ) : BaseInteractor<String, None>() {
     override fun execute(params: None): String {
         return deeplinkRepository.getDeeplinkUrl()

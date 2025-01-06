@@ -2,10 +2,10 @@ package io.primer.android.components.implementation.completion
 
 import io.primer.android.analytics.domain.models.SdkFunctionParams
 import io.primer.android.analytics.domain.repository.AnalyticsRepository
-import io.primer.android.data.settings.PrimerPaymentHandling
-import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.components.PrimerHeadlessUniversalCheckout
 import io.primer.android.components.implementation.HeadlessUniversalCheckoutAnalyticsConstants
+import io.primer.android.data.settings.PrimerPaymentHandling
+import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.domain.PrimerCheckoutData
 import io.primer.android.domain.error.models.PrimerError
 import io.primer.android.domain.payments.create.model.Payment
@@ -18,13 +18,15 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 class DefaultCheckoutErrorHandler(
     private val analyticsRepository: AnalyticsRepository,
     private val config: PrimerConfig,
-    private val coroutineDispatcher: MainCoroutineDispatcher = Dispatchers.Main
+    private val coroutineDispatcher: MainCoroutineDispatcher = Dispatchers.Main,
 ) : CheckoutErrorHandler {
-
     private val _errors = MutableSharedFlow<PrimerError>()
     override val errors: Flow<PrimerError> = _errors
 
-    override suspend fun handle(error: PrimerError, payment: Payment?) {
+    override suspend fun handle(
+        error: PrimerError,
+        payment: Payment?,
+    ) {
         _errors.emit(error)
         coroutineDispatcher.dispatch(coroutineDispatcher.immediate) {
             analyticsRepository.addEvent(
@@ -34,24 +36,27 @@ class DefaultCheckoutErrorHandler(
                         HeadlessUniversalCheckoutAnalyticsConstants.ERROR_ID_PARAM
                             to error.errorId,
                         HeadlessUniversalCheckoutAnalyticsConstants.ERROR_DESCRIPTION_PARAM
-                            to error.description
-                    )
-                )
+                            to error.description,
+                    ),
+                ),
             )
             val checkoutListener = PrimerHeadlessUniversalCheckout.instance.checkoutListener
             when (config.settings.paymentHandling) {
-                PrimerPaymentHandling.AUTO -> checkoutListener?.onFailed(
-                    error = error,
-                    checkoutData = payment?.let {
-                        PrimerCheckoutData(
-                            payment
-                        )
-                    }
-                )
+                PrimerPaymentHandling.AUTO ->
+                    checkoutListener?.onFailed(
+                        error = error,
+                        checkoutData =
+                            payment?.let {
+                                PrimerCheckoutData(
+                                    payment,
+                                )
+                            },
+                    )
 
-                PrimerPaymentHandling.MANUAL -> checkoutListener?.onFailed(
-                    error = error
-                )
+                PrimerPaymentHandling.MANUAL ->
+                    checkoutListener?.onFailed(
+                        error = error,
+                    )
             }
         }
     }

@@ -7,7 +7,6 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
 class MultibancoFactoryTest {
-
     @Test
     fun `build should return Success with Multibanco PaymentMethod`() {
         val paymentMethodType = "multibanco"

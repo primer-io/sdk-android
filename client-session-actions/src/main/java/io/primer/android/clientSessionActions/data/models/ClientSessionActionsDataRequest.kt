@@ -11,14 +11,12 @@ import org.json.JSONArray
 import org.json.JSONObject
 
 internal data class ClientSessionActionsDataRequest(
-    val actions: List<Action>
+    val actions: List<Action>,
 ) : JSONObjectSerializable {
-
     sealed class Action(
         private val type: String,
-        private val params: ActionParams
+        private val params: ActionParams,
     ) : JSONObjectSerializable {
-
         internal fun toJSONObject(): JSONObject {
             return JSONObject().apply {
                 put(TYPE_FIELD, type)
@@ -37,9 +35,10 @@ internal data class ClientSessionActionsDataRequest(
     }
 
     private data class SingleStringParam(private val key: String, private val value: String) : ActionParams {
-        override fun toJSONObject() = JSONObject().apply {
-            put(key, value)
-        }
+        override fun toJSONObject() =
+            JSONObject().apply {
+                put(key, value)
+            }
     }
 
     private object EmptyParams : ActionParams {
@@ -47,14 +46,15 @@ internal data class ClientSessionActionsDataRequest(
     }
 
     private class AddressParam(private val key: String, private val address: AddressData) : ActionParams {
-        override fun toJSONObject() = JSONObject().apply {
-            put(key, address.serialize())
-        }
+        override fun toJSONObject() =
+            JSONObject().apply {
+                put(key, address.serialize())
+            }
     }
 
     data class SetEmailAddress(val email: String) : Action(
         type = "SET_EMAIL_ADDRESS",
-        params = SingleStringParam("emailAddress", email)
+        params = SingleStringParam("emailAddress", email),
     ) {
         companion object {
             @JvmField
@@ -64,10 +64,9 @@ internal data class ClientSessionActionsDataRequest(
 
     data class SetCustomerFirstName(val firstName: String) : Action(
         type = "SET_CUSTOMER_FIRST_NAME",
-        params = SingleStringParam("firstName", firstName)
+        params = SingleStringParam("firstName", firstName),
     ) {
         companion object {
-
             @JvmField
             val serializer = JSONObjectSerializer<SetCustomerFirstName> { it.toJSONObject() }
         }
@@ -75,10 +74,9 @@ internal data class ClientSessionActionsDataRequest(
 
     data class SetCustomerLastName(val lastName: String) : Action(
         type = "SET_CUSTOMER_LAST_NAME",
-        params = SingleStringParam("lastName", lastName)
+        params = SingleStringParam("lastName", lastName),
     ) {
         companion object {
-
             @JvmField
             val serializer = JSONObjectSerializer<SetCustomerLastName> { it.toJSONObject() }
         }
@@ -86,10 +84,9 @@ internal data class ClientSessionActionsDataRequest(
 
     data class SetMobileNumber(val mobileNumber: String) : Action(
         type = "SET_MOBILE_NUMBER",
-        params = SingleStringParam("mobileNumber", mobileNumber)
+        params = SingleStringParam("mobileNumber", mobileNumber),
     ) {
         companion object {
-
             @JvmField
             val serializer = JSONObjectSerializer<SetMobileNumber> { it.toJSONObject() }
         }
@@ -97,22 +94,24 @@ internal data class ClientSessionActionsDataRequest(
 
     data class SetPaymentMethod(
         val paymentMethodType: String,
-        val binData: BinData? = null
+        val binData: BinData? = null,
     ) : Action(
-        type = "SELECT_PAYMENT_METHOD",
-        params = object : ActionParams {
-            private val PAYMENT_METHOD_TYPE_FIELD = "paymentMethodType"
-            private val BIN_DATA_FIELD = "binData"
+            type = "SELECT_PAYMENT_METHOD",
+            params =
+                object : ActionParams {
+                    private val PAYMENT_METHOD_TYPE_FIELD = "paymentMethodType"
+                    private val BIN_DATA_FIELD = "binData"
 
-            override fun toJSONObject() = JSONObject().apply {
-                put(PAYMENT_METHOD_TYPE_FIELD, paymentMethodType)
-                putOpt(
-                    BIN_DATA_FIELD,
-                    binData?.serialize()
-                )
-            }
-        }
-    ) {
+                    override fun toJSONObject() =
+                        JSONObject().apply {
+                            put(PAYMENT_METHOD_TYPE_FIELD, paymentMethodType)
+                            putOpt(
+                                BIN_DATA_FIELD,
+                                binData?.serialize(),
+                            )
+                        }
+                },
+        ) {
         companion object {
             @JvmField
             val serializer = JSONObjectSerializer<SetPaymentMethod> { it.toJSONObject() }
@@ -121,7 +120,7 @@ internal data class ClientSessionActionsDataRequest(
 
     data object UnsetPaymentMethod : Action(
         type = "UNSELECT_PAYMENT_METHOD",
-        params = EmptyParams
+        params = EmptyParams,
     ) {
         @JvmField
         val serializer = JSONObjectSerializer<UnsetPaymentMethod> { it.toJSONObject() }
@@ -129,7 +128,7 @@ internal data class ClientSessionActionsDataRequest(
 
     data class SetBillingAddress(val address: AddressData) : Action(
         type = "SET_BILLING_ADDRESS",
-        params = AddressParam("billingAddress", address)
+        params = AddressParam("billingAddress", address),
     ) {
         companion object {
             @JvmField
@@ -139,7 +138,7 @@ internal data class ClientSessionActionsDataRequest(
 
     data class SetShippingAddress(val address: AddressData) : Action(
         type = "SET_SHIPPING_ADDRESS",
-        params = AddressParam("shippingAddress", address)
+        params = AddressParam("shippingAddress", address),
     ) {
         companion object {
             @JvmField
@@ -149,7 +148,7 @@ internal data class ClientSessionActionsDataRequest(
 
     data class SetShippingMethodId(val shippingMethodId: String) : Action(
         type = "SELECT_SHIPPING_METHOD",
-        params = SingleStringParam("shipping_method_id", shippingMethodId)
+        params = SingleStringParam("shipping_method_id", shippingMethodId),
     ) {
         companion object {
             @JvmField
@@ -158,41 +157,43 @@ internal data class ClientSessionActionsDataRequest(
     }
 
     companion object {
-
         private const val ACTIONS_FIELD = "actions"
 
         @JvmField
-        val serializer = JSONObjectSerializer<ClientSessionActionsDataRequest> { request ->
-            JSONObject().apply {
-                put(
-                    ACTIONS_FIELD,
-                    JSONArray().apply {
-                        request.actions.forEach { put(it.toJSONObject()) }
-                    }
-                )
+        val serializer =
+            JSONObjectSerializer<ClientSessionActionsDataRequest> { request ->
+                JSONObject().apply {
+                    put(
+                        ACTIONS_FIELD,
+                        JSONArray().apply {
+                            request.actions.forEach { put(it.toJSONObject()) }
+                        },
+                    )
+                }
             }
-        }
     }
 }
 
 internal data class BinData(
-    val network: String? = null
+    val network: String? = null,
 ) : JSONObjectSerializable, JSONDeserializable {
     companion object {
         private const val NETWORK_FIELD = "network"
 
         @JvmField
-        internal val serializer = JSONObjectSerializer<BinData> { t ->
-            JSONObject().apply {
-                putOpt(NETWORK_FIELD, t.network)
+        internal val serializer =
+            JSONObjectSerializer<BinData> { t ->
+                JSONObject().apply {
+                    putOpt(NETWORK_FIELD, t.network)
+                }
             }
-        }
 
         @JvmField
-        internal val deserializer = JSONObjectDeserializer<BinData> { t ->
-            BinData(
-                t.optNullableString(NETWORK_FIELD)
-            )
-        }
+        internal val deserializer =
+            JSONObjectDeserializer<BinData> { t ->
+                BinData(
+                    t.optNullableString(NETWORK_FIELD),
+                )
+            }
     }
 }

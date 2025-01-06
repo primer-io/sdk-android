@@ -2,18 +2,18 @@ package io.primer.android.webredirect.implementation.payment.presentation.delega
 
 import io.primer.android.PrimerSessionIntent
 import io.primer.android.core.extensions.mapSuspendCatching
+import io.primer.android.domain.payments.create.model.Payment
 import io.primer.android.errors.domain.BaseErrorResolver
-import io.primer.android.payments.core.helpers.PaymentMethodPaymentDelegate
 import io.primer.android.paymentmethods.core.composer.composable.ComposerUiEvent
 import io.primer.android.paymentmethods.core.composer.composable.UiEventable
-import io.primer.paymentMethodCoreUi.core.ui.navigation.launchers.PaymentMethodLauncherParams
 import io.primer.android.payments.core.create.domain.handler.PaymentMethodTokenHandler
-import io.primer.android.domain.payments.create.model.Payment
 import io.primer.android.payments.core.helpers.CheckoutErrorHandler
 import io.primer.android.payments.core.helpers.CheckoutSuccessHandler
+import io.primer.android.payments.core.helpers.PaymentMethodPaymentDelegate
 import io.primer.android.payments.core.resume.domain.handler.PaymentResumeHandler
 import io.primer.android.webRedirectShared.implementation.composer.presentation.WebRedirectLauncherParams
 import io.primer.android.webredirect.implementation.payment.resume.handler.WebRedirectResumeHandler
+import io.primer.paymentMethodCoreUi.core.ui.navigation.launchers.PaymentMethodLauncherParams
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 
@@ -23,19 +23,22 @@ internal class WebRedirectPaymentDelegate(
     successHandler: CheckoutSuccessHandler,
     errorHandler: CheckoutErrorHandler,
     baseErrorResolver: BaseErrorResolver,
-    private val webRedirectResumeHandler: WebRedirectResumeHandler
+    private val webRedirectResumeHandler: WebRedirectResumeHandler,
 ) : PaymentMethodPaymentDelegate(
-    paymentMethodTokenHandler,
-    resumePaymentHandler,
-    successHandler,
-    errorHandler,
-    baseErrorResolver
-),
+        paymentMethodTokenHandler,
+        resumePaymentHandler,
+        successHandler,
+        errorHandler,
+        baseErrorResolver,
+    ),
     UiEventable {
-
     private val _uiEvent = MutableSharedFlow<ComposerUiEvent>()
     override val uiEvent: SharedFlow<ComposerUiEvent> = _uiEvent
-    override suspend fun handleNewClientToken(clientToken: String, payment: Payment?): Result<Unit> {
+
+    override suspend fun handleNewClientToken(
+        clientToken: String,
+        payment: Payment?,
+    ): Result<Unit> {
         return webRedirectResumeHandler.continueWithNewClientToken(clientToken)
             .mapSuspendCatching { decision ->
                 _uiEvent.emit(
@@ -43,15 +46,16 @@ internal class WebRedirectPaymentDelegate(
                         PaymentMethodLauncherParams(
                             paymentMethodType = decision.paymentMethodType,
                             sessionIntent = PrimerSessionIntent.CHECKOUT,
-                            initialLauncherParams = WebRedirectLauncherParams(
-                                decision.title,
-                                decision.paymentMethodType,
-                                decision.redirectUrl,
-                                decision.statusUrl,
-                                decision.deeplinkUrl
-                            )
-                        )
-                    )
+                            initialLauncherParams =
+                                WebRedirectLauncherParams(
+                                    decision.title,
+                                    decision.paymentMethodType,
+                                    decision.redirectUrl,
+                                    decision.statusUrl,
+                                    decision.deeplinkUrl,
+                                ),
+                        ),
+                    ),
                 )
             }
     }

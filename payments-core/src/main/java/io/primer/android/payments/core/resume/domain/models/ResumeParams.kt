@@ -4,5 +4,5 @@ import io.primer.android.core.domain.Params
 
 data class ResumeParams(
     val paymentId: String,
-    val resumeToken: String
+    val resumeToken: String,
 ) : Params

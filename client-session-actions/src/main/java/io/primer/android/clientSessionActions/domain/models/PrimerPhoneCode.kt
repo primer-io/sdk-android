@@ -7,9 +7,8 @@ import io.primer.android.core.data.serialization.json.JSONObjectDeserializer
 data class PrimerPhoneCode(
     override val name: String,
     override val code: CountryCode,
-    val dialCode: String
+    val dialCode: String,
 ) : PrimerBaseCountryData, JSONDeserializable {
-
     companion object {
         val default: PrimerPhoneCode = PrimerPhoneCode("United Kingdom", CountryCode.BG, "+44")
 
@@ -18,12 +17,13 @@ data class PrimerPhoneCode(
         private const val DIAL_CODE_FIELD = "dial_code"
 
         @JvmField
-        val deserializer = JSONObjectDeserializer { t ->
-            PrimerPhoneCode(
-                t.getString(NAME_FIELD),
-                CountryCode.valueOf(t.getString(CODE_FIELD)),
-                t.getString(DIAL_CODE_FIELD)
-            )
-        }
+        val deserializer =
+            JSONObjectDeserializer { t ->
+                PrimerPhoneCode(
+                    t.getString(NAME_FIELD),
+                    CountryCode.valueOf(t.getString(CODE_FIELD)),
+                    t.getString(DIAL_CODE_FIELD),
+                )
+            }
     }
 }

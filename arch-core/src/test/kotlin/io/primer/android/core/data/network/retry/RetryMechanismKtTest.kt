@@ -23,7 +23,6 @@ import kotlin.test.assertContains
 @ExperimentalCoroutinesApi
 @ExtendWith(MockKExtension::class)
 class RetryMechanismKtTest {
-
     @RelaxedMockK
     internal lateinit var logger: EventFlowProvider<MessageLog>
 
@@ -33,143 +32,160 @@ class RetryMechanismKtTest {
     @RelaxedMockK
     internal lateinit var messagePropertiesEventProvider: EventFlowProvider<MessagePropertiesHelper>
 
-    private val config = RetryConfig(
-        enabled = true,
-        retryNetworkErrors = true,
-        retry500Errors = true
-    )
-
-    @Test
-    fun `should not retry on successful response`() = runTest {
-        every { response.isSuccessful } returns true
-
-        val result = retry(response, config, logger, messagePropertiesEventProvider)
-
-        assertFalse(result)
-    }
-
-    @Test
-    fun `should not retry when config is disabled`() = runTest {
-        val config = RetryConfig(
-            enabled = false
-        )
-        every { response.isSuccessful } returns false
-        every { response.code } returns 500
-
-        val result = retry(response, config, logger, messagePropertiesEventProvider)
-
-        assertFalse(result)
-    }
-
-    @Test
-    fun `should not retry on network error when retryNetworkErrors is false`() = runTest {
-        val config = RetryConfig(
-            enabled = true,
-            retryNetworkErrors = false
-        )
-        every { response.isSuccessful } returns false
-        every { response.code } returns NETWORK_EXCEPTION_ERROR_CODE
-
-        val result = retry(response, config, logger, messagePropertiesEventProvider)
-
-        assertFalse(result)
-    }
-
-    @Test
-    fun `should retry on network error when retryNetworkErrors is true`() = runTest {
-        val config = RetryConfig(
-            enabled = true,
-            retryNetworkErrors = true
-        )
-        every { response.isSuccessful } returns false
-        every { response.code } returns NETWORK_EXCEPTION_ERROR_CODE
-
-        val result = retry(response, config, logger, messagePropertiesEventProvider)
-
-        assertTrue(result)
-    }
-
-    @Test
-    fun `should not retry on 400 error`() = runTest {
-        every { response.code } returns 400
-
-        val result = retry(response, config, logger, messagePropertiesEventProvider)
-
-        assertFalse(result)
-    }
-
-    @Test
-    fun `retry should stop after maximum retries`() = runTest {
-        val config = RetryConfig(
+    private val config =
+        RetryConfig(
             enabled = true,
             retryNetworkErrors = true,
             retry500Errors = true,
-            maxRetries = 3
         )
-
-        every { response.isSuccessful } returns false
-        every { response.code } returns 500
-
-        repeat(4) { config.retries++ }
-
-        val result = retry(response, config, logger, messagePropertiesEventProvider)
-
-        assertFalse(result)
-    }
 
     @Test
-    fun `logger should log retry attempt`() = runTest {
-        val config = RetryConfig(
-            enabled = true,
-            retryNetworkErrors = true,
-            retry500Errors = true
-        )
+    fun `should not retry on successful response`() =
+        runTest {
+            every { response.isSuccessful } returns true
 
-        every { response.isSuccessful } returns false
-        every { response.code } returns 500
+            val result = retry(response, config, logger, messagePropertiesEventProvider)
 
-        retry(response, config, logger, messagePropertiesEventProvider)
-
-        coVerify { logger.getEventProvider().emit(any()) }
-    }
+            assertFalse(result)
+        }
 
     @Test
-    fun `logger should log network error`() = runTest {
-        val config = RetryConfig(
-            enabled = true,
-            retryNetworkErrors = true
-        )
+    fun `should not retry when config is disabled`() =
+        runTest {
+            val config =
+                RetryConfig(
+                    enabled = false,
+                )
+            every { response.isSuccessful } returns false
+            every { response.code } returns 500
 
-        every { response.isSuccessful } returns false
-        every { response.code } returns NETWORK_EXCEPTION_ERROR_CODE
+            val result = retry(response, config, logger, messagePropertiesEventProvider)
 
-        retry(response, config, logger, messagePropertiesEventProvider)
-
-        val slot = slot<MessageLog>()
-
-        coVerify { logger.getEventProvider().emit(capture(slot)) }
-
-        assertContains(slot.captured.message, "Network error encountered")
-    }
+            assertFalse(result)
+        }
 
     @Test
-    fun `logger should log server error`() = runTest {
-        val config = RetryConfig(
-            enabled = true,
-            retry500Errors = true
-        )
+    fun `should not retry on network error when retryNetworkErrors is false`() =
+        runTest {
+            val config =
+                RetryConfig(
+                    enabled = true,
+                    retryNetworkErrors = false,
+                )
+            every { response.isSuccessful } returns false
+            every { response.code } returns NETWORK_EXCEPTION_ERROR_CODE
 
-        every { response.isSuccessful } returns false
-        every { response.code } returns 500
+            val result = retry(response, config, logger, messagePropertiesEventProvider)
 
-        retry(response, config, logger, messagePropertiesEventProvider)
+            assertFalse(result)
+        }
 
-        val slot = slot<MessageLog>()
+    @Test
+    fun `should retry on network error when retryNetworkErrors is true`() =
+        runTest {
+            val config =
+                RetryConfig(
+                    enabled = true,
+                    retryNetworkErrors = true,
+                )
+            every { response.isSuccessful } returns false
+            every { response.code } returns NETWORK_EXCEPTION_ERROR_CODE
 
-        coVerify { logger.getEventProvider().emit(capture(slot)) }
+            val result = retry(response, config, logger, messagePropertiesEventProvider)
 
-        assertContains(slot.captured.message, "HTTP 500 error encountered")
-    }
+            assertTrue(result)
+        }
+
+    @Test
+    fun `should not retry on 400 error`() =
+        runTest {
+            every { response.code } returns 400
+
+            val result = retry(response, config, logger, messagePropertiesEventProvider)
+
+            assertFalse(result)
+        }
+
+    @Test
+    fun `retry should stop after maximum retries`() =
+        runTest {
+            val config =
+                RetryConfig(
+                    enabled = true,
+                    retryNetworkErrors = true,
+                    retry500Errors = true,
+                    maxRetries = 3,
+                )
+
+            every { response.isSuccessful } returns false
+            every { response.code } returns 500
+
+            repeat(4) { config.retries++ }
+
+            val result = retry(response, config, logger, messagePropertiesEventProvider)
+
+            assertFalse(result)
+        }
+
+    @Test
+    fun `logger should log retry attempt`() =
+        runTest {
+            val config =
+                RetryConfig(
+                    enabled = true,
+                    retryNetworkErrors = true,
+                    retry500Errors = true,
+                )
+
+            every { response.isSuccessful } returns false
+            every { response.code } returns 500
+
+            retry(response, config, logger, messagePropertiesEventProvider)
+
+            coVerify { logger.getEventProvider().emit(any()) }
+        }
+
+    @Test
+    fun `logger should log network error`() =
+        runTest {
+            val config =
+                RetryConfig(
+                    enabled = true,
+                    retryNetworkErrors = true,
+                )
+
+            every { response.isSuccessful } returns false
+            every { response.code } returns NETWORK_EXCEPTION_ERROR_CODE
+
+            retry(response, config, logger, messagePropertiesEventProvider)
+
+            val slot = slot<MessageLog>()
+
+            coVerify { logger.getEventProvider().emit(capture(slot)) }
+
+            assertContains(slot.captured.message, "Network error encountered")
+        }
+
+    @Test
+    fun `logger should log server error`() =
+        runTest {
+            val config =
+                RetryConfig(
+                    enabled = true,
+                    retry500Errors = true,
+                )
+
+            every { response.isSuccessful } returns false
+            every { response.code } returns 500
+
+            retry(response, config, logger, messagePropertiesEventProvider)
+
+            val slot = slot<MessageLog>()
+
+            coVerify { logger.getEventProvider().emit(capture(slot)) }
+
+            assertContains(slot.captured.message, "HTTP 500 error encountered")
+        }
 
     @Test
     fun `networkError should return response with correct code`() {
@@ -191,9 +207,9 @@ class RetryMechanismKtTest {
 
         val expectedBody =
             """
-                {
-                    "description":"Network error encountered when retrying"
-                }
+            {
+                "description":"Network error encountered when retrying"
+            }
             """.trimIndent()
 
         assertEquals(expectedBody, response.body?.string())

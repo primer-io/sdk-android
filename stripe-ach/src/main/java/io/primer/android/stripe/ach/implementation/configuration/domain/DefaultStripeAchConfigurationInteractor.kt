@@ -9,5 +9,5 @@ internal typealias StripeAchConfigurationInteractor =
     PaymentMethodConfigurationInteractor<StripeAchConfig, StripeAchConfigParams>
 
 internal class DefaultStripeAchConfigurationInteractor(
-    configurationRepository: PaymentMethodConfigurationRepository<StripeAchConfig, StripeAchConfigParams>
+    configurationRepository: PaymentMethodConfigurationRepository<StripeAchConfig, StripeAchConfigParams>,
 ) : PaymentMethodConfigurationInteractor<StripeAchConfig, StripeAchConfigParams>(configurationRepository)

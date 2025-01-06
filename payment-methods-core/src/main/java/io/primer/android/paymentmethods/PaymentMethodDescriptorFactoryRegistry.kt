@@ -1,7 +1,7 @@
 package io.primer.android.paymentmethods
 
-import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.configuration.data.model.PaymentMethodConfigDataResponse
+import io.primer.android.data.settings.internal.PrimerConfig
 
 /**
  * Holds all available [PaymentMethodDescriptorFactory]. At run-time, when the SDK is being set up
@@ -13,25 +13,26 @@ import io.primer.android.configuration.data.model.PaymentMethodConfigDataRespons
  * @see
  */
 class PaymentMethodDescriptorFactoryRegistry(
-    private val paymentMethodCheckers: PaymentMethodCheckerRegistry
+    private val paymentMethodCheckers: PaymentMethodCheckerRegistry,
 ) {
-
     private val factories: MutableMap<String, PaymentMethodDescriptorFactory> =
         mutableMapOf()
 
     fun create(
         localConfig: PrimerConfig,
         paymentMethodRemoteConfig: PaymentMethodConfigDataResponse,
-        paymentMethod: PaymentMethod
-    ) =
-        factories[paymentMethodRemoteConfig.type]?.create(
-            localConfig = localConfig,
-            paymentMethodRemoteConfig = paymentMethodRemoteConfig,
-            paymentMethod = paymentMethod,
-            paymentMethodCheckers = paymentMethodCheckers
-        )
+        paymentMethod: PaymentMethod,
+    ) = factories[paymentMethodRemoteConfig.type]?.create(
+        localConfig = localConfig,
+        paymentMethodRemoteConfig = paymentMethodRemoteConfig,
+        paymentMethod = paymentMethod,
+        paymentMethodCheckers = paymentMethodCheckers,
+    )
 
-    fun register(type: String, factory: PaymentMethodDescriptorFactory) {
+    fun register(
+        type: String,
+        factory: PaymentMethodDescriptorFactory,
+    ) {
         factories[type] = factory
     }
 

@@ -1,14 +1,13 @@
 package io.primer.android.components.manager.vault
 
+import io.primer.android.components.domain.error.PrimerValidationError
+import io.primer.android.components.domain.exception.InvalidVaultedPaymentMethodIdException
 import io.primer.android.components.domain.exception.VaultManagerDeleteException
 import io.primer.android.components.domain.exception.VaultManagerFetchException
-import io.primer.android.components.domain.exception.InvalidVaultedPaymentMethodIdException
-import io.primer.android.components.domain.error.PrimerValidationError
-import io.primer.android.vault.implementation.vaultedMethods.domain.PrimerVaultedPaymentMethodAdditionalData
 import io.primer.android.domain.tokenization.models.PrimerVaultedPaymentMethod
+import io.primer.android.vault.implementation.vaultedMethods.domain.PrimerVaultedPaymentMethodAdditionalData
 
 interface PrimerHeadlessUniversalCheckoutVaultManagerInterface {
-
     /**
      * Retrieves a list of vaulted payment methods from the Primer API.
      *
@@ -52,7 +51,7 @@ interface PrimerHeadlessUniversalCheckoutVaultManagerInterface {
     @JvmName("validate")
     suspend fun validate(
         vaultedPaymentMethodId: String,
-        additionalData: PrimerVaultedPaymentMethodAdditionalData
+        additionalData: PrimerVaultedPaymentMethodAdditionalData,
     ): Result<List<PrimerValidationError>>
 
     /**
@@ -82,6 +81,6 @@ interface PrimerHeadlessUniversalCheckoutVaultManagerInterface {
     @JvmName("startPaymentFlow")
     suspend fun startPaymentFlow(
         vaultedPaymentMethodId: String,
-        additionalData: PrimerVaultedPaymentMethodAdditionalData
+        additionalData: PrimerVaultedPaymentMethodAdditionalData,
     ): Result<Unit>
 }

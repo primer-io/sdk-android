@@ -5,7 +5,6 @@ import io.primer.android.payments.core.additionalInfo.PrimerCheckoutAdditionalIn
 import kotlinx.coroutines.flow.Flow
 
 internal interface PrimerHeadlessRepository {
-
     val events: Flow<PrimerEvent>
 
     fun start(clientToken: String)

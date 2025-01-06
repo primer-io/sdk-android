@@ -26,7 +26,6 @@ import java.io.IOException
 import kotlin.test.assertIs
 
 class DefaultErrorMapperTest {
-
     private val errorMapper = DefaultErrorMapper()
 
     @Test
@@ -57,13 +56,15 @@ class DefaultErrorMapperTest {
 
     @Test
     fun `getPrimerError should return HttpUnauthorizedError when HttpException with unauthorized error is thrown`() {
-        val httpException = mockk<HttpException> {
-            every { isUnAuthorizedError() } returns true
-            every { errorCode } returns 401
-            every { error } returns mockk {
-                every { diagnosticsId } returns "diag-123"
+        val httpException =
+            mockk<HttpException> {
+                every { isUnAuthorizedError() } returns true
+                every { errorCode } returns 401
+                every { error } returns
+                    mockk {
+                        every { diagnosticsId } returns "diag-123"
+                    }
             }
-        }
         val result = errorMapper.getPrimerError(httpException)
         assertTrue(result is HttpError.HttpUnauthorizedError)
         assertEquals("401", (result as HttpError.HttpUnauthorizedError).errorCode)
@@ -72,14 +73,16 @@ class DefaultErrorMapperTest {
 
     @Test
     fun `getPrimerError should return HttpServerError when HttpException with server error is thrown`() {
-        val httpException = mockk<HttpException>(relaxed = true) {
-            every { isServerError() } returns true
-            every { errorCode } returns 500
-            every { error } returns mockk {
-                every { diagnosticsId } returns "diag-500"
-                every { description } returns "Internal Server Error"
+        val httpException =
+            mockk<HttpException>(relaxed = true) {
+                every { isServerError() } returns true
+                every { errorCode } returns 500
+                every { error } returns
+                    mockk {
+                        every { diagnosticsId } returns "diag-500"
+                        every { description } returns "Internal Server Error"
+                    }
             }
-        }
         val result = errorMapper.getPrimerError(httpException)
         assertTrue(result is HttpError.HttpServerError)
         assertEquals("500", (result as HttpError.HttpServerError).errorCode)
@@ -89,14 +92,16 @@ class DefaultErrorMapperTest {
 
     @Test
     fun `getPrimerError should return HttpClientError when HttpException with client error is thrown`() {
-        val httpException = mockk<HttpException>(relaxed = true) {
-            every { isClientError() } returns true
-            every { errorCode } returns 400
-            every { error } returns mockk {
-                every { diagnosticsId } returns "diag-400"
-                every { description } returns "Bad Request"
+        val httpException =
+            mockk<HttpException>(relaxed = true) {
+                every { isClientError() } returns true
+                every { errorCode } returns 400
+                every { error } returns
+                    mockk {
+                        every { diagnosticsId } returns "diag-400"
+                        every { description } returns "Bad Request"
+                    }
             }
-        }
         val result = errorMapper.getPrimerError(httpException)
         assertTrue(result is HttpError.HttpClientError)
         assertEquals("400", (result as HttpError.HttpClientError).errorCode)
@@ -122,10 +127,11 @@ class DefaultErrorMapperTest {
 
     @Test
     fun `getPrimerError should return InvalidValueError when IllegalValueException is thrown`() {
-        val exception = IllegalValueException(
-            mockk { every { key } returns "key" },
-            "Value is invalid"
-        )
+        val exception =
+            IllegalValueException(
+                mockk { every { key } returns "key" },
+                "Value is invalid",
+            )
         val result = errorMapper.getPrimerError(exception)
         assertTrue(result is GeneralError.InvalidValueError)
         assertEquals("key", (result as GeneralError.InvalidValueError).illegalValueKey.key)
@@ -142,19 +148,21 @@ class DefaultErrorMapperTest {
     @Test
     fun `getPrimerError should throw IllegalArgumentException when unsupported exception is thrown`() {
         val exception = IllegalArgumentException("Unsupported exception")
-        val thrownException = assertThrows<IllegalArgumentException> {
-            errorMapper.getPrimerError(exception)
-        }
+        val thrownException =
+            assertThrows<IllegalArgumentException> {
+                errorMapper.getPrimerError(exception)
+            }
         assertEquals("Unsupported mapping for $exception", thrownException.message)
     }
 
     @Test
     fun `getPrimerError should return SessionCreateError when SessionCreateException is thrown`() {
-        val exception = SessionCreateException(
-            paymentMethodType = "KLARNA",
-            diagnosticsId = "diagnosticsId",
-            description = "description"
-        )
+        val exception =
+            SessionCreateException(
+                paymentMethodType = "KLARNA",
+                diagnosticsId = "diagnosticsId",
+                description = "description",
+            )
         val result = errorMapper.getPrimerError(exception)
         assertTrue(result is SessionCreateError)
         assertEquals("failed-to-create-session", result.errorId)
@@ -163,7 +171,7 @@ class DefaultErrorMapperTest {
         assertEquals("diagnosticsId", result.diagnosticsId)
         assertEquals(
             "Ensure that the KLARNA is configured correctly on the dashboard (https://dashboard.primer.io/)",
-            result.recoverySuggestion
+            result.recoverySuggestion,
         )
         assertIs<ErrorContextParams>(result.context)
     }

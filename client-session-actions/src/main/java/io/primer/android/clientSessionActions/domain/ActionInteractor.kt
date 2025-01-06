@@ -22,9 +22,8 @@ internal class DefaultActionInteractor(
     private val errorEventResolver: BaseErrorResolver,
     private val clientSessionActionsHandler: CheckoutClientSessionActionsHandler,
     private val ignoreErrors: Boolean = false,
-    override val dispatcher: CoroutineDispatcher = Dispatchers.IO
+    override val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : BaseSuspendInteractor<ClientSessionData, MultipleActionUpdateParams>() {
-
     private var lastParams: MultipleActionUpdateParams? = null
 
     override suspend fun performAction(params: MultipleActionUpdateParams): Result<ClientSessionData> {
@@ -37,26 +36,27 @@ internal class DefaultActionInteractor(
                 try {
                     clientSessionActionsHandler.onClientSessionUpdateStarted()
                     actionRepository.updateClientActions(
-                        filteredActions
+                        filteredActions,
                     ).onSuccess { clientSessionData ->
                         clientSessionActionsHandler.onClientSessionUpdateSuccess(
-                            clientSession = clientSessionData.clientSession
+                            clientSession = clientSessionData.clientSession,
                         )
                     }
                 } catch (e: CancellationException) {
                     /*
                     Clear value to allow calling the action interactor again if the previous call got cancelled due to
                     fast user input
-                    */
+                     */
                     lastParams = null
                     throw e
                 }
             }
 
-            false -> runSuspendCatching {
-                configurationRepository.getConfiguration()
-                    .clientSession.clientSessionDataResponse.toClientSessionData()
-            }
+            false ->
+                runSuspendCatching {
+                    configurationRepository.getConfiguration()
+                        .clientSession.clientSessionDataResponse.toClientSessionData()
+                }
         }.onFailure { throwable ->
             if (!ignoreErrors) {
                 clientSessionActionsHandler.onClientSessionUpdateError(error = errorEventResolver.resolve(throwable))

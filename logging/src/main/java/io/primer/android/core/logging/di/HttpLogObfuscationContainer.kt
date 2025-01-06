@@ -7,7 +7,6 @@ import io.primer.android.core.logging.WhitelistedHttpBodyKeyProviderRegistry
 import io.primer.android.core.logging.internal.DefaultBlacklistedHttpHeadersProvider
 
 class HttpLogObfuscationContainer : DependencyContainer() {
-
     override fun registerInitialDependencies() {
         registerSingleton<BlacklistedHttpHeadersProvider>(DEFAULT_NAME) {
             DefaultBlacklistedHttpHeadersProvider()

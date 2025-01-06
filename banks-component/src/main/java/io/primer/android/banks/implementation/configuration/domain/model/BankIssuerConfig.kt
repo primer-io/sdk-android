@@ -5,5 +5,5 @@ import java.util.Locale
 
 internal data class BankIssuerConfig(
     val paymentMethodConfigId: String,
-    val locale: Locale
+    val locale: Locale,
 ) : PaymentMethodConfiguration

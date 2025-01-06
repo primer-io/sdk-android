@@ -7,18 +7,18 @@ import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
 import io.mockk.verify
-import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.assets.ui.registry.BrandRegistry
 import io.primer.android.banks.implementation.composer.provider.BankIssuerComposerProviderFactory
+import io.primer.android.banks.implementation.composer.ui.assets.DotpayBrand
+import io.primer.android.banks.implementation.composer.ui.assets.IdealBrand
 import io.primer.android.configuration.data.model.ConfigurationData
 import io.primer.android.configuration.data.model.PaymentMethodConfigDataResponse
+import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.paymentmethods.PaymentMethodCheckerRegistry
 import io.primer.android.paymentmethods.PaymentMethodDescriptorFactoryRegistry
 import io.primer.android.paymentmethods.common.data.model.PaymentMethodType
 import io.primer.android.paymentmethods.core.composer.provider.PaymentMethodProviderFactoryRegistry
 import io.primer.android.paymentmethods.core.ui.navigation.PaymentMethodNavigationFactoryRegistry
-import io.primer.android.banks.implementation.composer.ui.assets.IdealBrand
-import io.primer.android.banks.implementation.composer.ui.assets.DotpayBrand
 import io.primer.android.webRedirectShared.implementation.composer.ui.navigation.provider.WebRedirectNavigatorProviderFactory
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
@@ -27,7 +27,6 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 
 internal class BankIssuerPaymentMethodTest {
-
     private lateinit var bankIssuerPaymentMethod: BankIssuerPaymentMethod
     private val paymentMethodType = "testPaymentMethodType"
 
@@ -78,9 +77,9 @@ internal class BankIssuerPaymentMethodTest {
                         localConfig = localConfig,
                         paymentMethodRemoteConfig = paymentMethodRemoteConfig,
                         paymentMethod = bankIssuerPaymentMethod,
-                        paymentMethodCheckers = paymentMethodCheckers
+                        paymentMethodCheckers = paymentMethodCheckers,
                     ) is BankIssuerPaymentMethodDescriptor
-                }
+                },
             )
         }
     }
@@ -96,7 +95,7 @@ internal class BankIssuerPaymentMethodTest {
         verify {
             registry.register(
                 paymentMethodType,
-                BankIssuerComposerProviderFactory::class.java
+                BankIssuerComposerProviderFactory::class.java,
             )
         }
     }
@@ -112,7 +111,7 @@ internal class BankIssuerPaymentMethodTest {
         verify {
             registry.register(
                 paymentMethodType,
-                WebRedirectNavigatorProviderFactory::class.java
+                WebRedirectNavigatorProviderFactory::class.java,
             )
         }
     }

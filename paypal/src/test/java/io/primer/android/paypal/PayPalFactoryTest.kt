@@ -6,7 +6,6 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
 class PayPalFactoryTest {
-
     @Test
     fun `build should return Success with PayPal instance`() {
         // Given

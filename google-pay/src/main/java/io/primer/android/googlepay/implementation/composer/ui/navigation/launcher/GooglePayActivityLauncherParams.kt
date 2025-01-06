@@ -1,11 +1,11 @@
 package io.primer.android.googlepay.implementation.composer.ui.navigation.launcher
 
 import io.primer.android.PrimerSessionIntent
-import io.primer.android.data.settings.PrimerGoogleShippingAddressParameters
 import io.primer.android.configuration.domain.model.CheckoutModule
+import io.primer.android.data.settings.PrimerGoogleShippingAddressParameters
+import io.primer.android.googlepay.GooglePayFacade
 import io.primer.android.paymentmethods.common.data.model.PaymentMethodType
 import io.primer.paymentMethodCoreUi.core.ui.navigation.launchers.PaymentMethodRedirectLauncherParams
-import io.primer.android.googlepay.GooglePayFacade
 
 internal class GooglePayActivityLauncherParams(
     val environment: GooglePayFacade.Environment,
@@ -20,8 +20,8 @@ internal class GooglePayActivityLauncherParams(
     val shippingOptions: CheckoutModule.Shipping?,
     val shippingAddressParameters: PrimerGoogleShippingAddressParameters? = null,
     val requireShippingMethod: Boolean,
-    val emailAddressRequired: Boolean
+    val emailAddressRequired: Boolean,
 ) : PaymentMethodRedirectLauncherParams(
-    PaymentMethodType.GOOGLE_PAY.name,
-    PrimerSessionIntent.CHECKOUT
-)
+        PaymentMethodType.GOOGLE_PAY.name,
+        PrimerSessionIntent.CHECKOUT,
+    )

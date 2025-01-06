@@ -13,7 +13,6 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 class CheckoutModuleDataRepositoryTest {
-
     private lateinit var repository: CheckoutModuleDataRepository
     private val localConfigurationDataSource: LocalConfigurationDataSource = mockk()
 
@@ -24,12 +23,13 @@ class CheckoutModuleDataRepositoryTest {
 
     @Test
     fun `getCardInformation returns correct CardInformation module`() {
-        val cardInformationResponse = CheckoutModuleDataResponse(
-            type = CheckoutModuleType.CARD_INFORMATION,
-            requestUrl = null,
-            options = mapOf("option1" to true),
-            shippingOptions = null
-        )
+        val cardInformationResponse =
+            CheckoutModuleDataResponse(
+                type = CheckoutModuleType.CARD_INFORMATION,
+                requestUrl = null,
+                options = mapOf("option1" to true),
+                shippingOptions = null,
+            )
         every {
             localConfigurationDataSource.get().checkoutModules
         } returns listOf(cardInformationResponse)
@@ -51,12 +51,13 @@ class CheckoutModuleDataRepositoryTest {
 
     @Test
     fun `getBillingAddress returns correct BillingAddress module`() {
-        val billingAddressResponse = CheckoutModuleDataResponse(
-            type = CheckoutModuleType.BILLING_ADDRESS,
-            requestUrl = null,
-            options = mapOf("option2" to false),
-            shippingOptions = null
-        )
+        val billingAddressResponse =
+            CheckoutModuleDataResponse(
+                type = CheckoutModuleType.BILLING_ADDRESS,
+                requestUrl = null,
+                options = mapOf("option2" to false),
+                shippingOptions = null,
+            )
         every { localConfigurationDataSource.get().checkoutModules } returns listOf(billingAddressResponse)
 
         val result = repository.getBillingAddress()

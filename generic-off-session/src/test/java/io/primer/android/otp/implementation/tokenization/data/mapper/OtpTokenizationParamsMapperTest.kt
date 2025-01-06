@@ -17,24 +17,26 @@ class OtpTokenizationParamsMapperTest {
 
     @Test
     fun `map() correctly maps OtpPaymentInstrumentParams to OtpPaymentInstrumentDataRequest when payment method type is ADYEN_BLIK`() {
-        val params = TokenizationParams(
-            OtpPaymentInstrumentParams(
-                paymentMethodType = PaymentMethodType.ADYEN_BLIK.name,
-                paymentMethodConfigId = "id",
-                locale = "en_US",
-                otp = "1234"
-            ),
-            sessionIntent = PrimerSessionIntent.CHECKOUT
-        )
+        val params =
+            TokenizationParams(
+                OtpPaymentInstrumentParams(
+                    paymentMethodType = PaymentMethodType.ADYEN_BLIK.name,
+                    paymentMethodConfigId = "id",
+                    locale = "en_US",
+                    otp = "1234",
+                ),
+                sessionIntent = PrimerSessionIntent.CHECKOUT,
+            )
 
         val result = mapper.map(params)
 
-        val expectedInstrumentDataRequest = OtpPaymentInstrumentDataRequest(
-            paymentMethodType = PaymentMethodType.ADYEN_BLIK.name,
-            paymentMethodConfigId = "id",
-            sessionInfo = AdyenBlikSessionInfoDataRequest(locale = "en_US", blikCode = "1234"),
-            type = PaymentInstrumentType.OFF_SESSION_PAYMENT
-        )
+        val expectedInstrumentDataRequest =
+            OtpPaymentInstrumentDataRequest(
+                paymentMethodType = PaymentMethodType.ADYEN_BLIK.name,
+                paymentMethodConfigId = "id",
+                sessionInfo = AdyenBlikSessionInfoDataRequest(locale = "en_US", blikCode = "1234"),
+                type = PaymentInstrumentType.OFF_SESSION_PAYMENT,
+            )
         val expectedTokenizationRequest =
             expectedInstrumentDataRequest.toTokenizationRequest(PrimerSessionIntent.CHECKOUT)
 
@@ -43,15 +45,16 @@ class OtpTokenizationParamsMapperTest {
 
     @Test
     fun `map() throws exception when payment method type is not ADYEN_BLIK`() {
-        val params = TokenizationParams(
-            OtpPaymentInstrumentParams(
-                paymentMethodType = PaymentMethodType.STRIPE_ACH.name,
-                paymentMethodConfigId = "id",
-                locale = "en_US",
-                otp = "1234"
-            ),
-            sessionIntent = PrimerSessionIntent.CHECKOUT
-        )
+        val params =
+            TokenizationParams(
+                OtpPaymentInstrumentParams(
+                    paymentMethodType = PaymentMethodType.STRIPE_ACH.name,
+                    paymentMethodConfigId = "id",
+                    locale = "en_US",
+                    otp = "1234",
+                ),
+                sessionIntent = PrimerSessionIntent.CHECKOUT,
+            )
 
         assertThrows<IllegalStateException> {
             mapper.map(params)

@@ -17,7 +17,6 @@ import org.junit.jupiter.api.assertThrows
 import kotlin.test.assertEquals
 
 internal class NolPayLinkMobileNumberDataValidatorTest {
-
     @RelaxedMockK
     internal lateinit var phoneMetadataRepository: PhoneMetadataRepository
 
@@ -37,16 +36,17 @@ internal class NolPayLinkMobileNumberDataValidatorTest {
         every { collectableData.mobileNumber } returns ""
 
         coEvery { phoneMetadataRepository.getPhoneMetadata(any()) }.returns(
-            Result.failure(expectedException)
+            Result.failure(expectedException),
         )
 
-        val exception = assertThrows<Exception> {
-            runTest {
-                val result = validator.validate(collectableData)
-                assert(result.isFailure)
-                result.getOrThrow()
+        val exception =
+            assertThrows<Exception> {
+                runTest {
+                    val result = validator.validate(collectableData)
+                    assert(result.isFailure)
+                    result.getOrThrow()
+                }
             }
-        }
         assertEquals(expectedException, exception)
 
         coVerify { phoneMetadataRepository.getPhoneMetadata(any()) }
@@ -59,7 +59,7 @@ internal class NolPayLinkMobileNumberDataValidatorTest {
 
         every { collectableData.mobileNumber } returns ""
         coEvery { phoneMetadataRepository.getPhoneMetadata(any()) }.returns(
-            Result.failure(exception)
+            Result.failure(exception),
         )
 
         runTest {
@@ -79,7 +79,7 @@ internal class NolPayLinkMobileNumberDataValidatorTest {
 
         every { collectableData.mobileNumber } returns VALID_MOBILE_NUMBER
         coEvery { phoneMetadataRepository.getPhoneMetadata(any()) }.returns(
-            Result.success(phoneMetadata)
+            Result.success(phoneMetadata),
         )
 
         runTest {

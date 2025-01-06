@@ -47,11 +47,12 @@ class WebRedirectComponentTest {
         every { webRedirectDelegate.steps() } returns flowOf(*steps.toTypedArray())
         coEvery { webRedirectLoggingDelegate.logError(any(), any()) } just Runs
         coEvery { webRedirectLoggingDelegate.logStep(any(), any()) } just Runs
-        component = WebRedirectComponent(
-            paymentMethodType,
-            webRedirectDelegate,
-            webRedirectLoggingDelegate
-        )
+        component =
+            WebRedirectComponent(
+                paymentMethodType,
+                webRedirectDelegate,
+                webRedirectLoggingDelegate,
+            )
     }
 
     @AfterEach
@@ -60,28 +61,29 @@ class WebRedirectComponentTest {
     }
 
     @Test
-    fun `start() should log errors and steps via logging delegate when called`() = runTest {
-        component.start()
+    fun `start() should log errors and steps via logging delegate when called`() =
+        runTest {
+            component.start()
 
-        delay(1.seconds)
+            delay(1.seconds)
 
-        verify(exactly = 1) {
-            webRedirectDelegate.errors()
-            webRedirectDelegate.steps()
-        }
-        coVerify(exactly = 1) {
-            errors.forEach {
-                webRedirectLoggingDelegate.logError(
-                    error = it,
-                    paymentMethodType = paymentMethodType
-                )
+            verify(exactly = 1) {
+                webRedirectDelegate.errors()
+                webRedirectDelegate.steps()
             }
-            (listOf(WebRedirectStep.Loading) + steps).forEach {
-                webRedirectLoggingDelegate.logStep(
-                    webRedirectStep = it,
-                    paymentMethodType = paymentMethodType
-                )
+            coVerify(exactly = 1) {
+                errors.forEach {
+                    webRedirectLoggingDelegate.logError(
+                        error = it,
+                        paymentMethodType = paymentMethodType,
+                    )
+                }
+                (listOf(WebRedirectStep.Loading) + steps).forEach {
+                    webRedirectLoggingDelegate.logStep(
+                        webRedirectStep = it,
+                        paymentMethodType = paymentMethodType,
+                    )
+                }
             }
         }
-    }
 }

@@ -9,7 +9,6 @@ import kotlin.test.assertIs
 import kotlin.test.assertTrue
 
 internal class PaypalValidBillingAgreementTokenRuleTest {
-
     private val rule = PaypalValidBillingAgreementTokenRule()
 
     @Test

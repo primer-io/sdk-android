@@ -20,7 +20,6 @@ import org.junit.jupiter.api.extension.ExtendWith
 @ExtendWith(InstantExecutorExtension::class, MockKExtension::class)
 @ExperimentalCoroutinesApi
 class BanksInteractorTest {
-
     @RelaxedMockK
     internal lateinit var repository: IssuingBankRepository
 
@@ -60,10 +59,11 @@ class BanksInteractorTest {
     }
 
     private companion object {
-        val banks = listOf(
-            IssuingBank("1", "bunq", false, ""),
-            IssuingBank("2", "Revolut", false, ""),
-            IssuingBank("3", "Abn amro", false, "")
-        )
+        val banks =
+            listOf(
+                IssuingBank("1", "bunq", false, ""),
+                IssuingBank("2", "Revolut", false, ""),
+                IssuingBank("3", "Abn amro", false, ""),
+            )
     }
 }

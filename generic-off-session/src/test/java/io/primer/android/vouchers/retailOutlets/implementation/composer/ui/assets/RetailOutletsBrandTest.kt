@@ -6,7 +6,6 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 internal class RetailOutletsBrandTest {
-
     private lateinit var retailOutletsBrand: RetailOutletsBrand
 
     @BeforeEach

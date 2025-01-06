@@ -22,11 +22,12 @@ class PrimerInputValidationErrorExtKtTest {
     @Test
     fun `toSyncValidationError maps invalid-card-number correctly when card number is blank`() {
         every { primerCardData.cardNumber } returns ""
-        val error = PrimerInputValidationError(
-            inputElementType = PrimerInputElementType.CARD_NUMBER,
-            description = "",
-            errorId = "invalid-card-number"
-        )
+        val error =
+            PrimerInputValidationError(
+                inputElementType = PrimerInputElementType.CARD_NUMBER,
+                description = "",
+                errorId = "invalid-card-number",
+            )
 
         val syncError = error.toSyncValidationError(primerCardData)
 
@@ -39,11 +40,12 @@ class PrimerInputValidationErrorExtKtTest {
     @Test
     fun `toSyncValidationError maps invalid-card-number correctly when card number is not blank`() {
         every { primerCardData.cardNumber } returns "1234"
-        val error = PrimerInputValidationError(
-            inputElementType = PrimerInputElementType.CARD_NUMBER,
-            description = "",
-            errorId = "invalid-card-number"
-        )
+        val error =
+            PrimerInputValidationError(
+                inputElementType = PrimerInputElementType.CARD_NUMBER,
+                description = "",
+                errorId = "invalid-card-number",
+            )
 
         val syncError = error.toSyncValidationError(primerCardData)
 
@@ -56,11 +58,12 @@ class PrimerInputValidationErrorExtKtTest {
     @Test
     fun `toSyncValidationError maps unsupported-card-type correctly when card number is blank`() {
         every { primerCardData.cardNumber } returns ""
-        val error = PrimerInputValidationError(
-            inputElementType = PrimerInputElementType.CARD_NUMBER,
-            description = "",
-            errorId = "unsupported-card-type"
-        )
+        val error =
+            PrimerInputValidationError(
+                inputElementType = PrimerInputElementType.CARD_NUMBER,
+                description = "",
+                errorId = "unsupported-card-type",
+            )
 
         val syncError = error.toSyncValidationError(primerCardData)
 
@@ -73,11 +76,12 @@ class PrimerInputValidationErrorExtKtTest {
     @Test
     fun `toSyncValidationError maps unsupported-card-type correctly when card number is not blank`() {
         every { primerCardData.cardNumber } returns "1234"
-        val error = PrimerInputValidationError(
-            inputElementType = PrimerInputElementType.CARD_NUMBER,
-            description = "",
-            errorId = "unsupported-card-type"
-        )
+        val error =
+            PrimerInputValidationError(
+                inputElementType = PrimerInputElementType.CARD_NUMBER,
+                description = "",
+                errorId = "unsupported-card-type",
+            )
 
         val syncError = error.toSyncValidationError(primerCardData)
 
@@ -90,11 +94,12 @@ class PrimerInputValidationErrorExtKtTest {
     @Test
     fun `toSyncValidationError maps invalid-cvv correctly when cvv is blank`() {
         every { primerCardData.cvv } returns ""
-        val error = PrimerInputValidationError(
-            inputElementType = PrimerInputElementType.CVV,
-            description = "",
-            errorId = "invalid-cvv"
-        )
+        val error =
+            PrimerInputValidationError(
+                inputElementType = PrimerInputElementType.CVV,
+                description = "",
+                errorId = "invalid-cvv",
+            )
 
         val syncError = error.toSyncValidationError(primerCardData)
 
@@ -107,11 +112,12 @@ class PrimerInputValidationErrorExtKtTest {
     @Test
     fun `toSyncValidationError maps invalid-cvv correctly when cvv is not blank`() {
         every { primerCardData.cvv } returns "123"
-        val error = PrimerInputValidationError(
-            inputElementType = PrimerInputElementType.CVV,
-            description = "",
-            errorId = "invalid-cvv"
-        )
+        val error =
+            PrimerInputValidationError(
+                inputElementType = PrimerInputElementType.CVV,
+                description = "",
+                errorId = "invalid-cvv",
+            )
 
         val syncError = error.toSyncValidationError(primerCardData)
 
@@ -124,11 +130,12 @@ class PrimerInputValidationErrorExtKtTest {
     @Test
     fun `toSyncValidationError maps invalid-expiry-date correctly when expiration is blank`() {
         every { primerCardData.expiryDate } returns ""
-        val error = PrimerInputValidationError(
-            inputElementType = PrimerInputElementType.EXPIRY_DATE,
-            description = "",
-            errorId = "invalid-expiry-date"
-        )
+        val error =
+            PrimerInputValidationError(
+                inputElementType = PrimerInputElementType.EXPIRY_DATE,
+                description = "",
+                errorId = "invalid-expiry-date",
+            )
 
         val syncError = error.toSyncValidationError(primerCardData)
 
@@ -141,11 +148,12 @@ class PrimerInputValidationErrorExtKtTest {
     @Test
     fun `toSyncValidationError maps invalid-expiry-date correctly when expiration is not blank`() {
         every { primerCardData.expiryDate } returns "13/37"
-        val error = PrimerInputValidationError(
-            inputElementType = PrimerInputElementType.EXPIRY_DATE,
-            description = "",
-            errorId = "invalid-expiry-date"
-        )
+        val error =
+            PrimerInputValidationError(
+                inputElementType = PrimerInputElementType.EXPIRY_DATE,
+                description = "",
+                errorId = "invalid-expiry-date",
+            )
 
         val syncError = error.toSyncValidationError(primerCardData)
 
@@ -158,11 +166,12 @@ class PrimerInputValidationErrorExtKtTest {
     @Test
     fun `toSyncValidationError maps invalid-cardholder-name correctly when name is blank`() {
         every { primerCardData.cardHolderName } returns ""
-        val error = PrimerInputValidationError(
-            inputElementType = PrimerInputElementType.CARDHOLDER_NAME,
-            description = "",
-            errorId = "invalid-cardholder-name"
-        )
+        val error =
+            PrimerInputValidationError(
+                inputElementType = PrimerInputElementType.CARDHOLDER_NAME,
+                description = "",
+                errorId = "invalid-cardholder-name",
+            )
 
         val syncError = error.toSyncValidationError(primerCardData)
 
@@ -175,11 +184,12 @@ class PrimerInputValidationErrorExtKtTest {
     @Test
     fun `toSyncValidationError maps invalid-cardholder-name correctly when name is too short`() {
         every { primerCardData.cardHolderName } returns "J"
-        val error = PrimerInputValidationError(
-            inputElementType = PrimerInputElementType.CARDHOLDER_NAME,
-            description = "",
-            errorId = "invalid-cardholder-name"
-        )
+        val error =
+            PrimerInputValidationError(
+                inputElementType = PrimerInputElementType.CARDHOLDER_NAME,
+                description = "",
+                errorId = "invalid-cardholder-name",
+            )
 
         val syncError = error.toSyncValidationError(primerCardData)
 
@@ -192,11 +202,12 @@ class PrimerInputValidationErrorExtKtTest {
     @Test
     fun `toSyncValidationError maps invalid-cardholder-name correctly when name is too long`() {
         every { primerCardData.cardHolderName } returns "J".repeat(46)
-        val error = PrimerInputValidationError(
-            inputElementType = PrimerInputElementType.CARDHOLDER_NAME,
-            description = "",
-            errorId = "invalid-cardholder-name"
-        )
+        val error =
+            PrimerInputValidationError(
+                inputElementType = PrimerInputElementType.CARDHOLDER_NAME,
+                description = "",
+                errorId = "invalid-cardholder-name",
+            )
 
         val syncError = error.toSyncValidationError(primerCardData)
 
@@ -208,11 +219,12 @@ class PrimerInputValidationErrorExtKtTest {
 
     @Test
     fun `toSyncValidationError throws exception for unsupported errorId`() {
-        val error = PrimerInputValidationError(
-            inputElementType = PrimerInputElementType.CARD_NUMBER,
-            description = "",
-            errorId = "unsupported-error-id"
-        )
+        val error =
+            PrimerInputValidationError(
+                inputElementType = PrimerInputElementType.CARD_NUMBER,
+                description = "",
+                errorId = "unsupported-error-id",
+            )
 
         assertThrows<IllegalStateException> {
             error.toSyncValidationError(primerCardData)

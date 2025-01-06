@@ -1,7 +1,6 @@
 package io.primer.android.components.implementation
 
 internal object HeadlessUniversalCheckoutAnalyticsConstants {
-
     // PrimerHeadlessUniversalCheckout
     const val START_METHOD = "PrimerHeadlessUniversalCheckout.start"
     const val SET_CHECKOUT_LISTENER_METHOD = "PrimerHeadlessUniversalCheckout.setCheckoutListener"

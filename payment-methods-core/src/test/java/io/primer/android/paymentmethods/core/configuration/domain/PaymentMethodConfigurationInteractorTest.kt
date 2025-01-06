@@ -16,7 +16,6 @@ import kotlin.test.assertEquals
 
 @ExtendWith(MockKExtension::class)
 internal class PaymentMethodConfigurationInteractorTest {
-
     @RelaxedMockK
     private lateinit var configurationRepository:
         PaymentMethodConfigurationRepository<PaymentMethodConfiguration, PaymentMethodConfigurationParams>
@@ -26,40 +25,45 @@ internal class PaymentMethodConfigurationInteractorTest {
 
     @BeforeEach
     fun setUp() {
-        configurationInteractor = PaymentMethodConfigurationInteractor(
-            configurationRepository = configurationRepository
-        )
+        configurationInteractor =
+            PaymentMethodConfigurationInteractor(
+                configurationRepository = configurationRepository,
+            )
     }
 
     @Test
-    fun `PaymentMethodConfigurationInteractor invoke should return success when getPaymentMethodConfiguration returns a success result`() = runTest {
-        // Given
-        val paymentMethodConfiguration = mockk<PaymentMethodConfiguration>(relaxed = true)
-        every { configurationRepository.getPaymentMethodConfiguration(any()) } returns Result.success(
-            paymentMethodConfiguration
-        )
+    fun `PaymentMethodConfigurationInteractor invoke should return success when getPaymentMethodConfiguration returns a success result`() =
+        runTest {
+            // Given
+            val paymentMethodConfiguration = mockk<PaymentMethodConfiguration>(relaxed = true)
+            every { configurationRepository.getPaymentMethodConfiguration(any()) } returns
+                Result.success(
+                    paymentMethodConfiguration,
+                )
 
-        // When
-        val paymentMethodConfigurationParams = mockk<PaymentMethodConfigurationParams>(relaxed = true)
-        val result = configurationInteractor(paymentMethodConfigurationParams)
+            // When
+            val paymentMethodConfigurationParams = mockk<PaymentMethodConfigurationParams>(relaxed = true)
+            val result = configurationInteractor(paymentMethodConfigurationParams)
 
-        // Then
-        assertEquals(paymentMethodConfiguration, result.getOrThrow())
-    }
-
-    @Test
-    fun `PaymentMethodConfigurationInteractor invoke should return failure when getPaymentMethodConfiguration returns a failure result`() = runTest {
-        // Given
-        val exception = mockk<Exception>(relaxed = true)
-        every { configurationRepository.getPaymentMethodConfiguration(any()) } returns Result.failure(
-            exception
-        )
-
-        // When, Then
-        val paymentMethodConfigurationParams = mockk<PaymentMethodConfigurationParams>(relaxed = true)
-        val result = configurationInteractor(paymentMethodConfigurationParams)
-        assertThrows(Exception::class.java) {
-            result.getOrThrow()
+            // Then
+            assertEquals(paymentMethodConfiguration, result.getOrThrow())
         }
-    }
+
+    @Test
+    fun `PaymentMethodConfigurationInteractor invoke should return failure when getPaymentMethodConfiguration returns a failure result`() =
+        runTest {
+            // Given
+            val exception = mockk<Exception>(relaxed = true)
+            every { configurationRepository.getPaymentMethodConfiguration(any()) } returns
+                Result.failure(
+                    exception,
+                )
+
+            // When, Then
+            val paymentMethodConfigurationParams = mockk<PaymentMethodConfigurationParams>(relaxed = true)
+            val result = configurationInteractor(paymentMethodConfigurationParams)
+            assertThrows(Exception::class.java) {
+                result.getOrThrow()
+            }
+        }
 }

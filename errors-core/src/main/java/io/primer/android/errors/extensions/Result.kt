@@ -9,7 +9,7 @@ import kotlin.coroutines.cancellation.CancellationException
 @OptIn(ExperimentalContracts::class)
 suspend fun <R> Result<R>.onFailureWithCancellation(
     paymentMethodType: String,
-    action: suspend (Throwable) -> Unit
+    action: suspend (Throwable) -> Unit,
 ): Result<R> {
     contract {
         callsInPlace(action, InvocationKind.AT_MOST_ONCE)
@@ -20,7 +20,7 @@ suspend fun <R> Result<R>.onFailureWithCancellation(
                 PaymentMethodCancelledException(paymentMethodType)
             } else {
                 it
-            }
+            },
         )
     }
     return this

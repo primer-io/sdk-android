@@ -27,10 +27,11 @@ class KlarnaErrorMapperTest {
         val actualResult = errorMapper.getPrimerError(throwable)
         val expectedDescription =
             "User is not approved to perform Klarna payments (diagnosticsId: ${UUID.randomUUID()})"
-        val expectedContext = ErrorContextParams(
-            "klarna-user-not-approved",
-            PaymentMethodType.KLARNA.name
-        )
+        val expectedContext =
+            ErrorContextParams(
+                "klarna-user-not-approved",
+                PaymentMethodType.KLARNA.name,
+            )
 
         assertTrue(actualResult is KlarnaError.UserUnapprovedError)
         assertEquals(expectedDescription, actualResult.description)
@@ -48,10 +49,11 @@ class KlarnaErrorMapperTest {
         val actualResult = errorMapper.getPrimerError(throwable)
         val expectedDescription =
             "Multiple errors occurred: $message (diagnosticsId: ${UUID.randomUUID()})"
-        val expectedContext = ErrorContextParams(
-            "klarna-sdk-error",
-            PaymentMethodType.KLARNA.name
-        )
+        val expectedContext =
+            ErrorContextParams(
+                "klarna-sdk-error",
+                PaymentMethodType.KLARNA.name,
+            )
 
         assertTrue(actualResult is KlarnaError.KlarnaSdkError)
         assertEquals(expectedDescription, actualResult.description)
@@ -65,13 +67,14 @@ class KlarnaErrorMapperTest {
         val exception = IllegalStateException("Some error")
 
         // When / Then
-        val thrown = assertThrows(IllegalStateException::class.java) {
-            errorMapper.getPrimerError(exception)
-        }
+        val thrown =
+            assertThrows(IllegalStateException::class.java) {
+                errorMapper.getPrimerError(exception)
+            }
         Assertions.assertEquals(
             "Unsupported mapping for java.lang.IllegalStateException: Some error " +
                 "in io.primer.android.klarna.implementation.errors.data.mapper.KlarnaErrorMapper",
-            thrown.message
+            thrown.message,
         )
     }
 }

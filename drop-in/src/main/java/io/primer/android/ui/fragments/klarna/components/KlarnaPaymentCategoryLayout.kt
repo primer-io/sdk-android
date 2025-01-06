@@ -59,79 +59,84 @@ internal class KlarnaPaymentCategoryLayout(context: Context, attrs: AttributeSet
                 }.apply {
                     isClickable = true
                     this@apply.setOnClickListener { onItemClickListener(index) }
-                }
+                },
             )
             if (index != klarnaPaymentCategories.lastIndex) {
                 addView(
                     Space(context).apply {
-                        layoutParams = LayoutParams(
-                            0,
-                            context.resources.getDimensionPixelSize(R.dimen.medium_padding)
-                        )
-                    }
+                        layoutParams =
+                            LayoutParams(
+                                0,
+                                context.resources.getDimensionPixelSize(R.dimen.medium_padding),
+                            )
+                    },
                 )
             }
         }
     }
 
     private fun ItemKlarnaUnselectedPaymentCategoryBinding.bind(
-        category: KlarnaPaymentCategory.UnselectedKlarnaPaymentCategory
+        category: KlarnaPaymentCategory.UnselectedKlarnaPaymentCategory,
     ) {
         paymentCategory.paymentCategoryName.text = category.name
     }
 
     private fun ItemKlarnaSelectedPaymentCategoryBinding.bind(
-        category: KlarnaPaymentCategory.SelectedKlarnaPaymentCategory
+        category: KlarnaPaymentCategory.SelectedKlarnaPaymentCategory,
     ) {
         paymentCategory.paymentCategoryName.text = category.name
         with(klarnaPaymentViewContainer) {
             removeAllViews()
             lateinit var klarnaPaymentView: View
-            val listener = object : View.OnLayoutChangeListener {
-                private var timer: Timer? = null
+            val listener =
+                object : View.OnLayoutChangeListener {
+                    private var timer: Timer? = null
 
-                override fun onLayoutChange(
-                    v: View?,
-                    left: Int,
-                    top: Int,
-                    right: Int,
-                    bottom: Int,
-                    oldLeft: Int,
-                    oldTop: Int,
-                    oldRight: Int,
-                    oldBottom: Int
-                ) {
-                    val listener = this
-                    timer?.cancel()
-                    timer = Timer().apply {
-                        schedule(
-                            object : TimerTask() {
-                                override fun run() {
-                                    timer?.cancel()
-                                    timer = null
-                                    klarnaPaymentView.removeOnLayoutChangeListener(listener)
-                                    dummyKlarnaPaymentViewContainer?.post {
-                                        dummyKlarnaPaymentViewContainer?.removeAllViews()
-                                        addView(klarnaPaymentView)
-                                    }
-                                }
-                            },
-                            TIMER_DELAY
-                        )
+                    override fun onLayoutChange(
+                        v: View?,
+                        left: Int,
+                        top: Int,
+                        right: Int,
+                        bottom: Int,
+                        oldLeft: Int,
+                        oldTop: Int,
+                        oldRight: Int,
+                        oldBottom: Int,
+                    ) {
+                        val listener = this
+                        timer?.cancel()
+                        timer =
+                            Timer().apply {
+                                schedule(
+                                    object : TimerTask() {
+                                        override fun run() {
+                                            timer?.cancel()
+                                            timer = null
+                                            klarnaPaymentView.removeOnLayoutChangeListener(listener)
+                                            dummyKlarnaPaymentViewContainer?.post {
+                                                dummyKlarnaPaymentViewContainer?.removeAllViews()
+                                                addView(klarnaPaymentView)
+                                            }
+                                        }
+                                    },
+                                    TIMER_DELAY,
+                                )
+                            }
                     }
                 }
-            }
-            klarnaPaymentView = category.view.apply {
-                layoutParams = FrameLayout.LayoutParams(
-                    FrameLayout.LayoutParams.WRAP_CONTENT,
-                    FrameLayout.LayoutParams.WRAP_CONTENT
-                )
-            }.apply { addOnLayoutChangeListener(listener) }
+            klarnaPaymentView =
+                category.view.apply {
+                    layoutParams =
+                        FrameLayout.LayoutParams(
+                            FrameLayout.LayoutParams.WRAP_CONTENT,
+                            FrameLayout.LayoutParams.WRAP_CONTENT,
+                        )
+                }.apply { addOnLayoutChangeListener(listener) }
 
             /*
             Initially add the view to a dummy invisible view to avoid flickering due the webview
             loading
-            */
+             */
             dummyKlarnaPaymentViewContainer?.addView(klarnaPaymentView)
         }
     }

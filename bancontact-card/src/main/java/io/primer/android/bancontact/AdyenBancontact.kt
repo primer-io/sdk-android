@@ -21,76 +21,77 @@ import io.primer.android.webRedirectShared.di.WebRedirectContainer
 import io.primer.android.webRedirectShared.implementation.composer.ui.navigation.provider.WebRedirectNavigatorProviderFactory
 
 internal class AdyenBancontact : PaymentMethod, DISdkComponent {
-
     override val type = PaymentMethodType.ADYEN_BANCONTACT_CARD.name
 
     override val canBeVaulted: Boolean = false
 
-    override val module: PaymentMethodModule = object : PaymentMethodModule {
-        override fun initialize(applicationContext: Context, configuration: ConfigurationData) {
-            // no-op
-        }
+    override val module: PaymentMethodModule =
+        object : PaymentMethodModule {
+            override fun initialize(
+                applicationContext: Context,
+                configuration: ConfigurationData,
+            ) {
+                // no-op
+            }
 
-        override fun registerPaymentMethodCheckers(
-            paymentMethodCheckerRegistry: PaymentMethodCheckerRegistry
-        ) {
-            // no-op
-        }
+            override fun registerPaymentMethodCheckers(paymentMethodCheckerRegistry: PaymentMethodCheckerRegistry) {
+                // no-op
+            }
 
-        override fun registerPaymentMethodDescriptorFactory(
-            paymentMethodDescriptorFactoryRegistry: PaymentMethodDescriptorFactoryRegistry
-        ) {
-            paymentMethodDescriptorFactoryRegistry.register(
-                type,
-                AdyenBancontactPaymentMethodDescriptorFactory()
-            )
-        }
+            override fun registerPaymentMethodDescriptorFactory(
+                paymentMethodDescriptorFactoryRegistry: PaymentMethodDescriptorFactoryRegistry,
+            ) {
+                paymentMethodDescriptorFactoryRegistry.register(
+                    type,
+                    AdyenBancontactPaymentMethodDescriptorFactory(),
+                )
+            }
 
-        override fun registerPaymentMethodProviderFactory(
-            paymentMethodProviderFactoryRegistry: PaymentMethodProviderFactoryRegistry
-        ) {
-            paymentMethodProviderFactoryRegistry.register(
-                PaymentMethodType.ADYEN_BANCONTACT_CARD.name,
-                AdyenBancontactComposerProviderFactory::class.java
-            )
-        }
+            override fun registerPaymentMethodProviderFactory(
+                paymentMethodProviderFactoryRegistry: PaymentMethodProviderFactoryRegistry,
+            ) {
+                paymentMethodProviderFactoryRegistry.register(
+                    PaymentMethodType.ADYEN_BANCONTACT_CARD.name,
+                    AdyenBancontactComposerProviderFactory::class.java,
+                )
+            }
 
-        override fun registerSavedPaymentMethodProviderFactory(
-            paymentMethodProviderFactoryRegistry: VaultedPaymentMethodProviderFactoryRegistry
-        ) {
-            // no-op
-        }
+            override fun registerSavedPaymentMethodProviderFactory(
+                paymentMethodProviderFactoryRegistry: VaultedPaymentMethodProviderFactoryRegistry,
+            ) {
+                // no-op
+            }
 
-        override fun registerPaymentMethodNavigationFactory(
-            paymentMethodNavigationFactoryRegistry: PaymentMethodNavigationFactoryRegistry
-        ) {
-            paymentMethodNavigationFactoryRegistry.register(
-                PaymentMethodType.ADYEN_BANCONTACT_CARD.name,
-                WebRedirectNavigatorProviderFactory::class.java
-            )
-        }
+            override fun registerPaymentMethodNavigationFactory(
+                paymentMethodNavigationFactoryRegistry: PaymentMethodNavigationFactoryRegistry,
+            ) {
+                paymentMethodNavigationFactoryRegistry.register(
+                    PaymentMethodType.ADYEN_BANCONTACT_CARD.name,
+                    WebRedirectNavigatorProviderFactory::class.java,
+                )
+            }
 
-        override fun registerDependencyContainer(sdkContainers: List<SdkContainer>) {
-            sdkContainers.forEach { sdkContainer ->
-                sdkContainer.registerContainer(WebRedirectContainer { getSdkContainer() })
-                sdkContainer.registerContainer(
-                    AdyenBancontactContainer(
-                        sdk = { getSdkContainer() },
-                        paymentMethodType = PaymentMethodType.ADYEN_BANCONTACT_CARD.name
+            override fun registerDependencyContainer(sdkContainers: List<SdkContainer>) {
+                sdkContainers.forEach { sdkContainer ->
+                    sdkContainer.registerContainer(WebRedirectContainer { getSdkContainer() })
+                    sdkContainer.registerContainer(
+                        AdyenBancontactContainer(
+                            sdk = { getSdkContainer() },
+                            paymentMethodType = PaymentMethodType.ADYEN_BANCONTACT_CARD.name,
+                        ),
                     )
+                }
+            }
+
+            override fun registerErrorMappers(errorMapperRegistry: ErrorMapperRegistry) {
+                // no-op
+            }
+
+            override fun registerBrandProvider(brandRegistry: BrandRegistry) {
+                brandRegistry.register(
+                    paymentMethodType = PaymentMethodType.ADYEN_BANCONTACT_CARD.name,
+                    brand = AdyenBancontactBrand(),
                 )
             }
         }
-
-        override fun registerErrorMappers(errorMapperRegistry: ErrorMapperRegistry) {
-            // no-op
-        }
-
-        override fun registerBrandProvider(brandRegistry: BrandRegistry) {
-            brandRegistry.register(
-                paymentMethodType = PaymentMethodType.ADYEN_BANCONTACT_CARD.name,
-                brand = AdyenBancontactBrand()
-            )
-        }
-    }
 }

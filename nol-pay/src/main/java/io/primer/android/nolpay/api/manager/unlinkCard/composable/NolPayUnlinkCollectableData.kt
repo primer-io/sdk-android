@@ -8,7 +8,6 @@ import io.primer.nolpay.api.models.PrimerNolPaymentCard
  * for unlinking a Nol Pay card.
  */
 sealed interface NolPayUnlinkCollectableData : NolPayCollectableData {
-
     /**
      * Data class representing Nol Pay initial data for unlinking.
      *
@@ -18,7 +17,7 @@ sealed interface NolPayUnlinkCollectableData : NolPayCollectableData {
      */
     data class NolPayCardAndPhoneData(
         val nolPaymentCard: PrimerNolPaymentCard,
-        val mobileNumber: String
+        val mobileNumber: String,
     ) : NolPayUnlinkCollectableData
 
     /**

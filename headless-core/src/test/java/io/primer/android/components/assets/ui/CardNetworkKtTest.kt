@@ -6,9 +6,9 @@ import io.mockk.mockk
 import io.mockk.mockkStatic
 import io.mockk.unmockkStatic
 import io.mockk.verify
-import io.primer.android.headlessCore.R
 import io.primer.android.configuration.data.model.CardNetwork
 import io.primer.android.displayMetadata.domain.model.ImageColor
+import io.primer.android.headlessCore.R
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith

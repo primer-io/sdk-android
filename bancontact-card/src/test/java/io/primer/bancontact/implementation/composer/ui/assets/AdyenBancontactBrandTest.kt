@@ -1,13 +1,12 @@
 package io.primer.bancontact.implementation.composer.ui.assets
 
+import io.primer.android.bancontact.R
 import io.primer.android.bancontact.implementation.composer.ui.assets.AdyenBancontactBrand
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import io.primer.android.bancontact.R
 
 internal class AdyenBancontactBrandTest {
-
     private lateinit var adyenBancontactBrand: AdyenBancontactBrand
 
     @BeforeEach

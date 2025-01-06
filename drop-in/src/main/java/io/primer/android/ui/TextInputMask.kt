@@ -5,15 +5,24 @@ import android.text.TextWatcher
 import io.primer.cardShared.ExpiryDateFormatter
 
 internal abstract class TextInputMask : TextWatcher {
-
     private var deleting: Boolean = false
     private var editing: Boolean = false
 
-    override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+    override fun beforeTextChanged(
+        s: CharSequence?,
+        start: Int,
+        count: Int,
+        after: Int,
+    ) {
         // no op
     }
 
-    override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
+    override fun onTextChanged(
+        s: CharSequence,
+        start: Int,
+        before: Int,
+        count: Int,
+    ) {
         deleting = before > 0
     }
 
@@ -36,18 +45,25 @@ internal abstract class TextInputMask : TextWatcher {
         s.replace(0, before.length, after)
     }
 
-    abstract fun mask(value: String, deleting: Boolean): String
+    abstract fun mask(
+        value: String,
+        deleting: Boolean,
+    ): String
 
     class CardNumber : TextInputMask() {
-
-        override fun mask(value: String, deleting: Boolean): String {
+        override fun mask(
+            value: String,
+            deleting: Boolean,
+        ): String {
             return io.primer.cardShared.CardNumberFormatter.fromString(value).toString()
         }
     }
 
     class ExpiryDate : TextInputMask() {
-
-        override fun mask(value: String, deleting: Boolean): String {
+        override fun mask(
+            value: String,
+            deleting: Boolean,
+        ): String {
             return ExpiryDateFormatter.fromString(value, autoInsert = !deleting).toString()
         }
     }

@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Test
 
 class ClientTokenErrorTest {
-
     @Test
     fun `test InvalidClientTokenError properties`() {
         // Arrange
@@ -21,7 +20,7 @@ class ClientTokenErrorTest {
         assertEquals(
             "Ensure that the client token fetched from your backend is a valid client token" +
                 " (i.e. not null, not blank, is valid JWT and it comes from Primer).",
-            error.recoverySuggestion
+            error.recoverySuggestion,
         )
     }
 
@@ -40,7 +39,7 @@ class ClientTokenErrorTest {
         assertEquals(
             "Avoid storing client tokens locally." +
                 " Fetch a new client token to provide on when starting Primer.",
-            error.recoverySuggestion
+            error.recoverySuggestion,
         )
     }
 }

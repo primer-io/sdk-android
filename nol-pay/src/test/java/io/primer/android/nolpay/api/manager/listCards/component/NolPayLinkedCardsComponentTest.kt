@@ -24,7 +24,6 @@ import kotlin.test.assertEquals
 @OptIn(ExperimentalCoroutinesApi::class)
 @ExtendWith(InstantExecutorExtension::class, MockKExtension::class)
 internal class NolPayLinkedCardsComponentTest {
-
     @RelaxedMockK
     lateinit var linkedCardsDelegate: NolPayGetLinkedCardsDelegate
 
@@ -35,10 +34,11 @@ internal class NolPayLinkedCardsComponentTest {
 
     @BeforeEach
     fun setUp() {
-        component = NolPayLinkedCardsComponent(
-            linkedCardsDelegate = linkedCardsDelegate,
-            eventLoggingDelegate = eventLoggingDelegate
-        )
+        component =
+            NolPayLinkedCardsComponent(
+                linkedCardsDelegate = linkedCardsDelegate,
+                eventLoggingDelegate = eventLoggingDelegate,
+            )
     }
 
     @Test
@@ -67,13 +67,14 @@ internal class NolPayLinkedCardsComponentTest {
             linkedCardsDelegate.getLinkedCards(any())
         } returns Result.failure(expectedException)
 
-        val exception = assertThrows<NolPaySdkException> {
-            runTest {
-                val result = component.getLinkedCards(MOBILE_NUMBER)
-                assert(result.isFailure)
-                result.getOrThrow()
+        val exception =
+            assertThrows<NolPaySdkException> {
+                runTest {
+                    val result = component.getLinkedCards(MOBILE_NUMBER)
+                    assert(result.isFailure)
+                    result.getOrThrow()
+                }
             }
-        }
 
         assertEquals(expectedException, exception)
 
@@ -92,7 +93,7 @@ internal class NolPayLinkedCardsComponentTest {
             eventLoggingDelegate.logSdkAnalyticsEvent(
                 PaymentMethodType.NOL_PAY.name,
                 NolPayAnalyticsConstants.LINKED_CARDS_GET_CARDS_METHOD,
-                hashMapOf("category" to PrimerPaymentMethodManagerCategory.NOL_PAY.name)
+                hashMapOf("category" to PrimerPaymentMethodManagerCategory.NOL_PAY.name),
             )
         }
     }

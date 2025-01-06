@@ -9,7 +9,7 @@ internal object KlarnaPaymentFinalizationValidator {
         } else {
             PrimerValidationError(
                 errorId = KlarnaValidations.PAYMENT_ALREADY_FINALIZED_ERROR_ID,
-                description = "This payment was configured to finalized automatically."
+                description = "This payment was configured to finalized automatically.",
             )
         }
 }

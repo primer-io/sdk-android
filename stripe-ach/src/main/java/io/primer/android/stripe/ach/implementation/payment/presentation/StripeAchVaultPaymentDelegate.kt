@@ -29,22 +29,25 @@ internal class StripeAchVaultPaymentDelegate(
     private val pendingResumeHandler: PendingResumeHandler,
     private val manualFlowSuccessHandler: ManualFlowSuccessHandler,
     private val paymentResultRepository: PaymentResultRepository,
-    private val config: PrimerConfig
+    private val config: PrimerConfig,
 ) : PaymentMethodPaymentDelegate(
-    paymentMethodTokenHandler,
-    resumePaymentHandler,
-    successHandler,
-    errorHandler,
-    baseErrorResolver
-) {
-    override suspend fun handleNewClientToken(clientToken: String, payment: Payment?): Result<Unit> =
+        paymentMethodTokenHandler,
+        resumePaymentHandler,
+        successHandler,
+        errorHandler,
+        baseErrorResolver,
+    ) {
+    override suspend fun handleNewClientToken(
+        clientToken: String,
+        payment: Payment?,
+    ): Result<Unit> =
         resumeDecisionHandler.continueWithNewClientToken(clientToken)
             .mapCatching {
                 val date = Date()
                 completeStripeAchPaymentSessionDelegate.invoke(
                     completeUrl = it.sdkCompleteUrl,
                     paymentMethodId = null,
-                    mandateTimestamp = date
+                    mandateTimestamp = date,
                 )
                 date.toIso8601String()
             }
@@ -55,10 +58,11 @@ internal class StripeAchVaultPaymentDelegate(
                         manualFlowSuccessHandler.handle()
                     }
 
-                    PrimerPaymentHandling.AUTO -> successHandler.handle(
-                        payment = paymentResultRepository.getPaymentResult().payment,
-                        additionalInfo = null
-                    )
+                    PrimerPaymentHandling.AUTO ->
+                        successHandler.handle(
+                            payment = paymentResultRepository.getPaymentResult().payment,
+                            additionalInfo = null,
+                        )
                 }
             }
             .onFailure { handleError(it) }

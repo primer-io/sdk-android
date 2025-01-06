@@ -1,13 +1,12 @@
 package io.primer.android.clientToken.core.token.data.datasource
 
-import io.primer.android.core.data.datasource.BaseCacheDataSource
 import io.primer.android.clientToken.core.token.data.model.ClientToken
+import io.primer.android.core.data.datasource.BaseCacheDataSource
 
 typealias CacheClientTokenDataSource = BaseCacheDataSource<ClientToken, String>
 
 internal class LocalClientTokenDataSource :
     BaseCacheDataSource<ClientToken, String> {
-
     private var clientToken: ClientToken? = null
 
     override fun get(): ClientToken {

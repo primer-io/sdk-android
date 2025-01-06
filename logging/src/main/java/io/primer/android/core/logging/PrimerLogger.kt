@@ -4,7 +4,6 @@ package io.primer.android.core.logging
  * Sealed interface [PrimerLog] defines various log types for the logging system.
  */
 sealed interface PrimerLog {
-
     /** The log level associated with the log entry. */
     val logLevel: PrimerLogLevel
 
@@ -28,7 +27,7 @@ sealed interface PrimerLog {
     class Error(
         override val logLevel: PrimerLogLevel,
         override val message: String,
-        val throwable: Throwable?
+        val throwable: Throwable?,
     ) : PrimerLog
 }
 
@@ -36,7 +35,6 @@ sealed interface PrimerLog {
  * Interface [PrimerLogger] defines the contract for a logger implementation.
  */
 interface PrimerLogger {
-
     /** The log level to control logging behavior. */
     var logLevel: PrimerLogLevel
 

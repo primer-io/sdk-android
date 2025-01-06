@@ -20,10 +20,11 @@ internal class CardNavigationHandler :
 
     override fun getSupportedNavigators(
         activity: Activity,
-        launcher: ActivityResultLauncher<Intent>
-    ): List<Navigator<NavigationParams>> = listOf(
-        Card3DSNavigator(activity, launcher),
-        CardProcessor3DSNavigator(activity, launcher),
-        MockCard3DSNavigator(activity, launcher)
-    )
+        launcher: ActivityResultLauncher<Intent>,
+    ): List<Navigator<NavigationParams>> =
+        listOf(
+            Card3DSNavigator(activity, launcher),
+            CardProcessor3DSNavigator(activity, launcher),
+            MockCard3DSNavigator(activity, launcher),
+        )
 }

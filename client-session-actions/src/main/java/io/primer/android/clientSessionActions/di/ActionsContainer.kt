@@ -11,25 +11,25 @@ import io.primer.android.core.di.DependencyContainer
 import io.primer.android.core.di.SdkContainer
 
 class ActionsContainer(private val sdk: () -> SdkContainer) : DependencyContainer() {
-
     override fun registerInitialDependencies() {
         registerSingleton { RemoteActionDataSource(httpClient = sdk().resolve()) }
 
         registerSingleton<ActionRepository> {
             ActionDataRepository(
-                configurationDataSource = sdk().resolve(
-                    ConfigurationCoreContainer.CACHED_CONFIGURATION_DI_KEY
-                ),
+                configurationDataSource =
+                    sdk().resolve(
+                        ConfigurationCoreContainer.CACHED_CONFIGURATION_DI_KEY,
+                    ),
                 remoteActionDataSource = resolve(),
                 globalCacheDataSource = sdk().resolve(ConfigurationCoreContainer.GLOBAL_CACHED_CONFIGURATION_DI_KEY),
-                clientTokenProvider = sdk().resolve(ConfigurationCoreContainer.CLIENT_TOKEN_PROVIDER_DI_KEY)
+                clientTokenProvider = sdk().resolve(ConfigurationCoreContainer.CLIENT_TOKEN_PROVIDER_DI_KEY),
             )
         }
 
         registerFactory { ActionUpdateFilter(configurationRepository = sdk().resolve(), config = sdk().resolve()) }
 
         registerSingleton<ActionInteractor>(
-            ACTION_INTERACTOR_DI_KEY
+            ACTION_INTERACTOR_DI_KEY,
         ) {
             DefaultActionInteractor(
                 actionRepository = resolve(),
@@ -37,11 +37,11 @@ class ActionsContainer(private val sdk: () -> SdkContainer) : DependencyContaine
                 actionUpdateFilter = resolve(),
                 errorEventResolver = sdk().resolve(),
                 clientSessionActionsHandler = sdk().resolve(),
-                ignoreErrors = false
+                ignoreErrors = false,
             )
         }
         registerSingleton<ActionInteractor>(
-            ACTION_INTERACTOR_IGNORE_ERRORS_DI_KEY
+            ACTION_INTERACTOR_IGNORE_ERRORS_DI_KEY,
         ) {
             DefaultActionInteractor(
                 actionRepository = resolve(),
@@ -49,7 +49,7 @@ class ActionsContainer(private val sdk: () -> SdkContainer) : DependencyContaine
                 actionUpdateFilter = resolve(),
                 errorEventResolver = sdk().resolve(),
                 clientSessionActionsHandler = sdk().resolve(),
-                ignoreErrors = true
+                ignoreErrors = true,
             )
         }
     }

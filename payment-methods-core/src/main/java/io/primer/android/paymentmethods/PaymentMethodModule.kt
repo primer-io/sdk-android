@@ -16,14 +16,13 @@ import io.primer.android.paymentmethods.core.ui.navigation.PaymentMethodNavigati
  * [PaymentMethodDescriptorFactoryRegistry].
  */
 interface PaymentMethodModule {
-
     /**
      * Initializes this payment method module, passing in all the information it may need to do
      * initialize itself.
      */
     fun initialize(
         applicationContext: Context,
-        configuration: ConfigurationData
+        configuration: ConfigurationData,
     )
 
     /**
@@ -35,9 +34,7 @@ interface PaymentMethodModule {
      * @see [PaymentMethodDescriptor]
      * @see [PaymentMethodCheckerRegistry]
      */
-    fun registerPaymentMethodCheckers(
-        paymentMethodCheckerRegistry: PaymentMethodCheckerRegistry
-    )
+    fun registerPaymentMethodCheckers(paymentMethodCheckerRegistry: PaymentMethodCheckerRegistry)
 
     /**
      * To be called when the SDK is at its startup phase. Each [PaymentMethod] can declare its
@@ -49,19 +46,17 @@ interface PaymentMethodModule {
      * @see [PaymentMethodDescriptorFactoryRegistry]
      */
     fun registerPaymentMethodDescriptorFactory(
-        paymentMethodDescriptorFactoryRegistry: PaymentMethodDescriptorFactoryRegistry
+        paymentMethodDescriptorFactoryRegistry: PaymentMethodDescriptorFactoryRegistry,
     )
 
-    fun registerPaymentMethodProviderFactory(
-        paymentMethodProviderFactoryRegistry: PaymentMethodProviderFactoryRegistry
-    )
+    fun registerPaymentMethodProviderFactory(paymentMethodProviderFactoryRegistry: PaymentMethodProviderFactoryRegistry)
 
     fun registerSavedPaymentMethodProviderFactory(
-        paymentMethodProviderFactoryRegistry: VaultedPaymentMethodProviderFactoryRegistry
+        paymentMethodProviderFactoryRegistry: VaultedPaymentMethodProviderFactoryRegistry,
     )
 
     fun registerPaymentMethodNavigationFactory(
-        paymentMethodNavigationFactoryRegistry: PaymentMethodNavigationFactoryRegistry
+        paymentMethodNavigationFactoryRegistry: PaymentMethodNavigationFactoryRegistry,
     )
 
     fun registerDependencyContainer(sdkContainers: List<SdkContainer>)

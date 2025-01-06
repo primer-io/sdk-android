@@ -1,8 +1,7 @@
 package io.primer.android.paymentmethods.common.data.model
 
-@Suppress("EnumNaming")
+@Suppress("EnumEntryName")
 enum class ClientTokenIntent {
-
     CHECKOUT,
     `3DS_AUTHENTICATION`,
     PROCESSOR_3DS,
@@ -52,5 +51,5 @@ enum class ClientTokenIntent {
     OMISE_PROMPTPAY_REDIRECTION,
     IPAY88_CARD_REDIRECTION,
     NOL_PAY_REDIRECTION,
-    STRIPE_ACH_REDIRECTION
+    STRIPE_ACH_REDIRECTION,
 }

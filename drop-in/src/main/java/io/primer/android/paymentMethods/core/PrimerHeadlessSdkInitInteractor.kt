@@ -6,7 +6,6 @@ import io.primer.android.paymentMethods.core.domain.repository.PrimerHeadlessRep
 
 internal class PrimerHeadlessSdkInitInteractor(private val headlessRepository: PrimerHeadlessRepository) :
     BaseInteractor<Unit, HeadlessSdkInitParams>() {
-
     override fun execute(params: HeadlessSdkInitParams) {
         headlessRepository.start(params.clientToken)
     }

@@ -10,7 +10,7 @@ internal fun List<PrimerCountry>.mapCountryToCountryItem(): List<CountryCodeItem
     return map {
         CountryCodeItem(
             it.code,
-            String.format(Locale.getDefault(), "%s %s", it.code.emojiFlag(), it.name)
+            String.format(Locale.getDefault(), "%s %s", it.code.emojiFlag(), it.name),
         )
     }
 }
@@ -24,8 +24,8 @@ internal fun List<PrimerPhoneCode>.mapPhoneCodesToCountryItem(): List<CountryCod
                 "%s %s (%s)",
                 it.code.emojiFlag(),
                 it.name,
-                it.dialCode
-            )
+                it.dialCode,
+            ),
         )
     }
 }

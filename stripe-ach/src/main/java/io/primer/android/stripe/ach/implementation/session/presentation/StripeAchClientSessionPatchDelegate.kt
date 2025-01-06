@@ -10,35 +10,36 @@ import io.primer.android.core.extensions.flatMap
 
 internal class StripeAchClientSessionPatchDelegate(
     private val configurationInteractor: ConfigurationInteractor,
-    private val actionInteractor: ActionInteractor
+    private val actionInteractor: ActionInteractor,
 ) {
     suspend operator fun invoke(
         firstName: String,
         lastName: String,
-        emailAddress: String
-    ): Result<Unit> = configurationInteractor.invoke(ConfigurationParams(cachePolicy = CachePolicy.ForceCache))
-        .flatMap {
-            it.clientSession
-                .clientSessionDataResponse
-                .customer.let { customer ->
-                    val shouldPatchFirstName = customer?.firstName != firstName
-                    val shouldPatchLastName = customer?.lastName != lastName
-                    val shouldPatchEmailAddress = customer?.emailAddress != emailAddress
-                    if (shouldPatchFirstName || shouldPatchLastName || shouldPatchEmailAddress) {
-                        actionInteractor(
-                            MultipleActionUpdateParams(
-                                listOf(
-                                    ActionUpdateCustomerDetailsParams(
-                                        firstName = firstName.takeIf { shouldPatchFirstName },
-                                        lastName = lastName.takeIf { shouldPatchLastName },
-                                        emailAddress = emailAddress.takeIf { shouldPatchEmailAddress }
-                                    )
-                                )
-                            )
-                        ).map { /* no-op */ }
-                    } else {
-                        Result.success(Unit)
+        emailAddress: String,
+    ): Result<Unit> =
+        configurationInteractor.invoke(ConfigurationParams(cachePolicy = CachePolicy.ForceCache))
+            .flatMap {
+                it.clientSession
+                    .clientSessionDataResponse
+                    .customer.let { customer ->
+                        val shouldPatchFirstName = customer?.firstName != firstName
+                        val shouldPatchLastName = customer?.lastName != lastName
+                        val shouldPatchEmailAddress = customer?.emailAddress != emailAddress
+                        if (shouldPatchFirstName || shouldPatchLastName || shouldPatchEmailAddress) {
+                            actionInteractor(
+                                MultipleActionUpdateParams(
+                                    listOf(
+                                        ActionUpdateCustomerDetailsParams(
+                                            firstName = firstName.takeIf { shouldPatchFirstName },
+                                            lastName = lastName.takeIf { shouldPatchLastName },
+                                            emailAddress = emailAddress.takeIf { shouldPatchEmailAddress },
+                                        ),
+                                    ),
+                                ),
+                            ).map { /* no-op */ }
+                        } else {
+                            Result.success(Unit)
+                        }
                     }
-                }
-        }
+            }
 }

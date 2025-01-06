@@ -9,29 +9,27 @@ import io.primer.android.threeds.data.models.postAuth.BaseContinueAuthDataReques
 import io.primer.android.threeds.data.models.postAuth.PostAuthResponse
 
 internal class Remote3DSAuthDataSource(private val httpClient: PrimerHttpClient) {
-
     suspend fun get3dsAuthToken(
         configuration: ConfigurationData,
         paymentMethodToken: String,
-        beginAuthRequest: BeginAuthDataRequest
+        beginAuthRequest: BeginAuthDataRequest,
     ) = httpClient.suspendPost<BeginAuthDataRequest, BeginAuthResponse>(
         url = "${configuration.pciUrl}/3ds/$paymentMethodToken/auth",
         request = beginAuthRequest,
-        headers = mapOf(Constants.SDK_API_VERSION_HEADER to THREE_DS_VERSION)
+        headers = mapOf(Constants.SDK_API_VERSION_HEADER to THREE_DS_VERSION),
     )
 
     suspend fun continue3dsAuth(
         configuration: ConfigurationData,
         paymentMethodToken: String,
-        continueAuthDataRequest: BaseContinueAuthDataRequest
+        continueAuthDataRequest: BaseContinueAuthDataRequest,
     ) = httpClient.suspendPost<BaseContinueAuthDataRequest, PostAuthResponse>(
         url = "${configuration.pciUrl}/3ds/$paymentMethodToken/continue",
         request = continueAuthDataRequest,
-        headers = mapOf(Constants.SDK_API_VERSION_HEADER to THREE_DS_VERSION)
+        headers = mapOf(Constants.SDK_API_VERSION_HEADER to THREE_DS_VERSION),
     )
 
     private companion object {
-
         const val THREE_DS_VERSION = "2.1"
     }
 }

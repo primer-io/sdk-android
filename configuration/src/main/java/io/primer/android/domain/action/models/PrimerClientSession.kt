@@ -12,7 +12,7 @@ data class PrimerClientSession(
     val orderDetails: PrimerOrder?,
     val customer: PrimerCustomer?,
     val paymentMethod: PrimerPaymentMethod?,
-    val fees: List<PrimerFee>?
+    val fees: List<PrimerFee>?,
 )
 
 data class PrimerCustomer(
@@ -21,19 +21,19 @@ data class PrimerCustomer(
     val firstName: String?,
     val lastName: String?,
     val billingAddress: PrimerAddress?,
-    val shippingAddress: PrimerAddress?
+    val shippingAddress: PrimerAddress?,
 )
 
 data class PrimerOrder(
     val countryCode: CountryCode?,
-    val shipping: PrimerShipping?
+    val shipping: PrimerShipping?,
 )
 
 data class PrimerShipping(
     val amount: Int?,
     val methodId: String?,
     val methodName: String?,
-    val methodDescription: String?
+    val methodDescription: String?,
 )
 
 data class PrimerLineItem(
@@ -43,7 +43,7 @@ data class PrimerLineItem(
     val discountAmount: Int?,
     val quantity: Int?,
     val taxCode: String?,
-    val taxAmount: Int?
+    val taxAmount: Int?,
 )
 
 data class PrimerAddress(
@@ -54,17 +54,17 @@ data class PrimerAddress(
     val postalCode: String? = null,
     val city: String? = null,
     val state: String? = null,
-    val countryCode: CountryCode? = null
+    val countryCode: CountryCode? = null,
 ) {
     val country: String?
         get() = countryCode?.name
 }
 
 class PrimerPaymentMethod(
-    val orderedAllowedCardNetworks: List<CardNetwork.Type>
+    val orderedAllowedCardNetworks: List<CardNetwork.Type>,
 )
 
 data class PrimerFee(
     val type: String?,
-    val amount: Int
+    val amount: Int,
 )

@@ -6,5 +6,5 @@ import java.io.Serializable
 
 abstract class ActivityLauncherParams(
     open val paymentMethodType: String,
-    open val sessionIntent: PrimerSessionIntent
+    open val sessionIntent: PrimerSessionIntent,
 ) : Serializable, NavigationParams

@@ -10,7 +10,6 @@ import org.junit.jupiter.api.Test
 import java.util.UUID
 
 class SessionCreateErrorTest {
-
     @Test
     fun `should create SessionCreateError with correct properties`() {
         // Arrange
@@ -30,7 +29,7 @@ class SessionCreateErrorTest {
         assertEquals(
             "Ensure that the $paymentMethodType is configured correctly " +
                 "on the dashboard (https://dashboard.primer.io/)",
-            error.recoverySuggestion
+            error.recoverySuggestion,
         )
         assertTrue(error.context is ErrorContextParams)
         assertEquals("failed-to-create-session", (error.context as ErrorContextParams).errorId)
@@ -78,7 +77,7 @@ class SessionCreateErrorTest {
         assertEquals(
             "Ensure that the $paymentMethodType is configured correctly " +
                 "on the dashboard (https://dashboard.primer.io/)",
-            error.recoverySuggestion
+            error.recoverySuggestion,
         )
     }
 }

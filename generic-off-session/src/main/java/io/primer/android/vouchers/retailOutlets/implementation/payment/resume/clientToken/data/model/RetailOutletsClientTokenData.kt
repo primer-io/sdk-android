@@ -12,11 +12,9 @@ internal data class RetailOutletsClientTokenData(
     val intent: String,
     val expiresAt: String,
     val reference: String,
-    val entity: String
+    val entity: String,
 ) : JSONDeserializable {
-
     companion object {
-
         @Throws(InvalidClientTokenException::class, ExpiredClientTokenException::class)
         fun fromString(encoded: String): RetailOutletsClientTokenData {
             ClientTokenDecoder.decode(encoded).let { decoded ->
@@ -32,13 +30,14 @@ internal data class RetailOutletsClientTokenData(
         private const val ENTITY_FIELD = "entity"
 
         @JvmField
-        val deserializer = JSONObjectDeserializer { t ->
-            RetailOutletsClientTokenData(
-                intent = t.getString(INTENT_FIELD),
-                expiresAt = t.getString(EXPIRES_AT_FIELD),
-                entity = t.getString(ENTITY_FIELD),
-                reference = t.getString(REFERENCE_FIELD)
-            )
-        }
+        val deserializer =
+            JSONObjectDeserializer { t ->
+                RetailOutletsClientTokenData(
+                    intent = t.getString(INTENT_FIELD),
+                    expiresAt = t.getString(EXPIRES_AT_FIELD),
+                    entity = t.getString(ENTITY_FIELD),
+                    reference = t.getString(REFERENCE_FIELD),
+                )
+            }
     }
 }

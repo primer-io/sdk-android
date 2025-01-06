@@ -24,7 +24,6 @@ import kotlin.test.assertTrue
 @ExtendWith(InstantExecutorExtension::class, MockKExtension::class)
 @ExperimentalCoroutinesApi
 internal class CreatePaymentInteractorTest {
-
     @RelaxedMockK
     internal lateinit var createPaymentRepository: CreatePaymentRepository
 
@@ -43,7 +42,7 @@ internal class CreatePaymentInteractorTest {
             DefaultCreatePaymentInteractor(
                 createPaymentRepository,
                 paymentDecisionResolver,
-                logReporter
+                logReporter,
             )
     }
 

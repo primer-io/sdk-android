@@ -23,7 +23,6 @@ import kotlin.test.assertEquals
 @ExtendWith(InstantExecutorExtension::class, MockKExtension::class)
 @ExperimentalCoroutinesApi
 internal class FetchVaultedPaymentMethodsInteractorTest {
-
     @RelaxedMockK
     internal lateinit var vaultedPaymentMethodsRepository: VaultedPaymentMethodsRepository
 
@@ -32,9 +31,10 @@ internal class FetchVaultedPaymentMethodsInteractorTest {
     @BeforeEach
     fun setUp() {
         MockKAnnotations.init(this, relaxed = true)
-        interactor = FetchVaultedPaymentMethodsInteractor(
-            vaultedPaymentMethodsRepository
-        )
+        interactor =
+            FetchVaultedPaymentMethodsInteractor(
+                vaultedPaymentMethodsRepository,
+            )
     }
 
     @Test
@@ -42,7 +42,7 @@ internal class FetchVaultedPaymentMethodsInteractorTest {
         val params = mockk<None>(relaxed = true)
         val vaultTokenInternal = mockk<PaymentMethodVaultTokenInternal>(relaxed = true)
         coEvery { vaultedPaymentMethodsRepository.getVaultedPaymentMethods(any()) }.returns(
-            Result.success(listOf(vaultTokenInternal))
+            Result.success(listOf(vaultTokenInternal)),
         )
         runTest {
             val result = interactor(params)
@@ -59,14 +59,15 @@ internal class FetchVaultedPaymentMethodsInteractorTest {
         val params = mockk<None>(relaxed = true)
         val mockException = mockk<VaultManagerFetchException>(relaxed = true)
         coEvery { vaultedPaymentMethodsRepository.getVaultedPaymentMethods(any()) }.returns(
-            Result.failure(mockException)
+            Result.failure(mockException),
         )
 
-        val exception = assertThrows<VaultManagerFetchException> {
-            runTest {
-                interactor(params).getOrThrow()
+        val exception =
+            assertThrows<VaultManagerFetchException> {
+                runTest {
+                    interactor(params).getOrThrow()
+                }
             }
-        }
 
         coVerify { vaultedPaymentMethodsRepository.getVaultedPaymentMethods(any()) }
 

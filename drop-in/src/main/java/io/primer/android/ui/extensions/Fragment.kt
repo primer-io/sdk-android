@@ -16,20 +16,22 @@ internal fun <T : Any> Fragment.autoCleaned(initializer: (() -> T)? = null): Aut
     return AutoClearedValue(this, initializer)
 }
 
-internal fun Fragment.popBackStackToRoot() = runCatching {
-    popBackStackToIndex(index = 0)
-}.getOrElse {
-    childFragmentManager.commit(allowStateLoss = true) {
-        childFragmentManager.fragments.forEach(::remove)
+internal fun Fragment.popBackStackToRoot() =
+    runCatching {
+        popBackStackToIndex(index = 0)
+    }.getOrElse {
+        childFragmentManager.commit(allowStateLoss = true) {
+            childFragmentManager.fragments.forEach(::remove)
+        }
     }
-}
 
-private fun Fragment.popBackStackToIndex(index: Int) = childFragmentManager.apply {
-    popBackStack(
-        getBackStackEntryAt(index).id,
-        FragmentManager.POP_BACK_STACK_INCLUSIVE
-    )
-}
+private fun Fragment.popBackStackToIndex(index: Int) =
+    childFragmentManager.apply {
+        popBackStack(
+            getBackStackEntryAt(index).id,
+            FragmentManager.POP_BACK_STACK_INCLUSIVE,
+        )
+    }
 
 internal fun Fragment.copyTextToClipboard(text: String): Boolean {
     val clipboardManager = (requireActivity().getSystemService<ClipboardManager>())
@@ -39,8 +41,9 @@ internal fun Fragment.copyTextToClipboard(text: String): Boolean {
     return clipboardManager != null
 }
 
-internal fun Fragment.getParentDialogOrNull() = ((parentFragment as? DialogFragment)?.dialog as? ComponentDialog).also {
-    if (it == null) {
-        DISdkContext.getContainerOrNull()?.resolve<LogReporter>()?.error("Error: expected ComponentDialog parent!")
+internal fun Fragment.getParentDialogOrNull() =
+    ((parentFragment as? DialogFragment)?.dialog as? ComponentDialog).also {
+        if (it == null) {
+            DISdkContext.getContainerOrNull()?.resolve<LogReporter>()?.error("Error: expected ComponentDialog parent!")
+        }
     }
-}

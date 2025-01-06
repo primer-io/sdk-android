@@ -4,7 +4,10 @@ import java.lang.reflect.Field
 import java.lang.reflect.Method
 import java.lang.reflect.Modifier
 
-internal inline fun <reified T> modifyClassProperty(property: String, value: String) {
+internal inline fun <reified T> modifyClassProperty(
+    property: String,
+    value: String,
+) {
     val buildProperty = T::class.java.getField(property)
     buildProperty.isAccessible = true
     getModifiersField().also {

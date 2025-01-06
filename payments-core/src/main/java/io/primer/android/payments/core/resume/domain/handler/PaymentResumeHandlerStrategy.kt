@@ -12,31 +12,31 @@ import io.primer.android.payments.di.PaymentsContainer
 internal fun interface PaymentResumeHandlerStrategy {
     suspend fun handle(
         resumeToken: String,
-        paymentId: String?
+        paymentId: String?,
     ): Result<PaymentDecision>
 }
 
 internal class AutoPaymentResumeHandlerStrategy(
-    private val resumePaymentInteractor: ResumePaymentInteractor
+    private val resumePaymentInteractor: ResumePaymentInteractor,
 ) : PaymentResumeHandlerStrategy {
     override suspend fun handle(
         resumeToken: String,
-        paymentId: String?
+        paymentId: String?,
     ): Result<PaymentDecision> =
         resumePaymentInteractor(
             ResumeParams(
                 paymentId = requireNotNull(paymentId),
-                resumeToken = resumeToken
-            )
+                resumeToken = resumeToken,
+            ),
         )
 }
 
 internal class ManualPaymentResumeHandlerStrategy(
-    private val postResumeHandler: PostResumeHandler
+    private val postResumeHandler: PostResumeHandler,
 ) : PaymentResumeHandlerStrategy {
     override suspend fun handle(
         resumeToken: String,
-        paymentId: String?
+        paymentId: String?,
     ): Result<PaymentDecision> = postResumeHandler.handle(resumeToken = resumeToken)
 }
 
@@ -45,40 +45,41 @@ internal class ManualPaymentResumeHandlerStrategy(
  * be used by async payment method once they receive a resume token.
  */
 interface PaymentResumeHandler {
-
     /**
      * Resumes the payment or signals checkout resume depending on the payment handing type (auto or manual).
      */
     suspend fun handle(
         resumeToken: String,
-        paymentId: String?
+        paymentId: String?,
     ): Result<PaymentDecision>
 }
 
 class DefaultPaymentResumeHandler(private val config: PrimerConfig) :
     PaymentResumeHandler,
     DISdkComponent {
-
     internal enum class ResumeHandlingStrategy {
         AUTO,
-        MANUAL
+        MANUAL,
     }
 
-    private val strategies: Map<ResumeHandlingStrategy, PaymentResumeHandlerStrategy> = mapOf(
-        ResumeHandlingStrategy.AUTO to AutoPaymentResumeHandlerStrategy(
-            resumePaymentInteractor = resolve(PaymentsContainer.RESUME_PAYMENT_INTERACTOR_DI_KEY)
-        ),
-        ResumeHandlingStrategy.MANUAL to ManualPaymentResumeHandlerStrategy(resolve())
-    )
+    private val strategies: Map<ResumeHandlingStrategy, PaymentResumeHandlerStrategy> =
+        mapOf(
+            ResumeHandlingStrategy.AUTO to
+                AutoPaymentResumeHandlerStrategy(
+                    resumePaymentInteractor = resolve(PaymentsContainer.RESUME_PAYMENT_INTERACTOR_DI_KEY),
+                ),
+            ResumeHandlingStrategy.MANUAL to ManualPaymentResumeHandlerStrategy(resolve()),
+        )
 
     override suspend fun handle(
         resumeToken: String,
-        paymentId: String?
+        paymentId: String?,
     ): Result<PaymentDecision> {
-        val paymentHandlingStrategy = when (config.settings.paymentHandling) {
-            PrimerPaymentHandling.MANUAL -> ResumeHandlingStrategy.MANUAL
-            else -> ResumeHandlingStrategy.AUTO
-        }
+        val paymentHandlingStrategy =
+            when (config.settings.paymentHandling) {
+                PrimerPaymentHandling.MANUAL -> ResumeHandlingStrategy.MANUAL
+                else -> ResumeHandlingStrategy.AUTO
+            }
         return strategies[paymentHandlingStrategy]?.handle(paymentId = paymentId, resumeToken = resumeToken)
             ?: error("Unregistered strategy for $paymentHandlingStrategy ")
     }

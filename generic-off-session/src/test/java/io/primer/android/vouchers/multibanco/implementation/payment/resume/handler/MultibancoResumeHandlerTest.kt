@@ -15,7 +15,6 @@ import java.text.SimpleDateFormat
 import java.util.Locale
 
 internal class MultibancoResumeHandlerTest {
-
     private lateinit var clientTokenParser: MultibancoClientTokenParser
     private lateinit var validateClientTokenRepository: ValidateClientTokenRepository
     private lateinit var clientTokenRepository: ClientTokenRepository
@@ -28,12 +27,13 @@ internal class MultibancoResumeHandlerTest {
         validateClientTokenRepository = mockk()
         clientTokenRepository = mockk()
         checkoutAdditionalInfoHandler = mockk()
-        handler = MultibancoResumeHandler(
-            clientTokenParser,
-            validateClientTokenRepository,
-            clientTokenRepository,
-            checkoutAdditionalInfoHandler
-        )
+        handler =
+            MultibancoResumeHandler(
+                clientTokenParser,
+                validateClientTokenRepository,
+                clientTokenRepository,
+                checkoutAdditionalInfoHandler,
+            )
     }
 
     @Test
@@ -45,25 +45,29 @@ internal class MultibancoResumeHandlerTest {
 
     @Test
     fun `getResumeDecision should correctly parse client token and return MultibancoDecision`() {
-        val clientToken = MultibancoClientToken(
-            clientTokenIntent = "PAYMENT_METHOD_VOUCHER",
-            expiresAt = "2024-07-10T00:00:00",
-            reference = "some-reference",
-            entity = "some-entity"
-        )
+        val clientToken =
+            MultibancoClientToken(
+                clientTokenIntent = "PAYMENT_METHOD_VOUCHER",
+                expiresAt = "2024-07-10T00:00:00",
+                reference = "some-reference",
+                entity = "some-entity",
+            )
 
-        val expiresDateFormat = DateFormat.getDateTimeInstance(
-            DateFormat.MEDIUM,
-            DateFormat.SHORT
-        )
+        val expiresDateFormat =
+            DateFormat.getDateTimeInstance(
+                DateFormat.MEDIUM,
+                DateFormat.SHORT,
+            )
 
-        val expectedDecision = MultibancoDecision(
-            expiresAt = expiresDateFormat.format(
-                SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault()).parse(clientToken.expiresAt)
-            ),
-            reference = clientToken.reference,
-            entity = clientToken.entity
-        )
+        val expectedDecision =
+            MultibancoDecision(
+                expiresAt =
+                    expiresDateFormat.format(
+                        SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault()).parse(clientToken.expiresAt),
+                    ),
+                reference = clientToken.reference,
+                entity = clientToken.entity,
+            )
 
         runTest {
             val result = handler.getResumeDecision(clientToken)

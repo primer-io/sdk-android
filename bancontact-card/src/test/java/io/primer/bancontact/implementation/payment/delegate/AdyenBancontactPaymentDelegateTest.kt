@@ -29,7 +29,6 @@ import org.junit.jupiter.api.extension.ExtendWith
 @OptIn(ExperimentalCoroutinesApi::class)
 @ExtendWith(InstantExecutorExtension::class, MockKExtension::class)
 internal class AdyenBancontactPaymentDelegateTest {
-
     private lateinit var paymentDelegate: AdyenBancontactPaymentDelegate
     private lateinit var resumeHandler: AydenBancontactResumeHandler
 
@@ -43,64 +42,70 @@ internal class AdyenBancontactPaymentDelegateTest {
 
         resumeHandler = mockk()
 
-        paymentDelegate = AdyenBancontactPaymentDelegate(
-            paymentMethodTokenHandler,
-            resumePaymentHandler,
-            successHandler,
-            errorHandler,
-            baseErrorResolver,
-            resumeHandler
-        )
-    }
-
-    @Test
-    fun `handleNewClientToken should return success and emit Navigate event when continueWithNewClientToken returns a success result`() = runTest {
-        // Given
-        val clientToken = "testClientToken"
-        val decision = AydenBancontactDecision(
-            title = "Test Title",
-            paymentMethodType = PaymentMethodType.ADYEN_BANCONTACT_CARD.name,
-            redirectUrl = "https://test.com/redirect",
-            statusUrl = "https://test.com/status",
-            deeplinkUrl = "https://test.com/deeplink"
-        )
-        coEvery { resumeHandler.continueWithNewClientToken(clientToken) } returns Result.success(decision)
-
-        launch {
-            paymentDelegate.handleNewClientToken(clientToken, null)
-        }
-
-        paymentDelegate.uiEvent.first { event ->
-            val expectedEvent = ComposerUiEvent.Navigate(
-                PaymentMethodLauncherParams(
-                    paymentMethodType = PaymentMethodType.ADYEN_BANCONTACT_CARD.name,
-                    sessionIntent = PrimerSessionIntent.CHECKOUT,
-                    initialLauncherParams = WebRedirectLauncherParams(
-                        decision.title,
-                        decision.paymentMethodType,
-                        decision.redirectUrl,
-                        decision.statusUrl,
-                        decision.deeplinkUrl
-                    )
-                )
+        paymentDelegate =
+            AdyenBancontactPaymentDelegate(
+                paymentMethodTokenHandler,
+                resumePaymentHandler,
+                successHandler,
+                errorHandler,
+                baseErrorResolver,
+                resumeHandler,
             )
-            assertEquals(expectedEvent, event)
-            true
-        }
     }
 
     @Test
-    fun `handleNewClientToken should handle exception and return failure when continueWithNewClientToken() returns a failure result`() = runTest {
-        // Given
-        val clientToken = "testClientToken"
-        val exception = Exception("Test Exception")
-        coEvery { resumeHandler.continueWithNewClientToken(clientToken) } returns Result.failure(exception)
+    fun `handleNewClientToken should return success and emit Navigate event when continueWithNewClientToken returns a success result`() =
+        runTest {
+            // Given
+            val clientToken = "testClientToken"
+            val decision =
+                AydenBancontactDecision(
+                    title = "Test Title",
+                    paymentMethodType = PaymentMethodType.ADYEN_BANCONTACT_CARD.name,
+                    redirectUrl = "https://test.com/redirect",
+                    statusUrl = "https://test.com/status",
+                    deeplinkUrl = "https://test.com/deeplink",
+                )
+            coEvery { resumeHandler.continueWithNewClientToken(clientToken) } returns Result.success(decision)
 
-        // When
-        val result = paymentDelegate.handleNewClientToken(clientToken, null)
+            launch {
+                paymentDelegate.handleNewClientToken(clientToken, null)
+            }
 
-        // Then
-        assert(result.isFailure)
-        assertEquals(exception, result.exceptionOrNull())
-    }
+            paymentDelegate.uiEvent.first { event ->
+                val expectedEvent =
+                    ComposerUiEvent.Navigate(
+                        PaymentMethodLauncherParams(
+                            paymentMethodType = PaymentMethodType.ADYEN_BANCONTACT_CARD.name,
+                            sessionIntent = PrimerSessionIntent.CHECKOUT,
+                            initialLauncherParams =
+                                WebRedirectLauncherParams(
+                                    decision.title,
+                                    decision.paymentMethodType,
+                                    decision.redirectUrl,
+                                    decision.statusUrl,
+                                    decision.deeplinkUrl,
+                                ),
+                        ),
+                    )
+                assertEquals(expectedEvent, event)
+                true
+            }
+        }
+
+    @Test
+    fun `handleNewClientToken should handle exception and return failure when continueWithNewClientToken() returns a failure result`() =
+        runTest {
+            // Given
+            val clientToken = "testClientToken"
+            val exception = Exception("Test Exception")
+            coEvery { resumeHandler.continueWithNewClientToken(clientToken) } returns Result.failure(exception)
+
+            // When
+            val result = paymentDelegate.handleNewClientToken(clientToken, null)
+
+            // Then
+            assert(result.isFailure)
+            assertEquals(exception, result.exceptionOrNull())
+        }
 }

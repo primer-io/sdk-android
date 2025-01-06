@@ -8,5 +8,5 @@ data class TimerAnalyticsParams(
     val id: TimerId,
     val timerType: TimerType,
     val duration: Long? = null,
-    val context: AnalyticsContext? = null
+    val context: AnalyticsContext? = null,
 ) : BaseAnalyticsParams()

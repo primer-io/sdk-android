@@ -8,21 +8,24 @@ import io.primer.android.vouchers.multibanco.implementation.composer.MultibancoC
 import io.primer.android.vouchers.multibanco.implementation.payment.delegate.MultibancoPaymentDelegate
 
 internal class MultibancoComposerProviderFactory : PaymentMethodComposerProvider.Factory {
-
-    override fun create(paymentMethodType: String, sessionIntent: PrimerSessionIntent): PaymentMethodComposer {
+    override fun create(
+        paymentMethodType: String,
+        sessionIntent: PrimerSessionIntent,
+    ): PaymentMethodComposer {
         return MultibancoComponent(
             tokenizationDelegate = resolve(),
-            paymentDelegate = MultibancoPaymentDelegate(
-                paymentMethodTokenHandler = resolve(),
-                resumePaymentHandler = resolve(),
-                config = resolve(),
-                pendingResumeHandler = resolve(),
-                successHandler = resolve(),
-                manualFlowSuccessHandler = resolve(),
-                errorHandler = resolve(),
-                baseErrorResolver = resolve(),
-                resumeHandler = resolve()
-            )
+            paymentDelegate =
+                MultibancoPaymentDelegate(
+                    paymentMethodTokenHandler = resolve(),
+                    resumePaymentHandler = resolve(),
+                    config = resolve(),
+                    pendingResumeHandler = resolve(),
+                    successHandler = resolve(),
+                    manualFlowSuccessHandler = resolve(),
+                    errorHandler = resolve(),
+                    baseErrorResolver = resolve(),
+                    resumeHandler = resolve(),
+                ),
         )
     }
 }

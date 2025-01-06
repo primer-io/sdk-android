@@ -12,11 +12,11 @@ import io.primer.android.core.di.DISdkContext
 import io.primer.android.core.di.DependencyContainer
 import io.primer.android.core.di.SdkContainer
 import io.primer.android.core.utils.CoroutineScopeProvider
+import io.primer.android.domain.tokenization.models.PrimerPaymentMethodTokenData
 import io.primer.android.payments.core.helpers.PollingStartHandler
 import io.primer.android.payments.core.status.domain.AsyncPaymentMethodPollingInteractor
 import io.primer.android.payments.core.status.domain.model.AsyncStatus
 import io.primer.android.payments.core.status.domain.model.AsyncStatusParams
-import io.primer.android.domain.tokenization.models.PrimerPaymentMethodTokenData
 import io.primer.android.qrcode.implementation.payment.delegate.QrCodePaymentDelegate
 import io.primer.android.qrcode.implementation.tokenization.presentation.QrCodeTokenizationDelegate
 import io.primer.android.vouchers.InstantExecutorExtension
@@ -34,7 +34,6 @@ import org.junit.jupiter.api.extension.ExtendWith
 @ExperimentalCoroutinesApi
 @ExtendWith(InstantExecutorExtension::class, MockKExtension::class)
 class QrCodeComponentTest {
-
     private lateinit var component: QrCodeComponent
     private val tokenizationDelegate: QrCodeTokenizationDelegate = mockk(relaxed = true)
     private val pollingInteractor: AsyncPaymentMethodPollingInteractor = mockk(relaxed = true)
@@ -43,17 +42,19 @@ class QrCodeComponentTest {
 
     @BeforeEach
     fun setUp() {
-        DISdkContext.headlessSdkContainer = mockk<SdkContainer>(relaxed = true).also { sdkContainer ->
-            val cont = spyk<DependencyContainer>().also { container ->
-                container.registerFactory<CoroutineScopeProvider> {
-                    object : CoroutineScopeProvider {
-                        override val scope: CoroutineScope
-                            get() = TestScope()
+        DISdkContext.headlessSdkContainer =
+            mockk<SdkContainer>(relaxed = true).also { sdkContainer ->
+                val cont =
+                    spyk<DependencyContainer>().also { container ->
+                        container.registerFactory<CoroutineScopeProvider> {
+                            object : CoroutineScopeProvider {
+                                override val scope: CoroutineScope
+                                    get() = TestScope()
+                            }
+                        }
                     }
-                }
+                every { sdkContainer.containers }.returns(mutableMapOf(cont::class.simpleName.orEmpty() to cont))
             }
-            every { sdkContainer.containers }.returns(mutableMapOf(cont::class.simpleName.orEmpty() to cont))
-        }
         component = QrCodeComponent(tokenizationDelegate, pollingInteractor, paymentDelegate, pollingStartHandler)
         coEvery { pollingStartHandler.startPolling } returns MutableSharedFlow()
     }

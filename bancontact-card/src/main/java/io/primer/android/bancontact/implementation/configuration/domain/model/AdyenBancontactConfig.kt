@@ -5,5 +5,5 @@ import java.util.Locale
 
 internal data class AdyenBancontactConfig(
     val paymentMethodConfigId: String,
-    val locale: Locale
+    val locale: Locale,
 ) : PaymentMethodConfiguration

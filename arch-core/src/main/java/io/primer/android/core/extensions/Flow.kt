@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.onEach
 
 fun <T> Flow<T>.onError(
     dispatcher: CoroutineDispatcher = Dispatchers.Main,
-    onError: (Throwable) -> Unit
+    onError: (Throwable) -> Unit,
 ): Flow<T> {
     return flow {
         try {
@@ -26,5 +26,7 @@ fun <T> Flow<T>.onError(
     }.flowOn(dispatcher)
 }
 
-fun <T> Flow<T>.collectIn(list: MutableList<T>, coroutineScope: CoroutineScope): Job =
-    onEach { list += it }.launchIn(coroutineScope)
+fun <T> Flow<T>.collectIn(
+    list: MutableList<T>,
+    coroutineScope: CoroutineScope,
+): Job = onEach { list += it }.launchIn(coroutineScope)

@@ -14,11 +14,11 @@ import io.primer.android.core.di.DISdkContext
 import io.primer.android.core.di.DependencyContainer
 import io.primer.android.core.di.SdkContainer
 import io.primer.android.core.utils.CoroutineScopeProvider
+import io.primer.android.domain.tokenization.models.PrimerPaymentMethodTokenData
 import io.primer.android.paymentmethods.core.composer.composable.ComposerUiEvent
 import io.primer.android.payments.core.status.domain.AsyncPaymentMethodPollingInteractor
 import io.primer.android.payments.core.status.domain.model.AsyncStatus
 import io.primer.android.payments.core.status.domain.model.AsyncStatusParams
-import io.primer.android.domain.tokenization.models.PrimerPaymentMethodTokenData
 import io.primer.android.webRedirectShared.implementation.composer.presentation.WebRedirectLauncherParams
 import io.primer.android.webredirect.InstantExecutorExtension
 import io.primer.android.webredirect.implementation.payment.presentation.delegate.presentation.WebRedirectPaymentDelegate
@@ -42,7 +42,6 @@ import kotlin.time.Duration.Companion.seconds
 @ExperimentalCoroutinesApi
 @ExtendWith(InstantExecutorExtension::class, MockKExtension::class)
 class WebRedirectComponentTest {
-
     private lateinit var component: WebRedirectComponent
     private val tokenizationDelegate: WebRedirectTokenizationDelegate = mockk(relaxed = true)
     private val pollingInteractor: AsyncPaymentMethodPollingInteractor = mockk(relaxed = true)
@@ -50,17 +49,19 @@ class WebRedirectComponentTest {
 
     @BeforeEach
     fun setUp() {
-        DISdkContext.headlessSdkContainer = mockk<SdkContainer>(relaxed = true).also { sdkContainer ->
-            val cont = spyk<DependencyContainer>().also { container ->
-                container.registerFactory<CoroutineScopeProvider> {
-                    object : CoroutineScopeProvider {
-                        override val scope: CoroutineScope
-                            get() = TestScope()
+        DISdkContext.headlessSdkContainer =
+            mockk<SdkContainer>(relaxed = true).also { sdkContainer ->
+                val cont =
+                    spyk<DependencyContainer>().also { container ->
+                        container.registerFactory<CoroutineScopeProvider> {
+                            object : CoroutineScopeProvider {
+                                override val scope: CoroutineScope
+                                    get() = TestScope()
+                            }
+                        }
                     }
-                }
+                every { sdkContainer.containers }.returns(mutableMapOf(cont::class.simpleName.orEmpty() to cont))
             }
-            every { sdkContainer.containers }.returns(mutableMapOf(cont::class.simpleName.orEmpty() to cont))
-        }
         component = WebRedirectComponent(tokenizationDelegate, pollingInteractor, paymentDelegate)
         coEvery { paymentDelegate.uiEvent } returns MutableSharedFlow()
     }
@@ -99,12 +100,14 @@ class WebRedirectComponentTest {
 
     @Test
     fun `handleActivityResultIntent with RESULT_CANCELED should handle PaymentMethodCancelledException`() {
-        val params: PaymentMethodLauncherParams = mockk(relaxed = true) {
-            every { initialLauncherParams } returns mockk<WebRedirectLauncherParams>() {
-                every { statusUrl } returns "testStatusUrl"
-                every { paymentMethodType } returns "testPaymentMethod"
+        val params: PaymentMethodLauncherParams =
+            mockk(relaxed = true) {
+                every { initialLauncherParams } returns
+                    mockk<WebRedirectLauncherParams> {
+                        every { statusUrl } returns "testStatusUrl"
+                        every { paymentMethodType } returns "testPaymentMethod"
+                    }
             }
-        }
 
         runTest {
             component.handleActivityResultIntent(params, Activity.RESULT_CANCELED, null)
@@ -117,12 +120,14 @@ class WebRedirectComponentTest {
 
     @Test
     fun `handleActivityResultIntent with RESULT_OK should start polling`() {
-        val params: PaymentMethodLauncherParams = mockk(relaxed = true) {
-            every { initialLauncherParams } returns mockk<WebRedirectLauncherParams>() {
-                every { statusUrl } returns "testStatusUrl"
-                every { paymentMethodType } returns "testPaymentMethod"
+        val params: PaymentMethodLauncherParams =
+            mockk(relaxed = true) {
+                every { initialLauncherParams } returns
+                    mockk<WebRedirectLauncherParams> {
+                        every { statusUrl } returns "testStatusUrl"
+                        every { paymentMethodType } returns "testPaymentMethod"
+                    }
             }
-        }
         val resultCode = Activity.RESULT_OK
         val intent: Intent? = null
 
@@ -137,9 +142,10 @@ class WebRedirectComponentTest {
 
     @Test
     fun `handleActivityStartEvent should open redirect screen`() {
-        val params: PaymentMethodLauncherParams = mockk(relaxed = true) {
-            every { initialLauncherParams } returns mockk<WebRedirectLauncherParams>(relaxed = true)
-        }
+        val params: PaymentMethodLauncherParams =
+            mockk(relaxed = true) {
+                every { initialLauncherParams } returns mockk<WebRedirectLauncherParams>(relaxed = true)
+            }
 
         runTest {
             component.handleActivityStartEvent(params)
@@ -194,9 +200,10 @@ class WebRedirectComponentTest {
     }
 
     @Test
-    fun `close should emit Finish event`() = runTest {
-        component.close()
-        val events = component.uiEvent.toListDuring(1.0.seconds)
-        assertTrue(events.any { it == ComposerUiEvent.Finish })
-    }
+    fun `close should emit Finish event`() =
+        runTest {
+            component.close()
+            val events = component.uiEvent.toListDuring(1.0.seconds)
+            assertTrue(events.any { it == ComposerUiEvent.Finish })
+        }
 }

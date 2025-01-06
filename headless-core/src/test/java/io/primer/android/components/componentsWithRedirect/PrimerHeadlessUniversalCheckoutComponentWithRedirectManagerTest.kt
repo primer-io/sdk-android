@@ -29,7 +29,6 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 
 class PrimerHeadlessUniversalCheckoutComponentWithRedirectManagerTest {
-
     private lateinit var viewModelStoreOwner: ViewModelStoreOwner
     private lateinit var paymentMethodManagerDelegate: PaymentMethodManagerDelegate
     private lateinit var context: Context
@@ -44,39 +43,42 @@ class PrimerHeadlessUniversalCheckoutComponentWithRedirectManagerTest {
         mockkObject(WebRedirectComponentProvider)
 
         DISdkContext.clear()
-        DISdkContext.headlessSdkContainer = mockk<SdkContainer>(relaxed = true).also { sdkContainer ->
-            val cont = spyk<DependencyContainer>().also { container ->
-                container.registerFactory<PaymentMethodManagerDelegate> { paymentMethodManagerDelegate }
-                container.registerFactory<Context> { context }
-            }
+        DISdkContext.headlessSdkContainer =
+            mockk<SdkContainer>(relaxed = true).also { sdkContainer ->
+                val cont =
+                    spyk<DependencyContainer>().also { container ->
+                        container.registerFactory<PaymentMethodManagerDelegate> { paymentMethodManagerDelegate }
+                        container.registerFactory<Context> { context }
+                    }
 
-            every { sdkContainer.containers }.returns(mutableMapOf(cont::class.simpleName.orEmpty() to cont))
-        }
+                every { sdkContainer.containers }.returns(mutableMapOf(cont::class.simpleName.orEmpty() to cont))
+            }
     }
 
     @Test
-    fun `provide should initialize and start payment method`() = runTest {
-        val paymentMethodType = PaymentMethodType.ADYEN_IDEAL.name
-        val category = PrimerPaymentMethodManagerCategory.COMPONENT_WITH_REDIRECT
+    fun `provide should initialize and start payment method`() =
+        runTest {
+            val paymentMethodType = PaymentMethodType.ADYEN_IDEAL.name
+            val category = PrimerPaymentMethodManagerCategory.COMPONENT_WITH_REDIRECT
 
-        val component = PrimerHeadlessUniversalCheckoutComponentWithRedirectManager(viewModelStoreOwner)
+            val component = PrimerHeadlessUniversalCheckoutComponentWithRedirectManager(viewModelStoreOwner)
 
-        every { BanksComponentProvider.provideInstance(any(), any(), any()) } returns mockk(relaxed = true)
+            every { BanksComponentProvider.provideInstance(any(), any(), any()) } returns mockk(relaxed = true)
 
-        component.provide<PrimerHeadlessMainComponent<PrimerCollectableData, PrimerHeadlessStep>>(paymentMethodType)
+            component.provide<PrimerHeadlessMainComponent<PrimerCollectableData, PrimerHeadlessStep>>(paymentMethodType)
 
-        coVerify {
-            paymentMethodManagerDelegate.init(paymentMethodType, category)
-            paymentMethodManagerDelegate.start(
-                context = context,
-                paymentMethodType = paymentMethodType,
-                sessionIntent = PrimerSessionIntent.CHECKOUT,
-                category = category,
-                onPostStart = any()
-            )
-            BanksComponentProvider.provideInstance(any(), any(), any())
+            coVerify {
+                paymentMethodManagerDelegate.init(paymentMethodType, category)
+                paymentMethodManagerDelegate.start(
+                    context = context,
+                    paymentMethodType = paymentMethodType,
+                    sessionIntent = PrimerSessionIntent.CHECKOUT,
+                    category = category,
+                    onPostStart = any(),
+                )
+                BanksComponentProvider.provideInstance(any(), any(), any())
+            }
         }
-    }
 
     @Test
     fun `provide should throw UnsupportedPaymentMethodException for unsupported payment methods`() {
@@ -86,7 +88,7 @@ class PrimerHeadlessUniversalCheckoutComponentWithRedirectManagerTest {
         assertThrows<UnsupportedPaymentMethodException> {
             runTest {
                 component.provide<PrimerHeadlessMainComponent<PrimerCollectableData, PrimerHeadlessStep>>(
-                    paymentMethodType
+                    paymentMethodType,
                 )
             }
         }
@@ -103,7 +105,7 @@ class PrimerHeadlessUniversalCheckoutComponentWithRedirectManagerTest {
         assertThrows<UnsupportedPaymentMethodException> {
             runTest {
                 component.provide<PrimerHeadlessMainComponent<PrimerCollectableData, PrimerHeadlessStep>>(
-                    paymentMethodType
+                    paymentMethodType,
                 )
             }
         }
@@ -119,7 +121,7 @@ class PrimerHeadlessUniversalCheckoutComponentWithRedirectManagerTest {
         assertThrows<SdkUninitializedException> {
             runTest {
                 component.provide<PrimerHeadlessMainComponent<PrimerCollectableData, PrimerHeadlessStep>>(
-                    paymentMethodType
+                    paymentMethodType,
                 )
             }
         }

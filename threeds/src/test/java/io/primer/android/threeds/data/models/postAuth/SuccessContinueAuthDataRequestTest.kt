@@ -8,7 +8,6 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
 internal class SuccessContinueAuthDataRequestTest {
-
     @AfterEach
     fun tearDown() {
         // Unmock all mocked objects
@@ -23,12 +22,13 @@ internal class SuccessContinueAuthDataRequestTest {
         val threeDsWrapperSdkVersion = "1.0.0"
         val threeDsSdkProvider = ThreeDsSdkProvider.NETCETERA
 
-        val successRequest = SuccessContinueAuthDataRequest(
-            threeDsSdkVersion = threeDsSdkVersion,
-            initProtocolVersion = initProtocolVersion,
-            threeDsWrapperSdkVersion = threeDsWrapperSdkVersion,
-            threeDsSdkProvider = threeDsSdkProvider
-        )
+        val successRequest =
+            SuccessContinueAuthDataRequest(
+                threeDsSdkVersion = threeDsSdkVersion,
+                initProtocolVersion = initProtocolVersion,
+                threeDsWrapperSdkVersion = threeDsWrapperSdkVersion,
+                threeDsSdkProvider = threeDsSdkProvider,
+            )
 
         // Serialize the object
         val jsonObject = SuccessContinueAuthDataRequest.serializer.serialize(successRequest)
@@ -37,7 +37,7 @@ internal class SuccessContinueAuthDataRequestTest {
         assertEquals(initProtocolVersion, jsonObject.getString(BaseContinueAuthDataRequest.INIT_PROTOCOL_VERSION_FIELD))
         assertEquals(
             threeDsWrapperSdkVersion,
-            jsonObject.getString(BaseContinueAuthDataRequest.SDK_WRAPPER_VERSION_FIELD)
+            jsonObject.getString(BaseContinueAuthDataRequest.SDK_WRAPPER_VERSION_FIELD),
         )
         assertEquals(threeDsSdkVersion, jsonObject.optString(BaseContinueAuthDataRequest.SDK_VERSION_FIELD))
         assertEquals(threeDsSdkProvider.name, jsonObject.getString(BaseContinueAuthDataRequest.SDK_PROVIDER_FIELD))
@@ -48,10 +48,11 @@ internal class SuccessContinueAuthDataRequestTest {
         // Create a SuccessThreeDsContinueAuthParams object
         val threeDsSdkVersion = "2.2.0"
         val initProtocolVersion = "2.1.0"
-        val successParams = SuccessThreeDsContinueAuthParams(
-            threeDsSdkVersion = threeDsSdkVersion,
-            initProtocolVersion = initProtocolVersion
-        )
+        val successParams =
+            SuccessThreeDsContinueAuthParams(
+                threeDsSdkVersion = threeDsSdkVersion,
+                initProtocolVersion = initProtocolVersion,
+            )
 
         // Convert to SuccessContinueAuthDataRequest
         val successRequest = successParams.toContinueAuthDataRequest()

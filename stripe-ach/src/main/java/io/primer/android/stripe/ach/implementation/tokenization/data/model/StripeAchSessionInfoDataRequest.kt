@@ -6,10 +6,9 @@ import org.json.JSONObject
 
 internal data class StripeAchSessionInfoDataRequest(
     val locale: String,
-    val platform: String = "ANDROID"
+    val platform: String = "ANDROID",
 ) : JSONObjectSerializable {
     companion object {
-
         private const val PLATFORM_FIELD = "platform"
         private const val LOCALE_FIELD = "locale"
 

@@ -1,7 +1,7 @@
 package io.primer.android.core.data.serialization.json
 
-import org.json.JSONObject
 import org.json.JSONArray
+import org.json.JSONObject
 
 /**
 Interface describing class that can be serialized to JSON.

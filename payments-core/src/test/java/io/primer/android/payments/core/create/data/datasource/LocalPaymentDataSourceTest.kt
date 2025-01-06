@@ -8,7 +8,6 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 
 class LocalPaymentDataSourceTest {
-
     private lateinit var localPaymentDataSource: LocalPaymentDataSource
 
     @BeforeEach
@@ -32,9 +31,10 @@ class LocalPaymentDataSourceTest {
     @Test
     fun `test get without update throws UninitializedPropertyAccessException`() {
         // Act & Assert
-        val exception = assertThrows<UninitializedPropertyAccessException> {
-            localPaymentDataSource.get()
-        }
+        val exception =
+            assertThrows<UninitializedPropertyAccessException> {
+                localPaymentDataSource.get()
+            }
 
         assertEquals("lateinit property paymentResponse has not been initialized", exception.message)
     }

@@ -6,9 +6,9 @@ import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
+import io.primer.android.domain.payments.create.model.Payment
 import io.primer.android.errors.domain.BaseErrorResolver
 import io.primer.android.payments.core.create.domain.handler.PaymentMethodTokenHandler
-import io.primer.android.domain.payments.create.model.Payment
 import io.primer.android.payments.core.helpers.CheckoutErrorHandler
 import io.primer.android.payments.core.helpers.CheckoutSuccessHandler
 import io.primer.android.payments.core.helpers.PollingStartHandler
@@ -22,7 +22,6 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 class PhoneNumberPaymentDelegateTest {
-
     private lateinit var paymentMethodTokenHandler: PaymentMethodTokenHandler
     private lateinit var resumePaymentHandler: PaymentResumeHandler
     private lateinit var successHandler: CheckoutSuccessHandler
@@ -47,63 +46,68 @@ class PhoneNumberPaymentDelegateTest {
 
         coEvery { pollingStartHandler.handle(any()) } just Runs
 
-        phoneNumberPaymentDelegate = PhoneNumberPaymentDelegate(
-            paymentMethodTokenHandler,
-            resumePaymentHandler,
-            successHandler,
-            errorHandler,
-            pollingStartHandler,
-            baseErrorResolver,
-            resumeHandler,
-            tokenizedPaymentMethodRepository
-        )
-    }
-
-    @Test
-    fun `handleNewClientToken should handle token and return success`() = runTest {
-        // Arrange
-        val clientToken = "client_token"
-        val payment = mockk<Payment>()
-        val decision = mockk<PhoneNumberDecision> {
-            every { statusUrl } returns "status_url"
-        }
-        val result = Result.success(decision)
-
-        every { tokenizedPaymentMethodRepository.getPaymentMethod() } returns mockk {
-            every { paymentMethodType } returns "payment_method_type"
-        }
-        coEvery { resumeHandler.continueWithNewClientToken(clientToken) } returns result
-
-        // Act
-        val handleNewClientTokenResult = phoneNumberPaymentDelegate.handleNewClientToken(clientToken, payment)
-
-        // Assert
-        assertTrue(handleNewClientTokenResult.isSuccess)
-        coVerify {
-            pollingStartHandler.handle(
-                PollingStartHandler.PollingStartData(
-                    statusUrl = "status_url",
-                    paymentMethodType = "payment_method_type"
-                )
+        phoneNumberPaymentDelegate =
+            PhoneNumberPaymentDelegate(
+                paymentMethodTokenHandler,
+                resumePaymentHandler,
+                successHandler,
+                errorHandler,
+                pollingStartHandler,
+                baseErrorResolver,
+                resumeHandler,
+                tokenizedPaymentMethodRepository,
             )
-        }
     }
 
     @Test
-    fun `handleNewClientToken should handle token and return failure`() = runTest {
-        // Arrange
-        val clientToken = "client_token"
-        val payment = mockk<Payment>()
-        val exception = Exception("An error occurred")
-        val result = Result.failure<PhoneNumberDecision>(exception)
+    fun `handleNewClientToken should handle token and return success`() =
+        runTest {
+            // Arrange
+            val clientToken = "client_token"
+            val payment = mockk<Payment>()
+            val decision =
+                mockk<PhoneNumberDecision> {
+                    every { statusUrl } returns "status_url"
+                }
+            val result = Result.success(decision)
 
-        coEvery { resumeHandler.continueWithNewClientToken(clientToken) } returns result
+            every { tokenizedPaymentMethodRepository.getPaymentMethod() } returns
+                mockk {
+                    every { paymentMethodType } returns "payment_method_type"
+                }
+            coEvery { resumeHandler.continueWithNewClientToken(clientToken) } returns result
 
-        // Act
-        val handleNewClientTokenResult = phoneNumberPaymentDelegate.handleNewClientToken(clientToken, payment)
+            // Act
+            val handleNewClientTokenResult = phoneNumberPaymentDelegate.handleNewClientToken(clientToken, payment)
 
-        // Assert
-        assertTrue(handleNewClientTokenResult.isFailure)
-        coVerify(exactly = 0) { successHandler.handle(any(), any()) }
-    }
+            // Assert
+            assertTrue(handleNewClientTokenResult.isSuccess)
+            coVerify {
+                pollingStartHandler.handle(
+                    PollingStartHandler.PollingStartData(
+                        statusUrl = "status_url",
+                        paymentMethodType = "payment_method_type",
+                    ),
+                )
+            }
+        }
+
+    @Test
+    fun `handleNewClientToken should handle token and return failure`() =
+        runTest {
+            // Arrange
+            val clientToken = "client_token"
+            val payment = mockk<Payment>()
+            val exception = Exception("An error occurred")
+            val result = Result.failure<PhoneNumberDecision>(exception)
+
+            coEvery { resumeHandler.continueWithNewClientToken(clientToken) } returns result
+
+            // Act
+            val handleNewClientTokenResult = phoneNumberPaymentDelegate.handleNewClientToken(clientToken, payment)
+
+            // Assert
+            assertTrue(handleNewClientTokenResult.isFailure)
+            coVerify(exactly = 0) { successHandler.handle(any(), any()) }
+        }
 }

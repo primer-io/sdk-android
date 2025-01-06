@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
 class BrowserLauncherParamsTest {
-
     @Test
     fun `test BrowserLauncherParams properties`() {
         // Arrange
@@ -15,12 +14,13 @@ class BrowserLauncherParamsTest {
         val sessionIntent = PrimerSessionIntent.CHECKOUT
 
         // Act
-        val browserLauncherParams = BrowserLauncherParams(
-            url = url,
-            host = host,
-            paymentMethodType = paymentMethodType,
-            sessionIntent = sessionIntent
-        )
+        val browserLauncherParams =
+            BrowserLauncherParams(
+                url = url,
+                host = host,
+                paymentMethodType = paymentMethodType,
+                sessionIntent = sessionIntent,
+            )
 
         // Assert
         assertEquals(url, browserLauncherParams.url)
@@ -36,12 +36,13 @@ class BrowserLauncherParamsTest {
         val sessionIntent = PrimerSessionIntent.CHECKOUT
 
         // Act
-        val browserLauncherParams = BrowserLauncherParams(
-            url = "https://example.com",
-            host = "example.com",
-            paymentMethodType = paymentMethodType,
-            sessionIntent = sessionIntent
-        )
+        val browserLauncherParams =
+            BrowserLauncherParams(
+                url = "https://example.com",
+                host = "example.com",
+                paymentMethodType = paymentMethodType,
+                sessionIntent = sessionIntent,
+            )
 
         // Assert
         assertEquals(paymentMethodType, browserLauncherParams.paymentMethodType)

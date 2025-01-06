@@ -8,9 +8,8 @@ import kotlinx.coroutines.Dispatchers
 
 class FinaliseMockedFlowInteractor internal constructor(
     private val mockConfigurationRepository: MockConfigurationRepository,
-    override val dispatcher: CoroutineDispatcher = Dispatchers.IO
+    override val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : BaseSuspendInteractor<Unit, Params>() {
-
     override suspend fun performAction(params: Params): Result<Unit> {
         return mockConfigurationRepository.finalizeMockedFlow()
     }

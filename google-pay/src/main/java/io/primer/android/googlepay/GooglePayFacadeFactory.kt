@@ -10,7 +10,7 @@ internal interface GooglePayFacadeFactory {
     fun create(
         applicationContext: Context,
         environment: GooglePayFacade.Environment,
-        logReporter: LogReporter
+        logReporter: LogReporter,
     ): GooglePayFacade
 }
 
@@ -18,7 +18,7 @@ internal class DefaultGooglePayFacadeFactory : GooglePayFacadeFactory {
     override fun create(
         applicationContext: Context,
         environment: GooglePayFacade.Environment,
-        logReporter: LogReporter
+        logReporter: LogReporter,
     ): GooglePayFacade {
         val walletEnvironment =
             if (environment == GooglePayFacade.Environment.TEST) {
@@ -26,9 +26,10 @@ internal class DefaultGooglePayFacadeFactory : GooglePayFacadeFactory {
             } else {
                 WalletConstants.ENVIRONMENT_PRODUCTION
             }
-        val walletOptions = Wallet.WalletOptions.Builder()
-            .setEnvironment(walletEnvironment)
-            .build()
+        val walletOptions =
+            Wallet.WalletOptions.Builder()
+                .setEnvironment(walletEnvironment)
+                .build()
         val paymentsClient: PaymentsClient =
             Wallet.getPaymentsClient(applicationContext, walletOptions)
 

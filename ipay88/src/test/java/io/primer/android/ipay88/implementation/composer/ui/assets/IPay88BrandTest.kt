@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
 internal class IPay88BrandTest {
-
     @Test
     fun `iconResId should return correct resource id`() {
         val brand = IPay88Brand()

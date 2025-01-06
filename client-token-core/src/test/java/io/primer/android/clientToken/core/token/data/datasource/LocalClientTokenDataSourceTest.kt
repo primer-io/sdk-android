@@ -9,17 +9,17 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 internal class LocalClientTokenDataSourceTest {
-
     private lateinit var localClientTokenDataSource: LocalClientTokenDataSource
     private lateinit var initialClientToken: ClientToken
 
     @BeforeEach
     fun setUp() {
         mockkObject(ClientToken.Companion)
-        initialClientToken = mockk<ClientToken> {
-            every { configurationUrl } returns "https://primer.io"
-            every { accessToken } returns "initialToken"
-        }
+        initialClientToken =
+            mockk<ClientToken> {
+                every { configurationUrl } returns "https://primer.io"
+                every { accessToken } returns "initialToken"
+            }
         localClientTokenDataSource = LocalClientTokenDataSource()
     }
 
@@ -55,11 +55,12 @@ internal class LocalClientTokenDataSourceTest {
         // Arrange
         val newClientTokenString = "newTokenWithBlankUrl"
 
-        val emptyClientToken = mockk<ClientToken> {
-            every { configurationUrl } returns ""
-            every { accessToken } returns "initialToken"
-            every { copy(configurationUrl = any()) } returns initialClientToken
-        }
+        val emptyClientToken =
+            mockk<ClientToken> {
+                every { configurationUrl } returns ""
+                every { accessToken } returns "initialToken"
+                every { copy(configurationUrl = any()) } returns initialClientToken
+            }
 
         every { ClientToken.fromString(any()) } returnsMany (listOf(initialClientToken, emptyClientToken))
 

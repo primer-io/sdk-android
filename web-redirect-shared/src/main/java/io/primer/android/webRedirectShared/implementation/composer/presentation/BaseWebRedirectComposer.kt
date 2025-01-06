@@ -3,10 +3,10 @@ package io.primer.android.webRedirectShared.implementation.composer.presentation
 import android.app.Activity
 import android.content.Intent
 import androidx.annotation.VisibleForTesting
-import io.primer.android.webRedirectShared.implementation.composer.ui.navigation.launcher.WebRedirectActivityLauncherParams
 import io.primer.android.paymentmethods.core.composer.PaymentMethodComposer
 import io.primer.android.paymentmethods.core.composer.composable.ComposerUiEvent
 import io.primer.android.paymentmethods.core.composer.composable.UiEventable
+import io.primer.android.webRedirectShared.implementation.composer.ui.navigation.launcher.WebRedirectActivityLauncherParams
 import io.primer.paymentMethodCoreUi.core.ui.composable.ActivityResultIntentHandler
 import io.primer.paymentMethodCoreUi.core.ui.composable.ActivityStartIntentHandler
 import io.primer.paymentMethodCoreUi.core.ui.navigation.launchers.PaymentMethodLauncherParams
@@ -20,9 +20,9 @@ interface BaseWebRedirectComposer :
     ActivityStartIntentHandler,
     ActivityResultIntentHandler,
     UiEventable {
-
     val scope: CoroutineScope
 
+    @Suppress("ktlint:standard:property-naming")
     val _uiEvent: MutableSharedFlow<ComposerUiEvent>
     override val uiEvent: SharedFlow<ComposerUiEvent>
         get() = _uiEvent
@@ -31,7 +31,11 @@ interface BaseWebRedirectComposer :
 
     fun onResultOk(params: WebRedirectLauncherParams)
 
-    override fun handleActivityResultIntent(params: PaymentMethodLauncherParams, resultCode: Int, intent: Intent?) {
+    override fun handleActivityResultIntent(
+        params: PaymentMethodLauncherParams,
+        resultCode: Int,
+        intent: Intent?,
+    ) {
         when (resultCode) {
             Activity.RESULT_CANCELED -> {
                 val redirectParams = params.initialLauncherParams as WebRedirectLauncherParams
@@ -60,15 +64,16 @@ interface BaseWebRedirectComposer :
                         event.redirectUrl,
                         event.title,
                         event.paymentMethodType,
-                        event.returnUrl
-                    )
-                )
+                        event.returnUrl,
+                    ),
+                ),
             )
         }
     }
 
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
-    fun close() = scope.launch {
-        _uiEvent.emit(ComposerUiEvent.Finish)
-    }
+    fun close() =
+        scope.launch {
+            _uiEvent.emit(ComposerUiEvent.Finish)
+        }
 }

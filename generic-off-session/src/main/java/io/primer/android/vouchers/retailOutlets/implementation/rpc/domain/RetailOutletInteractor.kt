@@ -15,19 +15,19 @@ import kotlinx.coroutines.Dispatchers
 internal class RetailOutletInteractor(
     private val configurationRepository: ConfigurationRepository,
     private val retailOutletRepository: RetailOutletRepository,
-    override val dispatcher: CoroutineDispatcher = Dispatchers.IO
+    override val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : BaseSuspendInteractor<List<RetailOutlet>, RetailOutletParams>() {
-
-    override suspend fun performAction(params: RetailOutletParams) = runSuspendCatching {
-        configurationRepository.getConfiguration().paymentMethods.first { it.type == params.paymentMethodType }
-    }.flatMap { configuration ->
-        retailOutletRepository.getRetailOutlets(
-            requireNotNullCheck(
-                configuration.id,
-                AsyncIllegalValueKey.PAYMENT_METHOD_CONFIG_ID
+    override suspend fun performAction(params: RetailOutletParams) =
+        runSuspendCatching {
+            configurationRepository.getConfiguration().paymentMethods.first { it.type == params.paymentMethodType }
+        }.flatMap { configuration ->
+            retailOutletRepository.getRetailOutlets(
+                requireNotNullCheck(
+                    configuration.id,
+                    AsyncIllegalValueKey.PAYMENT_METHOD_CONFIG_ID,
+                ),
             )
-        )
-    }
-        .map { it.filterNot { it.disabled } }
-        .map { it.sortedBy { it.name.lowercase() } }
+        }
+            .map { it.filterNot { it.disabled } }
+            .map { it.sortedBy { it.name.lowercase() } }
 }

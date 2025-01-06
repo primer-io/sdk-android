@@ -2,10 +2,10 @@ package io.primer.android.klarna.implementation.payment.presentation
 
 import io.mockk.MockKAnnotations
 import io.mockk.impl.annotations.MockK
+import io.primer.android.domain.payments.create.model.Payment
 import io.primer.android.errors.data.exception.UnhandledPaymentPendingStateException
 import io.primer.android.errors.domain.BaseErrorResolver
 import io.primer.android.payments.core.create.domain.handler.PaymentMethodTokenHandler
-import io.primer.android.domain.payments.create.model.Payment
 import io.primer.android.payments.core.helpers.CheckoutErrorHandler
 import io.primer.android.payments.core.helpers.CheckoutSuccessHandler
 import io.primer.android.payments.core.resume.domain.handler.PaymentResumeHandler
@@ -19,7 +19,6 @@ import kotlin.test.assertIs
 
 @ExperimentalCoroutinesApi
 internal class KlarnaPaymentDelegateTest {
-
     @MockK
     private lateinit var paymentMethodTokenHandler: PaymentMethodTokenHandler
 
@@ -40,24 +39,26 @@ internal class KlarnaPaymentDelegateTest {
     @BeforeEach
     fun setUp() {
         MockKAnnotations.init(this)
-        klarnaPaymentDelegate = KlarnaPaymentDelegate(
-            paymentMethodTokenHandler,
-            resumePaymentHandler,
-            successHandler,
-            errorHandler,
-            baseErrorResolver
-        )
+        klarnaPaymentDelegate =
+            KlarnaPaymentDelegate(
+                paymentMethodTokenHandler,
+                resumePaymentHandler,
+                successHandler,
+                errorHandler,
+                baseErrorResolver,
+            )
     }
 
     @Test
-    fun `handleNewClientToken should return failure with UnhandledPaymentPendingStateException`() = runTest {
-        val clientToken = "someClientToken"
-        val payment: Payment? = null
+    fun `handleNewClientToken should return failure with UnhandledPaymentPendingStateException`() =
+        runTest {
+            val clientToken = "someClientToken"
+            val payment: Payment? = null
 
-        val result = klarnaPaymentDelegate.handleNewClientToken(clientToken, payment)
+            val result = klarnaPaymentDelegate.handleNewClientToken(clientToken, payment)
 
-        assertTrue(result.isFailure)
-        assertIs<UnhandledPaymentPendingStateException>(result.exceptionOrNull())
-        assertEquals("Pending state for KLARNA is not handled", result.exceptionOrNull()?.message)
-    }
+            assertTrue(result.isFailure)
+            assertIs<UnhandledPaymentPendingStateException>(result.exceptionOrNull())
+            assertEquals("Pending state for KLARNA is not handled", result.exceptionOrNull()?.message)
+        }
 }

@@ -12,12 +12,13 @@ class AdyenBancontactSessionInfoDataRequestTest {
         val userAgent = "userAgent"
         val locale = "en-US"
         val platform = "ANDROID"
-        val request = AdyenBancontactSessionInfoDataRequest(
-            redirectionUrl = redirectionUrl,
-            locale = locale,
-            platform = platform,
-            userAgent = "userAgent"
-        )
+        val request =
+            AdyenBancontactSessionInfoDataRequest(
+                redirectionUrl = redirectionUrl,
+                locale = locale,
+                platform = platform,
+                userAgent = "userAgent",
+            )
 
         // Act
         val jsonObject = AdyenBancontactSessionInfoDataRequest.serializer.serialize(request)
@@ -35,11 +36,12 @@ class AdyenBancontactSessionInfoDataRequestTest {
         val redirectionUrl = "https://example.com"
         val locale = "en-US"
         val userAgent = "userAgent"
-        val request = AdyenBancontactSessionInfoDataRequest(
-            redirectionUrl = redirectionUrl,
-            locale = locale,
-            userAgent = userAgent
-        )
+        val request =
+            AdyenBancontactSessionInfoDataRequest(
+                redirectionUrl = redirectionUrl,
+                locale = locale,
+                userAgent = userAgent,
+            )
 
         // Act
         val jsonObject = AdyenBancontactSessionInfoDataRequest.serializer.serialize(request)
@@ -58,12 +60,13 @@ class AdyenBancontactSessionInfoDataRequestTest {
         val locale = "en-US"
         val platform = "IOS"
         val userAgent = "userAgent"
-        val request = AdyenBancontactSessionInfoDataRequest(
-            redirectionUrl = redirectionUrl,
-            locale = locale,
-            platform = platform,
-            userAgent = userAgent
-        )
+        val request =
+            AdyenBancontactSessionInfoDataRequest(
+                redirectionUrl = redirectionUrl,
+                locale = locale,
+                platform = platform,
+                userAgent = userAgent,
+            )
 
         // Act
         val jsonObject = AdyenBancontactSessionInfoDataRequest.serializer.serialize(request)

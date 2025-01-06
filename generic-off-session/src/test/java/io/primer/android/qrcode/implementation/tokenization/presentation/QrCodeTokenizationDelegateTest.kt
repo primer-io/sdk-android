@@ -15,53 +15,58 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
 internal class QrCodeTokenizationDelegateTest {
-
     private val configurationInteractor = mockk<QrCodeConfigurationInteractor>()
     private val tokenizationInteractor = mockk<QrCodeTokenizationInteractor>()
     private val delegate = QrCodeTokenizationDelegate(configurationInteractor, tokenizationInteractor)
 
     @Test
-    fun `mapTokenizationData should return tokenization params successfully`() = runBlocking {
-        val input = QrCodeTokenizationInputable(
-            paymentMethodType = "qrCode",
-            primerSessionIntent = mockk()
-        )
+    fun `mapTokenizationData should return tokenization params successfully`() =
+        runBlocking {
+            val input =
+                QrCodeTokenizationInputable(
+                    paymentMethodType = "qrCode",
+                    primerSessionIntent = mockk(),
+                )
 
-        val configParams = QrCodeConfigParams(paymentMethodType = input.paymentMethodType)
-        val config = QrCodeConfig(paymentMethodConfigId = "configId", locale = "en-US")
+            val configParams = QrCodeConfigParams(paymentMethodType = input.paymentMethodType)
+            val config = QrCodeConfig(paymentMethodConfigId = "configId", locale = "en-US")
 
-        coEvery { configurationInteractor.invoke(configParams) } returns Result.success(config)
+            coEvery { configurationInteractor.invoke(configParams) } returns Result.success(config)
 
-        val result = delegate.mapTokenizationData(input)
+            val result = delegate.mapTokenizationData(input)
 
-        val expected = TokenizationParams(
-            paymentInstrumentParams = QrCodePaymentInstrumentParams(
-                paymentMethodType = input.paymentMethodType,
-                paymentMethodConfigId = config.paymentMethodConfigId,
-                locale = config.locale
-            ),
-            sessionIntent = input.primerSessionIntent
-        )
+            val expected =
+                TokenizationParams(
+                    paymentInstrumentParams =
+                        QrCodePaymentInstrumentParams(
+                            paymentMethodType = input.paymentMethodType,
+                            paymentMethodConfigId = config.paymentMethodConfigId,
+                            locale = config.locale,
+                        ),
+                    sessionIntent = input.primerSessionIntent,
+                )
 
-        assertEquals(Result.success(expected), result)
-        coVerify { configurationInteractor.invoke(configParams) }
-    }
+            assertEquals(Result.success(expected), result)
+            coVerify { configurationInteractor.invoke(configParams) }
+        }
 
     @Test
-    fun `mapTokenizationData should return failure when configuration interactor fails`() = runBlocking {
-        val input = QrCodeTokenizationInputable(
-            paymentMethodType = "qrCode",
-            primerSessionIntent = mockk()
-        )
+    fun `mapTokenizationData should return failure when configuration interactor fails`() =
+        runBlocking {
+            val input =
+                QrCodeTokenizationInputable(
+                    paymentMethodType = "qrCode",
+                    primerSessionIntent = mockk(),
+                )
 
-        val configParams = QrCodeConfigParams(paymentMethodType = input.paymentMethodType)
-        val error = Exception("Configuration error")
+            val configParams = QrCodeConfigParams(paymentMethodType = input.paymentMethodType)
+            val error = Exception("Configuration error")
 
-        coEvery { configurationInteractor.invoke(configParams) } returns Result.failure(error)
+            coEvery { configurationInteractor.invoke(configParams) } returns Result.failure(error)
 
-        val result = delegate.mapTokenizationData(input)
+            val result = delegate.mapTokenizationData(input)
 
-        assertEquals(Result.failure<QrCodePaymentInstrumentParams>(error), result)
-        coVerify { configurationInteractor.invoke(configParams) }
-    }
+            assertEquals(Result.failure<QrCodePaymentInstrumentParams>(error), result)
+            coVerify { configurationInteractor.invoke(configParams) }
+        }
 }

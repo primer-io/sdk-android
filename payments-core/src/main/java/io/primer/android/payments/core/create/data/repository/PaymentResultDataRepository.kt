@@ -6,9 +6,8 @@ import io.primer.android.payments.core.create.domain.model.PaymentResult
 import io.primer.android.payments.core.create.domain.repository.PaymentResultRepository
 
 class PaymentResultDataRepository(
-    private val localPaymentDataSource: LocalPaymentDataSource
+    private val localPaymentDataSource: LocalPaymentDataSource,
 ) : PaymentResultRepository {
-
     override fun getPaymentResult(): PaymentResult {
         return localPaymentDataSource.get().toPaymentResult()
     }

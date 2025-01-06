@@ -26,32 +26,34 @@ class KlarnaSessionInteractorTest {
     private lateinit var interactor: KlarnaSessionInteractor
 
     @Test
-    fun `performAction() returns response when repository call succeeds`() = runTest {
-        val session = mockk<KlarnaSession>()
-        coEvery {
-            klarnaSessionRepository.createSession(surcharge = any(), primerSessionIntent = any())
-        } returns Result.success(session)
+    fun `performAction() returns response when repository call succeeds`() =
+        runTest {
+            val session = mockk<KlarnaSession>()
+            coEvery {
+                klarnaSessionRepository.createSession(surcharge = any(), primerSessionIntent = any())
+            } returns Result.success(session)
 
-        val result = interactor.invoke(KlarnaSessionParams(1, PrimerSessionIntent.VAULT))
+            val result = interactor.invoke(KlarnaSessionParams(1, PrimerSessionIntent.VAULT))
 
-        assertEquals(session, result.getOrThrow())
-        coVerify(exactly = 1) {
-            klarnaSessionRepository.createSession(1, PrimerSessionIntent.VAULT)
+            assertEquals(session, result.getOrThrow())
+            coVerify(exactly = 1) {
+                klarnaSessionRepository.createSession(1, PrimerSessionIntent.VAULT)
+            }
         }
-    }
 
     @Test
-    fun `performAction() returns error when repository call fails`() = runTest {
-        val exception = Exception()
-        coEvery {
-            klarnaSessionRepository.createSession(surcharge = any(), primerSessionIntent = any())
-        } returns Result.failure(exception)
+    fun `performAction() returns error when repository call fails`() =
+        runTest {
+            val exception = Exception()
+            coEvery {
+                klarnaSessionRepository.createSession(surcharge = any(), primerSessionIntent = any())
+            } returns Result.failure(exception)
 
-        val result = interactor.invoke(KlarnaSessionParams(1, PrimerSessionIntent.VAULT))
+            val result = interactor.invoke(KlarnaSessionParams(1, PrimerSessionIntent.VAULT))
 
-        assertEquals(exception, result.exceptionOrNull())
-        coVerify(exactly = 1) {
-            klarnaSessionRepository.createSession(1, PrimerSessionIntent.VAULT)
+            assertEquals(exception, result.exceptionOrNull())
+            coVerify(exactly = 1) {
+                klarnaSessionRepository.createSession(1, PrimerSessionIntent.VAULT)
+            }
         }
-    }
 }

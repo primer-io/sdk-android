@@ -8,7 +8,6 @@ import io.primer.android.ui.fragments.country.SelectCountryViewModelFactory
 
 internal class CountriesDataStorageContainer(private val sdk: () -> SdkContainer) :
     DependencyContainer() {
-
     override fun registerInitialDependencies() {
         registerSingleton<CountriesRepository> { CountriesDataRepository(context = sdk().resolve()) }
 

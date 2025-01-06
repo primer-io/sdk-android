@@ -11,24 +11,26 @@ import io.primer.android.phoneNumber.implementation.tokenization.presentation.co
 
 internal class PhoneNumberTokenizationDelegate(
     private val configurationInteractor: PhoneNumberConfigurationInteractor,
-    tokenizationInteractor: PhoneNumberTokenizationInteractor
+    tokenizationInteractor: PhoneNumberTokenizationInteractor,
 ) : PaymentMethodTokenizationDelegate<PhoneNumberTokenizationInputable, PhoneNumberPaymentInstrumentParams>(
-    tokenizationInteractor
-),
+        tokenizationInteractor,
+    ),
     TokenizationCollectedDataMapper<PhoneNumberTokenizationInputable, PhoneNumberPaymentInstrumentParams> {
-
-    override suspend fun mapTokenizationData(input: PhoneNumberTokenizationInputable):
-        Result<TokenizationParams<PhoneNumberPaymentInstrumentParams>> = configurationInteractor(
-        PhoneNumberConfigParams(paymentMethodType = input.paymentMethodType)
-    ).map { configuration ->
-        TokenizationParams(
-            paymentInstrumentParams = PhoneNumberPaymentInstrumentParams(
-                paymentMethodType = input.paymentMethodType,
-                paymentMethodConfigId = configuration.paymentMethodConfigId,
-                locale = configuration.locale,
-                phoneNumber = input.phoneNumberData.phoneNumber
-            ),
-            sessionIntent = input.primerSessionIntent
-        )
-    }
+    override suspend fun mapTokenizationData(
+        input: PhoneNumberTokenizationInputable,
+    ): Result<TokenizationParams<PhoneNumberPaymentInstrumentParams>> =
+        configurationInteractor(
+            PhoneNumberConfigParams(paymentMethodType = input.paymentMethodType),
+        ).map { configuration ->
+            TokenizationParams(
+                paymentInstrumentParams =
+                    PhoneNumberPaymentInstrumentParams(
+                        paymentMethodType = input.paymentMethodType,
+                        paymentMethodConfigId = configuration.paymentMethodConfigId,
+                        locale = configuration.locale,
+                        phoneNumber = input.phoneNumberData.phoneNumber,
+                    ),
+                sessionIntent = input.primerSessionIntent,
+            )
+        }
 }

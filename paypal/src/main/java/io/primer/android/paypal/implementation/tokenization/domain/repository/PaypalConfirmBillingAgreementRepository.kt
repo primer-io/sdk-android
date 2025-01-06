@@ -4,7 +4,7 @@ import io.primer.android.paypal.implementation.tokenization.domain.model.PaypalC
 import io.primer.android.paypal.implementation.tokenization.domain.model.PaypalConfirmBillingAgreementParams
 
 internal interface PaypalConfirmBillingAgreementRepository {
-
-    suspend fun confirmBillingAgreement(params: PaypalConfirmBillingAgreementParams):
-        Result<PaypalConfirmBillingAgreement>
+    suspend fun confirmBillingAgreement(
+        params: PaypalConfirmBillingAgreementParams,
+    ): Result<PaypalConfirmBillingAgreement>
 }

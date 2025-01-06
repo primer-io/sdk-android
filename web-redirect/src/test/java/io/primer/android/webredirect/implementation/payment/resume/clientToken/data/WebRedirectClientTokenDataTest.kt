@@ -15,7 +15,6 @@ import org.junit.jupiter.api.Test
 import kotlin.test.assertFailsWith
 
 class WebRedirectClientTokenDataTest {
-
     private val validEncodedString = "validEncodedString"
     private val decodedString = """
         {
@@ -40,11 +39,12 @@ class WebRedirectClientTokenDataTest {
         val result = WebRedirectClientTokenData.fromString(validEncodedString)
 
         // Then
-        val expected = WebRedirectClientTokenData(
-            intent = "testIntent",
-            statusUrl = "testStatusUrl",
-            redirectUrl = "testRedirectUrl"
-        )
+        val expected =
+            WebRedirectClientTokenData(
+                intent = "testIntent",
+                statusUrl = "testStatusUrl",
+                redirectUrl = "testRedirectUrl",
+            )
         assertEquals(expected, result)
     }
 

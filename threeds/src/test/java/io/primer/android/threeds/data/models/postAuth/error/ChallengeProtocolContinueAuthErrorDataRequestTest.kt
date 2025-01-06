@@ -8,7 +8,6 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
 internal class ChallengeProtocolContinueAuthErrorDataRequestTest {
-
     @AfterEach
     fun tearDown() {
         unmockkAll()
@@ -25,29 +24,31 @@ internal class ChallengeProtocolContinueAuthErrorDataRequestTest {
         val threeDsSdkTransactionId = "transaction-id"
         val protocolVersion = "2.1.0"
 
-        val request = ChallengeProtocolContinueAuthErrorDataRequest(
-            reasonCode,
-            reasonText,
-            threeDsErrorCode,
-            threeDsErrorDescription,
-            threeDsErrorComponent,
-            threeDsErrorDetails,
-            threeDsSdkTransactionId,
-            protocolVersion
-        )
+        val request =
+            ChallengeProtocolContinueAuthErrorDataRequest(
+                reasonCode,
+                reasonText,
+                threeDsErrorCode,
+                threeDsErrorDescription,
+                threeDsErrorComponent,
+                threeDsErrorDetails,
+                threeDsSdkTransactionId,
+                protocolVersion,
+            )
 
         val json = ChallengeProtocolContinueAuthErrorDataRequest.serializer.serialize(request)
 
-        val expectedJson = JSONObject().apply {
-            put("reasonCode", reasonCode.name)
-            put("reasonText", reasonText)
-            putOpt("threeDsErrorCode", threeDsErrorCode)
-            put("threeDsErrorDescription", threeDsErrorDescription)
-            put("threeDsErrorComponent", threeDsErrorComponent)
-            put("threeDsErrorDetails", threeDsErrorDetails)
-            put("threeDsSdkTransactionId", threeDsSdkTransactionId)
-            put("protocolVersion", protocolVersion)
-        }
+        val expectedJson =
+            JSONObject().apply {
+                put("reasonCode", reasonCode.name)
+                put("reasonText", reasonText)
+                putOpt("threeDsErrorCode", threeDsErrorCode)
+                put("threeDsErrorDescription", threeDsErrorDescription)
+                put("threeDsErrorComponent", threeDsErrorComponent)
+                put("threeDsErrorDetails", threeDsErrorDetails)
+                put("threeDsSdkTransactionId", threeDsSdkTransactionId)
+                put("protocolVersion", protocolVersion)
+            }
 
         assertEquals(expectedJson.toString(), json.toString())
     }

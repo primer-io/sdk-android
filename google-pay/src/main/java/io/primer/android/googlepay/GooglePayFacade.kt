@@ -8,9 +8,9 @@ import com.google.android.gms.wallet.AutoResolveHelper
 import com.google.android.gms.wallet.IsReadyToPayRequest
 import com.google.android.gms.wallet.PaymentDataRequest
 import com.google.android.gms.wallet.PaymentsClient
-import io.primer.android.data.settings.PrimerGoogleShippingAddressParameters
 import io.primer.android.configuration.domain.model.CheckoutModule
 import io.primer.android.core.logging.internal.LogReporter
+import io.primer.android.data.settings.PrimerGoogleShippingAddressParameters
 import io.primer.android.googlepay.implementation.utils.GooglePayPayloadUtils
 import org.jetbrains.annotations.VisibleForTesting
 import org.json.JSONArray
@@ -21,44 +21,45 @@ import kotlin.coroutines.suspendCoroutine
 
 internal class GooglePayFacade(
     private val paymentsClient: PaymentsClient,
-    private val logReporter: LogReporter
+    private val logReporter: LogReporter,
 ) {
-
     companion object {
-
         const val GOOGLE_PAY_REQUEST_CODE: Int = 1100
     }
 
-    private val baseRequest: JSONObject = JSONObject().apply {
-        put("apiVersion", 2)
-        put("apiVersionMinor", 0)
-    }
+    private val baseRequest: JSONObject =
+        JSONObject().apply {
+            put("apiVersion", 2)
+            put("apiVersionMinor", 0)
+        }
 
     suspend fun checkIfIsReadyToPay(
         allowedCardNetworks: List<String>,
         allowedCardAuthMethods: List<String>,
         billingAddressRequired: Boolean,
-        existingPaymentMethodRequired: Boolean
-    ): Boolean = checkIfIsReadyToPay(
-        buildIsReadyToGooglePayRequest(
-            allowedCardNetworks = allowedCardNetworks,
-            allowedCardAuthMethods = allowedCardAuthMethods,
-            billingAddressRequired = billingAddressRequired,
-            existingPaymentMethodRequired = existingPaymentMethodRequired
+        existingPaymentMethodRequired: Boolean,
+    ): Boolean =
+        checkIfIsReadyToPay(
+            buildIsReadyToGooglePayRequest(
+                allowedCardNetworks = allowedCardNetworks,
+                allowedCardAuthMethods = allowedCardAuthMethods,
+                billingAddressRequired = billingAddressRequired,
+                existingPaymentMethodRequired = existingPaymentMethodRequired,
+            ),
         )
-    )
 
     private fun buildIsReadyToGooglePayRequest(
         allowedCardNetworks: List<String>,
         allowedCardAuthMethods: List<String>,
         billingAddressRequired: Boolean,
-        existingPaymentMethodRequired: Boolean
+        existingPaymentMethodRequired: Boolean,
     ): JSONObject {
-        val baseCardPaymentMethods = GooglePayPayloadUtils.baseCardPaymentMethod(
-            allowedCardNetworks,
-            allowedCardAuthMethods,
-            billingAddressRequired
-        )
+        val baseCardPaymentMethods =
+            GooglePayPayloadUtils.baseCardPaymentMethod(
+                allowedCardNetworks,
+                allowedCardAuthMethods,
+                billingAddressRequired,
+            )
 
         return baseRequest.apply {
             put("allowedPaymentMethods", JSONArray().put(baseCardPaymentMethods))
@@ -83,7 +84,7 @@ internal class GooglePayFacade(
                             logReporter.warn(
                                 "Unable to make payments on this device." +
                                     " Status returned: ${exception.status}",
-                                "Google Pay"
+                                "Google Pay",
                             )
                             continuation.resume(false)
                         }
@@ -111,22 +112,23 @@ internal class GooglePayFacade(
         shippingOptions: CheckoutModule.Shipping?,
         shippingAddressParameters: PrimerGoogleShippingAddressParameters?,
         requireShippingMethod: Boolean,
-        emailAddressRequired: Boolean
+        emailAddressRequired: Boolean,
     ) {
-        val request = buildPaymentRequest(
-            gatewayMerchantId = gatewayMerchantId,
-            merchantName = merchantName,
-            totalPrice = totalPrice,
-            countryCode = countryCode,
-            currencyCode = currencyCode,
-            allowedCardNetworks = allowedCardNetworks,
-            allowedCardAuthMethods = allowedCardAuthMethods,
-            billingAddressRequired = billingAddressRequired,
-            shippingOptions = shippingOptions,
-            shippingAddressParameters = shippingAddressParameters,
-            requireShippingMethod = requireShippingMethod,
-            emailAddressRequired = emailAddressRequired
-        )
+        val request =
+            buildPaymentRequest(
+                gatewayMerchantId = gatewayMerchantId,
+                merchantName = merchantName,
+                totalPrice = totalPrice,
+                countryCode = countryCode,
+                currencyCode = currencyCode,
+                allowedCardNetworks = allowedCardNetworks,
+                allowedCardAuthMethods = allowedCardAuthMethods,
+                billingAddressRequired = billingAddressRequired,
+                shippingOptions = shippingOptions,
+                shippingAddressParameters = shippingAddressParameters,
+                requireShippingMethod = requireShippingMethod,
+                emailAddressRequired = emailAddressRequired,
+            )
         pay(activity, request)
     }
 
@@ -143,57 +145,63 @@ internal class GooglePayFacade(
         shippingOptions: CheckoutModule.Shipping?,
         shippingAddressParameters: PrimerGoogleShippingAddressParameters?,
         requireShippingMethod: Boolean,
-        emailAddressRequired: Boolean
+        emailAddressRequired: Boolean,
     ): JSONObject {
-        val gatewayParams = JSONObject(
-            mapOf(
-                "gateway" to "primer",
-                "gatewayMerchantId" to gatewayMerchantId
+        val gatewayParams =
+            JSONObject(
+                mapOf(
+                    "gateway" to "primer",
+                    "gatewayMerchantId" to gatewayMerchantId,
+                ),
             )
-        )
-        val gatewayTokenizationSpecification = JSONObject().apply {
-            put("type", "PAYMENT_GATEWAY")
-            put("parameters", gatewayParams)
-        }
-
-        val cardPaymentMethod = GooglePayPayloadUtils.baseCardPaymentMethod(
-            allowedCardNetworks,
-            allowedCardAuthMethods,
-            billingAddressRequired
-        ).apply {
-            put("tokenizationSpecification", gatewayTokenizationSpecification)
-        }
-
-        val transactionInfo = JSONObject().apply {
-            put("totalPrice", totalPrice)
-            put("totalPriceStatus", "FINAL")
-            put("countryCode", countryCode)
-            put("currencyCode", currencyCode)
-        }
-
-        val shippingOptionParametersObject = shippingOptions?.let {
+        val gatewayTokenizationSpecification =
             JSONObject().apply {
-                put("defaultSelectedOptionId", shippingOptions.selectedMethod)
-                put(
-                    "shippingOptions",
-                    JSONArray(
-                        shippingOptions.shippingMethods.map { shippingMethod ->
-                            JSONObject().apply {
-                                put("id", shippingMethod.id)
-                                put("label", shippingMethod.name)
-                                put("description", shippingMethod.description)
-                            }
-                        }
+                put("type", "PAYMENT_GATEWAY")
+                put("parameters", gatewayParams)
+            }
+
+        val cardPaymentMethod =
+            GooglePayPayloadUtils.baseCardPaymentMethod(
+                allowedCardNetworks,
+                allowedCardAuthMethods,
+                billingAddressRequired,
+            ).apply {
+                put("tokenizationSpecification", gatewayTokenizationSpecification)
+            }
+
+        val transactionInfo =
+            JSONObject().apply {
+                put("totalPrice", totalPrice)
+                put("totalPriceStatus", "FINAL")
+                put("countryCode", countryCode)
+                put("currencyCode", currencyCode)
+            }
+
+        val shippingOptionParametersObject =
+            shippingOptions?.let {
+                JSONObject().apply {
+                    put("defaultSelectedOptionId", shippingOptions.selectedMethod)
+                    put(
+                        "shippingOptions",
+                        JSONArray(
+                            shippingOptions.shippingMethods.map { shippingMethod ->
+                                JSONObject().apply {
+                                    put("id", shippingMethod.id)
+                                    put("label", shippingMethod.name)
+                                    put("description", shippingMethod.description)
+                                }
+                            },
+                        ),
                     )
-                )
+                }
             }
-        }
 
-        val shippingAddressParametersObject = shippingAddressParameters?.let {
-            JSONObject().apply {
-                put("phoneNumberRequired", it.phoneNumberRequired)
+        val shippingAddressParametersObject =
+            shippingAddressParameters?.let {
+                JSONObject().apply {
+                    put("phoneNumberRequired", it.phoneNumberRequired)
+                }
             }
-        }
 
         return JSONObject(baseRequest.toString()).apply {
             put("allowedPaymentMethods", JSONArray().put(cardPaymentMethod))
@@ -213,17 +221,20 @@ internal class GooglePayFacade(
         }
     }
 
-    private fun pay(activity: Activity, request: JSONObject) {
+    private fun pay(
+        activity: Activity,
+        request: JSONObject,
+    ) {
         val paymentDataRequest = PaymentDataRequest.fromJson(request.toString())
         AutoResolveHelper.resolveTask(
             paymentsClient.loadPaymentData(paymentDataRequest),
             activity,
-            GOOGLE_PAY_REQUEST_CODE
+            GOOGLE_PAY_REQUEST_CODE,
         )
     }
 
     enum class Environment {
         TEST,
-        PRODUCTION
+        PRODUCTION,
     }
 }

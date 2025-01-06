@@ -15,15 +15,15 @@ internal class PaymentMethodMockViewModel(
     private val finaliseMockedFlowInteractor: FinaliseMockedFlowInteractor,
     private val paymentResumeHandler: PaymentResumeHandler,
     private val errorHandler: CheckoutErrorHandler,
-    private val successHandler: CheckoutSuccessHandler
+    private val successHandler: CheckoutSuccessHandler,
 ) : ViewModel() {
-
     private val _finalizeMocked: MutableLiveData<Unit> = MutableLiveData()
     val finalizeMocked: LiveData<Unit> = _finalizeMocked
 
-    fun finaliseMockedFlow() = viewModelScope.launch {
-        finaliseMockedFlowInteractor(None).onSuccess {
-            _finalizeMocked.postValue(Unit)
+    fun finaliseMockedFlow() =
+        viewModelScope.launch {
+            finaliseMockedFlowInteractor(None).onSuccess {
+                _finalizeMocked.postValue(Unit)
+            }
         }
-    }
 }

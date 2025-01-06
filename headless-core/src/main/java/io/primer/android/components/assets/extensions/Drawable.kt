@@ -12,7 +12,7 @@ import kotlin.math.roundToInt
 internal fun Drawable.scaleImage(
     context: Context,
     scaleFactor: Float,
-    maxHeight: Float? = null
+    maxHeight: Float? = null,
 ): Drawable {
     if (this !is BitmapDrawable) return this
 
@@ -27,11 +27,12 @@ internal fun Drawable.scaleImage(
         }
     }
 
-    val scaledBitmap = Bitmap.createBitmap(
-        newWidth.roundToInt(),
-        newHeight.roundToInt(),
-        Bitmap.Config.ARGB_8888
-    )
+    val scaledBitmap =
+        Bitmap.createBitmap(
+            newWidth.roundToInt(),
+            newHeight.roundToInt(),
+            Bitmap.Config.ARGB_8888,
+        )
 
     val ratioX: Float = newWidth / bitmap.width
     val ratioY: Float = newHeight / bitmap.height
@@ -47,7 +48,7 @@ internal fun Drawable.scaleImage(
         bitmap,
         middleX - bitmap.width / 2,
         middleY - bitmap.height / 2,
-        Paint(Paint.FILTER_BITMAP_FLAG)
+        Paint(Paint.FILTER_BITMAP_FLAG),
     )
 
     return BitmapDrawable(context.resources, scaledBitmap).also {

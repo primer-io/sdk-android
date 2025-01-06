@@ -4,9 +4,10 @@ import io.primer.android.core.data.datasource.BaseCacheDataSource
 import io.primer.cardShared.binData.data.model.CardNetworkDataResponse
 
 class InMemoryCardBinMetadataDataSource :
-    BaseCacheDataSource<Map<String, List<CardNetworkDataResponse>>,
-        Pair<String, List<CardNetworkDataResponse>>> {
-
+    BaseCacheDataSource<
+        Map<String, List<CardNetworkDataResponse>>,
+        Pair<String, List<CardNetworkDataResponse>>,
+        > {
     private val cardNetworkDataResponses: HashMap<String, List<CardNetworkDataResponse>> =
         hashMapOf()
 

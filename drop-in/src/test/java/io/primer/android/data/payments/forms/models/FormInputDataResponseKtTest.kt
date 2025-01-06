@@ -7,7 +7,6 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
 class FormInputDataResponseKtTest {
-
     @Test
     fun `toInputType() returns correct input type for FormType TEXT`() {
         val result = FormType.TEXT.toInputType()
@@ -34,26 +33,28 @@ class FormInputDataResponseKtTest {
 
     @Test
     fun `toForm() maps FormDataResponse to Form correctly`() {
-        val formDataResponse = FormDataResponse(
-            title = 123,
-            logo = 456,
-            buttonType = ButtonType.CONFIRM,
-            description = 789,
-            inputs = listOf(
-                FormInputDataResponse(
-                    type = FormType.TEXT,
-                    id = "input1",
-                    hint = 111,
-                    inputCharacters = "abc",
-                    maxInputLength = 10,
-                    validation = "regex",
-                    inputPrefix = mockk<DialCodeCountryPrefix>()
-                )
-            ),
-            accountNumber = "123456",
-            expiration = "12/34",
-            inputPrefix = mockk<DialCodeCountryPrefix>()
-        )
+        val formDataResponse =
+            FormDataResponse(
+                title = 123,
+                logo = 456,
+                buttonType = ButtonType.CONFIRM,
+                description = 789,
+                inputs =
+                    listOf(
+                        FormInputDataResponse(
+                            type = FormType.TEXT,
+                            id = "input1",
+                            hint = 111,
+                            inputCharacters = "abc",
+                            maxInputLength = 10,
+                            validation = "regex",
+                            inputPrefix = mockk<DialCodeCountryPrefix>(),
+                        ),
+                    ),
+                accountNumber = "123456",
+                expiration = "12/34",
+                inputPrefix = mockk<DialCodeCountryPrefix>(),
+            )
 
         val form = formDataResponse.toForm()
 
@@ -80,15 +81,16 @@ class FormInputDataResponseKtTest {
 
     @Test
     fun `toFormInput() maps FormInputDataResponse to FormInput correctly`() {
-        val formInputDataResponse = FormInputDataResponse(
-            type = FormType.NUMBER,
-            id = "input1",
-            hint = 222,
-            inputCharacters = "123",
-            maxInputLength = 5,
-            validation = "regex",
-            inputPrefix = mockk<DialCodeCountryPrefix>()
-        )
+        val formInputDataResponse =
+            FormInputDataResponse(
+                type = FormType.NUMBER,
+                id = "input1",
+                hint = 222,
+                inputCharacters = "123",
+                maxInputLength = 5,
+                validation = "regex",
+                inputPrefix = mockk<DialCodeCountryPrefix>(),
+            )
 
         val formInput = formInputDataResponse.toFormInput()
 

@@ -20,20 +20,20 @@ import org.junit.jupiter.api.extension.ExtendWith
 
 @ExtendWith(MockKExtension::class)
 class Processor3dsWebViewClientTest {
-
     private lateinit var activity: WebViewActivity
     private lateinit var processor3dsWebViewClient: Processor3dsWebViewClient
 
     @BeforeEach
     fun setUp() {
         activity = mockk(relaxed = true)
-        processor3dsWebViewClient = spyk(
-            Processor3dsWebViewClient(
-                activity = activity,
-                url = "https://example.com",
-                returnUrl = "https://return.com"
+        processor3dsWebViewClient =
+            spyk(
+                Processor3dsWebViewClient(
+                    activity = activity,
+                    url = "https://example.com",
+                    returnUrl = "https://return.com",
+                ),
             )
-        )
     }
 
     @Test

@@ -26,40 +26,39 @@ import java.io.File
 import java.util.concurrent.TimeUnit
 
 internal class NetworkContainer(private val sdk: () -> SdkContainer) : DependencyContainer() {
-
     override fun registerInitialDependencies() {
         registerSingleton {
             HttpLoggerInterceptor(
                 logReporter = sdk().resolve(),
                 blacklistedHttpHeaderProviderRegistry =
-                sdk().resolve<BlacklistedHttpHeaderProviderRegistry>()
-                    .apply {
-                        register(
-                            sdk().resolve(
-                                HttpLogObfuscationContainer.DEFAULT_NAME
+                    sdk().resolve<BlacklistedHttpHeaderProviderRegistry>()
+                        .apply {
+                            register(
+                                sdk().resolve(
+                                    HttpLogObfuscationContainer.DEFAULT_NAME,
+                                ),
                             )
-                        )
-                    },
+                        },
                 whitelistedHttpBodyKeyProviderRegistry =
-                sdk().resolve<WhitelistedHttpBodyKeyProviderRegistry>().apply {
-                    listOf(
-                        ConfigurationDataResponse.provider
-                    ).forEach(::register)
-                },
+                    sdk().resolve<WhitelistedHttpBodyKeyProviderRegistry>().apply {
+                        listOf(
+                            ConfigurationDataResponse.provider,
+                        ).forEach(::register)
+                    },
                 pciUrlProvider = {
                     runCatching {
                         sdk().resolve<CacheConfigurationDataSource>(
-                            ConfigurationCoreContainer.CACHED_CONFIGURATION_DI_KEY
+                            ConfigurationCoreContainer.CACHED_CONFIGURATION_DI_KEY,
                         ).get().pciUrl
                     }.getOrNull()
-                }
+                },
             )
         }
 
         registerSingleton {
             Cache(
                 File(sdk().resolve<Context>().cacheDir, CACHE_DIRECTORY),
-                MAX_CACHE_SIZE_MB
+                MAX_CACHE_SIZE_MB,
             )
         }
 
@@ -67,7 +66,7 @@ internal class NetworkContainer(private val sdk: () -> SdkContainer) : Dependenc
             buildOkhttpClient(
                 sdk().resolve(AnalyticsContainer.CHECKOUT_SESSION_ID_PROVIDER_DI_KEY),
                 sdk().resolve(ClientTokenCoreContainer.CACHE_CLIENT_TOKEN_DATA_SOURCE_DI_KEY),
-                resolve()
+                resolve(),
             )
         }
 
@@ -75,7 +74,7 @@ internal class NetworkContainer(private val sdk: () -> SdkContainer) : Dependenc
             PrimerHttpClient(
                 okHttpClient = resolve(),
                 logProvider = sdk().resolve(MESSAGE_LOG_PROVIDER_DI_KEY),
-                messagePropertiesEventProvider = sdk().resolve(MESSAGE_PROPERTIES_PROVIDER_DI_KEY)
+                messagePropertiesEventProvider = sdk().resolve(MESSAGE_PROPERTIES_PROVIDER_DI_KEY),
             )
         }
     }
@@ -83,26 +82,27 @@ internal class NetworkContainer(private val sdk: () -> SdkContainer) : Dependenc
     private fun buildOkhttpClient(
         checkoutSessionIdProvider: CheckoutSessionIdProvider,
         localClientTokenDataSource: CacheClientTokenDataSource,
-        cache: Cache
+        cache: Cache,
     ): OkHttpClient {
-        val builder = OkHttpClient.Builder()
-            .cache(cache)
-            .addInterceptor { chain: Interceptor.Chain ->
-                chain.request().newBuilder()
-                    .addHeader(CONTENT_TYPE_HEADER, CONTENT_TYPE_APPLICATION_JSON)
-                    .addHeader(SDK_VERSION_HEADER, BuildConfig.SDK_VERSION_STRING)
-                    .addHeader(SDK_CLIENT_HEADER, SdkTypeResolver().resolve().name)
-                    .addHeader(
-                        PRIMER_SDK_CHECKOUT_SESSION_ID_HEADER,
-                        checkoutSessionIdProvider.provide()
-                    )
-                    .addHeader(
-                        CLIENT_TOKEN_HEADER,
-                        localClientTokenDataSource.get().accessToken
-                    )
-                    .build()
-                    .let { chain.proceed(it) }
-            }
+        val builder =
+            OkHttpClient.Builder()
+                .cache(cache)
+                .addInterceptor { chain: Interceptor.Chain ->
+                    chain.request().newBuilder()
+                        .addHeader(CONTENT_TYPE_HEADER, CONTENT_TYPE_APPLICATION_JSON)
+                        .addHeader(SDK_VERSION_HEADER, BuildConfig.SDK_VERSION_STRING)
+                        .addHeader(SDK_CLIENT_HEADER, SdkTypeResolver().resolve().name)
+                        .addHeader(
+                            PRIMER_SDK_CHECKOUT_SESSION_ID_HEADER,
+                            checkoutSessionIdProvider.provide(),
+                        )
+                        .addHeader(
+                            CLIENT_TOKEN_HEADER,
+                            localClientTokenDataSource.get().accessToken,
+                        )
+                        .build()
+                        .let { chain.proceed(it) }
+                }
         builder.addInterceptor(sdk().resolve(AnalyticsContainer.HTTP_INTERCEPTOR_DI_KEY) as Interceptor)
         builder.addInterceptor(resolve<HttpLoggerInterceptor>())
         builder.readTimeout(READ_TIMEOUT, TimeUnit.SECONDS)

@@ -13,15 +13,14 @@ import io.primer.android.nolpay.api.manager.unlinkCard.component.NolPayUnlinkCar
  * functionalities within your application.
  */
 class PrimerHeadlessUniversalCheckoutNolPayManager {
-
     /**
      * Provides an instance of the [NolPayLinkCardComponent] to manage linking a card for Nol Pay.
      *
      * @param viewModelStoreOwner The [ViewModelStoreOwner] to associate with the component.
      * @return An instance of [NolPayLinkCardComponent].
      */
-    fun provideNolPayLinkCardComponent(viewModelStoreOwner: ViewModelStoreOwner):
-        NolPayLinkCardComponent = NolPayLinkCardComponent.provideInstance(viewModelStoreOwner)
+    fun provideNolPayLinkCardComponent(viewModelStoreOwner: ViewModelStoreOwner): NolPayLinkCardComponent =
+        NolPayLinkCardComponent.provideInstance(viewModelStoreOwner)
 
     /**
      * Provides an instance of the [NolPayUnlinkCardComponent] to manage unlinking a card from Nol Pay.
@@ -29,8 +28,8 @@ class PrimerHeadlessUniversalCheckoutNolPayManager {
      * @param viewModelStoreOwner The [ViewModelStoreOwner] to associate with the component.
      * @return An instance of [NolPayUnlinkCardComponent].
      */
-    fun provideNolPayUnlinkCardComponent(viewModelStoreOwner: ViewModelStoreOwner):
-        NolPayUnlinkCardComponent = NolPayUnlinkCardComponent.provideInstance(viewModelStoreOwner)
+    fun provideNolPayUnlinkCardComponent(viewModelStoreOwner: ViewModelStoreOwner): NolPayUnlinkCardComponent =
+        NolPayUnlinkCardComponent.provideInstance(viewModelStoreOwner)
 
     /**
      * Provides an instance of the [NolPayPaymentComponent] to handle Nol Pay payments.
@@ -38,8 +37,8 @@ class PrimerHeadlessUniversalCheckoutNolPayManager {
      * @param viewModelStoreOwner The [ViewModelStoreOwner] to associate with the component.
      * @return An instance of [NolPayPaymentComponent].
      */
-    fun provideNolPayPaymentComponent(viewModelStoreOwner: ViewModelStoreOwner):
-        NolPayPaymentComponent = NolPayPaymentComponent.getInstance(viewModelStoreOwner)
+    fun provideNolPayPaymentComponent(viewModelStoreOwner: ViewModelStoreOwner): NolPayPaymentComponent =
+        NolPayPaymentComponent.getInstance(viewModelStoreOwner)
 
     /**
      * Provides an instance of the [NolPayLinkedCardsComponent] to manage linked cards for Nol Pay.

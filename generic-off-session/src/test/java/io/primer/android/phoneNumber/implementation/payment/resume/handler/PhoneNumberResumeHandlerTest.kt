@@ -15,7 +15,6 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 internal class PhoneNumberResumeHandlerTest {
-
     private lateinit var clientTokenParser: PhoneNumberClientTokenParser
     private lateinit var tokenizedPaymentMethodRepository: TokenizedPaymentMethodRepository
     private lateinit var validateClientTokenRepository: ValidateClientTokenRepository
@@ -30,22 +29,24 @@ internal class PhoneNumberResumeHandlerTest {
         validateClientTokenRepository = mockk()
         clientTokenRepository = mockk()
         checkoutAdditionalInfoHandler = mockk()
-        handler = PhoneNumberResumeHandler(
-            clientTokenParser,
-            tokenizedPaymentMethodRepository,
-            validateClientTokenRepository,
-            clientTokenRepository,
-            checkoutAdditionalInfoHandler
-        )
+        handler =
+            PhoneNumberResumeHandler(
+                clientTokenParser,
+                tokenizedPaymentMethodRepository,
+                validateClientTokenRepository,
+                clientTokenRepository,
+                checkoutAdditionalInfoHandler,
+            )
     }
 
     @Test
     fun `supportedClientTokenIntents should return the correct data`() {
         // Arrange
         val paymentMethodType = "OMISE_PROMPTPAY"
-        val paymentMethod = mockk<PaymentMethodTokenInternal> {
-            every { this@mockk.paymentMethodType } returns paymentMethodType
-        }
+        val paymentMethod =
+            mockk<PaymentMethodTokenInternal> {
+                every { this@mockk.paymentMethodType } returns paymentMethodType
+            }
 
         every { tokenizedPaymentMethodRepository.getPaymentMethod() } returns paymentMethod
 
@@ -58,14 +59,16 @@ internal class PhoneNumberResumeHandlerTest {
 
     @Test
     fun `getResumeDecision should correctly parse client token and return PhoneNumberDecision`() {
-        val clientToken = PhoneNumberClientToken(
-            clientTokenIntent = "PAYMENT_METHOD_VOUCHER",
-            statusUrl = "statusUrl"
-        )
+        val clientToken =
+            PhoneNumberClientToken(
+                clientTokenIntent = "PAYMENT_METHOD_VOUCHER",
+                statusUrl = "statusUrl",
+            )
 
-        val expectedDecision = PhoneNumberDecision(
-            statusUrl = clientToken.statusUrl
-        )
+        val expectedDecision =
+            PhoneNumberDecision(
+                statusUrl = clientToken.statusUrl,
+            )
 
         runTest {
             val result = handler.getResumeDecision(clientToken)

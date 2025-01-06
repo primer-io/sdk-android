@@ -19,5 +19,5 @@ internal fun IPay88ActivityLauncherParams.toIPay88LauncherParams() =
         remark,
         backendCallbackUrl,
         deeplinkUrl,
-        errorCode
+        errorCode,
     )

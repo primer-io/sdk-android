@@ -44,15 +44,15 @@ internal class BankIssuerContainer(private val sdk: () -> SdkContainer, private 
         sdk().resolve<WhitelistedHttpBodyKeyProviderRegistry>().apply {
             listOf(
                 IssuingBankDataRequest.provider,
-                IssuingBankResultDataResponse.provider
+                IssuingBankResultDataResponse.provider,
             ).forEach(::register)
         }
 
         registerFactory(name = paymentMethodType) {
             PaymentMethodSdkAnalyticsEventLoggingDelegate(
                 primerPaymentMethodManagerCategory =
-                PrimerPaymentMethodManagerCategory.COMPONENT_WITH_REDIRECT.name,
-                analyticsInteractor = sdk().resolve()
+                    PrimerPaymentMethodManagerCategory.COMPONENT_WITH_REDIRECT.name,
+                analyticsInteractor = sdk().resolve(),
             )
         }
 
@@ -66,7 +66,7 @@ internal class BankIssuerContainer(private val sdk: () -> SdkContainer, private 
 
         registerFactory<RedirectDeeplinkRepository> {
             RedirectDeeplinkDataRepository(
-                applicationIdProvider = sdk().resolve(Constants.APPLICATION_ID_PROVIDER_DI_KEY)
+                applicationIdProvider = sdk().resolve(Constants.APPLICATION_ID_PROVIDER_DI_KEY),
             )
         }
 
@@ -75,11 +75,11 @@ internal class BankIssuerContainer(private val sdk: () -> SdkContainer, private 
         }
 
         registerFactory<PaymentMethodConfigurationRepository<BankIssuerConfig, BankIssuerConfigParams>>(
-            name = paymentMethodType
+            name = paymentMethodType,
         ) {
             BankIssuerConfigurationDataRepository(
                 configurationDataSource = sdk().resolve(ConfigurationCoreContainer.CACHED_CONFIGURATION_DI_KEY),
-                settings = sdk().resolve()
+                settings = sdk().resolve(),
             )
         }
 
@@ -90,7 +90,7 @@ internal class BankIssuerContainer(private val sdk: () -> SdkContainer, private 
         registerFactory { BankIssuerTokenizationParamsMapper() }
 
         registerFactory<BaseRemoteTokenizationDataSource<BankIssuerPaymentInstrumentDataRequest>>(
-            name = paymentMethodType
+            name = paymentMethodType,
         ) {
             BankIssuerRemoteTokenizationDataSource(primerHttpClient = sdk().resolve())
         }
@@ -99,7 +99,7 @@ internal class BankIssuerContainer(private val sdk: () -> SdkContainer, private 
             BankIssuerTokenizationDataRepository(
                 remoteTokenizationDataSource = resolve(name = paymentMethodType),
                 cacheDataSource = sdk().resolve(ConfigurationCoreContainer.CACHED_CONFIGURATION_DI_KEY),
-                tokenizationParamsMapper = resolve()
+                tokenizationParamsMapper = resolve(),
             )
         }
 
@@ -113,7 +113,7 @@ internal class BankIssuerContainer(private val sdk: () -> SdkContainer, private 
                 deeplinkRepository = sdk().resolve(),
                 validateClientTokenRepository = sdk().resolve(),
                 clientTokenRepository = sdk().resolve(),
-                checkoutAdditionalInfoHandler = sdk().resolve()
+                checkoutAdditionalInfoHandler = sdk().resolve(),
             )
         }
 
@@ -122,7 +122,7 @@ internal class BankIssuerContainer(private val sdk: () -> SdkContainer, private 
                 tokenizationRepository = resolve(name = paymentMethodType),
                 tokenizedPaymentMethodRepository = sdk().resolve(),
                 preTokenizationHandler = sdk().resolve(),
-                logReporter = sdk().resolve()
+                logReporter = sdk().resolve(),
             )
         }
 
@@ -131,7 +131,7 @@ internal class BankIssuerContainer(private val sdk: () -> SdkContainer, private 
                 paymentMethodType = paymentMethodType,
                 banksInteractor = sdk().resolve(),
                 banksFilterInteractor = sdk().resolve(),
-                configurationInteractor = resolve(name = paymentMethodType)
+                configurationInteractor = resolve(name = paymentMethodType),
             )
         }
 
@@ -141,7 +141,7 @@ internal class BankIssuerContainer(private val sdk: () -> SdkContainer, private 
                 primerSettings = sdk().resolve(),
                 tokenizationInteractor = resolve(name = paymentMethodType),
                 actionInteractor = sdk().resolve(ActionsContainer.ACTION_INTERACTOR_IGNORE_ERRORS_DI_KEY),
-                deeplinkInteractor = resolve(name = paymentMethodType)
+                deeplinkInteractor = resolve(name = paymentMethodType),
             )
         }
 
@@ -152,7 +152,7 @@ internal class BankIssuerContainer(private val sdk: () -> SdkContainer, private 
                 successHandler = sdk().resolve(),
                 errorHandler = sdk().resolve(),
                 baseErrorResolver = sdk().resolve(),
-                bankIssuerResumeHandler = resolve()
+                bankIssuerResumeHandler = resolve(),
             )
         }
 
@@ -160,7 +160,7 @@ internal class BankIssuerContainer(private val sdk: () -> SdkContainer, private 
             BankWebRedirectComposer(
                 tokenizationDelegate = resolve(name = paymentMethodType),
                 pollingInteractor = sdk().resolve(PaymentsContainer.POLLING_INTERACTOR_DI_KEY),
-                paymentDelegate = resolve(name = paymentMethodType)
+                paymentDelegate = resolve(name = paymentMethodType),
             )
         }
     }

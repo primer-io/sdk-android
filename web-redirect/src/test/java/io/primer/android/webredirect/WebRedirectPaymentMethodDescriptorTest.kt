@@ -2,8 +2,8 @@ package io.primer.android.webredirect
 
 import io.mockk.mockk
 import io.primer.android.components.domain.core.models.PrimerPaymentMethodManagerCategory
-import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.configuration.data.model.PaymentMethodConfigDataResponse
+import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.paymentmethods.VaultCapability
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -11,7 +11,6 @@ import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 
 internal class WebRedirectPaymentMethodDescriptorTest {
-
     private lateinit var descriptor: WebRedirectPaymentMethodDescriptor
     private lateinit var options: WebRedirectPaymentMethod
     private lateinit var localConfig: PrimerConfig
@@ -38,7 +37,7 @@ internal class WebRedirectPaymentMethodDescriptorTest {
         assertEquals(1, headlessDefinition.paymentMethodManagerCategories.size)
         assertEquals(
             expected = PrimerPaymentMethodManagerCategory.NATIVE_UI,
-            actual = headlessDefinition.paymentMethodManagerCategories.first()
+            actual = headlessDefinition.paymentMethodManagerCategories.first(),
         )
     }
 }

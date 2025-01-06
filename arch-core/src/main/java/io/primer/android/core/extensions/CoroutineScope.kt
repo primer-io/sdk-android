@@ -11,29 +11,31 @@ val DEFAULT_DEBOUNCE_INTERVAL_IN_MILLIS: Duration = 275.milliseconds
 
 fun <T> CoroutineScope.debounce(
     debounceInterval: Duration = DEFAULT_DEBOUNCE_INTERVAL_IN_MILLIS,
-    action: suspend CoroutineScope.(T) -> Unit
+    action: suspend CoroutineScope.(T) -> Unit,
 ): (T) -> Unit {
     var debounceJob: Job? = null
     return { param: T ->
         debounceJob?.cancel()
-        debounceJob = launch {
-            delay(debounceInterval)
-            action(param)
-        }
+        debounceJob =
+            launch {
+                delay(debounceInterval)
+                action(param)
+            }
     }
 }
 
 internal fun <T> CoroutineScope.cancellable(
     predicate: (T) -> Boolean,
-    action: suspend CoroutineScope.(T) -> Unit
+    action: suspend CoroutineScope.(T) -> Unit,
 ): (T) -> Unit {
     var cancellableJob: Job? = null
     return { param: T ->
         if (predicate.invoke(param)) {
             cancellableJob?.cancel()
         }
-        cancellableJob = launch {
-            action(param)
-        }
+        cancellableJob =
+            launch {
+                action(param)
+            }
     }
 }

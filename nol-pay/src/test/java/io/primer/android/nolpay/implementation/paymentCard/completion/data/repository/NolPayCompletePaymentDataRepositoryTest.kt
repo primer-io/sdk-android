@@ -18,7 +18,6 @@ import org.junit.jupiter.api.extension.ExtendWith
 @ExperimentalCoroutinesApi
 @ExtendWith(MockKExtension::class)
 internal class NolPayCompletePaymentDataRepositoryTest {
-
     private lateinit var repository: NolPayCompletePaymentDataRepository
     private val completePaymentDataSource: RemoteNolPayCompletePaymentDataSource = mockk()
 
@@ -67,11 +66,12 @@ internal class NolPayCompletePaymentDataRepositoryTest {
         coEvery { completePaymentDataSource.execute(completeUrl) } throws exception
 
         // When/Then
-        val thrownException = assertThrows<RuntimeException> {
-            runTest {
-                repository.completePayment(completeUrl).getOrThrow()
+        val thrownException =
+            assertThrows<RuntimeException> {
+                runTest {
+                    repository.completePayment(completeUrl).getOrThrow()
+                }
             }
-        }
         assert(thrownException.message == "Unexpected error")
 
         coVerify(exactly = 1) { completePaymentDataSource.execute(completeUrl) }

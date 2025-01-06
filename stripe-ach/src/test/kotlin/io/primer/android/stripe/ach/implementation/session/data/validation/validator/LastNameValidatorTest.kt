@@ -25,9 +25,9 @@ class LastNameValidatorTest {
             PrimerValidationError(
                 errorId = StripeAchUserDetailsValidations.INVALID_CUSTOMER_LAST_NAME_ERROR_ID,
                 description = "The last name may not be blank.",
-                diagnosticsId = "uuid"
+                diagnosticsId = "uuid",
             ),
-            result
+            result,
         )
         unmockkStatic(UUID::class)
     }

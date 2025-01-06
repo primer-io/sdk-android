@@ -49,14 +49,13 @@ import io.primer.android.stripe.ach.implementation.validation.rules.ValidStripeM
 import io.primer.android.stripe.ach.implementation.validation.rules.ValidStripePublishableKeyRule
 
 internal class StripeContainer(private val sdk: () -> SdkContainer) : DependencyContainer() {
-
     override fun registerInitialDependencies() {
         val paymentMethodType = PaymentMethodType.STRIPE_ACH.name
 
         registerSingleton(name = paymentMethodType) {
             PaymentMethodSdkAnalyticsEventLoggingDelegate(
                 primerPaymentMethodManagerCategory = PrimerPaymentMethodManagerCategory.STRIPE_ACH.name,
-                analyticsInteractor = sdk().resolve()
+                analyticsInteractor = sdk().resolve(),
             )
         }
 
@@ -70,18 +69,20 @@ internal class StripeContainer(private val sdk: () -> SdkContainer) : Dependency
 
         registerSingleton {
             GetClientSessionCustomerDetailsDelegate(
-                configurationInteractor = sdk().resolve(
-                    ConfigurationCoreContainer.CONFIGURATION_INTERACTOR_DI_KEY
-                )
+                configurationInteractor =
+                    sdk().resolve(
+                        ConfigurationCoreContainer.CONFIGURATION_INTERACTOR_DI_KEY,
+                    ),
             )
         }
 
         registerSingleton {
             StripeAchClientSessionPatchDelegate(
-                configurationInteractor = sdk().resolve(
-                    ConfigurationCoreContainer.CONFIGURATION_INTERACTOR_DI_KEY
-                ),
-                actionInteractor = sdk().resolve(ActionsContainer.ACTION_INTERACTOR_IGNORE_ERRORS_DI_KEY)
+                configurationInteractor =
+                    sdk().resolve(
+                        ConfigurationCoreContainer.CONFIGURATION_INTERACTOR_DI_KEY,
+                    ),
+                actionInteractor = sdk().resolve(ActionsContainer.ACTION_INTERACTOR_IGNORE_ERRORS_DI_KEY),
             )
         }
 
@@ -90,7 +91,7 @@ internal class StripeContainer(private val sdk: () -> SdkContainer) : Dependency
         }
 
         registerSingleton<
-            TokenizationParamsMapper<StripeAchPaymentInstrumentParams, StripeAchPaymentInstrumentDataRequest>
+            TokenizationParamsMapper<StripeAchPaymentInstrumentParams, StripeAchPaymentInstrumentDataRequest>,
             > {
             StripeAchTokenizationParamsMapper()
         }
@@ -99,7 +100,7 @@ internal class StripeContainer(private val sdk: () -> SdkContainer) : Dependency
             StripeAchTokenizationDataRepository(
                 remoteTokenizationDataSource = resolve(),
                 localConfigurationDataSource = sdk().resolve(ConfigurationCoreContainer.CACHED_CONFIGURATION_DI_KEY),
-                tokenizationParamsMapper = resolve()
+                tokenizationParamsMapper = resolve(),
             )
         }
 
@@ -108,14 +109,14 @@ internal class StripeContainer(private val sdk: () -> SdkContainer) : Dependency
                 tokenizationRepository = resolve(),
                 tokenizedPaymentMethodRepository = sdk().resolve(),
                 preTokenizationHandler = sdk().resolve(),
-                logReporter = sdk().resolve()
+                logReporter = sdk().resolve(),
             )
         }
 
         registerSingleton<PaymentMethodConfigurationRepository<StripeAchConfig, StripeAchConfigParams>> {
             StripeAchConfigurationDataRepository(
                 configurationDataSource = sdk().resolve(ConfigurationCoreContainer.CACHED_CONFIGURATION_DI_KEY),
-                settings = sdk().resolve()
+                settings = sdk().resolve(),
             )
         }
 
@@ -128,7 +129,7 @@ internal class StripeContainer(private val sdk: () -> SdkContainer) : Dependency
                 stripeAchConfigurationInteractor = resolve(),
                 tokenizationInteractor = resolve(),
                 primerSettings = sdk().resolve(),
-                actionInteractor = sdk().resolve(ActionsContainer.ACTION_INTERACTOR_IGNORE_ERRORS_DI_KEY)
+                actionInteractor = sdk().resolve(ActionsContainer.ACTION_INTERACTOR_IGNORE_ERRORS_DI_KEY),
             )
         }
 
@@ -146,7 +147,7 @@ internal class StripeContainer(private val sdk: () -> SdkContainer) : Dependency
                 checkoutAdditionalInfoHandler = sdk().resolve(),
                 stripePublishableKeyDelegate = resolve(),
                 getClientSessionCustomerDetailsDelegate = resolve(),
-                mockConfigurationDelegate = sdk().resolve()
+                mockConfigurationDelegate = sdk().resolve(),
             )
         }
 
@@ -156,7 +157,7 @@ internal class StripeContainer(private val sdk: () -> SdkContainer) : Dependency
                 tokenizedPaymentMethodRepository = sdk().resolve(),
                 validateClientTokenRepository = sdk().resolve(),
                 clientTokenRepository = sdk().resolve(),
-                checkoutAdditionalInfoHandler = sdk().resolve()
+                checkoutAdditionalInfoHandler = sdk().resolve(),
             )
         }
 
@@ -166,7 +167,7 @@ internal class StripeContainer(private val sdk: () -> SdkContainer) : Dependency
                 tokenizedPaymentMethodRepository = sdk().resolve(),
                 validateClientTokenRepository = sdk().resolve(),
                 clientTokenRepository = sdk().resolve(),
-                checkoutAdditionalInfoHandler = sdk().resolve()
+                checkoutAdditionalInfoHandler = sdk().resolve(),
             )
         }
 
@@ -176,7 +177,7 @@ internal class StripeContainer(private val sdk: () -> SdkContainer) : Dependency
                 tokenizedPaymentMethodRepository = sdk().resolve(),
                 validateClientTokenRepository = sdk().resolve(),
                 clientTokenRepository = sdk().resolve(),
-                checkoutAdditionalInfoHandler = sdk().resolve()
+                checkoutAdditionalInfoHandler = sdk().resolve(),
             )
         }
 
@@ -187,7 +188,7 @@ internal class StripeContainer(private val sdk: () -> SdkContainer) : Dependency
                 successHandler = sdk().resolve(),
                 errorHandler = sdk().resolve(),
                 baseErrorResolver = sdk().resolve(),
-                resumeDecisionHandler = resolve()
+                resumeDecisionHandler = resolve(),
             )
         }
 
@@ -203,7 +204,7 @@ internal class StripeContainer(private val sdk: () -> SdkContainer) : Dependency
                 paymentResultRepository = sdk().resolve(),
                 config = sdk().resolve(),
                 pendingResumeHandler = sdk().resolve(),
-                manualFlowSuccessHandler = sdk().resolve()
+                manualFlowSuccessHandler = sdk().resolve(),
             )
         }
 
@@ -216,7 +217,7 @@ internal class StripeContainer(private val sdk: () -> SdkContainer) : Dependency
         registerSingleton {
             StripeAchMandateTimestampLoggingDelegate(
                 logReporter = sdk().resolve(),
-                analyticsInteractor = sdk().resolve()
+                analyticsInteractor = sdk().resolve(),
             )
         }
 
@@ -226,7 +227,7 @@ internal class StripeContainer(private val sdk: () -> SdkContainer) : Dependency
                 checkoutAdditionalInfoHandler = sdk().resolve(),
                 stripeAchMandateTimestampLoggingDelegate = resolve(),
                 completeStripeAchPaymentSessionDelegate = resolve(),
-                paymentResultRepository = sdk().resolve()
+                paymentResultRepository = sdk().resolve(),
             )
         }
 
@@ -245,7 +246,7 @@ internal class StripeContainer(private val sdk: () -> SdkContainer) : Dependency
         registerSingleton {
             StripeInitValidationRulesResolver(
                 validStripePublishableKeyRule = resolve(),
-                validStripeMandateDataRule = resolve()
+                validStripeMandateDataRule = resolve(),
             )
         }
     }

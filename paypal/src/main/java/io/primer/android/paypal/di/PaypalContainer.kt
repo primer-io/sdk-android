@@ -51,14 +51,13 @@ import io.primer.android.paypal.implementation.validation.resolvers.PaypalVaultV
 
 internal class PaypalContainer(private val sdk: () -> SdkContainer, private val paymentMethodType: String) :
     DependencyContainer() {
-
     override fun registerInitialDependencies() {
         sdk().resolve<WhitelistedHttpBodyKeyProviderRegistry>().apply {
             listOf(
                 PaypalCreateOrderDataRequest.provider,
                 PaypalOrderInfoDataRequest.provider,
                 PaypalCreateBillingAgreementDataRequest.provider,
-                PaypalConfirmBillingAgreementDataRequest.provider
+                PaypalConfirmBillingAgreementDataRequest.provider,
             ).forEach(::register)
         }
 
@@ -67,14 +66,14 @@ internal class PaypalContainer(private val sdk: () -> SdkContainer, private val 
         registerSingleton<PaypalInfoRepository> {
             PaypalOrderInfoDataRepository(
                 resolve(),
-                sdk().resolve(ConfigurationCoreContainer.CACHED_CONFIGURATION_DI_KEY)
+                sdk().resolve(ConfigurationCoreContainer.CACHED_CONFIGURATION_DI_KEY),
             )
         }
 
         registerSingleton {
             PaypalOrderInfoInteractor(
                 paypalInfoRepository = resolve(),
-                validationRulesResolver = resolve()
+                validationRulesResolver = resolve(),
             )
         }
 
@@ -83,13 +82,13 @@ internal class PaypalContainer(private val sdk: () -> SdkContainer, private val 
         registerSingleton<PaypalCreateOrderRepository> {
             PaypalCreateOrderDataRepository(
                 createOrderDataSource = resolve(),
-                configurationDataSource = sdk().resolve(ConfigurationCoreContainer.CACHED_CONFIGURATION_DI_KEY)
+                configurationDataSource = sdk().resolve(ConfigurationCoreContainer.CACHED_CONFIGURATION_DI_KEY),
             )
         }
 
         registerSingleton {
             PaypalCreateOrderInteractor(
-                createOrderRepository = resolve()
+                createOrderRepository = resolve(),
             )
         }
 
@@ -100,27 +99,27 @@ internal class PaypalContainer(private val sdk: () -> SdkContainer, private val 
         registerSingleton<PaypalCreateBillingAgreementRepository> {
             PaypalCreateBillingAgreementDataRepository(
                 createBillingAgreementDataSource = resolve(),
-                configurationDataSource = sdk().resolve(ConfigurationCoreContainer.CACHED_CONFIGURATION_DI_KEY)
+                configurationDataSource = sdk().resolve(ConfigurationCoreContainer.CACHED_CONFIGURATION_DI_KEY),
             )
         }
 
         registerSingleton<PaypalConfirmBillingAgreementRepository> {
             PaypalConfirmBillingAgreementDataRepository(
                 confirmBillingAgreementDataSource = resolve(),
-                configurationDataSource = sdk().resolve(ConfigurationCoreContainer.CACHED_CONFIGURATION_DI_KEY)
+                configurationDataSource = sdk().resolve(ConfigurationCoreContainer.CACHED_CONFIGURATION_DI_KEY),
             )
         }
 
         registerSingleton {
             PaypalCreateBillingAgreementInteractor(
-                createOrderRepository = resolve()
+                createOrderRepository = resolve(),
             )
         }
 
         registerSingleton {
             PaypalConfirmBillingAgreementInteractor(
                 confirmBillingAgreementRepository = resolve(),
-                validationRulesResolver = resolve()
+                validationRulesResolver = resolve(),
             )
         }
 
@@ -128,7 +127,7 @@ internal class PaypalContainer(private val sdk: () -> SdkContainer, private val 
 
         registerSingleton {
             PaypalCheckoutOrderInfoValidationRulesResolver(
-                resolve()
+                resolve(),
             )
         }
 
@@ -136,7 +135,7 @@ internal class PaypalContainer(private val sdk: () -> SdkContainer, private val 
 
         registerSingleton {
             PaypalVaultValidationRulesResolver(
-                resolve()
+                resolve(),
             )
         }
 
@@ -147,11 +146,11 @@ internal class PaypalContainer(private val sdk: () -> SdkContainer, private val 
         registerSingleton { PaypalCheckoutOrderValidationRulesResolver(resolve(), resolve()) }
 
         registerFactory<PaymentMethodConfigurationRepository<PaypalConfig, PaypalConfigParams>>(
-            name = paymentMethodType
+            name = paymentMethodType,
         ) {
             PaypalConfigurationDataRepository(
                 configurationDataSource = sdk().resolve(ConfigurationCoreContainer.CACHED_CONFIGURATION_DI_KEY),
-                applicationIdProvider = sdk().resolve(Constants.APPLICATION_ID_PROVIDER_DI_KEY)
+                applicationIdProvider = sdk().resolve(Constants.APPLICATION_ID_PROVIDER_DI_KEY),
             )
         }
 
@@ -162,7 +161,7 @@ internal class PaypalContainer(private val sdk: () -> SdkContainer, private val 
         registerFactory { PaypalTokenizationParamsMapper() }
 
         registerFactory<BaseRemoteTokenizationDataSource<PaypalPaymentInstrumentDataRequest>>(
-            name = paymentMethodType
+            name = paymentMethodType,
         ) {
             PaypalRemoteTokenizationDataSource(primerHttpClient = sdk().resolve())
         }
@@ -171,7 +170,7 @@ internal class PaypalContainer(private val sdk: () -> SdkContainer, private val 
             PaypalTokenizationDataRepository(
                 remoteTokenizationDataSource = resolve(name = paymentMethodType),
                 cacheDataSource = sdk().resolve(ConfigurationCoreContainer.CACHED_CONFIGURATION_DI_KEY),
-                tokenizationParamsMapper = resolve()
+                tokenizationParamsMapper = resolve(),
             )
         }
 
@@ -180,7 +179,7 @@ internal class PaypalContainer(private val sdk: () -> SdkContainer, private val 
                 tokenizationRepository = resolve(name = paymentMethodType),
                 tokenizedPaymentMethodRepository = sdk().resolve(),
                 preTokenizationHandler = sdk().resolve(),
-                logReporter = sdk().resolve()
+                logReporter = sdk().resolve(),
             )
         }
 
@@ -188,7 +187,7 @@ internal class PaypalContainer(private val sdk: () -> SdkContainer, private val 
             PaypalTokenizationCollectorDelegate(
                 configurationInteractor = resolve(name = paymentMethodType),
                 createOrderInteractor = resolve(),
-                createBillingAgreementInteractor = resolve()
+                createBillingAgreementInteractor = resolve(),
             )
         }
     }

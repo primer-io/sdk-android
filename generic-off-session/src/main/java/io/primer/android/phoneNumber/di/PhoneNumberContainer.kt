@@ -26,22 +26,21 @@ import io.primer.android.phoneNumber.implementation.validation.validator.PhoneNu
 
 internal class PhoneNumberContainer(private val sdk: () -> SdkContainer, private val paymentMethodType: String) :
     DependencyContainer() {
-
     override fun registerInitialDependencies() {
         registerFactory(name = paymentMethodType) {
             PaymentMethodSdkAnalyticsEventLoggingDelegate(
                 primerPaymentMethodManagerCategory =
-                PrimerPaymentMethodManagerCategory.RAW_DATA.name,
-                analyticsInteractor = sdk().resolve()
+                    PrimerPaymentMethodManagerCategory.RAW_DATA.name,
+                analyticsInteractor = sdk().resolve(),
             )
         }
 
         registerFactory<PaymentMethodConfigurationRepository<PhoneNumberConfig, PhoneNumberConfigParams>>(
-            name = paymentMethodType
+            name = paymentMethodType,
         ) {
             PhoneNumberConfigurationDataRepository(
                 configurationDataSource = sdk().resolve(ConfigurationCoreContainer.CACHED_CONFIGURATION_DI_KEY),
-                settings = sdk().resolve()
+                settings = sdk().resolve(),
             )
         }
 
@@ -50,7 +49,7 @@ internal class PhoneNumberContainer(private val sdk: () -> SdkContainer, private
         }
 
         registerFactory<BaseRemoteTokenizationDataSource<PhoneNumberPaymentInstrumentDataRequest>>(
-            name = paymentMethodType
+            name = paymentMethodType,
         ) {
             PhoneNumberRemoteTokenizationDataSource(primerHttpClient = sdk().resolve())
         }
@@ -63,14 +62,15 @@ internal class PhoneNumberContainer(private val sdk: () -> SdkContainer, private
 
         registerFactory<PhoneNumberTokenizationInteractor>(name = paymentMethodType) {
             DefaultPhoneNumberTokenizationInteractor(
-                tokenizationRepository = PhoneNumberTokenizationDataRepository(
-                    remoteTokenizationDataSource = sdk().resolve(paymentMethodType),
-                    configurationDataSource = sdk().resolve(ConfigurationCoreContainer.CACHED_CONFIGURATION_DI_KEY),
-                    tokenizationParamsMapper = resolve()
-                ),
+                tokenizationRepository =
+                    PhoneNumberTokenizationDataRepository(
+                        remoteTokenizationDataSource = sdk().resolve(paymentMethodType),
+                        configurationDataSource = sdk().resolve(ConfigurationCoreContainer.CACHED_CONFIGURATION_DI_KEY),
+                        tokenizationParamsMapper = resolve(),
+                    ),
                 tokenizedPaymentMethodRepository = sdk().resolve(),
                 preTokenizationHandler = sdk().resolve(),
-                logReporter = sdk().resolve()
+                logReporter = sdk().resolve(),
             )
         }
 
@@ -84,7 +84,7 @@ internal class PhoneNumberContainer(private val sdk: () -> SdkContainer, private
                 validateClientTokenRepository = sdk().resolve(),
                 clientTokenRepository = sdk().resolve(),
                 checkoutAdditionalInfoHandler = sdk().resolve(),
-                tokenizedPaymentMethodRepository = sdk().resolve()
+                tokenizedPaymentMethodRepository = sdk().resolve(),
             )
         }
     }

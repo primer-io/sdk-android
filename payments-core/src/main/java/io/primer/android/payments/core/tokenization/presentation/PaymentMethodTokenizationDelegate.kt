@@ -14,7 +14,7 @@ import io.primer.android.payments.core.tokenization.presentation.composable.Toke
  * Tokenizes payment method data.
  */
 abstract class PaymentMethodTokenizationDelegate<in I : TokenizationInputable, O : BasePaymentInstrumentParams>(
-    private val tokenizationInteractor: TokenizationInteractor<O>
+    private val tokenizationInteractor: TokenizationInteractor<O>,
 ) : Tokenizable<I>, TokenizationCollectedDataMapper<I, O> {
     /**
      * Tokenizes the given [TokenizationInputable], returning [token data][PrimerPaymentMethodTokenData] received

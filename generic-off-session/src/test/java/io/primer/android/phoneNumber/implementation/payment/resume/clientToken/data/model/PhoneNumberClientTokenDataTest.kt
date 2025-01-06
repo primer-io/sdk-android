@@ -12,14 +12,14 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 
 class PhoneNumberClientTokenDataTest {
-
     private val encodedToken = "encodedToken"
-    private val decodedToken = """
+    private val decodedToken =
+        """
         {
             "intent": "intent",
             "statusUrl": "statusUrl",
         }
-    """.trimIndent()
+        """.trimIndent()
 
     @BeforeEach
     fun setUp() {

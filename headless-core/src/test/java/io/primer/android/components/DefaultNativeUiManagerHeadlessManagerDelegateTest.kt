@@ -35,7 +35,6 @@ import org.junit.jupiter.api.extension.ExtendWith
 @ExperimentalCoroutinesApi
 @ExtendWith(InstantExecutorExtension::class, MockKExtension::class)
 class DefaultNativeUiManagerHeadlessManagerDelegateTest {
-
     private lateinit var actionInteractor: ActionInteractor
     private lateinit var sessionIntentRulesResolver: PaymentMethodManagerSessionIntentRulesResolver
     private lateinit var paymentMethodInitializer: PaymentMethodInitializer
@@ -57,17 +56,18 @@ class DefaultNativeUiManagerHeadlessManagerDelegateTest {
 
         every { scopeProvider.scope } returns CoroutineScope(SupervisorJob())
 
-        nativeUiManagerHeadlessDelegate = spyk(
-            DefaultNativeUiManagerHeadlessManagerDelegate(
-                actionInteractor = actionInteractor,
-                sessionIntentRulesResolver = sessionIntentRulesResolver,
-                paymentMethodInitializer = paymentMethodInitializer,
-                paymentMethodStarter = paymentMethodStarter,
-                composerRegistry = composerRegistry,
-                preparationStartHandler = preparationStartHandler,
-                headlessScopeProvider = scopeProvider
+        nativeUiManagerHeadlessDelegate =
+            spyk(
+                DefaultNativeUiManagerHeadlessManagerDelegate(
+                    actionInteractor = actionInteractor,
+                    sessionIntentRulesResolver = sessionIntentRulesResolver,
+                    paymentMethodInitializer = paymentMethodInitializer,
+                    paymentMethodStarter = paymentMethodStarter,
+                    composerRegistry = composerRegistry,
+                    preparationStartHandler = preparationStartHandler,
+                    headlessScopeProvider = scopeProvider,
+                ),
             )
-        )
     }
 
     @Disabled("Not sure how to address the onPostStart parameter")

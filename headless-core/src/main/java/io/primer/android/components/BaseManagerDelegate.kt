@@ -16,27 +16,32 @@ interface PaymentMethodManagerDelegate {
     @Throws(
         SdkUninitializedException::class,
         UnsupportedPaymentMethodManagerException::class,
-        UnsupportedPaymentMethodException::class
+        UnsupportedPaymentMethodException::class,
     )
-    fun init(paymentMethodType: String, category: PrimerPaymentMethodManagerCategory)
+    fun init(
+        paymentMethodType: String,
+        category: PrimerPaymentMethodManagerCategory,
+    )
 
     fun start(
         context: Context,
         paymentMethodType: String,
         sessionIntent: PrimerSessionIntent,
         category: PrimerPaymentMethodManagerCategory,
-        onPostStart: () -> Unit = {}
+        onPostStart: () -> Unit = {},
     )
 }
 
 internal open class DefaultPaymentMethodManagerDelegate(
     private val paymentMethodInitializer: PaymentMethodInitializer,
-    private val paymentMethodStarter: PaymentMethodStarter
+    private val paymentMethodStarter: PaymentMethodStarter,
 ) : PaymentMethodManagerDelegate {
-
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
 
-    override fun init(paymentMethodType: String, category: PrimerPaymentMethodManagerCategory) {
+    override fun init(
+        paymentMethodType: String,
+        category: PrimerPaymentMethodManagerCategory,
+    ) {
         scope.launch {
             paymentMethodInitializer.init(paymentMethodType = paymentMethodType, category = category)
         }
@@ -47,7 +52,7 @@ internal open class DefaultPaymentMethodManagerDelegate(
         paymentMethodType: String,
         sessionIntent: PrimerSessionIntent,
         category: PrimerPaymentMethodManagerCategory,
-        onPostStart: () -> Unit
+        onPostStart: () -> Unit,
     ) {
         scope.launch {
             paymentMethodStarter.start(
@@ -55,7 +60,7 @@ internal open class DefaultPaymentMethodManagerDelegate(
                 paymentMethodType = paymentMethodType,
                 sessionIntent = sessionIntent,
                 category = category,
-                onPostStart = onPostStart
+                onPostStart = onPostStart,
             )
         }
     }

@@ -10,24 +10,28 @@ import io.primer.android.webredirect.implementation.payment.presentation.delegat
 import io.primer.android.webredirect.implementation.tokenization.presentation.WebRedirectTokenizationDelegate
 
 internal class WebRedirectComposerProviderFactory : PaymentMethodComposerProvider.Factory {
-
-    override fun create(paymentMethodType: String, sessionIntent: PrimerSessionIntent): PaymentMethodComposer {
+    override fun create(
+        paymentMethodType: String,
+        sessionIntent: PrimerSessionIntent,
+    ): PaymentMethodComposer {
         return WebRedirectComponent(
-            tokenizationDelegate = WebRedirectTokenizationDelegate(
-                configurationInteractor = resolve(name = paymentMethodType),
-                tokenizationInteractor = resolve(name = paymentMethodType),
-                deeplinkInteractor = resolve(name = paymentMethodType),
-                platformResolver = resolve(name = paymentMethodType)
-            ),
+            tokenizationDelegate =
+                WebRedirectTokenizationDelegate(
+                    configurationInteractor = resolve(name = paymentMethodType),
+                    tokenizationInteractor = resolve(name = paymentMethodType),
+                    deeplinkInteractor = resolve(name = paymentMethodType),
+                    platformResolver = resolve(name = paymentMethodType),
+                ),
             pollingInteractor = resolve(PaymentsContainer.POLLING_INTERACTOR_DI_KEY),
-            paymentDelegate = WebRedirectPaymentDelegate(
-                paymentMethodTokenHandler = resolve(),
-                resumePaymentHandler = resolve(),
-                successHandler = resolve(),
-                errorHandler = resolve(),
-                baseErrorResolver = resolve(),
-                webRedirectResumeHandler = resolve()
-            )
+            paymentDelegate =
+                WebRedirectPaymentDelegate(
+                    paymentMethodTokenHandler = resolve(),
+                    resumePaymentHandler = resolve(),
+                    successHandler = resolve(),
+                    errorHandler = resolve(),
+                    baseErrorResolver = resolve(),
+                    webRedirectResumeHandler = resolve(),
+                ),
         )
     }
 }

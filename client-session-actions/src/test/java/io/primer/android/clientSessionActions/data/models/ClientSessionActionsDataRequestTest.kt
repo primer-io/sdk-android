@@ -16,43 +16,44 @@ import org.junit.jupiter.api.Test
 import kotlin.test.assertIs
 
 internal class ClientSessionActionsDataRequestTest {
-
     @Test
     fun `serializer correctly serializes SetPaymentMethod to JSON`() {
         // Create a SetPaymentMethod object using the params
-        val setPaymentMethod = ClientSessionActionsDataRequest.SetPaymentMethod(
-            paymentMethodType = "credit_card",
-            binData = BinData("Visa")
-        )
+        val setPaymentMethod =
+            ClientSessionActionsDataRequest.SetPaymentMethod(
+                paymentMethodType = "credit_card",
+                binData = BinData("Visa"),
+            )
 
         // Use the serializer to convert the SetPaymentMethod object to a JSONObject
         val jsonObject = ClientSessionActionsDataRequest.SetPaymentMethod.serializer.serialize(setPaymentMethod)
 
         // Expected JSON structure
-        val expectedJson = JSONObject().apply {
-            put(
-                "type",
-                "SELECT_PAYMENT_METHOD"
-            )
-            put(
-                "params",
-                JSONObject().apply {
-                    put(
-                        "paymentMethodType",
-                        "credit_card"
-                    )
-                    put(
-                        "binData",
-                        JSONObject().apply {
-                            put(
-                                "network",
-                                "Visa"
-                            )
-                        }
-                    )
-                }
-            )
-        }
+        val expectedJson =
+            JSONObject().apply {
+                put(
+                    "type",
+                    "SELECT_PAYMENT_METHOD",
+                )
+                put(
+                    "params",
+                    JSONObject().apply {
+                        put(
+                            "paymentMethodType",
+                            "credit_card",
+                        )
+                        put(
+                            "binData",
+                            JSONObject().apply {
+                                put(
+                                    "network",
+                                    "Visa",
+                                )
+                            },
+                        )
+                    },
+                )
+            }
 
         // Assert that the generated JSON matches the expected JSON
         assertEquals(expectedJson.toString(), jsonObject.toString())
@@ -60,29 +61,31 @@ internal class ClientSessionActionsDataRequestTest {
 
     @Test
     fun `serializer correctly serializes SetPaymentMethod to JSON without binData`() {
-        val params = ClientSessionActionsDataRequest.SetPaymentMethod(
-            paymentMethodType = "credit_card"
-        )
+        val params =
+            ClientSessionActionsDataRequest.SetPaymentMethod(
+                paymentMethodType = "credit_card",
+            )
 
         // Use the serializer to convert the SetPaymentMethod object to a JSONObject
         val jsonObject = ClientSessionActionsDataRequest.SetPaymentMethod.serializer.serialize(params)
 
         // Expected JSON structure
-        val expectedJson = JSONObject().apply {
-            put(
-                "type",
-                "SELECT_PAYMENT_METHOD"
-            )
-            put(
-                "params",
-                JSONObject().apply {
-                    put(
-                        "paymentMethodType",
-                        "credit_card"
-                    )
-                }
-            )
-        }
+        val expectedJson =
+            JSONObject().apply {
+                put(
+                    "type",
+                    "SELECT_PAYMENT_METHOD",
+                )
+                put(
+                    "params",
+                    JSONObject().apply {
+                        put(
+                            "paymentMethodType",
+                            "credit_card",
+                        )
+                    },
+                )
+            }
 
         // Assert that the generated JSON matches the expected JSON
         assertEquals(expectedJson.toString(), jsonObject.toString())
@@ -112,15 +115,15 @@ internal class ClientSessionActionsDataRequestTest {
         assertEquals("SET_BILLING_ADDRESS", json.getString(TYPE_FIELD))
         assertEquals(
             addressData.city,
-            json.getJSONObject(PARAMS_FIELD).getJSONObject("billingAddress").getString("city")
+            json.getJSONObject(PARAMS_FIELD).getJSONObject("billingAddress").getString("city"),
         )
         assertEquals(
             addressData.addressLine1,
-            json.getJSONObject(PARAMS_FIELD).getJSONObject("billingAddress").getString("addressLine1")
+            json.getJSONObject(PARAMS_FIELD).getJSONObject("billingAddress").getString("addressLine1"),
         )
         assertEquals(
             addressData.postalCode,
-            json.getJSONObject(PARAMS_FIELD).getJSONObject("billingAddress").getString("postalCode")
+            json.getJSONObject(PARAMS_FIELD).getJSONObject("billingAddress").getString("postalCode"),
         )
     }
 
@@ -129,10 +132,11 @@ internal class ClientSessionActionsDataRequestTest {
         // Arrange
         val paymentMethodType = "CreditCard"
         val binData = BinData(network = "VISA")
-        val action = ClientSessionActionsDataRequest.SetPaymentMethod(
-            paymentMethodType = paymentMethodType,
-            binData = binData
-        )
+        val action =
+            ClientSessionActionsDataRequest.SetPaymentMethod(
+                paymentMethodType = paymentMethodType,
+                binData = binData,
+            )
         val request = ClientSessionActionsDataRequest(actions = listOf(action))
 
         // Act
@@ -167,19 +171,21 @@ internal class ClientSessionActionsDataRequestTest {
     @Test
     fun `test ClientSessionActionsDataRequest serializer with SetBillingAddress`() {
         // Arrange
-        val billingAddress = AddressData(
-            firstName = "John",
-            lastName = "Doe",
-            addressLine1 = "123 Main St",
-            addressLine2 = "Apt 4B",
-            postalCode = "12345",
-            city = "Anytown",
-            state = "Anystate",
-            countryCode = CountryCode.US
-        )
-        val action = ClientSessionActionsDataRequest.SetBillingAddress(
-            address = billingAddress
-        )
+        val billingAddress =
+            AddressData(
+                firstName = "John",
+                lastName = "Doe",
+                addressLine1 = "123 Main St",
+                addressLine2 = "Apt 4B",
+                postalCode = "12345",
+                city = "Anytown",
+                state = "Anystate",
+                countryCode = CountryCode.US,
+            )
+        val action =
+            ClientSessionActionsDataRequest.SetBillingAddress(
+                address = billingAddress,
+            )
         val request = ClientSessionActionsDataRequest(actions = listOf(action))
 
         // Act
@@ -204,114 +210,121 @@ internal class ClientSessionActionsDataRequestTest {
     @Test
     fun `test ClientSessionActionsDataRequest serializer with SetEmailAddress`() {
         val action = ClientSessionActionsDataRequest.SetEmailAddress("john@doe.com")
-        val expectedJson = JSONObject().apply {
-            put("type", "SET_EMAIL_ADDRESS")
-            put(
-                "params",
-                JSONObject().apply {
-                    put("emailAddress", "john@doe.com")
-                }
-            )
-        }
+        val expectedJson =
+            JSONObject().apply {
+                put("type", "SET_EMAIL_ADDRESS")
+                put(
+                    "params",
+                    JSONObject().apply {
+                        put("emailAddress", "john@doe.com")
+                    },
+                )
+            }
         assertEquals(expectedJson.toString(), action.serialize().toString())
     }
 
     @Test
     fun `test ClientSessionActionsDataRequest serializer with SetCustomerFirstName`() {
         val action = ClientSessionActionsDataRequest.SetCustomerFirstName("John")
-        val expectedJson = JSONObject().apply {
-            put("type", "SET_CUSTOMER_FIRST_NAME")
-            put(
-                "params",
-                JSONObject().apply {
-                    put("firstName", "John")
-                }
-            )
-        }
+        val expectedJson =
+            JSONObject().apply {
+                put("type", "SET_CUSTOMER_FIRST_NAME")
+                put(
+                    "params",
+                    JSONObject().apply {
+                        put("firstName", "John")
+                    },
+                )
+            }
         assertEquals(expectedJson.toString(), action.serialize().toString())
     }
 
     @Test
     fun `test ClientSessionActionsDataRequest serializer with SetCustomerLastName`() {
         val action = ClientSessionActionsDataRequest.SetCustomerLastName("Doe")
-        val expectedJson = JSONObject().apply {
-            put("type", "SET_CUSTOMER_LAST_NAME")
-            put(
-                "params",
-                JSONObject().apply {
-                    put("lastName", "Doe")
-                }
-            )
-        }
+        val expectedJson =
+            JSONObject().apply {
+                put("type", "SET_CUSTOMER_LAST_NAME")
+                put(
+                    "params",
+                    JSONObject().apply {
+                        put("lastName", "Doe")
+                    },
+                )
+            }
         assertEquals(expectedJson.toString(), action.serialize().toString())
     }
 
     @Test
     fun `test ClientSessionActionsDataRequest serializer with SetShippingMethodId`() {
         val action = ClientSessionActionsDataRequest.SetShippingMethodId("EXPRESS")
-        val expectedJson = JSONObject().apply {
-            put("type", "SELECT_SHIPPING_METHOD")
-            put(
-                "params",
-                JSONObject().apply {
-                    put("shipping_method_id", "EXPRESS")
-                }
-            )
-        }
+        val expectedJson =
+            JSONObject().apply {
+                put("type", "SELECT_SHIPPING_METHOD")
+                put(
+                    "params",
+                    JSONObject().apply {
+                        put("shipping_method_id", "EXPRESS")
+                    },
+                )
+            }
         assertEquals(expectedJson.toString(), action.serialize().toString())
     }
 
     @Test
     fun `test ClientSessionActionsDataRequest serializer with SetShippingAddress`() {
-        val address = AddressData(
-            firstName = "John",
-            lastName = "Doe",
-            addressLine1 = "123 Main St",
-            addressLine2 = "Apt 4B",
-            postalCode = "12345",
-            city = "Anytown",
-            countryCode = CountryCode.US
-        )
-        val action = ClientSessionActionsDataRequest.SetShippingAddress(address)
-        val expectedJson = JSONObject().apply {
-            put("type", "SET_SHIPPING_ADDRESS")
-            put(
-                "params",
-                JSONObject().apply {
-                    put("shippingAddress", address.serialize())
-                }
+        val address =
+            AddressData(
+                firstName = "John",
+                lastName = "Doe",
+                addressLine1 = "123 Main St",
+                addressLine2 = "Apt 4B",
+                postalCode = "12345",
+                city = "Anytown",
+                countryCode = CountryCode.US,
             )
-        }
+        val action = ClientSessionActionsDataRequest.SetShippingAddress(address)
+        val expectedJson =
+            JSONObject().apply {
+                put("type", "SET_SHIPPING_ADDRESS")
+                put(
+                    "params",
+                    JSONObject().apply {
+                        put("shippingAddress", address.serialize())
+                    },
+                )
+            }
         assertEquals(expectedJson.toString(), action.serialize().toString())
     }
 
     @Test
     fun `test ClientSessionActionsDataRequest serializer with SetMobileNumber`() {
         val action = ClientSessionActionsDataRequest.SetMobileNumber("1234567890")
-        val expectedJson = JSONObject().apply {
-            put("type", "SET_MOBILE_NUMBER")
-            put(
-                "params",
-                JSONObject().apply {
-                    put("mobileNumber", "1234567890")
-                }
-            )
-        }
+        val expectedJson =
+            JSONObject().apply {
+                put("type", "SET_MOBILE_NUMBER")
+                put(
+                    "params",
+                    JSONObject().apply {
+                        put("mobileNumber", "1234567890")
+                    },
+                )
+            }
         assertEquals(expectedJson.toString(), action.serialize().toString())
     }
 }
 
 internal class BaseActionUpdateParamsTest {
-
     @Test
     fun `test toActionData with ActionUpdateSelectPaymentMethodParams`() {
         // Arrange
         val paymentMethodType = "CreditCard"
         val cardNetwork = "VISA"
-        val params = ActionUpdateSelectPaymentMethodParams(
-            paymentMethodType = paymentMethodType,
-            cardNetwork = cardNetwork
-        )
+        val params =
+            ActionUpdateSelectPaymentMethodParams(
+                paymentMethodType = paymentMethodType,
+                cardNetwork = cardNetwork,
+            )
 
         // Act
         val action = params.toActionData()
@@ -346,16 +359,17 @@ internal class BaseActionUpdateParamsTest {
         val city = "Any town"
         val state = "Any state"
         val countryCode = "US"
-        val params = ActionUpdateBillingAddressParams(
-            firstName = firstName,
-            lastName = lastName,
-            addressLine1 = addressLine1,
-            addressLine2 = addressLine2,
-            postalCode = postalCode,
-            city = city,
-            state = state,
-            countryCode = countryCode
-        )
+        val params =
+            ActionUpdateBillingAddressParams(
+                firstName = firstName,
+                lastName = lastName,
+                addressLine1 = addressLine1,
+                addressLine2 = addressLine2,
+                postalCode = postalCode,
+                city = city,
+                state = state,
+                countryCode = countryCode,
+            )
 
         // Act
         val action = params.toActionData()
@@ -376,7 +390,6 @@ internal class BaseActionUpdateParamsTest {
 }
 
 internal class BinDataTest {
-
     @Test
     fun `test BinData serialization with non-null network`() {
         // Arrange
@@ -406,9 +419,10 @@ internal class BinDataTest {
     fun `test BinData deserialization with non-null network`() {
         // Arrange
         val network = "MASTERCARD"
-        val json = JSONObject().apply {
-            put("network", network)
-        }
+        val json =
+            JSONObject().apply {
+                put("network", network)
+            }
 
         // Act
         val binData = BinData.deserializer.deserialize(json)
@@ -420,9 +434,10 @@ internal class BinDataTest {
     @Test
     fun `test BinData deserialization with null network`() {
         // Arrange
-        val json = JSONObject().apply {
-            put("network", JSONObject.NULL)
-        }
+        val json =
+            JSONObject().apply {
+                put("network", JSONObject.NULL)
+            }
 
         // Act
         val binData = BinData.deserializer.deserialize(json)

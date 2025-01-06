@@ -4,8 +4,8 @@ import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
 import io.primer.android.components.domain.core.models.PrimerPaymentMethodManagerCategory
-import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.configuration.data.model.PaymentMethodConfigDataResponse
+import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.paymentmethods.VaultCapability
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test

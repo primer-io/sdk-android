@@ -43,12 +43,11 @@ const val DEFAULT_YEAR: Int = 2021
 
 @ExperimentalCoroutinesApi
 class VaultedPaymentMethodsFragment : Fragment(), DISdkComponent {
-
     private val theme: PrimerTheme by inject()
     private var binding: FragmentVaultedPaymentMethodsBinding by autoCleaned()
 
     private val viewModel: PrimerViewModel by
-    activityViewModel<PrimerViewModel, PrimerViewModelFactory>()
+        activityViewModel<PrimerViewModel, PrimerViewModelFactory>()
 
     private var paymentMethods: List<PrimerVaultedPaymentMethod> = listOf()
 
@@ -86,7 +85,7 @@ class VaultedPaymentMethodsFragment : Fragment(), DISdkComponent {
     }
 
     private fun generateItemDataFromPaymentMethods(
-        paymentMethods: List<PrimerVaultedPaymentMethod>
+        paymentMethods: List<PrimerVaultedPaymentMethod>,
     ): List<PaymentMethodItemData> =
         paymentMethods.map {
             when (it.paymentMethodType) {
@@ -95,7 +94,7 @@ class VaultedPaymentMethodsFragment : Fragment(), DISdkComponent {
                     AlternativePaymentMethodData(
                         email ?: "Klarna Payment Method",
                         it.id,
-                        AlternativePaymentMethodType.Klarna
+                        AlternativePaymentMethodType.Klarna,
                     )
                 }
 
@@ -104,12 +103,13 @@ class VaultedPaymentMethodsFragment : Fragment(), DISdkComponent {
                     AlternativePaymentMethodData(
                         title,
                         it.id,
-                        AlternativePaymentMethodType.PayPal
+                        AlternativePaymentMethodType.PayPal,
                     )
                 }
 
                 PaymentMethodType.PAYMENT_CARD.name,
-                PaymentMethodType.GOOGLE_PAY.name -> {
+                PaymentMethodType.GOOGLE_PAY.name,
+                -> {
                     val title = it.paymentInstrumentData.cardholderName ?: "unknown"
                     val lastFour = it.paymentInstrumentData.last4Digits ?: DEFAULT_LAST_FOUR
                     val expiryMonth = it.paymentInstrumentData.expirationMonth ?: DEFAULT_MONTH
@@ -121,7 +121,7 @@ class VaultedPaymentMethodsFragment : Fragment(), DISdkComponent {
                         expiryMonth,
                         expiryYear,
                         CardNetwork.Type.valueOrNull(network) ?: CardNetwork.Type.OTHER,
-                        it.id
+                        it.id,
                     )
                 }
 
@@ -129,7 +129,7 @@ class VaultedPaymentMethodsFragment : Fragment(), DISdkComponent {
                     BankData(
                         bankName = it.paymentInstrumentData.bankName ?: "-",
                         lastFour = it.paymentInstrumentData.accountNumberLast4Digits ?: 0,
-                        tokenId = it.id
+                        tokenId = it.id,
                     )
                 }
 
@@ -137,7 +137,7 @@ class VaultedPaymentMethodsFragment : Fragment(), DISdkComponent {
                     AlternativePaymentMethodData(
                         "saved payment method",
                         it.id,
-                        AlternativePaymentMethodType.Generic
+                        AlternativePaymentMethodType.Generic,
                     )
                 }
             }
@@ -146,13 +146,16 @@ class VaultedPaymentMethodsFragment : Fragment(), DISdkComponent {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
         binding = FragmentVaultedPaymentMethodsBinding.inflate(inflater, container, false)
         return binding.root
     }
 
-    private fun onClickWith(id: String, action: VaultViewAction) {
+    private fun onClickWith(
+        id: String,
+        action: VaultViewAction,
+    ) {
         when (action) {
             VaultViewAction.SELECT -> {
                 logSelectedPaymentMethodId(id)
@@ -166,35 +169,40 @@ class VaultedPaymentMethodsFragment : Fragment(), DISdkComponent {
     }
 
     private fun onDeleteSelectedWith(id: String) {
-        val dialog = AlertDialog.Builder(view?.context, R.style.Primer_AlertDialog)
-            .setTitle(getString(R.string.payment_method_deletion_message))
-            .setPositiveButton(getString(R.string.delete)) { dialog, _ ->
-                val methodToBeDeleted = paymentMethods.find {
-                    it.id == id
-                }
+        val dialog =
+            AlertDialog.Builder(view?.context, R.style.Primer_AlertDialog)
+                .setTitle(getString(R.string.payment_method_deletion_message))
+                .setPositiveButton(getString(R.string.delete)) { dialog, _ ->
+                    val methodToBeDeleted =
+                        paymentMethods.find {
+                            it.id == id
+                        }
 
-                // FIXME: add loading view for this.
-                if (methodToBeDeleted == null) {
-                    dialog.dismiss()
-                } else {
-                    logDeletePaymentMethodDialogAction(id, ObjectId.DELETE)
-                    viewModel.deletePaymentMethodToken(paymentMethod = methodToBeDeleted)
+                    // FIXME: add loading view for this.
+                    if (methodToBeDeleted == null) {
+                        dialog.dismiss()
+                    } else {
+                        logDeletePaymentMethodDialogAction(id, ObjectId.DELETE)
+                        viewModel.deletePaymentMethodToken(paymentMethod = methodToBeDeleted)
+                    }
                 }
-            }
-            .setNegativeButton(getString(R.string.cancel)) { dialog, _ ->
-                logDeletePaymentMethodDialogAction(id, ObjectId.CANCEL)
-                dialog.cancel()
-            }
+                .setNegativeButton(getString(R.string.cancel)) { dialog, _ ->
+                    logDeletePaymentMethodDialogAction(id, ObjectId.CANCEL)
+                    dialog.cancel()
+                }
         dialog.show()
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onViewCreated(
+        view: View,
+        savedInstanceState: Bundle?,
+    ) {
         super.onViewCreated(view, savedInstanceState)
         binding.vaultTitleLabel.setTextColor(
             theme.titleText.defaultColor.getColor(
                 requireContext(),
-                theme.isDarkMode
-            )
+                theme.isDarkMode,
+            ),
         )
 
         renderEditLabel()
@@ -214,26 +222,28 @@ class VaultedPaymentMethodsFragment : Fragment(), DISdkComponent {
         binding.vaultedPaymentMethodsGoBack.setOnClickListener {
             viewModel.goToSelectPaymentMethodsView()
         }
-        binding.vaultedPaymentMethodsGoBack.imageTintList = ColorStateList.valueOf(
-            theme.titleText.defaultColor.getColor(requireContext(), theme.isDarkMode)
-        )
+        binding.vaultedPaymentMethodsGoBack.imageTintList =
+            ColorStateList.valueOf(
+                theme.titleText.defaultColor.getColor(requireContext(), theme.isDarkMode),
+            )
         binding.editVaultedPaymentMethods.setOnClickListener {
             isEditing = !isEditing
         }
     }
 
-    private fun renderEditLabel() = binding.editVaultedPaymentMethods.apply {
-        setTextColor(
-            theme.systemText.defaultColor.getColor(
-                requireContext(),
-                theme.isDarkMode
+    private fun renderEditLabel() =
+        binding.editVaultedPaymentMethods.apply {
+            setTextColor(
+                theme.systemText.defaultColor.getColor(
+                    requireContext(),
+                    theme.isDarkMode,
+                ),
             )
-        )
-        setTextSize(
-            TypedValue.COMPLEX_UNIT_PX,
-            theme.systemText.fontSize.getDimension(requireContext())
-        )
-    }
+            setTextSize(
+                TypedValue.COMPLEX_UNIT_PX,
+                theme.systemText.fontSize.getDimension(requireContext()),
+            )
+        }
 
     private fun logSelectedPaymentMethodId(id: String) =
         viewModel.addAnalyticsEvent(
@@ -242,23 +252,24 @@ class VaultedPaymentMethodsFragment : Fragment(), DISdkComponent {
                 ObjectType.LIST_ITEM,
                 Place.PAYMENT_METHODS_LIST,
                 ObjectId.SELECT,
-                PaymentInstrumentIdContextParams(id)
-            )
+                PaymentInstrumentIdContextParams(id),
+            ),
         )
 
-    private fun logDeletePaymentMethodDialogAction(id: String, objectId: ObjectId) =
-        viewModel.addAnalyticsEvent(
-            UIAnalyticsParams(
-                AnalyticsAction.CLICK,
-                ObjectType.ALERT,
-                Place.PAYMENT_METHODS_LIST,
-                objectId,
-                PaymentInstrumentIdContextParams(id)
-            )
-        )
+    private fun logDeletePaymentMethodDialogAction(
+        id: String,
+        objectId: ObjectId,
+    ) = viewModel.addAnalyticsEvent(
+        UIAnalyticsParams(
+            AnalyticsAction.CLICK,
+            ObjectType.ALERT,
+            Place.PAYMENT_METHODS_LIST,
+            objectId,
+            PaymentInstrumentIdContextParams(id),
+        ),
+    )
 
     companion object {
-
         fun newInstance(): VaultedPaymentMethodsFragment {
             return VaultedPaymentMethodsFragment()
         }

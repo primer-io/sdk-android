@@ -6,9 +6,8 @@ import io.primer.android.domain.error.models.PrimerError
 import java.util.UUID
 
 data class PaymentMethodCancelledError(
-    val paymentMethodType: String
+    val paymentMethodType: String,
 ) : PrimerError() {
-
     override val exposedError = this
 
     override val context: BaseContextParams

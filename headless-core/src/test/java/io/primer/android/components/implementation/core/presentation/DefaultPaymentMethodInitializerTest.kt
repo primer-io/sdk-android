@@ -22,7 +22,6 @@ import org.junit.jupiter.api.assertThrows
 
 @ExperimentalCoroutinesApi
 class DefaultPaymentMethodInitializerTest {
-
     private lateinit var initValidationRulesResolver: PaymentMethodManagerInitValidationRulesResolver
     private lateinit var analyticsInteractor: AnalyticsInteractor
     private lateinit var paymentMethodInitializer: DefaultPaymentMethodInitializer
@@ -35,23 +34,24 @@ class DefaultPaymentMethodInitializerTest {
     }
 
     @Test
-    fun `init should add analytics event`() = runTest {
-        val paymentMethodType = "testType"
-        val category = PrimerPaymentMethodManagerCategory.NATIVE_UI
+    fun `init should add analytics event`() =
+        runTest {
+            val paymentMethodType = "testType"
+            val category = PrimerPaymentMethodManagerCategory.NATIVE_UI
 
-        coEvery { initValidationRulesResolver.resolve().rules } returns listOf()
+            coEvery { initValidationRulesResolver.resolve().rules } returns listOf()
 
-        paymentMethodInitializer.init(paymentMethodType, category)
+            paymentMethodInitializer.init(paymentMethodType, category)
 
-        coVerify {
-            analyticsInteractor(
-                SdkFunctionParams(
-                    "newInstance",
-                    mapOf("paymentMethodType" to paymentMethodType, "category" to category.name)
+            coVerify {
+                analyticsInteractor(
+                    SdkFunctionParams(
+                        "newInstance",
+                        mapOf("paymentMethodType" to paymentMethodType, "category" to category.name),
+                    ),
                 )
-            )
+            }
         }
-    }
 
     @Test
     fun `init should validate using validation rules and throw exceptions on failures`() {
@@ -60,9 +60,10 @@ class DefaultPaymentMethodInitializerTest {
 
         val failureResult = ValidationResult.Failure(SdkUninitializedException())
 
-        val validationRule = mockk<ValidationRule<PaymentMethodManagerInitValidationData>>() {
-            every { validate(any()) } returns failureResult
-        }
+        val validationRule =
+            mockk<ValidationRule<PaymentMethodManagerInitValidationData>> {
+                every { validate(any()) } returns failureResult
+            }
 
         coEvery { initValidationRulesResolver.resolve().rules } returns listOf(validationRule)
 
@@ -78,24 +79,27 @@ class DefaultPaymentMethodInitializerTest {
         val paymentMethodType = "testType"
         val category = PrimerPaymentMethodManagerCategory.NATIVE_UI
 
-        val failureResult = ValidationResult.Failure(
-            UnsupportedPaymentMethodManagerException(
-                paymentMethodType = paymentMethodType,
-                category = PrimerPaymentMethodManagerCategory.NATIVE_UI
+        val failureResult =
+            ValidationResult.Failure(
+                UnsupportedPaymentMethodManagerException(
+                    paymentMethodType = paymentMethodType,
+                    category = PrimerPaymentMethodManagerCategory.NATIVE_UI,
+                ),
             )
-        )
 
-        val validationRule = mockk<ValidationRule<PaymentMethodManagerInitValidationData>>() {
-            every { validate(any()) } returns failureResult
-        }
+        val validationRule =
+            mockk<ValidationRule<PaymentMethodManagerInitValidationData>> {
+                every { validate(any()) } returns failureResult
+            }
 
         coEvery { initValidationRulesResolver.resolve().rules } returns listOf(validationRule)
 
-        val exception = assertThrows<UnsupportedPaymentMethodManagerException> {
-            runTest {
-                paymentMethodInitializer.init(paymentMethodType, category)
+        val exception =
+            assertThrows<UnsupportedPaymentMethodManagerException> {
+                runTest {
+                    paymentMethodInitializer.init(paymentMethodType, category)
+                }
             }
-        }
 
         assert(exception.message == "Payment method $paymentMethodType is not supported on $category manager")
     }
@@ -107,17 +111,19 @@ class DefaultPaymentMethodInitializerTest {
 
         val failureResult = ValidationResult.Failure(UnsupportedPaymentMethodException(paymentMethodType))
 
-        val validationRule = mockk<ValidationRule<PaymentMethodManagerInitValidationData>> {
-            every { validate(any()) } returns failureResult
-        }
+        val validationRule =
+            mockk<ValidationRule<PaymentMethodManagerInitValidationData>> {
+                every { validate(any()) } returns failureResult
+            }
 
         coEvery { initValidationRulesResolver.resolve().rules } returns listOf(validationRule)
 
-        val exception = assertThrows<UnsupportedPaymentMethodException> {
-            runTest {
-                paymentMethodInitializer.init(paymentMethodType, category)
+        val exception =
+            assertThrows<UnsupportedPaymentMethodException> {
+                runTest {
+                    paymentMethodInitializer.init(paymentMethodType, category)
+                }
             }
-        }
 
         assert(exception.message == "Cannot present $paymentMethodType because it is not supported.")
     }

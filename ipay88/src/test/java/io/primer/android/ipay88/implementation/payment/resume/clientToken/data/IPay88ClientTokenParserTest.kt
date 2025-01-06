@@ -11,7 +11,6 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 internal class IPay88ClientTokenParserTest {
-
     private val parser = IPay88ClientTokenParser()
 
     @BeforeEach
@@ -29,30 +28,32 @@ internal class IPay88ClientTokenParserTest {
         // Given
         val clientToken = "encodedClientToken"
 
-        val expectedToken = IPay88ClientToken(
-            intent = "PAY",
-            statusUrl = "http://example.com/status",
-            paymentId = "payment123",
-            paymentMethod = 0, // Mock the payment method value as needed
-            actionType = "actionType",
-            referenceNumber = "ref123",
-            supportedCurrencyCode = "MYR",
-            backendCallbackUrl = "http://example.com/callback",
-            supportedCountryCode = "MY",
-            clientTokenIntent = "PAY"
-        )
+        val expectedToken =
+            IPay88ClientToken(
+                intent = "PAY",
+                statusUrl = "http://example.com/status",
+                paymentId = "payment123",
+                paymentMethod = 0,
+                actionType = "actionType",
+                referenceNumber = "ref123",
+                supportedCurrencyCode = "MYR",
+                backendCallbackUrl = "http://example.com/callback",
+                supportedCountryCode = "MY",
+                clientTokenIntent = "PAY",
+            )
 
-        every { IPay88ClientTokenData.fromString(clientToken) } returns IPay88ClientTokenData(
-            intent = "PAY",
-            statusUrl = "http://example.com/status",
-            paymentId = "payment123",
-            paymentMethod = 0, // Mock the payment method value as needed
-            actionType = "actionType",
-            referenceNumber = "ref123",
-            currencyCode = "MYR",
-            countryCode = "MY",
-            backendCallbackUrl = "http://example.com/callback"
-        )
+        every { IPay88ClientTokenData.fromString(clientToken) } returns
+            IPay88ClientTokenData(
+                intent = "PAY",
+                statusUrl = "http://example.com/status",
+                paymentId = "payment123",
+                paymentMethod = 0,
+                actionType = "actionType",
+                referenceNumber = "ref123",
+                currencyCode = "MYR",
+                countryCode = "MY",
+                backendCallbackUrl = "http://example.com/callback",
+            )
 
         // When
         val result = parser.parseClientToken(clientToken)

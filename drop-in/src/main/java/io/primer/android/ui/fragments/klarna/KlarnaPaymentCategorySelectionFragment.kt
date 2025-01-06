@@ -11,19 +11,19 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.material.bottomsheet.BottomSheetBehavior
-import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.core.di.extensions.resolve
+import io.primer.android.core.extensions.getParcelableArrayListCompat
+import io.primer.android.core.extensions.getParcelableCompat
+import io.primer.android.data.settings.internal.PrimerConfig
+import io.primer.android.databinding.FragmentKlarnaPaymentCategorySelectionBinding
 import io.primer.android.klarna.PrimerHeadlessUniversalCheckoutKlarnaManager
 import io.primer.android.klarna.api.component.KlarnaComponent
 import io.primer.android.klarna.api.composable.KlarnaPaymentCollectableData
 import io.primer.android.klarna.api.composable.KlarnaPaymentStep
-import io.primer.android.databinding.FragmentKlarnaPaymentCategorySelectionBinding
 import io.primer.android.ui.extensions.autoCleaned
 import io.primer.android.ui.extensions.getCollapsedSheetHeight
 import io.primer.android.ui.fragments.base.BaseFragment
 import io.primer.android.ui.fragments.klarna.model.KlarnaPaymentCategory
-import io.primer.android.core.extensions.getParcelableArrayListCompat
-import io.primer.android.core.extensions.getParcelableCompat
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
@@ -39,7 +39,7 @@ internal class KlarnaPaymentCategorySelectionFragment : BaseFragment() {
 
     private val component: KlarnaComponent by lazy {
         PrimerHeadlessUniversalCheckoutKlarnaManager(
-            viewModelStoreOwner = this
+            viewModelStoreOwner = this,
         ).provideKlarnaComponent(primerSessionIntent = primerSessionIntent)
     }
 
@@ -49,8 +49,9 @@ internal class KlarnaPaymentCategorySelectionFragment : BaseFragment() {
         get() = primerConfig.paymentMethodIntent
 
     private val returnIntentUrl
-        get() = primerConfig.settings.paymentMethodOptions.klarnaOptions.returnIntentUrl
-            .orEmpty()
+        get() =
+            primerConfig.settings.paymentMethodOptions.klarnaOptions.returnIntentUrl
+                .orEmpty()
 
     private var categories: ArrayList<DomainKlarnaPaymentCategory>? = null
     private var selectedCategory: DomainKlarnaPaymentCategory? = null
@@ -58,25 +59,29 @@ internal class KlarnaPaymentCategorySelectionFragment : BaseFragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
         categories = savedInstanceState?.getParcelableArrayListCompat(CATEGORIES_KEY)
         selectedCategory = savedInstanceState?.getParcelableCompat(SELECTED_CATEGORY_KEY)
-        binding = FragmentKlarnaPaymentCategorySelectionBinding.inflate(
-            inflater,
-            container,
-            false
-        ).apply {
-            authorize.isEnabled = false
-            paymentCategories.setOnItemClickListener { index ->
-                selectedCategory = requireNotNull(categories?.get(index))
-                updatePaymentOptions(requireNotNull(selectedCategory))
+        binding =
+            FragmentKlarnaPaymentCategorySelectionBinding.inflate(
+                inflater,
+                container,
+                false,
+            ).apply {
+                authorize.isEnabled = false
+                paymentCategories.setOnItemClickListener { index ->
+                    selectedCategory = requireNotNull(categories?.get(index))
+                    updatePaymentOptions(requireNotNull(selectedCategory))
+                }
             }
-        }
         return binding.root
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onViewCreated(
+        view: View,
+        savedInstanceState: Bundle?,
+    ) {
         super.onViewCreated(view, savedInstanceState)
         binding.paymentCategories.dummyKlarnaPaymentViewContainer =
             binding.dummyKlarnaPaymentViewContainer
@@ -110,7 +115,7 @@ internal class KlarnaPaymentCategorySelectionFragment : BaseFragment() {
 
     private fun updatePaymentMethodBackVisibility(isVisible: Boolean? = null) {
         binding.paymentMethodBack.isVisible =
-            isVisible ?: primerConfig.isStandalonePaymentMethod.not() ?: false
+            isVisible ?: primerConfig.isStandalonePaymentMethod.not()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -136,7 +141,7 @@ internal class KlarnaPaymentCategorySelectionFragment : BaseFragment() {
                     /*
                     Automatically pick payment category if only one is available as per the
                     design.
-                    */
+                     */
                     if (klarnaStep.paymentCategories.size == 1) {
                         updatePaymentOptions(klarnaStep.paymentCategories.single())
                     } else {
@@ -158,7 +163,7 @@ internal class KlarnaPaymentCategorySelectionFragment : BaseFragment() {
                                     klarnaStep.paymentView
                                 } else {
                                     null
-                                }
+                                },
                             )
                         }
                     if (categories.orEmpty().size == 1) {
@@ -210,27 +215,28 @@ internal class KlarnaPaymentCategorySelectionFragment : BaseFragment() {
             KlarnaPaymentCollectableData.PaymentOptions(
                 requireContext(),
                 returnIntentUrl = returnIntentUrl,
-                paymentCategory = selectedCategory
-            )
+                paymentCategory = selectedCategory,
+            ),
         )
     }
 
     private fun DomainKlarnaPaymentCategory.toKlarnaPaymentCategory(
-        klarnaPaymentView: View? = null
-    ): KlarnaPaymentCategory = if (klarnaPaymentView == null) {
-        KlarnaPaymentCategory.UnselectedKlarnaPaymentCategory(
-            id = identifier,
-            name = name,
-            iconUrl = standardAssetUrl
-        )
-    } else {
-        KlarnaPaymentCategory.SelectedKlarnaPaymentCategory(
-            id = identifier,
-            name = name,
-            iconUrl = standardAssetUrl,
-            view = klarnaPaymentView
-        )
-    }
+        klarnaPaymentView: View? = null,
+    ): KlarnaPaymentCategory =
+        if (klarnaPaymentView == null) {
+            KlarnaPaymentCategory.UnselectedKlarnaPaymentCategory(
+                id = identifier,
+                name = name,
+                iconUrl = standardAssetUrl,
+            )
+        } else {
+            KlarnaPaymentCategory.SelectedKlarnaPaymentCategory(
+                id = identifier,
+                name = name,
+                iconUrl = standardAssetUrl,
+                view = klarnaPaymentView,
+            )
+        }
 
     companion object {
         private const val CATEGORIES_KEY = "categories"

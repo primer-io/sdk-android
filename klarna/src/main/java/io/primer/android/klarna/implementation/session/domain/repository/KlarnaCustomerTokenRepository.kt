@@ -4,8 +4,5 @@ import io.primer.android.klarna.implementation.session.data.models.CreateCustome
 import io.primer.android.klarna.implementation.session.domain.models.KlarnaCustomerTokenParam
 
 internal fun interface KlarnaCustomerTokenRepository {
-
-    suspend fun createCustomerToken(
-        params: KlarnaCustomerTokenParam
-    ): Result<CreateCustomerTokenDataResponse>
+    suspend fun createCustomerToken(params: KlarnaCustomerTokenParam): Result<CreateCustomerTokenDataResponse>
 }

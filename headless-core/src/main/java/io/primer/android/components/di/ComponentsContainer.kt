@@ -57,7 +57,6 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.SupervisorJob
 
 internal class ComponentsContainer(private val sdk: () -> SdkContainer) : DependencyContainer() {
-
     @Suppress("LongMethod")
     override fun registerInitialDependencies() {
         registerFactory {
@@ -79,7 +78,7 @@ internal class ComponentsContainer(private val sdk: () -> SdkContainer) : Depend
                 fetchCurrencyFormatDataInteractor = sdk().resolve(),
                 availablePaymentMethodsHandler = sdk().resolve(),
                 primerSettings = sdk().resolve(),
-                logReporter = sdk().resolve()
+                logReporter = sdk().resolve(),
             )
         }
 
@@ -93,10 +92,11 @@ internal class ComponentsContainer(private val sdk: () -> SdkContainer) : Depend
             DefaultHeadlessUniversalCheckoutDelegate(
                 paymentsTypesInteractor = resolve(),
                 analyticsInteractor = sdk().resolve(),
-                globalCacheConfigurationCacheDataSource = sdk().resolve(
-                    ConfigurationCoreContainer.GLOBAL_CACHED_CONFIGURATION_DI_KEY
-                ),
-                scopeProvider = resolve()
+                globalCacheConfigurationCacheDataSource =
+                    sdk().resolve(
+                        ConfigurationCoreContainer.GLOBAL_CACHED_CONFIGURATION_DI_KEY,
+                    ),
+                scopeProvider = resolve(),
             )
         }
 
@@ -144,14 +144,14 @@ internal class ComponentsContainer(private val sdk: () -> SdkContainer) : Depend
             DefaultCheckoutAdditionalInfoHandler(
                 analyticsRepository = sdk().resolve(),
                 config = sdk().resolve(),
-                paymentResultRepository = sdk().resolve()
+                paymentResultRepository = sdk().resolve(),
             )
         }
 
         registerFactory<CheckoutClientSessionActionsHandler> {
             DefaultCheckoutClientSessionActionsHandler(
                 analyticsRepository = sdk().resolve(),
-                checkoutErrorHandler = resolve()
+                checkoutErrorHandler = resolve(),
             )
         }
 
@@ -171,7 +171,7 @@ internal class ComponentsContainer(private val sdk: () -> SdkContainer) : Depend
             PaymentMethodManagerInitValidationRulesResolver(
                 sdkInitializedRule = resolve(),
                 validPaymentMethodRule = resolve(),
-                validPaymentMethodManagerRule = resolve()
+                validPaymentMethodManagerRule = resolve(),
             )
         }
 
@@ -182,7 +182,7 @@ internal class ComponentsContainer(private val sdk: () -> SdkContainer) : Depend
         registerFactory<PaymentMethodInitializer> {
             DefaultPaymentMethodInitializer(
                 initValidationRulesResolver = resolve(),
-                analyticsInteractor = sdk().resolve()
+                analyticsInteractor = sdk().resolve(),
             )
         }
 
@@ -192,14 +192,14 @@ internal class ComponentsContainer(private val sdk: () -> SdkContainer) : Depend
                 composerRegistry = sdk().resolve(),
                 providerFactoryRegistry = sdk().resolve(),
                 paymentMethodNavigationFactoryRegistry = sdk().resolve(),
-                paymentMethodShowedHandler = sdk().resolve()
+                paymentMethodShowedHandler = sdk().resolve(),
             )
         }
 
         registerFactory<PaymentMethodManagerDelegate> {
             DefaultPaymentMethodManagerDelegate(
                 paymentMethodInitializer = resolve(),
-                paymentMethodStarter = resolve()
+                paymentMethodStarter = resolve(),
             )
         }
 
@@ -207,7 +207,7 @@ internal class ComponentsContainer(private val sdk: () -> SdkContainer) : Depend
             PaymentInputTypesInteractor(
                 sdk().resolve(),
                 sdk().resolve(),
-                sdk().resolve()
+                sdk().resolve(),
             )
         }
 
@@ -219,7 +219,7 @@ internal class ComponentsContainer(private val sdk: () -> SdkContainer) : Depend
                 paymentMethodStarter = resolve(),
                 composerRegistry = sdk().resolve(),
                 preparationStartHandler = sdk().resolve(),
-                headlessScopeProvider = resolve()
+                headlessScopeProvider = resolve(),
             )
         }
 
@@ -234,7 +234,7 @@ internal class ComponentsContainer(private val sdk: () -> SdkContainer) : Depend
                 paymentMethodNavigationFactoryRegistry = sdk().resolve(),
                 actionInteractor = sdk().resolve(ActionsContainer.ACTION_INTERACTOR_DI_KEY),
                 logReporter = sdk().resolve(),
-                preparationStartHandler = sdk().resolve()
+                preparationStartHandler = sdk().resolve(),
             )
         }
     }

@@ -10,9 +10,8 @@ import io.primer.android.core.di.extensions.inject
 import io.primer.android.domain.exception.UnsupportedPaymentMethodException
 
 class PrimerHeadlessUniversalCheckoutNativeUiManager private constructor(
-    private val paymentMethodType: String
+    private val paymentMethodType: String,
 ) : PrimerHeadlessUniversalCheckoutNativeUiManagerInterface, DISdkComponent {
-
     private val delegate: DefaultNativeUiManagerHeadlessManagerDelegate by inject()
 
     init {
@@ -21,7 +20,7 @@ class PrimerHeadlessUniversalCheckoutNativeUiManager private constructor(
 
     override fun showPaymentMethod(
         context: Context,
-        sessionIntent: PrimerSessionIntent
+        sessionIntent: PrimerSessionIntent,
     ) {
         delegate.dispatchAction(paymentMethodType) { error ->
             if (error == null) {
@@ -30,7 +29,7 @@ class PrimerHeadlessUniversalCheckoutNativeUiManager private constructor(
                     paymentMethodType = paymentMethodType,
                     sessionIntent = sessionIntent,
                     category = PrimerPaymentMethodManagerCategory.NATIVE_UI,
-                    onPostStart = {}
+                    onPostStart = {},
                 )
             }
         }
@@ -51,10 +50,9 @@ class PrimerHeadlessUniversalCheckoutNativeUiManager private constructor(
 
         @Throws(SdkUninitializedException::class, UnsupportedPaymentMethodException::class)
         @JvmStatic
-        fun newInstance(
-            paymentMethodType: String
-        ): PrimerHeadlessUniversalCheckoutNativeUiManagerInterface = PrimerHeadlessUniversalCheckoutNativeUiManager(
-            paymentMethodType = paymentMethodType
-        )
+        fun newInstance(paymentMethodType: String): PrimerHeadlessUniversalCheckoutNativeUiManagerInterface =
+            PrimerHeadlessUniversalCheckoutNativeUiManager(
+                paymentMethodType = paymentMethodType,
+            )
     }
 }

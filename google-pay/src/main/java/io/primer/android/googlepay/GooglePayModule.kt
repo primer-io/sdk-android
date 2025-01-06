@@ -1,13 +1,13 @@
 package io.primer.android.googlepay
 
 import android.content.Context
-import io.primer.android.data.settings.PrimerSettings
 import io.primer.android.assets.ui.registry.BrandRegistry
 import io.primer.android.configuration.data.model.ConfigurationData
 import io.primer.android.configuration.data.model.Environment
 import io.primer.android.core.di.DISdkComponent
 import io.primer.android.core.di.SdkContainer
 import io.primer.android.core.di.extensions.resolve
+import io.primer.android.data.settings.PrimerSettings
 import io.primer.android.errors.domain.ErrorMapperRegistry
 import io.primer.android.googlepay.di.GooglePayContainer
 import io.primer.android.googlepay.implementation.composer.presentation.provider.GooglePayComposerProviderFactory
@@ -25,68 +25,69 @@ import io.primer.android.paymentmethods.core.composer.provider.VaultedPaymentMet
 import io.primer.android.paymentmethods.core.ui.navigation.PaymentMethodNavigationFactoryRegistry
 
 internal class GooglePayModule(
-    private val googlePayFacadeFactory: GooglePayFacadeFactory = DefaultGooglePayFacadeFactory()
+    private val googlePayFacadeFactory: GooglePayFacadeFactory = DefaultGooglePayFacadeFactory(),
 ) : PaymentMethodModule, DISdkComponent {
-
     private lateinit var googlePayFacade: GooglePayFacade
 
-    override fun initialize(applicationContext: Context, configuration: ConfigurationData) {
-        val googlePayEnvironment = if (configuration.environment == Environment.PRODUCTION) {
-            GooglePayFacade.Environment.PRODUCTION
-        } else {
-            GooglePayFacade.Environment.TEST
-        }
+    override fun initialize(
+        applicationContext: Context,
+        configuration: ConfigurationData,
+    ) {
+        val googlePayEnvironment =
+            if (configuration.environment == Environment.PRODUCTION) {
+                GooglePayFacade.Environment.PRODUCTION
+            } else {
+                GooglePayFacade.Environment.TEST
+            }
         googlePayFacade =
             googlePayFacadeFactory.create(applicationContext, googlePayEnvironment, resolve())
     }
 
-    override fun registerPaymentMethodCheckers(
-        paymentMethodCheckerRegistry: PaymentMethodCheckerRegistry
-    ) {
+    override fun registerPaymentMethodCheckers(paymentMethodCheckerRegistry: PaymentMethodCheckerRegistry) {
         val googlePayChecker = GooglePayPaymentMethodChecker(googlePayFacade)
 
         paymentMethodCheckerRegistry.register(
             PaymentMethodType.GOOGLE_PAY.name,
-            googlePayChecker
+            googlePayChecker,
         )
     }
 
     override fun registerPaymentMethodDescriptorFactory(
-        paymentMethodDescriptorFactoryRegistry: PaymentMethodDescriptorFactoryRegistry
+        paymentMethodDescriptorFactoryRegistry: PaymentMethodDescriptorFactoryRegistry,
     ) {
         val paymentMethodDescriptorFactory =
             GooglePayPaymentMethodDescriptorFactory()
 
         paymentMethodDescriptorFactoryRegistry.register(
             PaymentMethodType.GOOGLE_PAY.name,
-            paymentMethodDescriptorFactory
+            paymentMethodDescriptorFactory,
         )
     }
 
     override fun registerPaymentMethodProviderFactory(
-        paymentMethodProviderFactoryRegistry: PaymentMethodProviderFactoryRegistry
+        paymentMethodProviderFactoryRegistry: PaymentMethodProviderFactoryRegistry,
     ) {
         paymentMethodProviderFactoryRegistry.register(
             PaymentMethodType.GOOGLE_PAY.name,
-            GooglePayComposerProviderFactory::class.java
+            GooglePayComposerProviderFactory::class.java,
         )
     }
 
     override fun registerSavedPaymentMethodProviderFactory(
-        paymentMethodProviderFactoryRegistry: VaultedPaymentMethodProviderFactoryRegistry
+        paymentMethodProviderFactoryRegistry: VaultedPaymentMethodProviderFactoryRegistry,
     ) {
         paymentMethodProviderFactoryRegistry.register(
             PaymentMethodType.GOOGLE_PAY.name,
-            VaultedGooglePayComposerFactory::class.java
+            VaultedGooglePayComposerFactory::class.java,
         )
     }
 
     override fun registerPaymentMethodNavigationFactory(
-        paymentMethodNavigationFactoryRegistry: PaymentMethodNavigationFactoryRegistry
+        paymentMethodNavigationFactoryRegistry: PaymentMethodNavigationFactoryRegistry,
     ) {
         paymentMethodNavigationFactoryRegistry.register(
             PaymentMethodType.GOOGLE_PAY.name,
-            GooglePayNavigatorProviderFactory::class.java
+            GooglePayNavigatorProviderFactory::class.java,
         )
     }
 
@@ -95,8 +96,8 @@ internal class GooglePayModule(
             sdkContainer.registerContainer(
                 GooglePayContainer(
                     sdk = { getSdkContainer() },
-                    paymentMethodType = PaymentMethodType.GOOGLE_PAY.name
-                )
+                    paymentMethodType = PaymentMethodType.GOOGLE_PAY.name,
+                ),
             )
         }
     }
@@ -108,10 +109,11 @@ internal class GooglePayModule(
     override fun registerBrandProvider(brandRegistry: BrandRegistry) {
         brandRegistry.register(
             paymentMethodType = PaymentMethodType.GOOGLE_PAY.name,
-            brand = GooglePayBrand(
-                resolve<PrimerSettings>(),
-                resolve<GooglePayConfigurationRepository>(name = PaymentMethodType.GOOGLE_PAY.name)
-            )
+            brand =
+                GooglePayBrand(
+                    resolve<PrimerSettings>(),
+                    resolve<GooglePayConfigurationRepository>(name = PaymentMethodType.GOOGLE_PAY.name),
+                ),
         )
     }
 }

@@ -7,16 +7,19 @@ data class KlarnaPaymentCategory(
     val identifier: String,
     val name: String,
     val descriptiveAssetUrl: String,
-    val standardAssetUrl: String
+    val standardAssetUrl: String,
 ) : Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.readString().orEmpty(),
         parcel.readString().orEmpty(),
         parcel.readString().orEmpty(),
-        parcel.readString().orEmpty()
+        parcel.readString().orEmpty(),
     )
 
-    override fun writeToParcel(parcel: Parcel, flags: Int) {
+    override fun writeToParcel(
+        parcel: Parcel,
+        flags: Int,
+    ) {
         parcel.writeString(identifier)
         parcel.writeString(name)
         parcel.writeString(descriptiveAssetUrl)

@@ -5,7 +5,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 
 internal class DefaultPollingStartHandler : PollingStartHandler {
-
     private val _startPolling = MutableSharedFlow<PollingStartHandler.PollingStartData>()
 
     override val startPolling: Flow<PollingStartHandler.PollingStartData> = _startPolling

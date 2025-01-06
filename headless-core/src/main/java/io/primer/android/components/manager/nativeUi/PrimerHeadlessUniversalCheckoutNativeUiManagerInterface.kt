@@ -6,13 +6,15 @@ import io.primer.android.domain.exception.UnsupportedPaymentIntentException
 
 @JvmDefaultWithCompatibility
 interface PrimerHeadlessUniversalCheckoutNativeUiManagerInterface {
-
     /**
      * This method should be called when payment method needs to be showed.
      * @throws UnsupportedPaymentIntentException in case it is invoked for an unsupported [PrimerSessionIntent].
      */
     @Throws(UnsupportedPaymentIntentException::class)
-    fun showPaymentMethod(context: Context, sessionIntent: PrimerSessionIntent)
+    fun showPaymentMethod(
+        context: Context,
+        sessionIntent: PrimerSessionIntent,
+    )
 
     fun cleanup()
 }

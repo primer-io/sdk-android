@@ -4,5 +4,5 @@ import io.primer.android.PrimerSessionIntent
 
 internal data class PaymentMethodManagerSessionIntentValidationData(
     val paymentMethodType: String,
-    val sessionIntent: PrimerSessionIntent
+    val sessionIntent: PrimerSessionIntent,
 )

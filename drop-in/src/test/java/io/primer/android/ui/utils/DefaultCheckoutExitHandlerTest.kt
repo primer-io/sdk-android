@@ -28,30 +28,34 @@ class DefaultCheckoutExitHandlerTest {
     }
 
     @Test
-    fun `handle should emit payment to checkoutExited flow`() = runTest {
-        val job = launch {
-            val emission = checkoutExitHandler.checkoutExited.first()
-            assertEquals(Unit, emission)
-        }
+    fun `handle should emit payment to checkoutExited flow`() =
+        runTest {
+            val job =
+                launch {
+                    val emission = checkoutExitHandler.checkoutExited.first()
+                    assertEquals(Unit, emission)
+                }
 
-        checkoutExitHandler.handle()
-        job.cancel()
-    }
+            checkoutExitHandler.handle()
+            job.cancel()
+        }
 
     @Test
-    fun `handle should call onExit`() = runTest {
-        val job = launch {
-            val emission = checkoutExitHandler.checkoutExited.first()
-            assertEquals(Unit, emission)
+    fun `handle should call onExit`() =
+        runTest {
+            val job =
+                launch {
+                    val emission = checkoutExitHandler.checkoutExited.first()
+                    assertEquals(Unit, emission)
+                }
+
+            checkoutExitHandler.handle()
+
+            advanceUntilIdle()
+
+            coVerify {
+                onExit.invoke()
+            }
+            job.cancel()
         }
-
-        checkoutExitHandler.handle()
-
-        advanceUntilIdle()
-
-        coVerify {
-            onExit.invoke()
-        }
-        job.cancel()
-    }
 }

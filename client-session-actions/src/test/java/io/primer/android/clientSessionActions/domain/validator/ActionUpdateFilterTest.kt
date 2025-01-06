@@ -8,7 +8,6 @@ import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
-import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.clientSessionActions.domain.models.ActionUpdateBillingAddressParams
 import io.primer.android.clientSessionActions.domain.models.ActionUpdateCustomerDetailsParams
 import io.primer.android.clientSessionActions.domain.models.ActionUpdateEmailAddressParams
@@ -19,6 +18,7 @@ import io.primer.android.clientSessionActions.domain.models.ActionUpdateShipping
 import io.primer.android.clientSessionActions.domain.models.ActionUpdateUnselectPaymentMethodParams
 import io.primer.android.configuration.domain.model.Configuration
 import io.primer.android.configuration.domain.repository.ConfigurationRepository
+import io.primer.android.data.settings.internal.PrimerConfig
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertFalse
@@ -28,7 +28,6 @@ import org.junit.jupiter.api.extension.ExtendWith
 
 @ExtendWith(MockKExtension::class)
 internal class ActionUpdateFilterTest {
-
     @MockK
     private lateinit var configurationRepository: ConfigurationRepository
 
@@ -44,159 +43,175 @@ internal class ActionUpdateFilterTest {
     }
 
     @Test
-    fun `filter() should return 'false' when called with ActionUpdateCustomerDetailsParams`() = runTest {
-        val result = filter.filter(mockk<ActionUpdateCustomerDetailsParams>())
+    fun `filter() should return 'false' when called with ActionUpdateCustomerDetailsParams`() =
+        runTest {
+            val result = filter.filter(mockk<ActionUpdateCustomerDetailsParams>())
 
-        assertFalse(result)
-    }
-
-    @Test
-    fun `filter() should return 'false' when called with ActionUpdateBillingAddressParams`() = runTest {
-        val result = filter.filter(mockk<ActionUpdateBillingAddressParams>())
-
-        assertFalse(result)
-    }
-
-    @Test
-    fun `filter() should return 'true' when called with ActionUpdateSelectPaymentMethodParams and intent is vaulted`() = runTest {
-        every {
-            configurationRepository.getConfiguration()
-        } returns mockk()
-        every { config.intent.paymentMethodIntent.isVault } returns true
-
-        val result = filter.filter(mockk<ActionUpdateSelectPaymentMethodParams>())
-
-        assertTrue(result)
-        coVerify {
-            configurationRepository.getConfiguration()
-            config.intent.paymentMethodIntent.isVault
+            assertFalse(result)
         }
-    }
 
     @Test
-    fun `filter() should return 'true' when called with ActionUpdateSelectPaymentMethodParams and intent is not vaulted and there are no surcharges`() = runTest {
-        every {
-            configurationRepository.getConfiguration()
-        } returns mockk<Configuration> {
+    fun `filter() should return 'false' when called with ActionUpdateBillingAddressParams`() =
+        runTest {
+            val result = filter.filter(mockk<ActionUpdateBillingAddressParams>())
+
+            assertFalse(result)
+        }
+
+    @Test
+    fun `filter() should return 'true' when called with ActionUpdateSelectPaymentMethodParams and intent is vaulted`() =
+        runTest {
             every {
-                clientSession.clientSessionDataResponse.paymentMethod?.surcharges
-            } returns emptyMap()
+                configurationRepository.getConfiguration()
+            } returns mockk()
+            every { config.intent.paymentMethodIntent.isVault } returns true
+
+            val result = filter.filter(mockk<ActionUpdateSelectPaymentMethodParams>())
+
+            assertTrue(result)
+            coVerify {
+                configurationRepository.getConfiguration()
+                config.intent.paymentMethodIntent.isVault
+            }
         }
-
-        every { config.intent.paymentMethodIntent.isVault } returns false
-
-        val result = filter.filter(mockk<ActionUpdateSelectPaymentMethodParams>())
-
-        assertTrue(result)
-        coVerify {
-            configurationRepository.getConfiguration()
-            config.intent.paymentMethodIntent.isVault
-        }
-    }
 
     @Test
-    fun `filter() should return 'false' when called with ActionUpdateSelectPaymentMethodParams and intent is not vaulted and there are surcharges`() = runTest {
-        every {
-            configurationRepository.getConfiguration()
-        } returns mockk<Configuration> {
+    fun `filter() should return 'true' when called with ActionUpdateSelectPaymentMethodParams and intent is not vaulted and there are no surcharges`() =
+        runTest {
             every {
-                clientSession.clientSessionDataResponse.paymentMethod?.surcharges
-            } returns mapOf("order" to 1)
-        }
-        every { config.intent.paymentMethodIntent.isVault } returns false
+                configurationRepository.getConfiguration()
+            } returns
+                mockk<Configuration> {
+                    every {
+                        clientSession.clientSessionDataResponse.paymentMethod?.surcharges
+                    } returns emptyMap()
+                }
 
-        val result = filter.filter(mockk<ActionUpdateSelectPaymentMethodParams>())
+            every { config.intent.paymentMethodIntent.isVault } returns false
 
-        assertFalse(result)
-        coVerify {
-            configurationRepository.getConfiguration()
-            config.intent.paymentMethodIntent.isVault
+            val result = filter.filter(mockk<ActionUpdateSelectPaymentMethodParams>())
+
+            assertTrue(result)
+            coVerify {
+                configurationRepository.getConfiguration()
+                config.intent.paymentMethodIntent.isVault
+            }
         }
-    }
 
     @Test
-    fun `filter() should return 'true' when called with ActionUpdateUnselectPaymentMethodParams and intent is vaulted`() = runTest {
-        coEvery {
-            configurationRepository.getConfiguration()
-        } returns mockk()
-        every { config.intent.paymentMethodIntent.isVault } returns true
-
-        val result = filter.filter(mockk<ActionUpdateUnselectPaymentMethodParams>())
-
-        assertTrue(result)
-        coVerify {
-            configurationRepository.getConfiguration()
-            config.intent.paymentMethodIntent.isVault
-        }
-    }
-
-    @Test
-    fun `filter() should return 'true' when called with ActionUpdateUnselectPaymentMethodParams and intent is not vaulted and there are no surcharges`() = runTest {
-        every {
-            configurationRepository.getConfiguration()
-        } returns mockk {
+    fun `filter() should return 'false' when called with ActionUpdateSelectPaymentMethodParams and intent is not vaulted and there are surcharges`() =
+        runTest {
             every {
-                clientSession.clientSessionDataResponse.paymentMethod?.surcharges
-            } returns emptyMap()
+                configurationRepository.getConfiguration()
+            } returns
+                mockk<Configuration> {
+                    every {
+                        clientSession.clientSessionDataResponse.paymentMethod?.surcharges
+                    } returns mapOf("order" to 1)
+                }
+            every { config.intent.paymentMethodIntent.isVault } returns false
+
+            val result = filter.filter(mockk<ActionUpdateSelectPaymentMethodParams>())
+
+            assertFalse(result)
+            coVerify {
+                configurationRepository.getConfiguration()
+                config.intent.paymentMethodIntent.isVault
+            }
         }
-
-        every { config.intent.paymentMethodIntent.isVault } returns false
-
-        val result = filter.filter(mockk<ActionUpdateUnselectPaymentMethodParams>())
-
-        assertTrue(result)
-        coVerify {
-            configurationRepository.getConfiguration()
-            config.intent.paymentMethodIntent.isVault
-        }
-    }
 
     @Test
-    fun `filter() should return 'false' when called with ActionUpdateUnselectPaymentMethodParams and intent is not vaulted and there are surcharges`() = runTest {
-        every {
-            configurationRepository.getConfiguration()
-        } returns mockk {
+    fun `filter() should return 'true' when called with ActionUpdateUnselectPaymentMethodParams and intent is vaulted`() =
+        runTest {
+            coEvery {
+                configurationRepository.getConfiguration()
+            } returns mockk()
+            every { config.intent.paymentMethodIntent.isVault } returns true
+
+            val result = filter.filter(mockk<ActionUpdateUnselectPaymentMethodParams>())
+
+            assertTrue(result)
+            coVerify {
+                configurationRepository.getConfiguration()
+                config.intent.paymentMethodIntent.isVault
+            }
+        }
+
+    @Test
+    fun `filter() should return 'true' when called with ActionUpdateUnselectPaymentMethodParams and intent is not vaulted and there are no surcharges`() =
+        runTest {
             every {
-                clientSession.clientSessionDataResponse.paymentMethod?.surcharges
-            } returns mapOf("order" to 1)
+                configurationRepository.getConfiguration()
+            } returns
+                mockk {
+                    every {
+                        clientSession.clientSessionDataResponse.paymentMethod?.surcharges
+                    } returns emptyMap()
+                }
+
+            every { config.intent.paymentMethodIntent.isVault } returns false
+
+            val result = filter.filter(mockk<ActionUpdateUnselectPaymentMethodParams>())
+
+            assertTrue(result)
+            coVerify {
+                configurationRepository.getConfiguration()
+                config.intent.paymentMethodIntent.isVault
+            }
         }
 
-        every { config.intent.paymentMethodIntent.isVault } returns false
+    @Test
+    fun `filter() should return 'false' when called with ActionUpdateUnselectPaymentMethodParams and intent is not vaulted and there are surcharges`() =
+        runTest {
+            every {
+                configurationRepository.getConfiguration()
+            } returns
+                mockk {
+                    every {
+                        clientSession.clientSessionDataResponse.paymentMethod?.surcharges
+                    } returns mapOf("order" to 1)
+                }
 
-        val result = filter.filter(mockk<ActionUpdateUnselectPaymentMethodParams>())
+            every { config.intent.paymentMethodIntent.isVault } returns false
 
-        assertFalse(result)
-        coVerify {
-            configurationRepository.getConfiguration()
-            config.intent.paymentMethodIntent.isVault
+            val result = filter.filter(mockk<ActionUpdateUnselectPaymentMethodParams>())
+
+            assertFalse(result)
+            coVerify {
+                configurationRepository.getConfiguration()
+                config.intent.paymentMethodIntent.isVault
+            }
         }
-    }
 
     @Test
-    fun `filter() should return 'false' when called with ActionUpdateMobileNumberParams`() = runTest {
-        val result = filter.filter(mockk<ActionUpdateMobileNumberParams>())
+    fun `filter() should return 'false' when called with ActionUpdateMobileNumberParams`() =
+        runTest {
+            val result = filter.filter(mockk<ActionUpdateMobileNumberParams>())
 
-        assertFalse(result)
-    }
-
-    @Test
-    fun `filter() should return 'false' when called with ActionUpdateShippingAddressParams`() = runTest {
-        val result = filter.filter(mockk<ActionUpdateShippingAddressParams>())
-
-        assertFalse(result)
-    }
+            assertFalse(result)
+        }
 
     @Test
-    fun `filter() should return 'false' when called with ActionUpdateShippingOptionIdParams`() = runTest {
-        val result = filter.filter(mockk<ActionUpdateShippingOptionIdParams>())
+    fun `filter() should return 'false' when called with ActionUpdateShippingAddressParams`() =
+        runTest {
+            val result = filter.filter(mockk<ActionUpdateShippingAddressParams>())
 
-        assertFalse(result)
-    }
+            assertFalse(result)
+        }
 
     @Test
-    fun `filter() should return 'false' when called with ActionUpdateEmailAddressParams`() = runTest {
-        val result = filter.filter(mockk<ActionUpdateEmailAddressParams>())
+    fun `filter() should return 'false' when called with ActionUpdateShippingOptionIdParams`() =
+        runTest {
+            val result = filter.filter(mockk<ActionUpdateShippingOptionIdParams>())
 
-        assertFalse(result)
-    }
+            assertFalse(result)
+        }
+
+    @Test
+    fun `filter() should return 'false' when called with ActionUpdateEmailAddressParams`() =
+        runTest {
+            val result = filter.filter(mockk<ActionUpdateEmailAddressParams>())
+
+            assertFalse(result)
+        }
 }

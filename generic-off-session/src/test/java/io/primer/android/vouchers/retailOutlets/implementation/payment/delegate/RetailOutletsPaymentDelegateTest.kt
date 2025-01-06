@@ -5,9 +5,9 @@ import io.mockk.coVerify
 import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.mockk
+import io.primer.android.domain.payments.create.model.Payment
 import io.primer.android.errors.domain.BaseErrorResolver
 import io.primer.android.payments.core.create.domain.handler.PaymentMethodTokenHandler
-import io.primer.android.domain.payments.create.model.Payment
 import io.primer.android.payments.core.helpers.CheckoutErrorHandler
 import io.primer.android.payments.core.helpers.CheckoutSuccessHandler
 import io.primer.android.payments.core.resume.domain.handler.PaymentResumeHandler
@@ -20,7 +20,6 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 internal class RetailOutletsPaymentDelegateTest {
-
     private lateinit var paymentMethodTokenHandler: PaymentMethodTokenHandler
     private lateinit var resumePaymentHandler: PaymentResumeHandler
     private lateinit var successHandler: CheckoutSuccessHandler
@@ -39,14 +38,15 @@ internal class RetailOutletsPaymentDelegateTest {
         baseErrorResolver = mockk()
         resumeHandler = mockk()
 
-        retailOutletsPaymentDelegate = RetailOutletsPaymentDelegate(
-            paymentMethodTokenHandler,
-            resumePaymentHandler,
-            successHandler,
-            errorHandler,
-            baseErrorResolver,
-            resumeHandler
-        )
+        retailOutletsPaymentDelegate =
+            RetailOutletsPaymentDelegate(
+                paymentMethodTokenHandler,
+                resumePaymentHandler,
+                successHandler,
+                errorHandler,
+                baseErrorResolver,
+                resumeHandler,
+            )
     }
 
     @AfterEach
@@ -57,47 +57,50 @@ internal class RetailOutletsPaymentDelegateTest {
             successHandler,
             errorHandler,
             baseErrorResolver,
-            resumeHandler
+            resumeHandler,
         )
     }
 
     @Test
-    fun `handleNewClientToken should handle token and return success`() = runTest {
-        // Arrange
-        val clientToken = "client_token"
-        val payment = mockk<Payment>()
-        val decision = mockk<RetailOutletsDecision> {
-            every { expiresAt } returns "expires_at"
-            every { reference } returns "reference"
-            every { retailerName } returns "retailerName"
+    fun `handleNewClientToken should handle token and return success`() =
+        runTest {
+            // Arrange
+            val clientToken = "client_token"
+            val payment = mockk<Payment>()
+            val decision =
+                mockk<RetailOutletsDecision> {
+                    every { expiresAt } returns "expires_at"
+                    every { reference } returns "reference"
+                    every { retailerName } returns "retailerName"
+                }
+            val result = Result.success(decision)
+
+            coEvery { resumeHandler.continueWithNewClientToken(clientToken) } returns result
+
+            // Act
+            val handleNewClientTokenResult = retailOutletsPaymentDelegate.handleNewClientToken(clientToken, payment)
+
+            // Assert
+            coVerify { resumeHandler.continueWithNewClientToken(clientToken) }
+            assertTrue(handleNewClientTokenResult.isSuccess)
         }
-        val result = Result.success(decision)
-
-        coEvery { resumeHandler.continueWithNewClientToken(clientToken) } returns result
-
-        // Act
-        val handleNewClientTokenResult = retailOutletsPaymentDelegate.handleNewClientToken(clientToken, payment)
-
-        // Assert
-        coVerify { resumeHandler.continueWithNewClientToken(clientToken) }
-        assertTrue(handleNewClientTokenResult.isSuccess)
-    }
 
     @Test
-    fun `handleNewClientToken should handle token and return failure`() = runTest {
-        // Arrange
-        val clientToken = "client_token"
-        val payment = mockk<Payment>()
-        val exception = Exception("An error occurred")
-        val result = Result.failure<RetailOutletsDecision>(exception)
+    fun `handleNewClientToken should handle token and return failure`() =
+        runTest {
+            // Arrange
+            val clientToken = "client_token"
+            val payment = mockk<Payment>()
+            val exception = Exception("An error occurred")
+            val result = Result.failure<RetailOutletsDecision>(exception)
 
-        coEvery { resumeHandler.continueWithNewClientToken(clientToken) } returns result
+            coEvery { resumeHandler.continueWithNewClientToken(clientToken) } returns result
 
-        // Act
-        val handleNewClientTokenResult = retailOutletsPaymentDelegate.handleNewClientToken(clientToken, payment)
+            // Act
+            val handleNewClientTokenResult = retailOutletsPaymentDelegate.handleNewClientToken(clientToken, payment)
 
-        // Assert
-        coVerify { resumeHandler.continueWithNewClientToken(clientToken) }
-        assertTrue(handleNewClientTokenResult.isFailure)
-    }
+            // Assert
+            coVerify { resumeHandler.continueWithNewClientToken(clientToken) }
+            assertTrue(handleNewClientTokenResult.isFailure)
+        }
 }

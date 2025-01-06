@@ -7,10 +7,10 @@ import io.primer.android.analytics.domain.models.BaseAnalyticsParams
 import kotlinx.coroutines.launch
 
 internal class WebRedirectViewModel(
-    private val analyticsInteractor: AnalyticsInteractor
+    private val analyticsInteractor: AnalyticsInteractor,
 ) : ViewModel() {
-
-    fun addAnalyticsEvent(params: BaseAnalyticsParams) = viewModelScope.launch {
-        analyticsInteractor(params)
-    }
+    fun addAnalyticsEvent(params: BaseAnalyticsParams) =
+        viewModelScope.launch {
+            analyticsInteractor(params)
+        }
 }

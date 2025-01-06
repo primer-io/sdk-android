@@ -9,14 +9,14 @@ import io.primer.android.core.data.network.utils.Constants.SDK_API_VERSION_HEADE
 
 internal class RemoteConfigurationDataSource(private val httpClient: PrimerHttpClient) :
     BaseSuspendDataSource<PrimerResponse<ConfigurationDataResponse>, String> {
-    override suspend fun execute(input: String) = httpClient.retrySuspendGet<ConfigurationDataResponse>(
-        url = input,
-        headers = mapOf(SDK_API_VERSION_HEADER to CONFIGURATION_VERSION),
-        retryConfig = RetryConfig(enabled = true)
-    )
+    override suspend fun execute(input: String) =
+        httpClient.retrySuspendGet<ConfigurationDataResponse>(
+            url = input,
+            headers = mapOf(SDK_API_VERSION_HEADER to CONFIGURATION_VERSION),
+            retryConfig = RetryConfig(enabled = true),
+        )
 
     private companion object {
-
         const val CONFIGURATION_VERSION = "2.3"
     }
 }

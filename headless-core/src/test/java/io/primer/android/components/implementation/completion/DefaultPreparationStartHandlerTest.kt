@@ -29,7 +29,6 @@ import kotlin.test.assertEquals
 @ExperimentalCoroutinesApi
 @ExtendWith(InstantExecutorExtension::class, MockKExtension::class)
 class DefaultPreparationStartHandlerTest {
-
     @RelaxedMockK
     internal lateinit var analyticsRepository: AnalyticsRepository
 
@@ -46,17 +45,19 @@ class DefaultPreparationStartHandlerTest {
     }
 
     @Test
-    fun `handle should emit payment to paymentMethodType flow`() = runTest {
-        val paymentMethodType = "paymentMethodType"
+    fun `handle should emit payment to paymentMethodType flow`() =
+        runTest {
+            val paymentMethodType = "paymentMethodType"
 
-        val job = launch {
-            val emittedPaymentMethodType = startHandler.preparationStarted.first()
-            assertEquals(paymentMethodType, emittedPaymentMethodType)
+            val job =
+                launch {
+                    val emittedPaymentMethodType = startHandler.preparationStarted.first()
+                    assertEquals(paymentMethodType, emittedPaymentMethodType)
+                }
+
+            startHandler.handle(paymentMethodType)
+            job.cancel()
         }
-
-        startHandler.handle(paymentMethodType)
-        job.cancel()
-    }
 
     @Test
     fun `handle should call onCheckoutCompleted with correct data`() {
@@ -79,9 +80,9 @@ class DefaultPreparationStartHandlerTest {
                     HeadlessUniversalCheckoutAnalyticsConstants.ON_PREPARATION_STARTED,
                     mapOf(
                         HeadlessUniversalCheckoutAnalyticsConstants.PAYMENT_METHOD_TYPE
-                            to paymentMethodType
-                    )
-                )
+                            to paymentMethodType,
+                    ),
+                ),
             )
         }
 

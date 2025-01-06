@@ -3,13 +3,13 @@ package io.primer.android.paymentmethods.common.data.model
 import androidx.annotation.RestrictTo
 
 enum class PaymentMethodType(
-    val intents: Array<ClientTokenIntent>? = null
+    val intents: Array<ClientTokenIntent>? = null,
 ) {
     PAYMENT_CARD(
         arrayOf(
             ClientTokenIntent.`3DS_AUTHENTICATION`,
-            ClientTokenIntent.PROCESSOR_3DS
-        )
+            ClientTokenIntent.PROCESSOR_3DS,
+        ),
     ),
     KLARNA,
     PRIMER_TEST_KLARNA,
@@ -66,11 +66,14 @@ enum class PaymentMethodType(
     STRIPE_ACH(ClientTokenIntent.STRIPE_ACH_REDIRECTION),
 
     @RestrictTo(RestrictTo.Scope.LIBRARY)
-    UNKNOWN;
+    UNKNOWN,
+
+    ;
 
     companion object {
-        fun safeValueOf(type: String?) = PaymentMethodType.entries.find { type == it.name }
-            ?: UNKNOWN
+        fun safeValueOf(type: String?) =
+            PaymentMethodType.entries.find { type == it.name }
+                ?: UNKNOWN
     }
 
     constructor(intent: ClientTokenIntent) : this(arrayOf(intent))

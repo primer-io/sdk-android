@@ -17,7 +17,6 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 internal class GooglePayNavigatorTest {
-
     private lateinit var activity: Activity
     private lateinit var logReporter: LogReporter
     private lateinit var launcher: ActivityResultLauncher<Intent>
@@ -26,14 +25,16 @@ internal class GooglePayNavigatorTest {
 
     @BeforeEach
     fun setUp() {
-        activity = mockk(relaxed = true) {
-            every { applicationContext } returns mockk(relaxed = true)
-        }
+        activity =
+            mockk(relaxed = true) {
+                every { applicationContext } returns mockk(relaxed = true)
+            }
 
         facade = mockk<GooglePayFacade>(relaxed = true)
-        val facadeFactory = mockk<GooglePayFacadeFactory> {
-            every { create(any(), any(), any()) } returns facade
-        }
+        val facadeFactory =
+            mockk<GooglePayFacadeFactory> {
+                every { create(any(), any(), any()) } returns facade
+            }
 
         logReporter = mockk(relaxed = true)
         launcher = mockk(relaxed = true)
@@ -44,21 +45,22 @@ internal class GooglePayNavigatorTest {
     @Test
     fun `navigate() should call GooglePayFacade's pay method with correct parameters`() {
         // Given
-        val params = GooglePayActivityLauncherParams(
-            environment = GooglePayFacade.Environment.TEST,
-            gatewayMerchantId = "merchant_id",
-            merchantName = "Merchant",
-            totalPrice = "100.0",
-            countryCode = "US",
-            currencyCode = "USD",
-            allowedCardNetworks = listOf("VISA", "MASTERCARD"),
-            allowedCardAuthMethods = listOf("PAN_ONLY", "CRYPTOGRAM_3DS"),
-            billingAddressRequired = true,
-            shippingOptions = null,
-            shippingAddressParameters = null,
-            requireShippingMethod = false,
-            emailAddressRequired = false
-        )
+        val params =
+            GooglePayActivityLauncherParams(
+                environment = GooglePayFacade.Environment.TEST,
+                gatewayMerchantId = "merchant_id",
+                merchantName = "Merchant",
+                totalPrice = "100.0",
+                countryCode = "US",
+                currencyCode = "USD",
+                allowedCardNetworks = listOf("VISA", "MASTERCARD"),
+                allowedCardAuthMethods = listOf("PAN_ONLY", "CRYPTOGRAM_3DS"),
+                billingAddressRequired = true,
+                shippingOptions = null,
+                shippingAddressParameters = null,
+                requireShippingMethod = false,
+                emailAddressRequired = false,
+            )
         every { Looper.getMainLooper() } returns mockk(relaxed = true)
 
         // When
@@ -79,7 +81,7 @@ internal class GooglePayNavigatorTest {
                 shippingOptions = null,
                 shippingAddressParameters = null,
                 requireShippingMethod = false,
-                emailAddressRequired = false
+                emailAddressRequired = false,
             )
         }
     }
@@ -87,21 +89,22 @@ internal class GooglePayNavigatorTest {
     @Test
     fun `canHandle() should return true when called with GooglePayActivityLauncherParams`() {
         // Given
-        val params = GooglePayActivityLauncherParams(
-            environment = GooglePayFacade.Environment.TEST,
-            gatewayMerchantId = "merchant_id",
-            merchantName = "Merchant",
-            totalPrice = "100.0",
-            countryCode = "US",
-            currencyCode = "USD",
-            allowedCardNetworks = listOf("VISA", "MASTERCARD"),
-            allowedCardAuthMethods = listOf("PAN_ONLY", "CRYPTOGRAM_3DS"),
-            billingAddressRequired = true,
-            shippingOptions = null,
-            shippingAddressParameters = null,
-            requireShippingMethod = false,
-            emailAddressRequired = false
-        )
+        val params =
+            GooglePayActivityLauncherParams(
+                environment = GooglePayFacade.Environment.TEST,
+                gatewayMerchantId = "merchant_id",
+                merchantName = "Merchant",
+                totalPrice = "100.0",
+                countryCode = "US",
+                currencyCode = "USD",
+                allowedCardNetworks = listOf("VISA", "MASTERCARD"),
+                allowedCardAuthMethods = listOf("PAN_ONLY", "CRYPTOGRAM_3DS"),
+                billingAddressRequired = true,
+                shippingOptions = null,
+                shippingAddressParameters = null,
+                requireShippingMethod = false,
+                emailAddressRequired = false,
+            )
 
         // When
         val result = navigator.canHandle(params)

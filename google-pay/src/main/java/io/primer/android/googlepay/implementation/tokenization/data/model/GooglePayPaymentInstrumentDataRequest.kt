@@ -8,21 +8,21 @@ import org.json.JSONObject
 internal data class GooglePayPaymentInstrumentDataRequest(
     val merchantId: String,
     val encryptedPayload: String,
-    val flow: GooglePayFlow
+    val flow: GooglePayFlow,
 ) : BasePaymentInstrumentDataRequest {
     companion object {
-
         internal const val MERCHANT_ID_FIELD = "merchantId"
         internal const val ENCRYPTED_PAYLOAD_FIELD = "encryptedPayload"
         internal const val FLOW_FIELD = "flow"
 
         @JvmField
-        val serializer = JSONObjectSerializer<GooglePayPaymentInstrumentDataRequest> { t ->
-            JSONObject().apply {
-                put(MERCHANT_ID_FIELD, t.merchantId)
-                put(ENCRYPTED_PAYLOAD_FIELD, t.encryptedPayload)
-                put(FLOW_FIELD, t.flow.name)
+        val serializer =
+            JSONObjectSerializer<GooglePayPaymentInstrumentDataRequest> { t ->
+                JSONObject().apply {
+                    put(MERCHANT_ID_FIELD, t.merchantId)
+                    put(ENCRYPTED_PAYLOAD_FIELD, t.encryptedPayload)
+                    put(FLOW_FIELD, t.flow.name)
+                }
             }
-        }
     }
 }

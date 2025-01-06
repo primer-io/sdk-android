@@ -21,5 +21,5 @@ internal class IPay88ActivityLauncherParams(
     val deeplinkUrl: String,
     val errorCode: Int,
     override val paymentMethodType: String,
-    override val sessionIntent: PrimerSessionIntent
+    override val sessionIntent: PrimerSessionIntent,
 ) : PaymentMethodRedirectLauncherParams(paymentMethodType, sessionIntent)

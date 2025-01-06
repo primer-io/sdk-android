@@ -18,7 +18,7 @@ class VaultedPaymentMethodProviderFactoryRegistryTest {
     class Factory : PaymentMethodComposerProvider.Factory {
         override fun create(
             paymentMethodType: String,
-            sessionIntent: PrimerSessionIntent
+            sessionIntent: PrimerSessionIntent,
         ): PaymentMethodComposer = composer
 
         companion object {

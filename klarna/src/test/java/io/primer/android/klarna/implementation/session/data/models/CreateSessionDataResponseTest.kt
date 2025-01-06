@@ -9,28 +9,29 @@ import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
 internal class CreateSessionDataResponseTest {
-
     private val createSessionDataResponse by lazy {
         CreateSessionDataResponse.deserializer.deserialize(
-            JSONObject(JSON_OBJECT)
+            JSONObject(JSON_OBJECT),
         )
     }
 
     @Test
     fun `provider should correctly whitelist keys`() {
         // Given
-        val expectedKeys = setOf(
-            WhitelistedKey.PrimitiveWhitelistedKey("sessionId"),
-            WhitelistedKey.NonPrimitiveWhitelistedKey(
-                value = "categories",
-                children = listOf(
-                    WhitelistedKey.PrimitiveWhitelistedKey("identifier"),
-                    WhitelistedKey.PrimitiveWhitelistedKey("name"),
-                    WhitelistedKey.PrimitiveWhitelistedKey("descriptiveAssetUrl"),
-                    WhitelistedKey.PrimitiveWhitelistedKey("standardAssetUrl")
-                )
+        val expectedKeys =
+            setOf(
+                WhitelistedKey.PrimitiveWhitelistedKey("sessionId"),
+                WhitelistedKey.NonPrimitiveWhitelistedKey(
+                    value = "categories",
+                    children =
+                        listOf(
+                            WhitelistedKey.PrimitiveWhitelistedKey("identifier"),
+                            WhitelistedKey.PrimitiveWhitelistedKey("name"),
+                            WhitelistedKey.PrimitiveWhitelistedKey("descriptiveAssetUrl"),
+                            WhitelistedKey.PrimitiveWhitelistedKey("standardAssetUrl"),
+                        ),
+                ),
             )
-        )
 
         // When
         val actualKeys = CreateSessionDataResponse.provider.values.toSet()
@@ -43,24 +44,24 @@ internal class CreateSessionDataResponseTest {
 
     @Test
     fun `createSessionDataResponse should be deserialized correctly`() {
-        val klarnaSession = KlarnaSession(
-            SESSION_ID,
-            CLIENT_TOKEN,
-            listOf(
-                KlarnaPaymentCategory(
-                    identifier = CATEGORY_IDENTIFIER,
-                    name = CATEGORY_NAME,
-                    descriptiveAssetUrl = CATEGORY_DESCRIPTIVE_ASSET_URL,
-                    standardAssetUrl = CATEGORY_STANDARD_ASSET_URL
-                )
+        val klarnaSession =
+            KlarnaSession(
+                SESSION_ID,
+                CLIENT_TOKEN,
+                listOf(
+                    KlarnaPaymentCategory(
+                        identifier = CATEGORY_IDENTIFIER,
+                        name = CATEGORY_NAME,
+                        descriptiveAssetUrl = CATEGORY_DESCRIPTIVE_ASSET_URL,
+                        standardAssetUrl = CATEGORY_STANDARD_ASSET_URL,
+                    ),
+                ),
             )
-        )
 
         assertEquals(klarnaSession, createSessionDataResponse.toKlarnaSession())
     }
 
     private companion object {
-
         const val SESSION_ID = "ea59c16b-18e9-436e-bc99"
         const val CLIENT_TOKEN = "test.token"
         const val CATEGORY_IDENTIFIER = "pay_over_time"

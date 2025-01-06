@@ -3,7 +3,7 @@ package io.primer.android.errors.domain.models
 import io.primer.android.domain.error.models.PrimerError
 
 internal class BadNetworkError(
-    override val diagnosticsId: String
+    override val diagnosticsId: String,
 ) : PrimerError() {
     override val errorId: String = "bad-network"
     override val description: String =

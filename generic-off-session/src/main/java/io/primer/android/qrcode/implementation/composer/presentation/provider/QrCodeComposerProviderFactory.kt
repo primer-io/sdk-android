@@ -9,23 +9,26 @@ import io.primer.android.qrcode.implementation.composer.presentation.QrCodeCompo
 import io.primer.android.qrcode.implementation.payment.delegate.QrCodePaymentDelegate
 
 internal class QrCodeComposerProviderFactory : PaymentMethodComposerProvider.Factory {
-
-    override fun create(paymentMethodType: String, sessionIntent: PrimerSessionIntent): PaymentMethodComposer {
+    override fun create(
+        paymentMethodType: String,
+        sessionIntent: PrimerSessionIntent,
+    ): PaymentMethodComposer {
         return QrCodeComponent(
             tokenizationDelegate = resolve(),
             pollingInteractor = resolve(PaymentsContainer.POLLING_INTERACTOR_DI_KEY),
-            paymentDelegate = QrCodePaymentDelegate(
-                paymentMethodTokenHandler = resolve(),
-                resumePaymentHandler = resolve(),
-                successHandler = resolve(),
-                pollingStartHandler = resolve(),
-                additionalInfoHandler = resolve(),
-                errorHandler = resolve(),
-                baseErrorResolver = resolve(),
-                resumeHandler = resolve(),
-                tokenizedPaymentMethodRepository = resolve()
-            ),
-            pollingStartHandler = resolve()
+            paymentDelegate =
+                QrCodePaymentDelegate(
+                    paymentMethodTokenHandler = resolve(),
+                    resumePaymentHandler = resolve(),
+                    successHandler = resolve(),
+                    pollingStartHandler = resolve(),
+                    additionalInfoHandler = resolve(),
+                    errorHandler = resolve(),
+                    baseErrorResolver = resolve(),
+                    resumeHandler = resolve(),
+                    tokenizedPaymentMethodRepository = resolve(),
+                ),
+            pollingStartHandler = resolve(),
         )
     }
 }

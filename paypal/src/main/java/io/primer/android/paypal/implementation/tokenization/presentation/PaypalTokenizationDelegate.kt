@@ -14,64 +14,74 @@ import io.primer.android.paypal.implementation.tokenization.presentation.model.P
 internal class PaypalTokenizationDelegate(
     private val tokenizationInteractor: PaypalTokenizationInteractor,
     private val paypalCreateOrderInteractor: PaypalOrderInfoInteractor,
-    private val confirmBillingAgreementInteractor: PaypalConfirmBillingAgreementInteractor
+    private val confirmBillingAgreementInteractor: PaypalConfirmBillingAgreementInteractor,
 ) : PaymentMethodTokenizationDelegate<PaypalTokenizationInputable, PaypalPaymentInstrumentParams>(
-    tokenizationInteractor
-),
-    TokenizationCollectedDataMapper<PaypalTokenizationInputable,
-        PaypalPaymentInstrumentParams> {
+        tokenizationInteractor,
+    ),
+    TokenizationCollectedDataMapper<
+        PaypalTokenizationInputable,
+        PaypalPaymentInstrumentParams,
+        > {
+    override suspend fun mapTokenizationData(
+        input: PaypalTokenizationInputable,
+    ): Result<TokenizationParams<PaypalPaymentInstrumentParams>> =
+        when (input) {
+            is PaypalTokenizationInputable.PaypalCheckoutTokenizationInputable ->
+                getPaypalOrderInfo(
+                    paymentMethodConfigId = input.paymentMethodConfigId,
+                    orderId = input.orderId,
+                ).map { orderInfo ->
+                    TokenizationParams(
+                        paymentInstrumentParams =
+                            PaypalPaymentInstrumentParams.PaypalCheckoutPaymentInstrumentParams(
+                                paymentMethodType = input.paymentMethodType,
+                                externalPayerId = orderInfo.externalPayerId,
+                                externalPayerInfoEmail = orderInfo.email,
+                                paypalOrderId = orderInfo.orderId,
+                                externalPayerFirstName = orderInfo.externalPayerFirstName,
+                                externalPayerLastName = orderInfo.externalPayerLastName,
+                            ),
+                        sessionIntent = input.primerSessionIntent,
+                    )
+                }
 
-    override suspend fun mapTokenizationData(input: PaypalTokenizationInputable):
-        Result<TokenizationParams<PaypalPaymentInstrumentParams>> = when (input) {
-        is PaypalTokenizationInputable.PaypalCheckoutTokenizationInputable -> getPaypalOrderInfo(
-            paymentMethodConfigId = input.paymentMethodConfigId,
-            orderId = input.orderId
-        ).map { orderInfo ->
-            TokenizationParams(
-                paymentInstrumentParams = PaypalPaymentInstrumentParams.PaypalCheckoutPaymentInstrumentParams(
-                    paymentMethodType = input.paymentMethodType,
-                    externalPayerId = orderInfo.externalPayerId,
-                    externalPayerInfoEmail = orderInfo.email,
-                    paypalOrderId = orderInfo.orderId,
-                    externalPayerFirstName = orderInfo.externalPayerFirstName,
-                    externalPayerLastName = orderInfo.externalPayerLastName
-                ),
-                sessionIntent = input.primerSessionIntent
-            )
+            is PaypalTokenizationInputable.PaypalVaultTokenizationInputable ->
+                confirmBillingAgreement(
+                    paymentMethodConfigId = input.paymentMethodConfigId,
+                    token = input.tokenId,
+                ).map { billingAgreement ->
+                    TokenizationParams(
+                        paymentInstrumentParams =
+                            PaypalPaymentInstrumentParams.PaypalVaultPaymentInstrumentParams(
+                                paypalBillingAgreementId = billingAgreement.billingAgreementId,
+                                paymentMethodType = input.paymentMethodType,
+                                externalPayerInfo = billingAgreement.externalPayerInfo,
+                                shippingAddress = billingAgreement.shippingAddress,
+                            ),
+                        sessionIntent = input.primerSessionIntent,
+                    )
+                }
         }
 
-        is PaypalTokenizationInputable.PaypalVaultTokenizationInputable ->
-            confirmBillingAgreement(
-                paymentMethodConfigId = input.paymentMethodConfigId,
-                token = input.tokenId
-            ).map { billingAgreement ->
-                TokenizationParams(
-                    paymentInstrumentParams = PaypalPaymentInstrumentParams.PaypalVaultPaymentInstrumentParams(
-                        paypalBillingAgreementId = billingAgreement.billingAgreementId,
-                        paymentMethodType = input.paymentMethodType,
-                        externalPayerInfo = billingAgreement.externalPayerInfo,
-                        shippingAddress = billingAgreement.shippingAddress
-                    ),
-                    sessionIntent = input.primerSessionIntent
-                )
-            }
-    }
-
-    private suspend fun getPaypalOrderInfo(paymentMethodConfigId: String, orderId: String?) =
-        paypalCreateOrderInteractor(
-            params = PaypalOrderInfoParams(
+    private suspend fun getPaypalOrderInfo(
+        paymentMethodConfigId: String,
+        orderId: String?,
+    ) = paypalCreateOrderInteractor(
+        params =
+            PaypalOrderInfoParams(
                 paymentMethodConfigId = paymentMethodConfigId,
-                orderId = orderId
-            )
-        )
+                orderId = orderId,
+            ),
+    )
 
     private suspend fun confirmBillingAgreement(
         paymentMethodConfigId: String,
-        token: String?
+        token: String?,
     ) = confirmBillingAgreementInteractor(
-        params = PaypalConfirmBillingAgreementParams(
-            paymentMethodConfigId = paymentMethodConfigId,
-            tokenId = requireNotNull(token)
-        )
+        params =
+            PaypalConfirmBillingAgreementParams(
+                paymentMethodConfigId = paymentMethodConfigId,
+                tokenId = requireNotNull(token),
+            ),
     )
 }

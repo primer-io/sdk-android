@@ -27,7 +27,6 @@ import kotlin.test.assertEquals
 @ExtendWith(InstantExecutorExtension::class, MockKExtension::class)
 @ExperimentalCoroutinesApi
 class AsyncPaymentMethodPollingInteractorTest {
-
     @RelaxedMockK
     internal lateinit var paymentMethodStatusRepository: AsyncPaymentMethodStatusRepository
 
@@ -36,9 +35,10 @@ class AsyncPaymentMethodPollingInteractorTest {
     @BeforeEach
     fun setUp() {
         MockKAnnotations.init(this, relaxed = true)
-        interactor = DefaultAsyncPaymentMethodPollingInteractor(
-            paymentMethodStatusRepository = paymentMethodStatusRepository
-        )
+        interactor =
+            DefaultAsyncPaymentMethodPollingInteractor(
+                paymentMethodStatusRepository = paymentMethodStatusRepository,
+            )
     }
 
     @Test
@@ -46,17 +46,18 @@ class AsyncPaymentMethodPollingInteractorTest {
         val asyncStatus = AsyncStatus(resumeToken = "test_resume_token")
 
         coEvery { paymentMethodStatusRepository.getAsyncStatus(any()) }.returns(
-            flowOf(asyncStatus)
+            flowOf(asyncStatus),
         )
         val url = "https://www.example.com"
 
         runTest {
-            val status = interactor(
-                AsyncStatusParams(
-                    url = url,
-                    paymentMethodType = ""
-                )
-            ).first()
+            val status =
+                interactor(
+                    AsyncStatusParams(
+                        url = url,
+                        paymentMethodType = "",
+                    ),
+                ).first()
 
             assertEquals("test_resume_token", status.resumeToken)
         }
@@ -70,7 +71,7 @@ class AsyncPaymentMethodPollingInteractorTest {
         every { exception.message }.returns("Failed to get status.")
 
         coEvery { paymentMethodStatusRepository.getAsyncStatus(any()) }.returns(
-            flow { throw exception }
+            flow { throw exception },
         )
         val url = "https://www.example.com"
         assertThrows<Exception> {
@@ -78,8 +79,8 @@ class AsyncPaymentMethodPollingInteractorTest {
                 interactor(
                     AsyncStatusParams(
                         url,
-                        ""
-                    )
+                        "",
+                    ),
                 ).first()
             }
         }
@@ -92,15 +93,15 @@ class AsyncPaymentMethodPollingInteractorTest {
         val exception = mockk<CancellationException>(relaxed = true)
         every { exception.message }.returns("Job cancelled.")
         coEvery { paymentMethodStatusRepository.getAsyncStatus(any()) }.returns(
-            flow { throw exception }
+            flow { throw exception },
         )
         assertThrows<PaymentMethodCancelledException> {
             runTest {
                 interactor(
                     AsyncStatusParams(
                         "",
-                        "GOOGLE_PAY"
-                    )
+                        "GOOGLE_PAY",
+                    ),
                 ).first()
             }
         }

@@ -1,5 +1,3 @@
-@file:Suppress("MaxLineLength")
-
 package io.primer.android.configuration.data.model
 
 import io.primer.android.configuration.data.model.CheckoutModuleDataResponse.Companion.OPTIONS_FIELD
@@ -29,9 +27,8 @@ data class ConfigurationDataResponse(
     val keys: ConfigurationKeysDataResponse?,
     val clientSession: ClientSessionDataResponse,
     val environment: Environment,
-    val primerAccountId: String?
+    val primerAccountId: String?,
 ) : JSONDeserializable {
-
     fun toConfigurationData(iconDisplayMetaData: List<Map<String, List<IconDisplayMetadata>>>) =
         ConfigurationData(
             pciUrl,
@@ -44,7 +41,7 @@ data class ConfigurationDataResponse(
             clientSession,
             environment,
             primerAccountId,
-            iconDisplayMetaData
+            iconDisplayMetaData,
         )
 
     companion object {
@@ -59,202 +56,221 @@ data class ConfigurationDataResponse(
         const val ENVIRONMENT_FIELD = "env"
         const val PRIMER_ACCOUNT_ID_FIELD = "primerAccountId"
 
-        val provider = object : WhitelistedHttpBodyKeysProvider {
-            // ktlint-disable max-line-length
-            override val values: List<WhitelistedKey> =
-                whitelistedKeys {
-                    primitiveKey(CORE_URL_FIELD)
-                    primitiveKey(PCI_URL_FIELD)
-                    primitiveKey(BIN_DATA_URL_FIELD)
-                    primitiveKey(ASSETS_URL_FIELD)
-                    nonPrimitiveKey(CHECKOUT_MODULES_FIELD) {
-                        primitiveKey(TYPE_FIELD)
-                        primitiveKey(REQUEST_URL_FIELD)
-                        primitiveKey(OPTIONS_FIELD)
-                    }
-                    nonPrimitiveKey(CLIENT_SESSION_FIELD) {
-                        primitiveKey(ClientSessionDataResponse.CLIENT_SESSION_ID_FIELD)
-                        nonPrimitiveKey(ClientSessionDataResponse.ORDER_DATA_FIELD) {
-                            primitiveKey(OrderDataResponse.ORDER_ID_FIELD)
-                            primitiveKey(OrderDataResponse.CURRENCY_CODE_FIELD)
-                            primitiveKey(OrderDataResponse.MERCHANT_AMOUNT_FIELD)
-                            primitiveKey(OrderDataResponse.TOTAL_ORDER_AMOUNT_FIELD)
-                            primitiveKey(OrderDataResponse.COUNTRY_CODE_FIELD)
-                            nonPrimitiveKey(OrderDataResponse.LINE_ITEMS_FIELD) {
-                                primitiveKey(OrderDataResponse.LineItemDataResponse.ITEM_ID_FIELD)
-                                primitiveKey(OrderDataResponse.LineItemDataResponse.UNIT_AMOUNT_FIELD)
-                                primitiveKey(OrderDataResponse.LineItemDataResponse.QUANTITY_FIELD)
-                                primitiveKey(
-                                    OrderDataResponse.LineItemDataResponse.DISCOUNT_AMOUNT_FIELD
-                                )
-                                primitiveKey(OrderDataResponse.LineItemDataResponse.TAX_AMOUNT_FIELD)
-                                primitiveKey(OrderDataResponse.LineItemDataResponse.TAX_CODE_FIELD)
-                            }
-                            primitiveKey(OrderDataResponse.FEES_FIELD)
+        val provider =
+            object : WhitelistedHttpBodyKeysProvider {
+                override val values: List<WhitelistedKey> =
+                    whitelistedKeys {
+                        primitiveKey(CORE_URL_FIELD)
+                        primitiveKey(PCI_URL_FIELD)
+                        primitiveKey(BIN_DATA_URL_FIELD)
+                        primitiveKey(ASSETS_URL_FIELD)
+                        nonPrimitiveKey(CHECKOUT_MODULES_FIELD) {
+                            primitiveKey(TYPE_FIELD)
+                            primitiveKey(REQUEST_URL_FIELD)
+                            primitiveKey(OPTIONS_FIELD)
                         }
-                        nonPrimitiveKey(ClientSessionDataResponse.PAYMENT_METHOD_DATA_FIELD) {
-                            primitiveKey(
-                                ClientSessionDataResponse.PaymentMethodDataResponse.VAULT_ON_SUCCESS_FIELD
-                            )
-                            primitiveKey(
-                                ClientSessionDataResponse.PaymentMethodDataResponse.VAULT_ON_AGREEMENT_FIELD
-                            )
-                            nonPrimitiveKey(
-                                ClientSessionDataResponse.PaymentMethodDataResponse.OPTIONS_FIELD
-                            ) {
-                                primitiveKey(
-                                    ClientSessionDataResponse.PaymentMethodOptionDataResponse.TYPE_FIELD
-                                )
-                                primitiveKey(
-                                    ClientSessionDataResponse.PaymentMethodOptionDataResponse.SURCHARGE_FIELD
-                                )
-                                nonPrimitiveKey(
-                                    ClientSessionDataResponse.PaymentMethodOptionDataResponse.NETWORKS_FIELD
-                                ) {
+                        nonPrimitiveKey(CLIENT_SESSION_FIELD) {
+                            primitiveKey(ClientSessionDataResponse.CLIENT_SESSION_ID_FIELD)
+                            nonPrimitiveKey(ClientSessionDataResponse.ORDER_DATA_FIELD) {
+                                primitiveKey(OrderDataResponse.ORDER_ID_FIELD)
+                                primitiveKey(OrderDataResponse.CURRENCY_CODE_FIELD)
+                                primitiveKey(OrderDataResponse.MERCHANT_AMOUNT_FIELD)
+                                primitiveKey(OrderDataResponse.TOTAL_ORDER_AMOUNT_FIELD)
+                                primitiveKey(OrderDataResponse.COUNTRY_CODE_FIELD)
+                                nonPrimitiveKey(OrderDataResponse.LINE_ITEMS_FIELD) {
+                                    primitiveKey(OrderDataResponse.LineItemDataResponse.ITEM_ID_FIELD)
+                                    primitiveKey(OrderDataResponse.LineItemDataResponse.UNIT_AMOUNT_FIELD)
+                                    primitiveKey(OrderDataResponse.LineItemDataResponse.QUANTITY_FIELD)
                                     primitiveKey(
-                                        ClientSessionDataResponse.NetworkOptionDataResponse.TYPE_FIELD
+                                        OrderDataResponse.LineItemDataResponse.DISCOUNT_AMOUNT_FIELD,
                                     )
-                                    primitiveKey(
-                                        ClientSessionDataResponse.NetworkOptionDataResponse.SURCHARGE_FIELD
-                                    )
+                                    primitiveKey(OrderDataResponse.LineItemDataResponse.TAX_AMOUNT_FIELD)
+                                    primitiveKey(OrderDataResponse.LineItemDataResponse.TAX_CODE_FIELD)
                                 }
+                                primitiveKey(OrderDataResponse.FEES_FIELD)
                             }
-                            primitiveKey(
-                                ClientSessionDataResponse.PaymentMethodDataResponse.ALLOWED_CARD_NETWORKS_FIELD
-                            )
-                        }
-                    }
-                    primitiveKey(PRIMER_ACCOUNT_ID_FIELD)
-                    primitiveKey(ENVIRONMENT_FIELD)
-                    nonPrimitiveKey(PAYMENT_METHODS_CONFIG_FIELD) {
-                        primitiveKey(PaymentMethodConfigDataResponse.ID_FIELD)
-                        primitiveKey(PaymentMethodConfigDataResponse.NAME_FIELD)
-                        primitiveKey(PaymentMethodConfigDataResponse.IMPLEMENTATION_TYPE_FIELD)
-                        primitiveKey(PaymentMethodConfigDataResponse.TYPE_FIELD)
-                        nonPrimitiveKey(PaymentMethodConfigDataResponse.DISPLAY_METADATA_FIELD) {
-                            nonPrimitiveKey(PaymentMethodDisplayMetadataResponse.BUTTON_DATA_FIELD) {
-                                nonPrimitiveKey(
-                                    PaymentMethodDisplayMetadataResponse.ButtonDataResponse.ICON_URL_DATA_FIELD
-                                ) {
-                                    primitiveKey(
-                                        PaymentMethodDisplayMetadataResponse.ButtonDataResponse.IconUrlDataResponse.COLORED_FIELD
-                                    )
-                                    primitiveKey(
-                                        PaymentMethodDisplayMetadataResponse.ButtonDataResponse.IconUrlDataResponse.LIGHT_FIELD
-                                    )
-                                    primitiveKey(
-                                        PaymentMethodDisplayMetadataResponse.ButtonDataResponse.IconUrlDataResponse.DARK_FIELD
-                                    )
-                                }
-                                nonPrimitiveKey(
-                                    PaymentMethodDisplayMetadataResponse.ButtonDataResponse.BACKGROUND_COLOR_DATA_FIELD
-                                ) {
-                                    primitiveKey(
-                                        PaymentMethodDisplayMetadataResponse.ButtonDataResponse.ColorDataResponse.COLORED_FIELD
-                                    )
-                                    primitiveKey(
-                                        PaymentMethodDisplayMetadataResponse.ButtonDataResponse.ColorDataResponse.LIGHT_FIELD
-                                    )
-                                    primitiveKey(
-                                        PaymentMethodDisplayMetadataResponse.ButtonDataResponse.ColorDataResponse.DARK_FIELD
-                                    )
-                                }
-                                nonPrimitiveKey(
-                                    PaymentMethodDisplayMetadataResponse.ButtonDataResponse.BORDER_COLOR_DATA_FIELD
-                                ) {
-                                    primitiveKey(
-                                        PaymentMethodDisplayMetadataResponse.ButtonDataResponse.ColorDataResponse.COLORED_FIELD
-                                    )
-                                    primitiveKey(
-                                        PaymentMethodDisplayMetadataResponse.ButtonDataResponse.ColorDataResponse.LIGHT_FIELD
-                                    )
-                                    primitiveKey(
-                                        PaymentMethodDisplayMetadataResponse.ButtonDataResponse.ColorDataResponse.DARK_FIELD
-                                    )
-                                }
-                                nonPrimitiveKey(
-                                    PaymentMethodDisplayMetadataResponse.ButtonDataResponse.BORDER_WIDTH_DATA_FIELD
-                                ) {
-                                    primitiveKey(
-                                        PaymentMethodDisplayMetadataResponse.ButtonDataResponse.BorderWidthDataResponse.COLORED_FIELD
-                                    )
-                                    primitiveKey(
-                                        PaymentMethodDisplayMetadataResponse.ButtonDataResponse.BorderWidthDataResponse.LIGHT_FIELD
-                                    )
-                                    primitiveKey(
-                                        PaymentMethodDisplayMetadataResponse.ButtonDataResponse.BorderWidthDataResponse.DARK_FIELD
-                                    )
-                                }
+                            nonPrimitiveKey(ClientSessionDataResponse.PAYMENT_METHOD_DATA_FIELD) {
                                 primitiveKey(
-                                    PaymentMethodDisplayMetadataResponse.ButtonDataResponse.CORNER_RADIUS_FIELD
+                                    ClientSessionDataResponse.PaymentMethodDataResponse.VAULT_ON_SUCCESS_FIELD,
                                 )
                                 primitiveKey(
-                                    PaymentMethodDisplayMetadataResponse.ButtonDataResponse.TEXT_FIELD
+                                    ClientSessionDataResponse.PaymentMethodDataResponse.VAULT_ON_AGREEMENT_FIELD,
                                 )
                                 nonPrimitiveKey(
-                                    PaymentMethodDisplayMetadataResponse.ButtonDataResponse.TEXT_COLOR_DATA_FIELD
+                                    ClientSessionDataResponse.PaymentMethodDataResponse.OPTIONS_FIELD,
                                 ) {
                                     primitiveKey(
-                                        PaymentMethodDisplayMetadataResponse.ButtonDataResponse.ColorDataResponse.COLORED_FIELD
+                                        ClientSessionDataResponse.PaymentMethodOptionDataResponse.TYPE_FIELD,
                                     )
                                     primitiveKey(
-                                        PaymentMethodDisplayMetadataResponse.ButtonDataResponse.ColorDataResponse.LIGHT_FIELD
+                                        ClientSessionDataResponse.PaymentMethodOptionDataResponse.SURCHARGE_FIELD,
                                     )
-                                    primitiveKey(
-                                        PaymentMethodDisplayMetadataResponse.ButtonDataResponse.ColorDataResponse.DARK_FIELD
-                                    )
+                                    nonPrimitiveKey(
+                                        ClientSessionDataResponse.PaymentMethodOptionDataResponse.NETWORKS_FIELD,
+                                    ) {
+                                        primitiveKey(
+                                            ClientSessionDataResponse.NetworkOptionDataResponse.TYPE_FIELD,
+                                        )
+                                        primitiveKey(
+                                            ClientSessionDataResponse.NetworkOptionDataResponse.SURCHARGE_FIELD,
+                                        )
+                                    }
                                 }
                                 primitiveKey(
-                                    PaymentMethodDisplayMetadataResponse.ButtonDataResponse.ICON_POSITION_FIELD
+                                    ClientSessionDataResponse.PaymentMethodDataResponse.ALLOWED_CARD_NETWORKS_FIELD,
                                 )
                             }
                         }
-                        primitiveKey("processorConfigId") // not yet defined as a constant
+                        primitiveKey(PRIMER_ACCOUNT_ID_FIELD)
+                        primitiveKey(ENVIRONMENT_FIELD)
+                        nonPrimitiveKey(PAYMENT_METHODS_CONFIG_FIELD) {
+                            primitiveKey(PaymentMethodConfigDataResponse.ID_FIELD)
+                            primitiveKey(PaymentMethodConfigDataResponse.NAME_FIELD)
+                            primitiveKey(PaymentMethodConfigDataResponse.IMPLEMENTATION_TYPE_FIELD)
+                            primitiveKey(PaymentMethodConfigDataResponse.TYPE_FIELD)
+                            nonPrimitiveKey(PaymentMethodConfigDataResponse.DISPLAY_METADATA_FIELD) {
+                                nonPrimitiveKey(PaymentMethodDisplayMetadataResponse.BUTTON_DATA_FIELD) {
+                                    nonPrimitiveKey(
+                                        PaymentMethodDisplayMetadataResponse.ButtonDataResponse.ICON_URL_DATA_FIELD,
+                                    ) {
+                                        primitiveKey(
+                                            PaymentMethodDisplayMetadataResponse.ButtonDataResponse
+                                                .IconUrlDataResponse.COLORED_FIELD,
+                                        )
+                                        primitiveKey(
+                                            PaymentMethodDisplayMetadataResponse.ButtonDataResponse
+                                                .IconUrlDataResponse.LIGHT_FIELD,
+                                        )
+                                        primitiveKey(
+                                            PaymentMethodDisplayMetadataResponse.ButtonDataResponse
+                                                .IconUrlDataResponse.DARK_FIELD,
+                                        )
+                                    }
+                                    nonPrimitiveKey(
+                                        PaymentMethodDisplayMetadataResponse.ButtonDataResponse
+                                            .BACKGROUND_COLOR_DATA_FIELD,
+                                    ) {
+                                        primitiveKey(
+                                            PaymentMethodDisplayMetadataResponse.ButtonDataResponse
+                                                .ColorDataResponse.COLORED_FIELD,
+                                        )
+                                        primitiveKey(
+                                            PaymentMethodDisplayMetadataResponse.ButtonDataResponse
+                                                .ColorDataResponse.LIGHT_FIELD,
+                                        )
+                                        primitiveKey(
+                                            PaymentMethodDisplayMetadataResponse.ButtonDataResponse
+                                                .ColorDataResponse.DARK_FIELD,
+                                        )
+                                    }
+                                    nonPrimitiveKey(
+                                        PaymentMethodDisplayMetadataResponse.ButtonDataResponse.BORDER_COLOR_DATA_FIELD,
+                                    ) {
+                                        primitiveKey(
+                                            PaymentMethodDisplayMetadataResponse.ButtonDataResponse
+                                                .ColorDataResponse.COLORED_FIELD,
+                                        )
+                                        primitiveKey(
+                                            PaymentMethodDisplayMetadataResponse.ButtonDataResponse
+                                                .ColorDataResponse.LIGHT_FIELD,
+                                        )
+                                        primitiveKey(
+                                            PaymentMethodDisplayMetadataResponse.ButtonDataResponse
+                                                .ColorDataResponse.DARK_FIELD,
+                                        )
+                                    }
+                                    nonPrimitiveKey(
+                                        PaymentMethodDisplayMetadataResponse.ButtonDataResponse.BORDER_WIDTH_DATA_FIELD,
+                                    ) {
+                                        primitiveKey(
+                                            PaymentMethodDisplayMetadataResponse.ButtonDataResponse
+                                                .BorderWidthDataResponse.COLORED_FIELD,
+                                        )
+                                        primitiveKey(
+                                            PaymentMethodDisplayMetadataResponse.ButtonDataResponse
+                                                .BorderWidthDataResponse.LIGHT_FIELD,
+                                        )
+                                        primitiveKey(
+                                            PaymentMethodDisplayMetadataResponse.ButtonDataResponse
+                                                .BorderWidthDataResponse.DARK_FIELD,
+                                        )
+                                    }
+                                    primitiveKey(
+                                        PaymentMethodDisplayMetadataResponse.ButtonDataResponse.CORNER_RADIUS_FIELD,
+                                    )
+                                    primitiveKey(
+                                        PaymentMethodDisplayMetadataResponse.ButtonDataResponse.TEXT_FIELD,
+                                    )
+                                    nonPrimitiveKey(
+                                        PaymentMethodDisplayMetadataResponse.ButtonDataResponse
+                                            .TEXT_COLOR_DATA_FIELD,
+                                    ) {
+                                        primitiveKey(
+                                            PaymentMethodDisplayMetadataResponse.ButtonDataResponse.ColorDataResponse
+                                                .COLORED_FIELD,
+                                        )
+                                        primitiveKey(
+                                            PaymentMethodDisplayMetadataResponse.ButtonDataResponse.ColorDataResponse
+                                                .LIGHT_FIELD,
+                                        )
+                                        primitiveKey(
+                                            PaymentMethodDisplayMetadataResponse.ButtonDataResponse.ColorDataResponse
+                                                .DARK_FIELD,
+                                        )
+                                    }
+                                    primitiveKey(
+                                        PaymentMethodDisplayMetadataResponse.ButtonDataResponse.ICON_POSITION_FIELD,
+                                    )
+                                }
+                            }
+                            primitiveKey("processorConfigId") // not yet defined as a constant
+                        }
                     }
-                }
-        }
+            }
 
         @JvmField
-        val deserializer = JSONObjectDeserializer { t ->
-            ConfigurationDataResponse(
-                t.getString(PCI_URL_FIELD),
-                t.getString(CORE_URL_FIELD),
-                t.getString(BIN_DATA_URL_FIELD),
-                t.optString(ASSETS_URL_FIELD),
-                t.getJSONArray(PAYMENT_METHODS_CONFIG_FIELD).sequence<JSONObject>()
-                    .map {
+        val deserializer =
+            JSONObjectDeserializer { t ->
+                ConfigurationDataResponse(
+                    t.getString(PCI_URL_FIELD),
+                    t.getString(CORE_URL_FIELD),
+                    t.getString(BIN_DATA_URL_FIELD),
+                    t.optString(ASSETS_URL_FIELD),
+                    t.getJSONArray(PAYMENT_METHODS_CONFIG_FIELD).sequence<JSONObject>()
+                        .map {
+                            JSONSerializationUtils
+                                .getJsonObjectDeserializer<PaymentMethodConfigDataResponse>()
+                                .deserialize(it)
+                        }.toList(),
+                    t.getJSONArray(CHECKOUT_MODULES_FIELD).sequence<JSONObject>()
+                        .map {
+                            JSONSerializationUtils
+                                .getJsonObjectDeserializer<CheckoutModuleDataResponse>()
+                                .deserialize(it)
+                        }.toList(),
+                    t.optJSONObject(CONFIGURATION_KEYS_FIELD)?.let {
                         JSONSerializationUtils
-                            .getJsonObjectDeserializer<PaymentMethodConfigDataResponse>()
+                            .getJsonObjectDeserializer<ConfigurationKeysDataResponse>()
                             .deserialize(it)
-                    }.toList(),
-                t.getJSONArray(CHECKOUT_MODULES_FIELD).sequence<JSONObject>()
-                    .map {
-                        JSONSerializationUtils
-                            .getJsonObjectDeserializer<CheckoutModuleDataResponse>()
-                            .deserialize(it)
-                    }.toList(),
-                t.optJSONObject(CONFIGURATION_KEYS_FIELD)?.let {
+                    },
                     JSONSerializationUtils
-                        .getJsonObjectDeserializer<ConfigurationKeysDataResponse>()
-                        .deserialize(it)
-                },
-                JSONSerializationUtils
-                    .getJsonObjectDeserializer<ClientSessionDataResponse>()
-                    .deserialize(t.getJSONObject(CLIENT_SESSION_FIELD)),
-                Environment.valueOf(t.getString(ENVIRONMENT_FIELD)),
-                t.optNullableString(PRIMER_ACCOUNT_ID_FIELD)
-            )
-        }
+                        .getJsonObjectDeserializer<ClientSessionDataResponse>()
+                        .deserialize(t.getJSONObject(CLIENT_SESSION_FIELD)),
+                    Environment.valueOf(t.getString(ENVIRONMENT_FIELD)),
+                    t.optNullableString(PRIMER_ACCOUNT_ID_FIELD),
+                )
+            }
     }
 }
 
 data class PaymentMethodConfigDataResponse(
-    val id: String?, // payment card has null only
+    // payment card has null only
+    val id: String?,
     val name: String?,
     val implementationType: PaymentMethodImplementationType,
     val type: String,
     val options: PaymentMethodRemoteConfigOptions?,
-    val displayMetadata: PaymentMethodDisplayMetadataResponse?
+    val displayMetadata: PaymentMethodDisplayMetadataResponse?,
 ) : JSONDeserializable {
     fun toPaymentMethodConfig() = PaymentMethodConfig(id = id, name = name, type = type, options = options)
 
@@ -267,28 +283,29 @@ data class PaymentMethodConfigDataResponse(
         const val DISPLAY_METADATA_FIELD = "displayMetadata"
 
         @JvmField
-        val deserializer = JSONObjectDeserializer { t ->
-            PaymentMethodConfigDataResponse(
-                t.optNullableString(ID_FIELD),
-                t.optNullableString(NAME_FIELD),
-                PaymentMethodImplementationType.safeValueOf(
-                    t.optNullableString(
-                        IMPLEMENTATION_TYPE_FIELD
-                    )
-                ),
-                t.getString(TYPE_FIELD),
-                t.optJSONObject(OPTIONS_FIELD)?.let {
-                    JSONSerializationUtils
-                        .getJsonObjectDeserializer<PaymentMethodRemoteConfigOptions>()
-                        .deserialize(it)
-                },
-                t.optJSONObject(DISPLAY_METADATA_FIELD)?.let {
-                    JSONSerializationUtils
-                        .getJsonObjectDeserializer<PaymentMethodDisplayMetadataResponse>()
-                        .deserialize(it)
-                }
-            )
-        }
+        val deserializer =
+            JSONObjectDeserializer { t ->
+                PaymentMethodConfigDataResponse(
+                    t.optNullableString(ID_FIELD),
+                    t.optNullableString(NAME_FIELD),
+                    PaymentMethodImplementationType.safeValueOf(
+                        t.optNullableString(
+                            IMPLEMENTATION_TYPE_FIELD,
+                        ),
+                    ),
+                    t.getString(TYPE_FIELD),
+                    t.optJSONObject(OPTIONS_FIELD)?.let {
+                        JSONSerializationUtils
+                            .getJsonObjectDeserializer<PaymentMethodRemoteConfigOptions>()
+                            .deserialize(it)
+                    },
+                    t.optJSONObject(DISPLAY_METADATA_FIELD)?.let {
+                        JSONSerializationUtils
+                            .getJsonObjectDeserializer<PaymentMethodDisplayMetadataResponse>()
+                            .deserialize(it)
+                    },
+                )
+            }
     }
 }
 
@@ -296,7 +313,8 @@ enum class PaymentMethodImplementationType {
     NATIVE_SDK,
     WEB_REDIRECT,
     IPAY88_SDK,
-    UNKNOWN;
+    UNKNOWN,
+    ;
 
     companion object {
         fun safeValueOf(type: String?) = PaymentMethodImplementationType.entries.find { type == it.name } ?: UNKNOWN
@@ -309,9 +327,8 @@ data class PaymentMethodRemoteConfigOptions(
     val merchantAppId: String?,
     val threeDSecureEnabled: Boolean?,
     val extraMerchantData: JSONObject?,
-    val captureVaultedCardCvv: Boolean?
+    val captureVaultedCardCvv: Boolean?,
 ) : JSONDeserializable {
-
     companion object {
         private const val MERCHANT_ID_FIELD = "merchantId"
         private const val MERCHANT_ACCOUNT_ID_FIELD = "merchantAccountId"
@@ -321,16 +338,17 @@ data class PaymentMethodRemoteConfigOptions(
         private const val CAPTURE_VAULTED_CARD_CVV = "captureVaultedCardCvv"
 
         @JvmField
-        val deserializer = JSONObjectDeserializer { t ->
-            PaymentMethodRemoteConfigOptions(
-                t.optNullableString(MERCHANT_ID_FIELD),
-                t.optNullableString(MERCHANT_ACCOUNT_ID_FIELD),
-                t.optNullableString(MERCHANT_APP_ID_FIELD),
-                t.optNullableBoolean(THREE_DS_SECURE_ENABLED_FIELD),
-                t.optNullableObject(EXTRA_MERCHANT_DATA),
-                t.optNullableBoolean(CAPTURE_VAULTED_CARD_CVV)
-            )
-        }
+        val deserializer =
+            JSONObjectDeserializer { t ->
+                PaymentMethodRemoteConfigOptions(
+                    t.optNullableString(MERCHANT_ID_FIELD),
+                    t.optNullableString(MERCHANT_ACCOUNT_ID_FIELD),
+                    t.optNullableString(MERCHANT_APP_ID_FIELD),
+                    t.optNullableBoolean(THREE_DS_SECURE_ENABLED_FIELD),
+                    t.optNullableObject(EXTRA_MERCHANT_DATA),
+                    t.optNullableBoolean(CAPTURE_VAULTED_CARD_CVV),
+                )
+            }
     }
 }
 
@@ -339,5 +357,5 @@ enum class Environment(val environment: String) {
     DEV("dev"),
     SANDBOX("sandbox"),
     STAGING("staging"),
-    PRODUCTION("production")
+    PRODUCTION("production"),
 }

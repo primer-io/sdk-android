@@ -19,64 +19,65 @@ import io.primer.android.paymentmethods.core.composer.provider.VaultedPaymentMet
 import io.primer.android.paymentmethods.core.ui.navigation.PaymentMethodNavigationFactoryRegistry
 
 internal data class Klarna(
-    override val type: String = PaymentMethodType.KLARNA.name
+    override val type: String = PaymentMethodType.KLARNA.name,
 ) : PaymentMethod, DISdkComponent {
-
     override val canBeVaulted: Boolean = true
 
-    override val module: PaymentMethodModule = object : PaymentMethodModule {
-        override fun initialize(applicationContext: Context, configuration: ConfigurationData) {
-            // no-op
-        }
+    override val module: PaymentMethodModule =
+        object : PaymentMethodModule {
+            override fun initialize(
+                applicationContext: Context,
+                configuration: ConfigurationData,
+            ) {
+                // no-op
+            }
 
-        override fun registerPaymentMethodCheckers(
-            paymentMethodCheckerRegistry: PaymentMethodCheckerRegistry
-        ) {
-            // no-op
-        }
+            override fun registerPaymentMethodCheckers(paymentMethodCheckerRegistry: PaymentMethodCheckerRegistry) {
+                // no-op
+            }
 
-        override fun registerPaymentMethodDescriptorFactory(
-            paymentMethodDescriptorFactoryRegistry: PaymentMethodDescriptorFactoryRegistry
-        ) {
-            paymentMethodDescriptorFactoryRegistry.register(
-                type,
-                KlarnaPaymentMethodDescriptorFactory()
-            )
-        }
+            override fun registerPaymentMethodDescriptorFactory(
+                paymentMethodDescriptorFactoryRegistry: PaymentMethodDescriptorFactoryRegistry,
+            ) {
+                paymentMethodDescriptorFactoryRegistry.register(
+                    type,
+                    KlarnaPaymentMethodDescriptorFactory(),
+                )
+            }
 
-        override fun registerPaymentMethodProviderFactory(
-            paymentMethodProviderFactoryRegistry: PaymentMethodProviderFactoryRegistry
-        ) {
-            // no-op
-        }
+            override fun registerPaymentMethodProviderFactory(
+                paymentMethodProviderFactoryRegistry: PaymentMethodProviderFactoryRegistry,
+            ) {
+                // no-op
+            }
 
-        override fun registerSavedPaymentMethodProviderFactory(
-            paymentMethodProviderFactoryRegistry: VaultedPaymentMethodProviderFactoryRegistry
-        ) {
-            // no-op
-        }
+            override fun registerSavedPaymentMethodProviderFactory(
+                paymentMethodProviderFactoryRegistry: VaultedPaymentMethodProviderFactoryRegistry,
+            ) {
+                // no-op
+            }
 
-        override fun registerPaymentMethodNavigationFactory(
-            paymentMethodNavigationFactoryRegistry: PaymentMethodNavigationFactoryRegistry
-        ) {
-            // no-op
-        }
+            override fun registerPaymentMethodNavigationFactory(
+                paymentMethodNavigationFactoryRegistry: PaymentMethodNavigationFactoryRegistry,
+            ) {
+                // no-op
+            }
 
-        override fun registerDependencyContainer(sdkContainers: List<SdkContainer>) {
-            sdkContainers.forEach { sdkContainer ->
-                sdkContainer.registerContainer(KlarnaContainer { getSdkContainer() })
+            override fun registerDependencyContainer(sdkContainers: List<SdkContainer>) {
+                sdkContainers.forEach { sdkContainer ->
+                    sdkContainer.registerContainer(KlarnaContainer { getSdkContainer() })
+                }
+            }
+
+            override fun registerErrorMappers(errorMapperRegistry: ErrorMapperRegistry) {
+                errorMapperRegistry.register(KlarnaErrorMapper())
+            }
+
+            override fun registerBrandProvider(brandRegistry: BrandRegistry) {
+                brandRegistry.register(
+                    paymentMethodType = PaymentMethodType.KLARNA.name,
+                    brand = KlarnaBrand(),
+                )
             }
         }
-
-        override fun registerErrorMappers(errorMapperRegistry: ErrorMapperRegistry) {
-            errorMapperRegistry.register(KlarnaErrorMapper())
-        }
-
-        override fun registerBrandProvider(brandRegistry: BrandRegistry) {
-            brandRegistry.register(
-                paymentMethodType = PaymentMethodType.KLARNA.name,
-                brand = KlarnaBrand()
-            )
-        }
-    }
 }

@@ -2,7 +2,8 @@ package io.primer.android
 
 enum class PrimerSessionIntent {
     CHECKOUT,
-    VAULT;
+    VAULT,
+    ;
 
     val isNotVault: Boolean
         get() = this != VAULT
@@ -11,8 +12,9 @@ enum class PrimerSessionIntent {
     val isCheckout: Boolean
         get() = this == CHECKOUT
     val oppositeIntent: PrimerSessionIntent
-        get() = when (this) {
-            CHECKOUT -> VAULT
-            VAULT -> CHECKOUT
-        }
+        get() =
+            when (this) {
+                CHECKOUT -> VAULT
+                VAULT -> CHECKOUT
+            }
 }

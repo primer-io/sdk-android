@@ -11,16 +11,19 @@ data class PrimerUIOptions(
     var isInitScreenEnabled: Boolean = true,
     var isSuccessScreenEnabled: Boolean = true,
     var isErrorScreenEnabled: Boolean = true,
-    var theme: PrimerTheme = PrimerTheme.build()
+    var theme: PrimerTheme = PrimerTheme.build(),
 ) : Parcelable, JSONObjectSerializable {
     constructor(parcel: Parcel) : this(
         isInitScreenEnabled = parcel.readByte() != 0.toByte(),
         isSuccessScreenEnabled = parcel.readByte() != 0.toByte(),
         isErrorScreenEnabled = parcel.readByte() != 0.toByte(),
-        theme = parcel.readParcelable<PrimerTheme>() ?: PrimerTheme.build()
+        theme = parcel.readParcelable<PrimerTheme>() ?: PrimerTheme.build(),
     )
 
-    override fun writeToParcel(parcel: Parcel, flags: Int) {
+    override fun writeToParcel(
+        parcel: Parcel,
+        flags: Int,
+    ) {
         parcel.writeByte(if (isInitScreenEnabled) 1 else 0)
         parcel.writeByte(if (isSuccessScreenEnabled) 1 else 0)
         parcel.writeByte(if (isErrorScreenEnabled) 1 else 0)
@@ -46,13 +49,14 @@ data class PrimerUIOptions(
         private const val THEME_FIELD = "theme"
 
         @JvmField
-        val serializer = JSONObjectSerializer<PrimerUIOptions> { t ->
-            JSONObject().apply {
-                put(INIT_SCREEN_ENABLED_FIELD, t.isInitScreenEnabled)
-                put(SUCCESS_SCREEN_ENABLED_FIELD, t.isSuccessScreenEnabled)
-                put(ERROR_SCREEN_ENABLED_FIELD, t.isErrorScreenEnabled)
-                put(THEME_FIELD, PrimerTheme.serializer.serialize(t.theme))
+        val serializer =
+            JSONObjectSerializer<PrimerUIOptions> { t ->
+                JSONObject().apply {
+                    put(INIT_SCREEN_ENABLED_FIELD, t.isInitScreenEnabled)
+                    put(SUCCESS_SCREEN_ENABLED_FIELD, t.isSuccessScreenEnabled)
+                    put(ERROR_SCREEN_ENABLED_FIELD, t.isErrorScreenEnabled)
+                    put(THEME_FIELD, PrimerTheme.serializer.serialize(t.theme))
+                }
             }
-        }
     }
 }

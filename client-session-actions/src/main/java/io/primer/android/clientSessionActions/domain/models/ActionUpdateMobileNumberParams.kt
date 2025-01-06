@@ -1,5 +1,5 @@
 package io.primer.android.clientSessionActions.domain.models
 
 data class ActionUpdateMobileNumberParams(
-    val mobileNumber: String
+    val mobileNumber: String,
 ) : BaseActionUpdateParams

@@ -8,10 +8,9 @@ import io.primer.android.nolpay.implementation.common.data.model.NolPaySecretDat
 
 internal class RemoteNolPaySecretDataSource(private val primerHttpClient: PrimerHttpClient) :
     BaseSuspendDataSource<NolPaySecretDataResponse, BaseRemoteHostRequest<NolPaySecretDataRequest>> {
-
     override suspend fun execute(input: BaseRemoteHostRequest<NolPaySecretDataRequest>) =
         primerHttpClient.suspendPost<NolPaySecretDataRequest, NolPaySecretDataResponse>(
             url = "${input.host}/nol-pay/sdk-secrets",
-            request = input.data
+            request = input.data,
         ).body
 }

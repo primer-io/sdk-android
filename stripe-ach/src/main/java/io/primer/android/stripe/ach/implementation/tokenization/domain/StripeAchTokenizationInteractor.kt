@@ -11,10 +11,10 @@ internal class StripeAchTokenizationInteractor(
     tokenizationRepository: TokenizationRepository<StripeAchPaymentInstrumentParams>,
     tokenizedPaymentMethodRepository: TokenizedPaymentMethodRepository,
     preTokenizationHandler: PreTokenizationHandler,
-    logReporter: LogReporter
+    logReporter: LogReporter,
 ) : TokenizationInteractor<StripeAchPaymentInstrumentParams>(
-    tokenizationRepository = tokenizationRepository,
-    tokenizedPaymentMethodRepository = tokenizedPaymentMethodRepository,
-    preTokenizationHandler = preTokenizationHandler,
-    logReporter = logReporter
-)
+        tokenizationRepository = tokenizationRepository,
+        tokenizedPaymentMethodRepository = tokenizedPaymentMethodRepository,
+        preTokenizationHandler = preTokenizationHandler,
+        logReporter = logReporter,
+    )

@@ -2,15 +2,14 @@ package io.primer.android.googlepay.implementation.composer.ui.navigation.launch
 
 import io.mockk.mockk
 import io.primer.android.PrimerSessionIntent
-import io.primer.android.data.settings.PrimerGoogleShippingAddressParameters
 import io.primer.android.configuration.domain.model.CheckoutModule
+import io.primer.android.data.settings.PrimerGoogleShippingAddressParameters
 import io.primer.android.googlepay.GooglePayFacade
 import io.primer.android.paymentmethods.common.data.model.PaymentMethodType
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
 internal class GooglePayActivityLauncherParamsTest {
-
     @Test
     fun `test initialization and property access`() {
         // Given
@@ -29,21 +28,22 @@ internal class GooglePayActivityLauncherParamsTest {
         val emailAddressRequired = false
 
         // When
-        val params = GooglePayActivityLauncherParams(
-            environment = environment,
-            gatewayMerchantId = gatewayMerchantId,
-            merchantName = merchantName,
-            totalPrice = totalPrice,
-            countryCode = countryCode,
-            currencyCode = currencyCode,
-            allowedCardNetworks = allowedCardNetworks,
-            allowedCardAuthMethods = allowedCardAuthMethods,
-            billingAddressRequired = billingAddressRequired,
-            shippingOptions = shippingOptions,
-            shippingAddressParameters = shippingAddressParameters,
-            requireShippingMethod = requireShippingMethod,
-            emailAddressRequired = emailAddressRequired
-        )
+        val params =
+            GooglePayActivityLauncherParams(
+                environment = environment,
+                gatewayMerchantId = gatewayMerchantId,
+                merchantName = merchantName,
+                totalPrice = totalPrice,
+                countryCode = countryCode,
+                currencyCode = currencyCode,
+                allowedCardNetworks = allowedCardNetworks,
+                allowedCardAuthMethods = allowedCardAuthMethods,
+                billingAddressRequired = billingAddressRequired,
+                shippingOptions = shippingOptions,
+                shippingAddressParameters = shippingAddressParameters,
+                requireShippingMethod = requireShippingMethod,
+                emailAddressRequired = emailAddressRequired,
+            )
 
         // Then
         assertEquals(environment, params.environment)

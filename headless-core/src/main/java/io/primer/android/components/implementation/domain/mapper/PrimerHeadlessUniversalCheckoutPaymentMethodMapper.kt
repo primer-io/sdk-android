@@ -7,18 +7,17 @@ import io.primer.android.domain.exception.UnsupportedPaymentMethodException
 import io.primer.android.paymentmethods.VaultCapability
 
 internal class PrimerHeadlessUniversalCheckoutPaymentMethodMapper(
-    private val paymentMethodDescriptorsRepository: PaymentMethodDescriptorsRepository
+    private val paymentMethodDescriptorsRepository: PaymentMethodDescriptorsRepository,
 ) {
-
     fun getPrimerHeadlessUniversalCheckoutPaymentMethod(
-        paymentMethodType: String
+        paymentMethodType: String,
     ): PrimerHeadlessUniversalCheckoutPaymentMethod {
         return paymentMethodDescriptorsRepository.getPaymentMethodDescriptors()
             .firstOrNull { descriptor -> descriptor.config.type == paymentMethodType }
             ?.let { descriptor ->
                 val headlessDefinition =
                     descriptor.headlessDefinition ?: throw IllegalStateException(
-                        "Missing payment method manager descriptor for $paymentMethodType"
+                        "Missing payment method manager descriptor for $paymentMethodType",
                     )
 
                 PrimerHeadlessUniversalCheckoutPaymentMethod(
@@ -26,7 +25,7 @@ internal class PrimerHeadlessUniversalCheckoutPaymentMethodMapper(
                     paymentMethodName = descriptor.config.name,
                     supportedPrimerSessionIntents = descriptor.vaultCapability.toPrimerSupportedIntents(),
                     paymentMethodManagerCategories = headlessDefinition.paymentMethodManagerCategories,
-                    requiredInputDataClass = headlessDefinition.rawDataDefinition?.requiredInputDataClass
+                    requiredInputDataClass = headlessDefinition.rawDataDefinition?.requiredInputDataClass,
                 )
             } ?: throw UnsupportedPaymentMethodException(paymentMethodType)
     }
@@ -36,8 +35,9 @@ internal fun VaultCapability.toPrimerSupportedIntents() =
     when (this) {
         VaultCapability.VAULT_ONLY -> listOf(PrimerSessionIntent.VAULT)
         VaultCapability.SINGLE_USE_ONLY -> listOf(PrimerSessionIntent.CHECKOUT)
-        VaultCapability.SINGLE_USE_AND_VAULT -> listOf(
-            PrimerSessionIntent.CHECKOUT,
-            PrimerSessionIntent.VAULT
-        )
+        VaultCapability.SINGLE_USE_AND_VAULT ->
+            listOf(
+                PrimerSessionIntent.CHECKOUT,
+                PrimerSessionIntent.VAULT,
+            )
     }

@@ -2,21 +2,20 @@ package io.primer.android.payments.core.helpers
 
 import io.primer.android.PrimerSessionIntent
 import io.primer.android.core.extensions.flatMap
+import io.primer.android.domain.payments.create.model.Payment
+import io.primer.android.domain.tokenization.models.PrimerPaymentMethodTokenData
 import io.primer.android.errors.domain.BaseErrorResolver
 import io.primer.android.payments.core.create.domain.handler.PaymentMethodTokenHandler
-import io.primer.android.domain.payments.create.model.Payment
 import io.primer.android.payments.core.create.domain.model.PaymentDecision
 import io.primer.android.payments.core.resume.domain.handler.PaymentResumeHandler
-import io.primer.android.domain.tokenization.models.PrimerPaymentMethodTokenData
 
 abstract class PaymentMethodPaymentDelegate(
     private val paymentMethodTokenHandler: PaymentMethodTokenHandler,
     private val resumePaymentHandler: PaymentResumeHandler,
     private val successHandler: CheckoutSuccessHandler,
     private val errorHandler: CheckoutErrorHandler,
-    private val baseErrorResolver: BaseErrorResolver
+    private val baseErrorResolver: BaseErrorResolver,
 ) {
-
     private var payment: Payment? = null
 
     /**
@@ -27,35 +26,37 @@ abstract class PaymentMethodPaymentDelegate(
      */
     open suspend fun handlePaymentMethodToken(
         paymentMethodTokenData: PrimerPaymentMethodTokenData,
-        primerSessionIntent: PrimerSessionIntent
-    ): Result<PaymentDecision> = paymentMethodTokenHandler.handle(
-        paymentMethodTokenData = paymentMethodTokenData,
-        primerSessionIntent = primerSessionIntent
-    ).flatMap { decision ->
-        payment = decision.payment
-        when (decision) {
-            is PaymentDecision.Error -> {
-                errorHandler.handle(
-                    error = decision.error,
-                    payment = decision.payment
-                )
-                Result.success(Unit)
-            }
+        primerSessionIntent: PrimerSessionIntent,
+    ): Result<PaymentDecision> =
+        paymentMethodTokenHandler.handle(
+            paymentMethodTokenData = paymentMethodTokenData,
+            primerSessionIntent = primerSessionIntent,
+        ).flatMap { decision ->
+            payment = decision.payment
+            when (decision) {
+                is PaymentDecision.Error -> {
+                    errorHandler.handle(
+                        error = decision.error,
+                        payment = decision.payment,
+                    )
+                    Result.success(Unit)
+                }
 
-            is PaymentDecision.Pending -> handleNewClientToken(
-                clientToken = decision.clientToken,
-                payment = payment
-            )
+                is PaymentDecision.Pending ->
+                    handleNewClientToken(
+                        clientToken = decision.clientToken,
+                        payment = payment,
+                    )
 
-            is PaymentDecision.Success -> {
-                successHandler.handle(
-                    payment = decision.payment,
-                    additionalInfo = null
-                )
-                Result.success(Unit)
-            }
-        }.map { decision }
-    }
+                is PaymentDecision.Success -> {
+                    successHandler.handle(
+                        payment = decision.payment,
+                        additionalInfo = null,
+                    )
+                    Result.success(Unit)
+                }
+            }.map { decision }
+        }
 
     /**
      * Called by asynchronous payment methods whenever the payment status changes.
@@ -67,20 +68,21 @@ abstract class PaymentMethodPaymentDelegate(
                     is PaymentDecision.Error -> {
                         errorHandler.handle(
                             error = decision.error,
-                            payment = decision.payment
+                            payment = decision.payment,
                         )
                         Result.success(Unit)
                     }
 
-                    is PaymentDecision.Pending -> handleNewClientToken(
-                        clientToken = decision.clientToken,
-                        payment = payment
-                    )
+                    is PaymentDecision.Pending ->
+                        handleNewClientToken(
+                            clientToken = decision.clientToken,
+                            payment = payment,
+                        )
 
                     is PaymentDecision.Success -> {
                         successHandler.handle(
                             payment = decision.payment,
-                            additionalInfo = null
+                            additionalInfo = null,
                         )
                         Result.success(Unit)
                     }
@@ -89,14 +91,17 @@ abstract class PaymentMethodPaymentDelegate(
             .onFailure {
                 errorHandler.handle(
                     error = baseErrorResolver.resolve(it),
-                    payment = null
+                    payment = null,
                 )
             }
 
     /**
      * Called when the [payment decision][PaymentDecision] is in a [pending][PaymentDecision.Pending] state.
      */
-    abstract suspend fun handleNewClientToken(clientToken: String, payment: Payment?): Result<Unit>
+    abstract suspend fun handleNewClientToken(
+        clientToken: String,
+        payment: Payment?,
+    ): Result<Unit>
 
     /**
      * Dispatches the given [Throwable] as a checkout failure, logging it to analytics.

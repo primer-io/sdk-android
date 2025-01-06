@@ -7,9 +7,8 @@ import io.primer.android.vault.implementation.vaultedMethods.domain.validation.r
 
 internal class VaultManagerInitValidationRulesResolver(
     private val sdkInitializedRule: SdkInitializedRule,
-    private val validClientSessionCustomerIdRule: ValidClientSessionCustomerIdRule
+    private val validClientSessionCustomerIdRule: ValidClientSessionCustomerIdRule,
 ) : ValidationRulesResolver<Unit> {
-
     override fun resolve(): ValidationRulesChain<Unit> {
         return ValidationRulesChain<Unit>()
             .addRule(sdkInitializedRule)

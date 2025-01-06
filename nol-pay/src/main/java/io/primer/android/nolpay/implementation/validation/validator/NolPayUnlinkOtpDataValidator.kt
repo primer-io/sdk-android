@@ -1,7 +1,7 @@
 package io.primer.android.nolpay.implementation.validation.validator
 
-import io.primer.android.core.extensions.runSuspendCatching
 import io.primer.android.components.domain.error.PrimerValidationError
+import io.primer.android.core.extensions.runSuspendCatching
 import io.primer.android.nolpay.api.manager.unlinkCard.composable.NolPayUnlinkCollectableData
 import io.primer.android.nolpay.implementation.validation.validator.NolPayValidations.INVALID_OTP_CODE_ERROR_ID
 import io.primer.android.nolpay.implementation.validation.validator.NolPayValidations.OTP_CODE_REGEX
@@ -16,8 +16,8 @@ internal class NolPayUnlinkOtpDataValidator :
                     listOf(
                         PrimerValidationError(
                             INVALID_OTP_CODE_ERROR_ID,
-                            "OTP code cannot be blank."
-                        )
+                            "OTP code cannot be blank.",
+                        ),
                     )
                 }
 
@@ -25,8 +25,8 @@ internal class NolPayUnlinkOtpDataValidator :
                     listOf(
                         PrimerValidationError(
                             INVALID_OTP_CODE_ERROR_ID,
-                            "OTP code is not valid."
-                        )
+                            "OTP code is not valid.",
+                        ),
                     )
                 }
 

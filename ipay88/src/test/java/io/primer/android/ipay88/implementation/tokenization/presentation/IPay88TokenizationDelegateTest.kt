@@ -21,20 +21,21 @@ import org.junit.jupiter.api.extension.ExtendWith
 @OptIn(ExperimentalCoroutinesApi::class)
 @ExtendWith(InstantExecutorExtension::class)
 class IPay88TokenizationDelegateTest {
-
     private lateinit var configurationInteractor: IPay88ConfigurationInteractor
     private lateinit var tokenizationInteractor: IPay88TokenizationInteractor
     private lateinit var delegate: IPay88TokenizationDelegate
-    private val input = IPay88TokenizationInputable(
-        paymentMethodType = "CARD",
-        primerSessionIntent = PrimerSessionIntent.CHECKOUT
-    )
+    private val input =
+        IPay88TokenizationInputable(
+            paymentMethodType = "CARD",
+            primerSessionIntent = PrimerSessionIntent.CHECKOUT,
+        )
     private val iPay88ConfigParams = IPay88ConfigParams(paymentMethodType = input.paymentMethodType)
 
-    private val iPay88Config = IPay88Config(
-        paymentMethodConfigId = "web-redirect",
-        locale = "en"
-    )
+    private val iPay88Config =
+        IPay88Config(
+            paymentMethodConfigId = "web-redirect",
+            locale = "en",
+        )
 
     @BeforeEach
     fun setUp() {
@@ -44,29 +45,31 @@ class IPay88TokenizationDelegateTest {
     }
 
     @Test
-    fun `mapTokenizationData returns success result when the configurationInteractor returns Result success`() = runTest {
-        coEvery { configurationInteractor(iPay88ConfigParams) } returns Result.success(iPay88Config)
+    fun `mapTokenizationData returns success result when the configurationInteractor returns Result success`() =
+        runTest {
+            coEvery { configurationInteractor(iPay88ConfigParams) } returns Result.success(iPay88Config)
 
-        val result = delegate.mapTokenizationData(input)
+            val result = delegate.mapTokenizationData(input)
 
-        assertTrue(result.isSuccess)
-        val tokenizationParams = result.getOrNull()!!
-        val paymentInstrumentParams = tokenizationParams.paymentInstrumentParams
+            assertTrue(result.isSuccess)
+            val tokenizationParams = result.getOrNull()!!
+            val paymentInstrumentParams = tokenizationParams.paymentInstrumentParams
 
-        assertEquals(input.paymentMethodType, paymentInstrumentParams.paymentMethodType)
-        coVerify { configurationInteractor(iPay88ConfigParams) }
-    }
+            assertEquals(input.paymentMethodType, paymentInstrumentParams.paymentMethodType)
+            coVerify { configurationInteractor(iPay88ConfigParams) }
+        }
 
     @Test
-    fun `mapTokenizationData returns failure result when the configurationInteractor returns Result failure`() = runTest {
-        val exception = Exception("Configuration error")
-        coEvery { configurationInteractor(iPay88ConfigParams) } returns Result.failure(exception)
+    fun `mapTokenizationData returns failure result when the configurationInteractor returns Result failure`() =
+        runTest {
+            val exception = Exception("Configuration error")
+            coEvery { configurationInteractor(iPay88ConfigParams) } returns Result.failure(exception)
 
-        val result = delegate.mapTokenizationData(input)
+            val result = delegate.mapTokenizationData(input)
 
-        assertTrue(result.isFailure)
-        assertEquals(exception, result.exceptionOrNull())
+            assertTrue(result.isFailure)
+            assertEquals(exception, result.exceptionOrNull())
 
-        coVerify { configurationInteractor(iPay88ConfigParams) }
-    }
+            coVerify { configurationInteractor(iPay88ConfigParams) }
+        }
 }

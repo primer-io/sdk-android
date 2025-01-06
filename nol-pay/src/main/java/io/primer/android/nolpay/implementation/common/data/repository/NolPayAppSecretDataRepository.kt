@@ -10,20 +10,24 @@ import io.primer.android.nolpay.implementation.common.domain.repository.NolPayAp
 
 internal class NolPayAppSecretDataRepository(
     private val configurationDataSource: CacheConfigurationDataSource,
-    private val nolPaySecretDataSource: RemoteNolPaySecretDataSource
+    private val nolPaySecretDataSource: RemoteNolPaySecretDataSource,
 ) : NolPayAppSecretRepository {
-    override suspend fun getAppSecret(sdkId: String, appId: String) = runSuspendCatching {
+    override suspend fun getAppSecret(
+        sdkId: String,
+        appId: String,
+    ) = runSuspendCatching {
         configurationDataSource.get().let { configuration ->
             nolPaySecretDataSource.execute(
                 BaseRemoteHostRequest(
                     host = configuration.coreUrl,
-                    data = NolPaySecretDataRequest(
-                        sdkId = sdkId,
-                        appId = appId,
-                        deviceVendor = Build.MANUFACTURER,
-                        deviceModel = Build.MODEL
-                    )
-                )
+                    data =
+                        NolPaySecretDataRequest(
+                            sdkId = sdkId,
+                            appId = appId,
+                            deviceVendor = Build.MANUFACTURER,
+                            deviceModel = Build.MODEL,
+                        ),
+                ),
             ).sdkSecret
         }
     }

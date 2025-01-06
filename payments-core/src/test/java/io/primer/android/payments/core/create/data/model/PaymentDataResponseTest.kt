@@ -5,62 +5,61 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
 internal class PaymentDataResponseTest {
-
     @Test
     fun `test PaymentDataResponse deserialization`() {
         // Arrange
-        val json = JSONObject().apply {
-            put(
-                "id",
-                "payment123"
-            )
-            put(
-                "date",
-                "2024-06-25"
-            )
-            put(
-                "status",
-                "SUCCESS"
-            )
-            put(
-                "orderId",
-                "order456"
-            )
-            put(
-                "currencyCode",
-                "USD"
-            )
-            put(
-                "amount",
-                1000
-            )
-            put(
-                "customerId",
-                "customer789"
-            )
-            put(
-                "paymentFailureReason",
-                "None"
-            )
-            put(
-
-                "requiredAction",
-                JSONObject().apply {
-                    put(
-                        "name",
-                        "3DS_AUTHENTICATION"
-                    )
-                    put(
-                        "description",
-                        "Authenticate the transaction"
-                    )
-                    put(
-                        "clientToken",
-                        "token123"
-                    )
-                }
-            )
-        }
+        val json =
+            JSONObject().apply {
+                put(
+                    "id",
+                    "payment123",
+                )
+                put(
+                    "date",
+                    "2024-06-25",
+                )
+                put(
+                    "status",
+                    "SUCCESS",
+                )
+                put(
+                    "orderId",
+                    "order456",
+                )
+                put(
+                    "currencyCode",
+                    "USD",
+                )
+                put(
+                    "amount",
+                    1000,
+                )
+                put(
+                    "customerId",
+                    "customer789",
+                )
+                put(
+                    "paymentFailureReason",
+                    "None",
+                )
+                put(
+                    "requiredAction",
+                    JSONObject().apply {
+                        put(
+                            "name",
+                            "3DS_AUTHENTICATION",
+                        )
+                        put(
+                            "description",
+                            "Authenticate the transaction",
+                        )
+                        put(
+                            "clientToken",
+                            "token123",
+                        )
+                    },
+                )
+            }
 
         // Act
         val paymentDataResponse = PaymentDataResponse.deserializer.deserialize(json)
@@ -82,23 +81,25 @@ internal class PaymentDataResponseTest {
     @Test
     fun `test PaymentDataResponse toPaymentResult conversion`() {
         // Arrange
-        val requiredActionData = RequiredActionData(
-            name = RequiredActionName.`3DS_AUTHENTICATION`,
-            description = "Authenticate the transaction",
-            clientToken = "token123"
-        )
-        val paymentDataResponse = PaymentDataResponse(
-            id = "payment123",
-            date = "2024-06-25",
-            status = PaymentStatus.SUCCESS,
-            orderId = "order456",
-            currencyCode = "USD",
-            amount = 1000,
-            customerId = "customer789",
-            paymentFailureReason = "None",
-            requiredAction = requiredActionData,
-            showSuccessCheckoutOnPendingPayment = false
-        )
+        val requiredActionData =
+            RequiredActionData(
+                name = RequiredActionName.`3DS_AUTHENTICATION`,
+                description = "Authenticate the transaction",
+                clientToken = "token123",
+            )
+        val paymentDataResponse =
+            PaymentDataResponse(
+                id = "payment123",
+                date = "2024-06-25",
+                status = PaymentStatus.SUCCESS,
+                orderId = "order456",
+                currencyCode = "USD",
+                amount = 1000,
+                customerId = "customer789",
+                paymentFailureReason = "None",
+                requiredAction = requiredActionData,
+                showSuccessCheckoutOnPendingPayment = false,
+            )
 
         // Act
         val paymentResult = paymentDataResponse.toPaymentResult()
@@ -114,24 +115,24 @@ internal class PaymentDataResponseTest {
 }
 
 internal class RequiredActionDataTest {
-
     @Test
     fun `test RequiredActionData deserialization`() {
         // Arrange
-        val json = JSONObject().apply {
-            put(
-                "name",
-                "3DS_AUTHENTICATION"
-            )
-            put(
-                "description",
-                "Authenticate the transaction"
-            )
-            put(
-                "clientToken",
-                "token123"
-            )
-        }
+        val json =
+            JSONObject().apply {
+                put(
+                    "name",
+                    "3DS_AUTHENTICATION",
+                )
+                put(
+                    "description",
+                    "Authenticate the transaction",
+                )
+                put(
+                    "clientToken",
+                    "token123",
+                )
+            }
 
         // Act
         val requiredActionData = RequiredActionData.deserializer.deserialize(json)

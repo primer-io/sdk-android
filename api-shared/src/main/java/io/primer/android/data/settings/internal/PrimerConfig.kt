@@ -12,9 +12,8 @@ import io.primer.android.data.settings.PrimerSettings
 import org.json.JSONObject
 
 data class PrimerConfig(
-    var settings: PrimerSettings = PrimerSettings()
+    var settings: PrimerSettings = PrimerSettings(),
 ) : Parcelable, JSONObjectSerializable {
-
     var clientTokenBase64: String? = null
 
     var intent: PrimerIntent = PrimerIntent()
@@ -26,7 +25,7 @@ data class PrimerConfig(
         get() = intent.paymentMethodIntent
 
     constructor(parcel: Parcel) : this(
-        parcel.readParcelable<PrimerSettings>() ?: PrimerSettings()
+        parcel.readParcelable<PrimerSettings>() ?: PrimerSettings(),
     ) {
         clientTokenBase64 = parcel.readString()
         intent = parcel.readParcelable<PrimerIntent>() ?: PrimerIntent()
@@ -39,13 +38,17 @@ data class PrimerConfig(
             Place.VAULT_MANAGER
         }
 
-    fun toDropInSource() = when {
-        isStandalonePaymentMethod -> DropInLoadingSource.SHOW_PAYMENT_METHOD
-        intent.paymentMethodIntent == PrimerSessionIntent.CHECKOUT -> DropInLoadingSource.UNIVERSAL_CHECKOUT
-        else -> DropInLoadingSource.VAULT_MANAGER
-    }
+    fun toDropInSource() =
+        when {
+            isStandalonePaymentMethod -> DropInLoadingSource.SHOW_PAYMENT_METHOD
+            intent.paymentMethodIntent == PrimerSessionIntent.CHECKOUT -> DropInLoadingSource.UNIVERSAL_CHECKOUT
+            else -> DropInLoadingSource.VAULT_MANAGER
+        }
 
-    override fun writeToParcel(parcel: Parcel, flags: Int) {
+    override fun writeToParcel(
+        parcel: Parcel,
+        flags: Int,
+    ) {
         parcel.writeParcelable(settings, flags)
         parcel.writeString(clientTokenBase64)
         parcel.writeParcelable(intent, flags)
@@ -67,10 +70,11 @@ data class PrimerConfig(
         private const val SETTINGS_FIELD = "settings"
 
         @JvmField
-        val serializer = JSONObjectSerializer<PrimerConfig> { primerConfig ->
-            JSONObject().apply {
-                put(SETTINGS_FIELD, PrimerSettings.serializer.serialize(primerConfig.settings))
+        val serializer =
+            JSONObjectSerializer<PrimerConfig> { primerConfig ->
+                JSONObject().apply {
+                    put(SETTINGS_FIELD, PrimerSettings.serializer.serialize(primerConfig.settings))
+                }
             }
-        }
     }
 }

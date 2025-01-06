@@ -17,18 +17,18 @@ import kotlin.test.assertContains
 import kotlin.test.assertEquals
 
 class CardResumeHandlerTest {
-
     private val clientTokenParser = mockk<CardNative3DSClientTokenParser>()
     private val validateClientTokenRepository = mockk<ValidateClientTokenRepository>()
     private val clientTokenRepository = mockk<ClientTokenRepository>()
     private val checkoutAdditionalInfoHandler = mockk<CheckoutAdditionalInfoHandler>()
 
-    private val handler = CardResumeHandler(
-        clientTokenParser,
-        validateClientTokenRepository,
-        clientTokenRepository,
-        checkoutAdditionalInfoHandler
-    )
+    private val handler =
+        CardResumeHandler(
+            clientTokenParser,
+            validateClientTokenRepository,
+            clientTokenRepository,
+            checkoutAdditionalInfoHandler,
+        )
 
     @AfterEach
     fun tearDown() {
@@ -38,10 +38,11 @@ class CardResumeHandlerTest {
     @Test
     fun `getResumeDecision should return the correct CardResumeDecision when called with a CardNative3DSClientToken`() {
         // Given
-        val clientToken = Card3DSClientToken.CardNative3DSClientToken(
-            clientTokenIntent = ClientTokenIntent.`3DS_AUTHENTICATION`.name,
-            supportedThreeDsProtocolVersions = listOf("1.0", "2.0")
-        )
+        val clientToken =
+            Card3DSClientToken.CardNative3DSClientToken(
+                clientTokenIntent = ClientTokenIntent.`3DS_AUTHENTICATION`.name,
+                supportedThreeDsProtocolVersions = listOf("1.0", "2.0"),
+            )
         every { clientTokenParser.parseClientToken(any()) } returns clientToken
 
         runTest {
@@ -57,13 +58,15 @@ class CardResumeHandlerTest {
     @Test
     fun `getResumeDecision should return the correct CardResumeDecision when called with a CardProcessor3DSClientToken`() {
         // Given
-        val clientToken = Card3DSClientToken.CardProcessor3DSClientToken(
-            clientTokenIntent = ClientTokenIntent.`3DS_AUTHENTICATION`.name,
-            processor3DS = Processor3DS(
-                redirectUrl = "https://www.example/redirect",
-                statusUrl = "https://www.example/status"
+        val clientToken =
+            Card3DSClientToken.CardProcessor3DSClientToken(
+                clientTokenIntent = ClientTokenIntent.`3DS_AUTHENTICATION`.name,
+                processor3DS =
+                    Processor3DS(
+                        redirectUrl = "https://www.example/redirect",
+                        statusUrl = "https://www.example/status",
+                    ),
             )
-        )
         every { clientTokenParser.parseClientToken(any()) } returns clientToken
 
         runTest {
@@ -71,12 +74,13 @@ class CardResumeHandlerTest {
             val decision = handler.getResumeDecision(clientToken)
 
             // Then
-            val expected = CardResumeDecision.CardProcessor3dsResumeDecision(
-                Processor3DS(
-                    redirectUrl = "https://www.example/redirect",
-                    statusUrl = "https://www.example/status"
+            val expected =
+                CardResumeDecision.CardProcessor3dsResumeDecision(
+                    Processor3DS(
+                        redirectUrl = "https://www.example/redirect",
+                        statusUrl = "https://www.example/status",
+                    ),
                 )
-            )
             assertEquals(expected, decision)
         }
     }

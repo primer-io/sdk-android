@@ -4,5 +4,5 @@ internal data class PaypalOrder(
     val orderId: String,
     val approvalUrl: String,
     val successUrl: String,
-    val cancelUrl: String
+    val cancelUrl: String,
 )

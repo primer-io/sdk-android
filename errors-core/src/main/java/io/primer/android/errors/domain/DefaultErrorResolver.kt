@@ -6,5 +6,5 @@ import io.primer.android.core.logging.internal.LogReporter
 internal class DefaultErrorResolver(
     analyticsRepository: AnalyticsRepository,
     errorMapperRegistry: ErrorMapperRegistry,
-    logReporter: LogReporter
+    logReporter: LogReporter,
 ) : BaseErrorResolver(errorMapperRegistry, analyticsRepository, logReporter)

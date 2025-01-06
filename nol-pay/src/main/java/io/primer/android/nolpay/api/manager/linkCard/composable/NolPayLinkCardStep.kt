@@ -7,7 +7,6 @@ import io.primer.nolpay.api.models.PrimerNolPaymentCard
  * A sealed interface representing the steps involved in linking a Nol Pay card.
  */
 sealed interface NolPayLinkCardStep : PrimerHeadlessStep {
-
     /**
      * Object representing the step of collecting tag data for Nol Pay card linking.
      */

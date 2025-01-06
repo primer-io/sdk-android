@@ -20,7 +20,6 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 
 internal class RetailOutletsTest {
-
     private lateinit var retailOutlets: RetailOutlets
     private val paymentMethodType = "RETAIL_OUTLETS"
 

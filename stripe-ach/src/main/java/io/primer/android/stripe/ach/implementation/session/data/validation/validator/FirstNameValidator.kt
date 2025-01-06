@@ -7,7 +7,7 @@ internal object FirstNameValidator {
         if (value.isBlank()) {
             PrimerValidationError(
                 errorId = StripeAchUserDetailsValidations.INVALID_CUSTOMER_FIRST_NAME_ERROR_ID,
-                description = "The first name may not be blank."
+                description = "The first name may not be blank.",
             )
         } else {
             null

@@ -9,9 +9,8 @@ data class CheckoutModuleDataResponse(
     val type: CheckoutModuleType,
     val requestUrl: String?,
     val options: Map<String, Boolean>?,
-    val shippingOptions: ShippingOptions?
+    val shippingOptions: ShippingOptions?,
 ) : JSONDeserializable {
-
     companion object {
         const val TYPE_FIELD = "type"
         const val REQUEST_URL_FIELD = "requestUrl"
@@ -24,61 +23,63 @@ data class CheckoutModuleDataResponse(
         private const val ID_FIELD = "id"
 
         @JvmField
-        val deserializer = JSONObjectDeserializer { jsonObject ->
-            val type = CheckoutModuleType.safeValueOf(jsonObject.optNullableString(TYPE_FIELD))
-            val options = if (type != CheckoutModuleType.SHIPPING) {
-                jsonObject.optJSONObject(OPTIONS_FIELD)?.toBooleanMap()
-            } else {
-                null
-            }
-
-            val shippingOptions = if (type == CheckoutModuleType.SHIPPING) {
-                val optionsObject = jsonObject.optJSONObject(OPTIONS_FIELD)
-                val shippingMethodsArray = optionsObject?.optJSONArray(SHIPPING_METHODS_FIELD)
-                val shippingMethods = mutableListOf<ShippingMethod>()
-
-                for (i in 0 until (shippingMethodsArray?.length() ?: 0)) {
-                    val methodJson = shippingMethodsArray?.optJSONObject(i)
-                    methodJson?.run {
-                        shippingMethods.add(
-                            ShippingMethod(
-                                optString(NAME_FIELD),
-                                optString(DESCRIPTION_FIELD),
-                                optInt(AMOUNT_FIELD),
-                                optString(ID_FIELD)
-                            )
-                        )
+        val deserializer =
+            JSONObjectDeserializer { jsonObject ->
+                val type = CheckoutModuleType.safeValueOf(jsonObject.optNullableString(TYPE_FIELD))
+                val options =
+                    if (type != CheckoutModuleType.SHIPPING) {
+                        jsonObject.optJSONObject(OPTIONS_FIELD)?.toBooleanMap()
+                    } else {
+                        null
                     }
-                }
-                if (shippingMethods.isNotEmpty()) {
-                    ShippingOptions(
-                        shippingMethods,
-                        optionsObject?.optString(SELECTED_SHIPPING_METHOD_FIELD)
-                    )
-                } else {
-                    null
-                }
-            } else {
-                null
+
+                val shippingOptions =
+                    if (type == CheckoutModuleType.SHIPPING) {
+                        val optionsObject = jsonObject.optJSONObject(OPTIONS_FIELD)
+                        val shippingMethodsArray = optionsObject?.optJSONArray(SHIPPING_METHODS_FIELD)
+                        val shippingMethods = mutableListOf<ShippingMethod>()
+
+                        for (i in 0 until (shippingMethodsArray?.length() ?: 0)) {
+                            val methodJson = shippingMethodsArray?.optJSONObject(i)
+                            methodJson?.run {
+                                shippingMethods.add(
+                                    ShippingMethod(
+                                        optString(NAME_FIELD),
+                                        optString(DESCRIPTION_FIELD),
+                                        optInt(AMOUNT_FIELD),
+                                        optString(ID_FIELD),
+                                    ),
+                                )
+                            }
+                        }
+                        if (shippingMethods.isNotEmpty()) {
+                            ShippingOptions(
+                                shippingMethods,
+                                optionsObject?.optString(SELECTED_SHIPPING_METHOD_FIELD),
+                            )
+                        } else {
+                            null
+                        }
+                    } else {
+                        null
+                    }
+
+                CheckoutModuleDataResponse(
+                    type,
+                    jsonObject.optNullableString(REQUEST_URL_FIELD),
+                    options,
+                    shippingOptions,
+                )
             }
-
-            CheckoutModuleDataResponse(
-                type,
-                jsonObject.optNullableString(REQUEST_URL_FIELD),
-                options,
-                shippingOptions
-
-            )
-        }
     }
 }
 
 enum class CheckoutModuleType {
-
     BILLING_ADDRESS,
     CARD_INFORMATION,
     SHIPPING,
-    UNKNOWN;
+    UNKNOWN,
+    ;
 
     companion object {
         fun safeValueOf(value: String?) = entries.find { it.name == value } ?: UNKNOWN
@@ -87,12 +88,12 @@ enum class CheckoutModuleType {
 
 data class ShippingOptions(
     val shippingMethods: List<ShippingMethod>,
-    val selectedShippingMethod: String?
+    val selectedShippingMethod: String?,
 )
 
 data class ShippingMethod(
     val name: String,
     val description: String,
     val amount: Int,
-    val id: String
+    val id: String,
 )

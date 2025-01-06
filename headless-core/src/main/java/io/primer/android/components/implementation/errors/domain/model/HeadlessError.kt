@@ -8,9 +8,8 @@ import java.util.UUID
 import kotlin.reflect.KClass
 
 internal sealed class HeadlessError : PrimerError() {
-
     class InitializationError(
-        val message: String
+        val message: String,
     ) : HeadlessError()
 
     data object InvalidRawDataError : HeadlessError()
@@ -18,7 +17,7 @@ internal sealed class HeadlessError : PrimerError() {
     class InvalidTokenizationInputDataError(
         val paymentMethodType: String,
         val inputData: KClass<out PrimerRawData>,
-        val requiredInputData: KClass<out PrimerRawData>?
+        val requiredInputData: KClass<out PrimerRawData>?,
     ) : HeadlessError() {
         override val context: BaseContextParams
             get() =
@@ -26,24 +25,26 @@ internal sealed class HeadlessError : PrimerError() {
     }
 
     override val errorId: String
-        get() = when (this) {
-            is InitializationError -> "huc-initialization-failed"
-            is InvalidTokenizationInputDataError -> "invalid-raw-type-data"
-            is InvalidRawDataError -> "invalid-raw-data"
-        }
+        get() =
+            when (this) {
+                is InitializationError -> "huc-initialization-failed"
+                is InvalidTokenizationInputDataError -> "invalid-raw-type-data"
+                is InvalidRawDataError -> "invalid-raw-data"
+            }
 
     override val description: String
-        get() = when (this) {
-            is InitializationError ->
-                "PrimerHeadlessUniversalCheckout initialization failed" +
-                    " | Message: $message"
+        get() =
+            when (this) {
+                is InitializationError ->
+                    "PrimerHeadlessUniversalCheckout initialization failed" +
+                        " | Message: $message"
 
-            is InvalidTokenizationInputDataError ->
-                "PrimerHeadlessUniversalCheckout tokenization error for" +
-                    " $paymentMethodType and input data ${inputData.simpleName}"
+                is InvalidTokenizationInputDataError ->
+                    "PrimerHeadlessUniversalCheckout tokenization error for" +
+                        " $paymentMethodType and input data ${inputData.simpleName}"
 
-            is InvalidRawDataError -> "Missing raw data."
-        }
+                is InvalidRawDataError -> "Missing raw data."
+            }
 
     override val errorCode: String? = null
 
@@ -54,14 +55,15 @@ internal sealed class HeadlessError : PrimerError() {
         get() = this
 
     override val recoverySuggestion: String?
-        get() = when (this) {
-            is InitializationError ->
-                "Ensure you are calling 'start' method before calling this method."
+        get() =
+            when (this) {
+                is InitializationError ->
+                    "Ensure you are calling 'start' method before calling this method."
 
-            is InvalidTokenizationInputDataError ->
-                "Make sure you provide data of type ${requiredInputData?.simpleName} " +
-                    "for payment method $paymentMethodType."
+                is InvalidTokenizationInputDataError ->
+                    "Make sure you provide data of type ${requiredInputData?.simpleName} " +
+                        "for payment method $paymentMethodType."
 
-            is InvalidRawDataError -> null
-        }
+                is InvalidRawDataError -> null
+            }
 }

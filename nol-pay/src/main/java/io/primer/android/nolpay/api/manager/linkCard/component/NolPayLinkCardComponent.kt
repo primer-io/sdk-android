@@ -25,15 +25,15 @@ class NolPayLinkCardComponent internal constructor(
     errorLoggingDelegate: SdkAnalyticsErrorLoggingDelegate,
     validationErrorLoggingDelegate: SdkAnalyticsValidationErrorLoggingDelegate,
     errorMapperRegistry: ErrorMapperRegistry,
-    private val savedStateHandle: SavedStateHandle
+    private val savedStateHandle: SavedStateHandle,
 ) : BaseNolPayComponent<NolPayLinkCollectableData, NolPayLinkCardStep>(
-    validatorRegistry = validatorRegistry,
-    eventLoggingDelegate = eventLoggingDelegate,
-    errorLoggingDelegate = errorLoggingDelegate,
-    validationErrorLoggingDelegate = validationErrorLoggingDelegate,
-    errorMapperRegistry = errorMapperRegistry
-) {
-    private val _collectedData: MutableSharedFlow<NolPayLinkCollectableData> =
+        validatorRegistry = validatorRegistry,
+        eventLoggingDelegate = eventLoggingDelegate,
+        errorLoggingDelegate = errorLoggingDelegate,
+        validationErrorLoggingDelegate = validationErrorLoggingDelegate,
+        errorMapperRegistry = errorMapperRegistry,
+    ) {
+    private val collectedData: MutableSharedFlow<NolPayLinkCollectableData> =
         MutableSharedFlow(replay = 1)
 
     override fun start() {
@@ -50,7 +50,7 @@ class NolPayLinkCardComponent internal constructor(
 
     override fun updateCollectedData(collectedData: NolPayLinkCollectableData) {
         logSdkFunctionCalls(NolPayAnalyticsConstants.LINK_CARD_UPDATE_COLLECTED_DATA_METHOD)
-        viewModelScope.launch { _collectedData.emit(collectedData) }
+        viewModelScope.launch { this@NolPayLinkCardComponent.collectedData.emit(collectedData) }
         onCollectableDataUpdated(collectedData)
     }
 
@@ -58,8 +58,8 @@ class NolPayLinkCardComponent internal constructor(
         logSdkFunctionCalls(NolPayAnalyticsConstants.LINK_CARD_SUBMIT_DATA_METHOD)
         viewModelScope.launch {
             linkPaymentCardDelegate.handleCollectedCardData(
-                _collectedData.replayCache.lastOrNull(),
-                savedStateHandle
+                collectedData.replayCache.lastOrNull(),
+                savedStateHandle,
             ).onSuccess { step ->
                 _componentStep.emit(step)
             }.onFailure { throwable ->
@@ -69,7 +69,6 @@ class NolPayLinkCardComponent internal constructor(
     }
 
     internal companion object {
-        fun provideInstance(owner: ViewModelStoreOwner) =
-            NolPayLinkCardComponentProvider().provideInstance(owner)
+        fun provideInstance(owner: ViewModelStoreOwner) = NolPayLinkCardComponentProvider().provideInstance(owner)
     }
 }

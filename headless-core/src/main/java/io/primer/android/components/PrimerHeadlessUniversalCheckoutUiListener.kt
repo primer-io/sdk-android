@@ -1,7 +1,6 @@
 package io.primer.android.components
 
 interface PrimerHeadlessUniversalCheckoutUiListener {
-
     /**
      * Called when SDK starts preparing to tokenize the payment method.
      * @param paymentMethodType payment method type.

@@ -6,96 +6,96 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
 class PaymentInstrumentDataTest {
-
     @Test
     fun `test deserialization of PaymentInstrumentData`() {
         // Given
-        val json = JSONObject().apply {
-            put(
-                "network",
-                "Visa"
-            )
-            put(
-                "cardholderName",
-                "John Doe"
-            )
-            put(
-                "first6Digits",
-                123456
-            )
-            put(
-                "last4Digits",
-                7890
-            )
-            put(
-                "expirationMonth",
-                12
-            )
-            put(
-                "expirationYear",
-                2025
-            )
-            put(
-                "gocardlessMandateId",
-                "gocardless123"
-            )
-            put(
-                "klarnaCustomerToken",
-                "klarnaToken123"
-            )
-            put(
-                "paymentMethodType",
-                "credit_card"
-            )
-            put(
-                "binData",
-                JSONObject().apply {
-                    put(
-                        "network",
-                        "Visa"
-                    )
-                }
-            )
-            put(
-                "externalPayerInfo",
-                JSONObject().apply {
-                    put(
-                        "email",
-                        "john.doe@example.com"
-                    )
-                    put(
-                        "externalPayerId",
-                        "external123"
-                    )
-                    put(
-                        "firstName",
-                        "John"
-                    )
-                    put(
-                        "lastName",
-                        "Doe"
-                    )
-                }
-            )
-            put(
-                "sessionData",
-                JSONObject().apply {
-                    put(
-                        "recurringDescription",
-                        "Monthly subscription"
-                    )
-                    put(
-                        "billingAddress",
-                        JSONObject().apply {
-                            put(
-                                "email",
-                                "billing@example.com"
-                            )
-                        }
-                    )
-                }
-            )
-        }
+        val json =
+            JSONObject().apply {
+                put(
+                    "network",
+                    "Visa",
+                )
+                put(
+                    "cardholderName",
+                    "John Doe",
+                )
+                put(
+                    "first6Digits",
+                    123456,
+                )
+                put(
+                    "last4Digits",
+                    7890,
+                )
+                put(
+                    "expirationMonth",
+                    12,
+                )
+                put(
+                    "expirationYear",
+                    2025,
+                )
+                put(
+                    "gocardlessMandateId",
+                    "gocardless123",
+                )
+                put(
+                    "klarnaCustomerToken",
+                    "klarnaToken123",
+                )
+                put(
+                    "paymentMethodType",
+                    "credit_card",
+                )
+                put(
+                    "binData",
+                    JSONObject().apply {
+                        put(
+                            "network",
+                            "Visa",
+                        )
+                    },
+                )
+                put(
+                    "externalPayerInfo",
+                    JSONObject().apply {
+                        put(
+                            "email",
+                            "john.doe@example.com",
+                        )
+                        put(
+                            "externalPayerId",
+                            "external123",
+                        )
+                        put(
+                            "firstName",
+                            "John",
+                        )
+                        put(
+                            "lastName",
+                            "Doe",
+                        )
+                    },
+                )
+                put(
+                    "sessionData",
+                    JSONObject().apply {
+                        put(
+                            "recurringDescription",
+                            "Monthly subscription",
+                        )
+                        put(
+                            "billingAddress",
+                            JSONObject().apply {
+                                put(
+                                    "email",
+                                    "billing@example.com",
+                                )
+                            },
+                        )
+                    },
+                )
+            }
 
         // When
         val paymentInstrumentData = PaymentInstrumentData.deserializer.deserialize(json)

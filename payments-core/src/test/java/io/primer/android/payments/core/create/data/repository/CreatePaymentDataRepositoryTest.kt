@@ -23,7 +23,6 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 internal class CreatePaymentDataRepositoryTest {
-
     private lateinit var createPaymentDataSource: CreatePaymentDataSource
     private lateinit var localPaymentDataSource: LocalPaymentDataSource
     private lateinit var configurationDataSource: BaseCacheDataSource<ConfigurationData, ConfigurationData>
@@ -39,109 +38,120 @@ internal class CreatePaymentDataRepositoryTest {
     }
 
     @Test
-    fun `createPayment should return PaymentResult when successful`() = runTest {
-        // Arrange
-        val token = "testToken"
-        val configurationData = mockk<ConfigurationData>() {
-            every { pciUrl } returns "https://test.com"
+    fun `createPayment should return PaymentResult when successful`() =
+        runTest {
+            // Arrange
+            val token = "testToken"
+            val configurationData =
+                mockk<ConfigurationData> {
+                    every { pciUrl } returns "https://test.com"
+                }
+            val paymentResponse =
+                PaymentDataResponse(
+                    id = "payment123",
+                    date = "2024-06-25",
+                    status = PaymentStatus.SUCCESS,
+                    orderId = "order456",
+                    currencyCode = "USD",
+                    amount = 1000,
+                    customerId = "customer789",
+                    paymentFailureReason = null,
+                    requiredAction = null,
+                    showSuccessCheckoutOnPendingPayment = false,
+                )
+
+            coEvery { configurationDataSource.get() } returns configurationData
+            coEvery { createPaymentDataSource.execute(any()) } returns paymentResponse
+            coEvery { localPaymentDataSource.update(paymentResponse) } just Runs
+
+            // Act
+            val paymentResult = repository.createPayment(token)
+
+            // Assert
+            assertNotNull(paymentResult.isSuccess)
+            val result = paymentResult.getOrNull()!!
+
+            assertEquals("payment123", result.payment.id)
+            assertEquals("order456", result.payment.orderId)
+            assertEquals(PaymentStatus.SUCCESS, result.paymentStatus)
+            coVerify { configurationDataSource.get() }
+            coVerify { createPaymentDataSource.execute(any()) }
+            coVerify { localPaymentDataSource.update(paymentResponse) }
         }
-        val paymentResponse = PaymentDataResponse(
-            id = "payment123",
-            date = "2024-06-25",
-            status = PaymentStatus.SUCCESS,
-            orderId = "order456",
-            currencyCode = "USD",
-            amount = 1000,
-            customerId = "customer789",
-            paymentFailureReason = null,
-            requiredAction = null,
-            showSuccessCheckoutOnPendingPayment = false
-        )
-
-        coEvery { configurationDataSource.get() } returns configurationData
-        coEvery { createPaymentDataSource.execute(any()) } returns paymentResponse
-        coEvery { localPaymentDataSource.update(paymentResponse) } just Runs
-
-        // Act
-        val paymentResult = repository.createPayment(token)
-
-        // Assert
-        assertNotNull(paymentResult.isSuccess)
-        val result = paymentResult.getOrNull()!!
-
-        assertEquals("payment123", result.payment.id)
-        assertEquals("order456", result.payment.orderId)
-        assertEquals(PaymentStatus.SUCCESS, result.paymentStatus)
-        coVerify { configurationDataSource.get() }
-        coVerify { createPaymentDataSource.execute(any()) }
-        coVerify { localPaymentDataSource.update(paymentResponse) }
-    }
 
     @Test
-    fun `createPayment should throw PaymentCreateException when HttpException occurs with client error`() = runTest {
-        // Arrange
-        val token = "testToken"
-        val configurationData = mockk<ConfigurationData>() {
-            every { pciUrl } returns "https://test.com"
+    fun `createPayment should throw PaymentCreateException when HttpException occurs with client error`() =
+        runTest {
+            // Arrange
+            val token = "testToken"
+            val configurationData =
+                mockk<ConfigurationData> {
+                    every { pciUrl } returns "https://test.com"
+                }
+            val httpException =
+                mockk<HttpException> {
+                    every { isClientError() } returns true
+                }
+
+            coEvery { configurationDataSource.get() } returns configurationData
+            coEvery { createPaymentDataSource.execute(any()) } throws httpException
+
+            // Act & Assert
+            val result = repository.createPayment(token)
+            assertTrue(result.isFailure)
+
+            assertTrue(result.exceptionOrNull() is PaymentCreateException)
+            coVerify { configurationDataSource.get() }
+            coVerify { createPaymentDataSource.execute(any()) }
         }
-        val httpException = mockk<HttpException> {
-            every { isClientError() } returns true
-        }
-
-        coEvery { configurationDataSource.get() } returns configurationData
-        coEvery { createPaymentDataSource.execute(any()) } throws httpException
-
-        // Act & Assert
-        val result = repository.createPayment(token)
-        assertTrue(result.isFailure)
-
-        assertTrue(result.exceptionOrNull() is PaymentCreateException)
-        coVerify { configurationDataSource.get() }
-        coVerify { createPaymentDataSource.execute(any()) }
-    }
 
     @Test
-    fun `createPayment should rethrow exception when non-client error HttpException occurs`() = runTest {
-        // Arrange
-        val token = "testToken"
-        val configurationData = mockk<ConfigurationData>() {
-            every { pciUrl } returns "https://test.com"
+    fun `createPayment should rethrow exception when non-client error HttpException occurs`() =
+        runTest {
+            // Arrange
+            val token = "testToken"
+            val configurationData =
+                mockk<ConfigurationData> {
+                    every { pciUrl } returns "https://test.com"
+                }
+            val httpException =
+                mockk<HttpException> {
+                    every { isClientError() } returns false
+                    every { isPaymentError() } returns false
+                }
+
+            coEvery { configurationDataSource.get() } returns configurationData
+            coEvery { createPaymentDataSource.execute(any()) } throws httpException
+
+            // Act & Assert
+            val result = repository.createPayment(token)
+            assertTrue(result.isFailure)
+
+            assertTrue(result.exceptionOrNull() is HttpException)
+            coVerify { configurationDataSource.get() }
+            coVerify { createPaymentDataSource.execute(any()) }
         }
-        val httpException = mockk<HttpException> {
-            every { isClientError() } returns false
-            every { isPaymentError() } returns false
-        }
-
-        coEvery { configurationDataSource.get() } returns configurationData
-        coEvery { createPaymentDataSource.execute(any()) } throws httpException
-
-        // Act & Assert
-        val result = repository.createPayment(token)
-        assertTrue(result.isFailure)
-
-        assertTrue(result.exceptionOrNull() is HttpException)
-        coVerify { configurationDataSource.get() }
-        coVerify { createPaymentDataSource.execute(any()) }
-    }
 
     @Test
-    fun `createPayment should rethrow exception when non-HttpException occurs`() = runTest {
-        // Arrange
-        val token = "testToken"
-        val configurationData = mockk<ConfigurationData>() {
-            every { pciUrl } returns "https://test.com"
+    fun `createPayment should rethrow exception when non-HttpException occurs`() =
+        runTest {
+            // Arrange
+            val token = "testToken"
+            val configurationData =
+                mockk<ConfigurationData> {
+                    every { pciUrl } returns "https://test.com"
+                }
+            val exception = RuntimeException("Something went wrong")
+
+            coEvery { configurationDataSource.get() } returns configurationData
+            coEvery { createPaymentDataSource.execute(any()) } throws exception
+
+            // Act & Assert
+            val result = repository.createPayment(token)
+            assertTrue(result.isFailure)
+
+            assertEquals(exception, result.exceptionOrNull())
+            coVerify { configurationDataSource.get() }
+            coVerify { createPaymentDataSource.execute(any()) }
         }
-        val exception = RuntimeException("Something went wrong")
-
-        coEvery { configurationDataSource.get() } returns configurationData
-        coEvery { createPaymentDataSource.execute(any()) } throws exception
-
-        // Act & Assert
-        val result = repository.createPayment(token)
-        assertTrue(result.isFailure)
-
-        assertEquals(exception, result.exceptionOrNull())
-        coVerify { configurationDataSource.get() }
-        coVerify { createPaymentDataSource.execute(any()) }
-    }
 }

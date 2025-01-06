@@ -31,79 +31,88 @@ class CompleteStripeAchPaymentSessionDelegateTest {
     }
 
     @Test
-    fun `invoke() should return success if interactor call succeeds and payment method id is not null`() = runTest {
-        coEvery { stripeAchCompletePaymentInteractor.invoke(any()) } returns Result.success(Unit)
+    fun `invoke() should return success if interactor call succeeds and payment method id is not null`() =
+        runTest {
+            coEvery { stripeAchCompletePaymentInteractor.invoke(any()) } returns Result.success(Unit)
 
-        val mandateTimestamp = Calendar.getInstance().apply {
-            set(2024, 4, 10)
-        }.time
-        val result = delegate.invoke(
-            completeUrl = "completionUrl",
-            paymentMethodId = "paymentMethodId",
-            mandateTimestamp = mandateTimestamp
-        )
-
-        assert(result.isSuccess)
-        coVerify {
-            stripeAchCompletePaymentInteractor.invoke(
-                StripeAchCompletePaymentParams(
+            val mandateTimestamp =
+                Calendar.getInstance().apply {
+                    set(2024, 4, 10)
+                }.time
+            val result =
+                delegate.invoke(
                     completeUrl = "completionUrl",
-                    mandateTimestamp = mandateTimestamp.toIso8601String(),
-                    paymentMethodId = "paymentMethodId"
+                    paymentMethodId = "paymentMethodId",
+                    mandateTimestamp = mandateTimestamp,
                 )
-            )
+
+            assert(result.isSuccess)
+            coVerify {
+                stripeAchCompletePaymentInteractor.invoke(
+                    StripeAchCompletePaymentParams(
+                        completeUrl = "completionUrl",
+                        mandateTimestamp = mandateTimestamp.toIso8601String(),
+                        paymentMethodId = "paymentMethodId",
+                    ),
+                )
+            }
         }
-    }
 
     @Test
-    fun `invoke() should return success if interactor call succeeds and payment method id is null`() = runTest {
-        coEvery { stripeAchCompletePaymentInteractor.invoke(any()) } returns Result.success(Unit)
+    fun `invoke() should return success if interactor call succeeds and payment method id is null`() =
+        runTest {
+            coEvery { stripeAchCompletePaymentInteractor.invoke(any()) } returns Result.success(Unit)
 
-        val mandateTimestamp = Calendar.getInstance().apply {
-            set(2024, 4, 10)
-        }.time
-        val result = delegate.invoke(
-            completeUrl = "completionUrl",
-            paymentMethodId = null,
-            mandateTimestamp = mandateTimestamp
-        )
-
-        assert(result.isSuccess)
-        coVerify {
-            stripeAchCompletePaymentInteractor.invoke(
-                StripeAchCompletePaymentParams(
+            val mandateTimestamp =
+                Calendar.getInstance().apply {
+                    set(2024, 4, 10)
+                }.time
+            val result =
+                delegate.invoke(
                     completeUrl = "completionUrl",
-                    mandateTimestamp = mandateTimestamp.toIso8601String(),
-                    paymentMethodId = null
+                    paymentMethodId = null,
+                    mandateTimestamp = mandateTimestamp,
                 )
-            )
+
+            assert(result.isSuccess)
+            coVerify {
+                stripeAchCompletePaymentInteractor.invoke(
+                    StripeAchCompletePaymentParams(
+                        completeUrl = "completionUrl",
+                        mandateTimestamp = mandateTimestamp.toIso8601String(),
+                        paymentMethodId = null,
+                    ),
+                )
+            }
         }
-    }
 
     @Test
-    fun `invoke() should return failure if interactor call succeeds`() = runTest {
-        coEvery {
-            stripeAchCompletePaymentInteractor.invoke(any())
-        } returns Result.failure(Exception())
+    fun `invoke() should return failure if interactor call succeeds`() =
+        runTest {
+            coEvery {
+                stripeAchCompletePaymentInteractor.invoke(any())
+            } returns Result.failure(Exception())
 
-        val mandateTimestamp = Calendar.getInstance().apply {
-            set(2024, 4, 10)
-        }.time
-        val result = delegate.invoke(
-            completeUrl = "completionUrl",
-            paymentMethodId = "paymentMethodId",
-            mandateTimestamp = mandateTimestamp
-        )
-
-        assert(result.isFailure)
-        coVerify {
-            stripeAchCompletePaymentInteractor.invoke(
-                StripeAchCompletePaymentParams(
+            val mandateTimestamp =
+                Calendar.getInstance().apply {
+                    set(2024, 4, 10)
+                }.time
+            val result =
+                delegate.invoke(
                     completeUrl = "completionUrl",
-                    mandateTimestamp = mandateTimestamp.toIso8601String(),
-                    paymentMethodId = "paymentMethodId"
+                    paymentMethodId = "paymentMethodId",
+                    mandateTimestamp = mandateTimestamp,
                 )
-            )
+
+            assert(result.isFailure)
+            coVerify {
+                stripeAchCompletePaymentInteractor.invoke(
+                    StripeAchCompletePaymentParams(
+                        completeUrl = "completionUrl",
+                        mandateTimestamp = mandateTimestamp.toIso8601String(),
+                        paymentMethodId = "paymentMethodId",
+                    ),
+                )
+            }
         }
-    }
 }

@@ -11,66 +11,78 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.view.isVisible
 import androidx.core.view.setPadding
-import io.primer.android.ui.settings.PrimerTheme
 import io.primer.android.core.di.DISdkComponent
 import io.primer.android.core.di.extensions.inject
+import io.primer.android.ui.settings.PrimerTheme
 
-class PaymentMethodButtonGroupBox @JvmOverloads constructor(
-    context: Context?,
-    attrs: AttributeSet? = null,
-    defStyle: Int = 0
-) : LinearLayout(context, attrs, defStyle), DISdkComponent {
+class PaymentMethodButtonGroupBox
+    @JvmOverloads
+    constructor(
+        context: Context?,
+        attrs: AttributeSet? = null,
+        defStyle: Int = 0,
+    ) : LinearLayout(context, attrs, defStyle), DISdkComponent {
+        private val theme: PrimerTheme by inject()
 
-    private val theme: PrimerTheme by inject()
+        private val label = TextView(context)
 
-    private val label = TextView(context)
-
-    init {
-        render()
-        label.textAlignment = TEXT_ALIGNMENT_VIEW_END
-        label.gravity = Gravity.END
-        addView(label, 0)
-    }
-
-    private fun render() {
-        orientation = VERTICAL
-        val backgroundColor = ColorStateList.valueOf(Color.argb(12, 0, 0, 0))
-        background = GradientDrawable().apply {
-            color = backgroundColor
-            cornerRadius = 16f
+        init {
+            render()
+            label.textAlignment = TEXT_ALIGNMENT_VIEW_END
+            label.gravity = Gravity.END
+            addView(label, 0)
         }
-        val params = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT)
-        layoutParams = params
-        setPadding(24)
-        setMargin()
-    }
 
-    fun setMargin(topMargin: Int = 16, bottomMargin: Int = 16) {
-        val params = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT)
-        params.setMargins(0, topMargin, 0, bottomMargin)
-        layoutParams = params
-    }
+        private fun render() {
+            orientation = VERTICAL
+            val backgroundColor = ColorStateList.valueOf(Color.argb(12, 0, 0, 0))
+            background =
+                GradientDrawable().apply {
+                    color = backgroundColor
+                    cornerRadius = 16f
+                }
+            val params = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT)
+            layoutParams = params
+            setPadding(24)
+            setMargin()
+        }
 
-    fun hideSurchargeFrame(padding: Int = 0, topMargin: Int = 24) {
-        setPadding(padding, 0, padding, 0)
-        val newBackground = GradientDrawable()
-        newBackground.color =
-            ColorStateList.valueOf(theme.backgroundColor.getColor(context, theme.isDarkMode))
-        setMargin(topMargin = topMargin, bottomMargin = 0)
-        this.background = newBackground
-        label.isVisible = false
-    }
+        fun setMargin(
+            topMargin: Int = 16,
+            bottomMargin: Int = 16,
+        ) {
+            val params = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT)
+            params.setMargins(0, topMargin, 0, bottomMargin)
+            layoutParams = params
+        }
 
-    fun showSurchargeLabel(text: String, isBold: Boolean = false) {
-        label.text = text
-        if (isBold) label.typeface = Typeface.DEFAULT_BOLD
-        val textColor = ColorStateList.valueOf(
-            theme.amountLabelText.defaultColor.getColor(context, theme.isDarkMode)
-        )
-        label.setTextColor(textColor)
-        val params = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT)
-        params.setMargins(0, 0, 0, 16)
-        label.layoutParams = params
-        label.isVisible = true
+        fun hideSurchargeFrame(
+            padding: Int = 0,
+            topMargin: Int = 24,
+        ) {
+            setPadding(padding, 0, padding, 0)
+            val newBackground = GradientDrawable()
+            newBackground.color =
+                ColorStateList.valueOf(theme.backgroundColor.getColor(context, theme.isDarkMode))
+            setMargin(topMargin = topMargin, bottomMargin = 0)
+            this.background = newBackground
+            label.isVisible = false
+        }
+
+        fun showSurchargeLabel(
+            text: String,
+            isBold: Boolean = false,
+        ) {
+            label.text = text
+            if (isBold) label.typeface = Typeface.DEFAULT_BOLD
+            val textColor =
+                ColorStateList.valueOf(
+                    theme.amountLabelText.defaultColor.getColor(context, theme.isDarkMode),
+                )
+            label.setTextColor(textColor)
+            val params = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT)
+            params.setMargins(0, 0, 0, 16)
+            label.layoutParams = params
+            label.isVisible = true
+        }
     }
-}

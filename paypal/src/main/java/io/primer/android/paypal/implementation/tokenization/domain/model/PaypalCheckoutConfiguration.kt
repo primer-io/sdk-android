@@ -5,5 +5,5 @@ internal data class PaypalCheckoutConfiguration(
     val amount: Int,
     val currencyCode: String?,
     val successUrl: String,
-    val cancelUrl: String
+    val cancelUrl: String,
 )

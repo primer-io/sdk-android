@@ -8,7 +8,6 @@ import io.primer.android.errors.domain.DefaultErrorResolver
 import io.primer.android.errors.domain.ErrorMapperRegistry
 
 class ErrorResolverContainer(private val sdk: () -> SdkContainer) : DependencyContainer() {
-
     override fun registerInitialDependencies() {
         registerSingleton<ErrorMapperRegistry> { DefaultErrorMapperRegistry() }
 
@@ -16,7 +15,7 @@ class ErrorResolverContainer(private val sdk: () -> SdkContainer) : DependencyCo
             DefaultErrorResolver(
                 analyticsRepository = sdk().resolve(),
                 errorMapperRegistry = resolve(),
-                logReporter = sdk().resolve()
+                logReporter = sdk().resolve(),
             )
         }
     }

@@ -11,9 +11,9 @@ import io.primer.android.sandboxProcessor.implementation.tokenization.domain.mod
 internal class SandboxProcessorTokenizationDataRepository(
     remoteTokenizationDataSource: BaseRemoteTokenizationDataSource<SandboxProcessorPaymentInstrumentDataRequest>,
     configurationDataSource: BaseCacheDataSource<ConfigurationData, ConfigurationData>,
-    tokenizationParamsMapper: SandboxProcessorTokenizationParamsMapper
+    tokenizationParamsMapper: SandboxProcessorTokenizationParamsMapper,
 ) : TokenizationDataRepository<SandboxProcessorPaymentInstrumentParams, SandboxProcessorPaymentInstrumentDataRequest>(
-    remoteTokenizationDataSource,
-    configurationDataSource,
-    tokenizationParamsMapper
-)
+        remoteTokenizationDataSource,
+        configurationDataSource,
+        tokenizationParamsMapper,
+    )

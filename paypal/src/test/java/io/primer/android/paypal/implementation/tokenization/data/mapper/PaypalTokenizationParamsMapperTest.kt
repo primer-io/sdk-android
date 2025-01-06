@@ -15,7 +15,6 @@ import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
 class PaypalTokenizationParamsMapperTest {
-
     private lateinit var mapper: PaypalTokenizationParamsMapper
 
     @BeforeEach
@@ -31,35 +30,40 @@ class PaypalTokenizationParamsMapperTest {
         val externalPayerId = "payer123"
         val firstName = "John"
         val lastName = "Doe"
-        val paymentInstrumentParams = PaypalPaymentInstrumentParams.PaypalCheckoutPaymentInstrumentParams(
-            paypalOrderId = paypalOrderId,
-            externalPayerInfoEmail = email,
-            externalPayerId = externalPayerId,
-            externalPayerFirstName = firstName,
-            externalPayerLastName = lastName
-        )
-        val tokenizationParams = TokenizationParams<PaypalPaymentInstrumentParams>(
-            paymentInstrumentParams = paymentInstrumentParams,
-            sessionIntent = PrimerSessionIntent.CHECKOUT
-        )
+        val paymentInstrumentParams =
+            PaypalPaymentInstrumentParams.PaypalCheckoutPaymentInstrumentParams(
+                paypalOrderId = paypalOrderId,
+                externalPayerInfoEmail = email,
+                externalPayerId = externalPayerId,
+                externalPayerFirstName = firstName,
+                externalPayerLastName = lastName,
+            )
+        val tokenizationParams =
+            TokenizationParams<PaypalPaymentInstrumentParams>(
+                paymentInstrumentParams = paymentInstrumentParams,
+                sessionIntent = PrimerSessionIntent.CHECKOUT,
+            )
 
         // Act
         val result = mapper.map(tokenizationParams)
 
         // Assert
-        val expectedRequest = PaypalPaymentInstrumentDataRequest.PaypalCheckoutPaymentInstrumentDataRequest(
-            paypalOrderId = paypalOrderId,
-            externalPayerInfo = ExternalPayerInfoRequest(
-                email = email,
-                externalPayerId = externalPayerId,
-                firstName = firstName,
-                lastName = lastName
+        val expectedRequest =
+            PaypalPaymentInstrumentDataRequest.PaypalCheckoutPaymentInstrumentDataRequest(
+                paypalOrderId = paypalOrderId,
+                externalPayerInfo =
+                    ExternalPayerInfoRequest(
+                        email = email,
+                        externalPayerId = externalPayerId,
+                        firstName = firstName,
+                        lastName = lastName,
+                    ),
             )
-        )
-        val expectedTokenizationRequest = TokenizationCheckoutRequestV2<PaypalPaymentInstrumentDataRequest>(
-            paymentInstrument = expectedRequest,
-            paymentInstrumentSerializer = PaypalPaymentInstrumentDataRequest.serializer
-        )
+        val expectedTokenizationRequest =
+            TokenizationCheckoutRequestV2<PaypalPaymentInstrumentDataRequest>(
+                paymentInstrument = expectedRequest,
+                paymentInstrumentSerializer = PaypalPaymentInstrumentDataRequest.serializer,
+            )
         assertEquals(expectedTokenizationRequest, result)
     }
 
@@ -69,31 +73,35 @@ class PaypalTokenizationParamsMapperTest {
         val billingAgreementId = "agreement123"
         val externalPayerInfo = mockk<PaypalExternalPayerInfo>()
         val shippingAddress = mockk<PaypalShippingAddressDataResponse>()
-        val paymentInstrumentParams = PaypalPaymentInstrumentParams.PaypalVaultPaymentInstrumentParams(
-            paypalBillingAgreementId = billingAgreementId,
-            externalPayerInfo = externalPayerInfo,
-            shippingAddress = shippingAddress
-        )
-        val tokenizationParams = TokenizationParams<PaypalPaymentInstrumentParams>(
-            paymentInstrumentParams = paymentInstrumentParams,
-            sessionIntent = PrimerSessionIntent.VAULT
-        )
+        val paymentInstrumentParams =
+            PaypalPaymentInstrumentParams.PaypalVaultPaymentInstrumentParams(
+                paypalBillingAgreementId = billingAgreementId,
+                externalPayerInfo = externalPayerInfo,
+                shippingAddress = shippingAddress,
+            )
+        val tokenizationParams =
+            TokenizationParams<PaypalPaymentInstrumentParams>(
+                paymentInstrumentParams = paymentInstrumentParams,
+                sessionIntent = PrimerSessionIntent.VAULT,
+            )
 
         // Act
         val result = mapper.map(tokenizationParams)
 
         // Assert
-        val expectedRequest = PaypalPaymentInstrumentDataRequest.PaypalVaultPaymentInstrumentDataRequest(
-            billingAgreementId = billingAgreementId,
-            externalPayerInfo = externalPayerInfo,
-            shippingAddress = shippingAddress
-        )
-        val expectedTokenizationRequest = TokenizationVaultRequestV2<PaypalPaymentInstrumentDataRequest>(
-            paymentInstrument = expectedRequest,
-            paymentInstrumentSerializer = PaypalPaymentInstrumentDataRequest.serializer,
-            tokenType = "MULTI_USE",
-            paymentFlow = "VAULT"
-        )
+        val expectedRequest =
+            PaypalPaymentInstrumentDataRequest.PaypalVaultPaymentInstrumentDataRequest(
+                billingAgreementId = billingAgreementId,
+                externalPayerInfo = externalPayerInfo,
+                shippingAddress = shippingAddress,
+            )
+        val expectedTokenizationRequest =
+            TokenizationVaultRequestV2<PaypalPaymentInstrumentDataRequest>(
+                paymentInstrument = expectedRequest,
+                paymentInstrumentSerializer = PaypalPaymentInstrumentDataRequest.serializer,
+                tokenType = "MULTI_USE",
+                paymentFlow = "VAULT",
+            )
         assertEquals(expectedTokenizationRequest, result)
     }
 }

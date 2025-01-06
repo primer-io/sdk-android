@@ -9,7 +9,6 @@ import androidx.annotation.RequiresApi
 @RequiresApi(Build.VERSION_CODES.N)
 internal class ConnectivityProviderImpl(private val cm: ConnectivityManager) :
     ConnectivityProviderBaseImpl() {
-
     private val networkCallback = ConnectivityCallback()
 
     override fun subscribe() {
@@ -30,8 +29,10 @@ internal class ConnectivityProviderImpl(private val cm: ConnectivityManager) :
     }
 
     private inner class ConnectivityCallback : ConnectivityManager.NetworkCallback() {
-
-        override fun onCapabilitiesChanged(network: Network, capabilities: NetworkCapabilities) {
+        override fun onCapabilitiesChanged(
+            network: Network,
+            capabilities: NetworkCapabilities,
+        ) {
             dispatchChange(ConnectivityProvider.NetworkState.ConnectedState.Connected(capabilities))
         }
 

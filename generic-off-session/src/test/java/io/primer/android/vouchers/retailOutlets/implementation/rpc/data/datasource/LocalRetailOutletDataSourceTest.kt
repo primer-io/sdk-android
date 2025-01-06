@@ -8,7 +8,6 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 class LocalRetailOutletDataSourceTest {
-
     private lateinit var dataSource: LocalRetailOutletDataSource
 
     @BeforeEach
@@ -24,16 +23,17 @@ class LocalRetailOutletDataSourceTest {
 
     @Test
     fun `test update stores data correctly`() {
-        val input = listOf(
-            mockk<RetailOutletDataResponse> {
-                every { id } returns "1"
-                every { name } returns "Retailer 1"
-            },
-            mockk<RetailOutletDataResponse> {
-                every { id } returns "2"
-                every { name } returns "Retailer 2"
-            }
-        )
+        val input =
+            listOf(
+                mockk<RetailOutletDataResponse> {
+                    every { id } returns "1"
+                    every { name } returns "Retailer 1"
+                },
+                mockk<RetailOutletDataResponse> {
+                    every { id } returns "2"
+                    every { name } returns "Retailer 2"
+                },
+            )
 
         dataSource.update(input)
 
@@ -47,18 +47,20 @@ class LocalRetailOutletDataSourceTest {
 
     @Test
     fun `test update clears previous data`() {
-        val initialInput = listOf(
-            mockk<RetailOutletDataResponse> {
-                every { id } returns "1"
-                every { name } returns "Retailer 1"
-            }
-        )
-        val newInput = listOf(
-            mockk<RetailOutletDataResponse> {
-                every { id } returns "2"
-                every { name } returns "Retailer 2"
-            }
-        )
+        val initialInput =
+            listOf(
+                mockk<RetailOutletDataResponse> {
+                    every { id } returns "1"
+                    every { name } returns "Retailer 1"
+                },
+            )
+        val newInput =
+            listOf(
+                mockk<RetailOutletDataResponse> {
+                    every { id } returns "2"
+                    every { name } returns "Retailer 2"
+                },
+            )
 
         dataSource.update(initialInput)
         assertEquals(1, dataSource.get().size)

@@ -8,8 +8,8 @@ import kotlinx.coroutines.launch
 
 internal open class BaseViewModel(private val analyticsInteractor: AnalyticsInteractor) :
     ViewModel() {
-
-    fun addAnalyticsEvent(params: BaseAnalyticsParams) = viewModelScope.launch {
-        analyticsInteractor(params)
-    }
+    fun addAnalyticsEvent(params: BaseAnalyticsParams) =
+        viewModelScope.launch {
+            analyticsInteractor(params)
+        }
 }

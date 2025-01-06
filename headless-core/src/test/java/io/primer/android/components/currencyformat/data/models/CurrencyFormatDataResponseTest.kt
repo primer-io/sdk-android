@@ -6,23 +6,23 @@ import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
 internal class CurrencyFormatDataResponseTest {
-
     private val currencyFormatDataResponse by lazy {
         CurrencyFormatDataResponse.deserializer.deserialize(
-            JSONArray(JSON_ARRAY)
+            JSONArray(JSON_ARRAY),
         )
     }
 
     @Test
     fun `currency formats should be deserialized correctly`() {
-        val expectedFormats = listOf(
-            CurrencyFormat("AED", 2),
-            CurrencyFormat("AFN", 2),
-            CurrencyFormat("ALL", 2),
-            CurrencyFormat("AMD", 2),
-            CurrencyFormat("ANG", 2),
-            CurrencyFormat("AOA", 2)
-        )
+        val expectedFormats =
+            listOf(
+                CurrencyFormat("AED", 2),
+                CurrencyFormat("AFN", 2),
+                CurrencyFormat("ALL", 2),
+                CurrencyFormat("AMD", 2),
+                CurrencyFormat("ANG", 2),
+                CurrencyFormat("AOA", 2),
+            )
         assertEquals(expectedFormats, currencyFormatDataResponse.data)
     }
 

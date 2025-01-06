@@ -5,11 +5,9 @@ import io.primer.android.components.domain.core.models.metadata.PrimerPaymentMet
 import kotlinx.coroutines.flow.Flow
 
 interface PrimerHeadlessMetadatable<T : PrimerCollectableData> {
-
     val metadataFlow: Flow<PrimerPaymentMethodMetadata>
 }
 
 interface PrimerHeadlessStateMetadatable<T : PrimerCollectableData> {
-
     val metadataStateFlow: Flow<PrimerPaymentMethodMetadataState>
 }

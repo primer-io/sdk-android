@@ -11,7 +11,6 @@ import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
 class OrderedAllowedCardNetworksDataRepositoryTest {
-
     private lateinit var repository: OrderedAllowedCardNetworksRepository
     private lateinit var configurationDataSource: CacheConfigurationDataSource
 
@@ -24,14 +23,16 @@ class OrderedAllowedCardNetworksDataRepositoryTest {
     @Test
     fun `getOrderedAllowedCardNetworks should return ordered allowed card networks from configuration data source`() {
         // Mock data
-        val orderedCardNetworks = listOf(
-            CardNetwork.Type.VISA,
-            CardNetwork.Type.MASTERCARD,
-            CardNetwork.Type.DISCOVER
-        )
-        val clientSession = mockk<ClientSessionDataResponse> {
-            every { paymentMethod?.orderedAllowedCardNetworks } returns orderedCardNetworks
-        }
+        val orderedCardNetworks =
+            listOf(
+                CardNetwork.Type.VISA,
+                CardNetwork.Type.MASTERCARD,
+                CardNetwork.Type.DISCOVER,
+            )
+        val clientSession =
+            mockk<ClientSessionDataResponse> {
+                every { paymentMethod?.orderedAllowedCardNetworks } returns orderedCardNetworks
+            }
 
         // Mock configuration data source behavior
         every { configurationDataSource.get().clientSession } returns clientSession
@@ -46,9 +47,10 @@ class OrderedAllowedCardNetworksDataRepositoryTest {
     @Test
     fun `getOrderedAllowedCardNetworks should return empty list when payment method is null`() {
         // Mock data with null payment method
-        val clientSession = mockk<ClientSessionDataResponse> {
-            every { paymentMethod } returns null
-        }
+        val clientSession =
+            mockk<ClientSessionDataResponse> {
+                every { paymentMethod } returns null
+            }
 
         // Mock configuration data source behavior
         every { configurationDataSource.get().clientSession } returns clientSession
@@ -62,9 +64,10 @@ class OrderedAllowedCardNetworksDataRepositoryTest {
 
     @Test
     fun `getOrderedAllowedCardNetworks should return empty list when ordered allowed card networks is null`() {
-        val clientSession = mockk<ClientSessionDataResponse> {
-            every { paymentMethod?.orderedAllowedCardNetworks } returns emptyList()
-        }
+        val clientSession =
+            mockk<ClientSessionDataResponse> {
+                every { paymentMethod?.orderedAllowedCardNetworks } returns emptyList()
+            }
 
         // Mock configuration data source behavior
         every { configurationDataSource.get().clientSession } returns clientSession

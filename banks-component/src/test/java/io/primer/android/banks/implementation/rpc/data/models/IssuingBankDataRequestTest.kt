@@ -4,16 +4,16 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
 class IssuingBankDataRequestTest {
-
     @Test
     fun `test serializer serializes correctly`() {
         // Arrange
         val parameters = IssuingBankDataParameters("visa", "en_US")
-        val request = IssuingBankDataRequest(
-            paymentMethodConfigId = "12345",
-            command = "FETCH_BANK_ISSUERS",
-            parameters = parameters
-        )
+        val request =
+            IssuingBankDataRequest(
+                paymentMethodConfigId = "12345",
+                command = "FETCH_BANK_ISSUERS",
+                parameters = parameters,
+            )
 
         // Act
         val json = IssuingBankDataRequest.serializer.serialize(request)

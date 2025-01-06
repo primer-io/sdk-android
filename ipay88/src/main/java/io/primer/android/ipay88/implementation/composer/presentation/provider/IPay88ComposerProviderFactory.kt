@@ -10,23 +10,27 @@ import io.primer.android.paymentmethods.core.composer.provider.PaymentMethodComp
 import io.primer.android.payments.di.PaymentsContainer
 
 internal class IPay88ComposerProviderFactory : PaymentMethodComposerProvider.Factory {
-
-    override fun create(paymentMethodType: String, sessionIntent: PrimerSessionIntent): PaymentMethodComposer {
+    override fun create(
+        paymentMethodType: String,
+        sessionIntent: PrimerSessionIntent,
+    ): PaymentMethodComposer {
         return IPay88Component(
-            tokenizationDelegate = IPay88TokenizationDelegate(
-                configurationInteractor = resolve(name = paymentMethodType),
-                tokenizationInteractor = resolve(name = paymentMethodType)
-            ),
+            tokenizationDelegate =
+                IPay88TokenizationDelegate(
+                    configurationInteractor = resolve(name = paymentMethodType),
+                    tokenizationInteractor = resolve(name = paymentMethodType),
+                ),
             pollingInteractor = resolve(PaymentsContainer.POLLING_INTERACTOR_DI_KEY),
-            paymentDelegate = IPay88PaymentDelegate(
-                paymentMethodTokenHandler = resolve(),
-                resumePaymentHandler = resolve(),
-                successHandler = resolve(),
-                errorHandler = resolve(),
-                baseErrorResolver = resolve(),
-                resumeHandler = resolve()
-            ),
-            mockConfigurationDelegate = resolve()
+            paymentDelegate =
+                IPay88PaymentDelegate(
+                    paymentMethodTokenHandler = resolve(),
+                    resumePaymentHandler = resolve(),
+                    successHandler = resolve(),
+                    errorHandler = resolve(),
+                    baseErrorResolver = resolve(),
+                    resumeHandler = resolve(),
+                ),
+            mockConfigurationDelegate = resolve(),
         )
     }
 }

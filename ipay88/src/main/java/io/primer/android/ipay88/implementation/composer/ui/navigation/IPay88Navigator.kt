@@ -4,22 +4,21 @@ import android.content.Context
 import android.content.Intent
 import androidx.activity.result.ActivityResultLauncher
 import io.primer.android.ipay88.implementation.composer.ui.navigation.extension.toIPay88LauncherParams
-import io.primer.android.paymentmethods.core.ui.navigation.NavigationParams
-import io.primer.paymentMethodCoreUi.core.ui.navigation.StartActivityForResultNavigator
 import io.primer.android.ipay88.implementation.composer.ui.navigation.launcher.IPay88ActivityLauncherParams
+import io.primer.android.paymentmethods.core.ui.navigation.NavigationParams
 import io.primer.ipay88.api.ui.NativeIPay88Activity
+import io.primer.paymentMethodCoreUi.core.ui.navigation.StartActivityForResultNavigator
 
 internal data class IPay88Navigator(
     private val context: Context,
-    override val launcher: ActivityResultLauncher<Intent>
+    override val launcher: ActivityResultLauncher<Intent>,
 ) : StartActivityForResultNavigator<IPay88ActivityLauncherParams>(launcher) {
-
     override fun navigate(params: IPay88ActivityLauncherParams) {
         launcher.launch(
             NativeIPay88Activity.getLaunchIntent(
                 context = context,
-                params = params.toIPay88LauncherParams()
-            )
+                params = params.toIPay88LauncherParams(),
+            ),
         )
     }
 

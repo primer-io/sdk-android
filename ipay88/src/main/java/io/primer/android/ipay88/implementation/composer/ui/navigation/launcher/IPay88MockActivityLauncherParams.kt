@@ -6,8 +6,8 @@ import io.primer.paymentMethodCoreUi.core.ui.navigation.launchers.PaymentMethodR
 
 internal data class IPay88MockActivityLauncherParams(
     val errorCode: Int,
-    override val sessionIntent: PrimerSessionIntent
+    override val sessionIntent: PrimerSessionIntent,
 ) : PaymentMethodRedirectLauncherParams(
-    PaymentMethodType.IPAY88_CARD.name,
-    sessionIntent
-)
+        PaymentMethodType.IPAY88_CARD.name,
+        sessionIntent,
+    )

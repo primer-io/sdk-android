@@ -22,7 +22,6 @@ import org.junit.jupiter.api.extension.ExtendWith
 @ExperimentalCoroutinesApi
 @ExtendWith(MockKExtension::class)
 class TokenizationDataRepositoryTest {
-
     // Mock dependencies
     private val mockRemoteDataSource = mockk<BaseRemoteTokenizationDataSource<BasePaymentInstrumentDataRequest>>()
     private val mockCacheDataSource = mockk<BaseCacheDataSource<ConfigurationData, ConfigurationData>>()
@@ -34,29 +33,31 @@ class TokenizationDataRepositoryTest {
         object : TokenizationDataRepository<BasePaymentInstrumentParams, BasePaymentInstrumentDataRequest>(
             mockRemoteDataSource,
             mockCacheDataSource,
-            mockTokenizationParamsMapper
+            mockTokenizationParamsMapper,
         ) {}
 
     @Test
-    fun `tokenize() calls remoteDataSource_execute with correct parameters when success`() = runTest {
-        // Given
-        val tokenizationParams = mockk<TokenizationParams<BasePaymentInstrumentParams>>()
-        val configurationData = mockk<ConfigurationData> {
-            every { pciUrl } returns "https://example.com"
-        }
-        val tokenizationResult = mockk<TokenizationRequestV2<BasePaymentInstrumentDataRequest>>(relaxed = true)
+    fun `tokenize() calls remoteDataSource_execute with correct parameters when success`() =
+        runTest {
+            // Given
+            val tokenizationParams = mockk<TokenizationParams<BasePaymentInstrumentParams>>()
+            val configurationData =
+                mockk<ConfigurationData> {
+                    every { pciUrl } returns "https://example.com"
+                }
+            val tokenizationResult = mockk<TokenizationRequestV2<BasePaymentInstrumentDataRequest>>(relaxed = true)
 
-        every { mockCacheDataSource.get() } returns configurationData
-        every { mockTokenizationParamsMapper.map(tokenizationParams) } returns tokenizationResult
+            every { mockCacheDataSource.get() } returns configurationData
+            every { mockTokenizationParamsMapper.map(tokenizationParams) } returns tokenizationResult
 
-        coEvery { mockRemoteDataSource.execute(any()) } returns mockk()
+            coEvery { mockRemoteDataSource.execute(any()) } returns mockk()
 
-        // When
-        repository.tokenize(tokenizationParams)
+            // When
+            repository.tokenize(tokenizationParams)
 
 //        // Verify interactions
-        verify { mockCacheDataSource.get() }
-        verify { mockTokenizationParamsMapper.map(tokenizationParams) }
-        coVerify { mockRemoteDataSource.execute(any()) }
-    }
+            verify { mockCacheDataSource.get() }
+            verify { mockTokenizationParamsMapper.map(tokenizationParams) }
+            coVerify { mockRemoteDataSource.execute(any()) }
+        }
 }

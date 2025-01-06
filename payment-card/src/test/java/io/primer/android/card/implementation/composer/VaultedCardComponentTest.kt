@@ -35,7 +35,6 @@ import kotlin.time.Duration.Companion.seconds
 @ExtendWith(InstantExecutorExtension::class, MockKExtension::class)
 @ExperimentalCoroutinesApi
 internal class VaultedCardComponentTest {
-
     @RelaxedMockK
     internal lateinit var paymentDelegate: CardPaymentDelegate
 
@@ -45,9 +44,10 @@ internal class VaultedCardComponentTest {
     @BeforeEach
     fun setUp() {
         MockKAnnotations.init(this, relaxed = true)
-        component = VaultedCardComponent(
-            paymentDelegate = paymentDelegate
-        )
+        component =
+            VaultedCardComponent(
+                paymentDelegate = paymentDelegate,
+            )
         paymentMethodType = "CARD"
 
         coEvery { paymentDelegate.uiEvent } returns MutableSharedFlow()
@@ -76,9 +76,10 @@ internal class VaultedCardComponentTest {
         val resultCode = WebViewActivity.RESULT_ERROR
 
         val exception = Exception("error")
-        val intent = mockk<Intent> {
-            every { getSerializableCompat<Exception>(Processor3dsWebViewActivity.ERROR_KEY) } returns exception
-        }
+        val intent =
+            mockk<Intent> {
+                every { getSerializableCompat<Exception>(Processor3dsWebViewActivity.ERROR_KEY) } returns exception
+            }
 
         // when
         runTest {
@@ -115,13 +116,15 @@ internal class VaultedCardComponentTest {
     fun `handleActivityResultIntent() should call resumePayment with correct resume token when initialLauncherParams is ThreeDsInitialLauncherParams`() {
         // Given
         val resumeToken = "resumeToken"
-        val params = mockk<PaymentMethodLauncherParams>(relaxed = true) {
-            every { initialLauncherParams } returns mockk<ThreeDsInitialLauncherParams>(relaxed = true)
-        }
+        val params =
+            mockk<PaymentMethodLauncherParams>(relaxed = true) {
+                every { initialLauncherParams } returns mockk<ThreeDsInitialLauncherParams>(relaxed = true)
+            }
         val resultCode = Activity.RESULT_OK
-        val intent = mockk<Intent>(relaxed = true) {
-            every { getStringExtra(ThreeDsActivity.RESUME_TOKEN_EXTRA_KEY) } returns resumeToken
-        }
+        val intent =
+            mockk<Intent>(relaxed = true) {
+                every { getStringExtra(ThreeDsActivity.RESUME_TOKEN_EXTRA_KEY) } returns resumeToken
+            }
 
         // When
         runTest {
@@ -137,11 +140,12 @@ internal class VaultedCardComponentTest {
     fun `handleActivityStartEvent() should emit Navigate event for ThreeDsInitialLauncherParams`() {
         // Given
         val threeDsInitialLauncherParams = ThreeDsInitialLauncherParams(listOf("2.0.0", "2.1.0"))
-        val params = PaymentMethodLauncherParams(
-            paymentMethodType = paymentMethodType,
-            sessionIntent = PrimerSessionIntent.CHECKOUT,
-            initialLauncherParams = threeDsInitialLauncherParams
-        )
+        val params =
+            PaymentMethodLauncherParams(
+                paymentMethodType = paymentMethodType,
+                sessionIntent = PrimerSessionIntent.CHECKOUT,
+                initialLauncherParams = threeDsInitialLauncherParams,
+            )
 
         runTest {
             // When
@@ -157,17 +161,20 @@ internal class VaultedCardComponentTest {
     @Test
     fun `handleActivityStartEvent() should emit Navigate event for ProcessorThreeDsInitialLauncherParams`() {
         // Given
-        val threeDsInitialLauncherParams = ProcessorThreeDsInitialLauncherParams(
-            processor3DS = Processor3DS(
-                redirectUrl = "https://www.example.com/redirect",
-                statusUrl = "https://www.example.com/status"
+        val threeDsInitialLauncherParams =
+            ProcessorThreeDsInitialLauncherParams(
+                processor3DS =
+                    Processor3DS(
+                        redirectUrl = "https://www.example.com/redirect",
+                        statusUrl = "https://www.example.com/status",
+                    ),
             )
-        )
-        val params = PaymentMethodLauncherParams(
-            paymentMethodType = paymentMethodType,
-            sessionIntent = PrimerSessionIntent.CHECKOUT,
-            initialLauncherParams = threeDsInitialLauncherParams
-        )
+        val params =
+            PaymentMethodLauncherParams(
+                paymentMethodType = paymentMethodType,
+                sessionIntent = PrimerSessionIntent.CHECKOUT,
+                initialLauncherParams = threeDsInitialLauncherParams,
+            )
 
         runTest {
             // When
@@ -184,13 +191,15 @@ internal class VaultedCardComponentTest {
     fun `handleActivityResultIntent() should call resumePayment with correct resume token when initialLauncherParams is ProcessorThreeDsInitialLauncherParams`() {
         // Given
         val resumeToken = "resumeToken"
-        val params = mockk<PaymentMethodLauncherParams>(relaxed = true) {
-            every { initialLauncherParams } returns mockk<ProcessorThreeDsInitialLauncherParams>(relaxed = true)
-        }
+        val params =
+            mockk<PaymentMethodLauncherParams>(relaxed = true) {
+                every { initialLauncherParams } returns mockk<ProcessorThreeDsInitialLauncherParams>(relaxed = true)
+            }
         val resultCode = Activity.RESULT_OK
-        val intent = mockk<Intent>(relaxed = true) {
-            every { getStringExtra(Processor3dsWebViewActivity.RESUME_TOKEN_EXTRA_KEY) } returns resumeToken
-        }
+        val intent =
+            mockk<Intent>(relaxed = true) {
+                every { getStringExtra(Processor3dsWebViewActivity.RESUME_TOKEN_EXTRA_KEY) } returns resumeToken
+            }
 
         // When
         runTest {

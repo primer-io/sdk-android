@@ -14,44 +14,56 @@ internal fun TextView.setCompoundDrawablesWithIntrinsicBoundsTinted(
     @ColorInt tintColorLeft: Int = tintColor,
     @ColorInt tintColorTop: Int = tintColor,
     @ColorInt tintColorRight: Int = tintColor,
-    @ColorInt tintColorBottom: Int = tintColor
+    @ColorInt tintColorBottom: Int = tintColor,
 ) {
-    val drawableLeft = if (left != 0) {
-        ResourcesCompat.getDrawable(
-            resources,
-            left,
+    val drawableLeft =
+        if (left != 0) {
+            ResourcesCompat.getDrawable(
+                resources,
+                left,
+                null,
+            )?.updateTint(tintColorLeft)
+        } else {
             null
-        )?.updateTint(tintColorLeft)
-    } else { null }
+        }
 
-    val drawableTop = if (top != 0) {
-        ResourcesCompat.getDrawable(
-            resources,
-            top,
+    val drawableTop =
+        if (top != 0) {
+            ResourcesCompat.getDrawable(
+                resources,
+                top,
+                null,
+            )?.updateTint(tintColorTop)
+        } else {
             null
-        )?.updateTint(tintColorTop)
-    } else { null }
+        }
 
-    val drawableRight = if (right != 0) {
-        ResourcesCompat.getDrawable(
-            resources,
-            right,
+    val drawableRight =
+        if (right != 0) {
+            ResourcesCompat.getDrawable(
+                resources,
+                right,
+                null,
+            )?.updateTint(tintColorRight)
+        } else {
             null
-        )?.updateTint(tintColorRight)
-    } else { null }
+        }
 
-    val drawableBottom = if (bottom != 0) {
-        ResourcesCompat.getDrawable(
-            resources,
-            bottom,
+    val drawableBottom =
+        if (bottom != 0) {
+            ResourcesCompat.getDrawable(
+                resources,
+                bottom,
+                null,
+            )?.updateTint(tintColorBottom)
+        } else {
             null
-        )?.updateTint(tintColorBottom)
-    } else { null }
+        }
 
     setCompoundDrawablesWithIntrinsicBounds(
         drawableLeft,
         drawableTop,
         drawableRight,
-        drawableBottom
+        drawableBottom,
     )
 }

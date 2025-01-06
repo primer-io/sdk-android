@@ -10,11 +10,12 @@ import io.primer.android.stripe.ach.implementation.errors.domain.model.StripeErr
 import org.junit.jupiter.api.Test
 
 class PrimerCheckoutListenerTest {
-    private val listener = object : PrimerCheckoutListener {
-        override fun onCheckoutCompleted(checkoutData: PrimerCheckoutData) {
-            // no-op
+    private val listener =
+        object : PrimerCheckoutListener {
+            override fun onCheckoutCompleted(checkoutData: PrimerCheckoutData) {
+                // no-op
+            }
         }
-    }
 
     @Test
     fun `onFailed(PrimerError, PrimerErrorDecisionHandler) should not call showErrorMessage() when errorHandler is null`() {
@@ -56,9 +57,10 @@ class PrimerCheckoutListenerTest {
 
     @Test
     fun `onFailed(PrimerError, PrimerCheckoutData, PrimerErrorDecisionHandler) should call showErrorMessage() with description when error is StripeError`() {
-        val error = io.primer.android.stripe.ach.implementation.errors.domain.model.StripeError.StripeSdkError(
-            message = "message"
-        )
+        val error =
+            io.primer.android.stripe.ach.implementation.errors.domain.model.StripeError.StripeSdkError(
+                message = "message",
+            )
         val errorHandler = mockk<PrimerErrorDecisionHandler>(relaxed = true)
 
         listener.onFailed(error = error, checkoutData = null, errorHandler = errorHandler)

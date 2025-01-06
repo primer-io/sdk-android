@@ -19,61 +19,65 @@ import io.primer.android.ui.settings.PrimerTheme
 internal class TextInputWidget(ctx: Context, attrs: AttributeSet? = null) :
     TextInputLayout(ctx, attrs),
     DISdkComponent {
-
     internal var onValueChanged: (CharSequence?) -> Unit = {}
 
     private val theme: PrimerTheme by
-    if (isInEditMode) {
-        lazy { PrimerTheme.build() }
-    } else {
-        inject()
-    }
+        if (isInEditMode) {
+            lazy { PrimerTheme.build() }
+        } else {
+            inject()
+        }
 
     init {
-        val colors = intArrayOf(
-            theme.input.border.defaultColor.getColor(context, theme.isDarkMode),
-            theme.input.border.selectedColor.getColor(context, theme.isDarkMode)
-        )
+        val colors =
+            intArrayOf(
+                theme.input.border.defaultColor.getColor(context, theme.isDarkMode),
+                theme.input.border.selectedColor.getColor(context, theme.isDarkMode),
+            )
 
-        val states = arrayOf(
-            intArrayOf(-android.R.attr.state_focused),
-            intArrayOf(android.R.attr.state_focused)
-        )
+        val states =
+            arrayOf(
+                intArrayOf(-android.R.attr.state_focused),
+                intArrayOf(android.R.attr.state_focused),
+            )
 
         val colorStateList = ColorStateList(states, colors)
 
         setBoxStrokeColorStateList(colorStateList)
 
-        val hintColors = intArrayOf(
-            theme.input.hintText.defaultColor.getColor(context, theme.isDarkMode),
-            theme.input.border.selectedColor.getColor(context, theme.isDarkMode)
-        )
+        val hintColors =
+            intArrayOf(
+                theme.input.hintText.defaultColor.getColor(context, theme.isDarkMode),
+                theme.input.border.selectedColor.getColor(context, theme.isDarkMode),
+            )
 
-        val hintTextStates = arrayOf(
-            intArrayOf(-android.R.attr.state_focused),
-            intArrayOf(android.R.attr.state_focused)
-        )
+        val hintTextStates =
+            arrayOf(
+                intArrayOf(-android.R.attr.state_focused),
+                intArrayOf(android.R.attr.state_focused),
+            )
 
         hintTextColor = ColorStateList(hintTextStates, hintColors)
         defaultHintTextColor = ColorStateList(hintTextStates, hintColors)
 
-        boxStrokeErrorColor = ColorStateList.valueOf(
-            theme.input.border.errorColor.getColor(context, theme.isDarkMode)
-        )
+        boxStrokeErrorColor =
+            ColorStateList.valueOf(
+                theme.input.border.errorColor.getColor(context, theme.isDarkMode),
+            )
 
         val cornerRadius = theme.input.cornerRadius.getDimension(context)
         setBoxCornerRadii(cornerRadius, cornerRadius, cornerRadius, cornerRadius)
 
-        boxBackgroundMode = when (theme.inputMode) {
-            PrimerTheme.InputMode.OUTLINED -> {
-                BOX_BACKGROUND_OUTLINE
+        boxBackgroundMode =
+            when (theme.inputMode) {
+                PrimerTheme.InputMode.OUTLINED -> {
+                    BOX_BACKGROUND_OUTLINE
+                }
+                PrimerTheme.InputMode.UNDERLINED -> {
+                    boxBackgroundColor = theme.input.backgroundColor.getColor(context, theme.isDarkMode)
+                    BOX_BACKGROUND_FILLED
+                }
             }
-
-            PrimerTheme.InputMode.UNDERLINED -> {
-                boxBackgroundColor = theme.input.backgroundColor.getColor(context, theme.isDarkMode)
-                BOX_BACKGROUND_FILLED
-            }
-        }
 
         setCursorColor(theme.input.cursorColor.getColor(context, theme.isDarkMode))
     }
@@ -85,8 +89,8 @@ internal class TextInputWidget(ctx: Context, attrs: AttributeSet? = null) :
             setTextColor(
                 theme.input.text.defaultColor.getColor(
                     context,
-                    theme.isDarkMode
-                )
+                    theme.isDarkMode,
+                ),
             )
         }
         if (withTextPrefix) {
@@ -95,8 +99,8 @@ internal class TextInputWidget(ctx: Context, attrs: AttributeSet? = null) :
                 setTextColor(
                     theme.input.text.defaultColor.getColor(
                         context,
-                        theme.isDarkMode
-                    )
+                        theme.isDarkMode,
+                    ),
                 )
             }
         }
@@ -106,32 +110,36 @@ internal class TextInputWidget(ctx: Context, attrs: AttributeSet? = null) :
         editText?.doAfterTextChanged { text -> onValueChanged(text) }
     }
 
-    internal fun setupEditTextInputFilters(inputCharacters: String?, maxInputLength: Int?) {
-        val customFilters = arrayOf(
-            inputCharacters?.let {
-                object : InputFilter {
-                    override fun filter(
-                        source: CharSequence?,
-                        start: Int,
-                        end: Int,
-                        dest: Spanned?,
-                        dstart: Int,
-                        dend: Int
-                    ): CharSequence? {
-                        val replacedText = dest?.subSequence(dstart, dend)
-                        for (i in start until end) {
-                            if (source != null && it.contains(source[i].toString()).not()) {
-                                return replacedText
+    internal fun setupEditTextInputFilters(
+        inputCharacters: String?,
+        maxInputLength: Int?,
+    ) {
+        val customFilters =
+            arrayOf(
+                inputCharacters?.let {
+                    object : InputFilter {
+                        override fun filter(
+                            source: CharSequence?,
+                            start: Int,
+                            end: Int,
+                            dest: Spanned?,
+                            dstart: Int,
+                            dend: Int,
+                        ): CharSequence? {
+                            val replacedText = dest?.subSequence(dstart, dend)
+                            for (i in start until end) {
+                                if (source != null && it.contains(source[i].toString()).not()) {
+                                    return replacedText
+                                }
                             }
+                            return null
                         }
-                        return null
                     }
-                }
-            },
-            maxInputLength?.let {
-                InputFilter.LengthFilter(it)
-            }
-        ).filterNotNull()
+                },
+                maxInputLength?.let {
+                    InputFilter.LengthFilter(it)
+                },
+            ).filterNotNull()
 
         editText?.apply {
             filters = filters.plus(customFilters)

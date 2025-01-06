@@ -6,5 +6,5 @@ import java.util.concurrent.CancellationException
 internal class ThreeDsProtocolFailedException(
     val errorCode: String,
     val context: ThreeDsProtocolFailureContextParams,
-    override val message: String
+    override val message: String,
 ) : CancellationException()

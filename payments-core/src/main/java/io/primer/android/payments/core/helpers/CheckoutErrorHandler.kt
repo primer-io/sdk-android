@@ -16,5 +16,8 @@ interface CheckoutErrorHandler {
     /**
      * Dispatches checkout failure taking into consideration the payment handling type (auto or manual).
      */
-    suspend fun handle(error: PrimerError, payment: Payment?)
+    suspend fun handle(
+        error: PrimerError,
+        payment: Payment?,
+    )
 }

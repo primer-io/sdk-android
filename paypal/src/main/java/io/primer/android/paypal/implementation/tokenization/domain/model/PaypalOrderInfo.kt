@@ -5,5 +5,5 @@ internal data class PaypalOrderInfo(
     val email: String?,
     val externalPayerId: String?,
     val externalPayerFirstName: String?,
-    val externalPayerLastName: String?
+    val externalPayerLastName: String?,
 )

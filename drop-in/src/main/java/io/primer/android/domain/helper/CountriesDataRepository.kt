@@ -2,10 +2,10 @@ package io.primer.android.domain.helper
 
 import android.content.Context
 import android.util.Log
+import io.primer.android.R
 import io.primer.android.clientSessionActions.domain.models.PrimerCountriesCodeInfo
 import io.primer.android.clientSessionActions.domain.models.PrimerCountry
 import io.primer.android.clientSessionActions.domain.models.PrimerPhoneCode
-import io.primer.android.R
 import io.primer.android.configuration.data.model.CountryCode
 import io.primer.android.core.data.serialization.json.JSONSerializationUtils
 import io.primer.android.core.data.serialization.json.extensions.sequence
@@ -15,7 +15,6 @@ import java.io.IOException
 
 internal class CountriesDataRepository(private val context: Context) :
     CountriesRepository {
-
     private val countries = mutableListOf<PrimerCountry>()
     private val phoneCodes = mutableListOf<PrimerPhoneCode>()
 
@@ -25,9 +24,10 @@ internal class CountriesDataRepository(private val context: Context) :
      */
     private suspend fun loadCountries(fromCache: Boolean = false) {
         if (!fromCache || countries.isEmpty()) {
-            val dataJson = context.resources?.openRawResource(R.raw.codes_countries)
-                ?.readBytes()
-                ?.decodeToString().orEmpty()
+            val dataJson =
+                context.resources?.openRawResource(R.raw.codes_countries)
+                    ?.readBytes()
+                    ?.decodeToString().orEmpty()
             if (dataJson.isNotBlank()) {
                 try {
                     parseFileAndLoadCountries(dataJson)
@@ -58,26 +58,28 @@ internal class CountriesDataRepository(private val context: Context) :
                 if (entry.value is ArrayList<*>) {
                     PrimerCountry(
                         (entry.value as ArrayList<*>).firstOrNull()?.toString() ?: "N/A",
-                        enumValueOf(entry.key)
+                        enumValueOf(entry.key),
                     )
                 } else {
                     PrimerCountry(entry.value.toString(), enumValueOf(entry.key))
                 }
-            }
+            },
         )
     }
 
     private fun loadPhoneCodes(fromCache: Boolean = false) {
         if (!fromCache || phoneCodes.isEmpty()) {
-            val dataJson = context.resources?.openRawResource(R.raw.phone_number_country_codes)
-                ?.readBytes()
-                ?.decodeToString().orEmpty()
+            val dataJson =
+                context.resources?.openRawResource(R.raw.phone_number_country_codes)
+                    ?.readBytes()
+                    ?.decodeToString().orEmpty()
             if (dataJson.isNotBlank()) {
                 try {
-                    val phoneCodesData = JSONArray(dataJson).sequence<JSONObject>().map {
-                        JSONSerializationUtils
-                            .getJsonObjectDeserializer<PrimerPhoneCode>().deserialize(it)
-                    }.toList()
+                    val phoneCodesData =
+                        JSONArray(dataJson).sequence<JSONObject>().map {
+                            JSONSerializationUtils
+                                .getJsonObjectDeserializer<PrimerPhoneCode>().deserialize(it)
+                        }.toList()
                     phoneCodes.clear()
                     phoneCodes.addAll(phoneCodesData)
                 } catch (e: IOException) {

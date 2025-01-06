@@ -15,16 +15,16 @@ import kotlinx.coroutines.flow.onStart
 
 internal class NetworkTypeDataSource(private val context: Context) :
     BaseFlowDataSource<NetworkTypeProperties, Unit> {
-
     private val sharedFlow = MutableStateFlow<NetworkTypeProperties?>(null)
     private val listener by lazy {
         object : ConnectivityProvider.ConnectivityStateListener {
             override fun onStateChange(state: ConnectivityProvider.NetworkState) {
                 try {
                     when (state) {
-                        is ConnectivityProvider.NetworkState.ConnectedState -> sharedFlow.tryEmit(
-                            NetworkTypeProperties(state.networkType)
-                        )
+                        is ConnectivityProvider.NetworkState.ConnectedState ->
+                            sharedFlow.tryEmit(
+                                NetworkTypeProperties(state.networkType),
+                            )
                         else -> sharedFlow.tryEmit(NetworkTypeProperties(NetworkType.NONE))
                     }
                 } catch (ignored: Exception) {
@@ -35,14 +35,15 @@ internal class NetworkTypeDataSource(private val context: Context) :
 
     private val connectivityProvider by lazy { ConnectivityProvider.createProvider(context) }
 
-    override fun execute(input: Unit): Flow<NetworkTypeProperties> = sharedFlow.asStateFlow()
-        .onStart {
-            addListener()
-        }
-        .onCompletion {
-            removeListener()
-        }
-        .filterNotNull().distinctUntilChanged()
+    override fun execute(input: Unit): Flow<NetworkTypeProperties> =
+        sharedFlow.asStateFlow()
+            .onStart {
+                addListener()
+            }
+            .onCompletion {
+                removeListener()
+            }
+            .filterNotNull().distinctUntilChanged()
 
     private fun addListener() = connectivityProvider.addListener(listener)
 

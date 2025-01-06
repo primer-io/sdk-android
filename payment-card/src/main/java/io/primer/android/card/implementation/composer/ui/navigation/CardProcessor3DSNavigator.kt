@@ -13,17 +13,16 @@ internal data class CardProcessor3DSActivityLauncherParams(
     override val paymentMethodType: String,
     val redirectUrl: String,
     val statusUrl: String,
-    val title: String
+    val title: String,
 ) : PaymentMethodRedirectLauncherParams(
-    paymentMethodType,
-    PrimerSessionIntent.CHECKOUT
-)
+        paymentMethodType,
+        PrimerSessionIntent.CHECKOUT,
+    )
 
 internal data class CardProcessor3DSNavigator(
     private val context: Activity,
-    override val launcher: ActivityResultLauncher<Intent>
+    override val launcher: ActivityResultLauncher<Intent>,
 ) : StartActivityForResultNavigator<CardProcessor3DSActivityLauncherParams>(launcher) {
-
     override fun navigate(params: CardProcessor3DSActivityLauncherParams) {
         launcher.launch(
             Processor3dsWebViewActivity.getLaunchIntent(
@@ -31,8 +30,8 @@ internal data class CardProcessor3DSNavigator(
                 paymentUrl = params.redirectUrl,
                 statusUrl = params.statusUrl,
                 title = params.title,
-                paymentMethodType = params.paymentMethodType
-            )
+                paymentMethodType = params.paymentMethodType,
+            ),
         )
     }
 

@@ -5,15 +5,14 @@ import android.content.res.ColorStateList
 import android.graphics.drawable.GradientDrawable
 import android.util.AttributeSet
 import android.widget.FrameLayout
-import io.primer.android.ui.settings.PrimerTheme
 import io.primer.android.core.di.DISdkComponent
 import io.primer.android.core.di.extensions.inject
+import io.primer.android.ui.settings.PrimerTheme
 
 class PrimerThemedFrameLayout(
     context: Context,
-    attrs: AttributeSet? = null
+    attrs: AttributeSet? = null,
 ) : FrameLayout(context, attrs), DISdkComponent {
-
     private val theme: PrimerTheme by inject()
 
     init {

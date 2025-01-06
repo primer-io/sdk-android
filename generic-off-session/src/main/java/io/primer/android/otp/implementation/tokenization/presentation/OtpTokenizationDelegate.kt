@@ -11,24 +11,26 @@ import io.primer.android.payments.core.tokenization.presentation.composable.Toke
 
 internal class OtpTokenizationDelegate(
     private val configurationInteractor: OtpConfigurationInteractor,
-    tokenizationInteractor: OtpTokenizationInteractor
+    tokenizationInteractor: OtpTokenizationInteractor,
 ) : PaymentMethodTokenizationDelegate<OtpTokenizationInputable, OtpPaymentInstrumentParams>(
-    tokenizationInteractor
-),
+        tokenizationInteractor,
+    ),
     TokenizationCollectedDataMapper<OtpTokenizationInputable, OtpPaymentInstrumentParams> {
-
-    override suspend fun mapTokenizationData(input: OtpTokenizationInputable):
-        Result<TokenizationParams<OtpPaymentInstrumentParams>> = configurationInteractor(
-        OtpConfigParams(paymentMethodType = input.paymentMethodType)
-    ).map { configuration ->
-        TokenizationParams(
-            paymentInstrumentParams = OtpPaymentInstrumentParams(
-                paymentMethodType = input.paymentMethodType,
-                paymentMethodConfigId = configuration.paymentMethodConfigId,
-                locale = configuration.locale,
-                otp = input.otpData.otp
-            ),
-            sessionIntent = input.primerSessionIntent
-        )
-    }
+    override suspend fun mapTokenizationData(
+        input: OtpTokenizationInputable,
+    ): Result<TokenizationParams<OtpPaymentInstrumentParams>> =
+        configurationInteractor(
+            OtpConfigParams(paymentMethodType = input.paymentMethodType),
+        ).map { configuration ->
+            TokenizationParams(
+                paymentInstrumentParams =
+                    OtpPaymentInstrumentParams(
+                        paymentMethodType = input.paymentMethodType,
+                        paymentMethodConfigId = configuration.paymentMethodConfigId,
+                        locale = configuration.locale,
+                        otp = input.otpData.otp,
+                    ),
+                sessionIntent = input.primerSessionIntent,
+            )
+        }
 }

@@ -10,5 +10,5 @@ internal data class CardPaymentInstrumentParams(
     val expirationYear: String,
     val cvv: String,
     val cardholderName: String?,
-    val preferredNetwork: CardNetwork.Type?
+    val preferredNetwork: CardNetwork.Type?,
 ) : BasePaymentInstrumentParams

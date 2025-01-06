@@ -8,5 +8,5 @@ internal enum class StripeIllegalValueKey(override val key: String) :
     MISSING_PAYMENT_INTENT_ID("missing-payment-intent-id"),
     MISSING_COMPLETION_URL("missing-completion-url"),
     MISSING_PUBLISHABLE_KEY("missing-publishable-key"),
-    MISSING_MANDATE_DATA("missing-mandate-data")
+    MISSING_MANDATE_DATA("missing-mandate-data"),
 }

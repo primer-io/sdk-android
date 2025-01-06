@@ -20,23 +20,25 @@ class StripeAchPaymentMethodClientTokenParserTest {
     @Test
     fun `parseClientToken() correctly parses client token`() {
         val clientToken = "token"
-        val clientTokenData = StripeAchClientTokenData(
-            sdkCompleteUrl = "https://complete.url",
-            stripePaymentIntentId = "id",
-            stripeClientSecret = "secret",
-            intent = "intent"
-        )
+        val clientTokenData =
+            StripeAchClientTokenData(
+                sdkCompleteUrl = "https://complete.url",
+                stripePaymentIntentId = "id",
+                stripeClientSecret = "secret",
+                intent = "intent",
+            )
         mockkObject(StripeAchClientTokenData.Companion)
         every { StripeAchClientTokenData.fromString(clientToken) } returns clientTokenData
 
         val result = parser.parseClientToken(clientToken)
 
-        val expectedToken = StripeAchClientToken(
-            sdkCompleteUrl = "https://complete.url",
-            stripePaymentIntentId = "id",
-            stripeClientSecret = "secret",
-            clientTokenIntent = "intent"
-        )
+        val expectedToken =
+            StripeAchClientToken(
+                sdkCompleteUrl = "https://complete.url",
+                stripePaymentIntentId = "id",
+                stripeClientSecret = "secret",
+                clientTokenIntent = "intent",
+            )
         assertEquals(expectedToken, result)
         verify { StripeAchClientTokenData.fromString(clientToken) }
         unmockkObject(StripeAchClientTokenData.Companion)

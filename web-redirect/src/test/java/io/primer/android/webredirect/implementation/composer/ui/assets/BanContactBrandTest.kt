@@ -8,7 +8,6 @@ import org.junit.jupiter.api.extension.ExtendWith
 
 @ExtendWith(MockKExtension::class)
 class BanContactBrandTest {
-
     private val banContactBrand = BanContactBrand()
 
     @Test

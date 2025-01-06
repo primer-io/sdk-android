@@ -18,58 +18,62 @@ import java.util.UUID
 internal class WebRedirectLoggingDelegate(
     private val logReporter: LogReporter,
     private val analyticsInteractor: AnalyticsInteractor,
-    private val dispatcher: CoroutineDispatcher = Dispatchers.IO
+    private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) {
     suspend fun logError(
         error: PrimerError,
-        paymentMethodType: String
-    ): Unit = withContext(dispatcher) {
-        supervisorScope {
-            launch {
-                analyticsInteractor(
-                    MessageAnalyticsParams(
-                        messageType = MessageType.ERROR,
-                        message = "$paymentMethodType: ${error.description}",
-                        severity = Severity.ERROR,
-                        diagnosticsId = error.diagnosticsId,
-                        context = ErrorContextParams(
-                            errorId = error.errorId,
-                            paymentMethodType = paymentMethodType
-                        )
+        paymentMethodType: String,
+    ): Unit =
+        withContext(dispatcher) {
+            supervisorScope {
+                launch {
+                    analyticsInteractor(
+                        MessageAnalyticsParams(
+                            messageType = MessageType.ERROR,
+                            message = "$paymentMethodType: ${error.description}",
+                            severity = Severity.ERROR,
+                            diagnosticsId = error.diagnosticsId,
+                            context =
+                                ErrorContextParams(
+                                    errorId = error.errorId,
+                                    paymentMethodType = paymentMethodType,
+                                ),
+                        ),
                     )
-                )
-            }
-            launch {
-                logReporter.error(error.description)
+                }
+                launch {
+                    logReporter.error(error.description)
+                }
             }
         }
-    }
 
     suspend fun logStep(
         webRedirectStep: WebRedirectStep,
-        paymentMethodType: String
-    ): Unit = withContext(dispatcher) {
-        supervisorScope {
-            val message = when (webRedirectStep) {
-                WebRedirectStep.Loading -> "Web redirect is loading for '$paymentMethodType'"
-                WebRedirectStep.Loaded -> "Web redirect has loaded for '$paymentMethodType'"
-                WebRedirectStep.Dismissed ->
-                    "Payment for '$paymentMethodType' was dismissed by user"
-                WebRedirectStep.Success -> "Payment for '$paymentMethodType' was successful"
-            }
-            launch {
-                analyticsInteractor(
-                    MessageAnalyticsParams(
-                        messageType = MessageType.INFO,
-                        message = message,
-                        severity = Severity.INFO,
-                        diagnosticsId = UUID.randomUUID().toString()
+        paymentMethodType: String,
+    ): Unit =
+        withContext(dispatcher) {
+            supervisorScope {
+                val message =
+                    when (webRedirectStep) {
+                        WebRedirectStep.Loading -> "Web redirect is loading for '$paymentMethodType'"
+                        WebRedirectStep.Loaded -> "Web redirect has loaded for '$paymentMethodType'"
+                        WebRedirectStep.Dismissed ->
+                            "Payment for '$paymentMethodType' was dismissed by user"
+                        WebRedirectStep.Success -> "Payment for '$paymentMethodType' was successful"
+                    }
+                launch {
+                    analyticsInteractor(
+                        MessageAnalyticsParams(
+                            messageType = MessageType.INFO,
+                            message = message,
+                            severity = Severity.INFO,
+                            diagnosticsId = UUID.randomUUID().toString(),
+                        ),
                     )
-                )
-            }
-            launch {
-                logReporter.info(message = message)
+                }
+                launch {
+                    logReporter.info(message = message)
+                }
             }
         }
-    }
 }

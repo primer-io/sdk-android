@@ -14,17 +14,19 @@ import io.primer.android.payments.core.resume.domain.respository.ResumePaymentsR
 
 internal class ResumePaymentDataRepository(
     private val resumePaymentDataSource: ResumePaymentDataSource,
-    private val configurationDataSource: BaseCacheDataSource<ConfigurationData, ConfigurationData>
+    private val configurationDataSource: BaseCacheDataSource<ConfigurationData, ConfigurationData>,
 ) : ResumePaymentsRepository {
-
-    override suspend fun resumePayment(paymentId: String, resumeToken: String) = runSuspendCatching {
+    override suspend fun resumePayment(
+        paymentId: String,
+        resumeToken: String,
+    ) = runSuspendCatching {
         configurationDataSource.get()
             .let {
                 resumePaymentDataSource.execute(
                     BaseRemoteHostRequest(
                         host = it.pciUrl,
-                        data = Pair(paymentId, ResumePaymentDataRequest(resumeToken))
-                    )
+                        data = Pair(paymentId, ResumePaymentDataRequest(resumeToken)),
+                    ),
                 )
             }.toPaymentResult()
     }.onError { throwable ->

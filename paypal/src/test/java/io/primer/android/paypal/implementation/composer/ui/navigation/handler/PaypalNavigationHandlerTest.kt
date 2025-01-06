@@ -17,7 +17,6 @@ import kotlin.test.assertTrue
 
 @ExtendWith(MockKExtension::class)
 class PaypalNavigationHandlerTest {
-
     private lateinit var paypalNavigationHandler: PaypalNavigationHandler
 
     @MockK

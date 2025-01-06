@@ -18,63 +18,64 @@ import io.primer.android.vouchers.multibanco.implementation.composer.presentatio
 import io.primer.android.vouchers.multibanco.implementation.composer.ui.assets.MultibancoBrand
 
 internal class Multibanco(internal val paymentMethodType: String) : PaymentMethod, DISdkComponent {
-
     override val type = paymentMethodType
 
     override val canBeVaulted: Boolean = false
 
-    override val module: PaymentMethodModule = object : PaymentMethodModule {
-        override fun initialize(applicationContext: Context, configuration: ConfigurationData) {
-            // no-op
-        }
+    override val module: PaymentMethodModule =
+        object : PaymentMethodModule {
+            override fun initialize(
+                applicationContext: Context,
+                configuration: ConfigurationData,
+            ) {
+                // no-op
+            }
 
-        override fun registerPaymentMethodCheckers(
-            paymentMethodCheckerRegistry: PaymentMethodCheckerRegistry
-        ) {
-            // no-op
-        }
+            override fun registerPaymentMethodCheckers(paymentMethodCheckerRegistry: PaymentMethodCheckerRegistry) {
+                // no-op
+            }
 
-        override fun registerPaymentMethodDescriptorFactory(
-            paymentMethodDescriptorFactoryRegistry: PaymentMethodDescriptorFactoryRegistry
-        ) {
-            paymentMethodDescriptorFactoryRegistry.register(
-                type,
-                MultibancoDescriptorFactory()
-            )
-        }
+            override fun registerPaymentMethodDescriptorFactory(
+                paymentMethodDescriptorFactoryRegistry: PaymentMethodDescriptorFactoryRegistry,
+            ) {
+                paymentMethodDescriptorFactoryRegistry.register(
+                    type,
+                    MultibancoDescriptorFactory(),
+                )
+            }
 
-        override fun registerPaymentMethodProviderFactory(
-            paymentMethodProviderFactoryRegistry: PaymentMethodProviderFactoryRegistry
-        ) {
-            paymentMethodProviderFactoryRegistry.register(
-                paymentMethodType = paymentMethodType,
-                factory = MultibancoComposerProviderFactory::class.java
-            )
-        }
+            override fun registerPaymentMethodProviderFactory(
+                paymentMethodProviderFactoryRegistry: PaymentMethodProviderFactoryRegistry,
+            ) {
+                paymentMethodProviderFactoryRegistry.register(
+                    paymentMethodType = paymentMethodType,
+                    factory = MultibancoComposerProviderFactory::class.java,
+                )
+            }
 
-        override fun registerSavedPaymentMethodProviderFactory(
-            paymentMethodProviderFactoryRegistry: VaultedPaymentMethodProviderFactoryRegistry
-        ) {
-            // no-op
-        }
+            override fun registerSavedPaymentMethodProviderFactory(
+                paymentMethodProviderFactoryRegistry: VaultedPaymentMethodProviderFactoryRegistry,
+            ) {
+                // no-op
+            }
 
-        override fun registerPaymentMethodNavigationFactory(
-            paymentMethodNavigationFactoryRegistry: PaymentMethodNavigationFactoryRegistry
-        ) {
-            // no-op
-        }
+            override fun registerPaymentMethodNavigationFactory(
+                paymentMethodNavigationFactoryRegistry: PaymentMethodNavigationFactoryRegistry,
+            ) {
+                // no-op
+            }
 
-        override fun registerDependencyContainer(sdkContainers: List<SdkContainer>) {
-            sdkContainers.forEach { sdkContainer ->
-                sdkContainer.registerContainer(MultibancoContainer({ getSdkContainer() }, paymentMethodType))
+            override fun registerDependencyContainer(sdkContainers: List<SdkContainer>) {
+                sdkContainers.forEach { sdkContainer ->
+                    sdkContainer.registerContainer(MultibancoContainer({ getSdkContainer() }, paymentMethodType))
+                }
+            }
+
+            override fun registerErrorMappers(errorMapperRegistry: ErrorMapperRegistry) {
+            }
+
+            override fun registerBrandProvider(brandRegistry: BrandRegistry) {
+                brandRegistry.register(paymentMethodType = paymentMethodType, MultibancoBrand())
             }
         }
-
-        override fun registerErrorMappers(errorMapperRegistry: ErrorMapperRegistry) {
-        }
-
-        override fun registerBrandProvider(brandRegistry: BrandRegistry) {
-            brandRegistry.register(paymentMethodType = paymentMethodType, MultibancoBrand())
-        }
-    }
 }

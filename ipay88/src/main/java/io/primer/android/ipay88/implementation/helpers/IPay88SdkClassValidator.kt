@@ -1,7 +1,6 @@
 package io.primer.android.ipay88.implementation.helpers
 
 internal class IPay88SdkClassValidator {
-
     fun isIPaySdkIncluded(): Boolean {
         return try {
             Class.forName(I_PAY_CLASS_NAME)
@@ -12,7 +11,6 @@ internal class IPay88SdkClassValidator {
     }
 
     companion object {
-
         const val I_PAY_CLASS_NOT_LOADED_ERROR =
             "WARNING!\n" +
                 "%s configuration has been found but dependency " +

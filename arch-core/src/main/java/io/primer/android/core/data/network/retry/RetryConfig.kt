@@ -7,5 +7,5 @@ data class RetryConfig(
     val initialBackoff: Int = INITIAL_BACKOFF,
     val retryNetworkErrors: Boolean = true,
     val retry500Errors: Boolean = false,
-    val maxJitter: Int = MAX_JITTER
+    val maxJitter: Int = MAX_JITTER,
 )

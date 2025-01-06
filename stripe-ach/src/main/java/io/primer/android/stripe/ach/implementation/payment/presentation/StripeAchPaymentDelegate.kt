@@ -1,8 +1,8 @@
 package io.primer.android.stripe.ach.implementation.payment.presentation
 
+import io.primer.android.domain.payments.create.model.Payment
 import io.primer.android.errors.domain.BaseErrorResolver
 import io.primer.android.payments.core.create.domain.handler.PaymentMethodTokenHandler
-import io.primer.android.domain.payments.create.model.Payment
 import io.primer.android.payments.core.helpers.CheckoutErrorHandler
 import io.primer.android.payments.core.helpers.CheckoutSuccessHandler
 import io.primer.android.payments.core.helpers.PaymentMethodPaymentDelegate
@@ -16,18 +16,21 @@ internal class StripeAchPaymentDelegate(
     successHandler: CheckoutSuccessHandler,
     errorHandler: CheckoutErrorHandler,
     baseErrorResolver: BaseErrorResolver,
-    private val resumeDecisionHandler: StripeAchResumeDecisionHandler
+    private val resumeDecisionHandler: StripeAchResumeDecisionHandler,
 ) : PaymentMethodPaymentDelegate(
-    paymentMethodTokenHandler,
-    resumePaymentHandler,
-    successHandler,
-    errorHandler,
-    baseErrorResolver
-) {
+        paymentMethodTokenHandler,
+        resumePaymentHandler,
+        successHandler,
+        errorHandler,
+        baseErrorResolver,
+    ) {
     var lastDecision: StripeAchDecision? = null
         private set
 
-    override suspend fun handleNewClientToken(clientToken: String, payment: Payment?): Result<Unit> =
+    override suspend fun handleNewClientToken(
+        clientToken: String,
+        payment: Payment?,
+    ): Result<Unit> =
         resumeDecisionHandler.continueWithNewClientToken(clientToken)
             .onSuccess { decision -> lastDecision = decision }
             .map { /* no-op */ }

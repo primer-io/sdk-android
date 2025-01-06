@@ -7,5 +7,5 @@ internal data class PaypalCreateOrderParams(
     val amount: Int?,
     val currencyCode: String?,
     val successUrl: String,
-    val cancelUrl: String
+    val cancelUrl: String,
 ) : Params

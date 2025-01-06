@@ -4,16 +4,16 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
 class IPay88SessionInfoDataRequestTest {
-
     @Test
     fun `serializer should correctly serialize IPay88SessionInfoDataRequest to JSONObject`() {
         // Arrange
         val locale = "en-US"
         val platform = "ANDROID"
-        val request = IPay88SessionInfoDataRequest(
-            locale = locale,
-            platform = platform
-        )
+        val request =
+            IPay88SessionInfoDataRequest(
+                locale = locale,
+                platform = platform,
+            )
 
         // Act
         val jsonObject = IPay88SessionInfoDataRequest.serializer.serialize(request)
@@ -27,9 +27,10 @@ class IPay88SessionInfoDataRequestTest {
     fun `serializer should set default platform value if not provided`() {
         // Arrange
         val locale = "en-US"
-        val request = IPay88SessionInfoDataRequest(
-            locale = locale
-        )
+        val request =
+            IPay88SessionInfoDataRequest(
+                locale = locale,
+            )
 
         // Act
         val jsonObject = IPay88SessionInfoDataRequest.serializer.serialize(request)
@@ -44,10 +45,11 @@ class IPay88SessionInfoDataRequestTest {
         // Arrange
         val locale = "en-US"
         val platform = "IOS"
-        val request = IPay88SessionInfoDataRequest(
-            locale = locale,
-            platform = platform
-        )
+        val request =
+            IPay88SessionInfoDataRequest(
+                locale = locale,
+                platform = platform,
+            )
 
         // Act
         val jsonObject = IPay88SessionInfoDataRequest.serializer.serialize(request)

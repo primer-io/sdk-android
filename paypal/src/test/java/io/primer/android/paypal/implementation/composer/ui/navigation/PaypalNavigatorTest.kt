@@ -18,7 +18,6 @@ import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 internal class PaypalNavigatorTest {
-
     @MockK
     lateinit var mockActivity: Activity
 
@@ -33,9 +32,10 @@ internal class PaypalNavigatorTest {
     @Test
     fun `navigate should start custom tabs`() {
         val testUrl = "https://example.com"
-        val params = mockk<BrowserLauncherParams> {
-            every { url } returns testUrl
-        }
+        val params =
+            mockk<BrowserLauncherParams> {
+                every { url } returns testUrl
+            }
         val intent = Intent(Intent.ACTION_VIEW, Uri.parse(testUrl))
 
         mockkStatic(Activity::launchCustomTab)
@@ -53,9 +53,10 @@ internal class PaypalNavigatorTest {
     @Test
     fun `canHandle should return true for BrowserLauncherParams`() {
         val testUrl = "https://example.com"
-        val params = mockk<BrowserLauncherParams> {
-            every { url } returns testUrl
-        }
+        val params =
+            mockk<BrowserLauncherParams> {
+                every { url } returns testUrl
+            }
         assertTrue(navigator.canHandle(params))
     }
 

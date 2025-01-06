@@ -18,7 +18,7 @@ internal fun Response.logHeaders(
     shouldLogHeaders: Boolean,
     blacklistedHeaders: List<String>,
     obfuscationLevel: HttpLoggerInterceptor.ObfuscationLevel,
-    obfuscationString: String
+    obfuscationString: String,
 ) {
     val response = this
     val responseBody = response.body
@@ -26,10 +26,11 @@ internal fun Response.logHeaders(
     val contentLength = response.body?.contentLength() ?: -1
     val bodySize = if (contentLength != -1L) "$contentLength-byte" else "unknown-length"
 
-    val stringBuilder = StringBuilder(
-        "<-- ${response.code} ${request.method} ${request.url}" +
-            " (${requestTime}ms, $bodySize body)"
-    )
+    val stringBuilder =
+        StringBuilder(
+            "<-- ${response.code} ${request.method} ${request.url}" +
+                " (${requestTime}ms, $bodySize body)",
+        )
 
     if (shouldLogHeaders) {
         if (responseBody != null) {
@@ -43,7 +44,7 @@ internal fun Response.logHeaders(
                 excludedHeaders = setOf("content-type", "content-length"),
                 shouldObfuscate = obfuscationLevel == HttpLoggerInterceptor.ObfuscationLevel.LIST,
                 blacklistedHeaders = blacklistedHeaders,
-                obfuscationString = obfuscationString
+                obfuscationString = obfuscationString,
             )
         }
     }
@@ -56,13 +57,14 @@ internal fun Response.logBody(
     shouldLogBody: Boolean,
     whitelistedBodyKeys: List<WhitelistedKey>,
     obfuscationLevel: HttpLoggerInterceptor.ObfuscationLevel,
-    obfuscationString: String
+    obfuscationString: String,
 ) {
-    val errorBody = if (isSuccessful) {
-        null
-    } else {
-        peekBody(Long.MAX_VALUE).string()
-    }
+    val errorBody =
+        if (isSuccessful) {
+            null
+        } else {
+            peekBody(Long.MAX_VALUE).string()
+        }
 
     val stringBuilder = StringBuilder()
 
@@ -87,7 +89,7 @@ internal fun Response.logBody(
                         stringBuilder = stringBuilder,
                         shouldObfuscate = obfuscationLevel == HttpLoggerInterceptor.ObfuscationLevel.LIST,
                         whitelistedBodyKeys = whitelistedBodyKeys,
-                        obfuscationString = obfuscationString
+                        obfuscationString = obfuscationString,
                     )
                 }
             }
@@ -103,7 +105,7 @@ private fun Response.appendKnownEncodingBody(
     stringBuilder: StringBuilder,
     shouldObfuscate: Boolean,
     whitelistedBodyKeys: List<WhitelistedKey>,
-    obfuscationString: String
+    obfuscationString: String,
 ) {
     val responseBody = requireNotNull(body)
     val source = responseBody.source()
@@ -139,7 +141,7 @@ private fun Response.appendKnownEncodingBody(
 
         if (gzippedLength != null) {
             stringBuilder.append(
-                "<-- END HTTP (${buffer.size}-byte, $gzippedLength-gzipped-byte body)"
+                "<-- END HTTP (${buffer.size}-byte, $gzippedLength-gzipped-byte body)",
             )
         } else {
             stringBuilder.append("<-- END HTTP (${buffer.size}-byte body)")

@@ -10,14 +10,16 @@ import io.primer.android.threeds.domain.interactor.ThreeDsInteractor
 internal class ThreeDsViewModelFactory(
     private val threeDsInteractor: ThreeDsInteractor,
     private val analyticsInteractor: AnalyticsInteractor,
-    private val settings: PrimerSettings
+    private val settings: PrimerSettings,
 ) : ViewModelProvider.Factory {
-
-    override fun <T : ViewModel> create(modelClass: Class<T>, extras: CreationExtras): T {
+    override fun <T : ViewModel> create(
+        modelClass: Class<T>,
+        extras: CreationExtras,
+    ): T {
         return ThreeDsViewModel(
             threeDsInteractor,
             analyticsInteractor,
-            settings
+            settings,
         ) as T
     }
 }

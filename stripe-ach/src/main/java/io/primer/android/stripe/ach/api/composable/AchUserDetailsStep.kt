@@ -22,7 +22,7 @@ sealed interface AchUserDetailsStep : PrimerHeadlessStep {
         /**
          * The email address previously sent on client session creation.
          */
-        val emailAddress: String
+        val emailAddress: String,
     ) : AchUserDetailsStep
 
     /**

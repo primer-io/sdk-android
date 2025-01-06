@@ -14,12 +14,11 @@ import io.primer.android.webRedirectShared.implementation.deeplink.domain.Redire
 internal class AdyenBancontactTokenizationDelegate(
     private val configurationInteractor: AdyenBancontactConfigurationInteractor,
     private val deeplinkInteractor: RedirectDeeplinkInteractor,
-    tokenizationInteractor: AdyenBancontactTokenizationInteractor
+    tokenizationInteractor: AdyenBancontactTokenizationInteractor,
 ) : PaymentMethodTokenizationDelegate<AdyenBancontactTokenizationInputable, AdyenBancontactPaymentInstrumentParams>(
-    tokenizationInteractor
-),
+        tokenizationInteractor,
+    ),
     TokenizationCollectedDataMapper<AdyenBancontactTokenizationInputable, AdyenBancontactPaymentInstrumentParams> {
-
     override suspend fun mapTokenizationData(input: AdyenBancontactTokenizationInputable) =
         configurationInteractor(AdyenBancontactConfigParams(paymentMethodType = input.paymentMethodType))
             .map { configuration ->
@@ -27,19 +26,19 @@ internal class AdyenBancontactTokenizationDelegate(
                     AdyenBancontactPaymentInstrumentParams(
                         paymentMethodType = input.paymentMethodType,
                         number = input.cardData.cardNumber,
-                        expirationMonth = input.cardData.expiryDate.split("/").first().padStart(
-                            EXPIRATION_MONTH_PAD_START_LENGTH,
-                            EXPIRATION_MONTH_PAD_START_CHAR
-                        ),
+                        expirationMonth =
+                            input.cardData.expiryDate.split("/").first().padStart(
+                                EXPIRATION_MONTH_PAD_START_LENGTH,
+                                EXPIRATION_MONTH_PAD_START_CHAR,
+                            ),
                         expirationYear = input.cardData.expiryDate.split("/")[1],
                         cardholderName = input.cardData.cardHolderName,
                         paymentMethodConfigId = configuration.paymentMethodConfigId,
                         locale = configuration.locale.toString(),
                         userAgent = System.getProperty("http.agent").orEmpty(),
-                        redirectionUrl = deeplinkInteractor(None)
-
+                        redirectionUrl = deeplinkInteractor(None),
                     ),
-                    input.primerSessionIntent
+                    input.primerSessionIntent,
                 )
             }
 

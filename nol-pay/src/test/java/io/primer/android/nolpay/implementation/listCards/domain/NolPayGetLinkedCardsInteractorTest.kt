@@ -17,7 +17,6 @@ import kotlin.test.assertEquals
 
 @ExtendWith(MockKExtension::class)
 internal class NolPayGetLinkedCardsInteractorTest {
-
     @RelaxedMockK
     lateinit var nolPay: PrimerNolPay
 
@@ -47,13 +46,14 @@ internal class NolPayGetLinkedCardsInteractorTest {
         val expectedException = mockk<NolPaySdkException>(relaxed = true)
         every { nolPay.getLinkedPaymentCards(any(), any()) } throws expectedException
 
-        val exception = assertThrows<NolPaySdkException> {
-            runTest {
-                val result = interactor(params)
-                assert(result.isFailure)
-                result.getOrThrow()
+        val exception =
+            assertThrows<NolPaySdkException> {
+                runTest {
+                    val result = interactor(params)
+                    assert(result.isFailure)
+                    result.getOrThrow()
+                }
             }
-        }
 
         assertEquals(expectedException, exception)
     }

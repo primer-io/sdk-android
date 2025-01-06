@@ -10,8 +10,8 @@ import io.mockk.runs
 import io.mockk.verify
 import io.primer.android.PrimerSessionIntent
 import io.primer.android.core.logging.internal.LogReporter
-import io.primer.android.payments.core.tokenization.data.model.PaymentMethodTokenInternal
 import io.primer.android.data.tokenization.models.TokenType
+import io.primer.android.payments.core.tokenization.data.model.PaymentMethodTokenInternal
 import io.primer.android.payments.core.tokenization.domain.handler.PreTokenizationHandler
 import io.primer.android.payments.core.tokenization.domain.model.TokenizationParams
 import io.primer.android.payments.core.tokenization.domain.model.paymentInstruments.BasePaymentInstrumentParams
@@ -25,7 +25,6 @@ import org.junit.jupiter.api.extension.ExtendWith
 
 @ExtendWith(MockKExtension::class)
 class TokenizationInteractorTest {
-
     @Test
     fun `performAction should call preTokenizationHandler and tokenizationRepository with the expected args`() {
         // Mock dependencies
@@ -35,32 +34,35 @@ class TokenizationInteractorTest {
         val logReporter = mockk<LogReporter>()
 
         // Create instance of TokenizationInteractor
-        val interactor = object : TokenizationInteractor<BasePaymentInstrumentParams>(
-            tokenizationRepository,
-            tokenizedPaymentMethodRepository,
-            preTokenizationHandler,
-            logReporter,
-            Dispatchers.Unconfined // Use Unconfined dispatcher for testing
-        ) {}
+        val interactor =
+            object : TokenizationInteractor<BasePaymentInstrumentParams>(
+                tokenizationRepository,
+                tokenizedPaymentMethodRepository,
+                preTokenizationHandler,
+                logReporter,
+                Dispatchers.Unconfined,
+            ) {}
 
         // Prepare test data
-        val paymentMethodToken = PaymentMethodTokenInternal(
-            "mockToken",
-            "mockPaymentInstrumentType",
-            "mockPaymentMethodType",
-            null,
-            null,
-            null,
-            true,
-            "mockAnalyticsId",
-            TokenType.SINGLE_USE
-        )
-        val params = TokenizationParams(
-            mockk<BasePaymentInstrumentParams> {
-                every { paymentMethodType } returns "mockPaymentMethodType"
-            },
-            PrimerSessionIntent.CHECKOUT
-        )
+        val paymentMethodToken =
+            PaymentMethodTokenInternal(
+                "mockToken",
+                "mockPaymentInstrumentType",
+                "mockPaymentMethodType",
+                null,
+                null,
+                null,
+                true,
+                "mockAnalyticsId",
+                TokenType.SINGLE_USE,
+            )
+        val params =
+            TokenizationParams(
+                mockk<BasePaymentInstrumentParams> {
+                    every { paymentMethodType } returns "mockPaymentMethodType"
+                },
+                PrimerSessionIntent.CHECKOUT,
+            )
 
         // Mock preTokenizationHandler response
         coEvery { preTokenizationHandler.handle(any(), any()) } returns Result.success(Unit)

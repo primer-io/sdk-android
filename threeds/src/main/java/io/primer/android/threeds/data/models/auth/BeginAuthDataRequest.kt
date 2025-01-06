@@ -17,9 +17,8 @@ internal data class BeginAuthDataRequest(
     val customer: ThreeDsCustomerDataRequest? = null,
     val device: SDKAuthDataRequest,
     val billingAddress: Address? = null,
-    val shippingAddress: Address? = null
+    val shippingAddress: Address? = null,
 ) : JSONObjectSerializable {
-
     companion object {
         private const val MAX_PROTOCOL_VERSION_FIELD = "maxProtocolVersion"
         private const val AMOUNT_FIELD = "amount"
@@ -31,59 +30,62 @@ internal data class BeginAuthDataRequest(
         private const val SHIPPING_ADDRESS_FIELD = "shippingAddress"
 
         @JvmField
-        val serializer = JSONObjectSerializer<BeginAuthDataRequest> { t ->
-            JSONObject().apply {
-                put(MAX_PROTOCOL_VERSION_FIELD, t.maxProtocolVersion)
-                putOpt(AMOUNT_FIELD, t.amount)
-                putOpt(CURRENCY_CODE_FIELD, t.currencyCode)
-                putOpt(ORDER_ID_FIELD, t.orderId)
-                put(
-                    DEVICE_FIELD,
-                    JSONSerializationUtils
-                        .getJsonObjectSerializer<SDKAuthDataRequest>()
-                        .serialize(t.device)
-                )
-                t.customer?.let {
+        val serializer =
+            JSONObjectSerializer<BeginAuthDataRequest> { t ->
+                JSONObject().apply {
+                    put(MAX_PROTOCOL_VERSION_FIELD, t.maxProtocolVersion)
+                    putOpt(AMOUNT_FIELD, t.amount)
+                    putOpt(CURRENCY_CODE_FIELD, t.currencyCode)
+                    putOpt(ORDER_ID_FIELD, t.orderId)
                     put(
-                        CUSTOMER_FIELD,
+                        DEVICE_FIELD,
                         JSONSerializationUtils
-                            .getJsonObjectSerializer<ThreeDsCustomerDataRequest>()
-                            .serialize(it)
+                            .getJsonObjectSerializer<SDKAuthDataRequest>()
+                            .serialize(t.device),
                     )
-                }
-                t.billingAddress?.let {
-                    put(
-                        BILLING_ADDRESS_FIELD,
-                        JSONSerializationUtils
-                            .getJsonObjectSerializer<Address>()
-                            .serialize(it)
-                    )
-                }
-                t.shippingAddress?.let {
-                    put(
-                        SHIPPING_ADDRESS_FIELD,
-                        JSONSerializationUtils
-                            .getJsonObjectSerializer<Address>()
-                            .serialize(it)
-                    )
+                    t.customer?.let {
+                        put(
+                            CUSTOMER_FIELD,
+                            JSONSerializationUtils
+                                .getJsonObjectSerializer<ThreeDsCustomerDataRequest>()
+                                .serialize(it),
+                        )
+                    }
+                    t.billingAddress?.let {
+                        put(
+                            BILLING_ADDRESS_FIELD,
+                            JSONSerializationUtils
+                                .getJsonObjectSerializer<Address>()
+                                .serialize(it),
+                        )
+                    }
+                    t.shippingAddress?.let {
+                        put(
+                            SHIPPING_ADDRESS_FIELD,
+                            JSONSerializationUtils
+                                .getJsonObjectSerializer<Address>()
+                                .serialize(it),
+                        )
+                    }
                 }
             }
-        }
     }
 }
 
 internal fun BaseThreeDsParams.toBeginAuthRequest(): BeginAuthDataRequest {
     return when (this) {
-        is ThreeDsCheckoutParams -> BeginAuthDataRequest(
-            maxProtocolVersion = maxProtocolVersion.versionNumber,
-            device = SDKAuthDataRequest(
-                sdkAppId = sdkAppId,
-                sdkTransactionId = sdkTransactionId,
-                sdkTimeout = SDK_TIMEOUT_IN_SECONDS,
-                sdkEncData = sdkEncData,
-                sdkEphemPubKey = sdkEphemPubKey,
-                sdkReferenceNumber = sdkReferenceNumber
+        is ThreeDsCheckoutParams ->
+            BeginAuthDataRequest(
+                maxProtocolVersion = maxProtocolVersion.versionNumber,
+                device =
+                    SDKAuthDataRequest(
+                        sdkAppId = sdkAppId,
+                        sdkTransactionId = sdkTransactionId,
+                        sdkTimeout = SDK_TIMEOUT_IN_SECONDS,
+                        sdkEncData = sdkEncData,
+                        sdkEphemPubKey = sdkEphemPubKey,
+                        sdkReferenceNumber = sdkReferenceNumber,
+                    ),
             )
-        )
     }
 }

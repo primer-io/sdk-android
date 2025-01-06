@@ -7,9 +7,9 @@ internal class GooglePayPaymentInstrumentParams(
     override val paymentMethodType: String,
     val merchantId: String,
     val paymentData: PaymentData,
-    val flow: GooglePayFlow
+    val flow: GooglePayFlow,
 ) : BasePaymentInstrumentParams
 
 internal enum class GooglePayFlow {
-    GATEWAY
+    GATEWAY,
 }

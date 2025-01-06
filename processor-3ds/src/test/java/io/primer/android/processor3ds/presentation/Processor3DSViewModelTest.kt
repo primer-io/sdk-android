@@ -28,7 +28,6 @@ import org.junit.jupiter.api.extension.ExtendWith
 @ExperimentalCoroutinesApi
 @ExtendWith(InstantExecutorExtension::class, MockKExtension::class)
 class Processor3DSViewModelTest {
-
     private val pollingInteractor: AsyncPaymentMethodPollingInteractor = mockk()
     private val analyticsInteractor: AnalyticsInteractor = mockk()
     private lateinit var viewModel: Processor3DSViewModel
@@ -45,52 +44,55 @@ class Processor3DSViewModelTest {
     }
 
     @Test
-    fun `getStatus should update statusUrlLiveData on success`() = runTest {
-        val statusUrl = "https://example.com/status"
-        val paymentMethodType = "exampleMethod"
-        val asyncStatusResult = AsyncStatus(resumeToken = "resumeToken123")
+    fun `getStatus should update statusUrlLiveData on success`() =
+        runTest {
+            val statusUrl = "https://example.com/status"
+            val paymentMethodType = "exampleMethod"
+            val asyncStatusResult = AsyncStatus(resumeToken = "resumeToken123")
 
-        coEvery { pollingInteractor(any()) } returns flow { emit(asyncStatusResult) }
+            coEvery { pollingInteractor(any()) } returns flow { emit(asyncStatusResult) }
 
-        val observer: Observer<String> = mockk(relaxed = true)
-        viewModel.statusUrlLiveData.observeForever(observer)
+            val observer: Observer<String> = mockk(relaxed = true)
+            viewModel.statusUrlLiveData.observeForever(observer)
 
-        viewModel.getStatus(statusUrl, paymentMethodType)
+            viewModel.getStatus(statusUrl, paymentMethodType)
 
-        advanceUntilIdle()
+            advanceUntilIdle()
 
-        verify { observer.onChanged("resumeToken123") }
-        viewModel.statusUrlLiveData.removeObserver(observer)
-    }
+            verify { observer.onChanged("resumeToken123") }
+            viewModel.statusUrlLiveData.removeObserver(observer)
+        }
 
     @Test
-    fun `getStatus should update statusUrlErrorData on failure`() = runTest {
-        val statusUrl = "https://example.com/status"
-        val paymentMethodType = "exampleMethod"
-        val error = RuntimeException("Error fetching status")
+    fun `getStatus should update statusUrlErrorData on failure`() =
+        runTest {
+            val statusUrl = "https://example.com/status"
+            val paymentMethodType = "exampleMethod"
+            val error = RuntimeException("Error fetching status")
 
-        coEvery { pollingInteractor(any()) } returns flow { throw error }
+            coEvery { pollingInteractor(any()) } returns flow { throw error }
 
-        val observer: Observer<Throwable> = mockk(relaxed = true)
-        viewModel.statusUrlErrorData.observeForever(observer)
+            val observer: Observer<Throwable> = mockk(relaxed = true)
+            viewModel.statusUrlErrorData.observeForever(observer)
 
-        viewModel.getStatus(statusUrl, paymentMethodType)
+            viewModel.getStatus(statusUrl, paymentMethodType)
 
-        advanceUntilIdle()
+            advanceUntilIdle()
 
-        verify { observer.onChanged(error) }
-        viewModel.statusUrlErrorData.removeObserver(observer)
-    }
+            verify { observer.onChanged(error) }
+            viewModel.statusUrlErrorData.removeObserver(observer)
+        }
 
     @Disabled("This test is failing because analyticsInteractor does not verify as being called.")
     @Test
-    fun `addAnalyticsEvent should call analyticsInteractor`() = runTest {
-        val params = mockk<BaseAnalyticsParams>()
+    fun `addAnalyticsEvent should call analyticsInteractor`() =
+        runTest {
+            val params = mockk<BaseAnalyticsParams>()
 
-        coEvery { analyticsInteractor(params) } returns Result.success(Unit)
+            coEvery { analyticsInteractor(params) } returns Result.success(Unit)
 
-        viewModel.addAnalyticsEvent(params)
+            viewModel.addAnalyticsEvent(params)
 
-        coVerify { analyticsInteractor(params) }
-    }
+            coVerify { analyticsInteractor(params) }
+        }
 }

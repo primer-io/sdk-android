@@ -10,7 +10,7 @@ import io.primer.android.payments.core.helpers.CheckoutAdditionalInfoHandler
 import io.primer.android.payments.core.tokenization.domain.repository.TokenizedPaymentMethodRepository
 
 internal data class OtpDecision(
-    val statusUrl: String
+    val statusUrl: String,
 ) : PaymentMethodResumeDecision
 
 internal class OtpResumeHandler(
@@ -18,14 +18,13 @@ internal class OtpResumeHandler(
     private val tokenizedPaymentMethodRepository: TokenizedPaymentMethodRepository,
     private val validateClientTokenRepository: ValidateClientTokenRepository,
     private val clientTokenRepository: ClientTokenRepository,
-    checkoutAdditionalInfoHandler: CheckoutAdditionalInfoHandler
+    checkoutAdditionalInfoHandler: CheckoutAdditionalInfoHandler,
 ) : PrimerResumeDecisionHandlerV2<OtpDecision, OtpClientToken>(
-    clientTokenRepository = clientTokenRepository,
-    validateClientTokenRepository = validateClientTokenRepository,
-    clientTokenParser = clientTokenParser,
-    checkoutAdditionalInfoHandler = checkoutAdditionalInfoHandler
-) {
-
+        clientTokenRepository = clientTokenRepository,
+        validateClientTokenRepository = validateClientTokenRepository,
+        clientTokenParser = clientTokenParser,
+        checkoutAdditionalInfoHandler = checkoutAdditionalInfoHandler,
+    ) {
     override val supportedClientTokenIntents: () -> List<String> = {
         listOf(tokenizedPaymentMethodRepository.getPaymentMethod().paymentMethodType.orEmpty())
             .map { paymentMethodType -> "${paymentMethodType}_REDIRECTION" }
@@ -33,7 +32,7 @@ internal class OtpResumeHandler(
 
     override suspend fun getResumeDecision(clientToken: OtpClientToken): OtpDecision {
         return OtpDecision(
-            statusUrl = clientToken.statusUrl
+            statusUrl = clientToken.statusUrl,
         )
     }
 }

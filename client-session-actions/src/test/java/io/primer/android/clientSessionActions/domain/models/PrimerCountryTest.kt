@@ -6,15 +6,15 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
 internal class PrimerCountryTest {
-
     @Test
     fun `deserializer correctly parses valid JSON`() {
-        val json = """
+        val json =
+            """
             {
                 "name": "United States",
                 "code": "US"
             }
-        """.trimIndent()
+            """.trimIndent()
 
         val jsonObject = JSONObject(json)
         val primerCountry = PrimerCountry.deserializer.deserialize(jsonObject)
@@ -33,10 +33,10 @@ internal class PrimerCountryTest {
 }
 
 internal class PrimerCountriesCodeInfoTest {
-
     @Test
     fun `deserializer correctly parses valid JSON`() {
-        val json = """
+        val json =
+            """
             {
                 "locale": "en-US",
                 "countries": {
@@ -50,7 +50,7 @@ internal class PrimerCountriesCodeInfoTest {
                     }
                 }
             }
-        """.trimIndent()
+            """.trimIndent()
 
         val jsonObject = JSONObject(json)
         val primerCountriesCodeInfo = PrimerCountriesCodeInfo.deserializer.deserialize(jsonObject)

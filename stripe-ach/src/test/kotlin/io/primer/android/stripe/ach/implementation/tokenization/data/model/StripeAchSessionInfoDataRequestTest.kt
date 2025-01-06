@@ -12,8 +12,8 @@ class StripeAchSessionInfoDataRequestTest {
         val request =
             StripeAchSessionInfoDataRequest.serializer.serialize(
                 StripeAchSessionInfoDataRequest(
-                    locale = "fake_locale"
-                )
+                    locale = "fake_locale",
+                ),
             )
         assertEquals("ANDROID", request.getString("platform"))
         assertEquals("fake_locale", request.getString("locale"))

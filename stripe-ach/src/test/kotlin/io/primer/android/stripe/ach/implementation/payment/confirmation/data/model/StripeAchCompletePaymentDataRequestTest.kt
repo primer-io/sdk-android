@@ -13,8 +13,8 @@ class StripeAchCompletePaymentDataRequestTest {
             StripeAchCompletePaymentDataRequest.serializer.serialize(
                 StripeAchCompletePaymentDataRequest(
                     mandateTimestamp = "timestamp",
-                    paymentMethodId = "paymentMethodId"
-                )
+                    paymentMethodId = "paymentMethodId",
+                ),
             )
         assertEquals("paymentMethodId", request.getString("paymentMethodId"))
         assertEquals("timestamp", request.getString("mandateSignatureTimestamp"))

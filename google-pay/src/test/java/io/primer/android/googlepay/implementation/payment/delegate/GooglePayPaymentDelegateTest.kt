@@ -28,7 +28,6 @@ import org.junit.jupiter.api.extension.ExtendWith
 @OptIn(ExperimentalCoroutinesApi::class)
 @ExtendWith(InstantExecutorExtension::class, MockKExtension::class)
 internal class GooglePayPaymentDelegateTest {
-
     private lateinit var paymentDelegate: GooglePayPaymentDelegate
     private lateinit var resumeHandler: GooglePayResumeHandler
 
@@ -42,86 +41,96 @@ internal class GooglePayPaymentDelegateTest {
 
         resumeHandler = mockk()
 
-        paymentDelegate = GooglePayPaymentDelegate(
-            paymentMethodTokenHandler,
-            resumePaymentHandler,
-            successHandler,
-            errorHandler,
-            baseErrorResolver,
-            resumeHandler
-        )
+        paymentDelegate =
+            GooglePayPaymentDelegate(
+                paymentMethodTokenHandler,
+                resumePaymentHandler,
+                successHandler,
+                errorHandler,
+                baseErrorResolver,
+                resumeHandler,
+            )
     }
 
     @Test
-    fun `handleNewClientToken should return success and emit Navigate to Native 3ds launcher event when continueWithNewClientToken returns a success result`() = runTest {
-        // Given
-        val clientToken = "testClientToken"
-        val decision = GooglePayResumeDecision.GooglePayNative3dsResumeDecision(listOf("1.0", "2.0"))
-        coEvery { resumeHandler.continueWithNewClientToken(clientToken) } returns Result.success(decision)
+    fun `handleNewClientToken should return success and emit Navigate to Native 3ds launcher event when continueWithNewClientToken returns a success result`() =
+        runTest {
+            // Given
+            val clientToken = "testClientToken"
+            val decision = GooglePayResumeDecision.GooglePayNative3dsResumeDecision(listOf("1.0", "2.0"))
+            coEvery { resumeHandler.continueWithNewClientToken(clientToken) } returns Result.success(decision)
 
-        launch {
-            paymentDelegate.handleNewClientToken(clientToken, null)
-        }
+            launch {
+                paymentDelegate.handleNewClientToken(clientToken, null)
+            }
 
-        paymentDelegate.uiEvent.first { event ->
-            val expectedEvent = ComposerUiEvent.Navigate(
-                PaymentMethodLauncherParams(
-                    paymentMethodType = PaymentMethodType.GOOGLE_PAY.name,
-                    sessionIntent = PrimerSessionIntent.CHECKOUT,
-                    initialLauncherParams = ThreeDsInitialLauncherParams(
-                        supportedThreeDsProtocolVersions = decision.supportedThreeDsProtocolVersions
+            paymentDelegate.uiEvent.first { event ->
+                val expectedEvent =
+                    ComposerUiEvent.Navigate(
+                        PaymentMethodLauncherParams(
+                            paymentMethodType = PaymentMethodType.GOOGLE_PAY.name,
+                            sessionIntent = PrimerSessionIntent.CHECKOUT,
+                            initialLauncherParams =
+                                ThreeDsInitialLauncherParams(
+                                    supportedThreeDsProtocolVersions = decision.supportedThreeDsProtocolVersions,
+                                ),
+                        ),
                     )
-                )
-            )
-            assertEquals(expectedEvent, event)
-            true
+                assertEquals(expectedEvent, event)
+                true
+            }
         }
-    }
 
     @Test
-    fun `handleNewClientToken should return success and emit Navigate to Processor 3ds launcher event when continueWithNewClientToken returns a success result`() = runTest {
-        // Given
-        val clientToken = "testClientToken"
-        val decision = GooglePayResumeDecision.GooglePayProcessor3dsResumeDecision(
-            processor3DS = Processor3DS(
-                redirectUrl = "https://www.example/redirect",
-                statusUrl = "https://www.status/redirect",
-                title = "title"
-            )
-        )
-        coEvery { resumeHandler.continueWithNewClientToken(clientToken) } returns Result.success(decision)
+    fun `handleNewClientToken should return success and emit Navigate to Processor 3ds launcher event when continueWithNewClientToken returns a success result`() =
+        runTest {
+            // Given
+            val clientToken = "testClientToken"
+            val decision =
+                GooglePayResumeDecision.GooglePayProcessor3dsResumeDecision(
+                    processor3DS =
+                        Processor3DS(
+                            redirectUrl = "https://www.example/redirect",
+                            statusUrl = "https://www.status/redirect",
+                            title = "title",
+                        ),
+                )
+            coEvery { resumeHandler.continueWithNewClientToken(clientToken) } returns Result.success(decision)
 
-        launch {
-            paymentDelegate.handleNewClientToken(clientToken, null)
-        }
+            launch {
+                paymentDelegate.handleNewClientToken(clientToken, null)
+            }
 
-        paymentDelegate.uiEvent.first { event ->
-            val expectedEvent = ComposerUiEvent.Navigate(
-                PaymentMethodLauncherParams(
-                    paymentMethodType = PaymentMethodType.GOOGLE_PAY.name,
-                    sessionIntent = PrimerSessionIntent.CHECKOUT,
-                    initialLauncherParams = ProcessorThreeDsInitialLauncherParams(
-                        processor3DS = decision.processor3DS
+            paymentDelegate.uiEvent.first { event ->
+                val expectedEvent =
+                    ComposerUiEvent.Navigate(
+                        PaymentMethodLauncherParams(
+                            paymentMethodType = PaymentMethodType.GOOGLE_PAY.name,
+                            sessionIntent = PrimerSessionIntent.CHECKOUT,
+                            initialLauncherParams =
+                                ProcessorThreeDsInitialLauncherParams(
+                                    processor3DS = decision.processor3DS,
+                                ),
+                        ),
                     )
-                )
-            )
-            assertEquals(expectedEvent, event)
-            true
+                assertEquals(expectedEvent, event)
+                true
+            }
         }
-    }
 
     @Test
-    fun `handleNewClientToken should handle exception and return failure when continueWithNewClientToken() returns a failure result`() = runTest {
-        // Given
-        val clientToken = "testClientToken"
-        val exception = Exception("Test Exception")
-        coEvery { resumeHandler.continueWithNewClientToken(clientToken) } returns Result.failure(exception)
+    fun `handleNewClientToken should handle exception and return failure when continueWithNewClientToken() returns a failure result`() =
+        runTest {
+            // Given
+            val clientToken = "testClientToken"
+            val exception = Exception("Test Exception")
+            coEvery { resumeHandler.continueWithNewClientToken(clientToken) } returns Result.failure(exception)
 
-        // When
-        val result = paymentDelegate.handleNewClientToken(clientToken, null)
+            // When
+            val result = paymentDelegate.handleNewClientToken(clientToken, null)
 
-        // Then
-        assert(result.isFailure)
-        assertEquals(exception, result.exceptionOrNull())
-    }
+            // Then
+            assert(result.isFailure)
+            assertEquals(exception, result.exceptionOrNull())
+        }
 }

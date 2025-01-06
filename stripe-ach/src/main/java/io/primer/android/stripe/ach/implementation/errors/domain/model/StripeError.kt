@@ -7,26 +7,27 @@ import io.primer.android.paymentmethods.common.data.model.PaymentMethodType
 import java.util.UUID
 
 sealed class StripeError : PrimerError() {
-
     object StripeInvalidPublishableKeyError : StripeError()
 
     data class StripeSdkError(
-        val message: String
+        val message: String,
     ) : StripeError()
 
     override val errorId: String
-        get() = when (this) {
-            is StripeInvalidPublishableKeyError -> "stripe-invalid-publishable-key"
-            is StripeSdkError -> "stripe-sdk-error"
-        }
+        get() =
+            when (this) {
+                is StripeInvalidPublishableKeyError -> "stripe-invalid-publishable-key"
+                is StripeSdkError -> "stripe-sdk-error"
+            }
 
     override val description: String
-        get() = when (this) {
-            is StripeInvalidPublishableKeyError ->
-                "Publishable key is invalid"
-            is StripeSdkError ->
-                "Multiple errors occurred: $message"
-        }
+        get() =
+            when (this) {
+                is StripeInvalidPublishableKeyError ->
+                    "Publishable key is invalid"
+                is StripeSdkError ->
+                    "Multiple errors occurred: $message"
+            }
 
     override val diagnosticsId: String
         get() = UUID.randomUUID().toString()

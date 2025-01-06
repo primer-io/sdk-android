@@ -17,7 +17,6 @@ import kotlinx.coroutines.launch
  * Should never be called in production code.
  **/
 class PaymentMethodMockActivity : BaseCheckoutActivity() {
-
     private val viewModel: PaymentMethodMockViewModel
         by viewModel<PaymentMethodMockViewModel, PaymentMethodMockViewModelFactory>()
 
@@ -49,10 +48,11 @@ class PaymentMethodMockActivity : BaseCheckoutActivity() {
                     viewModel.finaliseMockedFlow()
                 }
 
-                PaymentMethodType.PAYMENT_CARD.name -> lifecycleScope.launch {
-                    setResult(RESULT_OK)
-                    finish()
-                }
+                PaymentMethodType.PAYMENT_CARD.name ->
+                    lifecycleScope.launch {
+                        setResult(RESULT_OK)
+                        finish()
+                    }
             }
         }
     }
@@ -64,20 +64,23 @@ class PaymentMethodMockActivity : BaseCheckoutActivity() {
         }
     }
 
-    private fun getTestTitle() = when (paymentMethodType) {
-        PaymentMethodType.PAYMENT_CARD.name -> THREE_DS_DEMO_TEST
-        else -> PAYMENT_METHOD_TEST.format(paymentMethodType)
-    }
+    private fun getTestTitle() =
+        when (paymentMethodType) {
+            PaymentMethodType.PAYMENT_CARD.name -> THREE_DS_DEMO_TEST
+            else -> PAYMENT_METHOD_TEST.format(paymentMethodType)
+        }
 
     companion object {
-
         private const val THREE_DS_DEMO_TEST = "Demo 3DS"
         private const val PAYMENT_METHOD_TEST = "Testing %s"
         private const val PAYMENT_METHOD_TYPE_KEY = "PAYMENT_METHOD_TYPE"
 
-        fun getLaunchIntent(context: Context, paymentMethodType: String) = Intent(
+        fun getLaunchIntent(
+            context: Context,
+            paymentMethodType: String,
+        ) = Intent(
             context,
-            PaymentMethodMockActivity::class.java
+            PaymentMethodMockActivity::class.java,
         ).apply {
             putExtra(PAYMENT_METHOD_TYPE_KEY, paymentMethodType)
         }

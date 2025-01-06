@@ -24,50 +24,54 @@ class StripeAchCompletePaymentInteractorTest {
     private lateinit var interactor: StripeAchCompletePaymentInteractor
 
     @Test
-    fun `invoke() should delegate to repository when payment method id is not null`() = runTest {
-        val expected = Result.success(Unit)
-        coEvery { completePaymentRepository.completePayment(any(), any(), any()) } returns expected
+    fun `invoke() should delegate to repository when payment method id is not null`() =
+        runTest {
+            val expected = Result.success(Unit)
+            coEvery { completePaymentRepository.completePayment(any(), any(), any()) } returns expected
 
-        val result = interactor.invoke(
-            StripeAchCompletePaymentParams(
-                completeUrl = "completeUrl",
-                mandateTimestamp = "mandateTimestamp",
-                paymentMethodId = "paymentMethodId"
-            )
-        )
+            val result =
+                interactor.invoke(
+                    StripeAchCompletePaymentParams(
+                        completeUrl = "completeUrl",
+                        mandateTimestamp = "mandateTimestamp",
+                        paymentMethodId = "paymentMethodId",
+                    ),
+                )
 
-        assertEquals(expected, result)
-        coVerify {
-            completePaymentRepository.completePayment(
-                completeUrl = "completeUrl",
-                mandateTimestamp = "mandateTimestamp",
-                paymentMethodId = "paymentMethodId"
-            )
+            assertEquals(expected, result)
+            coVerify {
+                completePaymentRepository.completePayment(
+                    completeUrl = "completeUrl",
+                    mandateTimestamp = "mandateTimestamp",
+                    paymentMethodId = "paymentMethodId",
+                )
+            }
+            confirmVerified(completePaymentRepository)
         }
-        confirmVerified(completePaymentRepository)
-    }
 
     @Test
-    fun `invoke() should delegate to repository when payment method id is null`() = runTest {
-        val expected = Result.success(Unit)
-        coEvery { completePaymentRepository.completePayment(any(), any(), any()) } returns expected
+    fun `invoke() should delegate to repository when payment method id is null`() =
+        runTest {
+            val expected = Result.success(Unit)
+            coEvery { completePaymentRepository.completePayment(any(), any(), any()) } returns expected
 
-        val result = interactor.invoke(
-            StripeAchCompletePaymentParams(
-                completeUrl = "completeUrl",
-                mandateTimestamp = "mandateTimestamp",
-                paymentMethodId = null
-            )
-        )
+            val result =
+                interactor.invoke(
+                    StripeAchCompletePaymentParams(
+                        completeUrl = "completeUrl",
+                        mandateTimestamp = "mandateTimestamp",
+                        paymentMethodId = null,
+                    ),
+                )
 
-        assertEquals(expected, result)
-        coVerify {
-            completePaymentRepository.completePayment(
-                completeUrl = "completeUrl",
-                mandateTimestamp = "mandateTimestamp",
-                paymentMethodId = null
-            )
+            assertEquals(expected, result)
+            coVerify {
+                completePaymentRepository.completePayment(
+                    completeUrl = "completeUrl",
+                    mandateTimestamp = "mandateTimestamp",
+                    paymentMethodId = null,
+                )
+            }
+            confirmVerified(completePaymentRepository)
         }
-        confirmVerified(completePaymentRepository)
-    }
 }

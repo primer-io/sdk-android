@@ -14,10 +14,10 @@ internal class DefaultAdyenBancontactTokenizationInteractor(
     tokenizationRepository: TokenizationRepository<AdyenBancontactPaymentInstrumentParams>,
     tokenizedPaymentMethodRepository: TokenizedPaymentMethodRepository,
     preTokenizationHandler: PreTokenizationHandler,
-    logReporter: LogReporter
+    logReporter: LogReporter,
 ) : TokenizationInteractor<AdyenBancontactPaymentInstrumentParams>(
-    tokenizationRepository = tokenizationRepository,
-    tokenizedPaymentMethodRepository = tokenizedPaymentMethodRepository,
-    preTokenizationHandler = preTokenizationHandler,
-    logReporter = logReporter
-)
+        tokenizationRepository = tokenizationRepository,
+        tokenizedPaymentMethodRepository = tokenizedPaymentMethodRepository,
+        preTokenizationHandler = preTokenizationHandler,
+        logReporter = logReporter,
+    )

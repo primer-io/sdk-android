@@ -2,8 +2,8 @@ package io.primer.android.otp
 
 import io.mockk.mockk
 import io.primer.android.components.domain.core.models.PrimerPaymentMethodManagerCategory
-import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.configuration.data.model.PaymentMethodConfigDataResponse
+import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.paymentmethods.HeadlessDefinition
 import io.primer.android.paymentmethods.SDKCapability
 import io.primer.android.paymentmethods.VaultCapability
@@ -23,11 +23,12 @@ class OtpDescriptorTest {
         mockConfig = mockk(relaxed = true)
     }
 
-    private fun createOtpDescriptor(paymentMethodType: PaymentMethodType) = OtpDescriptor(
-        localConfig = mockPrimerConfig,
-        config = mockConfig,
-        paymentMethodType = paymentMethodType.name
-    )
+    private fun createOtpDescriptor(paymentMethodType: PaymentMethodType) =
+        OtpDescriptor(
+            localConfig = mockPrimerConfig,
+            config = mockConfig,
+            paymentMethodType = paymentMethodType.name,
+        )
 
     @Test
     fun `vaultCapability should be SINGLE_USE_ONLY when payment method type is ADYEN_BLIK`() {
@@ -39,12 +40,13 @@ class OtpDescriptorTest {
     fun `headlessDefinition should include RAW_DATA category when payment method type is ADYEN_BLIK`() {
         otpDescriptor = createOtpDescriptor(PaymentMethodType.ADYEN_BLIK)
 
-        val expectedHeadlessDefinition = HeadlessDefinition(
-            listOf(PrimerPaymentMethodManagerCategory.RAW_DATA)
-        )
+        val expectedHeadlessDefinition =
+            HeadlessDefinition(
+                listOf(PrimerPaymentMethodManagerCategory.RAW_DATA),
+            )
         assertEquals(
             expectedHeadlessDefinition.paymentMethodManagerCategories,
-            otpDescriptor.headlessDefinition.paymentMethodManagerCategories
+            otpDescriptor.headlessDefinition.paymentMethodManagerCategories,
         )
     }
 

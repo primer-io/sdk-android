@@ -6,5 +6,5 @@ open class BaseAsyncPaymentInstrumentParams(
     override val paymentMethodType: String,
     open val paymentMethodConfigId: String?,
     open val locale: String,
-    open val type: PaymentInstrumentType
+    open val type: PaymentInstrumentType,
 ) : BasePaymentInstrumentParams

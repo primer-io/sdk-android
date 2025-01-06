@@ -9,9 +9,8 @@ import kotlinx.coroutines.Dispatchers
 
 class PhoneMetadataInteractor(
     private val phoneMetadataRepository: PhoneMetadataRepository,
-    override val dispatcher: CoroutineDispatcher = Dispatchers.IO
+    override val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : BaseSuspendInteractor<PhoneMetadata, PhoneMetadataParams>() {
-
     override suspend fun performAction(params: PhoneMetadataParams): Result<PhoneMetadata> {
         return phoneMetadataRepository.getPhoneMetadata(params.phoneNumber)
     }

@@ -10,11 +10,14 @@ import org.json.JSONObject
 
 data class PrimerStripeOptions(
     val mandateData: MandateData? = null,
-    val publishableKey: String? = null
+    val publishableKey: String? = null,
 ) : Parcelable, JSONObjectSerializable {
     constructor(parcel: Parcel) : this(parcel.readParcelable(), parcel.readString())
 
-    override fun writeToParcel(parcel: Parcel, flags: Int) {
+    override fun writeToParcel(
+        parcel: Parcel,
+        flags: Int,
+    ) {
         parcel.writeParcelable(mandateData, flags)
         parcel.writeString(publishableKey)
     }
@@ -39,51 +42,55 @@ data class PrimerStripeOptions(
         private const val FULL_MANDATE_INT_VALUE_FIELD = "intValue"
 
         @JvmField
-        val serializer = JSONObjectSerializer<PrimerStripeOptions> { t ->
-            JSONObject().apply {
-                put(PUBLISHABLE_KEY_FIELD, "****")
+        val serializer =
+            JSONObjectSerializer<PrimerStripeOptions> { t ->
+                JSONObject().apply {
+                    put(PUBLISHABLE_KEY_FIELD, "****")
 
-                t.mandateData?.let { mandateData ->
-                    when (mandateData) {
-                        is MandateData.TemplateMandateData -> {
-                            put(
-                                MANDATE_DATA_FIELD,
-                                JSONObject().apply {
-                                    put(TEMPLATE_MANDATE_MERCHANT_NAME_FIELD, mandateData.merchantName)
-                                }
-                            )
-                        }
+                    t.mandateData?.let { mandateData ->
+                        when (mandateData) {
+                            is MandateData.TemplateMandateData -> {
+                                put(
+                                    MANDATE_DATA_FIELD,
+                                    JSONObject().apply {
+                                        put(TEMPLATE_MANDATE_MERCHANT_NAME_FIELD, mandateData.merchantName)
+                                    },
+                                )
+                            }
 
-                        is MandateData.FullMandateStringData -> {
-                            put(
-                                MANDATE_DATA_FIELD,
-                                JSONObject().apply {
-                                    put(FULL_MANDATE_STRING_VALUE_FIELD, mandateData.value)
-                                }
-                            )
-                        }
+                            is MandateData.FullMandateStringData -> {
+                                put(
+                                    MANDATE_DATA_FIELD,
+                                    JSONObject().apply {
+                                        put(FULL_MANDATE_STRING_VALUE_FIELD, mandateData.value)
+                                    },
+                                )
+                            }
 
-                        is MandateData.FullMandateData -> {
-                            put(
-                                MANDATE_DATA_FIELD,
-                                JSONObject().apply {
-                                    put(FULL_MANDATE_INT_VALUE_FIELD, mandateData.value)
-                                }
-                            )
+                            is MandateData.FullMandateData -> {
+                                put(
+                                    MANDATE_DATA_FIELD,
+                                    JSONObject().apply {
+                                        put(FULL_MANDATE_INT_VALUE_FIELD, mandateData.value)
+                                    },
+                                )
+                            }
                         }
                     }
                 }
             }
-        }
     }
 
     sealed interface MandateData : Parcelable {
         data class TemplateMandateData(val merchantName: String) : MandateData {
             constructor(parcel: Parcel) : this(
-                parcel.readString().orEmpty()
+                parcel.readString().orEmpty(),
             )
 
-            override fun writeToParcel(parcel: Parcel, flags: Int) {
+            override fun writeToParcel(
+                parcel: Parcel,
+                flags: Int,
+            ) {
                 parcel.writeString(merchantName)
             }
 
@@ -105,7 +112,10 @@ data class PrimerStripeOptions(
         data class FullMandateStringData(val value: String) : MandateData {
             constructor(parcel: Parcel) : this(parcel.readString().orEmpty())
 
-            override fun writeToParcel(parcel: Parcel, flags: Int) {
+            override fun writeToParcel(
+                parcel: Parcel,
+                flags: Int,
+            ) {
                 parcel.writeString(value)
             }
 
@@ -124,11 +134,15 @@ data class PrimerStripeOptions(
             }
         }
 
-        data class FullMandateData(@StringRes val value: Int) : MandateData {
-
+        data class FullMandateData(
+            @StringRes val value: Int,
+        ) : MandateData {
             constructor(parcel: Parcel) : this(parcel.readInt())
 
-            override fun writeToParcel(parcel: Parcel, flags: Int) {
+            override fun writeToParcel(
+                parcel: Parcel,
+                flags: Int,
+            ) {
                 parcel.writeInt(value)
             }
 
@@ -137,7 +151,6 @@ data class PrimerStripeOptions(
             }
 
             companion object CREATOR : Parcelable.Creator<FullMandateData> {
-
                 override fun createFromParcel(parcel: Parcel): FullMandateData {
                     return FullMandateData(parcel)
                 }

@@ -20,7 +20,6 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 class AdyenBancontactResumeHandlerTest {
-
     private lateinit var aydenBancontactResumeHandler: AydenBancontactResumeHandler
     private val clientTokenParser = mockk<AdyenBancontactPaymentMethodClientTokenParser>()
     private val tokenizedPaymentMethodRepository = mockk<TokenizedPaymentMethodRepository>()
@@ -32,38 +31,43 @@ class AdyenBancontactResumeHandlerTest {
 
     @BeforeEach
     fun setUp() {
-        aydenBancontactResumeHandler = AydenBancontactResumeHandler(
-            clientTokenParser = clientTokenParser,
-            tokenizedPaymentMethodRepository = tokenizedPaymentMethodRepository,
-            configurationRepository = configurationRepository,
-            deeplinkRepository = deeplinkRepository,
-            validateClientTokenRepository = validateClientTokenRepository,
-            clientTokenRepository = clientTokenRepository,
-            checkoutAdditionalInfoHandler = checkoutAdditionalInfoHandler
-        )
+        aydenBancontactResumeHandler =
+            AydenBancontactResumeHandler(
+                clientTokenParser = clientTokenParser,
+                tokenizedPaymentMethodRepository = tokenizedPaymentMethodRepository,
+                configurationRepository = configurationRepository,
+                deeplinkRepository = deeplinkRepository,
+                validateClientTokenRepository = validateClientTokenRepository,
+                clientTokenRepository = clientTokenRepository,
+                checkoutAdditionalInfoHandler = checkoutAdditionalInfoHandler,
+            )
     }
 
     @Test
     fun `getResumeDecision should the AydenBancontactDecision filled up with the correct data`() {
         // Arrange
         val paymentMethodType = "AYDEN_BANCONTACT"
-        val clientToken = AdyenBancontactClientToken(
-            redirectUrl = "http://redirect.url",
-            statusUrl = "http://status.url",
-            clientTokenIntent = "clientTokenIntent"
-        )
-        val paymentMethodConfig = PaymentMethodConfig(
-            id = "123",
-            type = paymentMethodType,
-            name = "Ayden Bancontact",
-            options = null
-        )
-        val paymentMethod = mockk<PaymentMethodTokenInternal> {
-            every { this@mockk.paymentMethodType } returns paymentMethodType
-        }
-        val config = mockk<Configuration> {
-            every { paymentMethods } returns listOf(paymentMethodConfig)
-        }
+        val clientToken =
+            AdyenBancontactClientToken(
+                redirectUrl = "http://redirect.url",
+                statusUrl = "http://status.url",
+                clientTokenIntent = "clientTokenIntent",
+            )
+        val paymentMethodConfig =
+            PaymentMethodConfig(
+                id = "123",
+                type = paymentMethodType,
+                name = "Ayden Bancontact",
+                options = null,
+            )
+        val paymentMethod =
+            mockk<PaymentMethodTokenInternal> {
+                every { this@mockk.paymentMethodType } returns paymentMethodType
+            }
+        val config =
+            mockk<Configuration> {
+                every { paymentMethods } returns listOf(paymentMethodConfig)
+            }
 
         every { tokenizedPaymentMethodRepository.getPaymentMethod() } returns paymentMethod
         every { configurationRepository.getConfiguration() } returns config
@@ -86,9 +90,10 @@ class AdyenBancontactResumeHandlerTest {
     fun `supportedClientTokenIntents should return the correct data`() {
         // Arrange
         val paymentMethodType = "AYDEN_BANCONTACT"
-        val paymentMethod = mockk<PaymentMethodTokenInternal> {
-            every { this@mockk.paymentMethodType } returns paymentMethodType
-        }
+        val paymentMethod =
+            mockk<PaymentMethodTokenInternal> {
+                every { this@mockk.paymentMethodType } returns paymentMethodType
+            }
 
         every { tokenizedPaymentMethodRepository.getPaymentMethod() } returns paymentMethod
 

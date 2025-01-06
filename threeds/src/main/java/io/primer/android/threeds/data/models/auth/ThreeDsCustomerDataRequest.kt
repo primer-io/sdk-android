@@ -9,9 +9,8 @@ internal data class ThreeDsCustomerDataRequest(
     val email: String? = null,
     val homePhone: String? = null,
     val mobilePhone: String? = null,
-    val workPhone: String? = null
+    val workPhone: String? = null,
 ) : JSONObjectSerializable {
-
     companion object {
         private const val NAME_FIELD = "name"
         private const val EMAIL_FIELD = "email"
@@ -20,14 +19,15 @@ internal data class ThreeDsCustomerDataRequest(
         private const val WORK_PHONE_FIELD = "workPhone"
 
         @JvmField
-        val serializer = JSONObjectSerializer<ThreeDsCustomerDataRequest> { t ->
-            JSONObject().apply {
-                putOpt(NAME_FIELD, t.name)
-                putOpt(EMAIL_FIELD, t.email)
-                putOpt(HOME_PHONE_FIELD, t.homePhone)
-                putOpt(MOBILE_PHONE_FIELD, t.mobilePhone)
-                putOpt(WORK_PHONE_FIELD, t.workPhone)
+        val serializer =
+            JSONObjectSerializer<ThreeDsCustomerDataRequest> { t ->
+                JSONObject().apply {
+                    putOpt(NAME_FIELD, t.name)
+                    putOpt(EMAIL_FIELD, t.email)
+                    putOpt(HOME_PHONE_FIELD, t.homePhone)
+                    putOpt(MOBILE_PHONE_FIELD, t.mobilePhone)
+                    putOpt(WORK_PHONE_FIELD, t.workPhone)
+                }
             }
-        }
     }
 }

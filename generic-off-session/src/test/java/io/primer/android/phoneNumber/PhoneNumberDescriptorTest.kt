@@ -2,8 +2,8 @@ package io.primer.android.phoneNumber
 
 import io.mockk.mockk
 import io.primer.android.components.domain.core.models.PrimerPaymentMethodManagerCategory
-import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.configuration.data.model.PaymentMethodConfigDataResponse
+import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.paymentmethods.HeadlessDefinition
 import io.primer.android.paymentmethods.SDKCapability
 import io.primer.android.paymentmethods.VaultCapability
@@ -13,7 +13,6 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 internal class PhoneNumberDescriptorTest {
-
     private lateinit var phoneNumberDescriptor: PhoneNumberDescriptor
     private lateinit var mockPrimerConfig: PrimerConfig
     private lateinit var mockConfig: PaymentMethodConfigDataResponse
@@ -24,11 +23,12 @@ internal class PhoneNumberDescriptorTest {
         mockConfig = mockk(relaxed = true)
     }
 
-    private fun createPhoneNumberDescriptor(paymentMethodType: PaymentMethodType) = PhoneNumberDescriptor(
-        localConfig = mockPrimerConfig,
-        config = mockConfig,
-        paymentMethodType = paymentMethodType.name
-    )
+    private fun createPhoneNumberDescriptor(paymentMethodType: PaymentMethodType) =
+        PhoneNumberDescriptor(
+            localConfig = mockPrimerConfig,
+            config = mockConfig,
+            paymentMethodType = paymentMethodType.name,
+        )
 
     @Test
     fun `vaultCapability should be SINGLE_USE_ONLY when payment method type is ADYEN_MBWAY`() {
@@ -46,12 +46,13 @@ internal class PhoneNumberDescriptorTest {
     fun `headlessDefinition should include RAW_DATA category when payment method type is ADYEN_MBWAY`() {
         phoneNumberDescriptor = createPhoneNumberDescriptor(PaymentMethodType.ADYEN_MBWAY)
 
-        val expectedHeadlessDefinition = HeadlessDefinition(
-            listOf(PrimerPaymentMethodManagerCategory.RAW_DATA)
-        )
+        val expectedHeadlessDefinition =
+            HeadlessDefinition(
+                listOf(PrimerPaymentMethodManagerCategory.RAW_DATA),
+            )
         assertEquals(
             expectedHeadlessDefinition.paymentMethodManagerCategories,
-            phoneNumberDescriptor.headlessDefinition.paymentMethodManagerCategories
+            phoneNumberDescriptor.headlessDefinition.paymentMethodManagerCategories,
         )
     }
 
@@ -59,12 +60,13 @@ internal class PhoneNumberDescriptorTest {
     fun `headlessDefinition should include RAW_DATA category when payment method type is XENDIT_OVO`() {
         phoneNumberDescriptor = createPhoneNumberDescriptor(PaymentMethodType.XENDIT_OVO)
 
-        val expectedHeadlessDefinition = HeadlessDefinition(
-            listOf(PrimerPaymentMethodManagerCategory.RAW_DATA)
-        )
+        val expectedHeadlessDefinition =
+            HeadlessDefinition(
+                listOf(PrimerPaymentMethodManagerCategory.RAW_DATA),
+            )
         assertEquals(
             expectedHeadlessDefinition.paymentMethodManagerCategories,
-            phoneNumberDescriptor.headlessDefinition.paymentMethodManagerCategories
+            phoneNumberDescriptor.headlessDefinition.paymentMethodManagerCategories,
         )
     }
 

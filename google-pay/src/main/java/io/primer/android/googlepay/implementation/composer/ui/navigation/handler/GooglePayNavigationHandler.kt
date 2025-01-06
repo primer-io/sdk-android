@@ -23,18 +23,18 @@ internal class GooglePayNavigationHandler :
 
     override fun getSupportedNavigators(
         activity: Activity,
-        launcher: ActivityResultLauncher<Intent>
+        launcher: ActivityResultLauncher<Intent>,
     ): List<Navigator<NavigationParams>> {
         return listOf(
             GooglePayNavigator(
                 activity = activity,
                 logReporter = resolve(),
                 launcher = launcher,
-                facadeFactory = resolve()
+                facadeFactory = resolve(),
             ),
             GooglePay3DSNavigator(context = activity, launcher = launcher),
             GooglePayProcessor3DSNavigator(context = activity, launcher = launcher),
-            MockGooglePay3DSNavigator(context = activity, launcher = launcher)
+            MockGooglePay3DSNavigator(context = activity, launcher = launcher),
         )
     }
 }

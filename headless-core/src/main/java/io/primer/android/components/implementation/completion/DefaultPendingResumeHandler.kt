@@ -12,8 +12,8 @@ internal class DefaultPendingResumeHandler(private val analyticsRepository: Anal
     override fun handle(additionalInfo: PrimerCheckoutAdditionalInfo) {
         analyticsRepository.addEvent(
             SdkFunctionParams(
-                HeadlessUniversalCheckoutAnalyticsConstants.ON_CHECKOUT_PENDING
-            )
+                HeadlessUniversalCheckoutAnalyticsConstants.ON_CHECKOUT_PENDING,
+            ),
         )
         PrimerHeadlessUniversalCheckout.instance.checkoutListener?.onResumePending(additionalInfo)
     }

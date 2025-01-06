@@ -1,21 +1,20 @@
 package io.primer.android.klarna.api.composable
 
-import io.primer.android.paymentmethods.manager.composable.PrimerHeadlessStep
 import io.primer.android.klarna.api.ui.PrimerKlarnaPaymentView
 import io.primer.android.klarna.implementation.session.domain.models.KlarnaPaymentCategory
+import io.primer.android.paymentmethods.manager.composable.PrimerHeadlessStep
 
 /**
  * A sealed interface representing the steps involved in a Klarna payment process.
  */
 sealed interface KlarnaPaymentStep : PrimerHeadlessStep {
-
     /**
      * A data class representing the created payment session.
      *
      * @param paymentCategories The list of available Klarna payment categories.
      */
     data class PaymentSessionCreated(
-        val paymentCategories: List<KlarnaPaymentCategory>
+        val paymentCategories: List<KlarnaPaymentCategory>,
     ) : KlarnaPaymentStep
 
     /**
@@ -24,7 +23,7 @@ sealed interface KlarnaPaymentStep : PrimerHeadlessStep {
      * @param paymentView The Klarna payment view.
      */
     data class PaymentViewLoaded(
-        val paymentView: PrimerKlarnaPaymentView
+        val paymentView: PrimerKlarnaPaymentView,
     ) : KlarnaPaymentStep
 
     /**

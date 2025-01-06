@@ -5,5 +5,5 @@ import io.primer.android.paymentmethods.core.payment.resume.clientToken.domain.m
 internal data class AdyenBancontactClientToken(
     val redirectUrl: String,
     val statusUrl: String,
-    override val clientTokenIntent: String
+    override val clientTokenIntent: String,
 ) : PaymentMethodResumeClientToken

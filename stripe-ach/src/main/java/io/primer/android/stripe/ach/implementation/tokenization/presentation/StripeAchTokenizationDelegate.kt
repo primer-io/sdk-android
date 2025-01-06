@@ -19,10 +19,10 @@ internal class StripeAchTokenizationDelegate(
     private val stripeAchConfigurationInteractor: StripeAchConfigurationInteractor,
     private val primerSettings: PrimerSettings,
     tokenizationInteractor: StripeAchTokenizationInteractor,
-    private val actionInteractor: ActionInteractor
+    private val actionInteractor: ActionInteractor,
 ) : PaymentMethodTokenizationDelegate<StripeAchTokenizationInputable, StripeAchPaymentInstrumentParams>(
-    tokenizationInteractor
-),
+        tokenizationInteractor,
+    ),
     TokenizationCollectedDataMapper<StripeAchTokenizationInputable, StripeAchPaymentInstrumentParams> {
     override suspend fun mapTokenizationData(input: StripeAchTokenizationInputable) =
         if (primerSettings.sdkIntegrationType == SdkIntegrationType.HEADLESS) {
@@ -34,22 +34,24 @@ internal class StripeAchTokenizationDelegate(
                 stripeAchConfigurationInteractor(StripeAchConfigParams(paymentMethodType = input.paymentMethodType))
             }.map { configuration ->
                 TokenizationParams(
-                    paymentInstrumentParams = StripeAchPaymentInstrumentParams(
-                        paymentMethodConfigId = configuration.paymentMethodConfigId,
-                        locale = configuration.locale.toLanguageTag()
-                    ),
-                    sessionIntent = input.primerSessionIntent
+                    paymentInstrumentParams =
+                        StripeAchPaymentInstrumentParams(
+                            paymentMethodConfigId = configuration.paymentMethodConfigId,
+                            locale = configuration.locale.toLanguageTag(),
+                        ),
+                    sessionIntent = input.primerSessionIntent,
                 )
             }
 
-    private suspend fun updateSelectedPaymentMethodParams(paymentMethodType: String) = actionInteractor(
-        MultipleActionUpdateParams(
-            listOf(
-                ActionUpdateSelectPaymentMethodParams(
-                    paymentMethodType = paymentMethodType,
-                    cardNetwork = null
-                )
-            )
+    private suspend fun updateSelectedPaymentMethodParams(paymentMethodType: String) =
+        actionInteractor(
+            MultipleActionUpdateParams(
+                listOf(
+                    ActionUpdateSelectPaymentMethodParams(
+                        paymentMethodType = paymentMethodType,
+                        cardNetwork = null,
+                    ),
+                ),
+            ),
         )
-    )
 }

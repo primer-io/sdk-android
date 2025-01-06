@@ -8,8 +8,8 @@ import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
 import io.mockk.verify
 import io.primer.android.analytics.data.models.SdkIntegrationType
-import io.primer.android.data.settings.PrimerSettings
 import io.primer.android.core.domain.validation.ValidationResult
+import io.primer.android.data.settings.PrimerSettings
 import io.primer.android.data.settings.PrimerStripeOptions
 import io.primer.android.errors.data.exception.IllegalValueException
 import io.primer.android.stripe.ach.implementation.validation.exception.StripeIllegalValueKey
@@ -37,11 +37,12 @@ class ValidStripeMandateDataRuleTest {
     fun `validate() should return success when the input is FullMandateStringData and SDK integration is DROP-IN`() {
         every { primerSettings.sdkIntegrationType } returns SdkIntegrationType.DROP_IN
 
-        val result = rule.validate(
-            mockk {
-                every { mandateData } returns mockk<PrimerStripeOptions.MandateData.FullMandateStringData>()
-            }
-        )
+        val result =
+            rule.validate(
+                mockk {
+                    every { mandateData } returns mockk<PrimerStripeOptions.MandateData.FullMandateStringData>()
+                },
+            )
 
         assertEquals(ValidationResult.Success, result)
         verify {
@@ -53,11 +54,12 @@ class ValidStripeMandateDataRuleTest {
     fun `validate() should return success when the input is FullMandateData and SDK integration is DROP-IN`() {
         every { primerSettings.sdkIntegrationType } returns SdkIntegrationType.DROP_IN
 
-        val result = rule.validate(
-            mockk {
-                every { mandateData } returns mockk<PrimerStripeOptions.MandateData.FullMandateData>()
-            }
-        )
+        val result =
+            rule.validate(
+                mockk {
+                    every { mandateData } returns mockk<PrimerStripeOptions.MandateData.FullMandateData>()
+                },
+            )
 
         assertEquals(ValidationResult.Success, result)
         verify {
@@ -69,11 +71,12 @@ class ValidStripeMandateDataRuleTest {
     fun `validate() should return success when the input is TemplateMandateData and SDK integration is DROP-IN`() {
         every { primerSettings.sdkIntegrationType } returns SdkIntegrationType.DROP_IN
 
-        val result = rule.validate(
-            mockk {
-                every { mandateData } returns mockk<PrimerStripeOptions.MandateData.TemplateMandateData>()
-            }
-        )
+        val result =
+            rule.validate(
+                mockk {
+                    every { mandateData } returns mockk<PrimerStripeOptions.MandateData.TemplateMandateData>()
+                },
+            )
 
         assertEquals(ValidationResult.Success, result)
         verify {
@@ -91,11 +94,12 @@ class ValidStripeMandateDataRuleTest {
             ValidationResult.Failure(
                 IllegalValueException(
                     key = StripeIllegalValueKey.STRIPE_MANDATE_DATA,
-                    message = "Required value for " +
-                        "${StripeIllegalValueKey.STRIPE_MANDATE_DATA.key} was null."
-                )
+                    message =
+                        "Required value for " +
+                            "${StripeIllegalValueKey.STRIPE_MANDATE_DATA.key} was null.",
+                ),
             ),
-            result
+            result,
         )
         verify {
             primerSettings.sdkIntegrationType
@@ -106,11 +110,12 @@ class ValidStripeMandateDataRuleTest {
     fun `validate() should return success when the input is FullMandateData and SDK integration is HEADLESS`() {
         every { primerSettings.sdkIntegrationType } returns SdkIntegrationType.HEADLESS
 
-        val result = rule.validate(
-            mockk {
-                every { mandateData } returns mockk<PrimerStripeOptions.MandateData.FullMandateData>()
-            }
-        )
+        val result =
+            rule.validate(
+                mockk {
+                    every { mandateData } returns mockk<PrimerStripeOptions.MandateData.FullMandateData>()
+                },
+            )
 
         assertEquals(ValidationResult.Success, result)
         verify {
@@ -122,11 +127,12 @@ class ValidStripeMandateDataRuleTest {
     fun `validate() should return success when the input is TemplateMandateData and SDK integration is HEADLESS`() {
         every { primerSettings.sdkIntegrationType } returns SdkIntegrationType.HEADLESS
 
-        val result = rule.validate(
-            mockk {
-                every { mandateData } returns mockk<PrimerStripeOptions.MandateData.TemplateMandateData>()
-            }
-        )
+        val result =
+            rule.validate(
+                mockk {
+                    every { mandateData } returns mockk<PrimerStripeOptions.MandateData.TemplateMandateData>()
+                },
+            )
 
         assertEquals(ValidationResult.Success, result)
         verify {

@@ -11,7 +11,6 @@ package io.primer.android.paymentmethods
  * @see [PaymentMethodModule]
  */
 interface PaymentMethod {
-
     val type: String
 
     val canBeVaulted: Boolean

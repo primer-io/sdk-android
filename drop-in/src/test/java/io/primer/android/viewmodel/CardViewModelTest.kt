@@ -23,7 +23,6 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 class CardViewModelTest {
-
     private lateinit var mockCardManager: PrimerHeadlessUniversalCheckoutRawDataManagerInterface
     private var capturedListenerSlot = slot<PrimerHeadlessUniversalCheckoutRawDataManagerListener>()
 
@@ -31,11 +30,12 @@ class CardViewModelTest {
 
     @BeforeEach
     fun setup() {
-        mockCardManager = mockk {
-            every { setRawData(any()) } just Runs
-            every { setListener(capture(capturedListenerSlot)) } just Runs
-            every { getRequiredInputElementTypes() } returns listOf(PrimerInputElementType.CARD_NUMBER)
-        }
+        mockCardManager =
+            mockk {
+                every { setRawData(any()) } just Runs
+                every { setListener(capture(capturedListenerSlot)) } just Runs
+                every { getRequiredInputElementTypes() } returns listOf(PrimerInputElementType.CARD_NUMBER)
+            }
         viewModel = CardViewModel(mockCardManager)
     }
 
@@ -47,12 +47,13 @@ class CardViewModelTest {
 
     @Test
     fun `onCardDataChanged updates card data correctly`() {
-        val cardData = PrimerCardData(
-            cardNumber = "4111111111111111",
-            cardHolderName = "John Doe",
-            expiryDate = "12/25",
-            cvv = "123"
-        )
+        val cardData =
+            PrimerCardData(
+                cardNumber = "4111111111111111",
+                cardHolderName = "John Doe",
+                expiryDate = "12/25",
+                cvv = "123",
+            )
 
         viewModel.onCardDataChanged(cardData)
 
@@ -61,13 +62,14 @@ class CardViewModelTest {
 
     @Test
     fun `setSelectedNetwork updates card network state`() {
-        val initialCardData = PrimerCardData(
-            cardNumber = "4111111111111111",
-            cardHolderName = "John Doe",
-            expiryDate = "12/25",
-            cvv = "123",
-            cardNetwork = CardNetwork.Type.VISA
-        )
+        val initialCardData =
+            PrimerCardData(
+                cardNumber = "4111111111111111",
+                cardHolderName = "John Doe",
+                expiryDate = "12/25",
+                cvv = "123",
+                cardNetwork = CardNetwork.Type.VISA,
+            )
         val selectedNetwork = CardNetwork.Type.CARTES_BANCAIRES
 
         viewModel.onCardDataChanged(initialCardData)
@@ -243,9 +245,9 @@ class CardViewModelTest {
             setOf(
                 PrimerInputElementType.CARD_NUMBER,
                 PrimerInputElementType.CVV,
-                PrimerInputElementType.EXPIRY_DATE
+                PrimerInputElementType.EXPIRY_DATE,
             ),
-            result
+            result,
         )
     }
 
@@ -253,9 +255,10 @@ class CardViewModelTest {
     fun `getValidAutoFocusableFields should exclude CARD_NUMBER when CARD_NUMBER error exists`() {
         // Arrange
         every { mockCardManager.getRequiredInputElementTypes() } returns emptyList()
-        val errors = listOf(
-            PrimerInputValidationError("", "", PrimerInputElementType.CARD_NUMBER)
-        )
+        val errors =
+            listOf(
+                PrimerInputValidationError("", "", PrimerInputElementType.CARD_NUMBER),
+            )
 
         // Act
         val result = viewModel.getValidAutoFocusableFields(errors)
@@ -264,9 +267,9 @@ class CardViewModelTest {
         assertEquals(
             setOf(
                 PrimerInputElementType.CVV,
-                PrimerInputElementType.EXPIRY_DATE
+                PrimerInputElementType.EXPIRY_DATE,
             ),
-            result
+            result,
         )
     }
 
@@ -275,9 +278,10 @@ class CardViewModelTest {
         // Arrange
         every { mockCardManager.getRequiredInputElementTypes() } returns emptyList()
 
-        val errors = listOf(
-            PrimerInputValidationError("", "", PrimerInputElementType.CVV)
-        )
+        val errors =
+            listOf(
+                PrimerInputValidationError("", "", PrimerInputElementType.CVV),
+            )
 
         // Act
         val result = viewModel.getValidAutoFocusableFields(errors)
@@ -286,9 +290,9 @@ class CardViewModelTest {
         assertEquals(
             setOf(
                 PrimerInputElementType.CARD_NUMBER,
-                PrimerInputElementType.EXPIRY_DATE
+                PrimerInputElementType.EXPIRY_DATE,
             ),
-            result
+            result,
         )
     }
 
@@ -297,9 +301,10 @@ class CardViewModelTest {
         // Arrange
         every { mockCardManager.getRequiredInputElementTypes() } returns emptyList()
 
-        val errors = listOf(
-            PrimerInputValidationError("", "", PrimerInputElementType.EXPIRY_DATE)
-        )
+        val errors =
+            listOf(
+                PrimerInputValidationError("", "", PrimerInputElementType.EXPIRY_DATE),
+            )
 
         // Act
         val result = viewModel.getValidAutoFocusableFields(errors)
@@ -308,9 +313,9 @@ class CardViewModelTest {
         assertEquals(
             setOf(
                 PrimerInputElementType.CARD_NUMBER,
-                PrimerInputElementType.CVV
+                PrimerInputElementType.CVV,
             ),
-            result
+            result,
         )
     }
 
@@ -332,9 +337,9 @@ class CardViewModelTest {
                 PrimerInputElementType.CARD_NUMBER,
                 PrimerInputElementType.CVV,
                 PrimerInputElementType.EXPIRY_DATE,
-                PrimerInputElementType.CARDHOLDER_NAME
+                PrimerInputElementType.CARDHOLDER_NAME,
             ),
-            result
+            result,
         )
     }
 
@@ -354,9 +359,9 @@ class CardViewModelTest {
             setOf(
                 PrimerInputElementType.CARD_NUMBER,
                 PrimerInputElementType.CVV,
-                PrimerInputElementType.EXPIRY_DATE
+                PrimerInputElementType.EXPIRY_DATE,
             ),
-            result
+            result,
         )
     }
 
@@ -375,9 +380,9 @@ class CardViewModelTest {
             setOf(
                 PrimerInputElementType.CARD_NUMBER,
                 PrimerInputElementType.CVV,
-                PrimerInputElementType.EXPIRY_DATE
+                PrimerInputElementType.EXPIRY_DATE,
             ),
-            result
+            result,
         )
     }
 
@@ -397,9 +402,9 @@ class CardViewModelTest {
             setOf(
                 PrimerInputElementType.CARD_NUMBER,
                 PrimerInputElementType.CVV,
-                PrimerInputElementType.EXPIRY_DATE
+                PrimerInputElementType.EXPIRY_DATE,
             ),
-            result
+            result,
         )
     }
 
@@ -420,30 +425,34 @@ class CardViewModelTest {
             setOf(
                 PrimerInputElementType.CARD_NUMBER,
                 PrimerInputElementType.CVV,
-                PrimerInputElementType.EXPIRY_DATE
+                PrimerInputElementType.EXPIRY_DATE,
             ),
-            result
+            result,
         )
     }
 
     @Test
     fun `handleFetchedMetadata sets correct card networks state`() {
         val visa = PrimerCardNetwork(network = CardNetwork.Type.VISA, CardNetwork.Type.VISA.displayName, true)
-        val master = PrimerCardNetwork(
-            network = CardNetwork.Type.MASTERCARD,
-            displayName = CardNetwork.Type.MASTERCARD.displayName,
-            allowed = true
-        )
-        val mockMetadata = mockk<PrimerCardNumberEntryMetadata> {
-            every { selectableCardNetworks } returns PrimerCardNetworksMetadata(
-                items = listOf(visa, master),
-                preferred = visa
+        val master =
+            PrimerCardNetwork(
+                network = CardNetwork.Type.MASTERCARD,
+                displayName = CardNetwork.Type.MASTERCARD.displayName,
+                allowed = true,
             )
-            every { detectedCardNetworks } returns PrimerCardNetworksMetadata(
-                items = listOf(visa),
-                preferred = null
-            )
-        }
+        val mockMetadata =
+            mockk<PrimerCardNumberEntryMetadata> {
+                every { selectableCardNetworks } returns
+                    PrimerCardNetworksMetadata(
+                        items = listOf(visa, master),
+                        preferred = visa,
+                    )
+                every { detectedCardNetworks } returns
+                    PrimerCardNetworksMetadata(
+                        items = listOf(visa),
+                        preferred = null,
+                    )
+            }
 
         // Act
         viewModel.handleFetchedMetadata(mockMetadata)

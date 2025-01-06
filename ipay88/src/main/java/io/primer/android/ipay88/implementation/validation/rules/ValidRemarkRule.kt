@@ -14,12 +14,13 @@ internal class ValidRemarkRule :
             t.clientToken.actionType.isBlank() || remark.isNullOrBlank().not()
         ) {
             true -> ValidationResult.Success
-            false -> ValidationResult.Failure(
-                IllegalClientSessionValueException(
-                    IPay88IllegalValueKey.ILLEGAL_CUSTOMER_ID,
-                    remark
+            false ->
+                ValidationResult.Failure(
+                    IllegalClientSessionValueException(
+                        IPay88IllegalValueKey.ILLEGAL_CUSTOMER_ID,
+                        remark,
+                    ),
                 )
-            )
         }
     }
 }

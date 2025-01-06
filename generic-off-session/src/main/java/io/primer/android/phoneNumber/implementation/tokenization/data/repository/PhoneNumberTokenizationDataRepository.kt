@@ -11,9 +11,9 @@ import io.primer.android.phoneNumber.implementation.tokenization.domain.model.Ph
 internal class PhoneNumberTokenizationDataRepository(
     remoteTokenizationDataSource: BaseRemoteTokenizationDataSource<PhoneNumberPaymentInstrumentDataRequest>,
     configurationDataSource: BaseCacheDataSource<ConfigurationData, ConfigurationData>,
-    tokenizationParamsMapper: PhoneNumberTokenizationParamsMapper
+    tokenizationParamsMapper: PhoneNumberTokenizationParamsMapper,
 ) : TokenizationDataRepository<PhoneNumberPaymentInstrumentParams, PhoneNumberPaymentInstrumentDataRequest>(
-    remoteTokenizationDataSource,
-    configurationDataSource,
-    tokenizationParamsMapper
-)
+        remoteTokenizationDataSource,
+        configurationDataSource,
+        tokenizationParamsMapper,
+    )

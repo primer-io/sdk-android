@@ -12,12 +12,12 @@ import io.mockk.mockk
 import io.mockk.verify
 import io.primer.android.analytics.domain.repository.AnalyticsRepository
 import io.primer.android.core.logging.internal.LogReporter
-import io.primer.android.errors.domain.ErrorMapperRegistry
 import io.primer.android.data.tokenization.models.BinData
 import io.primer.android.data.tokenization.models.PaymentInstrumentData
+import io.primer.android.data.tokenization.models.TokenType
+import io.primer.android.errors.domain.ErrorMapperRegistry
 import io.primer.android.payments.core.tokenization.data.model.PaymentMethodTokenInternal
 import io.primer.android.payments.core.tokenization.data.model.ResponseCode
-import io.primer.android.data.tokenization.models.TokenType
 import io.primer.android.payments.core.tokenization.domain.repository.TokenizedPaymentMethodRepository
 import io.primer.android.threeds.InstantExecutorExtension
 import io.primer.android.threeds.data.models.auth.BeginAuthResponse
@@ -53,7 +53,6 @@ import java.util.UUID
 @ExperimentalCoroutinesApi
 @ExtendWith(InstantExecutorExtension::class, MockKExtension::class)
 internal class ThreeDsInteractorTest {
-
     @RelaxedMockK
     internal lateinit var threeDsSdkClassValidator: ThreeDsSdkClassValidator
 
@@ -89,18 +88,19 @@ internal class ThreeDsInteractorTest {
     @BeforeEach
     fun setUp() {
         MockKAnnotations.init(this, relaxed = true)
-        interactor = DefaultThreeDsInteractor(
-            threeDsSdkClassValidator = threeDsSdkClassValidator,
-            threeDsLibraryVersionValidator = threeDsLibraryVersionValidator,
-            threeDsServiceRepository = threeDsServiceRepository,
-            threeDsRepository = threeDsRepository,
-            tokenizedPaymentMethodRepository = tokenizedPaymentMethodRepository,
-            threeDsAppUrlRepository = threeDsAppUrlRepository,
-            threeDsConfigurationRepository = threeDsConfigurationRepository,
-            errorMapperRegistry = errorMapperRegistry,
-            analyticsRepository = analyticsRepository,
-            logReporter = logReporter
-        )
+        interactor =
+            DefaultThreeDsInteractor(
+                threeDsSdkClassValidator = threeDsSdkClassValidator,
+                threeDsLibraryVersionValidator = threeDsLibraryVersionValidator,
+                threeDsServiceRepository = threeDsServiceRepository,
+                threeDsRepository = threeDsRepository,
+                tokenizedPaymentMethodRepository = tokenizedPaymentMethodRepository,
+                threeDsAppUrlRepository = threeDsAppUrlRepository,
+                threeDsConfigurationRepository = threeDsConfigurationRepository,
+                errorMapperRegistry = errorMapperRegistry,
+                analyticsRepository = analyticsRepository,
+                logReporter = logReporter,
+            )
 
         every {
             tokenizedPaymentMethodRepository.getPaymentMethod()
@@ -147,10 +147,10 @@ internal class ThreeDsInteractorTest {
         every { threeDsLibraryVersionValidator.isValidVersion() }.returns(true)
 
         coEvery { threeDsConfigurationRepository.getConfiguration() }.returns(
-            Result.success(keysParams)
+            Result.success(keysParams),
         )
         coEvery { threeDsServiceRepository.initializeProvider(any(), any(), any()) }.returns(
-            Result.success(Unit)
+            Result.success(Unit),
         )
 
         runTest {
@@ -174,7 +174,7 @@ internal class ThreeDsInteractorTest {
         every { threeDsLibraryVersionValidator.isValidVersion() }.returns(true)
 
         coEvery { threeDsConfigurationRepository.getConfiguration() }.returns(
-            Result.failure(exception)
+            Result.failure(exception),
         )
 
         runTest {
@@ -200,10 +200,10 @@ internal class ThreeDsInteractorTest {
         every { threeDsLibraryVersionValidator.isValidVersion() }.returns(true)
 
         coEvery { threeDsConfigurationRepository.getConfiguration() }.returns(
-            Result.success(keysParams)
+            Result.success(keysParams),
         )
         coEvery { threeDsServiceRepository.initializeProvider(any(), any(), any()) }.returns(
-            Result.failure(exception)
+            Result.failure(exception),
         )
 
         runTest {
@@ -226,15 +226,16 @@ internal class ThreeDsInteractorTest {
         every { authParams.protocolVersions }.returns(listOf(ProtocolVersion.V_210))
 
         coEvery { threeDsConfigurationRepository.getPreAuthConfiguration(any()) }.returns(
-            Result.success(authParams)
+            Result.success(authParams),
         )
         coEvery { threeDsServiceRepository.performProviderAuth(any(), any(), any()) }.returns(
-            Result.success(transactionMock)
+            Result.success(transactionMock),
         )
         runTest {
-            val transaction = interactor.authenticateSdk(
-                authParams.protocolVersions.map { protocolVersion -> protocolVersion.versionNumber }
-            ).getOrThrow()
+            val transaction =
+                interactor.authenticateSdk(
+                    authParams.protocolVersions.map { protocolVersion -> protocolVersion.versionNumber },
+                ).getOrThrow()
             assertEquals(transactionMock, transaction)
         }
 
@@ -250,19 +251,20 @@ internal class ThreeDsInteractorTest {
         every { authParams.protocolVersions }.returns(listOf(ProtocolVersion.V_210))
 
         coEvery { threeDsConfigurationRepository.getPreAuthConfiguration(any()) }.returns(
-            Result.success(authParams)
+            Result.success(authParams),
         )
 
         coEvery { threeDsServiceRepository.performProviderAuth(any(), any(), any()) }.returns(
-            Result.failure(exception)
+            Result.failure(exception),
         )
 
         runTest {
-            val capturedException = requireNotNull(
-                interactor.authenticateSdk(
-                    authParams.protocolVersions.map { protocolVersion -> protocolVersion.versionNumber }
-                ).exceptionOrNull()
-            )
+            val capturedException =
+                requireNotNull(
+                    interactor.authenticateSdk(
+                        authParams.protocolVersions.map { protocolVersion -> protocolVersion.versionNumber },
+                    ).exceptionOrNull(),
+                )
             assertEquals(exception.javaClass, capturedException.javaClass)
             assertEquals(exception.message, capturedException.message)
         }
@@ -277,7 +279,7 @@ internal class ThreeDsInteractorTest {
         every { beginAuthResponse.token }.returns(paymentMethodTokenInternal)
 
         coEvery { threeDsRepository.begin3DSAuth(any(), any()) }.returns(
-            Result.success(beginAuthResponse)
+            Result.success(beginAuthResponse),
         )
 
         runTest {
@@ -295,14 +297,15 @@ internal class ThreeDsInteractorTest {
 
         val threeDsParams = mockk<BaseThreeDsParams>(relaxed = true)
         coEvery { threeDsRepository.begin3DSAuth(any(), any()) }.returns(
-            Result.failure(exception)
+            Result.failure(exception),
         )
 
         runTest {
-            val capturedException = requireNotNull(
-                interactor.beginRemoteAuth(threeDsParams)
-                    .exceptionOrNull()
-            )
+            val capturedException =
+                requireNotNull(
+                    interactor.beginRemoteAuth(threeDsParams)
+                        .exceptionOrNull(),
+                )
 
             assertEquals(exception.javaClass, capturedException.javaClass)
             assertEquals(exception.message, capturedException.message)
@@ -321,7 +324,7 @@ internal class ThreeDsInteractorTest {
         every { authResponse.token }.returns(paymentMethodTokenInternal)
         every { threeDsAppUrlRepository.getAppUrl(transaction) }.returns(null)
         every { authResponse.authentication.protocolVersion }.returns(
-            ProtocolVersion.V_220.versionNumber
+            ProtocolVersion.V_220.versionNumber,
         )
 
         coEvery {
@@ -330,12 +333,12 @@ internal class ThreeDsInteractorTest {
                 any(),
                 any(),
                 any(),
-                any()
+                any(),
             )
         }.returns(
             flowOf(
-                challengeStatusData
-            )
+                challengeStatusData,
+            ),
         )
 
         runTest {
@@ -363,12 +366,12 @@ internal class ThreeDsInteractorTest {
                 any(),
                 any(),
                 any(),
-                any()
+                any(),
             )
         }.returns(
             flowOf(
-                challengeStatusData
-            )
+                challengeStatusData,
+            ),
         )
 
         runTest {
@@ -396,16 +399,17 @@ internal class ThreeDsInteractorTest {
         }.returns(
             flow {
                 throw exception
-            }
+            },
         )
 
-        val capturedException = assertThrows<Exception> {
-            runTest {
-                val statusData =
-                    interactor.performChallenge(activity, transaction, authResponse).first()
-                assertEquals(challengeStatusData, statusData)
+        val capturedException =
+            assertThrows<Exception> {
+                runTest {
+                    val statusData =
+                        interactor.performChallenge(activity, transaction, authResponse).first()
+                    assertEquals(challengeStatusData, statusData)
+                }
             }
-        }
 
         coVerify { threeDsServiceRepository.performChallenge(any(), any(), any(), any(), any()) }
 
@@ -421,18 +425,19 @@ internal class ThreeDsInteractorTest {
         every { authParams.protocolVersions }.returns(listOf(ProtocolVersion.V_210))
 
         coEvery { threeDsConfigurationRepository.getPreAuthConfiguration(any()) }.returns(
-            Result.success(authParams)
+            Result.success(authParams),
         )
 
         coEvery { threeDsRepository.continue3DSAuth(any(), any()) }.returns(
-            Result.success(postAuthResponse)
+            Result.success(postAuthResponse),
         )
 
         runTest {
-            val response = interactor.continueRemoteAuth(
-                ChallengeStatusData("", "Y"),
-                authParams.protocolVersions.map { protocolVersion -> protocolVersion.versionNumber }
-            ).getOrThrow()
+            val response =
+                interactor.continueRemoteAuth(
+                    ChallengeStatusData("", "Y"),
+                    authParams.protocolVersions.map { protocolVersion -> protocolVersion.versionNumber },
+                ).getOrThrow()
             assertEquals(postAuthResponse, response)
         }
 
@@ -447,19 +452,20 @@ internal class ThreeDsInteractorTest {
         every { authParams.protocolVersions }.returns(listOf(ProtocolVersion.V_210))
 
         coEvery { threeDsConfigurationRepository.getPreAuthConfiguration(any()) }.returns(
-            Result.success(authParams)
+            Result.success(authParams),
         )
 
         val threeDsException = mockk<Exception>(relaxed = true)
         coEvery { threeDsRepository.continue3DSAuth(any(), any()) }.returns(
-            Result.success(postAuthResponse)
+            Result.success(postAuthResponse),
         )
 
         runTest {
-            val response = interactor.continueRemoteAuthWithException(
-                threeDsException,
-                authParams.protocolVersions.map { protocolVersion -> protocolVersion.versionNumber }
-            ).getOrThrow()
+            val response =
+                interactor.continueRemoteAuthWithException(
+                    threeDsException,
+                    authParams.protocolVersions.map { protocolVersion -> protocolVersion.versionNumber },
+                ).getOrThrow()
             assertEquals(postAuthResponse, response)
         }
 
@@ -476,19 +482,20 @@ internal class ThreeDsInteractorTest {
         every { authParams.protocolVersions }.returns(listOf(ProtocolVersion.V_210))
 
         coEvery { threeDsConfigurationRepository.getPreAuthConfiguration(any()) }.returns(
-            Result.success(authParams)
+            Result.success(authParams),
         )
         coEvery { threeDsRepository.continue3DSAuth(any(), any()) }.returns(
-            Result.failure(exception)
+            Result.failure(exception),
         )
 
         runTest {
-            val capturedException = requireNotNull(
-                interactor.continueRemoteAuth(
-                    ChallengeStatusData("", "Y"),
-                    authParams.protocolVersions.map { protocolVersion -> protocolVersion.versionNumber }
-                ).exceptionOrNull()
-            )
+            val capturedException =
+                requireNotNull(
+                    interactor.continueRemoteAuth(
+                        ChallengeStatusData("", "Y"),
+                        authParams.protocolVersions.map { protocolVersion -> protocolVersion.versionNumber },
+                    ).exceptionOrNull(),
+                )
 
             assertEquals(exception.javaClass, capturedException.javaClass)
             assertEquals(exception.message, capturedException.message)
@@ -507,19 +514,20 @@ internal class ThreeDsInteractorTest {
         every { authParams.protocolVersions }.returns(listOf(ProtocolVersion.V_210))
 
         coEvery { threeDsConfigurationRepository.getPreAuthConfiguration(any()) }.returns(
-            Result.success(authParams)
+            Result.success(authParams),
         )
         coEvery { threeDsRepository.continue3DSAuth(any(), any()) }.returns(
-            Result.failure(exception)
+            Result.failure(exception),
         )
 
         runTest {
-            val capturedException = requireNotNull(
-                interactor.continueRemoteAuthWithException(
-                    exception,
-                    authParams.protocolVersions.map { protocolVersion -> protocolVersion.versionNumber }
-                ).exceptionOrNull()
-            )
+            val capturedException =
+                requireNotNull(
+                    interactor.continueRemoteAuthWithException(
+                        exception,
+                        authParams.protocolVersions.map { protocolVersion -> protocolVersion.versionNumber },
+                    ).exceptionOrNull(),
+                )
 
             assertEquals(exception.javaClass, capturedException.javaClass)
             assertEquals(exception.message, capturedException.message)
@@ -529,7 +537,7 @@ internal class ThreeDsInteractorTest {
         coVerify { threeDsRepository.continue3DSAuth(any(), any()) }
         verify {
             errorMapperRegistry.getPrimerError(
-                exception
+                exception,
             )
         }
     }
@@ -546,7 +554,6 @@ internal class ThreeDsInteractorTest {
     }
 
     private companion object {
-
         private val paymentMethodTokenInternal =
             PaymentMethodTokenInternal(
                 token = UUID.randomUUID().toString(),
@@ -555,11 +562,12 @@ internal class ThreeDsInteractorTest {
                 paymentInstrumentType = "PAYMENT_CARD",
                 vaultData = null,
                 threeDSecureAuthentication = null,
-                paymentInstrumentData = PaymentInstrumentData(
-                    network = "VISA",
-                    binData = BinData("VISA")
-                ),
-                isVaulted = false
+                paymentInstrumentData =
+                    PaymentInstrumentData(
+                        network = "VISA",
+                        binData = BinData("VISA"),
+                    ),
+                isVaulted = false,
             )
     }
 }

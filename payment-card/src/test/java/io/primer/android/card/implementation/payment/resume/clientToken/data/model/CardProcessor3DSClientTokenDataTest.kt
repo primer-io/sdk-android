@@ -14,7 +14,6 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 
 internal class CardProcessor3DSClientTokenDataTest {
-
     private val validEncodedString = "validEncodedString"
     private val decodedString = """
         {
@@ -39,11 +38,12 @@ internal class CardProcessor3DSClientTokenDataTest {
         val result = CardProcessor3dsClientTokenData.fromString(validEncodedString)
 
         // Then
-        val expected = CardProcessor3dsClientTokenData(
-            intent = "testIntent",
-            statusUrl = "https://www.example.com/status",
-            redirectUrl = "https://www.example.com/redirect"
-        )
+        val expected =
+            CardProcessor3dsClientTokenData(
+                intent = "testIntent",
+                statusUrl = "https://www.example.com/status",
+                redirectUrl = "https://www.example.com/redirect",
+            )
         assertEquals(expected, result)
     }
 

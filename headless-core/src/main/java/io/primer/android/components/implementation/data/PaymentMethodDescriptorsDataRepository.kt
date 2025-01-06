@@ -1,7 +1,6 @@
 package io.primer.android.components.implementation.data
 
 import android.content.Context
-import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.assets.ui.registry.BrandRegistry
 import io.primer.android.components.PaymentMethodListFactory
 import io.primer.android.components.implementation.domain.PaymentMethodDescriptorsRepository
@@ -9,6 +8,7 @@ import io.primer.android.configuration.data.datasource.CacheConfigurationDataSou
 import io.primer.android.configuration.data.model.ConfigurationData
 import io.primer.android.core.di.DISdkContext
 import io.primer.android.core.extensions.runSuspendCatching
+import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.errors.domain.ErrorMapperRegistry
 import io.primer.android.paymentmethods.PaymentMethod
 import io.primer.android.paymentmethods.PaymentMethodCheckerRegistry
@@ -30,26 +30,27 @@ internal class PaymentMethodDescriptorsDataRepository(
     private val paymentMethodNavigationFactoryRegistry: PaymentMethodNavigationFactoryRegistry,
     private val errorMapperRegistry: ErrorMapperRegistry,
     private val brandRegistry: BrandRegistry,
-    private val config: PrimerConfig
+    private val config: PrimerConfig,
 ) : PaymentMethodDescriptorsRepository {
-
     private val descriptors = mutableListOf<PaymentMethodDescriptor>()
 
-    override suspend fun resolvePaymentMethodDescriptors(): Result<List<PaymentMethodDescriptor>> = runSuspendCatching {
-        configurationDataSource.get()
-            .let { checkoutSession ->
-                val paymentMethodDescriptorResolver = PrimerPaymentMethodDescriptorResolver(
-                    config,
-                    getPaymentMethods(checkoutSession),
-                    paymentMethodDescriptorFactoryRegistry,
-                    paymentMethodCheckerRegistry
-                )
+    override suspend fun resolvePaymentMethodDescriptors(): Result<List<PaymentMethodDescriptor>> =
+        runSuspendCatching {
+            configurationDataSource.get()
+                .let { checkoutSession ->
+                    val paymentMethodDescriptorResolver =
+                        PrimerPaymentMethodDescriptorResolver(
+                            config,
+                            getPaymentMethods(checkoutSession),
+                            paymentMethodDescriptorFactoryRegistry,
+                            paymentMethodCheckerRegistry,
+                        )
 
-                paymentMethodDescriptorResolver.resolve(checkoutSession.paymentMethods).apply {
-                    descriptors.addAll(this)
+                    paymentMethodDescriptorResolver.resolve(checkoutSession.paymentMethods).apply {
+                        descriptors.addAll(this)
+                    }
                 }
-            }
-    }
+        }
 
     override fun getPaymentMethodDescriptors(): List<PaymentMethodDescriptor> {
         return descriptors
@@ -67,7 +68,7 @@ internal class PaymentMethodDescriptorsDataRepository(
     private fun initializeAndRegisterModules(
         context: Context,
         paymentMethod: PaymentMethod,
-        configuration: ConfigurationData
+        configuration: ConfigurationData,
     ) {
         if (config.paymentMethodIntent.isNotVault ||
             (config.paymentMethodIntent.isVault && paymentMethod.canBeVaulted) ||
@@ -76,25 +77,26 @@ internal class PaymentMethodDescriptorsDataRepository(
             paymentMethod.module.initialize(context, configuration)
             paymentMethod.module.registerPaymentMethodCheckers(paymentMethodCheckerRegistry)
             paymentMethod.module.registerPaymentMethodDescriptorFactory(
-                paymentMethodDescriptorFactoryRegistry
+                paymentMethodDescriptorFactoryRegistry,
             )
             paymentMethod.module.registerPaymentMethodProviderFactory(
-                paymentMethodProviderFactoryRegistry
+                paymentMethodProviderFactoryRegistry,
             )
 
             paymentMethod.module.registerSavedPaymentMethodProviderFactory(
-                vaultedPaymentMethodProviderFactoryRegistry
+                vaultedPaymentMethodProviderFactoryRegistry,
             )
 
             paymentMethod.module.registerPaymentMethodNavigationFactory(
-                paymentMethodNavigationFactoryRegistry
+                paymentMethodNavigationFactoryRegistry,
             )
 
             paymentMethod.module.registerDependencyContainer(
-                sdkContainers = listOfNotNull(
-                    DISdkContext.headlessSdkContainer,
-                    DISdkContext.dropInSdkContainer
-                )
+                sdkContainers =
+                    listOfNotNull(
+                        DISdkContext.headlessSdkContainer,
+                        DISdkContext.dropInSdkContainer,
+                    ),
             )
 
             paymentMethod.module.registerErrorMappers(errorMapperRegistry)

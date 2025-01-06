@@ -10,32 +10,34 @@ import io.primer.android.payments.core.tokenization.domain.model.TokenizationPar
 import org.junit.jupiter.api.Test
 
 internal class IPay88TokenizationParamsMapperTest {
-
     private val mapper = IPay88TokenizationParamsMapper()
 
     @Test
     fun `map should correctly map TokenizationParams to TokenizationRequestV2`() {
         // Given
         val paymentMethodType = "IPAY88"
-        val paymentInstrumentParams = IPay88PaymentInstrumentParams(
-            paymentMethodType = paymentMethodType,
-            paymentMethodConfigId = "testPaymentMethodConfigId",
-            locale = "testLocale"
-        )
+        val paymentInstrumentParams =
+            IPay88PaymentInstrumentParams(
+                paymentMethodType = paymentMethodType,
+                paymentMethodConfigId = "testPaymentMethodConfigId",
+                locale = "testLocale",
+            )
         val sessionIntent = PrimerSessionIntent.CHECKOUT
         val tokenizationParams = TokenizationParams(paymentInstrumentParams, sessionIntent)
 
         // When
         val result = mapper.map(tokenizationParams)
 
-        val instrumentRequest = IPay88PaymentInstrumentDataRequest(
-            paymentMethodType = paymentMethodType,
-            paymentMethodConfigId = "testPaymentMethodConfigId",
-            sessionInfo = IPay88SessionInfoDataRequest(
-                locale = "testLocale"
-            ),
-            type = PaymentInstrumentType.OFF_SESSION_PAYMENT
-        )
+        val instrumentRequest =
+            IPay88PaymentInstrumentDataRequest(
+                paymentMethodType = paymentMethodType,
+                paymentMethodConfigId = "testPaymentMethodConfigId",
+                sessionInfo =
+                    IPay88SessionInfoDataRequest(
+                        locale = "testLocale",
+                    ),
+                type = PaymentInstrumentType.OFF_SESSION_PAYMENT,
+            )
 
         // Then
         val expectedRequest = instrumentRequest.toTokenizationRequest(sessionIntent)

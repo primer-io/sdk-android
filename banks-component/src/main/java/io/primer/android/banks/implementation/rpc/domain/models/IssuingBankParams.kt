@@ -6,5 +6,5 @@ import java.util.Locale
 internal data class IssuingBankParams(
     val paymentMethodConfigId: String,
     val paymentMethod: String,
-    val locale: Locale
+    val locale: Locale,
 ) : Params

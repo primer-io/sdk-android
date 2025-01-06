@@ -13,7 +13,7 @@ internal data class FormDataResponse(
     val inputs: List<FormInputDataResponse>? = null,
     val accountNumber: String? = null,
     val expiration: String? = null,
-    val inputPrefix: FormInputPrefix? = null
+    val inputPrefix: FormInputPrefix? = null,
 )
 
 internal data class FormInputDataResponse(
@@ -25,49 +25,50 @@ internal data class FormInputDataResponse(
     val inputCharacters: String? = null,
     val maxInputLength: Int? = null,
     val validation: String? = null,
-    val inputPrefix: FormInputPrefix? = null
+    val inputPrefix: FormInputPrefix? = null,
 )
 
 internal enum class FormType {
-
     TEXT,
     PHONE,
     NUMBER,
-    IBAN
+    IBAN,
 }
 
 internal enum class ButtonType {
-
     CONFIRM,
     PAY,
-    NEXT
+    NEXT,
 }
 
-internal fun FormType.toInputType() = when (this) {
-    FormType.TEXT -> InputType.TYPE_CLASS_TEXT
-    FormType.PHONE -> InputType.TYPE_CLASS_PHONE
-    FormType.NUMBER -> InputType.TYPE_CLASS_NUMBER
-    FormType.IBAN -> InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS
-}
+internal fun FormType.toInputType() =
+    when (this) {
+        FormType.TEXT -> InputType.TYPE_CLASS_TEXT
+        FormType.PHONE -> InputType.TYPE_CLASS_PHONE
+        FormType.NUMBER -> InputType.TYPE_CLASS_NUMBER
+        FormType.IBAN -> InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS
+    }
 
-internal fun FormDataResponse.toForm() = Form(
-    title,
-    logo,
-    buttonType,
-    description,
-    inputs?.map { it.toFormInput() },
-    accountNumber,
-    expiration,
-    inputPrefix
-)
+internal fun FormDataResponse.toForm() =
+    Form(
+        title,
+        logo,
+        buttonType,
+        description,
+        inputs?.map { it.toFormInput() },
+        accountNumber,
+        expiration,
+        inputPrefix,
+    )
 
-internal fun FormInputDataResponse.toFormInput() = FormInput(
-    type,
-    type.toInputType(),
-    id,
-    hint,
-    inputCharacters,
-    maxInputLength,
-    validation?.let { Regex(it, RegexOption.IGNORE_CASE) },
-    inputPrefix
-)
+internal fun FormInputDataResponse.toFormInput() =
+    FormInput(
+        type,
+        type.toInputType(),
+        id,
+        hint,
+        inputCharacters,
+        maxInputLength,
+        validation?.let { Regex(it, RegexOption.IGNORE_CASE) },
+        inputPrefix,
+    )

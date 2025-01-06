@@ -53,14 +53,18 @@ internal class StripeAchUserDetailsCollectionFragment : BaseFragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View = FragmentStripeAchUserDetailsCollectionBinding.inflate(inflater, container, false).apply {
-        progressGroup.isVisible = true
-        inputGroup.isVisible = false
-        binding = this
-    }.root
+        savedInstanceState: Bundle?,
+    ): View =
+        FragmentStripeAchUserDetailsCollectionBinding.inflate(inflater, container, false).apply {
+            progressGroup.isVisible = true
+            inputGroup.isVisible = false
+            binding = this
+        }.root
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onViewCreated(
+        view: View,
+        savedInstanceState: Bundle?,
+    ) {
         super.onViewCreated(view, savedInstanceState)
 
         applyStyle()
@@ -99,26 +103,29 @@ internal class StripeAchUserDetailsCollectionFragment : BaseFragment() {
     }
 
     private fun applyStyle() {
-        val titleColor = theme.titleText.defaultColor.getColor(
-            context = requireContext(),
-            isDarkMode = theme.isDarkMode
-        )
+        val titleColor =
+            theme.titleText.defaultColor.getColor(
+                context = requireContext(),
+                isDarkMode = theme.isDarkMode,
+            )
         binding.paymentMethodBack.setColorFilter(titleColor)
         binding.title.setTextColor(ColorStateList.valueOf(titleColor))
-        val textColorList = ColorStateList.valueOf(
-            theme.defaultText.defaultColor.getColor(
-                context = requireContext(),
-                isDarkMode = theme.isDarkMode
+        val textColorList =
+            ColorStateList.valueOf(
+                theme.defaultText.defaultColor.getColor(
+                    context = requireContext(),
+                    isDarkMode = theme.isDarkMode,
+                ),
             )
-        )
         binding.subtitle.setTextColor(textColorList)
         binding.progressText.setTextColor(textColorList)
-        val inputColorList = ColorStateList.valueOf(
-            theme.input.text.defaultColor.getColor(
-                context = requireContext(),
-                isDarkMode = theme.isDarkMode
+        val inputColorList =
+            ColorStateList.valueOf(
+                theme.input.text.defaultColor.getColor(
+                    context = requireContext(),
+                    isDarkMode = theme.isDarkMode,
+                ),
             )
-        )
         binding.firstNameInput.setTextColor(inputColorList)
         binding.lastNameInput.setTextColor(inputColorList)
         binding.emailAddressInput.setTextColor(inputColorList)
@@ -155,17 +162,17 @@ internal class StripeAchUserDetailsCollectionFragment : BaseFragment() {
 
                     binding.firstNameInput.doAfterTextChanged {
                         component.updateCollectedData(
-                            AchUserDetailsCollectableData.FirstName(it.toString())
+                            AchUserDetailsCollectableData.FirstName(it.toString()),
                         )
                     }
                     binding.lastNameInput.doAfterTextChanged {
                         component.updateCollectedData(
-                            AchUserDetailsCollectableData.LastName(it.toString())
+                            AchUserDetailsCollectableData.LastName(it.toString()),
                         )
                     }
                     binding.emailAddressInput.doAfterTextChanged {
                         component.updateCollectedData(
-                            AchUserDetailsCollectableData.EmailAddress(it.toString().orEmpty())
+                            AchUserDetailsCollectableData.EmailAddress(it.toString().orEmpty()),
                         )
                     }
 
@@ -197,10 +204,12 @@ internal class StripeAchUserDetailsCollectionFragment : BaseFragment() {
                     when (status.collectableData) {
                         is AchUserDetailsCollectableData.FirstName,
                         is AchUserDetailsCollectableData.LastName,
-                        is AchUserDetailsCollectableData.EmailAddress -> updateInputErrors(
-                            status.collectableData,
-                            error = status.toString()
-                        )
+                        is AchUserDetailsCollectableData.EmailAddress,
+                        ->
+                            updateInputErrors(
+                                status.collectableData,
+                                error = status.toString(),
+                            )
 
                         else -> {
                             // no-op
@@ -210,20 +219,23 @@ internal class StripeAchUserDetailsCollectionFragment : BaseFragment() {
 
                 is PrimerValidationStatus.Invalid -> {
                     when (status.collectableData) {
-                        is AchUserDetailsCollectableData.FirstName -> updateInputErrors(
-                            status.collectableData,
-                            getString(R.string.stripe_ach_user_details_collection_invalid_first_name)
-                        )
+                        is AchUserDetailsCollectableData.FirstName ->
+                            updateInputErrors(
+                                status.collectableData,
+                                getString(R.string.stripe_ach_user_details_collection_invalid_first_name),
+                            )
 
-                        is AchUserDetailsCollectableData.LastName -> updateInputErrors(
-                            status.collectableData,
-                            getString(R.string.stripe_ach_user_details_collection_invalid_last_name)
-                        )
+                        is AchUserDetailsCollectableData.LastName ->
+                            updateInputErrors(
+                                status.collectableData,
+                                getString(R.string.stripe_ach_user_details_collection_invalid_last_name),
+                            )
 
-                        is AchUserDetailsCollectableData.EmailAddress -> updateInputErrors(
-                            status.collectableData,
-                            getString(R.string.stripe_ach_user_details_collection_invalid_email_address)
-                        )
+                        is AchUserDetailsCollectableData.EmailAddress ->
+                            updateInputErrors(
+                                status.collectableData,
+                                getString(R.string.stripe_ach_user_details_collection_invalid_email_address),
+                            )
 
                         else -> {
                             // no-op
@@ -235,10 +247,12 @@ internal class StripeAchUserDetailsCollectionFragment : BaseFragment() {
                     when (status.collectableData) {
                         is AchUserDetailsCollectableData.FirstName,
                         is AchUserDetailsCollectableData.LastName,
-                        is AchUserDetailsCollectableData.EmailAddress -> updateInputErrors(
-                            status.collectableData,
-                            error = null
-                        )
+                        is AchUserDetailsCollectableData.EmailAddress,
+                        ->
+                            updateInputErrors(
+                                status.collectableData,
+                                error = null,
+                            )
 
                         else -> {
                             // no-op
@@ -253,7 +267,7 @@ internal class StripeAchUserDetailsCollectionFragment : BaseFragment() {
 
     private fun updateInputErrors(
         collectibleData: PrimerCollectableData,
-        error: String?
+        error: String?,
     ) {
         when (collectibleData) {
             is AchUserDetailsCollectableData.FirstName -> binding.firstName

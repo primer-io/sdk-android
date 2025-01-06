@@ -7,5 +7,5 @@ internal enum class AnalyticsEventType {
     NETWORK_CALL_EVENT,
     TIMER_EVENT,
     MESSAGE_EVENT,
-    SDK_FUNCTION_EVENT
+    SDK_FUNCTION_EVENT,
 }

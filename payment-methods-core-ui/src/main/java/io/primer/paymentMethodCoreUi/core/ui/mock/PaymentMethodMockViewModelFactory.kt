@@ -12,15 +12,17 @@ class PaymentMethodMockViewModelFactory(
     private val finaliseMockedFlowInteractor: FinaliseMockedFlowInteractor,
     private val paymentResumeHandler: PaymentResumeHandler,
     private val errorHandler: CheckoutErrorHandler,
-    private val successHandler: CheckoutSuccessHandler
+    private val successHandler: CheckoutSuccessHandler,
 ) : ViewModelProvider.Factory {
-
-    override fun <T : ViewModel> create(modelClass: Class<T>, extras: CreationExtras): T {
+    override fun <T : ViewModel> create(
+        modelClass: Class<T>,
+        extras: CreationExtras,
+    ): T {
         return PaymentMethodMockViewModel(
             finaliseMockedFlowInteractor = finaliseMockedFlowInteractor,
             paymentResumeHandler = paymentResumeHandler,
             errorHandler = errorHandler,
-            successHandler = successHandler
+            successHandler = successHandler,
         ) as T
     }
 }

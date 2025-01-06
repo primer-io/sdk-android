@@ -14,9 +14,10 @@ import kotlin.test.assertEquals
 @ExtendWith(MockKExtension::class)
 @ExperimentalCoroutinesApi
 class MockConfigurationDelegateTest {
-    private val interactor = mockk<MockConfigurationInteractor> {
-        every { execute(any()) } returns false
-    }
+    private val interactor =
+        mockk<MockConfigurationInteractor> {
+            every { execute(any()) } returns false
+        }
 
     private val delegate = MockConfigurationDelegate(interactor)
 

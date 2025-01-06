@@ -8,14 +8,16 @@ import io.primer.android.domain.helper.CountriesRepository
 
 internal class SelectCountryViewModelFactory(
     private val countriesRepository: CountriesRepository,
-    private val analyticsInteractor: AnalyticsInteractor
+    private val analyticsInteractor: AnalyticsInteractor,
 ) :
     ViewModelProvider.Factory {
-
-    override fun <T : ViewModel> create(modelClass: Class<T>, extras: CreationExtras): T {
+    override fun <T : ViewModel> create(
+        modelClass: Class<T>,
+        extras: CreationExtras,
+    ): T {
         return SelectCountryViewModel(
             countriesRepository,
-            analyticsInteractor
+            analyticsInteractor,
         ) as T
     }
 }

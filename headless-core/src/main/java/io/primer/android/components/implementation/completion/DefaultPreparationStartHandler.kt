@@ -12,11 +12,10 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 
 internal class DefaultPreparationStartHandler(
     private val analyticsRepository: AnalyticsRepository,
-    private val coroutineDispatcher: MainCoroutineDispatcher = Dispatchers.Main
+    private val coroutineDispatcher: MainCoroutineDispatcher = Dispatchers.Main,
 ) : PreparationStartHandler {
-
+    @Suppress("ktlint:standard:property-naming")
     private val _startPreparation = MutableSharedFlow<String>()
-
     override val preparationStarted: Flow<String> = _startPreparation
 
     override suspend fun handle(paymentMethodType: String) {
@@ -25,9 +24,9 @@ internal class DefaultPreparationStartHandler(
                 HeadlessUniversalCheckoutAnalyticsConstants.ON_PREPARATION_STARTED,
                 mapOf(
                     HeadlessUniversalCheckoutAnalyticsConstants.PAYMENT_METHOD_TYPE
-                        to paymentMethodType
-                )
-            )
+                        to paymentMethodType,
+                ),
+            ),
         )
         _startPreparation.emit(paymentMethodType)
         coroutineDispatcher.dispatch(coroutineDispatcher.immediate) {

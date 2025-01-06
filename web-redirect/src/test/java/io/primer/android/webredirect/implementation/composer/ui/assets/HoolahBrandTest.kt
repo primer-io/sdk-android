@@ -4,7 +4,6 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
 class HoolahBrandTest {
-
     private val hoolahBrand = HoolahBrand()
 
     @Test

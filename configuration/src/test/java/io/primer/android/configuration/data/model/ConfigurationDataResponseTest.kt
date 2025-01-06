@@ -5,30 +5,30 @@ import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
 internal class ConfigurationDataResponseTest {
-
     private val configurationDataResponse by lazy {
         ConfigurationDataResponse.deserializer.deserialize(
-            JSONObject(JSON_OBJECT)
+            JSONObject(JSON_OBJECT),
         )
     }
 
     @Test
     fun `toConfigurationData() maps correctly`() {
-        val configurationData = with(configurationDataResponse) {
-            ConfigurationData(
-                pciUrl,
-                coreUrl,
-                binDataUrl,
-                assetsUrl,
-                paymentMethods,
-                checkoutModules,
-                keys,
-                clientSession,
-                environment,
-                primerAccountId,
-                listOf()
-            )
-        }
+        val configurationData =
+            with(configurationDataResponse) {
+                ConfigurationData(
+                    pciUrl,
+                    coreUrl,
+                    binDataUrl,
+                    assetsUrl,
+                    paymentMethods,
+                    checkoutModules,
+                    keys,
+                    clientSession,
+                    environment,
+                    primerAccountId,
+                    listOf(),
+                )
+            }
 
         assertEquals(configurationData, configurationDataResponse.toConfigurationData(listOf()))
     }
@@ -60,21 +60,22 @@ internal class ConfigurationDataResponseTest {
 
     @Test
     fun `'paymentMethod-options' should be deserialized correctly`() {
-        val paymentMethodRemoteConfigOptions = listOf(
-            PaymentMethodRemoteConfigOptions(
-                PAYMENT_METHOD_OPTIONS_MERCHANT_ID,
-                PAYMENT_METHOD_OPTIONS_MERCHANT_ACCOUNT_ID,
-                null,
-                null,
-                null,
-                null
+        val paymentMethodRemoteConfigOptions =
+            listOf(
+                PaymentMethodRemoteConfigOptions(
+                    PAYMENT_METHOD_OPTIONS_MERCHANT_ID,
+                    PAYMENT_METHOD_OPTIONS_MERCHANT_ACCOUNT_ID,
+                    null,
+                    null,
+                    null,
+                    null,
+                ),
             )
-        )
         assertEquals(
             paymentMethodRemoteConfigOptions,
             configurationDataResponse.paymentMethods.map {
                 it.options?.copy(extraMerchantData = null)
-            }
+            },
         )
     }
 
@@ -84,7 +85,7 @@ internal class ConfigurationDataResponseTest {
             JSONObject(EXTRA_MERCHANT_DATA).toString(),
             configurationDataResponse.paymentMethods.map {
                 it.options
-            }.single()?.extraMerchantData.toString()
+            }.single()?.extraMerchantData.toString(),
         )
     }
 
@@ -92,7 +93,7 @@ internal class ConfigurationDataResponseTest {
     fun `'paymentMethod-implementationType' should be deserialized correctly`() {
         assertEquals(
             PaymentMethodImplementationType.NATIVE_SDK,
-            configurationDataResponse.paymentMethods.first().implementationType
+            configurationDataResponse.paymentMethods.first().implementationType,
         )
     }
 
@@ -100,7 +101,7 @@ internal class ConfigurationDataResponseTest {
     fun `'paymentMethod-name' should be deserialized correctly`() {
         assertEquals(
             PAYMENT_METHOD_NAME,
-            configurationDataResponse.paymentMethods.first().name
+            configurationDataResponse.paymentMethods.first().name,
         )
     }
 
@@ -110,11 +111,11 @@ internal class ConfigurationDataResponseTest {
             PaymentMethodDisplayMetadataResponse.ButtonDataResponse.IconUrlDataResponse(
                 PAYMENT_METHOD_DISPLAY_METADATA_BUTTON_ICON_URL_COLORED,
                 PAYMENT_METHOD_DISPLAY_METADATA_BUTTON_ICON_URL_DARK,
-                PAYMENT_METHOD_DISPLAY_METADATA_BUTTON_ICON_URL_LIGHT
+                PAYMENT_METHOD_DISPLAY_METADATA_BUTTON_ICON_URL_LIGHT,
             )
         assertEquals(
             iconUrlDataResponse,
-            configurationDataResponse.paymentMethods.first().displayMetadata?.buttonData?.iconUrl
+            configurationDataResponse.paymentMethods.first().displayMetadata?.buttonData?.iconUrl,
         )
     }
 
@@ -124,12 +125,12 @@ internal class ConfigurationDataResponseTest {
             PaymentMethodDisplayMetadataResponse.ButtonDataResponse.ColorDataResponse(
                 PAYMENT_METHOD_DISPLAY_METADATA_BUTTON_BACKGROUND_COLOR_COLORED,
                 PAYMENT_METHOD_DISPLAY_METADATA_BUTTON_BACKGROUND_COLOR_LIGHT,
-                PAYMENT_METHOD_DISPLAY_METADATA_BUTTON_BACKGROUND_COLOR_DARK
+                PAYMENT_METHOD_DISPLAY_METADATA_BUTTON_BACKGROUND_COLOR_DARK,
             )
         assertEquals(
             colorDataResponse,
             configurationDataResponse.paymentMethods
-                .first().displayMetadata?.buttonData?.backgroundColorData
+                .first().displayMetadata?.buttonData?.backgroundColorData,
         )
     }
 
@@ -138,7 +139,7 @@ internal class ConfigurationDataResponseTest {
         assertEquals(
             PAYMENT_METHOD_DISPLAY_METADATA_BUTTON_RADIUS,
             configurationDataResponse.paymentMethods
-                .first().displayMetadata?.buttonData?.cornerRadius
+                .first().displayMetadata?.buttonData?.cornerRadius,
         )
     }
 
@@ -148,12 +149,12 @@ internal class ConfigurationDataResponseTest {
             PaymentMethodDisplayMetadataResponse.ButtonDataResponse.BorderWidthDataResponse(
                 PAYMENT_METHOD_DISPLAY_METADATA_BUTTON_BORDER_WIDTH_COLORED,
                 PAYMENT_METHOD_DISPLAY_METADATA_BUTTON_BORDER_WIDTH_LIGHT,
-                PAYMENT_METHOD_DISPLAY_METADATA_BUTTON_BORDER_WIDTH_DARK
+                PAYMENT_METHOD_DISPLAY_METADATA_BUTTON_BORDER_WIDTH_DARK,
             )
         assertEquals(
             colorDataResponse,
             configurationDataResponse.paymentMethods
-                .first().displayMetadata?.buttonData?.borderWidthData
+                .first().displayMetadata?.buttonData?.borderWidthData,
         )
     }
 
@@ -163,12 +164,12 @@ internal class ConfigurationDataResponseTest {
             PaymentMethodDisplayMetadataResponse.ButtonDataResponse.ColorDataResponse(
                 null,
                 PAYMENT_METHOD_DISPLAY_METADATA_BUTTON_BORDER_COLOR_LIGHT,
-                PAYMENT_METHOD_DISPLAY_METADATA_BUTTON_BORDER_COLOR_DARK
+                PAYMENT_METHOD_DISPLAY_METADATA_BUTTON_BORDER_COLOR_DARK,
             )
         assertEquals(
             colorDataResponse,
             configurationDataResponse.paymentMethods
-                .first().displayMetadata?.buttonData?.borderColorData
+                .first().displayMetadata?.buttonData?.borderColorData,
         )
     }
 
@@ -176,7 +177,7 @@ internal class ConfigurationDataResponseTest {
     fun `'checkout-module-card-information-type' should be deserialized correctly`() {
         assertEquals(
             CheckoutModuleType.CARD_INFORMATION,
-            configurationDataResponse.checkoutModules[0].type
+            configurationDataResponse.checkoutModules[0].type,
         )
     }
 
@@ -184,7 +185,7 @@ internal class ConfigurationDataResponseTest {
     fun `'checkout-module-card-information-options' should be deserialized correctly`() {
         assertEquals(
             mapOf("cardHolderName" to true),
-            configurationDataResponse.checkoutModules[0].options
+            configurationDataResponse.checkoutModules[0].options,
         )
     }
 
@@ -192,7 +193,7 @@ internal class ConfigurationDataResponseTest {
     fun `'checkout-module-billing-address-type' should be deserialized correctly`() {
         assertEquals(
             CheckoutModuleType.BILLING_ADDRESS,
-            configurationDataResponse.checkoutModules[1].type
+            configurationDataResponse.checkoutModules[1].type,
         )
     }
 
@@ -208,9 +209,9 @@ internal class ConfigurationDataResponseTest {
                 "addressLine2" to true,
                 "phoneNumber" to true,
                 "firstName" to true,
-                "lastName" to true
+                "lastName" to true,
             ),
-            configurationDataResponse.checkoutModules[1].options
+            configurationDataResponse.checkoutModules[1].options,
         )
     }
 
@@ -218,7 +219,7 @@ internal class ConfigurationDataResponseTest {
     fun `'checkout-module-shipping-type' should be deserialized correctly`() {
         assertEquals(
             CheckoutModuleType.SHIPPING,
-            configurationDataResponse.checkoutModules[2].type
+            configurationDataResponse.checkoutModules[2].type,
         )
     }
 
@@ -226,7 +227,7 @@ internal class ConfigurationDataResponseTest {
     fun `'checkout-module-shipping-type-options' should be deserialized correctly`() {
         assertEquals(
             null,
-            configurationDataResponse.checkoutModules[2].options
+            configurationDataResponse.checkoutModules[2].options,
         )
     }
 
@@ -239,18 +240,18 @@ internal class ConfigurationDataResponseTest {
                         "Regular",
                         "Regular",
                         100,
-                        "Regular"
+                        "Regular",
                     ),
                     ShippingMethod(
                         "Next Business Day",
                         "Get your stuff delivered next business day",
                         200,
-                        "NextBusiness"
-                    )
+                        "NextBusiness",
+                    ),
                 ),
-                "NextBusiness"
+                "NextBusiness",
             ),
-            configurationDataResponse.checkoutModules[2].shippingOptions
+            configurationDataResponse.checkoutModules[2].shippingOptions,
         )
     }
 
@@ -258,7 +259,7 @@ internal class ConfigurationDataResponseTest {
     fun `'client-session-id' should be deserialized correctly`() {
         assertEquals(
             CLIENT_SESSION_ID,
-            configurationDataResponse.clientSession.clientSessionId
+            configurationDataResponse.clientSession.clientSessionId,
         )
     }
 
@@ -266,7 +267,7 @@ internal class ConfigurationDataResponseTest {
     fun `'client-session-order-id' should be deserialized correctly`() {
         assertEquals(
             CLIENT_SESSION_ORDER_ID,
-            configurationDataResponse.clientSession.order?.orderId
+            configurationDataResponse.clientSession.order?.orderId,
         )
     }
 
@@ -274,7 +275,7 @@ internal class ConfigurationDataResponseTest {
     fun `'client-session-order-countryCode' should be deserialized correctly`() {
         assertEquals(
             CountryCode.GB,
-            configurationDataResponse.clientSession.order?.countryCode
+            configurationDataResponse.clientSession.order?.countryCode,
         )
     }
 
@@ -282,7 +283,7 @@ internal class ConfigurationDataResponseTest {
     fun `'client-session-order-currencyCode' should be deserialized correctly`() {
         assertEquals(
             CLIENT_SESSION_ORDER_CURRENCY,
-            configurationDataResponse.clientSession.order?.currencyCode
+            configurationDataResponse.clientSession.order?.currencyCode,
         )
     }
 
@@ -290,7 +291,7 @@ internal class ConfigurationDataResponseTest {
     fun `'client-session-order-totalOrderAmount' should be deserialized correctly`() {
         assertEquals(
             CLIENT_SESSION_ORDER_TOTAL_AMOUNT,
-            configurationDataResponse.clientSession.order?.totalOrderAmount
+            configurationDataResponse.clientSession.order?.totalOrderAmount,
         )
     }
 
@@ -303,10 +304,10 @@ internal class ConfigurationDataResponseTest {
                     quantity = CLIENT_SESSION_ORDER_LINE_ITEMS_QUANTITY,
                     discountAmount = CLIENT_SESSION_ORDER_LINE_ITEMS_DISCOUNT_AMOUNT,
                     itemId = CLIENT_SESSION_ORDER_LINE_ITEMS_ITEM_ID,
-                    description = CLIENT_SESSION_ORDER_LINE_ITEMS_ITEM_DESCRIPTION
-                )
+                    description = CLIENT_SESSION_ORDER_LINE_ITEMS_ITEM_DESCRIPTION,
+                ),
             ),
-            configurationDataResponse.clientSession.order?.lineItems
+            configurationDataResponse.clientSession.order?.lineItems,
         )
     }
 
@@ -316,10 +317,10 @@ internal class ConfigurationDataResponseTest {
             listOf(
                 OrderDataResponse.FeeDataResponse(
                     CLIENT_SESSION_ORDER_FEE_TYPE,
-                    CLIENT_SESSION_ORDER_FEE_AMOUNT
-                )
+                    CLIENT_SESSION_ORDER_FEE_AMOUNT,
+                ),
             ),
-            configurationDataResponse.clientSession.order?.fees
+            configurationDataResponse.clientSession.order?.fees,
         )
     }
 
@@ -332,35 +333,37 @@ internal class ConfigurationDataResponseTest {
                 firstName = CLIENT_SESSION_CUSTOMER_FIRST_NAME,
                 lastName = CLIENT_SESSION_CUSTOMER_LAST_NAME,
                 emailAddress = CLIENT_SESSION_CUSTOMER_EMAIL,
-                billingAddress = AddressData(
-                    CLIENT_SESSION_CUSTOMER_FIRST_NAME,
-                    CLIENT_SESSION_CUSTOMER_LAST_NAME,
-                    CLIENT_SESSION_CUSTOMER_EMAIL,
-                    CLIENT_SESSION_CUSTOMER_MOBILE_NUMBER,
-                    CLIENT_SESSION_CUSTOMER_ADDRESS_LINE,
-                    CLIENT_SESSION_CUSTOMER_ADDRESS_LINE,
-                    CLIENT_SESSION_CUSTOMER_ADDRESS_LINE,
-                    CLIENT_SESSION_CUSTOMER_ADDRESS_POSTAL_CODE,
-                    CLIENT_SESSION_CUSTOMER_ADDRESS_CITY,
-                    CLIENT_SESSION_CUSTOMER_ADDRESS_STATE,
-                    CountryCode.GB
-                ),
-                shippingAddress = AddressData(
-                    CLIENT_SESSION_CUSTOMER_FIRST_NAME,
-                    CLIENT_SESSION_CUSTOMER_LAST_NAME,
-                    CLIENT_SESSION_CUSTOMER_EMAIL,
-                    CLIENT_SESSION_CUSTOMER_MOBILE_NUMBER,
-                    CLIENT_SESSION_CUSTOMER_ADDRESS_LINE,
-                    CLIENT_SESSION_CUSTOMER_ADDRESS_LINE,
-                    CLIENT_SESSION_CUSTOMER_ADDRESS_LINE,
-                    CLIENT_SESSION_CUSTOMER_ADDRESS_POSTAL_CODE,
-                    CLIENT_SESSION_CUSTOMER_ADDRESS_CITY,
-                    CLIENT_SESSION_CUSTOMER_ADDRESS_STATE,
-                    CountryCode.GB
-                ),
-                nationalDocumentId = CLIENT_SESSION_CUSTOMER_NATIONAL_ID
+                billingAddress =
+                    AddressData(
+                        CLIENT_SESSION_CUSTOMER_FIRST_NAME,
+                        CLIENT_SESSION_CUSTOMER_LAST_NAME,
+                        CLIENT_SESSION_CUSTOMER_EMAIL,
+                        CLIENT_SESSION_CUSTOMER_MOBILE_NUMBER,
+                        CLIENT_SESSION_CUSTOMER_ADDRESS_LINE,
+                        CLIENT_SESSION_CUSTOMER_ADDRESS_LINE,
+                        CLIENT_SESSION_CUSTOMER_ADDRESS_LINE,
+                        CLIENT_SESSION_CUSTOMER_ADDRESS_POSTAL_CODE,
+                        CLIENT_SESSION_CUSTOMER_ADDRESS_CITY,
+                        CLIENT_SESSION_CUSTOMER_ADDRESS_STATE,
+                        CountryCode.GB,
+                    ),
+                shippingAddress =
+                    AddressData(
+                        CLIENT_SESSION_CUSTOMER_FIRST_NAME,
+                        CLIENT_SESSION_CUSTOMER_LAST_NAME,
+                        CLIENT_SESSION_CUSTOMER_EMAIL,
+                        CLIENT_SESSION_CUSTOMER_MOBILE_NUMBER,
+                        CLIENT_SESSION_CUSTOMER_ADDRESS_LINE,
+                        CLIENT_SESSION_CUSTOMER_ADDRESS_LINE,
+                        CLIENT_SESSION_CUSTOMER_ADDRESS_LINE,
+                        CLIENT_SESSION_CUSTOMER_ADDRESS_POSTAL_CODE,
+                        CLIENT_SESSION_CUSTOMER_ADDRESS_CITY,
+                        CLIENT_SESSION_CUSTOMER_ADDRESS_STATE,
+                        CountryCode.GB,
+                    ),
+                nationalDocumentId = CLIENT_SESSION_CUSTOMER_NATIONAL_ID,
             ),
-            configurationDataResponse.clientSession.customer
+            configurationDataResponse.clientSession.customer,
         )
     }
 
@@ -368,32 +371,33 @@ internal class ConfigurationDataResponseTest {
     fun `'client-session-payment-method' should be deserialized correctly`() {
         assertEquals(
             false,
-            configurationDataResponse.clientSession.paymentMethod?.vaultOnSuccess
+            configurationDataResponse.clientSession.paymentMethod?.vaultOnSuccess,
         )
         assertEquals(
             false,
-            configurationDataResponse.clientSession.paymentMethod?.vaultOnAgreement
+            configurationDataResponse.clientSession.paymentMethod?.vaultOnAgreement,
         )
         assertEquals(
             ClientSessionDataResponse.PaymentMethodOptionDataResponse(
                 type = "PAYMENT_CARD",
                 surcharge = null,
-                networks = listOf(
-                    ClientSessionDataResponse.NetworkOptionDataResponse(
-                        "VISA",
-                        100
-                    )
-                )
+                networks =
+                    listOf(
+                        ClientSessionDataResponse.NetworkOptionDataResponse(
+                            "VISA",
+                            100,
+                        ),
+                    ),
             ),
-            configurationDataResponse.clientSession.paymentMethod?.options?.get(0)
+            configurationDataResponse.clientSession.paymentMethod?.options?.get(0),
         )
         assertEquals(
             ClientSessionDataResponse.PaymentMethodOptionDataResponse(
                 type = "PAYPAL",
                 surcharge = 50,
-                networks = null
+                networks = null,
             ),
-            configurationDataResponse.clientSession.paymentMethod?.options?.get(1)
+            configurationDataResponse.clientSession.paymentMethod?.options?.get(1),
         )
         val klarnaOptions = configurationDataResponse.clientSession.paymentMethod?.options?.get(2)
         assertEquals("KLARNA", klarnaOptions?.type)
@@ -401,7 +405,7 @@ internal class ConfigurationDataResponseTest {
         assertEquals(null, klarnaOptions?.networks)
         assertEquals(
             listOf(CardNetwork.Type.VISA, CardNetwork.Type.AMEX, CardNetwork.Type.MASTERCARD),
-            configurationDataResponse.clientSession.paymentMethod?.orderedAllowedCardNetworks
+            configurationDataResponse.clientSession.paymentMethod?.orderedAllowedCardNetworks,
         )
     }
 
@@ -409,7 +413,7 @@ internal class ConfigurationDataResponseTest {
     fun `'primer-account-id' should be deserialized correctly`() {
         assertEquals(
             PRIMER_ACCOUNT_ID,
-            configurationDataResponse.primerAccountId
+            configurationDataResponse.primerAccountId,
         )
     }
 
@@ -417,12 +421,11 @@ internal class ConfigurationDataResponseTest {
     fun `'env' should be deserialized correctly`() {
         assertEquals(
             Environment.STAGING,
-            configurationDataResponse.environment
+            configurationDataResponse.environment,
         )
     }
 
     private companion object {
-
         const val CORE_URL = "https://api.staging.primer.io"
         const val PCI_URL = "https://sdk.api.staging.primer.io"
         const val BIN_DATA_URL = "https://sdk.bin.data.staging.primer.io"

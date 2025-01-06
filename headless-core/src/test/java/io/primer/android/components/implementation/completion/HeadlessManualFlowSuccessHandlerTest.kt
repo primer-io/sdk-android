@@ -5,7 +5,8 @@ import org.junit.jupiter.api.Test
 
 class HeadlessManualFlowSuccessHandlerTest {
     @Test
-    fun `handle does nothing`() = runTest {
-        HeadlessManualFlowSuccessHandler().handle()
-    }
+    fun `handle does nothing`() =
+        runTest {
+            HeadlessManualFlowSuccessHandler().handle()
+        }
 }

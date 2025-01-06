@@ -7,12 +7,11 @@ import android.os.Bundle
 import android.webkit.WebView
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.widget.Toolbar
-import io.primer.android.paymentMethodCoreUi.R
 import io.primer.android.paymentMethodCoreUi.BuildConfig
+import io.primer.android.paymentMethodCoreUi.R
 import io.primer.paymentMethodCoreUi.core.ui.BaseCheckoutActivity
 
 abstract class WebViewActivity : BaseCheckoutActivity() {
-
     protected val webView by lazy { findViewById<WebView>(R.id.webView) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -84,17 +83,16 @@ abstract class WebViewActivity : BaseCheckoutActivity() {
                         onSupportNavigateUp()
                     }
                 }
-            }
+            },
         )
     }
 
     companion object {
-
         fun getLaunchIntent(
             context: Context,
             paymentUrl: String,
             redirectUrl: String,
-            title: String
+            title: String,
         ): Intent {
             return Intent(context, WebViewActivity::class.java).apply {
                 putExtra(PAYMENT_URL_KEY, paymentUrl)

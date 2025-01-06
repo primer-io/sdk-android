@@ -7,14 +7,19 @@ import io.primer.android.klarna.implementation.session.data.models.CreateSession
 import io.primer.android.klarna.implementation.session.data.models.CreateVaultPaymentSessionDataRequest
 
 internal class RemoteKlarnaVaultPaymentSessionDataSource(
-    private val primerHttpClient: PrimerHttpClient
-) : BaseSuspendDataSource<CreateSessionDataResponse,
-        BaseRemoteHostRequest<CreateVaultPaymentSessionDataRequest>> {
-    override suspend fun execute(input: BaseRemoteHostRequest<CreateVaultPaymentSessionDataRequest>):
-        CreateSessionDataResponse = primerHttpClient.suspendPost<
-        CreateVaultPaymentSessionDataRequest, CreateSessionDataResponse
-        >(
-        "${input.host}/klarna/payment-sessions",
-        input.data
-    ).body
+    private val primerHttpClient: PrimerHttpClient,
+) : BaseSuspendDataSource<
+        CreateSessionDataResponse,
+        BaseRemoteHostRequest<CreateVaultPaymentSessionDataRequest>,
+        > {
+    override suspend fun execute(
+        input: BaseRemoteHostRequest<CreateVaultPaymentSessionDataRequest>,
+    ): CreateSessionDataResponse =
+        primerHttpClient.suspendPost<
+            CreateVaultPaymentSessionDataRequest,
+            CreateSessionDataResponse,
+            >(
+            "${input.host}/klarna/payment-sessions",
+            input.data,
+        ).body
 }

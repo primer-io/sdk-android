@@ -1,7 +1,6 @@
 package io.primer.android.nolpay.implementation.helpers
 
 internal class NolPaySdkClassValidator {
-
     fun isSdkIncluded(): Boolean {
         return try {
             Class.forName(NOL_PAY_CLASS_NAME)
@@ -12,7 +11,6 @@ internal class NolPaySdkClassValidator {
     }
 
     companion object {
-
         const val NOL_PAY_CLASS_NOT_LOADED_ERROR =
             "Nol pay configuration has been found but dependency " +
                 "'io.primer:nol-pay-android is missing. " +

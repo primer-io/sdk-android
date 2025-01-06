@@ -14,7 +14,6 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 class StripeAchResumeDecisionHandlerTest {
-
     private lateinit var clientTokenParser: StripeAchPaymentMethodClientTokenParser
     private lateinit var validateClientTokenRepository: ValidateClientTokenRepository
     private lateinit var clientTokenRepository: ClientTokenRepository
@@ -30,38 +29,41 @@ class StripeAchResumeDecisionHandlerTest {
         tokenizedPaymentMethodRepository = mockk()
         checkoutAdditionalInfoHandler = mockk()
 
-        resumeHandler = StripeAchResumeDecisionHandler(
-            clientTokenParser,
-            tokenizedPaymentMethodRepository,
-            validateClientTokenRepository,
-            clientTokenRepository,
-            checkoutAdditionalInfoHandler
-        )
+        resumeHandler =
+            StripeAchResumeDecisionHandler(
+                clientTokenParser,
+                tokenizedPaymentMethodRepository,
+                validateClientTokenRepository,
+                clientTokenRepository,
+                checkoutAdditionalInfoHandler,
+            )
     }
 
     @Test
-    fun `getResumeDecision should return correct StripeAchDecision`() = runTest {
-        // Given
-        val clientToken = StripeAchClientToken(
-            clientTokenIntent = "intent",
-            sdkCompleteUrl = "sdkCompleteUrl",
-            stripePaymentIntentId = "stripePaymentIntentId",
-            stripeClientSecret = "stripeClientSecret"
-        )
+    fun `getResumeDecision should return correct StripeAchDecision`() =
+        runTest {
+            // Given
+            val clientToken =
+                StripeAchClientToken(
+                    clientTokenIntent = "intent",
+                    sdkCompleteUrl = "sdkCompleteUrl",
+                    stripePaymentIntentId = "stripePaymentIntentId",
+                    stripeClientSecret = "stripeClientSecret",
+                )
 
-        // When
-        val result = resumeHandler.getResumeDecision(clientToken)
+            // When
+            val result = resumeHandler.getResumeDecision(clientToken)
 
-        // Then
-        assertEquals(
-            StripeAchDecision(
-                sdkCompleteUrl = "sdkCompleteUrl",
-                stripePaymentIntentId = "stripePaymentIntentId",
-                stripeClientSecret = "stripeClientSecret"
-            ),
-            result
-        )
-    }
+            // Then
+            assertEquals(
+                StripeAchDecision(
+                    sdkCompleteUrl = "sdkCompleteUrl",
+                    stripePaymentIntentId = "stripePaymentIntentId",
+                    stripeClientSecret = "stripeClientSecret",
+                ),
+                result,
+            )
+        }
 
     @Test
     fun `supportedClientTokenIntents should return correct list of intents`() {

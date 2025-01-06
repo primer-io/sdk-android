@@ -6,8 +6,10 @@ import io.primer.android.payments.core.helpers.PaymentMethodPaymentDelegate
 
 internal class DefaultVaultedPaymentMethodComponent(override val paymentDelegate: PaymentMethodPaymentDelegate) :
     VaultedPaymentMethodComponent {
-
-    override fun start(paymentMethodType: String, sessionIntent: PrimerSessionIntent) {
+    override fun start(
+        paymentMethodType: String,
+        sessionIntent: PrimerSessionIntent,
+    ) {
         // no-op
     }
 

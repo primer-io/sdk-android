@@ -14,9 +14,8 @@ import io.primer.android.paymentmethods.PrimerInitializationData
 import io.primer.android.paymentmethods.PrimerRawData
 
 class PrimerHeadlessUniversalCheckoutRawDataManager private constructor(
-    private val paymentMethodType: String
+    private val paymentMethodType: String,
 ) : PrimerHeadlessUniversalCheckoutRawDataManagerInterface, DISdkComponent {
-
     private val rawDelegate: RawDataDelegate<PrimerRawData> by lazy {
         resolve()
     }
@@ -27,8 +26,9 @@ class PrimerHeadlessUniversalCheckoutRawDataManager private constructor(
         rawDelegate.start(
             context = resolve(),
             paymentMethodType = paymentMethodType,
-            primerSessionIntent = runCatching { resolve<PrimerConfig>().paymentMethodIntent }
-                .getOrElse { PrimerSessionIntent.CHECKOUT }
+            primerSessionIntent =
+                runCatching { resolve<PrimerConfig>().paymentMethodIntent }
+                    .getOrElse { PrimerSessionIntent.CHECKOUT },
         )
     }
 
@@ -36,9 +36,7 @@ class PrimerHeadlessUniversalCheckoutRawDataManager private constructor(
         rawDelegate.configure(paymentMethodType, completion)
     }
 
-    override fun setListener(
-        listener: PrimerHeadlessUniversalCheckoutRawDataManagerListener
-    ) {
+    override fun setListener(listener: PrimerHeadlessUniversalCheckoutRawDataManagerListener) {
         rawDelegate.setListener(listener)
     }
 
@@ -61,7 +59,6 @@ class PrimerHeadlessUniversalCheckoutRawDataManager private constructor(
     }
 
     companion object {
-
         /**
          * Creates raw data manager tied to current session for a given payment method.
          *
@@ -71,8 +68,7 @@ class PrimerHeadlessUniversalCheckoutRawDataManager private constructor(
          */
         @Throws(SdkUninitializedException::class, UnsupportedPaymentMethodException::class)
         @JvmStatic
-        fun newInstance(paymentMethodType: String):
-            PrimerHeadlessUniversalCheckoutRawDataManagerInterface =
+        fun newInstance(paymentMethodType: String): PrimerHeadlessUniversalCheckoutRawDataManagerInterface =
             PrimerHeadlessUniversalCheckoutRawDataManager(paymentMethodType)
     }
 }

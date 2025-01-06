@@ -10,10 +10,9 @@ internal data class StripeAchPaymentInstrumentDataRequest(
     val paymentMethodType: String,
     val paymentMethodConfigId: String,
     val sessionInfo: StripeAchSessionInfoDataRequest,
-    val type: PaymentInstrumentType
+    val type: PaymentInstrumentType,
 ) : BasePaymentInstrumentDataRequest {
     companion object {
-
         private const val TYPE_FIELD = "type"
         private const val PAYMENT_METHOD_TYPE_FIELD = "paymentMethodType"
         private const val PAYMENT_METHOD_CONFIG_ID_FIELD = "paymentMethodConfigId"
@@ -31,7 +30,7 @@ internal data class StripeAchPaymentInstrumentDataRequest(
                         SESSION_INFO_FIELD,
                         JSONSerializationUtils
                             .getJsonObjectSerializer<StripeAchSessionInfoDataRequest>()
-                            .serialize(t.sessionInfo)
+                            .serialize(t.sessionInfo),
                     )
                     put(AUTHENTICATION_PROVIDER_FIELD, "STRIPE")
                 }

@@ -20,7 +20,6 @@ import io.primer.android.threeds.ui.launcher.ThreeDsActivityLauncherParams
 import io.primer.paymentMethodCoreUi.core.ui.BaseCheckoutActivity
 
 class ThreeDsActivity : BaseCheckoutActivity() {
-
     private val viewModel: ThreeDsViewModel
         by viewModel<ThreeDsViewModel, ThreeDsViewModelFactory>()
 
@@ -68,21 +67,21 @@ class ThreeDsActivity : BaseCheckoutActivity() {
             viewModel.performChallenge(
                 activity = this,
                 transaction = challengeRequiredData.transaction,
-                authData = challengeRequiredData.authData
+                authData = challengeRequiredData.authData,
             )
         }
 
         viewModel.threeDsStatusChangedEvent.observe(this) { challengeStatusData ->
             viewModel.continueRemoteAuth(
                 challengeStatusData = challengeStatusData,
-                supportedThreeDsProtocolVersions = getSupportedThreeDsProtocolVersion()
+                supportedThreeDsProtocolVersions = getSupportedThreeDsProtocolVersion(),
             )
         }
 
         viewModel.threeDsErrorEvent.observe(this) { throwable ->
             viewModel.continueRemoteAuthWithException(
                 throwable = throwable,
-                supportedThreeDsProtocolVersions = getSupportedThreeDsProtocolVersion()
+                supportedThreeDsProtocolVersions = getSupportedThreeDsProtocolVersion(),
             )
         }
 
@@ -91,31 +90,35 @@ class ThreeDsActivity : BaseCheckoutActivity() {
                 RESULT_OK,
                 Intent().apply {
                     putExtra(RESUME_TOKEN_EXTRA_KEY, resumeToken)
-                }
+                },
             )
             finish()
         }
     }
 
-    private fun logAnalyticsViewed() = viewModel.addAnalyticsEvent(
-        UIAnalyticsParams(
-            AnalyticsAction.VIEW,
-            ObjectType.VIEW,
-            Place.`3DS_VIEW`
+    private fun logAnalyticsViewed() =
+        viewModel.addAnalyticsEvent(
+            UIAnalyticsParams(
+                AnalyticsAction.VIEW,
+                ObjectType.VIEW,
+                Place.`3DS_VIEW`,
+            ),
         )
-    )
 
-    private fun getSupportedThreeDsProtocolVersion() = intent.getSerializableCompat<ThreeDsActivityLauncherParams>(
-        INTENT_PARAMS_EXTRA_KEY
-    )?.supportedThreeDsProtocolVersions.orEmpty()
+    private fun getSupportedThreeDsProtocolVersion() =
+        intent.getSerializableCompat<ThreeDsActivityLauncherParams>(
+            INTENT_PARAMS_EXTRA_KEY,
+        )?.supportedThreeDsProtocolVersions.orEmpty()
 
     companion object {
-
         const val INTENT_PARAMS_EXTRA_KEY = "INTENT_PARAMS_EXTRA"
 
         const val RESUME_TOKEN_EXTRA_KEY = "RESUME_TOKEN"
 
-        fun getLaunchIntent(context: Context, params: ThreeDsActivityLauncherParams): Intent {
+        fun getLaunchIntent(
+            context: Context,
+            params: ThreeDsActivityLauncherParams,
+        ): Intent {
             return Intent(context, ThreeDsActivity::class.java).apply {
                 putExtra(INTENT_PARAMS_EXTRA_KEY, params)
             }

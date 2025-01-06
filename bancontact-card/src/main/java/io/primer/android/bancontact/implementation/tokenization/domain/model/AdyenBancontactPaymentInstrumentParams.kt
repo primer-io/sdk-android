@@ -11,5 +11,5 @@ internal data class AdyenBancontactPaymentInstrumentParams(
     val expirationMonth: String,
     val expirationYear: String,
     val cardholderName: String,
-    val userAgent: String
+    val userAgent: String,
 ) : BasePaymentInstrumentParams

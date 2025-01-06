@@ -16,7 +16,7 @@ android {
                 "--add-opens",
                 "java.base/java.lang=ALL-UNNAMED",
                 "--add-opens",
-                "java.base/java.lang.reflect=ALL-UNNAMED"
+                "java.base/java.lang.reflect=ALL-UNNAMED",
             )
         }
     }

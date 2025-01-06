@@ -8,12 +8,11 @@ import io.primer.android.core.data.network.utils.Constants.SDK_API_VERSION_HEADE
 import io.primer.android.vault.implementation.utils.Constants
 
 internal class RemoteVaultedPaymentMethodDeleteDataSource(
-    private val primerHttpClient: PrimerHttpClient
+    private val primerHttpClient: PrimerHttpClient,
 ) : BaseSuspendDataSource<Unit, BaseRemoteHostRequest<String>> {
-
     override suspend fun execute(input: BaseRemoteHostRequest<String>) =
         primerHttpClient.delete<EmptyDataResponse>(
             "${input.host}/payment-instruments/${input.data}/vault",
-            mapOf(SDK_API_VERSION_HEADER to Constants.PAYMENT_INSTRUMENTS_VERSION)
+            mapOf(SDK_API_VERSION_HEADER to Constants.PAYMENT_INSTRUMENTS_VERSION),
         ).let { }
 }

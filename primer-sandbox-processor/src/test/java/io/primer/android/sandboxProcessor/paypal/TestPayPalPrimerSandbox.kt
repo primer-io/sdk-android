@@ -85,7 +85,7 @@ class TestPayPalPrimerSandbox {
         verify {
             mockRegistry.register(
                 type = primerSandboxPayPal.type,
-                factory = any<SandboxProcessorPayPalDescriptorFactory>()
+                factory = any<SandboxProcessorPayPalDescriptorFactory>(),
             )
         }
         confirmVerified(mockRegistry)
@@ -112,7 +112,7 @@ class TestPayPalPrimerSandbox {
         verify {
             mockBrandRegistry.register(
                 paymentMethodType = paymentMethodType,
-                brand = any<SandboxProcessorPayPalBrand>()
+                brand = any<SandboxProcessorPayPalBrand>(),
             )
         }
         confirmVerified(mockBrandRegistry)

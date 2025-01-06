@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
 class TwoC2PBrandTest {
-
     private val brand = TwoC2PBrand()
 
     @Test

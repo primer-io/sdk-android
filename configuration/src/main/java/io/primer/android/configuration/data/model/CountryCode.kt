@@ -1,7 +1,6 @@
 package io.primer.android.configuration.data.model
 
 enum class CountryCode {
-
     AF,
     AX,
     AL,
@@ -252,15 +251,17 @@ enum class CountryCode {
     XK,
     YE,
     ZM,
-    ZW;
+    ZW,
+    ;
 
     companion object {
-        fun safeValueOf(country: String?) = CountryCode.entries.find {
-            country.equals(
-                it.name,
-                ignoreCase = true
-            )
-        } ?: GB
+        fun safeValueOf(country: String?) =
+            CountryCode.entries.find {
+                country.equals(
+                    it.name,
+                    ignoreCase = true,
+                )
+            } ?: GB
     }
 }
 

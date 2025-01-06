@@ -6,13 +6,12 @@ import io.primer.android.paymentmethods.core.payment.resume.clientToken.domain.p
 
 internal class AdyenBancontactPaymentMethodClientTokenParser :
     PaymentMethodClientTokenParser<AdyenBancontactClientToken> {
-
     override fun parseClientToken(clientToken: String): AdyenBancontactClientToken {
         return AdyenBancontactClientTokenData.fromString(clientToken).let { clientTokenData ->
             AdyenBancontactClientToken(
                 clientTokenIntent = clientTokenData.intent,
                 redirectUrl = clientTokenData.redirectUrl,
-                statusUrl = clientTokenData.statusUrl
+                statusUrl = clientTokenData.statusUrl,
             )
         }
     }

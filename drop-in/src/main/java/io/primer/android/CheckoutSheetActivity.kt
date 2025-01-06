@@ -50,7 +50,6 @@ import kotlinx.coroutines.launch
 @Suppress("TooManyFunctions")
 @OptIn(ExperimentalCoroutinesApi::class)
 internal class CheckoutSheetActivity : BaseCheckoutActivity(), AchMandateActionHandler {
-
     private var exited = false
     private var initFinished = false
 
@@ -65,129 +64,143 @@ internal class CheckoutSheetActivity : BaseCheckoutActivity(), AchMandateActionH
 
     private var displayMandateAchAdditionalInfo: AchAdditionalInfo.DisplayMandate? = null
 
-    private val viewStatusObserver = Observer<ViewStatus> { viewStatus ->
-        val fragment = when {
-            viewStatus is ViewStatus.Initializing &&
-                config.settings.uiOptions.isInitScreenEnabled -> {
-                InitializingFragment.newInstance()
+    private val viewStatusObserver =
+        Observer<ViewStatus> { viewStatus ->
+            val fragment =
+                when {
+                    viewStatus is ViewStatus.Initializing &&
+                        config.settings.uiOptions.isInitScreenEnabled -> {
+                        InitializingFragment.newInstance()
+                    }
+
+                    viewStatus is ViewStatus.SelectPaymentMethod -> {
+                        SelectPaymentMethodFragment.newInstance()
+                    }
+
+                    viewStatus is ViewStatus.ViewVaultedPaymentMethods -> {
+                        VaultedPaymentMethodsFragment.newInstance()
+                    }
+
+                    viewStatus is ViewStatus.VaultedPaymentRecaptureCvv -> {
+                        VaultedPaymentMethodsCvvRecaptureFragment.newInstance()
+                    }
+
+                    viewStatus is ViewStatus.ShowError -> {
+                        sheet.disableDismiss(false)
+                        SessionCompleteFragment.newInstance(
+                            delay = viewStatus.delay,
+                            viewType = SessionCompleteViewType.Error(viewStatus.errorType, viewStatus.message),
+                        )
+                    }
+
+                    viewStatus is ViewStatus.ShowSuccess -> {
+                        sheet.disableDismiss(false)
+                        val behaviour =
+                            (
+                                primerViewModel.selectedPaymentMethod.value
+                                    ?: primerViewModel.selectedSavedPaymentMethodDescriptor
+                            )?.createSuccessBehavior(viewStatus)
+                        if (behaviour != null) {
+                            openFragment(behaviour)
+                            return@Observer
+                        } else {
+                            SessionCompleteFragment.newInstance(
+                                delay = viewStatus.delay,
+                                viewType =
+                                    SessionCompleteViewType.Error(
+                                        ErrorType.DEFAULT,
+                                        getString(R.string.error_default),
+                                    ),
+                            )
+                        }
+                    }
+
+                    viewStatus is ViewStatus.PollingStarted -> {
+                        val behaviour =
+                            primerViewModel.selectedPaymentMethod.value?.createPollingStartedBehavior(
+                                viewStatus,
+                            )
+                        if (behaviour != null) {
+                            openFragment(behaviour)
+                            return@Observer
+                        } else {
+                            null
+                        }
+                    }
+
+                    viewStatus is ViewStatus.Dismiss -> {
+                        onExit()
+                        null
+                    }
+
+                    viewStatus is ViewStatus.DisableDismiss -> {
+                        sheet.disableDismiss(true)
+                        return@Observer
+                    }
+
+                    else -> null
+                }
+
+            if (!initFinished && viewStatus != ViewStatus.Initializing) {
+                initFinished = true
             }
 
-            viewStatus is ViewStatus.SelectPaymentMethod -> {
-                SelectPaymentMethodFragment.newInstance()
-            }
-
-            viewStatus is ViewStatus.ViewVaultedPaymentMethods -> {
-                VaultedPaymentMethodsFragment.newInstance()
-            }
-
-            viewStatus is ViewStatus.VaultedPaymentRecaptureCvv -> {
-                VaultedPaymentMethodsCvvRecaptureFragment.newInstance()
-            }
-
-            viewStatus is ViewStatus.ShowError -> {
-                sheet.disableDismiss(false)
-                SessionCompleteFragment.newInstance(
-                    delay = viewStatus.delay,
-                    viewType = SessionCompleteViewType.Error(viewStatus.errorType, viewStatus.message)
+            fragment?.let {
+                openFragment(
+                    fragment = it,
+                    returnToPreviousOnBack = initFinished,
+                    tag =
+                        if (it is SelectPaymentMethodFragment) {
+                            SelectPaymentMethodFragment.TAG
+                        } else {
+                            null
+                        },
                 )
+            } ?: run {
+                sheet.dialog?.hide()
             }
+        }
 
-            viewStatus is ViewStatus.ShowSuccess -> {
-                sheet.disableDismiss(false)
-                val behaviour = (
-                    primerViewModel.selectedPaymentMethod.value
-                        ?: primerViewModel.selectedSavedPaymentMethodDescriptor
-                    )?.createSuccessBehavior(viewStatus)
-                if (behaviour != null) {
-                    openFragment(behaviour)
-                    return@Observer
+    private fun presentFragment(behaviour: PaymentMethodBehaviour?) =
+        when (behaviour) {
+            is NewFragmentBehaviour -> openFragment(behaviour)
+            is NativeUiSelectedPaymentMethodManagerBehaviour -> {
+                val nativeUiManager = behaviour.execute(this)
+                primerViewModel.setSelectedPaymentMethodNativeUiManager(nativeUiManager)
+            }
+            // todo: refactor to sealed class or change logic altogether
+            else -> Unit
+        }
+
+    private val actionNavigateObserver =
+        Observer<PaymentMethodBehaviour> { behaviour ->
+            presentFragment(behaviour)
+        }
+
+    private val selectedPaymentMethodObserver =
+        Observer<PaymentMethodDropInDescriptor?> { descriptor ->
+            if (descriptor == null) return@Observer
+
+            val type = descriptor.paymentMethodType
+
+            val actionParams =
+                if (type == PaymentMethodType.PAYMENT_CARD.name) {
+                    ActionUpdateUnselectPaymentMethodParams
                 } else {
-                    SessionCompleteFragment.newInstance(
-                        delay = viewStatus.delay,
-                        viewType = SessionCompleteViewType.Error(ErrorType.DEFAULT, getString(R.string.error_default))
-                    )
+                    ActionUpdateSelectPaymentMethodParams(type)
                 }
-            }
 
-            viewStatus is ViewStatus.PollingStarted -> {
-                val behaviour = primerViewModel.selectedPaymentMethod.value?.createPollingStartedBehavior(viewStatus)
-                if (behaviour != null) {
-                    openFragment(behaviour)
-                    return@Observer
-                } else {
-                    null
-                }
-            }
-
-            viewStatus is ViewStatus.Dismiss -> {
-                onExit()
-                null
-            }
-
-            viewStatus is ViewStatus.DisableDismiss -> {
-                sheet.disableDismiss(true)
-                return@Observer
-            }
-
-            else -> null
-        }
-
-        if (!initFinished && viewStatus != ViewStatus.Initializing) {
-            initFinished = true
-        }
-
-        fragment?.let {
-            openFragment(
-                fragment = it,
-                returnToPreviousOnBack = initFinished,
-                tag = if (it is SelectPaymentMethodFragment) {
-                    SelectPaymentMethodFragment.TAG
-                } else {
-                    null
-                }
-            )
-        } ?: run {
-            sheet.dialog?.hide()
-        }
-    }
-
-    private fun presentFragment(behaviour: PaymentMethodBehaviour?) = when (behaviour) {
-        is NewFragmentBehaviour -> openFragment(behaviour)
-        is NativeUiSelectedPaymentMethodManagerBehaviour -> {
-            val nativeUiManager = behaviour.execute(this)
-            primerViewModel.setSelectedPaymentMethodNativeUiManager(nativeUiManager)
-        }
-        // todo: refactor to sealed class or change logic altogether
-        else -> Unit
-    }
-
-    private val actionNavigateObserver = Observer<PaymentMethodBehaviour> { behaviour ->
-        presentFragment(behaviour)
-    }
-
-    private val selectedPaymentMethodObserver = Observer<PaymentMethodDropInDescriptor?> { descriptor ->
-        if (descriptor == null) return@Observer
-
-        val type = descriptor.paymentMethodType
-
-        val actionParams =
-            if (type == PaymentMethodType.PAYMENT_CARD.name) {
-                ActionUpdateUnselectPaymentMethodParams
-            } else {
-                ActionUpdateSelectPaymentMethodParams(type)
-            }
-
-        primerViewModel.dispatchAction(actionParams, false) { error: Error? ->
-            runOnUiThread {
-                if (error == null) {
-                    presentFragment(descriptor.selectedBehaviour)
-                    primerViewModel.setState(SessionState.AWAITING_USER)
-                } else {
-                    // no-op error was emitted
+            primerViewModel.dispatchAction(actionParams, false) { error: Error? ->
+                runOnUiThread {
+                    if (error == null) {
+                        presentFragment(descriptor.selectedBehaviour)
+                        primerViewModel.setState(SessionState.AWAITING_USER)
+                    } else {
+                        // no-op error was emitted
+                    }
                 }
             }
         }
-    }
 
     private val paymentMethodBehaviourObserver =
         Observer<PaymentMethodBehaviour?> { behaviour ->
@@ -203,14 +216,14 @@ internal class CheckoutSheetActivity : BaseCheckoutActivity(), AchMandateActionH
 
         logReporter.debug(
             "Creating CheckoutSheetActivity (hashcode ${hashCode()}); " +
-                "Drop-in container: ${DISdkContext.dropInSdkContainer}"
+                "Drop-in container: ${DISdkContext.dropInSdkContainer}",
         )
 
         intent.getParcelableCompat<PrimerConfig>(PRIMER_CONFIG_KEY)?.let { config ->
             if (DISdkContext.dropInSdkContainer == null) {
                 DISdkContextInitializer.initDropIn(
                     config = config,
-                    context = applicationContext
+                    context = applicationContext,
                 )
                 DISdkContext.dropInSdkContainer?.apply {
                     registerContainer(CheckoutConfigContainer { getSdkContainer() })
@@ -222,7 +235,7 @@ internal class CheckoutSheetActivity : BaseCheckoutActivity(), AchMandateActionH
         } ?: run {
             logReporter.warn(
                 "Finishing CheckoutSheetActivity " +
-                    "(hashcode ${hashCode()}) because Primer config is missing"
+                    "(hashcode ${hashCode()}) because Primer config is missing",
             )
             finish()
             return
@@ -237,7 +250,7 @@ internal class CheckoutSheetActivity : BaseCheckoutActivity(), AchMandateActionH
         primerViewModel.selectedPaymentMethod.observe(this, selectedPaymentMethodObserver)
         primerViewModel.paymentMethodBehaviour.observe(
             this,
-            paymentMethodBehaviourObserver
+            paymentMethodBehaviourObserver,
         )
         primerViewModel.navigateActionEvent.observe(this, actionNavigateObserver)
 
@@ -255,9 +268,9 @@ internal class CheckoutSheetActivity : BaseCheckoutActivity(), AchMandateActionH
                             qrCodeBase64 = it.qrCodeBase64,
                             qrCodeUrl = it.qrCodeUrl,
                             statusUrl = it.statusUrl,
-                            paymentMethodType = it.paymentMethodType
+                            paymentMethodType = it.paymentMethodType,
                         ),
-                        true
+                        true,
                     )
                 }
 
@@ -307,7 +320,11 @@ internal class CheckoutSheetActivity : BaseCheckoutActivity(), AchMandateActionH
         DISdkContextInitializer.clearDropIn()
     }
 
-    private fun openFragment(fragment: Fragment, returnToPreviousOnBack: Boolean = false, tag: String? = null) {
+    private fun openFragment(
+        fragment: Fragment,
+        returnToPreviousOnBack: Boolean = false,
+        tag: String? = null,
+    ) {
         sheet.dialog?.show()
         openFragment(NewFragmentBehaviour({ fragment }, returnToPreviousOnBack, tag))
     }
@@ -321,15 +338,15 @@ internal class CheckoutSheetActivity : BaseCheckoutActivity(), AchMandateActionH
         sheet.show(supportFragmentManager, sheet.tag)
     }
 
-    private fun addTimerDurationEvent(type: TimerType) = primerViewModel.addAnalyticsEvent(
-        TimerAnalyticsParams(
-            TimerId.CHECKOUT_DURATION,
-            type
+    private fun addTimerDurationEvent(type: TimerType) =
+        primerViewModel.addAnalyticsEvent(
+            TimerAnalyticsParams(
+                TimerId.CHECKOUT_DURATION,
+                type,
+            ),
         )
-    )
 
     internal companion object {
-
         const val PRIMER_CONFIG_KEY = "PRIMER_CONFIG"
     }
 }

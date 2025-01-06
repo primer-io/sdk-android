@@ -37,7 +37,6 @@ private const val UPDATED_ELEMENT_TYPE_KEY = "updated_element_type"
 
 @ExperimentalCoroutinesApi
 internal class BancontactCardFragment : BaseFragment(), PrimerHeadlessUniversalCheckoutRawDataManagerListener {
-
     private lateinit var rawDataManager: PrimerHeadlessUniversalCheckoutRawDataManagerInterface
     private var binding: FragmentFormBancontactCardBinding by autoCleaned()
 
@@ -50,16 +49,20 @@ internal class BancontactCardFragment : BaseFragment(), PrimerHeadlessUniversalC
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
         binding = FragmentFormBancontactCardBinding.inflate(inflater, container, false)
         return binding.root
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onViewCreated(
+        view: View,
+        savedInstanceState: Bundle?,
+    ) {
         super.onViewCreated(view, savedInstanceState)
-        updatedElementType = savedInstanceState
-            ?.getSerializableExtraCompat<PrimerInputElementType>(UPDATED_ELEMENT_TYPE_KEY)
+        updatedElementType =
+            savedInstanceState
+                ?.getSerializableExtraCompat<PrimerInputElementType>(UPDATED_ELEMENT_TYPE_KEY)
         rawDataManager = PrimerHeadlessUniversalCheckoutRawDataManager.newInstance(descriptor.paymentMethodType)
         rawDataManager.setListener(this)
         setupComponents()
@@ -83,12 +86,13 @@ internal class BancontactCardFragment : BaseFragment(), PrimerHeadlessUniversalC
     }
 
     private fun setupTheme() {
-        val imageColorStates = ColorStateList.valueOf(
-            theme.titleText.defaultColor.getColor(
-                requireContext(),
-                theme.isDarkMode
+        val imageColorStates =
+            ColorStateList.valueOf(
+                theme.titleText.defaultColor.getColor(
+                    requireContext(),
+                    theme.isDarkMode,
+                ),
             )
-        )
         binding.ivBack.imageTintList = imageColorStates
         binding.ivBack.isVisible =
             primerViewModel.selectedPaymentMethod.value?.uiOptions
@@ -113,18 +117,19 @@ internal class BancontactCardFragment : BaseFragment(), PrimerHeadlessUniversalC
 
     private fun setInputFieldPadding(view: View) {
         val res = requireContext().resources
-        val horizontalPadding = res
-            .getDimensionPixelSize(R.dimen.primer_underlined_input_padding_horizontal)
+        val horizontalPadding =
+            res
+                .getDimensionPixelSize(R.dimen.primer_underlined_input_padding_horizontal)
 
         view.setPadding(horizontalPadding, 0, horizontalPadding, 0)
     }
 
     private fun setupInputs() {
         binding.cardFormCardExpiry.editText?.addTextChangedListener(
-            TextInputMask.ExpiryDate()
+            TextInputMask.ExpiryDate(),
         )
         binding.cardFormCardNumber.editText?.addTextChangedListener(
-            TextInputMask.CardNumber()
+            TextInputMask.CardNumber(),
         )
     }
 
@@ -157,7 +162,7 @@ internal class BancontactCardFragment : BaseFragment(), PrimerHeadlessUniversalC
         }
 
         binding.cardFormCardNumber.editText?.addTextChangedListener(
-            afterTextChanged = ::onCardNumberInputChanged
+            afterTextChanged = ::onCardNumberInputChanged,
         )
 
         binding.cardFormCardExpiry.editText?.addTextChangedListener {
@@ -173,21 +178,22 @@ internal class BancontactCardFragment : BaseFragment(), PrimerHeadlessUniversalC
 
     private fun updateRawData() {
         val rawExpiryDate = binding.cardFormCardExpiryInput.text?.toString().orEmpty().trim()
-        val expiryDate = StringBuilder(rawExpiryDate.substringBefore(CARD_EXPIRATION_SEPARATOR)).apply {
-            if (isNotBlank()) {
-                append(CARD_EXPIRATION_SEPARATOR)
-                append(
-                    CENTURY_START_YEAR +
-                        (rawExpiryDate.substringAfterLast(CARD_EXPIRATION_SEPARATOR).toIntOrNull() ?: 0)
-                )
+        val expiryDate =
+            StringBuilder(rawExpiryDate.substringBefore(CARD_EXPIRATION_SEPARATOR)).apply {
+                if (isNotBlank()) {
+                    append(CARD_EXPIRATION_SEPARATOR)
+                    append(
+                        CENTURY_START_YEAR +
+                            (rawExpiryDate.substringAfterLast(CARD_EXPIRATION_SEPARATOR).toIntOrNull() ?: 0),
+                    )
+                }
             }
-        }
         rawDataManager.setRawData(
             PrimerBancontactCardData(
                 cardNumber = binding.cardFormCardNumberInput.text?.toString().orEmpty().trim().removeSpaces(),
                 expiryDate = expiryDate.toString(),
-                cardHolderName = binding.cardFormCardholderNameInput.text?.toString().orEmpty().trim()
-            )
+                cardHolderName = binding.cardFormCardholderNameInput.text?.toString().orEmpty().trim(),
+            ),
         )
     }
 
@@ -212,9 +218,10 @@ internal class BancontactCardFragment : BaseFragment(), PrimerHeadlessUniversalC
         binding.btnPay.isEnabled = !hasInputErrors()
     }
 
-    private fun hasInputErrors(): Boolean = binding.cardFormCardNumber.isErrorEnabled ||
-        binding.cardFormCardExpiry.isErrorEnabled ||
-        binding.cardFormCardholderName.isErrorEnabled
+    private fun hasInputErrors(): Boolean =
+        binding.cardFormCardNumber.isErrorEnabled ||
+            binding.cardFormCardExpiry.isErrorEnabled ||
+            binding.cardFormCardholderName.isErrorEnabled
 
     private fun updateCardNumberInputIcon() {
         binding.cardFormCardNumber.editText?.setCompoundDrawablesRelativeWithIntrinsicBounds(
@@ -222,11 +229,14 @@ internal class BancontactCardFragment : BaseFragment(), PrimerHeadlessUniversalC
                 ?: R.drawable.ic_generic_card,
             0,
             0,
-            0
+            0,
         )
     }
 
-    override fun onValidationChanged(isValid: Boolean, errors: List<PrimerInputValidationError>) {
+    override fun onValidationChanged(
+        isValid: Boolean,
+        errors: List<PrimerInputValidationError>,
+    ) {
         if (view == null) {
             // Fragment is destroyed, accessing binding is not possible
             return
@@ -247,24 +257,26 @@ internal class BancontactCardFragment : BaseFragment(), PrimerHeadlessUniversalC
                     it.inputElementType == updatedElementType
             }
             .forEach { (_, _, inputElementType) ->
-                val (inputLayout, inputNameResId) = when (inputElementType) {
-                    PrimerInputElementType.CARD_NUMBER ->
-                        binding.cardFormCardNumber to R.string.card_number
+                val (inputLayout, inputNameResId) =
+                    when (inputElementType) {
+                        PrimerInputElementType.CARD_NUMBER ->
+                            binding.cardFormCardNumber to R.string.card_number
 
-                    PrimerInputElementType.EXPIRY_DATE ->
-                        binding.cardFormCardExpiry to R.string.card_expiry
+                        PrimerInputElementType.EXPIRY_DATE ->
+                            binding.cardFormCardExpiry to R.string.card_expiry
 
-                    PrimerInputElementType.CARDHOLDER_NAME ->
-                        binding.cardFormCardholderName to R.string.card_holder_name
+                        PrimerInputElementType.CARDHOLDER_NAME ->
+                            binding.cardFormCardholderName to R.string.card_holder_name
 
-                    else -> error("Unsupported element type $inputElementType")
-                }
+                        else -> error("Unsupported element type $inputElementType")
+                    }
                 val inputText = inputLayout.editText?.text?.toString()
-                val errorResId = if (inputText.isNullOrBlank()) {
-                    R.string.form_error_required
-                } else {
-                    R.string.form_error_invalid
-                }
+                val errorResId =
+                    if (inputText.isNullOrBlank()) {
+                        R.string.form_error_required
+                    } else {
+                        R.string.form_error_invalid
+                    }
                 val errorMessage = getString(errorResId, getString(inputNameResId))
                 inputLayout.isErrorEnabled = true
                 inputLayout.error = errorMessage

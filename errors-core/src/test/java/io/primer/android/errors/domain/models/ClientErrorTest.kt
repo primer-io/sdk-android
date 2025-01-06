@@ -4,7 +4,6 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
 class ClientErrorTest {
-
     @Test
     fun `should create ClientError with given description and diagnostics ID`() {
         // Arrange

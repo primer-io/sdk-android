@@ -3,7 +3,6 @@ package io.primer.android.components.ach
 import android.content.Context
 import androidx.lifecycle.ViewModelStoreOwner
 import io.primer.android.PrimerSessionIntent
-import io.primer.android.data.settings.PrimerSettings
 import io.primer.android.components.PaymentMethodManagerDelegate
 import io.primer.android.components.PrimerHeadlessUniversalCheckoutListener
 import io.primer.android.components.domain.core.models.PrimerPaymentMethodManagerCategory
@@ -11,6 +10,7 @@ import io.primer.android.core.di.DISdkComponent
 import io.primer.android.core.di.extensions.inject
 import io.primer.android.core.di.extensions.resolve
 import io.primer.android.core.domain.validation.ValidationResult
+import io.primer.android.data.settings.PrimerSettings
 import io.primer.android.domain.exception.UnsupportedPaymentMethodException
 import io.primer.android.paymentmethods.common.data.model.PaymentMethodType
 import io.primer.android.paymentmethods.manager.component.ach.PrimerHeadlessAchComponent
@@ -27,7 +27,7 @@ import io.primer.android.stripe.ach.implementation.validation.resolvers.StripeIn
  * @param viewModelStoreOwner The [ViewModelStoreOwner] to associate with the component.
  */
 class PrimerHeadlessUniversalCheckoutAchManager(
-    private val viewModelStoreOwner: ViewModelStoreOwner
+    private val viewModelStoreOwner: ViewModelStoreOwner,
 ) : DISdkComponent {
     private val primerSettings by inject<PrimerSettings>()
     private val paymentMethodInitializer: PaymentMethodManagerDelegate by inject()
@@ -42,19 +42,23 @@ class PrimerHeadlessUniversalCheckoutAchManager(
      */
     @Suppress("ThrowsCount")
     @Throws(UnsupportedPaymentMethodException::class)
-    fun <T : PrimerHeadlessAchComponent<
+    fun <
+        T : PrimerHeadlessAchComponent<
             out PrimerCollectableData,
-            out PrimerHeadlessStep>> provide(
-        paymentMethodType: String
+            out PrimerHeadlessStep,
+            >,
+        > provide(
+        paymentMethodType: String,
     ): T {
         try {
             when (paymentMethodType) {
                 PaymentMethodType.STRIPE_ACH.name -> {
-                    val validationResults = stripeInitValidationRulesResolver.resolve().rules.map {
-                        it.validate(
-                            primerSettings.paymentMethodOptions.stripeOptions
-                        )
-                    }
+                    val validationResults =
+                        stripeInitValidationRulesResolver.resolve().rules.map {
+                            it.validate(
+                                primerSettings.paymentMethodOptions.stripeOptions,
+                            )
+                        }
                     validationResults.filterIsInstance<ValidationResult.Failure>()
                         .forEach { validationResult ->
                             throw validationResult.exception
@@ -64,13 +68,13 @@ class PrimerHeadlessUniversalCheckoutAchManager(
                     paymentMethodInitializer.apply {
                         init(
                             paymentMethodType = paymentMethodType,
-                            category = category
+                            category = category,
                         ).also {
                             start(
                                 context = resolve<Context>(),
                                 paymentMethodType = paymentMethodType,
                                 sessionIntent = PrimerSessionIntent.CHECKOUT,
-                                category = category
+                                category = category,
                             )
                         }
                     }

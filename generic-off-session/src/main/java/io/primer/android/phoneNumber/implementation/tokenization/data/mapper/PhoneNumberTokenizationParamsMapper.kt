@@ -11,18 +11,21 @@ import io.primer.android.phoneNumber.implementation.tokenization.domain.model.Ph
 
 internal class PhoneNumberTokenizationParamsMapper :
     TokenizationParamsMapper<PhoneNumberPaymentInstrumentParams, PhoneNumberPaymentInstrumentDataRequest> {
-    override fun map(params: TokenizationParams<PhoneNumberPaymentInstrumentParams>):
-        TokenizationRequestV2<PhoneNumberPaymentInstrumentDataRequest> {
+    override fun map(
+        params: TokenizationParams<PhoneNumberPaymentInstrumentParams>,
+    ): TokenizationRequestV2<PhoneNumberPaymentInstrumentDataRequest> {
         val paymentInstrumentParams = params.paymentInstrumentParams
-        val instrumentDataRequest = PhoneNumberPaymentInstrumentDataRequest(
-            paymentMethodType = paymentInstrumentParams.paymentMethodType,
-            paymentMethodConfigId = paymentInstrumentParams.paymentMethodConfigId,
-            sessionInfo = PhoneNumberSessionInfoDataRequest(
-                locale = paymentInstrumentParams.locale,
-                phoneNumber = paymentInstrumentParams.phoneNumber
-            ),
-            type = PaymentInstrumentType.OFF_SESSION_PAYMENT
-        )
+        val instrumentDataRequest =
+            PhoneNumberPaymentInstrumentDataRequest(
+                paymentMethodType = paymentInstrumentParams.paymentMethodType,
+                paymentMethodConfigId = paymentInstrumentParams.paymentMethodConfigId,
+                sessionInfo =
+                    PhoneNumberSessionInfoDataRequest(
+                        locale = paymentInstrumentParams.locale,
+                        phoneNumber = paymentInstrumentParams.phoneNumber,
+                    ),
+                type = PaymentInstrumentType.OFF_SESSION_PAYMENT,
+            )
         return instrumentDataRequest.toTokenizationRequest(params.sessionIntent)
     }
 }

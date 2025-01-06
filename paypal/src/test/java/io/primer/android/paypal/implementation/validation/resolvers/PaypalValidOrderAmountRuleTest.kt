@@ -12,14 +12,14 @@ import kotlin.test.assertIs
 import kotlin.test.assertTrue
 
 internal class PaypalValidOrderAmountRuleTest {
-
     private val rule = PaypalValidOrderAmountRule()
 
     @Test
     fun `validate should return success for valid amount`() {
-        val params = mockk<PaypalCreateOrderParams> {
-            every { amount } returns 100
-        }
+        val params =
+            mockk<PaypalCreateOrderParams> {
+                every { amount } returns 100
+            }
 
         val result = rule.validate(params)
 
@@ -28,9 +28,10 @@ internal class PaypalValidOrderAmountRuleTest {
 
     @Test
     fun `validate should return failure for invalid amount`() {
-        val params = mockk<PaypalCreateOrderParams> {
-            every { amount } returns 0
-        }
+        val params =
+            mockk<PaypalCreateOrderParams> {
+                every { amount } returns 0
+            }
 
         val result = rule.validate(params)
 
@@ -41,9 +42,10 @@ internal class PaypalValidOrderAmountRuleTest {
 
     @Test
     fun `validate should return failure for null amount`() {
-        val params = mockk<PaypalCreateOrderParams> {
-            every { amount } returns null
-        }
+        val params =
+            mockk<PaypalCreateOrderParams> {
+                every { amount } returns null
+            }
 
         val result = rule.validate(params)
 

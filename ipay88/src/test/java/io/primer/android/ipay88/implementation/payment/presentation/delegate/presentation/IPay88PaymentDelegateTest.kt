@@ -28,7 +28,6 @@ import org.junit.jupiter.api.extension.ExtendWith
 @OptIn(ExperimentalCoroutinesApi::class)
 @ExtendWith(InstantExecutorExtension::class, MockKExtension::class)
 internal class IPay88PaymentDelegateTest {
-
     private lateinit var paymentDelegate: IPay88PaymentDelegate
     private lateinit var resumeHandler: IPay88ResumeHandler
 
@@ -42,90 +41,96 @@ internal class IPay88PaymentDelegateTest {
 
         resumeHandler = mockk()
 
-        paymentDelegate = IPay88PaymentDelegate(
-            paymentMethodTokenHandler,
-            resumePaymentHandler,
-            successHandler,
-            errorHandler,
-            baseErrorResolver,
-            resumeHandler
-        )
-    }
-
-    @Test
-    fun `handleNewClientToken should return success and emit Navigate event when continueWithNewClientToken returns a success result`() = runTest {
-        // Given
-        val clientToken = "testClientToken"
-        val decision = IPay88Decision(
-            statusUrl = "testStatusUrl",
-            iPayPaymentId = "testIPayPaymentId",
-            iPayMethod = 88,
-            merchantCode = "testMerchantCode",
-            actionType = "testActionType",
-            amount = "testAmount",
-            referenceNumber = "testReferenceNumber",
-            prodDesc = "testProdDesc",
-            currencyCode = "testCurrencyCode",
-            countryCode = "testCountryCode",
-            paymentMethodType = PaymentMethodType.GOOGLE_PAY.name,
-            deeplinkUrl = "testDeeplinkUrl",
-            errorCode = 500,
-            sessionIntent = PrimerSessionIntent.CHECKOUT,
-            customerName = "testCustomerName",
-            customerEmail = "testCustomerEmail",
-            remark = "testRemark",
-            backendCallbackUrl = "testBackendCallbackUrl"
-        )
-        coEvery { resumeHandler.continueWithNewClientToken(clientToken) } returns Result.success(decision)
-
-        launch {
-            paymentDelegate.handleNewClientToken(clientToken, null)
-        }
-
-        paymentDelegate.uiEvent.first { event ->
-            val expectedEvent = ComposerUiEvent.Navigate(
-                PaymentMethodLauncherParams(
-                    paymentMethodType = PaymentMethodType.GOOGLE_PAY.name,
-                    sessionIntent = PrimerSessionIntent.CHECKOUT,
-                    initialLauncherParams = RedirectLauncherParams(
-                        statusUrl = decision.statusUrl,
-                        iPayPaymentId = decision.iPayPaymentId,
-                        iPayMethod = decision.iPayMethod,
-                        merchantCode = decision.merchantCode,
-                        actionType = decision.actionType,
-                        amount = decision.amount,
-                        referenceNumber = decision.referenceNumber,
-                        prodDesc = decision.prodDesc,
-                        currencyCode = decision.currencyCode,
-                        countryCode = decision.countryCode,
-                        customerName = decision.customerName,
-                        customerEmail = decision.customerEmail,
-                        remark = decision.remark,
-                        backendCallbackUrl = decision.backendCallbackUrl,
-                        deeplinkUrl = decision.deeplinkUrl,
-                        errorCode = decision.errorCode,
-                        paymentMethodType = decision.paymentMethodType,
-                        sessionIntent = decision.sessionIntent
-                    )
-                )
+        paymentDelegate =
+            IPay88PaymentDelegate(
+                paymentMethodTokenHandler,
+                resumePaymentHandler,
+                successHandler,
+                errorHandler,
+                baseErrorResolver,
+                resumeHandler,
             )
-            assertEquals(expectedEvent, event)
-            true
-        }
     }
 
     @Test
-    fun `handleNewClientToken should handle exception and return failure when continueWithNewClientToken() returns a failure result`() = runTest {
-        // Given
-        val clientToken = "testClientToken"
-        val exception = Exception("Test Exception")
-        coEvery { resumeHandler.continueWithNewClientToken(clientToken) } returns Result.failure(exception)
+    fun `handleNewClientToken should return success and emit Navigate event when continueWithNewClientToken returns a success result`() =
+        runTest {
+            // Given
+            val clientToken = "testClientToken"
+            val decision =
+                IPay88Decision(
+                    statusUrl = "testStatusUrl",
+                    iPayPaymentId = "testIPayPaymentId",
+                    iPayMethod = 88,
+                    merchantCode = "testMerchantCode",
+                    actionType = "testActionType",
+                    amount = "testAmount",
+                    referenceNumber = "testReferenceNumber",
+                    prodDesc = "testProdDesc",
+                    currencyCode = "testCurrencyCode",
+                    countryCode = "testCountryCode",
+                    paymentMethodType = PaymentMethodType.GOOGLE_PAY.name,
+                    deeplinkUrl = "testDeeplinkUrl",
+                    errorCode = 500,
+                    sessionIntent = PrimerSessionIntent.CHECKOUT,
+                    customerName = "testCustomerName",
+                    customerEmail = "testCustomerEmail",
+                    remark = "testRemark",
+                    backendCallbackUrl = "testBackendCallbackUrl",
+                )
+            coEvery { resumeHandler.continueWithNewClientToken(clientToken) } returns Result.success(decision)
 
-        // When
-        val result = paymentDelegate.handleNewClientToken(clientToken, null)
+            launch {
+                paymentDelegate.handleNewClientToken(clientToken, null)
+            }
 
-        // Then
-        assert(result.isFailure)
-        assertEquals(exception, result.exceptionOrNull())
-    }
+            paymentDelegate.uiEvent.first { event ->
+                val expectedEvent =
+                    ComposerUiEvent.Navigate(
+                        PaymentMethodLauncherParams(
+                            paymentMethodType = PaymentMethodType.GOOGLE_PAY.name,
+                            sessionIntent = PrimerSessionIntent.CHECKOUT,
+                            initialLauncherParams =
+                                RedirectLauncherParams(
+                                    statusUrl = decision.statusUrl,
+                                    iPayPaymentId = decision.iPayPaymentId,
+                                    iPayMethod = decision.iPayMethod,
+                                    merchantCode = decision.merchantCode,
+                                    actionType = decision.actionType,
+                                    amount = decision.amount,
+                                    referenceNumber = decision.referenceNumber,
+                                    prodDesc = decision.prodDesc,
+                                    currencyCode = decision.currencyCode,
+                                    countryCode = decision.countryCode,
+                                    customerName = decision.customerName,
+                                    customerEmail = decision.customerEmail,
+                                    remark = decision.remark,
+                                    backendCallbackUrl = decision.backendCallbackUrl,
+                                    deeplinkUrl = decision.deeplinkUrl,
+                                    errorCode = decision.errorCode,
+                                    paymentMethodType = decision.paymentMethodType,
+                                    sessionIntent = decision.sessionIntent,
+                                ),
+                        ),
+                    )
+                assertEquals(expectedEvent, event)
+                true
+            }
+        }
+
+    @Test
+    fun `handleNewClientToken should handle exception and return failure when continueWithNewClientToken() returns a failure result`() =
+        runTest {
+            // Given
+            val clientToken = "testClientToken"
+            val exception = Exception("Test Exception")
+            coEvery { resumeHandler.continueWithNewClientToken(clientToken) } returns Result.failure(exception)
+
+            // When
+            val result = paymentDelegate.handleNewClientToken(clientToken, null)
+
+            // Then
+            assert(result.isFailure)
+            assertEquals(exception, result.exceptionOrNull())
+        }
 }

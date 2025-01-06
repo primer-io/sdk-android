@@ -7,107 +7,107 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
 class PaymentMethodTokenInternalTest {
-
     @Test
     fun `test deserialization of PaymentMethodTokenInternal`() {
         // Given
-        val json = JSONObject().apply {
-            put(
-                "token",
-                "test_token"
-            )
-            put(
-                "paymentInstrumentType",
-                "credit_card"
-            )
-            put(
-                "paymentMethodType",
-                "visa"
-            )
-            put(
-                "paymentInstrumentData",
-                JSONObject().apply {
-                    put(
-                        "network",
-                        "Visa"
-                    )
-                    put(
-                        "cardholderName",
-                        "John Doe"
-                    )
-                    put(
-                        "first6Digits",
-                        123456
-                    )
-                    put(
-                        "last4Digits",
-                        7890
-                    )
-                    put(
-                        "expirationMonth",
-                        12
-                    )
-                    put(
-                        "expirationYear",
-                        2025
-                    )
-                    put(
-                        "gocardlessMandateId",
-                        "gocardless123"
-                    )
-                    put(
-                        "klarnaCustomerToken",
-                        "klarnaToken123"
-                    )
-                }
-            )
-            put(
-                "vaultData",
-                JSONObject().apply {
-                    put(
-                        "customerId",
-                        "customer123"
-                    )
-                }
-            )
-            put(
-                "threeDSecureAuthentication",
-                JSONObject().apply {
-                    put(
-                        "responseCode",
-                        "AUTH_SUCCESS"
-                    )
-                    put(
-                        "reasonCode",
-                        "123"
-                    )
-                    put(
-                        "reasonText",
-                        "Successful authentication"
-                    )
-                    put(
-                        "protocolVersion",
-                        "1.0"
-                    )
-                    put(
-                        "challengeIssued",
-                        true
-                    )
-                }
-            )
-            put(
-                "isVaulted",
-                true
-            )
-            put(
-                "analyticsId",
-                "analytics123"
-            )
-            put(
-                "tokenType",
-                "SINGLE_USE"
-            )
-        }
+        val json =
+            JSONObject().apply {
+                put(
+                    "token",
+                    "test_token",
+                )
+                put(
+                    "paymentInstrumentType",
+                    "credit_card",
+                )
+                put(
+                    "paymentMethodType",
+                    "visa",
+                )
+                put(
+                    "paymentInstrumentData",
+                    JSONObject().apply {
+                        put(
+                            "network",
+                            "Visa",
+                        )
+                        put(
+                            "cardholderName",
+                            "John Doe",
+                        )
+                        put(
+                            "first6Digits",
+                            123456,
+                        )
+                        put(
+                            "last4Digits",
+                            7890,
+                        )
+                        put(
+                            "expirationMonth",
+                            12,
+                        )
+                        put(
+                            "expirationYear",
+                            2025,
+                        )
+                        put(
+                            "gocardlessMandateId",
+                            "gocardless123",
+                        )
+                        put(
+                            "klarnaCustomerToken",
+                            "klarnaToken123",
+                        )
+                    },
+                )
+                put(
+                    "vaultData",
+                    JSONObject().apply {
+                        put(
+                            "customerId",
+                            "customer123",
+                        )
+                    },
+                )
+                put(
+                    "threeDSecureAuthentication",
+                    JSONObject().apply {
+                        put(
+                            "responseCode",
+                            "AUTH_SUCCESS",
+                        )
+                        put(
+                            "reasonCode",
+                            "123",
+                        )
+                        put(
+                            "reasonText",
+                            "Successful authentication",
+                        )
+                        put(
+                            "protocolVersion",
+                            "1.0",
+                        )
+                        put(
+                            "challengeIssued",
+                            true,
+                        )
+                    },
+                )
+                put(
+                    "isVaulted",
+                    true,
+                )
+                put(
+                    "analyticsId",
+                    "analytics123",
+                )
+                put(
+                    "tokenType",
+                    "SINGLE_USE",
+                )
+            }
 
         // When
         val paymentMethodTokenInternal = PaymentMethodTokenInternal.deserializer.deserialize(json)
@@ -140,34 +140,37 @@ class PaymentMethodTokenInternalTest {
     @Test
     fun `test conversion to PrimerPaymentMethodTokenData`() {
         // Given
-        val paymentMethodTokenInternal = PaymentMethodTokenInternal(
-            token = "test_token",
-            paymentInstrumentType = "credit_card",
-            paymentMethodType = "visa",
-            paymentInstrumentData = PaymentInstrumentData(
-                network = "Visa",
-                cardholderName = "John Doe",
-                first6Digits = 123456,
-                last4Digits = 7890,
-                accountNumberLast4Digits = 9876,
-                expirationMonth = 12,
-                expirationYear = 2025,
-                klarnaCustomerToken = "klarnaToken123",
-                paymentMethodType = "credit_card",
-                bankName = "bank_name"
-            ),
-            vaultData = BasePaymentToken.VaultDataResponse("customer123"),
-            threeDSecureAuthentication = BasePaymentToken.AuthenticationDetailsDataResponse(
-                responseCode = ResponseCode.AUTH_SUCCESS,
-                reasonCode = "123",
-                reasonText = "Successful authentication",
-                protocolVersion = "1.0",
-                challengeIssued = true
-            ),
-            isVaulted = true,
-            analyticsId = "analytics123",
-            tokenType = TokenType.SINGLE_USE
-        )
+        val paymentMethodTokenInternal =
+            PaymentMethodTokenInternal(
+                token = "test_token",
+                paymentInstrumentType = "credit_card",
+                paymentMethodType = "visa",
+                paymentInstrumentData =
+                    PaymentInstrumentData(
+                        network = "Visa",
+                        cardholderName = "John Doe",
+                        first6Digits = 123456,
+                        last4Digits = 7890,
+                        accountNumberLast4Digits = 9876,
+                        expirationMonth = 12,
+                        expirationYear = 2025,
+                        klarnaCustomerToken = "klarnaToken123",
+                        paymentMethodType = "credit_card",
+                        bankName = "bank_name",
+                    ),
+                vaultData = BasePaymentToken.VaultDataResponse("customer123"),
+                threeDSecureAuthentication =
+                    BasePaymentToken.AuthenticationDetailsDataResponse(
+                        responseCode = ResponseCode.AUTH_SUCCESS,
+                        reasonCode = "123",
+                        reasonText = "Successful authentication",
+                        protocolVersion = "1.0",
+                        challengeIssued = true,
+                    ),
+                isVaulted = true,
+                analyticsId = "analytics123",
+                tokenType = TokenType.SINGLE_USE,
+            )
 
         // When
         val primerPaymentMethodTokenData = paymentMethodTokenInternal.toPaymentMethodToken()

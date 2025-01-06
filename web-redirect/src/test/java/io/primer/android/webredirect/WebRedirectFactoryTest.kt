@@ -9,7 +9,6 @@ import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 internal class WebRedirectFactoryTest {
-
     private lateinit var webRedirectFactory: WebRedirectFactory
     private val paymentMethodType = "testPaymentMethodType"
 

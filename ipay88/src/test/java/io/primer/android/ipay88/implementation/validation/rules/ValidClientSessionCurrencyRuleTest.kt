@@ -18,7 +18,6 @@ import kotlin.test.assertEquals
 @ExtendWith(InstantExecutorExtension::class, MockKExtension::class)
 @ExperimentalCoroutinesApi
 internal class ValidClientSessionCurrencyRuleTest {
-
     private lateinit var clientSessionCurrencyRule: ValidClientSessionCurrencyRule
 
     @BeforeEach
@@ -48,11 +47,11 @@ internal class ValidClientSessionCurrencyRuleTest {
                 as IllegalClientSessionValueException
         assertEquals(
             IllegalClientSessionValueException::class,
-            exception::class
+            exception::class,
         )
         assertEquals(
             IPay88IllegalValueKey.ILLEGAL_CURRENCY_CODE,
-            exception.key
+            exception.key,
         )
     }
 }

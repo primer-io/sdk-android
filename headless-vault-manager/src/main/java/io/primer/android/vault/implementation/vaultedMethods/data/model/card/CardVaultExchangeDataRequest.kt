@@ -5,16 +5,15 @@ import io.primer.android.vault.implementation.vaultedMethods.data.model.BasePaym
 import org.json.JSONObject
 
 internal data class CardVaultExchangeDataRequest(val cvv: String) : BasePaymentMethodVaultExchangeDataRequest {
-
     companion object {
-
         private const val CVV_FIELD = "cvv"
 
         @JvmField
-        val serializer = JSONObjectSerializer<CardVaultExchangeDataRequest> { t ->
-            JSONObject().apply {
-                put(CVV_FIELD, t.cvv)
+        val serializer =
+            JSONObjectSerializer<CardVaultExchangeDataRequest> { t ->
+                JSONObject().apply {
+                    put(CVV_FIELD, t.cvv)
+                }
             }
-        }
     }
 }

@@ -48,7 +48,6 @@ import kotlin.test.assertIs
 import kotlin.time.Duration.Companion.seconds
 
 class DefaultPrimerHeadlessRepositoryTest {
-
     @MockK
     private lateinit var context: Context
 
@@ -88,886 +87,942 @@ class DefaultPrimerHeadlessRepositoryTest {
     }
 
     @Test
-    fun `handleManualFlowSuccess() should emit CheckoutCompleted event when isSuccessScreenEnabled=true`() = runTest {
-        val checkoutAdditionalInfo = mockk<PrimerCheckoutAdditionalInfo>()
-        val intent = mockk<PrimerIntent> {
-            every { paymentMethodIntent } returns PrimerSessionIntent.CHECKOUT
-        }
-        every { config.intent } returns intent
-        every { config.settings.uiOptions.isSuccessScreenEnabled } returns true
-        val listenerSlot = slot<PrimerHeadlessUniversalCheckoutListener>()
-        every { headlessUniversalCheckout.setCheckoutListener(capture(listenerSlot)) } just Runs
-        every { headlessUniversalCheckout.cleanup() } just Runs
+    fun `handleManualFlowSuccess() should emit CheckoutCompleted event when isSuccessScreenEnabled=true`() =
+        runTest {
+            val checkoutAdditionalInfo = mockk<PrimerCheckoutAdditionalInfo>()
+            val intent =
+                mockk<PrimerIntent> {
+                    every { paymentMethodIntent } returns PrimerSessionIntent.CHECKOUT
+                }
+            every { config.intent } returns intent
+            every { config.settings.uiOptions.isSuccessScreenEnabled } returns true
+            val listenerSlot = slot<PrimerHeadlessUniversalCheckoutListener>()
+            every { headlessUniversalCheckout.setCheckoutListener(capture(listenerSlot)) } just Runs
+            every { headlessUniversalCheckout.cleanup() } just Runs
 
-        repository.handleManualFlowSuccess(checkoutAdditionalInfo)
-        val event = repository.events.first()
+            repository.handleManualFlowSuccess(checkoutAdditionalInfo)
+            val event = repository.events.first()
 
-        assert(event is PrimerEvent.CheckoutCompleted)
-        assertEquals(
-            PrimerCheckoutData(Payment.undefined, checkoutAdditionalInfo),
-            (event as PrimerEvent.CheckoutCompleted).checkoutData
-        )
-        assertEquals(SuccessType.PAYMENT_SUCCESS, event.successType)
-        verify {
-            config.settings
-            config.intent
-            headlessUniversalCheckout.cleanup()
-        }
-        verify(exactly = 0) {
-            primerCheckoutListener.onCheckoutCompleted(any())
-        }
-    }
-
-    @Test
-    fun `handleManualFlowSuccess() should emit CheckoutCompleted event when isSuccessScreenEnabled=false`() = runTest {
-        val intent = mockk<PrimerIntent> {
-            every { paymentMethodIntent } returns PrimerSessionIntent.CHECKOUT
-        }
-        every { config.intent } returns intent
-        every { config.settings.uiOptions.isSuccessScreenEnabled } returns false
-        val listenerSlot = slot<PrimerHeadlessUniversalCheckoutListener>()
-        every { headlessUniversalCheckout.setCheckoutListener(capture(listenerSlot)) } just Runs
-        every { headlessUniversalCheckout.cleanup() } just Runs
-
-        repository.handleManualFlowSuccess(mockk())
-        val event = repository.events.first()
-
-        assertIs<PrimerEvent.Dismiss>(event)
-        verify {
-            config.settings
-            headlessUniversalCheckout.cleanup()
-        }
-        verify(exactly = 0) {
-            config.intent
-            primerCheckoutListener.onCheckoutCompleted(any())
-        }
-    }
-
-    @Test
-    fun `events flow should emit AvailablePaymentMethodsLoaded event when onAvailablePaymentMethodsLoaded() is called`() = runTest {
-        val paymentMethods = listOf<PrimerHeadlessUniversalCheckoutPaymentMethod>(mockk())
-        val listenerSlot = slot<PrimerHeadlessUniversalCheckoutListener>()
-        every { headlessUniversalCheckout.setCheckoutListener(capture(listenerSlot)) } answers {
-            listenerSlot.captured.onAvailablePaymentMethodsLoaded(paymentMethods)
-        }
-        every { headlessUniversalCheckout.cleanup() } just Runs
-
-        val event = repository.events.first()
-
-        assert(event is PrimerEvent.AvailablePaymentMethodsLoaded)
-        assertEquals(
-            paymentMethods,
-            (event as PrimerEvent.AvailablePaymentMethodsLoaded).paymentMethodsHolder.paymentMethods
-        )
-    }
-
-    @Test
-    fun `events flow should call PrimerCheckoutListener and emit CheckoutCompleted event when onCheckoutCompleted() is called and isSuccessScreenEnabled=true`() = runTest {
-        val checkoutData = mockk<PrimerCheckoutData>()
-        val intent = mockk<PrimerIntent> {
-            every { paymentMethodIntent } returns PrimerSessionIntent.CHECKOUT
-        }
-        every { config.intent } returns intent
-        every { config.settings.uiOptions.isSuccessScreenEnabled } returns true
-        val listenerSlot = slot<PrimerHeadlessUniversalCheckoutListener>()
-        every { headlessUniversalCheckout.setCheckoutListener(capture(listenerSlot)) } answers {
-            listenerSlot.captured.onCheckoutCompleted(checkoutData)
-        }
-        every { primerCheckoutListener.onCheckoutCompleted(any()) } just Runs
-        every { headlessUniversalCheckout.cleanup() } just Runs
-
-        val event = repository.events.first()
-
-        assert(event is PrimerEvent.CheckoutCompleted)
-        assertEquals(checkoutData, (event as PrimerEvent.CheckoutCompleted).checkoutData)
-        assertEquals(SuccessType.PAYMENT_SUCCESS, event.successType)
-        verify {
-            config.settings
-            config.intent
-            primerCheckoutListener.onCheckoutCompleted(checkoutData)
-            headlessUniversalCheckout.cleanup()
-        }
-    }
-
-    @Test
-    fun `events flow should call PrimerCheckoutListener and emit Dismiss event when onCheckoutCompleted() is called and isSuccessScreenEnabled=false`() = runTest {
-        val checkoutData = mockk<PrimerCheckoutData>()
-        val intent = mockk<PrimerIntent> {
-            every { paymentMethodIntent } returns PrimerSessionIntent.CHECKOUT
-        }
-        every { config.intent } returns intent
-        every { config.settings.uiOptions.isSuccessScreenEnabled } returns false
-        val listenerSlot = slot<PrimerHeadlessUniversalCheckoutListener>()
-        every { headlessUniversalCheckout.setCheckoutListener(capture(listenerSlot)) } answers {
-            listenerSlot.captured.onCheckoutCompleted(checkoutData)
-        }
-        every { primerCheckoutListener.onCheckoutCompleted(any()) } just Runs
-        every { headlessUniversalCheckout.cleanup() } just Runs
-
-        val event = repository.events.first()
-
-        assertIs<PrimerEvent.Dismiss>(event)
-        verify {
-            config.settings
-            primerCheckoutListener.onCheckoutCompleted(checkoutData)
-            headlessUniversalCheckout.cleanup()
-        }
-        verify(exactly = 0) {
-            config.intent
-        }
-    }
-
-    @Test
-    fun `events flow should call PrimerCheckoutListener and emit CheckoutFailed event with cancellation error when onFailed(2) is called and isSuccessScreenEnabled=true and PrimerSessionIntent CHECKOUT`() = runTest {
-        val error = mockk<PaymentMethodCancelledError>()
-        val intent = mockk<PrimerIntent> {
-            every { paymentMethodIntent } returns PrimerSessionIntent.CHECKOUT
-        }
-        every { config.intent } returns intent
-        every { config.settings.uiOptions.isSuccessScreenEnabled } returns true
-        val listenerSlot = slot<PrimerHeadlessUniversalCheckoutListener>()
-        val checkoutData = mockk<PrimerCheckoutData>()
-        every { headlessUniversalCheckout.setCheckoutListener(capture(listenerSlot)) } answers {
-            listenerSlot.captured.onFailed(error, checkoutData)
-        }
-        val handlerSlot = slot<PrimerErrorDecisionHandler>()
-        every { primerCheckoutListener.onFailed(any(), any(), capture(handlerSlot)) } answers {
-            handlerSlot.captured.showErrorMessage("This is an error")
-        }
-        every { headlessUniversalCheckout.cleanup() } just Runs
-
-        val event = repository.events.first()
-
-        assert(event is PrimerEvent.CheckoutFailed)
-        assertEquals("This is an error", (event as PrimerEvent.CheckoutFailed).errorMessage)
-        assertEquals(ErrorType.PAYMENT_CANCELLED, event.errorType)
-        verify {
-            intent.paymentMethodIntent
-            primerCheckoutListener.onFailed(error, checkoutData, handlerSlot.captured)
-            headlessUniversalCheckout.cleanup()
-        }
-    }
-
-    @Test
-    fun `events flow should call PrimerCheckoutListener and emit CheckoutFailed event with error when onFailed(2) is called and isSuccessScreenEnabled=true and PrimerSessionIntent CHECKOUT`() = runTest {
-        val error = mockk<PrimerError>()
-        val intent = mockk<PrimerIntent> {
-            every { paymentMethodIntent } returns PrimerSessionIntent.CHECKOUT
-        }
-        every { config.intent } returns intent
-        every { config.settings.uiOptions.isSuccessScreenEnabled } returns true
-        val listenerSlot = slot<PrimerHeadlessUniversalCheckoutListener>()
-        val checkoutData = mockk<PrimerCheckoutData>()
-        every { headlessUniversalCheckout.setCheckoutListener(capture(listenerSlot)) } answers {
-            listenerSlot.captured.onFailed(error, checkoutData)
-        }
-        val handlerSlot = slot<PrimerErrorDecisionHandler>()
-        every { primerCheckoutListener.onFailed(any(), any(), capture(handlerSlot)) } answers {
-            handlerSlot.captured.showErrorMessage("This is an error")
-        }
-        every { headlessUniversalCheckout.cleanup() } just Runs
-
-        val event = repository.events.first()
-
-        assert(event is PrimerEvent.CheckoutFailed)
-        assertEquals("This is an error", (event as PrimerEvent.CheckoutFailed).errorMessage)
-        assertEquals(ErrorType.PAYMENT_FAILED, event.errorType)
-        verify {
-            intent.paymentMethodIntent
-            primerCheckoutListener.onFailed(error, checkoutData, handlerSlot.captured)
-            headlessUniversalCheckout.cleanup()
-        }
-    }
-
-    @Test
-    fun `events flow should call PrimerCheckoutListener and emit CheckoutFailed event with error when onFailed(2) is called and isSuccessScreenEnabled=true and PrimerSessionIntent VAULT`() = runTest {
-        val error = mockk<PrimerError>()
-        val intent = mockk<PrimerIntent> {
-            every { paymentMethodIntent } returns PrimerSessionIntent.VAULT
-        }
-        every { config.intent } returns intent
-        every { config.settings.uiOptions.isSuccessScreenEnabled } returns true
-        val listenerSlot = slot<PrimerHeadlessUniversalCheckoutListener>()
-        val checkoutData = mockk<PrimerCheckoutData>()
-        every { headlessUniversalCheckout.setCheckoutListener(capture(listenerSlot)) } answers {
-            listenerSlot.captured.onFailed(error, checkoutData)
-        }
-        val handlerSlot = slot<PrimerErrorDecisionHandler>()
-        every { primerCheckoutListener.onFailed(any(), any(), capture(handlerSlot)) } answers {
-            handlerSlot.captured.showErrorMessage("This is an error")
-        }
-        every { headlessUniversalCheckout.cleanup() } just Runs
-
-        val event = repository.events.first()
-
-        assert(event is PrimerEvent.CheckoutFailed)
-        assertEquals("This is an error", (event as PrimerEvent.CheckoutFailed).errorMessage)
-        assertEquals(ErrorType.VAULT_TOKENIZATION_FAILED, event.errorType)
-        verify {
-            intent.paymentMethodIntent
-            primerCheckoutListener.onFailed(error, checkoutData, handlerSlot.captured)
-            headlessUniversalCheckout.cleanup()
-        }
-    }
-
-    @Test
-    fun `events flow should call PrimerCheckoutListener and emit Dismiss event when onFailed(2) is called and isSuccessScreenEnabled=false`() = runTest {
-        val error = mockk<PrimerError>()
-        every { config.settings.uiOptions.isSuccessScreenEnabled } returns false
-        val listenerSlot = slot<PrimerHeadlessUniversalCheckoutListener>()
-        val checkoutData = mockk<PrimerCheckoutData>()
-        every { headlessUniversalCheckout.setCheckoutListener(capture(listenerSlot)) } answers {
-            listenerSlot.captured.onFailed(error, checkoutData)
-        }
-        val handlerSlot = slot<PrimerErrorDecisionHandler>()
-        every { primerCheckoutListener.onFailed(any(), any(), capture(handlerSlot)) } answers {
-            handlerSlot.captured.showErrorMessage("This is an error")
-        }
-        every { headlessUniversalCheckout.cleanup() } just Runs
-
-        val event = repository.events.first()
-
-        assertIs<PrimerEvent.Dismiss>(event)
-        verify {
-            primerCheckoutListener.onFailed(error, checkoutData, handlerSlot.captured)
-            headlessUniversalCheckout.cleanup()
-        }
-        verify(exactly = 0) {
-            config.intent.paymentMethodIntent
-        }
-    }
-
-    @Test
-    fun `events flow should call PrimerCheckoutListener and emit CheckoutFailed event with cancellation error when onFailed(1) is called and isSuccessScreenEnabled=true and PrimerSessionIntent CHECKOUT`() = runTest {
-        val error = mockk<PaymentMethodCancelledError>()
-        val intent = mockk<PrimerIntent> {
-            every { paymentMethodIntent } returns PrimerSessionIntent.CHECKOUT
-        }
-        every { config.intent } returns intent
-        every { config.settings.uiOptions.isSuccessScreenEnabled } returns true
-        val listenerSlot = slot<PrimerHeadlessUniversalCheckoutListener>()
-        every { headlessUniversalCheckout.setCheckoutListener(capture(listenerSlot)) } answers {
-            listenerSlot.captured.onFailed(error)
-        }
-        val handlerSlot = slot<PrimerErrorDecisionHandler>()
-        every { primerCheckoutListener.onFailed(any(), capture(handlerSlot)) } answers {
-            handlerSlot.captured.showErrorMessage("This is an error")
-        }
-        every { headlessUniversalCheckout.cleanup() } just Runs
-
-        val event = repository.events.first()
-
-        assert(event is PrimerEvent.CheckoutFailed)
-        assertEquals("This is an error", (event as PrimerEvent.CheckoutFailed).errorMessage)
-        assertEquals(ErrorType.PAYMENT_CANCELLED, event.errorType)
-        verify {
-            intent.paymentMethodIntent
-            primerCheckoutListener.onFailed(error, handlerSlot.captured)
-            headlessUniversalCheckout.cleanup()
-        }
-    }
-
-    @Test
-    fun `events flow should call PrimerCheckoutListener and emit CheckoutFailed event with error when onFailed(1) is called and isSuccessScreenEnabled=true and PrimerSessionIntent CHECKOUT`() = runTest {
-        val error = mockk<PrimerError>()
-        val intent = mockk<PrimerIntent> {
-            every { paymentMethodIntent } returns PrimerSessionIntent.CHECKOUT
-        }
-        every { config.intent } returns intent
-        every { config.settings.uiOptions.isSuccessScreenEnabled } returns true
-        val listenerSlot = slot<PrimerHeadlessUniversalCheckoutListener>()
-        every { headlessUniversalCheckout.setCheckoutListener(capture(listenerSlot)) } answers {
-            listenerSlot.captured.onFailed(error)
-        }
-        val handlerSlot = slot<PrimerErrorDecisionHandler>()
-        every { primerCheckoutListener.onFailed(any(), capture(handlerSlot)) } answers {
-            handlerSlot.captured.showErrorMessage("This is an error")
-        }
-        every { headlessUniversalCheckout.cleanup() } just Runs
-
-        val event = repository.events.first()
-
-        assert(event is PrimerEvent.CheckoutFailed)
-        assertEquals("This is an error", (event as PrimerEvent.CheckoutFailed).errorMessage)
-        assertEquals(ErrorType.PAYMENT_FAILED, event.errorType)
-        verify {
-            intent.paymentMethodIntent
-            primerCheckoutListener.onFailed(error, handlerSlot.captured)
-            headlessUniversalCheckout.cleanup()
-        }
-    }
-
-    @Test
-    fun `events flow should call PrimerCheckoutListener and emit CheckoutFailed event with error when onFailed(1) is called and isSuccessScreenEnabled=true and PrimerSessionIntent VAULT`() = runTest {
-        val error = mockk<PrimerError>()
-        val intent = mockk<PrimerIntent> {
-            every { paymentMethodIntent } returns PrimerSessionIntent.VAULT
-        }
-        every { config.intent } returns intent
-        every { config.settings.uiOptions.isSuccessScreenEnabled } returns true
-        val listenerSlot = slot<PrimerHeadlessUniversalCheckoutListener>()
-        every { headlessUniversalCheckout.setCheckoutListener(capture(listenerSlot)) } answers {
-            listenerSlot.captured.onFailed(error)
-        }
-        val handlerSlot = slot<PrimerErrorDecisionHandler>()
-        every { primerCheckoutListener.onFailed(any(), capture(handlerSlot)) } answers {
-            handlerSlot.captured.showErrorMessage("This is an error")
-        }
-        every { headlessUniversalCheckout.cleanup() } just Runs
-
-        val event = repository.events.first()
-
-        assert(event is PrimerEvent.CheckoutFailed)
-        assertEquals("This is an error", (event as PrimerEvent.CheckoutFailed).errorMessage)
-        assertEquals(ErrorType.VAULT_TOKENIZATION_FAILED, event.errorType)
-        verify {
-            intent.paymentMethodIntent
-            primerCheckoutListener.onFailed(error, handlerSlot.captured)
-            headlessUniversalCheckout.cleanup()
-        }
-    }
-
-    @Test
-    fun `events flow should call PrimerCheckoutListener and emit Dismiss event when onFailed(1) is called and isSuccessScreenEnabled=false`() = runTest {
-        val error = mockk<PrimerError>()
-        every { config.settings.uiOptions.isSuccessScreenEnabled } returns false
-        val listenerSlot = slot<PrimerHeadlessUniversalCheckoutListener>()
-        every { headlessUniversalCheckout.setCheckoutListener(capture(listenerSlot)) } answers {
-            listenerSlot.captured.onFailed(error)
-        }
-        val handlerSlot = slot<PrimerErrorDecisionHandler>()
-        every { primerCheckoutListener.onFailed(any(), capture(handlerSlot)) } answers {
-            handlerSlot.captured.showErrorMessage("This is an error")
-        }
-        every { headlessUniversalCheckout.cleanup() } just Runs
-
-        val event = repository.events.first()
-
-        assertIs<PrimerEvent.Dismiss>(event)
-        verify {
-            primerCheckoutListener.onFailed(error, handlerSlot.captured)
-            headlessUniversalCheckout.cleanup()
-        }
-        verify(exactly = 0) {
-            config.intent.paymentMethodIntent
-        }
-    }
-
-    @Test
-    fun `events flow should call PrimerCheckoutListener when onTokenizeSuccess() is called and delegates to decision handler when continueWithNewClientToken() is called`() = runTest {
-        val listenerSlot = slot<PrimerHeadlessUniversalCheckoutListener>()
-        val paymentMethodTokenData = mockk<PrimerPaymentMethodTokenData>()
-        val decisionHandler = mockk<PrimerHeadlessUniversalCheckoutResumeDecisionHandler> {
-            every { continueWithNewClientToken(any()) } just Runs
-        }
-        every { headlessUniversalCheckout.setCheckoutListener(capture(listenerSlot)) } answers {
-            listenerSlot.captured.onTokenizeSuccess(paymentMethodTokenData, decisionHandler)
-        }
-        every { primerCheckoutListener.onTokenizeSuccess(any(), any()) } just Runs
-        every { headlessUniversalCheckout.cleanup() } just Runs
-
-        runCatching {
-            withTimeout(1.seconds) {
-                repository.events.collect {}
+            assert(event is PrimerEvent.CheckoutCompleted)
+            assertEquals(
+                PrimerCheckoutData(Payment.undefined, checkoutAdditionalInfo),
+                (event as PrimerEvent.CheckoutCompleted).checkoutData,
+            )
+            assertEquals(SuccessType.PAYMENT_SUCCESS, event.successType)
+            verify {
+                config.settings
+                config.intent
+                headlessUniversalCheckout.cleanup()
+            }
+            verify(exactly = 0) {
+                primerCheckoutListener.onCheckoutCompleted(any())
             }
         }
 
-        val slot = slot<PrimerResumeDecisionHandler>()
-        verify {
-            primerCheckoutListener.onTokenizeSuccess(paymentMethodTokenData, capture(slot))
-            headlessUniversalCheckout.cleanup()
-        }
-        slot.captured.continueWithNewClientToken("token")
-        verify {
-            decisionHandler.continueWithNewClientToken("token")
-        }
-    }
-
     @Test
-    fun `events flow should call PrimerCheckoutListener when onTokenizeSuccess() is called and success should be handled correctly when isSuccessScreenEnabled=false`() = runTest {
-        val listenerSlot = slot<PrimerHeadlessUniversalCheckoutListener>()
-        val intent = mockk<PrimerIntent> {
-            every { paymentMethodIntent } returns PrimerSessionIntent.CHECKOUT
-        }
-        every { config.intent } returns intent
-        every { config.settings.uiOptions.isSuccessScreenEnabled } returns false
-        val paymentMethodTokenData = mockk<PrimerPaymentMethodTokenData>()
-        val decisionHandler = mockk<PrimerHeadlessUniversalCheckoutResumeDecisionHandler>()
-        every { headlessUniversalCheckout.setCheckoutListener(capture(listenerSlot)) } answers {
-            listenerSlot.captured.onTokenizeSuccess(paymentMethodTokenData, decisionHandler)
-        }
-        every { primerCheckoutListener.onTokenizeSuccess(any(), any()) } just Runs
-        every { headlessUniversalCheckout.cleanup() } just Runs
+    fun `handleManualFlowSuccess() should emit CheckoutCompleted event when isSuccessScreenEnabled=false`() =
+        runTest {
+            val intent =
+                mockk<PrimerIntent> {
+                    every { paymentMethodIntent } returns PrimerSessionIntent.CHECKOUT
+                }
+            every { config.intent } returns intent
+            every { config.settings.uiOptions.isSuccessScreenEnabled } returns false
+            val listenerSlot = slot<PrimerHeadlessUniversalCheckoutListener>()
+            every { headlessUniversalCheckout.setCheckoutListener(capture(listenerSlot)) } just Runs
+            every { headlessUniversalCheckout.cleanup() } just Runs
 
-        val events = mutableListOf<PrimerEvent>()
-        val collectJob = launch {
-            repository.events.collectLatest {
-                events += it
+            repository.handleManualFlowSuccess(mockk())
+            val event = repository.events.first()
+
+            assertIs<PrimerEvent.Dismiss>(event)
+            verify {
+                config.settings
+                headlessUniversalCheckout.cleanup()
+            }
+            verify(exactly = 0) {
+                config.intent
+                primerCheckoutListener.onCheckoutCompleted(any())
             }
         }
-        delay(1.seconds)
-
-        val slot = slot<PrimerResumeDecisionHandler>()
-        verify {
-            primerCheckoutListener.onTokenizeSuccess(paymentMethodTokenData, capture(slot))
-        }
-        slot.captured.handleSuccess()
-        verify(exactly = 0) {
-            decisionHandler.continueWithNewClientToken(any())
-        }
-        delay(1.seconds)
-        assertIs<PrimerEvent.Dismiss>(events.single())
-        verify {
-            config.settings
-        }
-        verify(exactly = 0) {
-            config.intent
-        }
-        collectJob.cancel()
-    }
 
     @Test
-    fun `events flow should call PrimerCheckoutListener when onTokenizeSuccess() is called and success should be handled correctly when isSuccessScreenEnabled=true`() = runTest {
-        val listenerSlot = slot<PrimerHeadlessUniversalCheckoutListener>()
-        val intent = mockk<PrimerIntent> {
-            every { paymentMethodIntent } returns PrimerSessionIntent.CHECKOUT
-        }
-        every { config.intent } returns intent
-        every { config.settings.uiOptions.isSuccessScreenEnabled } returns true
-        val paymentMethodTokenData = mockk<PrimerPaymentMethodTokenData>()
-        val decisionHandler = mockk<PrimerHeadlessUniversalCheckoutResumeDecisionHandler>()
-        every { headlessUniversalCheckout.setCheckoutListener(capture(listenerSlot)) } answers {
-            listenerSlot.captured.onTokenizeSuccess(paymentMethodTokenData, decisionHandler)
-        }
-        every { primerCheckoutListener.onTokenizeSuccess(any(), any()) } just Runs
-        every { headlessUniversalCheckout.cleanup() } just Runs
-
-        val events = mutableListOf<PrimerEvent>()
-        val collectJob = launch {
-            repository.events.collectLatest {
-                events += it
+    fun `events flow should emit AvailablePaymentMethodsLoaded event when onAvailablePaymentMethodsLoaded() is called`() =
+        runTest {
+            val paymentMethods = listOf<PrimerHeadlessUniversalCheckoutPaymentMethod>(mockk())
+            val listenerSlot = slot<PrimerHeadlessUniversalCheckoutListener>()
+            every { headlessUniversalCheckout.setCheckoutListener(capture(listenerSlot)) } answers {
+                listenerSlot.captured.onAvailablePaymentMethodsLoaded(paymentMethods)
             }
-        }
-        delay(1.seconds)
+            every { headlessUniversalCheckout.cleanup() } just Runs
 
-        val slot = slot<PrimerResumeDecisionHandler>()
-        verify {
-            primerCheckoutListener.onTokenizeSuccess(paymentMethodTokenData, capture(slot))
+            val event = repository.events.first()
+
+            assert(event is PrimerEvent.AvailablePaymentMethodsLoaded)
+            assertEquals(
+                paymentMethods,
+                (event as PrimerEvent.AvailablePaymentMethodsLoaded).paymentMethodsHolder.paymentMethods,
+            )
         }
-        slot.captured.handleSuccess()
-        verify(exactly = 0) {
-            decisionHandler.continueWithNewClientToken(any())
-        }
-        delay(1.seconds)
-        val event = events.single()
-        assert(event is PrimerEvent.CheckoutCompleted)
-        assertEquals(null, (event as PrimerEvent.CheckoutCompleted).checkoutData)
-        assertEquals(SuccessType.PAYMENT_SUCCESS, event.successType)
-        verify {
-            config.settings
-            config.intent
-        }
-        collectJob.cancel()
-    }
 
     @Test
-    fun `events flow should call PrimerCheckoutListener when onTokenizeSuccess() is called and failure should be handled correctly when isSuccessScreenEnabled=true`() = runTest {
-        val listenerSlot = slot<PrimerHeadlessUniversalCheckoutListener>()
-        val intent = mockk<PrimerIntent> {
-            every { paymentMethodIntent } returns PrimerSessionIntent.CHECKOUT
-        }
-        every { config.intent } returns intent
-        every { config.settings.uiOptions.isSuccessScreenEnabled } returns true
-        val paymentMethodTokenData = mockk<PrimerPaymentMethodTokenData>()
-        val decisionHandler = mockk<PrimerHeadlessUniversalCheckoutResumeDecisionHandler>()
-        every { headlessUniversalCheckout.setCheckoutListener(capture(listenerSlot)) } answers {
-            listenerSlot.captured.onTokenizeSuccess(paymentMethodTokenData, decisionHandler)
-        }
-        every { primerCheckoutListener.onTokenizeSuccess(any(), any()) } just Runs
-        every { headlessUniversalCheckout.cleanup() } just Runs
+    fun `events flow should call PrimerCheckoutListener and emit CheckoutCompleted event when onCheckoutCompleted() is called and isSuccessScreenEnabled=true`() =
+        runTest {
+            val checkoutData = mockk<PrimerCheckoutData>()
+            val intent =
+                mockk<PrimerIntent> {
+                    every { paymentMethodIntent } returns PrimerSessionIntent.CHECKOUT
+                }
+            every { config.intent } returns intent
+            every { config.settings.uiOptions.isSuccessScreenEnabled } returns true
+            val listenerSlot = slot<PrimerHeadlessUniversalCheckoutListener>()
+            every { headlessUniversalCheckout.setCheckoutListener(capture(listenerSlot)) } answers {
+                listenerSlot.captured.onCheckoutCompleted(checkoutData)
+            }
+            every { primerCheckoutListener.onCheckoutCompleted(any()) } just Runs
+            every { headlessUniversalCheckout.cleanup() } just Runs
 
-        val events = mutableListOf<PrimerEvent>()
-        val collectJob = launch {
-            repository.events.collectLatest {
-                events += it
+            val event = repository.events.first()
+
+            assert(event is PrimerEvent.CheckoutCompleted)
+            assertEquals(checkoutData, (event as PrimerEvent.CheckoutCompleted).checkoutData)
+            assertEquals(SuccessType.PAYMENT_SUCCESS, event.successType)
+            verify {
+                config.settings
+                config.intent
+                primerCheckoutListener.onCheckoutCompleted(checkoutData)
+                headlessUniversalCheckout.cleanup()
             }
         }
-        delay(1.seconds)
-
-        val slot = slot<PrimerResumeDecisionHandler>()
-        verify {
-            primerCheckoutListener.onTokenizeSuccess(paymentMethodTokenData, capture(slot))
-        }
-        slot.captured.handleFailure("Failure")
-        verify(exactly = 0) {
-            decisionHandler.continueWithNewClientToken(any())
-        }
-        delay(1.seconds)
-        val event = events.single()
-        assert(event is PrimerEvent.CheckoutFailed)
-        assertEquals("Failure", (event as PrimerEvent.CheckoutFailed).errorMessage)
-        assertEquals(ErrorType.PAYMENT_FAILED, event.errorType)
-        verify {
-            config.settings
-            config.intent
-        }
-        collectJob.cancel()
-    }
 
     @Test
-    fun `events flow should call PrimerCheckoutListener when onTokenizeSuccess() is called and failure should be handled correctly when isSuccessScreenEnabled=false`() = runTest {
-        val listenerSlot = slot<PrimerHeadlessUniversalCheckoutListener>()
-        val intent = mockk<PrimerIntent> {
-            every { paymentMethodIntent } returns PrimerSessionIntent.CHECKOUT
-        }
-        every { config.intent } returns intent
-        every { config.settings.uiOptions.isSuccessScreenEnabled } returns false
-        val paymentMethodTokenData = mockk<PrimerPaymentMethodTokenData>()
-        val decisionHandler = mockk<PrimerHeadlessUniversalCheckoutResumeDecisionHandler>()
-        every { headlessUniversalCheckout.setCheckoutListener(capture(listenerSlot)) } answers {
-            listenerSlot.captured.onTokenizeSuccess(paymentMethodTokenData, decisionHandler)
-        }
-        every { primerCheckoutListener.onTokenizeSuccess(any(), any()) } just Runs
-        every { headlessUniversalCheckout.cleanup() } just Runs
+    fun `events flow should call PrimerCheckoutListener and emit Dismiss event when onCheckoutCompleted() is called and isSuccessScreenEnabled=false`() =
+        runTest {
+            val checkoutData = mockk<PrimerCheckoutData>()
+            val intent =
+                mockk<PrimerIntent> {
+                    every { paymentMethodIntent } returns PrimerSessionIntent.CHECKOUT
+                }
+            every { config.intent } returns intent
+            every { config.settings.uiOptions.isSuccessScreenEnabled } returns false
+            val listenerSlot = slot<PrimerHeadlessUniversalCheckoutListener>()
+            every { headlessUniversalCheckout.setCheckoutListener(capture(listenerSlot)) } answers {
+                listenerSlot.captured.onCheckoutCompleted(checkoutData)
+            }
+            every { primerCheckoutListener.onCheckoutCompleted(any()) } just Runs
+            every { headlessUniversalCheckout.cleanup() } just Runs
 
-        val events = mutableListOf<PrimerEvent>()
-        val collectJob = launch {
-            repository.events.collectLatest {
-                events += it
+            val event = repository.events.first()
+
+            assertIs<PrimerEvent.Dismiss>(event)
+            verify {
+                config.settings
+                primerCheckoutListener.onCheckoutCompleted(checkoutData)
+                headlessUniversalCheckout.cleanup()
+            }
+            verify(exactly = 0) {
+                config.intent
             }
         }
-        delay(1.seconds)
 
-        val slot = slot<PrimerResumeDecisionHandler>()
-        verify {
-            primerCheckoutListener.onTokenizeSuccess(paymentMethodTokenData, capture(slot))
+    @Test
+    fun `events flow should call PrimerCheckoutListener and emit CheckoutFailed event with cancellation error when onFailed(2) is called and isSuccessScreenEnabled=true and PrimerSessionIntent CHECKOUT`() =
+        runTest {
+            val error = mockk<PaymentMethodCancelledError>()
+            val intent =
+                mockk<PrimerIntent> {
+                    every { paymentMethodIntent } returns PrimerSessionIntent.CHECKOUT
+                }
+            every { config.intent } returns intent
+            every { config.settings.uiOptions.isSuccessScreenEnabled } returns true
+            val listenerSlot = slot<PrimerHeadlessUniversalCheckoutListener>()
+            val checkoutData = mockk<PrimerCheckoutData>()
+            every { headlessUniversalCheckout.setCheckoutListener(capture(listenerSlot)) } answers {
+                listenerSlot.captured.onFailed(error, checkoutData)
+            }
+            val handlerSlot = slot<PrimerErrorDecisionHandler>()
+            every { primerCheckoutListener.onFailed(any(), any(), capture(handlerSlot)) } answers {
+                handlerSlot.captured.showErrorMessage("This is an error")
+            }
+            every { headlessUniversalCheckout.cleanup() } just Runs
+
+            val event = repository.events.first()
+
+            assert(event is PrimerEvent.CheckoutFailed)
+            assertEquals("This is an error", (event as PrimerEvent.CheckoutFailed).errorMessage)
+            assertEquals(ErrorType.PAYMENT_CANCELLED, event.errorType)
+            verify {
+                intent.paymentMethodIntent
+                primerCheckoutListener.onFailed(error, checkoutData, handlerSlot.captured)
+                headlessUniversalCheckout.cleanup()
+            }
         }
-        slot.captured.handleFailure("Failure")
-        verify(exactly = 0) {
-            decisionHandler.continueWithNewClientToken(any())
+
+    @Test
+    fun `events flow should call PrimerCheckoutListener and emit CheckoutFailed event with error when onFailed(2) is called and isSuccessScreenEnabled=true and PrimerSessionIntent CHECKOUT`() =
+        runTest {
+            val error = mockk<PrimerError>()
+            val intent =
+                mockk<PrimerIntent> {
+                    every { paymentMethodIntent } returns PrimerSessionIntent.CHECKOUT
+                }
+            every { config.intent } returns intent
+            every { config.settings.uiOptions.isSuccessScreenEnabled } returns true
+            val listenerSlot = slot<PrimerHeadlessUniversalCheckoutListener>()
+            val checkoutData = mockk<PrimerCheckoutData>()
+            every { headlessUniversalCheckout.setCheckoutListener(capture(listenerSlot)) } answers {
+                listenerSlot.captured.onFailed(error, checkoutData)
+            }
+            val handlerSlot = slot<PrimerErrorDecisionHandler>()
+            every { primerCheckoutListener.onFailed(any(), any(), capture(handlerSlot)) } answers {
+                handlerSlot.captured.showErrorMessage("This is an error")
+            }
+            every { headlessUniversalCheckout.cleanup() } just Runs
+
+            val event = repository.events.first()
+
+            assert(event is PrimerEvent.CheckoutFailed)
+            assertEquals("This is an error", (event as PrimerEvent.CheckoutFailed).errorMessage)
+            assertEquals(ErrorType.PAYMENT_FAILED, event.errorType)
+            verify {
+                intent.paymentMethodIntent
+                primerCheckoutListener.onFailed(error, checkoutData, handlerSlot.captured)
+                headlessUniversalCheckout.cleanup()
+            }
         }
-        delay(1.seconds)
-        assertIs<PrimerEvent.Dismiss>(events.single())
-        verify {
-            config.settings
+
+    @Test
+    fun `events flow should call PrimerCheckoutListener and emit CheckoutFailed event with error when onFailed(2) is called and isSuccessScreenEnabled=true and PrimerSessionIntent VAULT`() =
+        runTest {
+            val error = mockk<PrimerError>()
+            val intent =
+                mockk<PrimerIntent> {
+                    every { paymentMethodIntent } returns PrimerSessionIntent.VAULT
+                }
+            every { config.intent } returns intent
+            every { config.settings.uiOptions.isSuccessScreenEnabled } returns true
+            val listenerSlot = slot<PrimerHeadlessUniversalCheckoutListener>()
+            val checkoutData = mockk<PrimerCheckoutData>()
+            every { headlessUniversalCheckout.setCheckoutListener(capture(listenerSlot)) } answers {
+                listenerSlot.captured.onFailed(error, checkoutData)
+            }
+            val handlerSlot = slot<PrimerErrorDecisionHandler>()
+            every { primerCheckoutListener.onFailed(any(), any(), capture(handlerSlot)) } answers {
+                handlerSlot.captured.showErrorMessage("This is an error")
+            }
+            every { headlessUniversalCheckout.cleanup() } just Runs
+
+            val event = repository.events.first()
+
+            assert(event is PrimerEvent.CheckoutFailed)
+            assertEquals("This is an error", (event as PrimerEvent.CheckoutFailed).errorMessage)
+            assertEquals(ErrorType.VAULT_TOKENIZATION_FAILED, event.errorType)
+            verify {
+                intent.paymentMethodIntent
+                primerCheckoutListener.onFailed(error, checkoutData, handlerSlot.captured)
+                headlessUniversalCheckout.cleanup()
+            }
         }
-        verify(exactly = 0) {
-            config.intent
+
+    @Test
+    fun `events flow should call PrimerCheckoutListener and emit Dismiss event when onFailed(2) is called and isSuccessScreenEnabled=false`() =
+        runTest {
+            val error = mockk<PrimerError>()
+            every { config.settings.uiOptions.isSuccessScreenEnabled } returns false
+            val listenerSlot = slot<PrimerHeadlessUniversalCheckoutListener>()
+            val checkoutData = mockk<PrimerCheckoutData>()
+            every { headlessUniversalCheckout.setCheckoutListener(capture(listenerSlot)) } answers {
+                listenerSlot.captured.onFailed(error, checkoutData)
+            }
+            val handlerSlot = slot<PrimerErrorDecisionHandler>()
+            every { primerCheckoutListener.onFailed(any(), any(), capture(handlerSlot)) } answers {
+                handlerSlot.captured.showErrorMessage("This is an error")
+            }
+            every { headlessUniversalCheckout.cleanup() } just Runs
+
+            val event = repository.events.first()
+
+            assertIs<PrimerEvent.Dismiss>(event)
+            verify {
+                primerCheckoutListener.onFailed(error, checkoutData, handlerSlot.captured)
+                headlessUniversalCheckout.cleanup()
+            }
+            verify(exactly = 0) {
+                config.intent.paymentMethodIntent
+            }
+        }
+
+    @Test
+    fun `events flow should call PrimerCheckoutListener and emit CheckoutFailed event with cancellation error when onFailed(1) is called and isSuccessScreenEnabled=true and PrimerSessionIntent CHECKOUT`() =
+        runTest {
+            val error = mockk<PaymentMethodCancelledError>()
+            val intent =
+                mockk<PrimerIntent> {
+                    every { paymentMethodIntent } returns PrimerSessionIntent.CHECKOUT
+                }
+            every { config.intent } returns intent
+            every { config.settings.uiOptions.isSuccessScreenEnabled } returns true
+            val listenerSlot = slot<PrimerHeadlessUniversalCheckoutListener>()
+            every { headlessUniversalCheckout.setCheckoutListener(capture(listenerSlot)) } answers {
+                listenerSlot.captured.onFailed(error)
+            }
+            val handlerSlot = slot<PrimerErrorDecisionHandler>()
+            every { primerCheckoutListener.onFailed(any(), capture(handlerSlot)) } answers {
+                handlerSlot.captured.showErrorMessage("This is an error")
+            }
+            every { headlessUniversalCheckout.cleanup() } just Runs
+
+            val event = repository.events.first()
+
+            assert(event is PrimerEvent.CheckoutFailed)
+            assertEquals("This is an error", (event as PrimerEvent.CheckoutFailed).errorMessage)
+            assertEquals(ErrorType.PAYMENT_CANCELLED, event.errorType)
+            verify {
+                intent.paymentMethodIntent
+                primerCheckoutListener.onFailed(error, handlerSlot.captured)
+                headlessUniversalCheckout.cleanup()
+            }
+        }
+
+    @Test
+    fun `events flow should call PrimerCheckoutListener and emit CheckoutFailed event with error when onFailed(1) is called and isSuccessScreenEnabled=true and PrimerSessionIntent CHECKOUT`() =
+        runTest {
+            val error = mockk<PrimerError>()
+            val intent =
+                mockk<PrimerIntent> {
+                    every { paymentMethodIntent } returns PrimerSessionIntent.CHECKOUT
+                }
+            every { config.intent } returns intent
+            every { config.settings.uiOptions.isSuccessScreenEnabled } returns true
+            val listenerSlot = slot<PrimerHeadlessUniversalCheckoutListener>()
+            every { headlessUniversalCheckout.setCheckoutListener(capture(listenerSlot)) } answers {
+                listenerSlot.captured.onFailed(error)
+            }
+            val handlerSlot = slot<PrimerErrorDecisionHandler>()
+            every { primerCheckoutListener.onFailed(any(), capture(handlerSlot)) } answers {
+                handlerSlot.captured.showErrorMessage("This is an error")
+            }
+            every { headlessUniversalCheckout.cleanup() } just Runs
+
+            val event = repository.events.first()
+
+            assert(event is PrimerEvent.CheckoutFailed)
+            assertEquals("This is an error", (event as PrimerEvent.CheckoutFailed).errorMessage)
+            assertEquals(ErrorType.PAYMENT_FAILED, event.errorType)
+            verify {
+                intent.paymentMethodIntent
+                primerCheckoutListener.onFailed(error, handlerSlot.captured)
+                headlessUniversalCheckout.cleanup()
+            }
+        }
+
+    @Test
+    fun `events flow should call PrimerCheckoutListener and emit CheckoutFailed event with error when onFailed(1) is called and isSuccessScreenEnabled=true and PrimerSessionIntent VAULT`() =
+        runTest {
+            val error = mockk<PrimerError>()
+            val intent =
+                mockk<PrimerIntent> {
+                    every { paymentMethodIntent } returns PrimerSessionIntent.VAULT
+                }
+            every { config.intent } returns intent
+            every { config.settings.uiOptions.isSuccessScreenEnabled } returns true
+            val listenerSlot = slot<PrimerHeadlessUniversalCheckoutListener>()
+            every { headlessUniversalCheckout.setCheckoutListener(capture(listenerSlot)) } answers {
+                listenerSlot.captured.onFailed(error)
+            }
+            val handlerSlot = slot<PrimerErrorDecisionHandler>()
+            every { primerCheckoutListener.onFailed(any(), capture(handlerSlot)) } answers {
+                handlerSlot.captured.showErrorMessage("This is an error")
+            }
+            every { headlessUniversalCheckout.cleanup() } just Runs
+
+            val event = repository.events.first()
+
+            assert(event is PrimerEvent.CheckoutFailed)
+            assertEquals("This is an error", (event as PrimerEvent.CheckoutFailed).errorMessage)
+            assertEquals(ErrorType.VAULT_TOKENIZATION_FAILED, event.errorType)
+            verify {
+                intent.paymentMethodIntent
+                primerCheckoutListener.onFailed(error, handlerSlot.captured)
+                headlessUniversalCheckout.cleanup()
+            }
+        }
+
+    @Test
+    fun `events flow should call PrimerCheckoutListener and emit Dismiss event when onFailed(1) is called and isSuccessScreenEnabled=false`() =
+        runTest {
+            val error = mockk<PrimerError>()
+            every { config.settings.uiOptions.isSuccessScreenEnabled } returns false
+            val listenerSlot = slot<PrimerHeadlessUniversalCheckoutListener>()
+            every { headlessUniversalCheckout.setCheckoutListener(capture(listenerSlot)) } answers {
+                listenerSlot.captured.onFailed(error)
+            }
+            val handlerSlot = slot<PrimerErrorDecisionHandler>()
+            every { primerCheckoutListener.onFailed(any(), capture(handlerSlot)) } answers {
+                handlerSlot.captured.showErrorMessage("This is an error")
+            }
+            every { headlessUniversalCheckout.cleanup() } just Runs
+
+            val event = repository.events.first()
+
+            assertIs<PrimerEvent.Dismiss>(event)
+            verify {
+                primerCheckoutListener.onFailed(error, handlerSlot.captured)
+                headlessUniversalCheckout.cleanup()
+            }
+            verify(exactly = 0) {
+                config.intent.paymentMethodIntent
+            }
+        }
+
+    @Test
+    fun `events flow should call PrimerCheckoutListener when onTokenizeSuccess() is called and delegates to decision handler when continueWithNewClientToken() is called`() =
+        runTest {
+            val listenerSlot = slot<PrimerHeadlessUniversalCheckoutListener>()
+            val paymentMethodTokenData = mockk<PrimerPaymentMethodTokenData>()
+            val decisionHandler =
+                mockk<PrimerHeadlessUniversalCheckoutResumeDecisionHandler> {
+                    every { continueWithNewClientToken(any()) } just Runs
+                }
+            every { headlessUniversalCheckout.setCheckoutListener(capture(listenerSlot)) } answers {
+                listenerSlot.captured.onTokenizeSuccess(paymentMethodTokenData, decisionHandler)
+            }
+            every { primerCheckoutListener.onTokenizeSuccess(any(), any()) } just Runs
+            every { headlessUniversalCheckout.cleanup() } just Runs
+
+            runCatching {
+                withTimeout(1.seconds) {
+                    repository.events.collect {}
+                }
+            }
+
+            val slot = slot<PrimerResumeDecisionHandler>()
+            verify {
+                primerCheckoutListener.onTokenizeSuccess(paymentMethodTokenData, capture(slot))
+                headlessUniversalCheckout.cleanup()
+            }
+            slot.captured.continueWithNewClientToken("token")
+            verify {
+                decisionHandler.continueWithNewClientToken("token")
+            }
+        }
+
+    @Test
+    fun `events flow should call PrimerCheckoutListener when onTokenizeSuccess() is called and success should be handled correctly when isSuccessScreenEnabled=false`() =
+        runTest {
+            val listenerSlot = slot<PrimerHeadlessUniversalCheckoutListener>()
+            val intent =
+                mockk<PrimerIntent> {
+                    every { paymentMethodIntent } returns PrimerSessionIntent.CHECKOUT
+                }
+            every { config.intent } returns intent
+            every { config.settings.uiOptions.isSuccessScreenEnabled } returns false
+            val paymentMethodTokenData = mockk<PrimerPaymentMethodTokenData>()
+            val decisionHandler = mockk<PrimerHeadlessUniversalCheckoutResumeDecisionHandler>()
+            every { headlessUniversalCheckout.setCheckoutListener(capture(listenerSlot)) } answers {
+                listenerSlot.captured.onTokenizeSuccess(paymentMethodTokenData, decisionHandler)
+            }
+            every { primerCheckoutListener.onTokenizeSuccess(any(), any()) } just Runs
+            every { headlessUniversalCheckout.cleanup() } just Runs
+
+            val events = mutableListOf<PrimerEvent>()
+            val collectJob =
+                launch {
+                    repository.events.collectLatest {
+                        events += it
+                    }
+                }
+            delay(1.seconds)
+
+            val slot = slot<PrimerResumeDecisionHandler>()
+            verify {
+                primerCheckoutListener.onTokenizeSuccess(paymentMethodTokenData, capture(slot))
+            }
+            slot.captured.handleSuccess()
+            verify(exactly = 0) {
+                decisionHandler.continueWithNewClientToken(any())
+            }
+            delay(1.seconds)
+            assertIs<PrimerEvent.Dismiss>(events.single())
+            verify {
+                config.settings
+            }
+            verify(exactly = 0) {
+                config.intent
+            }
             collectJob.cancel()
         }
-    }
 
     @Test
-    fun `events flow should call PrimerCheckoutListener when onCheckoutResume() is called`() = runTest {
-        val listenerSlot = slot<PrimerHeadlessUniversalCheckoutListener>()
-        val resumeToken = "resumeToken"
-        val decisionHandler = mockk<PrimerHeadlessUniversalCheckoutResumeDecisionHandler> {
-            every { continueWithNewClientToken(any()) } just Runs
-        }
-        every { headlessUniversalCheckout.setCheckoutListener(capture(listenerSlot)) } answers {
-            listenerSlot.captured.onCheckoutResume(resumeToken, decisionHandler)
-        }
-        every { primerCheckoutListener.onResumeSuccess(any(), any()) } just Runs
-        every { headlessUniversalCheckout.cleanup() } just Runs
-
-        runCatching {
-            withTimeout(1.seconds) {
-                repository.events.collect {}
+    fun `events flow should call PrimerCheckoutListener when onTokenizeSuccess() is called and success should be handled correctly when isSuccessScreenEnabled=true`() =
+        runTest {
+            val listenerSlot = slot<PrimerHeadlessUniversalCheckoutListener>()
+            val intent =
+                mockk<PrimerIntent> {
+                    every { paymentMethodIntent } returns PrimerSessionIntent.CHECKOUT
+                }
+            every { config.intent } returns intent
+            every { config.settings.uiOptions.isSuccessScreenEnabled } returns true
+            val paymentMethodTokenData = mockk<PrimerPaymentMethodTokenData>()
+            val decisionHandler = mockk<PrimerHeadlessUniversalCheckoutResumeDecisionHandler>()
+            every { headlessUniversalCheckout.setCheckoutListener(capture(listenerSlot)) } answers {
+                listenerSlot.captured.onTokenizeSuccess(paymentMethodTokenData, decisionHandler)
             }
-        }
+            every { primerCheckoutListener.onTokenizeSuccess(any(), any()) } just Runs
+            every { headlessUniversalCheckout.cleanup() } just Runs
 
-        val slot = slot<PrimerResumeDecisionHandler>()
-        verify {
-            primerCheckoutListener.onResumeSuccess(resumeToken, capture(slot))
-            headlessUniversalCheckout.cleanup()
-        }
-        slot.captured.continueWithNewClientToken("token")
-        verify {
-            decisionHandler.continueWithNewClientToken("token")
-        }
-    }
+            val events = mutableListOf<PrimerEvent>()
+            val collectJob =
+                launch {
+                    repository.events.collectLatest {
+                        events += it
+                    }
+                }
+            delay(1.seconds)
 
-    @Test
-    fun `events flow should call PrimerCheckoutListener when onCheckoutResume() is called and success should be handled correctly when isSuccessScreenEnabled=false`() = runTest {
-        val listenerSlot = slot<PrimerHeadlessUniversalCheckoutListener>()
-        val intent = mockk<PrimerIntent> {
-            every { paymentMethodIntent } returns PrimerSessionIntent.CHECKOUT
-        }
-        every { config.intent } returns intent
-        every { config.settings.uiOptions.isSuccessScreenEnabled } returns false
-        val resumeToken = "resumeToken"
-        val decisionHandler = mockk<PrimerHeadlessUniversalCheckoutResumeDecisionHandler>()
-        every { headlessUniversalCheckout.setCheckoutListener(capture(listenerSlot)) } answers {
-            listenerSlot.captured.onCheckoutResume(resumeToken, decisionHandler)
-        }
-        every { primerCheckoutListener.onResumeSuccess(any(), any()) } just Runs
-        every { headlessUniversalCheckout.cleanup() } just Runs
-
-        val events = mutableListOf<PrimerEvent>()
-        val collectJob = launch {
-            repository.events.collectLatest {
-                events += it
+            val slot = slot<PrimerResumeDecisionHandler>()
+            verify {
+                primerCheckoutListener.onTokenizeSuccess(paymentMethodTokenData, capture(slot))
             }
-        }
-        delay(1.seconds)
-
-        val slot = slot<PrimerResumeDecisionHandler>()
-        verify {
-            primerCheckoutListener.onResumeSuccess(resumeToken, capture(slot))
-        }
-        slot.captured.handleSuccess()
-        verify(exactly = 0) {
-            decisionHandler.continueWithNewClientToken(any())
-        }
-        delay(1.seconds)
-        assertIs<PrimerEvent.Dismiss>(events.single())
-        verify {
-            config.settings
-        }
-        verify(exactly = 0) {
-            config.intent
-        }
-        collectJob.cancel()
-    }
-
-    @Test
-    fun `events flow should call PrimerCheckoutListener when onCheckoutResume() is called and success should be handled correctly when isSuccessScreenEnabled=true`() = runTest {
-        val listenerSlot = slot<PrimerHeadlessUniversalCheckoutListener>()
-        val intent = mockk<PrimerIntent> {
-            every { paymentMethodIntent } returns PrimerSessionIntent.CHECKOUT
-        }
-        every { config.intent } returns intent
-        every { config.settings.uiOptions.isSuccessScreenEnabled } returns true
-        val resumeToken = "resumeToken"
-        val decisionHandler = mockk<PrimerHeadlessUniversalCheckoutResumeDecisionHandler>()
-        every { headlessUniversalCheckout.setCheckoutListener(capture(listenerSlot)) } answers {
-            listenerSlot.captured.onCheckoutResume(resumeToken, decisionHandler)
-        }
-        every { primerCheckoutListener.onResumeSuccess(any(), any()) } just Runs
-        every { headlessUniversalCheckout.cleanup() } just Runs
-
-        val events = mutableListOf<PrimerEvent>()
-        val collectJob = launch {
-            repository.events.collectLatest {
-                events += it
+            slot.captured.handleSuccess()
+            verify(exactly = 0) {
+                decisionHandler.continueWithNewClientToken(any())
             }
-        }
-        delay(1.seconds)
-
-        val slot = slot<PrimerResumeDecisionHandler>()
-        verify {
-            primerCheckoutListener.onResumeSuccess(resumeToken, capture(slot))
-        }
-        slot.captured.handleSuccess()
-        verify(exactly = 0) {
-            decisionHandler.continueWithNewClientToken(any())
-        }
-        delay(1.seconds)
-        val event = events.single()
-        assert(event is PrimerEvent.CheckoutCompleted)
-        assertEquals(null, (event as PrimerEvent.CheckoutCompleted).checkoutData)
-        assertEquals(SuccessType.PAYMENT_SUCCESS, event.successType)
-        verify {
-            config.settings
-            config.intent
-        }
-        collectJob.cancel()
-    }
-
-    @Test
-    fun `events flow should call PrimerCheckoutListener when onCheckoutResume() is called and failure should be handled correctly when isSuccessScreenEnabled=true`() = runTest {
-        val listenerSlot = slot<PrimerHeadlessUniversalCheckoutListener>()
-        val intent = mockk<PrimerIntent> {
-            every { paymentMethodIntent } returns PrimerSessionIntent.CHECKOUT
-        }
-        every { config.intent } returns intent
-        every { config.settings.uiOptions.isSuccessScreenEnabled } returns true
-        val resumeToken = "resumeToken"
-        val decisionHandler = mockk<PrimerHeadlessUniversalCheckoutResumeDecisionHandler>()
-        every { headlessUniversalCheckout.setCheckoutListener(capture(listenerSlot)) } answers {
-            listenerSlot.captured.onCheckoutResume(resumeToken, decisionHandler)
-        }
-        every { primerCheckoutListener.onResumeSuccess(any(), any()) } just Runs
-        every { headlessUniversalCheckout.cleanup() } just Runs
-
-        val events = mutableListOf<PrimerEvent>()
-        val collectJob = launch {
-            repository.events.collectLatest {
-                events += it
+            delay(1.seconds)
+            val event = events.single()
+            assert(event is PrimerEvent.CheckoutCompleted)
+            assertEquals(null, (event as PrimerEvent.CheckoutCompleted).checkoutData)
+            assertEquals(SuccessType.PAYMENT_SUCCESS, event.successType)
+            verify {
+                config.settings
+                config.intent
             }
-        }
-        delay(1.seconds)
-
-        val slot = slot<PrimerResumeDecisionHandler>()
-        verify {
-            primerCheckoutListener.onResumeSuccess(resumeToken, capture(slot))
-        }
-        slot.captured.handleFailure("Failure")
-        verify(exactly = 0) {
-            decisionHandler.continueWithNewClientToken(any())
-        }
-        delay(1.seconds)
-        val event = events.single()
-        assert(event is PrimerEvent.CheckoutFailed)
-        assertEquals("Failure", (event as PrimerEvent.CheckoutFailed).errorMessage)
-        assertEquals(ErrorType.PAYMENT_FAILED, event.errorType)
-        verify {
-            config.settings
-            config.intent
-        }
-        collectJob.cancel()
-    }
-
-    @Test
-    fun `events flow should call PrimerCheckoutListener when onCheckoutResume() is called and failure should be handled correctly when isSuccessScreenEnabled=false`() = runTest {
-        val listenerSlot = slot<PrimerHeadlessUniversalCheckoutListener>()
-        val intent = mockk<PrimerIntent> {
-            every { paymentMethodIntent } returns PrimerSessionIntent.CHECKOUT
-        }
-        every { config.intent } returns intent
-        every { config.settings.uiOptions.isSuccessScreenEnabled } returns false
-        val resumeToken = "resumeToken"
-        val decisionHandler = mockk<PrimerHeadlessUniversalCheckoutResumeDecisionHandler>()
-        every { headlessUniversalCheckout.setCheckoutListener(capture(listenerSlot)) } answers {
-            listenerSlot.captured.onCheckoutResume(resumeToken, decisionHandler)
-        }
-        every { primerCheckoutListener.onResumeSuccess(any(), any()) } just Runs
-        every { headlessUniversalCheckout.cleanup() } just Runs
-
-        val events = mutableListOf<PrimerEvent>()
-        val collectJob = launch {
-            repository.events.collectLatest {
-                events += it
-            }
-        }
-        delay(1.seconds)
-
-        val slot = slot<PrimerResumeDecisionHandler>()
-        verify {
-            primerCheckoutListener.onResumeSuccess(resumeToken, capture(slot))
-        }
-        slot.captured.handleFailure("Failure")
-        verify(exactly = 0) {
-            decisionHandler.continueWithNewClientToken(any())
-        }
-        delay(1.seconds)
-        assertIs<PrimerEvent.Dismiss>(events.single())
-        verify {
-            config.settings
-        }
-        verify(exactly = 0) {
-            config.intent
             collectJob.cancel()
         }
-    }
 
     @Test
-    fun `events flow should call PrimerCheckoutListener when onBeforePaymentCreated() is called`() = runTest {
-        val listenerSlot = slot<PrimerHeadlessUniversalCheckoutListener>()
-        val paymentMethodData = mockk<PrimerPaymentMethodData>()
-        val decisionHandler = mockk<PrimerPaymentCreationDecisionHandler>()
-        every { headlessUniversalCheckout.setCheckoutListener(capture(listenerSlot)) } answers {
-            listenerSlot.captured.onBeforePaymentCreated(paymentMethodData, decisionHandler)
-        }
-        every { primerCheckoutListener.onBeforePaymentCreated(any(), any()) } just Runs
-        every { headlessUniversalCheckout.cleanup() } just Runs
+    fun `events flow should call PrimerCheckoutListener when onTokenizeSuccess() is called and failure should be handled correctly when isSuccessScreenEnabled=true`() =
+        runTest {
+            val listenerSlot = slot<PrimerHeadlessUniversalCheckoutListener>()
+            val intent =
+                mockk<PrimerIntent> {
+                    every { paymentMethodIntent } returns PrimerSessionIntent.CHECKOUT
+                }
+            every { config.intent } returns intent
+            every { config.settings.uiOptions.isSuccessScreenEnabled } returns true
+            val paymentMethodTokenData = mockk<PrimerPaymentMethodTokenData>()
+            val decisionHandler = mockk<PrimerHeadlessUniversalCheckoutResumeDecisionHandler>()
+            every { headlessUniversalCheckout.setCheckoutListener(capture(listenerSlot)) } answers {
+                listenerSlot.captured.onTokenizeSuccess(paymentMethodTokenData, decisionHandler)
+            }
+            every { primerCheckoutListener.onTokenizeSuccess(any(), any()) } just Runs
+            every { headlessUniversalCheckout.cleanup() } just Runs
 
-        runCatching {
-            withTimeout(1.seconds) {
-                repository.events.collect {}
+            val events = mutableListOf<PrimerEvent>()
+            val collectJob =
+                launch {
+                    repository.events.collectLatest {
+                        events += it
+                    }
+                }
+            delay(1.seconds)
+
+            val slot = slot<PrimerResumeDecisionHandler>()
+            verify {
+                primerCheckoutListener.onTokenizeSuccess(paymentMethodTokenData, capture(slot))
+            }
+            slot.captured.handleFailure("Failure")
+            verify(exactly = 0) {
+                decisionHandler.continueWithNewClientToken(any())
+            }
+            delay(1.seconds)
+            val event = events.single()
+            assert(event is PrimerEvent.CheckoutFailed)
+            assertEquals("Failure", (event as PrimerEvent.CheckoutFailed).errorMessage)
+            assertEquals(ErrorType.PAYMENT_FAILED, event.errorType)
+            verify {
+                config.settings
+                config.intent
+            }
+            collectJob.cancel()
+        }
+
+    @Test
+    fun `events flow should call PrimerCheckoutListener when onTokenizeSuccess() is called and failure should be handled correctly when isSuccessScreenEnabled=false`() =
+        runTest {
+            val listenerSlot = slot<PrimerHeadlessUniversalCheckoutListener>()
+            val intent =
+                mockk<PrimerIntent> {
+                    every { paymentMethodIntent } returns PrimerSessionIntent.CHECKOUT
+                }
+            every { config.intent } returns intent
+            every { config.settings.uiOptions.isSuccessScreenEnabled } returns false
+            val paymentMethodTokenData = mockk<PrimerPaymentMethodTokenData>()
+            val decisionHandler = mockk<PrimerHeadlessUniversalCheckoutResumeDecisionHandler>()
+            every { headlessUniversalCheckout.setCheckoutListener(capture(listenerSlot)) } answers {
+                listenerSlot.captured.onTokenizeSuccess(paymentMethodTokenData, decisionHandler)
+            }
+            every { primerCheckoutListener.onTokenizeSuccess(any(), any()) } just Runs
+            every { headlessUniversalCheckout.cleanup() } just Runs
+
+            val events = mutableListOf<PrimerEvent>()
+            val collectJob =
+                launch {
+                    repository.events.collectLatest {
+                        events += it
+                    }
+                }
+            delay(1.seconds)
+
+            val slot = slot<PrimerResumeDecisionHandler>()
+            verify {
+                primerCheckoutListener.onTokenizeSuccess(paymentMethodTokenData, capture(slot))
+            }
+            slot.captured.handleFailure("Failure")
+            verify(exactly = 0) {
+                decisionHandler.continueWithNewClientToken(any())
+            }
+            delay(1.seconds)
+            assertIs<PrimerEvent.Dismiss>(events.single())
+            verify {
+                config.settings
+            }
+            verify(exactly = 0) {
+                config.intent
+                collectJob.cancel()
             }
         }
 
-        verify {
-            primerCheckoutListener.onBeforePaymentCreated(paymentMethodData, decisionHandler)
-            headlessUniversalCheckout.cleanup()
-        }
-    }
-
     @Test
-    fun `events flow should call PrimerCheckoutListener when onBeforeClientSessionUpdated() is called`() = runTest {
-        val listenerSlot = slot<PrimerHeadlessUniversalCheckoutListener>()
-        every { headlessUniversalCheckout.setCheckoutListener(capture(listenerSlot)) } answers {
-            listenerSlot.captured.onBeforeClientSessionUpdated()
-        }
-        every { primerCheckoutListener.onBeforeClientSessionUpdated() } just Runs
-        every { headlessUniversalCheckout.cleanup() } just Runs
+    fun `events flow should call PrimerCheckoutListener when onCheckoutResume() is called`() =
+        runTest {
+            val listenerSlot = slot<PrimerHeadlessUniversalCheckoutListener>()
+            val resumeToken = "resumeToken"
+            val decisionHandler =
+                mockk<PrimerHeadlessUniversalCheckoutResumeDecisionHandler> {
+                    every { continueWithNewClientToken(any()) } just Runs
+                }
+            every { headlessUniversalCheckout.setCheckoutListener(capture(listenerSlot)) } answers {
+                listenerSlot.captured.onCheckoutResume(resumeToken, decisionHandler)
+            }
+            every { primerCheckoutListener.onResumeSuccess(any(), any()) } just Runs
+            every { headlessUniversalCheckout.cleanup() } just Runs
 
-        runCatching {
-            withTimeout(1.seconds) {
-                repository.events.collect {}
+            runCatching {
+                withTimeout(1.seconds) {
+                    repository.events.collect {}
+                }
+            }
+
+            val slot = slot<PrimerResumeDecisionHandler>()
+            verify {
+                primerCheckoutListener.onResumeSuccess(resumeToken, capture(slot))
+                headlessUniversalCheckout.cleanup()
+            }
+            slot.captured.continueWithNewClientToken("token")
+            verify {
+                decisionHandler.continueWithNewClientToken("token")
             }
         }
 
-        verify {
-            primerCheckoutListener.onBeforeClientSessionUpdated()
-            headlessUniversalCheckout.cleanup()
+    @Test
+    fun `events flow should call PrimerCheckoutListener when onCheckoutResume() is called and success should be handled correctly when isSuccessScreenEnabled=false`() =
+        runTest {
+            val listenerSlot = slot<PrimerHeadlessUniversalCheckoutListener>()
+            val intent =
+                mockk<PrimerIntent> {
+                    every { paymentMethodIntent } returns PrimerSessionIntent.CHECKOUT
+                }
+            every { config.intent } returns intent
+            every { config.settings.uiOptions.isSuccessScreenEnabled } returns false
+            val resumeToken = "resumeToken"
+            val decisionHandler = mockk<PrimerHeadlessUniversalCheckoutResumeDecisionHandler>()
+            every { headlessUniversalCheckout.setCheckoutListener(capture(listenerSlot)) } answers {
+                listenerSlot.captured.onCheckoutResume(resumeToken, decisionHandler)
+            }
+            every { primerCheckoutListener.onResumeSuccess(any(), any()) } just Runs
+            every { headlessUniversalCheckout.cleanup() } just Runs
+
+            val events = mutableListOf<PrimerEvent>()
+            val collectJob =
+                launch {
+                    repository.events.collectLatest {
+                        events += it
+                    }
+                }
+            delay(1.seconds)
+
+            val slot = slot<PrimerResumeDecisionHandler>()
+            verify {
+                primerCheckoutListener.onResumeSuccess(resumeToken, capture(slot))
+            }
+            slot.captured.handleSuccess()
+            verify(exactly = 0) {
+                decisionHandler.continueWithNewClientToken(any())
+            }
+            delay(1.seconds)
+            assertIs<PrimerEvent.Dismiss>(events.single())
+            verify {
+                config.settings
+            }
+            verify(exactly = 0) {
+                config.intent
+            }
+            collectJob.cancel()
         }
-    }
 
     @Test
-    fun `events flow should call PrimerCheckoutListener when onClientSessionUpdated() is called`() = runTest {
-        val listenerSlot = slot<PrimerHeadlessUniversalCheckoutListener>()
-        val clientSession = mockk<PrimerClientSession>()
-        every { headlessUniversalCheckout.setCheckoutListener(capture(listenerSlot)) } answers {
-            listenerSlot.captured.onClientSessionUpdated(clientSession)
-        }
-        every { primerCheckoutListener.onClientSessionUpdated(any()) } just Runs
-        every { headlessUniversalCheckout.cleanup() } just Runs
+    fun `events flow should call PrimerCheckoutListener when onCheckoutResume() is called and success should be handled correctly when isSuccessScreenEnabled=true`() =
+        runTest {
+            val listenerSlot = slot<PrimerHeadlessUniversalCheckoutListener>()
+            val intent =
+                mockk<PrimerIntent> {
+                    every { paymentMethodIntent } returns PrimerSessionIntent.CHECKOUT
+                }
+            every { config.intent } returns intent
+            every { config.settings.uiOptions.isSuccessScreenEnabled } returns true
+            val resumeToken = "resumeToken"
+            val decisionHandler = mockk<PrimerHeadlessUniversalCheckoutResumeDecisionHandler>()
+            every { headlessUniversalCheckout.setCheckoutListener(capture(listenerSlot)) } answers {
+                listenerSlot.captured.onCheckoutResume(resumeToken, decisionHandler)
+            }
+            every { primerCheckoutListener.onResumeSuccess(any(), any()) } just Runs
+            every { headlessUniversalCheckout.cleanup() } just Runs
 
-        runCatching {
-            withTimeout(1.seconds) {
-                repository.events.collect {}
+            val events = mutableListOf<PrimerEvent>()
+            val collectJob =
+                launch {
+                    repository.events.collectLatest {
+                        events += it
+                    }
+                }
+            delay(1.seconds)
+
+            val slot = slot<PrimerResumeDecisionHandler>()
+            verify {
+                primerCheckoutListener.onResumeSuccess(resumeToken, capture(slot))
+            }
+            slot.captured.handleSuccess()
+            verify(exactly = 0) {
+                decisionHandler.continueWithNewClientToken(any())
+            }
+            delay(1.seconds)
+            val event = events.single()
+            assert(event is PrimerEvent.CheckoutCompleted)
+            assertEquals(null, (event as PrimerEvent.CheckoutCompleted).checkoutData)
+            assertEquals(SuccessType.PAYMENT_SUCCESS, event.successType)
+            verify {
+                config.settings
+                config.intent
+            }
+            collectJob.cancel()
+        }
+
+    @Test
+    fun `events flow should call PrimerCheckoutListener when onCheckoutResume() is called and failure should be handled correctly when isSuccessScreenEnabled=true`() =
+        runTest {
+            val listenerSlot = slot<PrimerHeadlessUniversalCheckoutListener>()
+            val intent =
+                mockk<PrimerIntent> {
+                    every { paymentMethodIntent } returns PrimerSessionIntent.CHECKOUT
+                }
+            every { config.intent } returns intent
+            every { config.settings.uiOptions.isSuccessScreenEnabled } returns true
+            val resumeToken = "resumeToken"
+            val decisionHandler = mockk<PrimerHeadlessUniversalCheckoutResumeDecisionHandler>()
+            every { headlessUniversalCheckout.setCheckoutListener(capture(listenerSlot)) } answers {
+                listenerSlot.captured.onCheckoutResume(resumeToken, decisionHandler)
+            }
+            every { primerCheckoutListener.onResumeSuccess(any(), any()) } just Runs
+            every { headlessUniversalCheckout.cleanup() } just Runs
+
+            val events = mutableListOf<PrimerEvent>()
+            val collectJob =
+                launch {
+                    repository.events.collectLatest {
+                        events += it
+                    }
+                }
+            delay(1.seconds)
+
+            val slot = slot<PrimerResumeDecisionHandler>()
+            verify {
+                primerCheckoutListener.onResumeSuccess(resumeToken, capture(slot))
+            }
+            slot.captured.handleFailure("Failure")
+            verify(exactly = 0) {
+                decisionHandler.continueWithNewClientToken(any())
+            }
+            delay(1.seconds)
+            val event = events.single()
+            assert(event is PrimerEvent.CheckoutFailed)
+            assertEquals("Failure", (event as PrimerEvent.CheckoutFailed).errorMessage)
+            assertEquals(ErrorType.PAYMENT_FAILED, event.errorType)
+            verify {
+                config.settings
+                config.intent
+            }
+            collectJob.cancel()
+        }
+
+    @Test
+    fun `events flow should call PrimerCheckoutListener when onCheckoutResume() is called and failure should be handled correctly when isSuccessScreenEnabled=false`() =
+        runTest {
+            val listenerSlot = slot<PrimerHeadlessUniversalCheckoutListener>()
+            val intent =
+                mockk<PrimerIntent> {
+                    every { paymentMethodIntent } returns PrimerSessionIntent.CHECKOUT
+                }
+            every { config.intent } returns intent
+            every { config.settings.uiOptions.isSuccessScreenEnabled } returns false
+            val resumeToken = "resumeToken"
+            val decisionHandler = mockk<PrimerHeadlessUniversalCheckoutResumeDecisionHandler>()
+            every { headlessUniversalCheckout.setCheckoutListener(capture(listenerSlot)) } answers {
+                listenerSlot.captured.onCheckoutResume(resumeToken, decisionHandler)
+            }
+            every { primerCheckoutListener.onResumeSuccess(any(), any()) } just Runs
+            every { headlessUniversalCheckout.cleanup() } just Runs
+
+            val events = mutableListOf<PrimerEvent>()
+            val collectJob =
+                launch {
+                    repository.events.collectLatest {
+                        events += it
+                    }
+                }
+            delay(1.seconds)
+
+            val slot = slot<PrimerResumeDecisionHandler>()
+            verify {
+                primerCheckoutListener.onResumeSuccess(resumeToken, capture(slot))
+            }
+            slot.captured.handleFailure("Failure")
+            verify(exactly = 0) {
+                decisionHandler.continueWithNewClientToken(any())
+            }
+            delay(1.seconds)
+            assertIs<PrimerEvent.Dismiss>(events.single())
+            verify {
+                config.settings
+            }
+            verify(exactly = 0) {
+                config.intent
+                collectJob.cancel()
             }
         }
 
-        verify {
-            primerCheckoutListener.onClientSessionUpdated(clientSession)
-            headlessUniversalCheckout.cleanup()
-        }
-    }
-
     @Test
-    fun `events flow should call PrimerCheckoutListener when onResumePending() is called`() = runTest {
-        val listenerSlot = slot<PrimerHeadlessUniversalCheckoutListener>()
-        val additionalInfo = mockk<PrimerCheckoutAdditionalInfo>()
-        every { headlessUniversalCheckout.setCheckoutListener(capture(listenerSlot)) } answers {
-            listenerSlot.captured.onResumePending(additionalInfo)
-        }
-        every { primerCheckoutListener.onResumePending(any()) } just Runs
-        every { headlessUniversalCheckout.cleanup() } just Runs
+    fun `events flow should call PrimerCheckoutListener when onBeforePaymentCreated() is called`() =
+        runTest {
+            val listenerSlot = slot<PrimerHeadlessUniversalCheckoutListener>()
+            val paymentMethodData = mockk<PrimerPaymentMethodData>()
+            val decisionHandler = mockk<PrimerPaymentCreationDecisionHandler>()
+            every { headlessUniversalCheckout.setCheckoutListener(capture(listenerSlot)) } answers {
+                listenerSlot.captured.onBeforePaymentCreated(paymentMethodData, decisionHandler)
+            }
+            every { primerCheckoutListener.onBeforePaymentCreated(any(), any()) } just Runs
+            every { headlessUniversalCheckout.cleanup() } just Runs
 
-        runCatching {
-            withTimeout(1.seconds) {
-                repository.events.collect {}
+            runCatching {
+                withTimeout(1.seconds) {
+                    repository.events.collect {}
+                }
+            }
+
+            verify {
+                primerCheckoutListener.onBeforePaymentCreated(paymentMethodData, decisionHandler)
+                headlessUniversalCheckout.cleanup()
             }
         }
 
-        verify {
-            primerCheckoutListener.onResumePending(additionalInfo)
-            headlessUniversalCheckout.cleanup()
-        }
-    }
-
     @Test
-    fun `events flow should call PrimerCheckoutListener when onCheckoutAdditionalInfoReceived() is called`() = runTest {
-        val listenerSlot = slot<PrimerHeadlessUniversalCheckoutListener>()
-        val additionalInfo = mockk<PrimerCheckoutAdditionalInfo>()
-        every { headlessUniversalCheckout.setCheckoutListener(capture(listenerSlot)) } answers {
-            listenerSlot.captured.onCheckoutAdditionalInfoReceived(additionalInfo)
-        }
-        every { primerCheckoutListener.onAdditionalInfoReceived(any()) } just Runs
-        every { headlessUniversalCheckout.cleanup() } just Runs
+    fun `events flow should call PrimerCheckoutListener when onBeforeClientSessionUpdated() is called`() =
+        runTest {
+            val listenerSlot = slot<PrimerHeadlessUniversalCheckoutListener>()
+            every { headlessUniversalCheckout.setCheckoutListener(capture(listenerSlot)) } answers {
+                listenerSlot.captured.onBeforeClientSessionUpdated()
+            }
+            every { primerCheckoutListener.onBeforeClientSessionUpdated() } just Runs
+            every { headlessUniversalCheckout.cleanup() } just Runs
 
-        runCatching {
-            withTimeout(1.seconds) {
-                repository.events.collect {}
+            runCatching {
+                withTimeout(1.seconds) {
+                    repository.events.collect {}
+                }
+            }
+
+            verify {
+                primerCheckoutListener.onBeforeClientSessionUpdated()
+                headlessUniversalCheckout.cleanup()
             }
         }
 
-        verify {
-            primerCheckoutListener.onAdditionalInfoReceived(additionalInfo)
-            headlessUniversalCheckout.cleanup()
+    @Test
+    fun `events flow should call PrimerCheckoutListener when onClientSessionUpdated() is called`() =
+        runTest {
+            val listenerSlot = slot<PrimerHeadlessUniversalCheckoutListener>()
+            val clientSession = mockk<PrimerClientSession>()
+            every { headlessUniversalCheckout.setCheckoutListener(capture(listenerSlot)) } answers {
+                listenerSlot.captured.onClientSessionUpdated(clientSession)
+            }
+            every { primerCheckoutListener.onClientSessionUpdated(any()) } just Runs
+            every { headlessUniversalCheckout.cleanup() } just Runs
+
+            runCatching {
+                withTimeout(1.seconds) {
+                    repository.events.collect {}
+                }
+            }
+
+            verify {
+                primerCheckoutListener.onClientSessionUpdated(clientSession)
+                headlessUniversalCheckout.cleanup()
+            }
         }
-    }
+
+    @Test
+    fun `events flow should call PrimerCheckoutListener when onResumePending() is called`() =
+        runTest {
+            val listenerSlot = slot<PrimerHeadlessUniversalCheckoutListener>()
+            val additionalInfo = mockk<PrimerCheckoutAdditionalInfo>()
+            every { headlessUniversalCheckout.setCheckoutListener(capture(listenerSlot)) } answers {
+                listenerSlot.captured.onResumePending(additionalInfo)
+            }
+            every { primerCheckoutListener.onResumePending(any()) } just Runs
+            every { headlessUniversalCheckout.cleanup() } just Runs
+
+            runCatching {
+                withTimeout(1.seconds) {
+                    repository.events.collect {}
+                }
+            }
+
+            verify {
+                primerCheckoutListener.onResumePending(additionalInfo)
+                headlessUniversalCheckout.cleanup()
+            }
+        }
+
+    @Test
+    fun `events flow should call PrimerCheckoutListener when onCheckoutAdditionalInfoReceived() is called`() =
+        runTest {
+            val listenerSlot = slot<PrimerHeadlessUniversalCheckoutListener>()
+            val additionalInfo = mockk<PrimerCheckoutAdditionalInfo>()
+            every { headlessUniversalCheckout.setCheckoutListener(capture(listenerSlot)) } answers {
+                listenerSlot.captured.onCheckoutAdditionalInfoReceived(additionalInfo)
+            }
+            every { primerCheckoutListener.onAdditionalInfoReceived(any()) } just Runs
+            every { headlessUniversalCheckout.cleanup() } just Runs
+
+            runCatching {
+                withTimeout(1.seconds) {
+                    repository.events.collect {}
+                }
+            }
+
+            verify {
+                primerCheckoutListener.onAdditionalInfoReceived(additionalInfo)
+                headlessUniversalCheckout.cleanup()
+            }
+        }
 }

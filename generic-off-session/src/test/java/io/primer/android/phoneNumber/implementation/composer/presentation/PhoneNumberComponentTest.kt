@@ -37,7 +37,6 @@ import org.junit.jupiter.api.extension.ExtendWith
 @ExperimentalCoroutinesApi
 @ExtendWith(InstantExecutorExtension::class, MockKExtension::class)
 class PhoneNumberComponentTest {
-
     private lateinit var component: PhoneNumberComponent
     private val tokenizationDelegate: PhoneNumberTokenizationDelegate = mockk(relaxed = true)
     private val pollingInteractor: AsyncPaymentMethodPollingInteractor = mockk(relaxed = true)
@@ -50,26 +49,29 @@ class PhoneNumberComponentTest {
 
     @BeforeEach
     fun setUp() {
-        DISdkContext.headlessSdkContainer = mockk<SdkContainer>(relaxed = true).also { sdkContainer ->
-            val cont = spyk<DependencyContainer>().also { container ->
-                container.registerFactory<CoroutineScopeProvider> {
-                    object : CoroutineScopeProvider {
-                        override val scope: CoroutineScope
-                            get() = TestScope()
+        DISdkContext.headlessSdkContainer =
+            mockk<SdkContainer>(relaxed = true).also { sdkContainer ->
+                val cont =
+                    spyk<DependencyContainer>().also { container ->
+                        container.registerFactory<CoroutineScopeProvider> {
+                            object : CoroutineScopeProvider {
+                                override val scope: CoroutineScope
+                                    get() = TestScope()
+                            }
+                        }
                     }
-                }
+                every { sdkContainer.containers }.returns(mutableMapOf(cont::class.simpleName.orEmpty() to cont))
             }
-            every { sdkContainer.containers }.returns(mutableMapOf(cont::class.simpleName.orEmpty() to cont))
-        }
-        component = PhoneNumberComponent(
-            tokenizationDelegate,
-            pollingInteractor,
-            paymentDelegate,
-            pollingStartHandler,
-            phoneNumberValidator,
-            errorMapperRegistry,
-            analytics
-        )
+        component =
+            PhoneNumberComponent(
+                tokenizationDelegate,
+                pollingInteractor,
+                paymentDelegate,
+                pollingStartHandler,
+                phoneNumberValidator,
+                errorMapperRegistry,
+                analytics,
+            )
         coEvery { pollingStartHandler.startPolling } returns MutableSharedFlow()
     }
 

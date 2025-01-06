@@ -14,7 +14,6 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 internal class PaypalCreateOrderDataRepositoryTest {
-
     private lateinit var createOrderDataSource: RemotePaypalCreateOrderDataSource
     private lateinit var configurationDataSource: BaseCacheDataSource<ConfigurationData, ConfigurationData>
     private lateinit var repository: PaypalCreateOrderDataRepository
@@ -37,36 +36,41 @@ internal class PaypalCreateOrderDataRepositoryTest {
     }
 
     @Test
-    fun `createOrder should return PaypalOrder on success`() = runTest {
-        // Given
-        val params = PaypalCreateOrderParams(
-            paymentMethodConfigId = testPaymentMethodConfigId,
-            amount = testAmount,
-            currencyCode = testCurrencyCode,
-            successUrl = testSuccessUrl,
-            cancelUrl = testCancelUrl
-        )
+    fun `createOrder should return PaypalOrder on success`() =
+        runTest {
+            // Given
+            val params =
+                PaypalCreateOrderParams(
+                    paymentMethodConfigId = testPaymentMethodConfigId,
+                    amount = testAmount,
+                    currencyCode = testCurrencyCode,
+                    successUrl = testSuccessUrl,
+                    cancelUrl = testCancelUrl,
+                )
 
-        every { configurationDataSource.get() } returns mockk(relaxed = true) {
-            every { coreUrl } returns testCoreUrl
+            every { configurationDataSource.get() } returns
+                mockk(relaxed = true) {
+                    every { coreUrl } returns testCoreUrl
+                }
+
+            coEvery { createOrderDataSource.execute(any()) } returns
+                mockk(relaxed = true) {
+                    every { orderId } returns testOrderId
+                    every { approvalUrl } returns testApprovalUrl
+                }
+
+            // When
+            val result = repository.createOrder(params)
+
+            val expectedOrder =
+                PaypalOrder(
+                    orderId = testOrderId,
+                    approvalUrl = testApprovalUrl,
+                    successUrl = testSuccessUrl,
+                    cancelUrl = testCancelUrl,
+                )
+
+            // Then
+            assertEquals(expectedOrder, result.getOrNull())
         }
-
-        coEvery { createOrderDataSource.execute(any()) } returns mockk(relaxed = true) {
-            every { orderId } returns testOrderId
-            every { approvalUrl } returns testApprovalUrl
-        }
-
-        // When
-        val result = repository.createOrder(params)
-
-        val expectedOrder = PaypalOrder(
-            orderId = testOrderId,
-            approvalUrl = testApprovalUrl,
-            successUrl = testSuccessUrl,
-            cancelUrl = testCancelUrl
-        )
-
-        // Then
-        assertEquals(expectedOrder, result.getOrNull())
-    }
 }

@@ -5,24 +5,24 @@ import io.primer.android.configuration.extension.sanitizedCardNumber
 
 class CardNumberFormatter private constructor(
     private val value: String,
-    private val autoInsert: Boolean
+    private val autoInsert: Boolean,
 ) {
-
     private val meta = CardNetwork.lookup(value)
 
     override fun toString(): String {
         val max = meta.lengths.maxOrNull() ?: META_DEFAULT_LENGTH
 
-        val formatted = buildString {
-            value.forEachIndexed { index, c ->
-                if (index < max) {
-                    append(c)
-                    if (meta.gaps.contains(index + 1)) {
-                        append(' ')
+        val formatted =
+            buildString {
+                value.forEachIndexed { index, c ->
+                    if (index < max) {
+                        append(c)
+                        if (meta.gaps.contains(index + 1)) {
+                            append(' ')
+                        }
                     }
                 }
             }
-        }
 
         return if (!autoInsert && formatted.endsWith(' ')) {
             formatted.trim()
@@ -71,13 +71,12 @@ class CardNumberFormatter private constructor(
     }
 
     companion object {
-
         const val META_DEFAULT_LENGTH = 16
 
         fun fromString(
             str: String,
             autoInsert: Boolean = false,
-            replaceInvalid: Boolean = true
+            replaceInvalid: Boolean = true,
         ): CardNumberFormatter {
             val input = if (replaceInvalid) str.sanitizedCardNumber() else str
             return CardNumberFormatter(input, autoInsert)

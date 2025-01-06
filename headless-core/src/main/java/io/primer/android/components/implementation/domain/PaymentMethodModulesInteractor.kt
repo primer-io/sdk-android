@@ -1,6 +1,5 @@
 package io.primer.android.components.implementation.domain
 
-import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.configuration.domain.CachePolicy
 import io.primer.android.configuration.domain.repository.ConfigurationRepository
 import io.primer.android.core.domain.BaseSuspendInteractor
@@ -8,6 +7,7 @@ import io.primer.android.core.domain.None
 import io.primer.android.core.extensions.mapSuspendCatching
 import io.primer.android.core.extensions.zipWith
 import io.primer.android.core.logging.internal.LogReporter
+import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.domain.exception.MissingPaymentMethodException
 import io.primer.android.domain.exception.UnsupportedPaymentIntentException
 import io.primer.android.domain.exception.UnsupportedPaymentMethodException
@@ -28,19 +28,19 @@ internal class PaymentMethodModulesInteractor(
     private val baseErrorResolver: BaseErrorResolver,
     private val checkoutErrorHandler: CheckoutErrorHandler,
     private val logReporter: LogReporter,
-    override val dispatcher: CoroutineDispatcher = Dispatchers.IO
+    override val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : BaseSuspendInteractor<
-    PaymentMethodModulesInteractor.PaymentDescriptorsHolder,
-    None>() {
-
+        PaymentMethodModulesInteractor.PaymentDescriptorsHolder,
+        None,
+        >() {
     override suspend fun performAction(params: None): Result<PaymentDescriptorsHolder> {
         return paymentMethodDescriptorsRepository.resolvePaymentMethodDescriptors()
             .zipWith(
-                configurationRepository.fetchConfiguration(CachePolicy.ForceCache)
+                configurationRepository.fetchConfiguration(CachePolicy.ForceCache),
             ) { descriptors, paymentMethods ->
                 Pair(
                     descriptors,
-                    paymentMethods
+                    paymentMethods,
                 )
             }
             .mapSuspendCatching { paymentMethodData ->
@@ -58,7 +58,7 @@ internal class PaymentMethodModulesInteractor(
                     ) {
                         throw UnsupportedPaymentIntentException(
                             paymentMethod,
-                            config.intent.paymentMethodIntent
+                            config.intent.paymentMethodIntent,
                         )
                     } else if (
                         descriptors.filter { isSdkFlowSupportedPaymentDescriptor(it) }.none {
@@ -92,14 +92,15 @@ internal class PaymentMethodModulesInteractor(
             }
     }
 
-    private fun isValidPaymentDescriptor(descriptor: PaymentMethodDescriptor) = (
-        descriptor.vaultCapability == VaultCapability.VAULT_ONLY &&
-            config.paymentMethodIntent.isVault
+    private fun isValidPaymentDescriptor(descriptor: PaymentMethodDescriptor) =
+        (
+            descriptor.vaultCapability == VaultCapability.VAULT_ONLY &&
+                config.paymentMethodIntent.isVault
         ) || (
-        descriptor.vaultCapability == VaultCapability.SINGLE_USE_ONLY &&
-            config.paymentMethodIntent.isCheckout
+            descriptor.vaultCapability == VaultCapability.SINGLE_USE_ONLY &&
+                config.paymentMethodIntent.isCheckout
         ) ||
-        descriptor.vaultCapability == VaultCapability.SINGLE_USE_AND_VAULT
+            descriptor.vaultCapability == VaultCapability.SINGLE_USE_AND_VAULT
 
     private fun isSdkFlowSupportedPaymentDescriptor(descriptor: PaymentMethodDescriptor) =
         if (config.settings.fromHUC) {
@@ -110,6 +111,6 @@ internal class PaymentMethodModulesInteractor(
 
     data class PaymentDescriptorsHolder(
         val descriptors: List<PaymentMethodDescriptor>,
-        val selectedPaymentMethodDescriptor: PaymentMethodDescriptor? = null
+        val selectedPaymentMethodDescriptor: PaymentMethodDescriptor? = null,
     )
 }

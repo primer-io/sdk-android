@@ -5,7 +5,6 @@ import android.content.res.Configuration
 
 internal class UiMode private constructor() {
     companion object {
-
         fun useDarkTheme(context: Context): Boolean {
             val uiMode = context.resources.configuration.uiMode
 

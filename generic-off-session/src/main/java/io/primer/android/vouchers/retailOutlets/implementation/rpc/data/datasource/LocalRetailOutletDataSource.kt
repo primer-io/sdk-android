@@ -5,7 +5,6 @@ import io.primer.android.vouchers.retailOutlets.implementation.rpc.data.models.R
 
 internal class LocalRetailOutletDataSource :
     BaseCacheDataSource<List<RetailOutletDataResponse>, List<RetailOutletDataResponse>> {
-
     private val retailersList = mutableListOf<RetailOutletDataResponse>()
 
     override fun get() = retailersList

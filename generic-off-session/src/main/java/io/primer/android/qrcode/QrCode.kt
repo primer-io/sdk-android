@@ -18,63 +18,64 @@ import io.primer.android.qrcode.implementation.composer.presentation.provider.Qr
 import io.primer.android.qrcode.implementation.composer.ui.assets.PromptPayBrand
 
 internal class QrCode(internal val paymentMethodType: String) : PaymentMethod, DISdkComponent {
-
     override val type = paymentMethodType
 
     override val canBeVaulted: Boolean = false
 
-    override val module: PaymentMethodModule = object : PaymentMethodModule {
-        override fun initialize(applicationContext: Context, configuration: ConfigurationData) {
-            // no-op
-        }
+    override val module: PaymentMethodModule =
+        object : PaymentMethodModule {
+            override fun initialize(
+                applicationContext: Context,
+                configuration: ConfigurationData,
+            ) {
+                // no-op
+            }
 
-        override fun registerPaymentMethodCheckers(
-            paymentMethodCheckerRegistry: PaymentMethodCheckerRegistry
-        ) {
-            // no-op
-        }
+            override fun registerPaymentMethodCheckers(paymentMethodCheckerRegistry: PaymentMethodCheckerRegistry) {
+                // no-op
+            }
 
-        override fun registerPaymentMethodDescriptorFactory(
-            paymentMethodDescriptorFactoryRegistry: PaymentMethodDescriptorFactoryRegistry
-        ) {
-            paymentMethodDescriptorFactoryRegistry.register(
-                type,
-                QrCodeDescriptorFactory()
-            )
-        }
+            override fun registerPaymentMethodDescriptorFactory(
+                paymentMethodDescriptorFactoryRegistry: PaymentMethodDescriptorFactoryRegistry,
+            ) {
+                paymentMethodDescriptorFactoryRegistry.register(
+                    type,
+                    QrCodeDescriptorFactory(),
+                )
+            }
 
-        override fun registerPaymentMethodProviderFactory(
-            paymentMethodProviderFactoryRegistry: PaymentMethodProviderFactoryRegistry
-        ) {
-            paymentMethodProviderFactoryRegistry.register(
-                paymentMethodType = paymentMethodType,
-                factory = QrCodeComposerProviderFactory::class.java
-            )
-        }
+            override fun registerPaymentMethodProviderFactory(
+                paymentMethodProviderFactoryRegistry: PaymentMethodProviderFactoryRegistry,
+            ) {
+                paymentMethodProviderFactoryRegistry.register(
+                    paymentMethodType = paymentMethodType,
+                    factory = QrCodeComposerProviderFactory::class.java,
+                )
+            }
 
-        override fun registerSavedPaymentMethodProviderFactory(
-            paymentMethodProviderFactoryRegistry: VaultedPaymentMethodProviderFactoryRegistry
-        ) {
-            // no-op
-        }
+            override fun registerSavedPaymentMethodProviderFactory(
+                paymentMethodProviderFactoryRegistry: VaultedPaymentMethodProviderFactoryRegistry,
+            ) {
+                // no-op
+            }
 
-        override fun registerPaymentMethodNavigationFactory(
-            paymentMethodNavigationFactoryRegistry: PaymentMethodNavigationFactoryRegistry
-        ) {
-            // no-op
-        }
+            override fun registerPaymentMethodNavigationFactory(
+                paymentMethodNavigationFactoryRegistry: PaymentMethodNavigationFactoryRegistry,
+            ) {
+                // no-op
+            }
 
-        override fun registerDependencyContainer(sdkContainers: List<SdkContainer>) {
-            sdkContainers.forEach { sdkContainer ->
-                sdkContainer.registerContainer(QrCodeContainer({ getSdkContainer() }, paymentMethodType))
+            override fun registerDependencyContainer(sdkContainers: List<SdkContainer>) {
+                sdkContainers.forEach { sdkContainer ->
+                    sdkContainer.registerContainer(QrCodeContainer({ getSdkContainer() }, paymentMethodType))
+                }
+            }
+
+            override fun registerErrorMappers(errorMapperRegistry: ErrorMapperRegistry) {
+            }
+
+            override fun registerBrandProvider(brandRegistry: BrandRegistry) {
+                brandRegistry.register(paymentMethodType = paymentMethodType, PromptPayBrand())
             }
         }
-
-        override fun registerErrorMappers(errorMapperRegistry: ErrorMapperRegistry) {
-        }
-
-        override fun registerBrandProvider(brandRegistry: BrandRegistry) {
-            brandRegistry.register(paymentMethodType = paymentMethodType, PromptPayBrand())
-        }
-    }
 }

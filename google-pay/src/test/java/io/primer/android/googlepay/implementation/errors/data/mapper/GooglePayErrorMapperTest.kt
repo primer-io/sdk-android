@@ -9,7 +9,6 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 internal class GooglePayErrorMapperTest {
-
     private lateinit var errorMapper: GooglePayErrorMapper
 
     @BeforeEach
@@ -37,9 +36,10 @@ internal class GooglePayErrorMapperTest {
         val exception = IllegalStateException("Some error")
 
         // When / Then
-        val thrown = assertThrows(IllegalArgumentException::class.java) {
-            errorMapper.getPrimerError(exception)
-        }
+        val thrown =
+            assertThrows(IllegalArgumentException::class.java) {
+                errorMapper.getPrimerError(exception)
+            }
         assertEquals("Unsupported mapping for java.lang.IllegalStateException: Some error", thrown.message)
     }
 }

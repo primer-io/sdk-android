@@ -5,5 +5,5 @@ import io.primer.android.core.domain.Params
 internal data class StripeAchCompletePaymentParams(
     val completeUrl: String,
     val mandateTimestamp: String,
-    val paymentMethodId: String?
+    val paymentMethodId: String?,
 ) : Params

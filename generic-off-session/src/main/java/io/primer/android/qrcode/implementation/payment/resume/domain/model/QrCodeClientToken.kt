@@ -7,5 +7,5 @@ internal data class QrCodeClientToken(
     val statusUrl: String,
     val expiresAt: String?,
     val qrCodeUrl: String?,
-    val qrCodeBase64: String
+    val qrCodeBase64: String,
 ) : PaymentMethodResumeClientToken

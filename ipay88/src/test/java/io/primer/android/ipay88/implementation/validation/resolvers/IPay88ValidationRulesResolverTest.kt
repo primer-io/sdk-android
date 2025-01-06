@@ -16,7 +16,6 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
 internal class IPay88ValidationRulesResolverTest {
-
     // Mock validation rules
     private val clientSessionAmountRule: ValidClientSessionAmountRule = mockk()
     private val clientSessionCurrencyRule: ValidClientSessionCurrencyRule = mockk()
@@ -27,16 +26,17 @@ internal class IPay88ValidationRulesResolverTest {
     private val customerEmailRule: ValidCustomerEmailRule = mockk()
     private val validRemarkRule: ValidRemarkRule = mockk()
 
-    private val resolver = IPay88ValidationRulesResolver(
-        clientSessionAmountRule,
-        clientSessionCurrencyRule,
-        clientSessionCountryCodeRule,
-        productDescriptionRule,
-        customerFirstNameRule,
-        customerLastNameRule,
-        customerEmailRule,
-        validRemarkRule
-    )
+    private val resolver =
+        IPay88ValidationRulesResolver(
+            clientSessionAmountRule,
+            clientSessionCurrencyRule,
+            clientSessionCountryCodeRule,
+            productDescriptionRule,
+            customerFirstNameRule,
+            customerLastNameRule,
+            customerEmailRule,
+            validRemarkRule,
+        )
 
     @Test
     fun `resolve should return all the rules that enter the validation chain`() {

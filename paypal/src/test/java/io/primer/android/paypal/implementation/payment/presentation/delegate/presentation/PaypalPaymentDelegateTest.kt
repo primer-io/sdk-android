@@ -2,10 +2,10 @@ package io.primer.android.paypal.implementation.payment.presentation.delegate.pr
 
 import io.mockk.mockk
 import io.mockk.unmockkAll
+import io.primer.android.domain.payments.create.model.Payment
 import io.primer.android.errors.data.exception.UnhandledPaymentPendingStateException
 import io.primer.android.errors.domain.BaseErrorResolver
 import io.primer.android.payments.core.create.domain.handler.PaymentMethodTokenHandler
-import io.primer.android.domain.payments.create.model.Payment
 import io.primer.android.payments.core.helpers.CheckoutErrorHandler
 import io.primer.android.payments.core.helpers.CheckoutSuccessHandler
 import io.primer.android.payments.core.resume.domain.handler.PaymentResumeHandler
@@ -18,7 +18,6 @@ import kotlin.test.assertEquals
 import kotlin.test.assertIs
 
 class PaypalPaymentDelegateTest {
-
     private lateinit var paymentMethodTokenHandler: PaymentMethodTokenHandler
     private lateinit var resumePaymentHandler: PaymentResumeHandler
     private lateinit var successHandler: CheckoutSuccessHandler
@@ -33,13 +32,14 @@ class PaypalPaymentDelegateTest {
         successHandler = mockk(relaxed = true)
         errorHandler = mockk(relaxed = true)
         baseErrorResolver = mockk(relaxed = true)
-        delegate = PaypalPaymentDelegate(
-            paymentMethodTokenHandler,
-            resumePaymentHandler,
-            successHandler,
-            errorHandler,
-            baseErrorResolver
-        )
+        delegate =
+            PaypalPaymentDelegate(
+                paymentMethodTokenHandler,
+                resumePaymentHandler,
+                successHandler,
+                errorHandler,
+                baseErrorResolver,
+            )
     }
 
     @AfterEach
@@ -48,17 +48,18 @@ class PaypalPaymentDelegateTest {
     }
 
     @Test
-    fun `handleNewClientToken should return failure with UnhandledPaymentPendingStateException`() = runTest {
-        // Arrange
-        val clientToken = "dummy_client_token"
-        val payment: Payment? = null
+    fun `handleNewClientToken should return failure with UnhandledPaymentPendingStateException`() =
+        runTest {
+            // Arrange
+            val clientToken = "dummy_client_token"
+            val payment: Payment? = null
 
-        // Act
-        val result = delegate.handleNewClientToken(clientToken, payment)
+            // Act
+            val result = delegate.handleNewClientToken(clientToken, payment)
 
-        // Assert
-        Assertions.assertTrue(result.isFailure)
-        assertIs<UnhandledPaymentPendingStateException>(result.exceptionOrNull())
-        assertEquals("Pending state for PAYPAL is not handled", result.exceptionOrNull()?.message)
-    }
+            // Assert
+            Assertions.assertTrue(result.isFailure)
+            assertIs<UnhandledPaymentPendingStateException>(result.exceptionOrNull())
+            assertEquals("Pending state for PAYPAL is not handled", result.exceptionOrNull()?.message)
+        }
 }

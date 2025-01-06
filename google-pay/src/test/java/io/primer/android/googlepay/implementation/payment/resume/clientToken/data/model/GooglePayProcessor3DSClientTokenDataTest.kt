@@ -14,7 +14,6 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 
 internal class GooglePayProcessor3DSClientTokenDataTest {
-
     private val validEncodedString = "validEncodedString"
     private val decodedString = """
         {
@@ -39,11 +38,12 @@ internal class GooglePayProcessor3DSClientTokenDataTest {
         val result = GooglePayProcessor3DSClientTokenData.fromString(validEncodedString)
 
         // Then
-        val expected = GooglePayProcessor3DSClientTokenData(
-            intent = "testIntent",
-            statusUrl = "https://www.example.com/status",
-            redirectUrl = "https://www.example.com/redirect"
-        )
+        val expected =
+            GooglePayProcessor3DSClientTokenData(
+                intent = "testIntent",
+                statusUrl = "https://www.example.com/status",
+                redirectUrl = "https://www.example.com/redirect",
+            )
         assertEquals(expected, result)
     }
 

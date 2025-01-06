@@ -16,7 +16,6 @@ import org.junit.jupiter.api.extension.ExtendWith
 @OptIn(ExperimentalCoroutinesApi::class)
 @ExtendWith(MockKExtension::class)
 class NewFragmentBehaviourTest {
-
     @MockK
     private lateinit var parentFragment: Fragment
 

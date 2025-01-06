@@ -16,7 +16,7 @@ internal sealed interface ViewStatus {
     data class PollingStarted(
         val statusUrl: String,
         val paymentMethodType: String,
-        val delay: Int = 3000
+        val delay: Int = 3000,
     ) : ViewStatus
 
     data class ShowError(val errorType: ErrorType, val message: String?, val delay: Int = 3000) : ViewStatus
@@ -24,7 +24,7 @@ internal sealed interface ViewStatus {
     data class ShowSuccess(
         val successType: SuccessType,
         val delay: Int = 3000,
-        val checkoutAdditionalInfo: PrimerCheckoutAdditionalInfo? = null
+        val checkoutAdditionalInfo: PrimerCheckoutAdditionalInfo? = null,
     ) : ViewStatus
 
     data object Dismiss : ViewStatus

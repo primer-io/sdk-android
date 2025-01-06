@@ -57,7 +57,7 @@ class OtpTest {
         verify {
             mockRegistry.register(
                 paymentMethodType = paymentMethodType,
-                factory = OtpComposerProviderFactory::class.java
+                factory = OtpComposerProviderFactory::class.java,
             )
         }
         confirmVerified(mockRegistry)
@@ -91,7 +91,7 @@ class OtpTest {
         verify {
             mockRegistry.register(
                 type = otp.type,
-                factory = any<OtpDescriptorFactory>()
+                factory = any<OtpDescriptorFactory>(),
             )
         }
         confirmVerified(mockRegistry)
@@ -118,7 +118,7 @@ class OtpTest {
         verify {
             mockBrandRegistry.register(
                 paymentMethodType = paymentMethodType,
-                brand = any<AdyenBlikBrand>()
+                brand = any<AdyenBlikBrand>(),
             )
         }
         confirmVerified(mockBrandRegistry)

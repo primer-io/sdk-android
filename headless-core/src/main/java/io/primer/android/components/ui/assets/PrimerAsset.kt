@@ -21,30 +21,30 @@ data class PrimerPaymentMethodAsset(
     override val paymentMethodType: String,
     override val paymentMethodName: String,
     val paymentMethodLogo: PrimerAsset,
-    val paymentMethodBackgroundColor: PrimerPaymentMethodBackgroundColor
+    val paymentMethodBackgroundColor: PrimerPaymentMethodBackgroundColor,
 ) : PrimerPaymentMethodResource
 
 data class PrimerPaymentMethodNativeView(
     override val paymentMethodType: String,
     override val paymentMethodName: String,
-    val createView: (Context) -> View
+    val createView: (Context) -> View,
 ) : PrimerPaymentMethodResource
 
 @Deprecated(message = "This class is deprecated.", ReplaceWith("Use PrimerAsset"))
 data class PrimerPaymentMethodLogo(
     override val colored: Drawable?,
     override val light: Drawable?,
-    override val dark: Drawable?
+    override val dark: Drawable?,
 ) : PrimerAsset
 
 data class PrimerPaymentMethodBackgroundColor(
     @ColorInt val colored: Int?,
     @ColorInt val light: Int?,
-    @ColorInt val dark: Int?
+    @ColorInt val dark: Int?,
 )
 
 data class PrimerCardNetworkAsset(
     val cardNetwork: CardNetwork.Type,
     val displayName: String,
-    val cardImage: Drawable?
+    val cardImage: Drawable?,
 )

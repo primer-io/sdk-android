@@ -19,7 +19,6 @@ import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
 class WebRedirectResumeHandlerTest {
-
     private val clientTokenParser = mockk<WebRedirectPaymentMethodClientTokenParser>()
     private val tokenizedPaymentMethodRepository = mockk<TokenizedPaymentMethodRepository>()
     private val configurationRepository = mockk<ConfigurationRepository>()
@@ -32,21 +31,23 @@ class WebRedirectResumeHandlerTest {
     private val clientTokenIntent = "testIntent"
     private val testPaymentMethodType = "ADYEN_GIROPAY"
 
-    private val handler = WebRedirectResumeHandler(
-        clientTokenParser = clientTokenParser,
-        tokenizedPaymentMethodRepository = tokenizedPaymentMethodRepository,
-        configurationRepository = configurationRepository,
-        deeplinkRepository = deeplinkRepository,
-        validateClientTokenRepository = validateClientTokenRepository,
-        clientTokenRepository = clientTokenRepository,
-        checkoutAdditionalInfoHandler = checkoutAdditionalInfoHandler
-    )
+    private val handler =
+        WebRedirectResumeHandler(
+            clientTokenParser = clientTokenParser,
+            tokenizedPaymentMethodRepository = tokenizedPaymentMethodRepository,
+            configurationRepository = configurationRepository,
+            deeplinkRepository = deeplinkRepository,
+            validateClientTokenRepository = validateClientTokenRepository,
+            clientTokenRepository = clientTokenRepository,
+            checkoutAdditionalInfoHandler = checkoutAdditionalInfoHandler,
+        )
 
     @BeforeEach
     fun setUp() {
-        every { tokenizedPaymentMethodRepository.getPaymentMethod() } returns mockk {
-            every { paymentMethodType } returns testPaymentMethodType
-        }
+        every { tokenizedPaymentMethodRepository.getPaymentMethod() } returns
+            mockk {
+                every { paymentMethodType } returns testPaymentMethodType
+            }
     }
 
     @AfterEach
@@ -57,14 +58,16 @@ class WebRedirectResumeHandlerTest {
     @Test
     fun `getResumeDecision should return the correct WebRedirectDecision when called with a WebRedirectClientToken`() {
         // Given
-        every { configurationRepository.getConfiguration() } returns mockk {
-            every { paymentMethods } returns listOf(
-                mockk {
-                    every { type } returns testPaymentMethodType
-                    every { name } returns ""
-                }
-            )
-        }
+        every { configurationRepository.getConfiguration() } returns
+            mockk {
+                every { paymentMethods } returns
+                    listOf(
+                        mockk {
+                            every { type } returns testPaymentMethodType
+                            every { name } returns ""
+                        },
+                    )
+            }
 
         every { deeplinkRepository.getDeeplinkUrl() } returns ""
 
@@ -76,13 +79,14 @@ class WebRedirectResumeHandlerTest {
             val decision = handler.getResumeDecision(clientToken)
 
             // Then
-            val expected = WebRedirectDecision(
-                title = "",
-                paymentMethodType = testPaymentMethodType,
-                redirectUrl = redirectUrl,
-                statusUrl = statusUrl,
-                deeplinkUrl = ""
-            )
+            val expected =
+                WebRedirectDecision(
+                    title = "",
+                    paymentMethodType = testPaymentMethodType,
+                    redirectUrl = redirectUrl,
+                    statusUrl = statusUrl,
+                    deeplinkUrl = "",
+                )
             assertEquals(expected, decision)
         }
 

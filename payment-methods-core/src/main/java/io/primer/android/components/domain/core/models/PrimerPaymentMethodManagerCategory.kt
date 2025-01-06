@@ -7,5 +7,5 @@ enum class PrimerPaymentMethodManagerCategory {
     NOL_PAY,
     KLARNA,
     STRIPE_ACH,
-    COMPONENT_WITH_REDIRECT
+    COMPONENT_WITH_REDIRECT,
 }

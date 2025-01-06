@@ -18,11 +18,12 @@ import org.junit.jupiter.api.assertThrows
 import kotlin.test.assertIs
 
 class BankIssuerDropInDescriptorTest {
-    private val defaultUiOptions = UiOptions(
-        isStandalonePaymentMethod = true,
-        isInitScreenEnabled = false,
-        isDarkMode = null
-    )
+    private val defaultUiOptions =
+        UiOptions(
+            isStandalonePaymentMethod = true,
+            isInitScreenEnabled = false,
+            isDarkMode = null,
+        )
 
     @Test
     fun `fragmentFactory returns IdealBankSelectionFragment when payment method type is ADYEN_IDEAL`() {
@@ -47,10 +48,11 @@ class BankIssuerDropInDescriptorTest {
 
     @Test
     fun `selectedBehaviour returns correct NewFragmentBehaviour when payment method type is ADYEN_IDEAL and isStandalonePaymentMethod is false`() {
-        val descriptor = createDescriptor(
-            paymentMethodType = PaymentMethodType.ADYEN_IDEAL,
-            uiOptions = defaultUiOptions.copy(isStandalonePaymentMethod = false)
-        )
+        val descriptor =
+            createDescriptor(
+                paymentMethodType = PaymentMethodType.ADYEN_IDEAL,
+                uiOptions = defaultUiOptions.copy(isStandalonePaymentMethod = false),
+            )
 
         val selectedBehaviour = descriptor.selectedBehaviour
 
@@ -60,10 +62,11 @@ class BankIssuerDropInDescriptorTest {
 
     @Test
     fun `selectedBehaviour returns correct NewFragmentBehaviour when payment method type is ADYEN_IDEAL and isStandalonePaymentMethod is true`() {
-        val descriptor = createDescriptor(
-            paymentMethodType = PaymentMethodType.ADYEN_IDEAL,
-            uiOptions = defaultUiOptions.copy(isStandalonePaymentMethod = true)
-        )
+        val descriptor =
+            createDescriptor(
+                paymentMethodType = PaymentMethodType.ADYEN_IDEAL,
+                uiOptions = defaultUiOptions.copy(isStandalonePaymentMethod = true),
+            )
 
         val selectedBehaviour = descriptor.selectedBehaviour
 
@@ -116,10 +119,11 @@ class BankIssuerDropInDescriptorTest {
 
     @Test
     fun `selectedBehaviour returns correct NewFragmentBehaviour when payment method type is ADYEN_DOTPAY and isStandalonePaymentMethod is false`() {
-        val descriptor = createDescriptor(
-            paymentMethodType = PaymentMethodType.ADYEN_DOTPAY,
-            uiOptions = defaultUiOptions.copy(isStandalonePaymentMethod = false)
-        )
+        val descriptor =
+            createDescriptor(
+                paymentMethodType = PaymentMethodType.ADYEN_DOTPAY,
+                uiOptions = defaultUiOptions.copy(isStandalonePaymentMethod = false),
+            )
 
         val selectedBehaviour = descriptor.selectedBehaviour
 
@@ -129,10 +133,11 @@ class BankIssuerDropInDescriptorTest {
 
     @Test
     fun `selectedBehaviour returns correct NewFragmentBehaviour when payment method type is ADYEN_DOTPAY and isStandalonePaymentMethod is true`() {
-        val descriptor = createDescriptor(
-            paymentMethodType = PaymentMethodType.ADYEN_DOTPAY,
-            uiOptions = defaultUiOptions.copy(isStandalonePaymentMethod = true)
-        )
+        val descriptor =
+            createDescriptor(
+                paymentMethodType = PaymentMethodType.ADYEN_DOTPAY,
+                uiOptions = defaultUiOptions.copy(isStandalonePaymentMethod = true),
+            )
 
         val selectedBehaviour = descriptor.selectedBehaviour
 
@@ -142,9 +147,9 @@ class BankIssuerDropInDescriptorTest {
 
     private fun createDescriptor(
         paymentMethodType: PaymentMethodType,
-        uiOptions: UiOptions? = null
+        uiOptions: UiOptions? = null,
     ) = BankIssuerDropInDescriptor(
         paymentMethodType = paymentMethodType.name,
-        uiOptions = uiOptions ?: this.defaultUiOptions
+        uiOptions = uiOptions ?: this.defaultUiOptions,
     )
 }

@@ -20,10 +20,9 @@ import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.launch
 
 internal interface NativeUiManagerHeadlessDelegate {
-
     fun dispatchAction(
         type: String,
-        completion: ((Error?) -> Unit) = {}
+        completion: ((Error?) -> Unit) = {},
     )
 
     fun cleanup()
@@ -36,10 +35,9 @@ internal class DefaultNativeUiManagerHeadlessManagerDelegate(
     private val paymentMethodStarter: PaymentMethodStarter,
     private val composerRegistry: PaymentMethodComposerRegistry,
     private val preparationStartHandler: PreparationStartHandler,
-    private val headlessScopeProvider: CoroutineScopeProvider
+    private val headlessScopeProvider: CoroutineScopeProvider,
 ) : NativeUiManagerHeadlessDelegate,
     DefaultPaymentMethodManagerDelegate(paymentMethodInitializer, paymentMethodStarter) {
-
     private val scope = CoroutineScope(headlessScopeProvider.scope.coroutineContext)
     private lateinit var component: InternalNativeUiPaymentMethodComponent
 
@@ -48,16 +46,17 @@ internal class DefaultNativeUiManagerHeadlessManagerDelegate(
         paymentMethodType: String,
         sessionIntent: PrimerSessionIntent,
         category: PrimerPaymentMethodManagerCategory,
-        onPostStart: () -> Unit
+        onPostStart: () -> Unit,
     ) {
-        val validationResults = sessionIntentRulesResolver.resolve().rules.map {
-            it.validate(
-                PaymentMethodManagerSessionIntentValidationData(
-                    paymentMethodType = paymentMethodType,
-                    sessionIntent = sessionIntent
+        val validationResults =
+            sessionIntentRulesResolver.resolve().rules.map {
+                it.validate(
+                    PaymentMethodManagerSessionIntentValidationData(
+                        paymentMethodType = paymentMethodType,
+                        sessionIntent = sessionIntent,
+                    ),
                 )
-            )
-        }
+            }
 
         validationResults.filterIsInstance<ValidationResult.Failure>()
             .forEach { validationResult ->
@@ -70,13 +69,16 @@ internal class DefaultNativeUiManagerHeadlessManagerDelegate(
         })
     }
 
-    override fun dispatchAction(type: String, completion: (Error?) -> Unit) {
+    override fun dispatchAction(
+        type: String,
+        completion: (Error?) -> Unit,
+    ) {
         scope.launch {
             preparationStartHandler.handle(type)
             actionInteractor(
                 MultipleActionUpdateParams(
-                    listOf(ActionUpdateSelectPaymentMethodParams(type))
-                )
+                    listOf(ActionUpdateSelectPaymentMethodParams(type)),
+                ),
             ).onFailure {
                 completion(Error(it))
             }.onSuccess {

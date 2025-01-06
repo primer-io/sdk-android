@@ -8,7 +8,6 @@ import org.junit.jupiter.api.extension.ExtendWith
 
 @ExtendWith(MockKExtension::class)
 class AtomeBrandTest {
-
     private val atomeBrand = AtomeBrand()
 
     @Test

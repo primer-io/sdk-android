@@ -7,12 +7,12 @@ import io.primer.android.vouchers.retailOutlets.implementation.rpc.data.models.R
 import io.primer.android.vouchers.retailOutlets.implementation.rpc.data.models.RetailOutletResultDataResponse
 
 internal class RemoteRetailOutletDataSource(
-    private val primerHttpClient: PrimerHttpClient
+    private val primerHttpClient: PrimerHttpClient,
 ) : BaseSuspendDataSource<RetailOutletResultDataResponse, BaseRemoteHostRequest<RetailOutletDataRequest>> {
-
     override suspend fun execute(input: BaseRemoteHostRequest<RetailOutletDataRequest>) =
         primerHttpClient.suspendGet<RetailOutletResultDataResponse>(
-            url = "${input.host}/payment-method-options/" +
-                "${input.data.paymentMethodConfigId}/retail-outlets"
+            url =
+                "${input.host}/payment-method-options/" +
+                    "${input.data.paymentMethodConfigId}/retail-outlets",
         ).body
 }

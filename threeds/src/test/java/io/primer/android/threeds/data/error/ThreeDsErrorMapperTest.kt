@@ -27,7 +27,6 @@ import kotlin.test.assertEquals
 @OptIn(ExperimentalCoroutinesApi::class)
 @ExtendWith(InstantExecutorExtension::class, MockKExtension::class)
 internal class ThreeDsErrorMapperTest {
-
     private lateinit var mapper: ThreeDsErrorMapper
 
     @BeforeEach
@@ -43,7 +42,7 @@ internal class ThreeDsErrorMapperTest {
             val error = mapper.getPrimerError(exception)
             assertEquals<Class<*>>(
                 ThreeDsError.ThreeDsLibraryMissingError::class.java,
-                error.javaClass
+                error.javaClass,
             )
         }
     }
@@ -55,7 +54,7 @@ internal class ThreeDsErrorMapperTest {
             val error = mapper.getPrimerError(exception)
             assertEquals<Class<*>>(
                 ThreeDsError.ThreeDsLibraryVersionError::class.java,
-                error.javaClass
+                error.javaClass,
             )
         }
     }
@@ -67,7 +66,7 @@ internal class ThreeDsErrorMapperTest {
             val error = mapper.getPrimerError(exception)
             assertEquals<Class<*>>(
                 ThreeDsError.ThreeDsConfigurationError::class.java,
-                error.javaClass
+                error.javaClass,
             )
         }
     }
@@ -79,7 +78,7 @@ internal class ThreeDsErrorMapperTest {
             val error = mapper.getPrimerError(exception)
             assertEquals<Class<*>>(
                 ThreeDsError.ThreeDsConfigurationError::class.java,
-                error.javaClass
+                error.javaClass,
             )
         }
     }
@@ -91,7 +90,7 @@ internal class ThreeDsErrorMapperTest {
             val error = mapper.getPrimerError(exception)
             assertEquals<Class<*>>(
                 ThreeDsError.ThreeDsInitError::class.java,
-                error.javaClass
+                error.javaClass,
             )
         }
     }
@@ -103,7 +102,7 @@ internal class ThreeDsErrorMapperTest {
             val error = mapper.getPrimerError(exception)
             assertEquals<Class<*>>(
                 ThreeDsError.ThreeDsChallengeTimedOutError::class.java,
-                error.javaClass
+                error.javaClass,
             )
         }
     }
@@ -115,7 +114,7 @@ internal class ThreeDsErrorMapperTest {
             val error = mapper.getPrimerError(exception)
             assertEquals<Class<*>>(
                 ThreeDsError.ThreeDsChallengeCancelledError::class.java,
-                error.javaClass
+                error.javaClass,
             )
         }
     }
@@ -127,7 +126,7 @@ internal class ThreeDsErrorMapperTest {
             val error = mapper.getPrimerError(exception)
             assertEquals<Class<*>>(
                 ThreeDsError.ThreeDsChallengeFailedError::class.java,
-                error.javaClass
+                error.javaClass,
             )
         }
     }
@@ -139,7 +138,7 @@ internal class ThreeDsErrorMapperTest {
             val error = mapper.getPrimerError(exception)
             assertEquals<Class<*>>(
                 ThreeDsError.ThreeDsChallengeProtocolFailedError::class.java,
-                error.javaClass
+                error.javaClass,
             )
         }
     }
@@ -151,7 +150,7 @@ internal class ThreeDsErrorMapperTest {
             val error = mapper.getPrimerError(exception)
             assertEquals<Class<*>>(
                 ThreeDsError.ThreeDsMissingDirectoryServerIdError::class.java,
-                error.javaClass
+                error.javaClass,
             )
         }
     }
@@ -163,7 +162,7 @@ internal class ThreeDsErrorMapperTest {
             val error = mapper.getPrimerError(exception)
             assertEquals<Class<*>>(
                 ThreeDsError.ThreeDsUnknownProtocolError::class.java,
-                error.javaClass
+                error.javaClass,
             )
         }
     }
@@ -175,7 +174,7 @@ internal class ThreeDsErrorMapperTest {
             val error = mapper.getPrimerError(exception)
             assertEquals<Class<*>>(
                 ThreeDsError.ThreeDsChallengeInvalidStatusError::class.java,
-                error.javaClass
+                error.javaClass,
             )
         }
     }
@@ -185,8 +184,9 @@ internal class ThreeDsErrorMapperTest {
         runTest {
             val throwable = Exception()
             assertThrows<IllegalStateException>(
-                message = "Unsupported mapping for $throwable in " +
-                    "io.primer.android.threeds.data.error.ThreeDsErrorMapper"
+                message =
+                    "Unsupported mapping for $throwable in " +
+                        "io.primer.android.threeds.data.error.ThreeDsErrorMapper",
             ) {
                 mapper.getPrimerError(throwable)
             }

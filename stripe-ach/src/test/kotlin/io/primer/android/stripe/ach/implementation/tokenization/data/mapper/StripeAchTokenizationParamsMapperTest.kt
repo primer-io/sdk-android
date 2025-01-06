@@ -16,22 +16,24 @@ class StripeAchTokenizationParamsMapperTest {
 
     @Test
     fun `map() correctly maps StripeAchPaymentInstrumentParams to StripeAchPaymentInstrumentDataRequest`() {
-        val params = TokenizationParams(
-            StripeAchPaymentInstrumentParams(
-                paymentMethodConfigId = "id",
-                locale = "en_US",
-            ),
-            sessionIntent = PrimerSessionIntent.CHECKOUT
-        )
+        val params =
+            TokenizationParams(
+                StripeAchPaymentInstrumentParams(
+                    paymentMethodConfigId = "id",
+                    locale = "en_US",
+                ),
+                sessionIntent = PrimerSessionIntent.CHECKOUT,
+            )
 
         val result = mapper.map(params)
 
-        val expectedInstrumentDataRequest = StripeAchPaymentInstrumentDataRequest(
-            paymentMethodType = PaymentMethodType.STRIPE_ACH.name,
-            paymentMethodConfigId = "id",
-            sessionInfo = StripeAchSessionInfoDataRequest(locale = "en_US"),
-            type = PaymentInstrumentType.AUTOMATED_CLEARING_HOUSE
-        )
+        val expectedInstrumentDataRequest =
+            StripeAchPaymentInstrumentDataRequest(
+                paymentMethodType = PaymentMethodType.STRIPE_ACH.name,
+                paymentMethodConfigId = "id",
+                sessionInfo = StripeAchSessionInfoDataRequest(locale = "en_US"),
+                type = PaymentInstrumentType.AUTOMATED_CLEARING_HOUSE,
+            )
         val expectedTokenizationRequest =
             expectedInstrumentDataRequest.toTokenizationRequest(PrimerSessionIntent.CHECKOUT)
 

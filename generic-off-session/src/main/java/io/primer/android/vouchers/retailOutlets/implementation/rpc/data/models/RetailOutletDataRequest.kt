@@ -6,18 +6,18 @@ import io.primer.android.vouchers.retailOutlets.implementation.rpc.domain.models
 import org.json.JSONObject
 
 internal data class RetailOutletDataRequest(
-    val paymentMethodConfigId: String
+    val paymentMethodConfigId: String,
 ) : JSONObjectSerializable {
     companion object {
-
         private const val PAYMENT_METHOD_CONFIG_ID_FIELD = "paymentMethodConfigId"
 
         @JvmField
-        val serializer = JSONObjectSerializer<RetailOutletDataRequest> { t ->
-            JSONObject().apply {
-                put(PAYMENT_METHOD_CONFIG_ID_FIELD, t.paymentMethodConfigId)
+        val serializer =
+            JSONObjectSerializer<RetailOutletDataRequest> { t ->
+                JSONObject().apply {
+                    put(PAYMENT_METHOD_CONFIG_ID_FIELD, t.paymentMethodConfigId)
+                }
             }
-        }
     }
 }
 

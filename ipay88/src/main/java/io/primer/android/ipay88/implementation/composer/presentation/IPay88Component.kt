@@ -33,12 +33,14 @@ internal class IPay88Component(
     private val tokenizationDelegate: IPay88TokenizationDelegate,
     private val pollingInteractor: AsyncPaymentMethodPollingInteractor,
     private val paymentDelegate: IPay88PaymentDelegate,
-    private val mockConfigurationDelegate: MockConfigurationDelegate
+    private val mockConfigurationDelegate: MockConfigurationDelegate,
 ) : InternalNativeUiPaymentMethodComponent(),
     ActivityStartIntentHandler,
     ActivityResultIntentHandler {
-
-    override fun start(paymentMethodType: String, primerSessionIntent: PrimerSessionIntent) {
+    override fun start(
+        paymentMethodType: String,
+        primerSessionIntent: PrimerSessionIntent,
+    ) {
         this.paymentMethodType = paymentMethodType
         this.primerSessionIntent = primerSessionIntent
         composerScope.launch {
@@ -49,14 +51,18 @@ internal class IPay88Component(
         tokenize(paymentMethodType)
     }
 
-    override fun handleActivityResultIntent(params: PaymentMethodLauncherParams, resultCode: Int, intent: Intent?) {
+    override fun handleActivityResultIntent(
+        params: PaymentMethodLauncherParams,
+        resultCode: Int,
+        intent: Intent?,
+    ) {
         when (resultCode) {
             Activity.RESULT_CANCELED -> {
                 composerScope.launch {
                     paymentDelegate.handleError(
                         PaymentMethodCancelledException(
-                            params.paymentMethodType
-                        )
+                            params.paymentMethodType,
+                        ),
                     )
                 }
             }
@@ -69,7 +75,7 @@ internal class IPay88Component(
             IPay88ResumeHandler.RESULT_ERROR_CODE -> {
                 composerScope.launch {
                     paymentDelegate.handleError(
-                        requireNotNull(intent?.getSerializableCompat<Exception>(NativeIPay88Activity.ERROR_KEY))
+                        requireNotNull(intent?.getSerializableCompat<Exception>(NativeIPay88Activity.ERROR_KEY)),
                     )
                 }
             }
@@ -81,30 +87,32 @@ internal class IPay88Component(
         openRedirectScreen(params.initialLauncherParams as RedirectLauncherParams)
     }
 
-    private fun tokenize(
-        paymentMethodType: String
-    ) = composerScope.launch {
-        tokenizationDelegate.tokenize(
-            IPay88TokenizationInputable(
-                paymentMethodType = paymentMethodType,
-                primerSessionIntent = primerSessionIntent
+    private fun tokenize(paymentMethodType: String) =
+        composerScope.launch {
+            tokenizationDelegate.tokenize(
+                IPay88TokenizationInputable(
+                    paymentMethodType = paymentMethodType,
+                    primerSessionIntent = primerSessionIntent,
+                ),
             )
-        )
-            .flatMap { paymentMethodTokenData ->
-                paymentDelegate.handlePaymentMethodToken(
-                    paymentMethodTokenData = paymentMethodTokenData,
-                    primerSessionIntent = primerSessionIntent
-                )
-            }.onFailure { throwable ->
-                paymentDelegate.handleError(throwable)
-            }
-    }
+                .flatMap { paymentMethodTokenData ->
+                    paymentDelegate.handlePaymentMethodToken(
+                        paymentMethodTokenData = paymentMethodTokenData,
+                        primerSessionIntent = primerSessionIntent,
+                    )
+                }.onFailure { throwable ->
+                    paymentDelegate.handleError(throwable)
+                }
+        }
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
-    internal fun startPolling(statusUrl: String, paymentMethodType: String) = composerScope.launch {
+    internal fun startPolling(
+        statusUrl: String,
+        paymentMethodType: String,
+    ) = composerScope.launch {
         pollingInteractor.execute(
-            AsyncStatusParams(statusUrl, paymentMethodType)
+            AsyncStatusParams(statusUrl, paymentMethodType),
         ).mapLatest { status ->
             paymentDelegate.resumePayment(status.resumeToken)
         }.catch {
@@ -120,7 +128,7 @@ internal class IPay88Component(
                     if (mockConfigurationDelegate.isMockedFlow()) {
                         IPay88MockActivityLauncherParams(
                             errorCode = event.errorCode,
-                            sessionIntent = event.sessionIntent
+                            sessionIntent = event.sessionIntent,
                         )
                     } else {
                         IPay88ActivityLauncherParams(
@@ -141,16 +149,17 @@ internal class IPay88Component(
                             deeplinkUrl = event.deeplinkUrl,
                             errorCode = event.errorCode,
                             paymentMethodType = event.paymentMethodType,
-                            sessionIntent = event.sessionIntent
+                            sessionIntent = event.sessionIntent,
                         )
-                    }
-                )
+                    },
+                ),
             )
         }
     }
 
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
-    internal fun close() = composerScope.launch {
-        _uiEvent.emit(ComposerUiEvent.Finish)
-    }
+    internal fun close() =
+        composerScope.launch {
+            _uiEvent.emit(ComposerUiEvent.Finish)
+        }
 }

@@ -9,5 +9,5 @@ enum class SDKCapability {
     /**
      * A payment method which is available on Drop-In
      */
-    DROP_IN
+    DROP_IN,
 }

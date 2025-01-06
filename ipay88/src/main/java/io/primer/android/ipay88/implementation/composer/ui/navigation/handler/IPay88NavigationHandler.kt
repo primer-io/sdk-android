@@ -18,9 +18,10 @@ internal class IPay88NavigationHandler : PaymentMethodContextNavigationHandler {
 
     override fun getSupportedNavigators(
         activity: Activity,
-        launcher: ActivityResultLauncher<Intent>
-    ): List<Navigator<NavigationParams>> = listOf(
-        IPay88Navigator(activity, launcher),
-        IPay88MockNavigator(activity, launcher)
-    )
+        launcher: ActivityResultLauncher<Intent>,
+    ): List<Navigator<NavigationParams>> =
+        listOf(
+            IPay88Navigator(activity, launcher),
+            IPay88MockNavigator(activity, launcher),
+        )
 }

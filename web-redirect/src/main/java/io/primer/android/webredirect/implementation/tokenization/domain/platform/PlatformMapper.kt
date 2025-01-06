@@ -12,10 +12,9 @@ internal interface PlatformMapper {
 
 internal class AdyenVippsMapper(
     private val context: Context,
-    private val cacheConfigurationDataSource: CacheConfigurationDataSource
+    private val cacheConfigurationDataSource: CacheConfigurationDataSource,
 ) :
     PlatformMapper {
-
     override fun getPlatform(paymentMethodType: String): String {
         val environment = cacheConfigurationDataSource.get().environment
         val intentUri = if (environment == Environment.PRODUCTION) PRODUCTION_ENV else TEST_ENV
@@ -23,7 +22,10 @@ internal class AdyenVippsMapper(
         return if (isAppInstalled) PlatformResolver.ANDROID_PLATFORM else PlatformResolver.WEB_PLATFORM
     }
 
-    private fun isAppInstalled(context: Context, deeplink: String): Boolean {
+    private fun isAppInstalled(
+        context: Context,
+        deeplink: String,
+    ): Boolean {
         val uri = Uri.parse(deeplink)
         val intent = Intent(Intent.ACTION_VIEW, uri)
         val packageManager = context.packageManager

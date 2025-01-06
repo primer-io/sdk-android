@@ -12,7 +12,7 @@ import io.primer.android.payments.core.tokenization.domain.repository.TokenizedP
 internal data class NolPayResumeDecision(
     val transactionNumber: String,
     val statusUrl: String,
-    val completeUrl: String
+    val completeUrl: String,
 ) : PaymentMethodResumeDecision
 
 internal class NolPayResumeHandler(
@@ -20,14 +20,13 @@ internal class NolPayResumeHandler(
     validateClientTokenRepository: ValidateClientTokenRepository,
     clientTokenRepository: ClientTokenRepository,
     checkoutAdditionalInfoHandler: CheckoutAdditionalInfoHandler,
-    private val tokenizedPaymentMethodRepository: TokenizedPaymentMethodRepository
+    private val tokenizedPaymentMethodRepository: TokenizedPaymentMethodRepository,
 ) : PrimerResumeDecisionHandlerV2<NolPayResumeDecision, NolPayClientToken>(
-    clientTokenRepository = clientTokenRepository,
-    validateClientTokenRepository = validateClientTokenRepository,
-    clientTokenParser = clientTokenParser,
-    checkoutAdditionalInfoHandler = checkoutAdditionalInfoHandler
-) {
-
+        clientTokenRepository = clientTokenRepository,
+        validateClientTokenRepository = validateClientTokenRepository,
+        clientTokenParser = clientTokenParser,
+        checkoutAdditionalInfoHandler = checkoutAdditionalInfoHandler,
+    ) {
     override val supportedClientTokenIntents: () -> List<String> = {
         listOf(tokenizedPaymentMethodRepository.getPaymentMethod().paymentMethodType.orEmpty())
             .map { paymentMethodType -> "${paymentMethodType}_REDIRECTION" }
@@ -37,7 +36,7 @@ internal class NolPayResumeHandler(
         return NolPayResumeDecision(
             transactionNumber = clientToken.transactionNumber,
             statusUrl = clientToken.statusUrl,
-            completeUrl = clientToken.completeUrl
+            completeUrl = clientToken.completeUrl,
         )
     }
 }

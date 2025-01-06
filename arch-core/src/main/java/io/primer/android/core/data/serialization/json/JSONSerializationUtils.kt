@@ -3,7 +3,6 @@ package io.primer.android.core.data.serialization.json
 import org.json.JSONObject
 
 object JSONSerializationUtils {
-
     const val SERIALIZER_FIELD_NAME = "serializer"
     const val DESERIALIZER_FIELD_NAME = "deserializer"
 
@@ -11,14 +10,14 @@ object JSONSerializationUtils {
     @Throws(
         IllegalStateException::class,
         NoSuchFieldException::class,
-        IllegalAccessException::class
+        IllegalAccessException::class,
     )
     inline fun <reified T : JSONSerializable> getJsonSerializer(): JSONSerializer<T> {
         val field = T::class.java.getDeclaredField(SERIALIZER_FIELD_NAME)
 
         check(
             field.type == JSONObjectSerializer::class.java || field.type ==
-                JSONArraySerializer::class.java
+                JSONArraySerializer::class.java,
         ) {
             "Serializer is not of the type JSONSerializer"
         }
@@ -29,10 +28,9 @@ object JSONSerializationUtils {
     @Throws(
         IllegalStateException::class,
         NoSuchFieldException::class,
-        IllegalAccessException::class
+        IllegalAccessException::class,
     )
-    inline fun <reified T : JSONObjectSerializable> getJsonObjectSerializer():
-        JSONObjectSerializer<T> {
+    inline fun <reified T : JSONObjectSerializable> getJsonObjectSerializer(): JSONObjectSerializer<T> {
         val field = T::class.java.getDeclaredField(SERIALIZER_FIELD_NAME)
         check(field.type == JSONObjectSerializer::class.java) {
             "Serializer is not of the type JSONObjectSerializable"
@@ -44,10 +42,9 @@ object JSONSerializationUtils {
     @Throws(
         IllegalStateException::class,
         NoSuchFieldException::class,
-        IllegalAccessException::class
+        IllegalAccessException::class,
     )
-    inline fun <reified T : JSONDeserializable> getJsonArrayDeserializer():
-        JSONArrayDeserializer<T> {
+    inline fun <reified T : JSONDeserializable> getJsonArrayDeserializer(): JSONArrayDeserializer<T> {
         val field = T::class.java.getDeclaredField(DESERIALIZER_FIELD_NAME)
 
         check(field.type == JSONArrayDeserializer::class.java) {
@@ -60,10 +57,9 @@ object JSONSerializationUtils {
     @Throws(
         IllegalStateException::class,
         NoSuchFieldException::class,
-        IllegalAccessException::class
+        IllegalAccessException::class,
     )
-    inline fun <reified T : JSONDeserializable> getJsonObjectDeserializer():
-        JSONObjectDeserializer<T> {
+    inline fun <reified T : JSONDeserializable> getJsonObjectDeserializer(): JSONObjectDeserializer<T> {
         val field = T::class.java.getDeclaredField(DESERIALIZER_FIELD_NAME)
         check(field.type == JSONObjectDeserializer::class.java) {
             "Deserializer is not of the type JSONObjectDeserializer"
@@ -74,7 +70,7 @@ object JSONSerializationUtils {
     @Throws(
         IllegalStateException::class,
         NoSuchFieldException::class,
-        IllegalAccessException::class
+        IllegalAccessException::class,
     )
     inline fun <reified T : JSONDeserializable> JSONObject.deserialize(): T {
         return getJsonObjectDeserializer<T>().deserialize(this)
@@ -84,7 +80,7 @@ object JSONSerializationUtils {
     @Throws(
         IllegalStateException::class,
         NoSuchFieldException::class,
-        IllegalAccessException::class
+        IllegalAccessException::class,
     )
     inline fun <reified T : JSONObjectSerializable> T.serialize(): JSONObject {
         val serializer = getJsonObjectSerializer<T>()

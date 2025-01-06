@@ -7,7 +7,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 class DropInManualFlowSuccessHandler internal constructor(
-    private val primerHeadlessRepository: PrimerHeadlessRepository
+    private val primerHeadlessRepository: PrimerHeadlessRepository,
 ) : ManualFlowSuccessHandler {
     override suspend fun handle(additionalInfo: PrimerCheckoutAdditionalInfo?) {
         // ViewModels use Main.immediate dispatcher which causes race conditions with fragments that get popped

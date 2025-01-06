@@ -16,36 +16,38 @@ import io.primer.android.klarna.implementation.session.data.models.SessionOrderL
 
 internal data class CreateCustomerTokenDataResponse(
     val customerTokenId: String?,
-    val sessionData: KlarnaSessionData
+    val sessionData: KlarnaSessionData,
 ) : JSONDeserializable {
     companion object {
         private const val CUSTOMER_TOKEN_ID_FIELD = "customerTokenId"
         private const val SESSION_DATA_FIELD = "sessionData"
 
-        val provider = object : WhitelistedHttpBodyKeysProvider {
-            override val values: List<WhitelistedKey> =
-                whitelistedKeys {
-                    nonPrimitiveKey(SESSION_DATA_FIELD) {
-                        nonPrimitiveKey(ORDER_LINES_FIELD) {
-                            primitiveKey(TYPE_FIELD)
-                            primitiveKey(QUANTITY_FIELD)
-                            primitiveKey(UNIT_PRICE_FIELD)
-                            primitiveKey(TOTAL_AMOUNT_FIELD)
-                            primitiveKey(TOTAL_DISCOUNT_AMOUNT_FIELD)
+        val provider =
+            object : WhitelistedHttpBodyKeysProvider {
+                override val values: List<WhitelistedKey> =
+                    whitelistedKeys {
+                        nonPrimitiveKey(SESSION_DATA_FIELD) {
+                            nonPrimitiveKey(ORDER_LINES_FIELD) {
+                                primitiveKey(TYPE_FIELD)
+                                primitiveKey(QUANTITY_FIELD)
+                                primitiveKey(UNIT_PRICE_FIELD)
+                                primitiveKey(TOTAL_AMOUNT_FIELD)
+                                primitiveKey(TOTAL_DISCOUNT_AMOUNT_FIELD)
+                            }
                         }
                     }
-                }
-        }
+            }
 
         @JvmField
-        val deserializer = JSONObjectDeserializer<CreateCustomerTokenDataResponse> { t ->
-            CreateCustomerTokenDataResponse(
-                t.optNullableString(CUSTOMER_TOKEN_ID_FIELD),
-                JSONSerializationUtils
-                    .getJsonObjectDeserializer<KlarnaSessionData>().deserialize(
-                        t.getJSONObject(SESSION_DATA_FIELD)
-                    )
-            )
-        }
+        val deserializer =
+            JSONObjectDeserializer<CreateCustomerTokenDataResponse> { t ->
+                CreateCustomerTokenDataResponse(
+                    t.optNullableString(CUSTOMER_TOKEN_ID_FIELD),
+                    JSONSerializationUtils
+                        .getJsonObjectDeserializer<KlarnaSessionData>().deserialize(
+                            t.getJSONObject(SESSION_DATA_FIELD),
+                        ),
+                )
+            }
     }
 }

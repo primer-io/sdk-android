@@ -11,7 +11,7 @@ internal class NolPayClientTokenParser : PaymentMethodClientTokenParser<NolPayCl
                 clientTokenIntent = clientTokenData.intent,
                 transactionNumber = clientTokenData.transactionNumber,
                 statusUrl = clientTokenData.statusUrl,
-                completeUrl = clientTokenData.completeUrl
+                completeUrl = clientTokenData.completeUrl,
             )
         }
     }

@@ -11,7 +11,6 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 
 class ClientTokenDecoderTest {
-
     @BeforeEach
     fun setUp() {
         mockkStatic(android.util.Base64::class)
@@ -67,7 +66,7 @@ class ClientTokenDecoderTest {
         every {
             android.util.Base64.decode(
                 any<String>(),
-                android.util.Base64.URL_SAFE
+                android.util.Base64.URL_SAFE,
             )
         } returns expectedDecoded.toByteArray()
 

@@ -14,12 +14,13 @@ class SandboxPayPalDescriptorFactorySandboxProcessorProcessor {
 
     @Test
     fun `create() should return TestPayPalPaymentMethodDescriptor`() {
-        val descriptor = factory.create(
-            localConfig = mockk(),
-            paymentMethodRemoteConfig = mockk(),
-            paymentMethod = mockk(),
-            paymentMethodCheckers = mockk()
-        )
+        val descriptor =
+            factory.create(
+                localConfig = mockk(),
+                paymentMethodRemoteConfig = mockk(),
+                paymentMethod = mockk(),
+                paymentMethodCheckers = mockk(),
+            )
         assertIs<SandboxProcessorPayPalPaymentMethodDescriptor>(descriptor)
     }
 }

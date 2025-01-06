@@ -102,14 +102,15 @@ class TestKlarnaDropInPaymentMethodDescriptorSandboxProcessor {
 
     private fun createDescriptor(
         isStandalonePaymentMethod: Boolean = false,
-        isInitScreenEnabled: Boolean = false
+        isInitScreenEnabled: Boolean = false,
     ) = TestKlarnaDropInPaymentMethodDescriptor(
         paymentMethodType = paymentMethodType,
-        uiOptions = UiOptions(
-            isStandalonePaymentMethod = isStandalonePaymentMethod,
-            isInitScreenEnabled = isInitScreenEnabled,
-            isDarkMode = null
-        ),
-        brand = brand
+        uiOptions =
+            UiOptions(
+                isStandalonePaymentMethod = isStandalonePaymentMethod,
+                isInitScreenEnabled = isInitScreenEnabled,
+                isDarkMode = null,
+            ),
+        brand = brand,
     )
 }

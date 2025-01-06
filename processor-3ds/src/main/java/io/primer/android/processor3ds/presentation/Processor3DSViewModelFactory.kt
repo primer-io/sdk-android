@@ -8,13 +8,15 @@ import io.primer.android.payments.core.status.domain.AsyncPaymentMethodPollingIn
 
 internal class Processor3DSViewModelFactory(
     private val pollingInteractor: AsyncPaymentMethodPollingInteractor,
-    private val analyticsInteractor: AnalyticsInteractor
+    private val analyticsInteractor: AnalyticsInteractor,
 ) : ViewModelProvider.Factory {
-
-    override fun <T : ViewModel> create(modelClass: Class<T>, extras: CreationExtras): T {
+    override fun <T : ViewModel> create(
+        modelClass: Class<T>,
+        extras: CreationExtras,
+    ): T {
         return Processor3DSViewModel(
             pollingInteractor = pollingInteractor,
-            analyticsInteractor = analyticsInteractor
+            analyticsInteractor = analyticsInteractor,
         ) as T
     }
 }

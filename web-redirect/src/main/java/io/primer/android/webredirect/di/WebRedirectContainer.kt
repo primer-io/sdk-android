@@ -32,7 +32,7 @@ internal class WebRedirectContainer(private val sdk: () -> SdkContainer, private
     override fun registerInitialDependencies() {
         registerFactory<RedirectDeeplinkRepository> {
             RedirectDeeplinkDataRepository(
-                applicationIdProvider = sdk().resolve(Constants.APPLICATION_ID_PROVIDER_DI_KEY)
+                applicationIdProvider = sdk().resolve(Constants.APPLICATION_ID_PROVIDER_DI_KEY),
             )
         }
 
@@ -43,11 +43,11 @@ internal class WebRedirectContainer(private val sdk: () -> SdkContainer, private
         registerFactory<PlatformResolver>(name = paymentMethodType) { PlatformResolver() }
 
         registerFactory<PaymentMethodConfigurationRepository<WebRedirectConfig, WebRedirectConfigParams>>(
-            name = paymentMethodType
+            name = paymentMethodType,
         ) {
             WebRedirectConfigurationDataRepository(
                 configurationDataSource = sdk().resolve(ConfigurationCoreContainer.CACHED_CONFIGURATION_DI_KEY),
-                settings = sdk().resolve()
+                settings = sdk().resolve(),
             )
         }
 
@@ -58,7 +58,7 @@ internal class WebRedirectContainer(private val sdk: () -> SdkContainer, private
         registerFactory { WebRedirectTokenizationParamsMapper() }
 
         registerFactory<BaseRemoteTokenizationDataSource<WebRedirectPaymentInstrumentDataRequest>>(
-            name = paymentMethodType
+            name = paymentMethodType,
         ) {
             WebRedirectRemoteTokenizationDataSource(primerHttpClient = sdk().resolve())
         }
@@ -67,7 +67,7 @@ internal class WebRedirectContainer(private val sdk: () -> SdkContainer, private
             WebRedirectTokenizationDataRepository(
                 remoteTokenizationDataSource = resolve(name = paymentMethodType),
                 cacheDataSource = sdk().resolve(ConfigurationCoreContainer.CACHED_CONFIGURATION_DI_KEY),
-                tokenizationParamsMapper = resolve()
+                tokenizationParamsMapper = resolve(),
             )
         }
 
@@ -81,7 +81,7 @@ internal class WebRedirectContainer(private val sdk: () -> SdkContainer, private
                 deeplinkRepository = sdk().resolve(),
                 validateClientTokenRepository = sdk().resolve(),
                 clientTokenRepository = sdk().resolve(),
-                checkoutAdditionalInfoHandler = sdk().resolve()
+                checkoutAdditionalInfoHandler = sdk().resolve(),
             )
         }
 
@@ -90,7 +90,7 @@ internal class WebRedirectContainer(private val sdk: () -> SdkContainer, private
                 tokenizationRepository = resolve(name = paymentMethodType),
                 tokenizedPaymentMethodRepository = sdk().resolve(),
                 preTokenizationHandler = sdk().resolve(),
-                logReporter = sdk().resolve()
+                logReporter = sdk().resolve(),
             )
         }
     }

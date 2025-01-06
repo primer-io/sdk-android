@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
 internal class ValidationTokenDataRequestTest {
-
     @Test
     fun `serializer should return JSONObject with clientToken field`() {
         // Arrange

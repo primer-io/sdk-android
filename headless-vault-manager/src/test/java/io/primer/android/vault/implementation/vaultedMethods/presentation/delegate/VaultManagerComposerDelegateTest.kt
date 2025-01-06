@@ -9,13 +9,13 @@ import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
 import io.mockk.verify
+import io.primer.android.domain.tokenization.models.PrimerPaymentMethodTokenData
 import io.primer.android.paymentmethods.core.composer.VaultedPaymentMethodComponent
-import io.primer.android.paymentmethods.core.composer.registry.VaultedPaymentMethodComposerRegistry
 import io.primer.android.paymentmethods.core.composer.provider.VaultedPaymentMethodProviderFactoryRegistry
+import io.primer.android.paymentmethods.core.composer.registry.VaultedPaymentMethodComposerRegistry
 import io.primer.android.paymentmethods.core.ui.navigation.PaymentMethodNavigationFactoryRegistry
 import io.primer.android.payments.core.create.domain.model.PaymentDecision
 import io.primer.android.payments.core.helpers.PaymentMethodPaymentDelegate
-import io.primer.android.domain.tokenization.models.PrimerPaymentMethodTokenData
 import io.primer.android.vault.implementation.composer.presentation.DefaultVaultedPaymentMethodComponent
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
@@ -24,7 +24,6 @@ import org.junit.jupiter.api.extension.ExtendWith
 
 @ExtendWith(MockKExtension::class)
 internal class VaultManagerComposerDelegateTest {
-
     @RelaxedMockK
     internal lateinit var paymentMethodNavigationFactoryRegistry: PaymentMethodNavigationFactoryRegistry
 
@@ -55,7 +54,7 @@ internal class VaultManagerComposerDelegateTest {
         coEvery {
             paymentDelegate.handlePaymentMethodToken(
                 any(),
-                any()
+                any(),
             )
         } returns Result.success(mockk<PaymentDecision>(relaxed = true))
         every { providerFactoryRegistry.create(any(), any()) } returns composer
@@ -78,7 +77,7 @@ internal class VaultManagerComposerDelegateTest {
         coEvery {
             paymentDelegate.handlePaymentMethodToken(
                 any(),
-                any()
+                any(),
             )
         } returns Result.success(mockk<PaymentDecision>(relaxed = true))
         every { providerFactoryRegistry.create(any(), any()) } returns null
@@ -102,7 +101,7 @@ internal class VaultManagerComposerDelegateTest {
         coEvery {
             paymentDelegate.handlePaymentMethodToken(
                 any(),
-                any()
+                any(),
             )
         } returns Result.failure(exception)
         every { providerFactoryRegistry.create(any(), any()) } returns null
@@ -122,7 +121,7 @@ internal class VaultManagerComposerDelegateTest {
             composerRegistry = composerRegistry,
             providerFactoryRegistry = providerFactoryRegistry,
             context = context,
-            paymentDelegateProvider = { paymentDelegate }
+            paymentDelegateProvider = { paymentDelegate },
         )
     }
 }

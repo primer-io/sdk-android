@@ -4,7 +4,6 @@ import io.primer.android.assets.ui.model.Brand
 import io.primer.android.klarna.main.R
 
 internal class KlarnaBrand : Brand {
-
     override val iconResId: Int
         get() = R.drawable.ic_logo_klarna
 

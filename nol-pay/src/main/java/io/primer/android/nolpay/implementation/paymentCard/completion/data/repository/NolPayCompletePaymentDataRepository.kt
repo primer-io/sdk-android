@@ -2,21 +2,21 @@ package io.primer.android.nolpay.implementation.paymentCard.completion.data.repo
 
 import io.primer.android.core.data.network.exception.JsonDecodingException
 import io.primer.android.core.extensions.runSuspendCatching
-
-import io.primer.android.nolpay.implementation.paymentCard.completion.data.datasource.RemoteNolPayCompletePaymentDataSource
 import io.primer.android.nolpay.implementation.common.domain.repository.NolPayCompletePaymentRepository
+import io.primer.android.nolpay.implementation.paymentCard.completion.data.datasource.RemoteNolPayCompletePaymentDataSource
 
 internal class NolPayCompletePaymentDataRepository(
-    private val completePaymentDataSource: RemoteNolPayCompletePaymentDataSource
+    private val completePaymentDataSource: RemoteNolPayCompletePaymentDataSource,
 ) : NolPayCompletePaymentRepository {
-    override suspend fun completePayment(completeUrl: String) = runSuspendCatching {
-        completePaymentDataSource.execute(
-            completeUrl
-        ).let { }
-    }.recover { throwable: Throwable ->
-        when (throwable) {
-            is JsonDecodingException -> Unit
-            else -> throw throwable
+    override suspend fun completePayment(completeUrl: String) =
+        runSuspendCatching {
+            completePaymentDataSource.execute(
+                completeUrl,
+            ).let { }
+        }.recover { throwable: Throwable ->
+            when (throwable) {
+                is JsonDecodingException -> Unit
+                else -> throw throwable
+            }
         }
-    }
 }

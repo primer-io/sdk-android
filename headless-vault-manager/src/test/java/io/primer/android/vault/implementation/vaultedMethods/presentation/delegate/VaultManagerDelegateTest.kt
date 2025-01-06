@@ -10,15 +10,15 @@ import io.mockk.mockk
 import io.mockk.slot
 import io.primer.android.analytics.domain.AnalyticsInteractor
 import io.primer.android.analytics.domain.models.SdkFunctionParams
+import io.primer.android.components.domain.payments.vault.model.card.PrimerVaultedCardAdditionalData
+import io.primer.android.domain.tokenization.models.PrimerVaultedPaymentMethod
 import io.primer.android.errors.domain.ErrorMapperRegistry
 import io.primer.android.payments.core.tokenization.data.model.PaymentMethodTokenInternal
 import io.primer.android.payments.core.tokenization.data.model.toPaymentMethodToken
-import io.primer.android.vault.implementation.vaultedMethods.domain.FindVaultedPaymentMethodInteractor
 import io.primer.android.vault.implementation.vaultedMethods.domain.FetchVaultedPaymentMethodsInteractor
+import io.primer.android.vault.implementation.vaultedMethods.domain.FindVaultedPaymentMethodInteractor
 import io.primer.android.vault.implementation.vaultedMethods.domain.VaultedPaymentMethodsDeleteInteractor
 import io.primer.android.vault.implementation.vaultedMethods.domain.VaultedPaymentMethodsExchangeInteractor
-import io.primer.android.components.domain.payments.vault.model.card.PrimerVaultedCardAdditionalData
-import io.primer.android.domain.tokenization.models.PrimerVaultedPaymentMethod
 import io.primer.android.vault.implementation.vaultedMethods.domain.validation.additionalData.VaultedPaymentMethodAdditionalDataValidatorRegistry
 import io.primer.android.vault.implementation.vaultedMethods.domain.validation.additionalData.card.VaultedCardAdditionalDataValidator
 import io.primer.android.vault.implementation.vaultedMethods.domain.validation.resolvers.VaultManagerInitValidationRulesResolver
@@ -31,7 +31,6 @@ import kotlin.test.assertEquals
 
 @ExtendWith(MockKExtension::class)
 internal class VaultManagerDelegateTest {
-
     @RelaxedMockK
     internal lateinit var initValidationRulesResolver: VaultManagerInitValidationRulesResolver
 
@@ -62,16 +61,18 @@ internal class VaultManagerDelegateTest {
     @BeforeEach
     fun setUp() {
         MockKAnnotations.init(this, relaxed = true)
-        delegate = VaultManagerDelegate(
-            initValidationRulesResolver = initValidationRulesResolver,
-            vaultedPaymentMethodsInteractor = vaultedPaymentMethodsInteractor,
-            vaultedPaymentMethodsDeleteInteractor = vaultedPaymentMethodsDeleteInteractor,
-            vaultedPaymentMethodsExchangeInteractor = vaultedPaymentMethodsExchangeInteractor,
-            findVaultedPaymentMethodInteractor = findVaultedPaymentMethodInteractor,
-            analyticsInteractor = analyticsInteractor,
-            errorMapperRegistry = errorMapperRegistry,
-            vaultedPaymentMethodAdditionalDataValidatorRegistry = vaultedPaymentMethodAdditionalDataValidatorRegistry
-        )
+        delegate =
+            VaultManagerDelegate(
+                initValidationRulesResolver = initValidationRulesResolver,
+                vaultedPaymentMethodsInteractor = vaultedPaymentMethodsInteractor,
+                vaultedPaymentMethodsDeleteInteractor = vaultedPaymentMethodsDeleteInteractor,
+                vaultedPaymentMethodsExchangeInteractor = vaultedPaymentMethodsExchangeInteractor,
+                findVaultedPaymentMethodInteractor = findVaultedPaymentMethodInteractor,
+                analyticsInteractor = analyticsInteractor,
+                errorMapperRegistry = errorMapperRegistry,
+                vaultedPaymentMethodAdditionalDataValidatorRegistry =
+                vaultedPaymentMethodAdditionalDataValidatorRegistry,
+            )
     }
 
     @Test
@@ -121,7 +122,7 @@ internal class VaultManagerDelegateTest {
         val primerVaultedPaymentMethod = mockk<PrimerVaultedPaymentMethod>(relaxed = true)
 
         coEvery { findVaultedPaymentMethodInteractor(any()) }.returns(
-            Result.success(primerVaultedPaymentMethod)
+            Result.success(primerVaultedPaymentMethod),
         )
         coEvery {
             vaultedPaymentMethodsDeleteInteractor(any())
@@ -130,7 +131,7 @@ internal class VaultManagerDelegateTest {
         runTest {
             assertEquals(
                 Result.success(Unit),
-                delegate.deletePaymentMethod(vaultedPaymentMethodId)
+                delegate.deletePaymentMethod(vaultedPaymentMethodId),
             )
         }
 
@@ -145,14 +146,14 @@ internal class VaultManagerDelegateTest {
         val primerVaultedPaymentMethod = mockk<PrimerVaultedPaymentMethod>(relaxed = true)
 
         coEvery { findVaultedPaymentMethodInteractor(any()) }.returns(
-            Result.success(primerVaultedPaymentMethod)
+            Result.success(primerVaultedPaymentMethod),
         )
 
         coEvery { vaultedPaymentMethodsDeleteInteractor(any()) }.returns(Result.failure(exception))
         runTest {
             assertEquals(
                 Result.failure(exception),
-                delegate.deletePaymentMethod(vaultedPaymentMethodId)
+                delegate.deletePaymentMethod(vaultedPaymentMethodId),
             )
         }
 
@@ -167,7 +168,7 @@ internal class VaultManagerDelegateTest {
         val primerVaultedPaymentMethod = mockk<PrimerVaultedPaymentMethod>(relaxed = true)
 
         coEvery { findVaultedPaymentMethodInteractor(any()) }.returns(
-            Result.success(primerVaultedPaymentMethod)
+            Result.success(primerVaultedPaymentMethod),
         )
 
         coEvery { vaultedPaymentMethodsDeleteInteractor(any()) }.returns(result)
@@ -193,7 +194,7 @@ internal class VaultManagerDelegateTest {
         val primerVaultedPaymentMethod = mockk<PrimerVaultedPaymentMethod>(relaxed = true)
 
         coEvery { findVaultedPaymentMethodInteractor(any()) }.returns(
-            Result.success(primerVaultedPaymentMethod)
+            Result.success(primerVaultedPaymentMethod),
         )
         coEvery {
             vaultedPaymentMethodAdditionalDataValidatorRegistry.getValidator(any())
@@ -204,7 +205,7 @@ internal class VaultManagerDelegateTest {
             assertEquals("invalid-cvv", errors?.first()?.errorId)
             assertEquals(
                 "The length of the CVV does not match the required length.",
-                errors?.first()?.description
+                errors?.first()?.description,
             )
         }
 
@@ -219,13 +220,13 @@ internal class VaultManagerDelegateTest {
         val additionalData = mockk<PrimerVaultedCardAdditionalData>()
 
         coEvery { findVaultedPaymentMethodInteractor(any()) }.returns(
-            Result.failure(exception)
+            Result.failure(exception),
         )
 
         runTest {
             assertEquals(
                 Result.failure(exception),
-                delegate.validate(vaultedPaymentMethodId, additionalData)
+                delegate.validate(vaultedPaymentMethodId, additionalData),
             )
         }
 
@@ -240,7 +241,7 @@ internal class VaultManagerDelegateTest {
         every { additionalData.cvv }.returns("13")
 
         coEvery { findVaultedPaymentMethodInteractor(any()) }.returns(
-            Result.success(primerVaultedPaymentMethod)
+            Result.success(primerVaultedPaymentMethod),
         )
 
         coEvery {
@@ -268,7 +269,7 @@ internal class VaultManagerDelegateTest {
         val paymentMethodTokenInternal = mockk<PaymentMethodTokenInternal>(relaxed = true)
 
         coEvery { findVaultedPaymentMethodInteractor(any()) }.returns(
-            Result.success(primerVaultedPaymentMethod)
+            Result.success(primerVaultedPaymentMethod),
         )
         coEvery {
             vaultedPaymentMethodsExchangeInteractor(any())
@@ -289,13 +290,13 @@ internal class VaultManagerDelegateTest {
         val additionalData = mockk<PrimerVaultedCardAdditionalData>()
 
         coEvery { findVaultedPaymentMethodInteractor(any()) }.returns(
-            Result.failure(exception)
+            Result.failure(exception),
         )
 
         runTest {
             assertEquals(
                 Result.failure(exception),
-                delegate.validate(vaultedPaymentMethodId, additionalData)
+                delegate.validate(vaultedPaymentMethodId, additionalData),
             )
         }
 
@@ -311,7 +312,7 @@ internal class VaultManagerDelegateTest {
         val additionalData = mockk<PrimerVaultedCardAdditionalData>()
 
         coEvery { findVaultedPaymentMethodInteractor(any()) }.returns(
-            Result.success(primerVaultedPaymentMethod)
+            Result.success(primerVaultedPaymentMethod),
         )
 
         coEvery {
@@ -330,7 +331,7 @@ internal class VaultManagerDelegateTest {
 
         assertEquals(
             VaultManagerDelegate.ANALYTICS_EVENT_START_PAYMENT_FLOW,
-            analyticsEvent.captured.name
+            analyticsEvent.captured.name,
         )
     }
 }

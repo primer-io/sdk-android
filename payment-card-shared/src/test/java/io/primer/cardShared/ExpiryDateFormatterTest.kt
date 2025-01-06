@@ -7,15 +7,15 @@ import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class ExpiryDateFormatterTest {
-
     @Test
     fun `When using current month and year, then isValid returns true`() {
         val calendar = Calendar.getInstance()
         val month = calendar.get(Calendar.MONTH) + 1
         val year = calendar.get(Calendar.YEAR)
-        val formatter = ExpiryDateFormatter.fromString(
-            "${month.toString().padStart(2, '0')}/$year"
-        )
+        val formatter =
+            ExpiryDateFormatter.fromString(
+                "${month.toString().padStart(2, '0')}/$year",
+            )
         assertEquals(month, formatter.getMonth().toInt())
         assertEquals(year, formatter.getYear().toInt())
         assertTrue(formatter.isValid())
@@ -24,14 +24,16 @@ class ExpiryDateFormatterTest {
 
     @Test
     fun `When using current month and last year, then isValid returns false`() {
-        val dateDecrementedByYear = Calendar.getInstance().apply {
-            add(Calendar.YEAR, -1)
-        }
+        val dateDecrementedByYear =
+            Calendar.getInstance().apply {
+                add(Calendar.YEAR, -1)
+            }
         val month = dateDecrementedByYear.get(Calendar.MONTH) + 1
         val year = dateDecrementedByYear.get(Calendar.YEAR)
-        val formatter = ExpiryDateFormatter.fromString(
-            "${month.toString().padStart(2, '0')}/$year"
-        )
+        val formatter =
+            ExpiryDateFormatter.fromString(
+                "${month.toString().padStart(2, '0')}/$year",
+            )
         assertEquals(month, formatter.getMonth().toInt())
         assertEquals(year, formatter.getYear().toInt())
         assertFalse(formatter.isValid())
@@ -40,14 +42,16 @@ class ExpiryDateFormatterTest {
 
     @Test
     fun `When using next month, then isValid returns true`() {
-        val dateIncrementedByMonth = Calendar.getInstance().apply {
-            add(Calendar.MONTH, 1)
-        }
+        val dateIncrementedByMonth =
+            Calendar.getInstance().apply {
+                add(Calendar.MONTH, 1)
+            }
         val month = dateIncrementedByMonth.get(Calendar.MONTH) + 1
         val year = dateIncrementedByMonth.get(Calendar.YEAR)
-        val formatter = ExpiryDateFormatter.fromString(
-            "${month.toString().padStart(2, '0')}/$year"
-        )
+        val formatter =
+            ExpiryDateFormatter.fromString(
+                "${month.toString().padStart(2, '0')}/$year",
+            )
 
         assertEquals(month, formatter.getMonth().toInt())
         assertEquals(year, formatter.getYear().toInt())
@@ -57,14 +61,16 @@ class ExpiryDateFormatterTest {
 
     @Test
     fun `When using expired date, then isValid returns false`() {
-        val dateDecrementedByMonth = Calendar.getInstance().apply {
-            add(Calendar.MONTH, -1)
-        }
+        val dateDecrementedByMonth =
+            Calendar.getInstance().apply {
+                add(Calendar.MONTH, -1)
+            }
         val month = dateDecrementedByMonth.get(Calendar.MONTH) + 1
         val year = dateDecrementedByMonth.get(Calendar.YEAR)
-        val formatter = ExpiryDateFormatter.fromString(
-            "${month.toString().padStart(2, '0')}/$year"
-        )
+        val formatter =
+            ExpiryDateFormatter.fromString(
+                "${month.toString().padStart(2, '0')}/$year",
+            )
         assertEquals(month, formatter.getMonth().toInt())
         assertEquals(year, formatter.getYear().toInt())
         assertFalse(formatter.isValid())

@@ -7,14 +7,16 @@ import io.primer.android.klarna.implementation.session.data.models.FinalizeKlarn
 import io.primer.android.klarna.implementation.session.data.models.FinalizeKlarnaSessionDataResponse
 
 internal class RemoteFinalizeKlarnaSessionDataSource(
-    private val primerHttpClient: PrimerHttpClient
-) : BaseSuspendDataSource<FinalizeKlarnaSessionDataResponse,
-        BaseRemoteHostRequest<FinalizeKlarnaSessionDataRequest>> {
+    private val primerHttpClient: PrimerHttpClient,
+) : BaseSuspendDataSource<
+        FinalizeKlarnaSessionDataResponse,
+        BaseRemoteHostRequest<FinalizeKlarnaSessionDataRequest>,
+        > {
     override suspend fun execute(
-        input: BaseRemoteHostRequest<FinalizeKlarnaSessionDataRequest>
+        input: BaseRemoteHostRequest<FinalizeKlarnaSessionDataRequest>,
     ): FinalizeKlarnaSessionDataResponse =
         primerHttpClient.suspendPost<FinalizeKlarnaSessionDataRequest, FinalizeKlarnaSessionDataResponse>(
             "${input.host}/klarna/payment-sessions/finalize",
-            input.data
+            input.data,
         ).body
 }

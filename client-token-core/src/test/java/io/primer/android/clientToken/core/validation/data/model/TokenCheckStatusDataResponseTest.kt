@@ -8,7 +8,6 @@ import org.junit.jupiter.api.Test
 import kotlin.test.assertFalse
 
 internal class TokenCheckStatusDataResponseTest {
-
     @Test
     fun `deserializer should return TokenCheckStatusDataResponse with success true`() {
         // Arrange

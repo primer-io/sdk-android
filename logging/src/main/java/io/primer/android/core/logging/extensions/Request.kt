@@ -15,14 +15,15 @@ internal fun Request.logHeaders(
     shouldLogHeaders: Boolean,
     blacklistedHeaders: List<String>,
     obfuscationLevel: HttpLoggerInterceptor.ObfuscationLevel,
-    obfuscationString: String
+    obfuscationString: String,
 ) {
     val request = this
     val requestBody = request.body
-    val stringBuilder = StringBuilder(
-        "--> ${request.method} ${request.url}" +
-            request.body?.let { " (${it.contentLength()}-byte body)" }.orEmpty()
-    )
+    val stringBuilder =
+        StringBuilder(
+            "--> ${request.method} ${request.url}" +
+                request.body?.let { " (${it.contentLength()}-byte body)" }.orEmpty(),
+        )
     if (shouldLogHeaders) {
         if (requestBody != null) {
             stringBuilder.append("\nContent-Type: ${requestBody.contentType()}")
@@ -35,7 +36,7 @@ internal fun Request.logHeaders(
                 excludedHeaders = setOf("content-type", "content-length"),
                 shouldObfuscate = obfuscationLevel == HttpLoggerInterceptor.ObfuscationLevel.LIST,
                 blacklistedHeaders = blacklistedHeaders,
-                obfuscationString = obfuscationString
+                obfuscationString = obfuscationString,
             )
         }
     }
@@ -48,7 +49,7 @@ internal fun Request.logBody(
     shouldLogBody: Boolean,
     whitelistedBodyKeys: List<WhitelistedKey>,
     obfuscationLevel: HttpLoggerInterceptor.ObfuscationLevel,
-    obfuscationString: String
+    obfuscationString: String,
 ) {
     val requestBody = body
     val stringBuilder = StringBuilder("--> END $method")
@@ -73,7 +74,7 @@ internal fun Request.logBody(
                         stringBuilder = stringBuilder,
                         shouldObfuscate = obfuscationLevel == HttpLoggerInterceptor.ObfuscationLevel.LIST,
                         whitelistedBodyKeys = whitelistedBodyKeys,
-                        obfuscationString = obfuscationString
+                        obfuscationString = obfuscationString,
                     )
                 }
             }
@@ -86,7 +87,7 @@ internal fun Request.appendKnownEncodingBody(
     stringBuilder: StringBuilder,
     shouldObfuscate: Boolean,
     whitelistedBodyKeys: List<WhitelistedKey>,
-    obfuscationString: String
+    obfuscationString: String,
 ) {
     val requestBody = requireNotNull(body)
     val buffer = Buffer().also { requestBody.writeTo(it) }

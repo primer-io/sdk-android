@@ -1,18 +1,18 @@
 package io.primer.android.vouchers.retailOutlets.implementation.composer
 
 import io.primer.android.PrimerRetailerData
-import io.primer.android.RetailOutletsList
 import io.primer.android.PrimerSessionIntent
-import io.primer.android.core.extensions.flatMap
-import io.primer.android.core.extensions.runSuspendCatching
-import io.primer.android.errors.domain.ErrorMapperRegistry
-import io.primer.android.domain.error.models.PrimerError
-import io.primer.android.paymentmethods.PaymentInputDataValidator
-import io.primer.android.paymentmethods.PrimerInitializationData
-import io.primer.android.components.domain.error.PrimerInputValidationError
-import io.primer.android.paymentmethods.core.composer.RawDataPaymentMethodComponent
+import io.primer.android.RetailOutletsList
 import io.primer.android.components.domain.core.models.metadata.PrimerPaymentMethodMetadata
 import io.primer.android.components.domain.core.models.metadata.PrimerPaymentMethodMetadataState
+import io.primer.android.components.domain.error.PrimerInputValidationError
+import io.primer.android.core.extensions.flatMap
+import io.primer.android.core.extensions.runSuspendCatching
+import io.primer.android.domain.error.models.PrimerError
+import io.primer.android.errors.domain.ErrorMapperRegistry
+import io.primer.android.paymentmethods.PaymentInputDataValidator
+import io.primer.android.paymentmethods.PrimerInitializationData
+import io.primer.android.paymentmethods.core.composer.RawDataPaymentMethodComponent
 import io.primer.android.paymentmethods.manager.composable.PrimerHeadlessDataInitializable
 import io.primer.android.vouchers.retailOutlets.implementation.payment.delegate.RetailOutletsPaymentDelegate
 import io.primer.android.vouchers.retailOutlets.implementation.rpc.domain.RetailOutletInteractor
@@ -30,9 +30,8 @@ internal class RetailOutletsComponent(
     private val paymentDelegate: RetailOutletsPaymentDelegate,
     private val retailOutletsDataValidator: PaymentInputDataValidator<PrimerRetailerData>,
     private val retailOutletInteractor: RetailOutletInteractor,
-    private val errorMapperRegistry: ErrorMapperRegistry
+    private val errorMapperRegistry: ErrorMapperRegistry,
 ) : RawDataPaymentMethodComponent<PrimerRetailerData>(), PrimerHeadlessDataInitializable {
-
     private var primerSessionIntent by Delegates.notNull<PrimerSessionIntent>()
     private var paymentMethodType by Delegates.notNull<String>()
 
@@ -43,10 +42,13 @@ internal class RetailOutletsComponent(
     override val metadataStateFlow: Flow<PrimerPaymentMethodMetadataState> = emptyFlow()
     override val metadataFlow: Flow<PrimerPaymentMethodMetadata> = emptyFlow()
 
-    private val _collectedData: MutableSharedFlow<PrimerRetailerData> =
+    private val collectedData: MutableSharedFlow<PrimerRetailerData> =
         MutableSharedFlow(replay = 1)
 
-    override fun start(paymentMethodType: String, sessionIntent: PrimerSessionIntent) {
+    override fun start(
+        paymentMethodType: String,
+        sessionIntent: PrimerSessionIntent,
+    ) {
         this.paymentMethodType = paymentMethodType
         this.primerSessionIntent = sessionIntent
     }
@@ -61,46 +63,44 @@ internal class RetailOutletsComponent(
                 },
                 onFailure = { throwable ->
                     completion(null, errorMapperRegistry.getPrimerError(throwable))
-                }
+                },
             )
         }
     }
 
     override fun updateCollectedData(collectedData: PrimerRetailerData) {
         composerScope.launch {
-            _collectedData.emit(collectedData)
+            this@RetailOutletsComponent.collectedData.emit(collectedData)
         }
         validateRawData(collectedData)
     }
 
     override fun submit() {
-        startTokenization(_collectedData.replayCache.last())
+        startTokenization(collectedData.replayCache.last())
     }
 
-    private fun startTokenization(
-        retailerData: PrimerRetailerData
-    ) = composerScope.launch {
-        tokenizationDelegate.tokenize(
-            RetailOutletsTokenizationInputable(
-                retailOutletData = retailerData,
-                paymentMethodType = paymentMethodType,
-                primerSessionIntent = primerSessionIntent
-            )
-        ).flatMap { paymentMethodTokenData ->
-            paymentDelegate.handlePaymentMethodToken(
-                paymentMethodTokenData = paymentMethodTokenData,
-                primerSessionIntent = primerSessionIntent
-            )
-        }.onFailure {
-            paymentDelegate.handleError(it)
+    private fun startTokenization(retailerData: PrimerRetailerData) =
+        composerScope.launch {
+            tokenizationDelegate.tokenize(
+                RetailOutletsTokenizationInputable(
+                    retailOutletData = retailerData,
+                    paymentMethodType = paymentMethodType,
+                    primerSessionIntent = primerSessionIntent,
+                ),
+            ).flatMap { paymentMethodTokenData ->
+                paymentDelegate.handlePaymentMethodToken(
+                    paymentMethodTokenData = paymentMethodTokenData,
+                    primerSessionIntent = primerSessionIntent,
+                )
+            }.onFailure {
+                paymentDelegate.handleError(it)
+            }
         }
-    }
 
-    private fun validateRawData(
-        cardData: PrimerRetailerData
-    ) = composerScope.launch {
-        runSuspendCatching {
-            _componentInputValidations.emit(retailOutletsDataValidator.validate(cardData))
+    private fun validateRawData(cardData: PrimerRetailerData) =
+        composerScope.launch {
+            runSuspendCatching {
+                _componentInputValidations.emit(retailOutletsDataValidator.validate(cardData))
+            }
         }
-    }
 }

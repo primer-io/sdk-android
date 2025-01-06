@@ -15,7 +15,6 @@ import org.junit.jupiter.api.Test
 import kotlin.test.assertFailsWith
 
 class IPay88ClientTokenDataTest {
-
     private val validEncodedString = "validEncodedString"
     private val decodedString = """
         {
@@ -45,17 +44,18 @@ class IPay88ClientTokenDataTest {
         val result = IPay88ClientTokenData.fromString(validEncodedString)
 
         // Then
-        val expected = IPay88ClientTokenData(
-            intent = "testIntent",
-            statusUrl = "testStatusUrl",
-            paymentId = "iPay88PaymentMethodId",
-            paymentMethod = IPayIH.PAY_METHOD_CREDIT_CARD,
-            actionType = "iPay88ActionType",
-            referenceNumber = "primerTransactionId",
-            countryCode = "supportedCountry",
-            currencyCode = "supportedCurrencyCode",
-            backendCallbackUrl = "backendCallbackUrl"
-        )
+        val expected =
+            IPay88ClientTokenData(
+                intent = "testIntent",
+                statusUrl = "testStatusUrl",
+                paymentId = "iPay88PaymentMethodId",
+                paymentMethod = IPayIH.PAY_METHOD_CREDIT_CARD,
+                actionType = "iPay88ActionType",
+                referenceNumber = "primerTransactionId",
+                countryCode = "supportedCountry",
+                currencyCode = "supportedCurrencyCode",
+                backendCallbackUrl = "backendCallbackUrl",
+            )
         assertEquals(expected, result)
     }
 

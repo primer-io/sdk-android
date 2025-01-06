@@ -4,18 +4,18 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
 class WebRedirectSessionInfoDataRequestTest {
-
     @Test
     fun `serializer should correctly serialize WebRedirectSessionInfoDataRequest to JSONObject`() {
         // Arrange
         val redirectionUrl = "https://example.com"
         val locale = "en-US"
         val platform = "ANDROID"
-        val request = WebRedirectSessionInfoDataRequest(
-            redirectionUrl = redirectionUrl,
-            locale = locale,
-            platform = platform
-        )
+        val request =
+            WebRedirectSessionInfoDataRequest(
+                redirectionUrl = redirectionUrl,
+                locale = locale,
+                platform = platform,
+            )
 
         // Act
         val jsonObject = WebRedirectSessionInfoDataRequest.serializer.serialize(request)
@@ -31,10 +31,11 @@ class WebRedirectSessionInfoDataRequestTest {
         // Arrange
         val redirectionUrl = "https://example.com"
         val locale = "en-US"
-        val request = WebRedirectSessionInfoDataRequest(
-            redirectionUrl = redirectionUrl,
-            locale = locale
-        )
+        val request =
+            WebRedirectSessionInfoDataRequest(
+                redirectionUrl = redirectionUrl,
+                locale = locale,
+            )
 
         // Act
         val jsonObject = WebRedirectSessionInfoDataRequest.serializer.serialize(request)
@@ -51,11 +52,12 @@ class WebRedirectSessionInfoDataRequestTest {
         val redirectionUrl = "https://example.com"
         val locale = "en-US"
         val platform = "IOS"
-        val request = WebRedirectSessionInfoDataRequest(
-            redirectionUrl = redirectionUrl,
-            locale = locale,
-            platform = platform
-        )
+        val request =
+            WebRedirectSessionInfoDataRequest(
+                redirectionUrl = redirectionUrl,
+                locale = locale,
+                platform = platform,
+            )
 
         // Act
         val jsonObject = WebRedirectSessionInfoDataRequest.serializer.serialize(request)

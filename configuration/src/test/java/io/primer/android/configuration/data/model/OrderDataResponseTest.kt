@@ -5,10 +5,9 @@ import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
 internal class OrderDataResponseTest {
-
     private val orderDataResponse by lazy {
         OrderDataResponse.deserializer.deserialize(
-            JSONObject(JSON_OBJECT)
+            JSONObject(JSON_OBJECT),
         )
     }
 
@@ -21,10 +20,10 @@ internal class OrderDataResponseTest {
                     quantity = CLIENT_SESSION_ORDER_LINE_ITEMS_QUANTITY,
                     discountAmount = CLIENT_SESSION_ORDER_LINE_ITEMS_DISCOUNT_AMOUNT,
                     itemId = CLIENT_SESSION_ORDER_LINE_ITEMS_ITEM_ID,
-                    description = CLIENT_SESSION_ORDER_LINE_ITEMS_ITEM_DESCRIPTION
-                )
+                    description = CLIENT_SESSION_ORDER_LINE_ITEMS_ITEM_DESCRIPTION,
+                ),
             ),
-            orderDataResponse.lineItems
+            orderDataResponse.lineItems,
         )
     }
 
@@ -34,15 +33,14 @@ internal class OrderDataResponseTest {
             listOf(
                 OrderDataResponse.FeeDataResponse(
                     CLIENT_SESSION_ORDER_FEE_TYPE,
-                    CLIENT_SESSION_ORDER_FEE_AMOUNT
-                )
+                    CLIENT_SESSION_ORDER_FEE_AMOUNT,
+                ),
             ),
-            orderDataResponse.fees
+            orderDataResponse.fees,
         )
     }
 
     private companion object {
-
         const val CLIENT_SESSION_ORDER_NAME = "test-name"
         const val CLIENT_SESSION_ORDER_ID = "android-test-7a8d891e-09cf-48d6-a68f"
         const val CLIENT_SESSION_ORDER_CURRENCY = "GBP"

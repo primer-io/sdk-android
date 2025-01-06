@@ -9,14 +9,16 @@ import io.primer.android.components.domain.error.PrimerInputValidationError
  */
 @JvmDefaultWithCompatibility
 interface PrimerHeadlessUniversalCheckoutRawDataManagerListener {
-
     /**
      * Called when the validation state changes.
      *
      * @param isValid Indicates whether the current state of input is valid or not.
      * @param errors A list of validation errors if the state is not valid.
      */
-    fun onValidationChanged(isValid: Boolean, errors: List<PrimerInputValidationError>)
+    fun onValidationChanged(
+        isValid: Boolean,
+        errors: List<PrimerInputValidationError>,
+    )
 
     /**
      * Called when the metadata associated with the payment method changes.

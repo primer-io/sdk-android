@@ -10,7 +10,6 @@ import org.junit.jupiter.api.Test
 import java.util.UUID
 
 internal class IPay88ErrorTest {
-
     private val transactionId = "transId123"
     private val refNo = "refNo123"
     private val errorDescription = "Error occurred"
@@ -32,11 +31,12 @@ internal class IPay88ErrorTest {
 
     @Test
     fun `IPaySdkPaymentFailedError should return correct description`() {
-        val expectedDescription = """
+        val expectedDescription =
+            """
             iPay88 payment (transId: $transactionId, refNo: $refNo
             failed with error: $errorDescription 
             diagnosticsId: ${error.diagnosticsId})  
-        """.trimIndent()
+            """.trimIndent()
         assertEquals(expectedDescription, error.description)
     }
 

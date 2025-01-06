@@ -4,7 +4,6 @@ import io.primer.android.core.data.serialization.json.JSONDeserializable
 import io.primer.android.core.data.serialization.json.JSONObjectDeserializer
 
 internal data class AnalyticsDataResponse(val result: String) : JSONDeserializable {
-
     companion object {
         private const val RESULT_FIELD = "result"
 

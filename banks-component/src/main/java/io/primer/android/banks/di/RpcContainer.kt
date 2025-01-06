@@ -11,7 +11,6 @@ import io.primer.android.core.di.DependencyContainer
 import io.primer.android.core.di.SdkContainer
 
 internal class RpcContainer(private val sdk: () -> SdkContainer) : DependencyContainer() {
-
     override fun registerInitialDependencies() {
         registerSingleton { LocalIssuingBankDataSource() }
 
@@ -21,7 +20,7 @@ internal class RpcContainer(private val sdk: () -> SdkContainer) : DependencyCon
             IssuingBankDataRepository(
                 remoteIssuingSuspendDataSource = resolve(),
                 localIssuingBankDataSource = resolve(),
-                configurationDataSource = sdk().resolve(ConfigurationCoreContainer.CACHED_CONFIGURATION_DI_KEY)
+                configurationDataSource = sdk().resolve(ConfigurationCoreContainer.CACHED_CONFIGURATION_DI_KEY),
             )
         }
 

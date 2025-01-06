@@ -8,7 +8,7 @@ sealed interface AchAdditionalInfo : PrimerCheckoutAdditionalInfo {
         /**
          * Provides an [ActivityResultRegistry] to be used for ACH bank account selection.
          */
-        val provide: (ActivityResultRegistry) -> Unit
+        val provide: (ActivityResultRegistry) -> Unit,
     ) : AchAdditionalInfo {
         override val completesCheckout: Boolean = false
     }
@@ -21,7 +21,7 @@ sealed interface AchAdditionalInfo : PrimerCheckoutAdditionalInfo {
         /**
          * Declines the ACH mandate, cancelling the payment.
          */
-        val onDeclineMandate: suspend () -> Unit
+        val onDeclineMandate: suspend () -> Unit,
     ) : AchAdditionalInfo {
         override val completesCheckout: Boolean = false
     }

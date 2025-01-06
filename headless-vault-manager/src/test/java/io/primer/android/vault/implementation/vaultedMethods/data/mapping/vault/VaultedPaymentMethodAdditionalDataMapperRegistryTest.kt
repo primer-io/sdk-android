@@ -2,11 +2,11 @@ package io.primer.android.vault.implementation.vaultedMethods.data.mapping.vault
 
 import io.mockk.MockKAnnotations
 import io.mockk.mockk
+import io.primer.android.components.domain.payments.vault.model.card.PrimerVaultedCardAdditionalData
 import io.primer.android.vault.implementation.vaultedMethods.data.mapping.VaultedPaymentMethodAdditionalDataMapperRegistry
 import io.primer.android.vault.implementation.vaultedMethods.data.mapping.card.VaultedCardAdditionalDataMapper
 import io.primer.android.vault.implementation.vaultedMethods.data.mapping.default.EmptyAdditionalDataMapper
 import io.primer.android.vault.implementation.vaultedMethods.domain.PrimerVaultedPaymentMethodAdditionalData
-import io.primer.android.components.domain.payments.vault.model.card.PrimerVaultedCardAdditionalData
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -14,7 +14,6 @@ import org.junit.jupiter.api.assertThrows
 import kotlin.test.assertEquals
 
 internal class VaultedPaymentMethodAdditionalDataMapperRegistryTest {
-
     private lateinit var registry: VaultedPaymentMethodAdditionalDataMapperRegistry
 
     @BeforeEach

@@ -6,8 +6,8 @@ import io.mockk.mockk
 import io.mockk.mockkConstructor
 import io.mockk.unmockkConstructor
 import io.mockk.verify
-import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.configuration.data.model.PaymentMethodConfigDataResponse
+import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.paymentmethods.PaymentMethod
 import io.primer.android.paymentmethods.PaymentMethodCheckerRegistry
 import org.junit.jupiter.api.Test
@@ -16,9 +16,10 @@ import kotlin.test.assertIs
 class PhoneNumberDescriptorFactoryTest {
     private val localConfig = mockk<PrimerConfig>()
     private val paymentMethodRemoteConfig = mockk<PaymentMethodConfigDataResponse>()
-    private val paymentMethod = mockk<PaymentMethod> {
-        every { type } returns "PAYMENT_TYPE"
-    }
+    private val paymentMethod =
+        mockk<PaymentMethod> {
+            every { type } returns "PAYMENT_TYPE"
+        }
     private val paymentMethodCheckers = mockk<PaymentMethodCheckerRegistry>()
     private val factory = PhoneNumberDescriptorFactory()
 
@@ -32,7 +33,7 @@ class PhoneNumberDescriptorFactoryTest {
             constructedWith<PhoneNumberDescriptor>(
                 EqMatcher(localConfig),
                 EqMatcher(paymentMethodRemoteConfig),
-                EqMatcher("PAYMENT_TYPE")
+                EqMatcher("PAYMENT_TYPE"),
             )
         }
         unmockkConstructor(PhoneNumberDescriptor::class)

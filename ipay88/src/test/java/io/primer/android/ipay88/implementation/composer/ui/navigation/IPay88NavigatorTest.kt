@@ -18,7 +18,6 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 internal class IPay88NavigatorTest {
-
     private lateinit var context: Context
     private lateinit var launcher: ActivityResultLauncher<Intent>
     private lateinit var navigator: IPay88Navigator

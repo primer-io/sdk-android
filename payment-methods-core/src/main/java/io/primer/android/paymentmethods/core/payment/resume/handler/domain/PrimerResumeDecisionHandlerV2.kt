@@ -14,7 +14,7 @@ abstract class PrimerResumeDecisionHandlerV2<T : PaymentMethodResumeDecision, C 
     private val validateClientTokenRepository: ValidateClientTokenRepository,
     private val clientTokenRepository: ClientTokenRepository,
     private val checkoutAdditionalInfoHandler: CheckoutAdditionalInfoHandler,
-    private val clientTokenParser: PaymentMethodClientTokenParser<C>
+    private val clientTokenParser: PaymentMethodClientTokenParser<C>,
 ) {
     /**
      * The [PrimerCheckoutAdditionalInfo] associated with this payment method. If defined, it will be used after
@@ -31,8 +31,8 @@ abstract class PrimerResumeDecisionHandlerV2<T : PaymentMethodResumeDecision, C 
             val parsedClientToken: C = clientTokenParser.parseClientToken(clientToken)
             require(
                 supportedClientTokenIntents().contains(
-                    parsedClientToken.clientTokenIntent
-                )
+                    parsedClientToken.clientTokenIntent,
+                ),
             )
             parsedClientToken
         }.mapSuspendCatching { parsedClientToken ->

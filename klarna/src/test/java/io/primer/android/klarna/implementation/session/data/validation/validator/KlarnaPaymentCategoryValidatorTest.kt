@@ -21,19 +21,21 @@ class KlarnaPaymentCategoryValidatorTest {
     fun `validate() should return PrimerValidationError when 'banks' is null`() {
         mockkStatic(UUID::class)
         every { UUID.randomUUID().toString() } returns "uuid"
-        val result = KlarnaPaymentCategoryValidator.validate(
-            paymentCategories = null,
-            paymentCategory = mockk()
-        )
+        val result =
+            KlarnaPaymentCategoryValidator.validate(
+                paymentCategories = null,
+                paymentCategory = mockk(),
+            )
 
         assertEquals(
             PrimerValidationError(
                 errorId = KlarnaValidations.SESSION_NOT_CREATED_ERROR_ID,
-                description = "Session needs to be created before payment category can " +
-                    "be collected.",
-                diagnosticsId = "uuid"
+                description =
+                    "Session needs to be created before payment category can " +
+                        "be collected.",
+                diagnosticsId = "uuid",
             ),
-            result
+            result,
         )
         unmockkStatic(UUID::class)
     }
@@ -43,18 +45,19 @@ class KlarnaPaymentCategoryValidatorTest {
         mockkStatic(UUID::class)
         every { UUID.randomUUID().toString() } returns "uuid"
         val paymentCategories = listOf(mockk<KlarnaPaymentCategory>())
-        val result = KlarnaPaymentCategoryValidator.validate(
-            paymentCategories = paymentCategories,
-            paymentCategory = mockk()
-        )
+        val result =
+            KlarnaPaymentCategoryValidator.validate(
+                paymentCategories = paymentCategories,
+                paymentCategory = mockk(),
+            )
 
         assertEquals(
             PrimerValidationError(
                 errorId = KlarnaValidations.INVALID_PAYMENT_CATEGORY_ERROR_ID,
                 description = "Payment category is invalid.",
-                diagnosticsId = "uuid"
+                diagnosticsId = "uuid",
             ),
-            result
+            result,
         )
         unmockkStatic(UUID::class)
     }
@@ -63,10 +66,11 @@ class KlarnaPaymentCategoryValidatorTest {
     fun `validate() should return null when there's a matching payment category`() {
         val paymentCategory = mockk<KlarnaPaymentCategory>()
         val paymentCategories = listOf(paymentCategory)
-        val result = KlarnaPaymentCategoryValidator.validate(
-            paymentCategories = paymentCategories,
-            paymentCategory = paymentCategory
-        )
+        val result =
+            KlarnaPaymentCategoryValidator.validate(
+                paymentCategories = paymentCategories,
+                paymentCategory = paymentCategory,
+            )
 
         assertNull(result)
     }

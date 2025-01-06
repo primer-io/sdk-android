@@ -4,5 +4,5 @@ import io.primer.android.components.domain.core.models.PrimerPaymentMethodManage
 
 class UnsupportedPaymentMethodManagerException(
     paymentMethodType: String,
-    category: PrimerPaymentMethodManagerCategory
+    category: PrimerPaymentMethodManagerCategory,
 ) : IllegalStateException("Payment method $paymentMethodType is not supported on $category manager")

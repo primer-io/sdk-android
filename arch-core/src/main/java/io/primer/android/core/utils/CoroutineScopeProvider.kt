@@ -17,7 +17,6 @@ import kotlinx.coroutines.CoroutineScope
  *
  */
 interface CoroutineScopeProvider {
-
     /**
      * The [CoroutineScope] that should be used for launching coroutines.
      */

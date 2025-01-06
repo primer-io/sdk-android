@@ -4,11 +4,11 @@ sealed interface WhitelistedKey {
     val value: String
 
     data class PrimitiveWhitelistedKey(
-        override val value: String
+        override val value: String,
     ) : WhitelistedKey
 
     data class NonPrimitiveWhitelistedKey(
         override val value: String,
-        val children: List<WhitelistedKey>
+        val children: List<WhitelistedKey>,
     ) : WhitelistedKey
 }

@@ -41,7 +41,6 @@ import kotlin.time.Duration.Companion.seconds
 @ExperimentalCoroutinesApi
 @ExtendWith(InstantExecutorExtension::class, MockKExtension::class)
 internal class NolPayPaymentDelegateTest {
-
     private lateinit var delegate: NolPayPaymentDelegate
 
     private val requestPaymentInteractor: NolPayRequestPaymentInteractor = mockk()
@@ -56,58 +55,63 @@ internal class NolPayPaymentDelegateTest {
 
     @BeforeEach
     fun setUp() {
-        delegate = NolPayPaymentDelegate(
-            requestPaymentInteractor,
-            completePaymentInteractor,
-            pollingInteractor,
-            paymentMethodTokenHandler,
-            resumePaymentHandler,
-            successHandler,
-            errorHandler,
-            baseErrorResolver,
-            resumeHandler
-        )
+        delegate =
+            NolPayPaymentDelegate(
+                requestPaymentInteractor,
+                completePaymentInteractor,
+                pollingInteractor,
+                paymentMethodTokenHandler,
+                resumePaymentHandler,
+                successHandler,
+                errorHandler,
+                baseErrorResolver,
+                resumeHandler,
+            )
     }
 
     @Test
-    fun `handleNewClientToken should emit CollectTagData step`() = runTest {
-        // Given
-        val clientToken = "testClientToken"
-        val resumeDecision = NolPayResumeDecision(
-            transactionNumber = "testTransactionNumber",
-            completeUrl = "https://example.com/complete",
-            statusUrl = "https://example.com/status"
-        )
+    fun `handleNewClientToken should emit CollectTagData step`() =
+        runTest {
+            // Given
+            val clientToken = "testClientToken"
+            val resumeDecision =
+                NolPayResumeDecision(
+                    transactionNumber = "testTransactionNumber",
+                    completeUrl = "https://example.com/complete",
+                    statusUrl = "https://example.com/status",
+                )
 
-        coEvery { resumeHandler.continueWithNewClientToken(clientToken) } returns Result.success(resumeDecision)
+            coEvery { resumeHandler.continueWithNewClientToken(clientToken) } returns Result.success(resumeDecision)
 
-        launch {
-            delegate.handleNewClientToken(clientToken, null)
+            launch {
+                delegate.handleNewClientToken(clientToken, null)
+            }
+
+            // Then
+            delegate.componentStep.first { event ->
+                val expectedEvent = NolPayPaymentStep.CollectTagData
+                assertEquals(expectedEvent, event)
+                true
+            }
         }
-
-        // Then
-        delegate.componentStep.first { event ->
-            val expectedEvent = NolPayPaymentStep.CollectTagData
-            assertEquals(expectedEvent, event)
-            true
-        }
-    }
 
     @Test
     fun `requestPayment should call requestPaymentInteractor and completePaymentInteractor and emit PaymentRequested step`() {
         // Given
         val clientToken = "testClientToken"
         val collectedData = NolPayPaymentCollectableData.NolPayTagData(mockk())
-        val resumeDecision = NolPayResumeDecision(
-            transactionNumber = "testTransactionNumber",
-            completeUrl = "https://example.com/complete",
-            statusUrl = "https://example.com/status"
-        )
+        val resumeDecision =
+            NolPayResumeDecision(
+                transactionNumber = "testTransactionNumber",
+                completeUrl = "https://example.com/complete",
+                statusUrl = "https://example.com/status",
+            )
 
-        val requestParams = NolPayRequestPaymentParams(
-            tag = collectedData.tag,
-            transactionNo = resumeDecision.transactionNumber
-        )
+        val requestParams =
+            NolPayRequestPaymentParams(
+                tag = collectedData.tag,
+                transactionNo = resumeDecision.transactionNumber,
+            )
         val completeParams = NolPayCompletePaymentParams(resumeDecision.completeUrl)
 
         coEvery { requestPaymentInteractor(requestParams) } returns Result.success(true)
@@ -117,7 +121,7 @@ internal class NolPayPaymentDelegateTest {
         coEvery {
             resumePaymentHandler.handle(
                 any(),
-                any()
+                any(),
             )
         } returns Result.success(PaymentDecision.Pending(clientToken, null))
 
@@ -139,89 +143,98 @@ internal class NolPayPaymentDelegateTest {
     }
 
     @Test
-    fun `requestPayment should handle error from requestPaymentInteractor`() = runTest {
-        // Given
-        val clientToken = "testClientToken"
-        val resumeDecision = NolPayResumeDecision(
-            transactionNumber = "testTransactionNumber",
-            completeUrl = "https://example.com/complete",
-            statusUrl = "https://example.com/status"
-        )
+    fun `requestPayment should handle error from requestPaymentInteractor`() =
+        runTest {
+            // Given
+            val clientToken = "testClientToken"
+            val resumeDecision =
+                NolPayResumeDecision(
+                    transactionNumber = "testTransactionNumber",
+                    completeUrl = "https://example.com/complete",
+                    statusUrl = "https://example.com/status",
+                )
 
-        val collectedData = NolPayPaymentCollectableData.NolPayTagData(mockk())
-        val requestParams = NolPayRequestPaymentParams(
-            tag = collectedData.tag,
-            transactionNo = resumeDecision.transactionNumber
-        )
+            val collectedData = NolPayPaymentCollectableData.NolPayTagData(mockk())
+            val requestParams =
+                NolPayRequestPaymentParams(
+                    tag = collectedData.tag,
+                    transactionNo = resumeDecision.transactionNumber,
+                )
 
-        val exception = Exception("Test exception")
-        coEvery { requestPaymentInteractor(requestParams) } returns Result.failure(exception)
+            val exception = Exception("Test exception")
+            coEvery { requestPaymentInteractor(requestParams) } returns Result.failure(exception)
 
-        coEvery { resumeHandler.continueWithNewClientToken(clientToken) } returns Result.success(resumeDecision)
+            coEvery { resumeHandler.continueWithNewClientToken(clientToken) } returns Result.success(resumeDecision)
 
-        delegate.handleNewClientToken(clientToken, null)
+            delegate.handleNewClientToken(clientToken, null)
 
-        // When/Then
-        assertFailsWith<Exception> {
-            delegate.requestPayment(collectedData).getOrThrow()
+            // When/Then
+            assertFailsWith<Exception> {
+                delegate.requestPayment(collectedData).getOrThrow()
+            }
+
+            coVerify { requestPaymentInteractor(requestParams) }
         }
-
-        coVerify { requestPaymentInteractor(requestParams) }
-    }
 
     @Test
-    fun `completePayment should handle error from completePaymentInteractor`() = runTest {
-        // Given
-        val clientToken = "testClientToken"
-        val resumeDecision = NolPayResumeDecision(
-            transactionNumber = "testTransactionNumber",
-            completeUrl = "https://example.com/complete",
-            statusUrl = "https://example.com/status"
-        )
+    fun `completePayment should handle error from completePaymentInteractor`() =
+        runTest {
+            // Given
+            val clientToken = "testClientToken"
+            val resumeDecision =
+                NolPayResumeDecision(
+                    transactionNumber = "testTransactionNumber",
+                    completeUrl = "https://example.com/complete",
+                    statusUrl = "https://example.com/status",
+                )
 
-        val collectedData = NolPayPaymentCollectableData.NolPayTagData(mockk())
-        val requestParams = NolPayRequestPaymentParams(
-            tag = collectedData.tag,
-            transactionNo = resumeDecision.transactionNumber
-        )
+            val collectedData = NolPayPaymentCollectableData.NolPayTagData(mockk())
+            val requestParams =
+                NolPayRequestPaymentParams(
+                    tag = collectedData.tag,
+                    transactionNo = resumeDecision.transactionNumber,
+                )
 
-        val exception = Exception("Test exception")
-        coEvery { requestPaymentInteractor(requestParams) } returns Result.success(true)
-        coEvery { completePaymentInteractor(NolPayCompletePaymentParams(resumeDecision.completeUrl)) } returns
-            Result.failure(exception)
+            val exception = Exception("Test exception")
+            coEvery { requestPaymentInteractor(requestParams) } returns Result.success(true)
+            coEvery { completePaymentInteractor(NolPayCompletePaymentParams(resumeDecision.completeUrl)) } returns
+                Result.failure(exception)
 
-        coEvery { resumeHandler.continueWithNewClientToken(clientToken) } returns Result.success(resumeDecision)
+            coEvery { resumeHandler.continueWithNewClientToken(clientToken) } returns Result.success(resumeDecision)
 
-        delegate.handleNewClientToken(clientToken, null)
+            delegate.handleNewClientToken(clientToken, null)
 
-        // When/Then
-        assertFailsWith<Exception> {
-            delegate.completePayment().getOrThrow()
+            // When/Then
+            assertFailsWith<Exception> {
+                delegate.completePayment().getOrThrow()
+            }
+
+            coVerify { completePaymentInteractor(NolPayCompletePaymentParams(resumeDecision.completeUrl)) }
         }
-
-        coVerify { completePaymentInteractor(NolPayCompletePaymentParams(resumeDecision.completeUrl)) }
-    }
 
     @Test
     fun `complete should propagate error to error handler from pollingInteractor`() {
         // Given
         val clientToken = "testClientToken"
         val statusUrl = "https://example.com/status"
-        val resumeDecision = NolPayResumeDecision(
-            transactionNumber = "testTransactionNumber",
-            completeUrl = "https://example.com/complete",
-            statusUrl = statusUrl
-        )
+        val resumeDecision =
+            NolPayResumeDecision(
+                transactionNumber = "testTransactionNumber",
+                completeUrl = "https://example.com/complete",
+                statusUrl = statusUrl,
+            )
 
         val collectedData = NolPayPaymentCollectableData.NolPayTagData(mockk())
-        val requestParams = NolPayRequestPaymentParams(
-            tag = collectedData.tag,
-            transactionNo = resumeDecision.transactionNumber
-        )
-        val pollingParams = AsyncStatusParams(
-            url = statusUrl,
-            paymentMethodType = "NOL_PAY"
-        )
+        val requestParams =
+            NolPayRequestPaymentParams(
+                tag = collectedData.tag,
+                transactionNo = resumeDecision.transactionNumber,
+            )
+        val pollingParams =
+            AsyncStatusParams(
+                url = statusUrl,
+                paymentMethodType = "NOL_PAY",
+            )
 
         val exception = IllegalStateException("Test exception")
         coEvery { requestPaymentInteractor(requestParams) } returns Result.success(true)
@@ -229,7 +242,7 @@ internal class NolPayPaymentDelegateTest {
             Result.success(Unit)
         coEvery {
             pollingInteractor(
-                params = pollingParams
+                params = pollingParams,
             )
         } returns flow { throw exception }
 

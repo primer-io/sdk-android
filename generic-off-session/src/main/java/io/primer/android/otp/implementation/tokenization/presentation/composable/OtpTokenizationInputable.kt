@@ -7,5 +7,5 @@ import io.primer.android.payments.core.tokenization.presentation.composable.Toke
 internal data class OtpTokenizationInputable(
     val otpData: PrimerOtpData,
     override val paymentMethodType: String,
-    override val primerSessionIntent: PrimerSessionIntent
+    override val primerSessionIntent: PrimerSessionIntent,
 ) : TokenizationInputable

@@ -30,13 +30,12 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.Mockito.mock
-import kotlin.Exception
 import org.mockito.Mockito.`when`
+import kotlin.Exception
 
 @ExperimentalCoroutinesApi
 @ExtendWith(InstantExecutorExtension::class, MockKExtension::class)
 class ThreeDsViewModelTest {
-
     @RelaxedMockK
     internal lateinit var threeDsInteractor: ThreeDsInteractor
 
@@ -51,11 +50,12 @@ class ThreeDsViewModelTest {
     @BeforeEach
     fun setUp() {
         MockKAnnotations.init(this, relaxed = true)
-        viewModel = ThreeDsViewModel(
-            threeDsInteractor = threeDsInteractor,
-            analyticsInteractor = analyticsInteractor,
-            settings = checkoutConfig
-        )
+        viewModel =
+            ThreeDsViewModel(
+                threeDsInteractor = threeDsInteractor,
+                analyticsInteractor = analyticsInteractor,
+                settings = checkoutConfig,
+            )
     }
 
     @Test
@@ -228,7 +228,7 @@ class ThreeDsViewModelTest {
             threeDsInteractor.performChallenge(
                 any(),
                 any(),
-                any()
+                any(),
             )
         }.returns(flowOf(challengeStatusData))
 
@@ -240,7 +240,7 @@ class ThreeDsViewModelTest {
             threeDsInteractor.performChallenge(
                 any(),
                 any(),
-                any()
+                any(),
             )
         }
 
@@ -259,7 +259,7 @@ class ThreeDsViewModelTest {
             threeDsInteractor.performChallenge(
                 any(),
                 any(),
-                any()
+                any(),
             )
         }.returns(flow { throw exception })
 
@@ -282,7 +282,7 @@ class ThreeDsViewModelTest {
         runTest {
             viewModel.continueRemoteAuth(
                 ChallengeStatusData("", "Y"),
-                listOf(ProtocolVersion.V_210.versionNumber)
+                listOf(ProtocolVersion.V_210.versionNumber),
             )
         }
 
@@ -302,7 +302,7 @@ class ThreeDsViewModelTest {
         runTest {
             viewModel.continueRemoteAuth(
                 ChallengeStatusData("", "Y"),
-                listOf(ProtocolVersion.V_210.versionNumber)
+                listOf(ProtocolVersion.V_210.versionNumber),
             )
         }
 
@@ -323,7 +323,7 @@ class ThreeDsViewModelTest {
         runTest {
             viewModel.continueRemoteAuthWithException(
                 Exception(),
-                listOf(ProtocolVersion.V_210.versionNumber)
+                listOf(ProtocolVersion.V_210.versionNumber),
             )
         }
 
@@ -344,7 +344,7 @@ class ThreeDsViewModelTest {
         runTest {
             viewModel.continueRemoteAuthWithException(
                 Exception(),
-                listOf(ProtocolVersion.V_210.versionNumber)
+                listOf(ProtocolVersion.V_210.versionNumber),
             )
         }
 

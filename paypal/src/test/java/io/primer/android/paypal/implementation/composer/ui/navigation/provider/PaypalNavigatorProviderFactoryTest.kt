@@ -6,7 +6,6 @@ import org.junit.jupiter.api.Test
 import kotlin.test.assertTrue
 
 class PaypalNavigatorProviderFactoryTest {
-
     @Test
     fun `test create method returns PaypalNavigationHandler`() {
         // Arrange

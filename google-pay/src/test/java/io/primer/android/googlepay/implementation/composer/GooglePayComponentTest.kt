@@ -29,6 +29,7 @@ import io.primer.android.core.domain.validation.ValidationRule
 import io.primer.android.core.domain.validation.ValidationRulesChain
 import io.primer.android.core.extensions.getSerializableCompat
 import io.primer.android.core.utils.CoroutineScopeProvider
+import io.primer.android.domain.tokenization.models.PrimerPaymentMethodTokenData
 import io.primer.android.errors.data.exception.PaymentMethodCancelledException
 import io.primer.android.googlepay.InstantExecutorExtension
 import io.primer.android.googlepay.implementation.clientSessionActions.presentation.mapper.mapToMultipleActionUpdateParams
@@ -46,7 +47,6 @@ import io.primer.android.googlepay.implementation.validation.GooglePayShippingMe
 import io.primer.android.googlepay.implementation.validation.GooglePayValidationRulesResolver
 import io.primer.android.googlepay.toListDuring
 import io.primer.android.paymentmethods.core.composer.composable.ComposerUiEvent
-import io.primer.android.domain.tokenization.models.PrimerPaymentMethodTokenData
 import io.primer.android.processor3ds.domain.model.Processor3DS
 import io.primer.android.processor3ds.ui.Processor3dsWebViewActivity
 import io.primer.android.threeds.ui.ThreeDsActivity
@@ -71,7 +71,6 @@ private const val MAPPER_FILE_NAME =
 @ExtendWith(InstantExecutorExtension::class, MockKExtension::class)
 @ExperimentalCoroutinesApi
 internal class GooglePayComponentTest {
-
     @RelaxedMockK
     internal lateinit var tokenizationCollectorDelegate: GooglePayTokenizationCollectorDelegate
 
@@ -98,26 +97,29 @@ internal class GooglePayComponentTest {
     @BeforeEach
     fun setUp() {
         MockKAnnotations.init(this, relaxed = true)
-        DISdkContext.headlessSdkContainer = mockk<SdkContainer>(relaxed = true).also { sdkContainer ->
-            val cont = spyk<DependencyContainer>().also { container ->
-                container.registerFactory<CoroutineScopeProvider> {
-                    object : CoroutineScopeProvider {
-                        override val scope: CoroutineScope
-                            get() = TestScope()
+        DISdkContext.headlessSdkContainer =
+            mockk<SdkContainer>(relaxed = true).also { sdkContainer ->
+                val cont =
+                    spyk<DependencyContainer>().also { container ->
+                        container.registerFactory<CoroutineScopeProvider> {
+                            object : CoroutineScopeProvider {
+                                override val scope: CoroutineScope
+                                    get() = TestScope()
+                            }
+                        }
                     }
-                }
+                every { sdkContainer.containers }.returns(mutableMapOf(cont::class.simpleName.orEmpty() to cont))
             }
-            every { sdkContainer.containers }.returns(mutableMapOf(cont::class.simpleName.orEmpty() to cont))
-        }
-        component = GooglePayComponent(
-            tokenizationCollectorDelegate = tokenizationCollectorDelegate,
-            tokenizationDelegate = tokenizationDelegate,
-            shippingMethodUpdateValidator = shippingMethodUpdateValidator,
-            actionInteractor = actionInteractor,
-            validationRulesResolver = validationRulesResolver,
-            paymentDelegate = paymentDelegate,
-            mockConfigurationDelegate = mockConfigurationDelegate
-        )
+        component =
+            GooglePayComponent(
+                tokenizationCollectorDelegate = tokenizationCollectorDelegate,
+                tokenizationDelegate = tokenizationDelegate,
+                shippingMethodUpdateValidator = shippingMethodUpdateValidator,
+                actionInteractor = actionInteractor,
+                validationRulesResolver = validationRulesResolver,
+                paymentDelegate = paymentDelegate,
+                mockConfigurationDelegate = mockConfigurationDelegate,
+            )
 
         coEvery { tokenizationCollectorDelegate.uiEvent } returns MutableSharedFlow()
         coEvery { paymentDelegate.uiEvent } returns MutableSharedFlow()
@@ -194,13 +196,15 @@ internal class GooglePayComponentTest {
     fun `handleActivityResultIntent() should call resumePayment with correct resume token when initialLauncherParams is ThreeDsInitialLauncherParams`() {
         // Given
         val resumeToken = "resumeToken"
-        val params = mockk<PaymentMethodLauncherParams>(relaxed = true) {
-            every { initialLauncherParams } returns mockk<ThreeDsInitialLauncherParams>(relaxed = true)
-        }
+        val params =
+            mockk<PaymentMethodLauncherParams>(relaxed = true) {
+                every { initialLauncherParams } returns mockk<ThreeDsInitialLauncherParams>(relaxed = true)
+            }
         val resultCode = Activity.RESULT_OK
-        val intent = mockk<Intent>(relaxed = true) {
-            every { getStringExtra(ThreeDsActivity.RESUME_TOKEN_EXTRA_KEY) } returns resumeToken
-        }
+        val intent =
+            mockk<Intent>(relaxed = true) {
+                every { getStringExtra(ThreeDsActivity.RESUME_TOKEN_EXTRA_KEY) } returns resumeToken
+            }
 
         // When
         runTest {
@@ -216,13 +220,15 @@ internal class GooglePayComponentTest {
     fun `handleActivityResultIntent() should call resumePayment with correct resume token when initialLauncherParams is ProcessorThreeDsInitialLauncherParams`() {
         // Given
         val resumeToken = "resumeToken"
-        val params = mockk<PaymentMethodLauncherParams>(relaxed = true) {
-            every { initialLauncherParams } returns mockk<ProcessorThreeDsInitialLauncherParams>(relaxed = true)
-        }
+        val params =
+            mockk<PaymentMethodLauncherParams>(relaxed = true) {
+                every { initialLauncherParams } returns mockk<ProcessorThreeDsInitialLauncherParams>(relaxed = true)
+            }
         val resultCode = Activity.RESULT_OK
-        val intent = mockk<Intent>(relaxed = true) {
-            every { getStringExtra(Processor3dsWebViewActivity.RESUME_TOKEN_EXTRA_KEY) } returns resumeToken
-        }
+        val intent =
+            mockk<Intent>(relaxed = true) {
+                every { getStringExtra(Processor3dsWebViewActivity.RESUME_TOKEN_EXTRA_KEY) } returns resumeToken
+            }
 
         // When
         runTest {
@@ -239,11 +245,12 @@ internal class GooglePayComponentTest {
         // Given
         every { mockConfigurationDelegate.isMockedFlow() } returns false
         val threeDsInitialLauncherParams = ThreeDsInitialLauncherParams(listOf("2.0.0", "2.1.0"))
-        val params = PaymentMethodLauncherParams(
-            paymentMethodType = "GOOGLE_PAY",
-            sessionIntent = PrimerSessionIntent.CHECKOUT,
-            initialLauncherParams = threeDsInitialLauncherParams
-        )
+        val params =
+            PaymentMethodLauncherParams(
+                paymentMethodType = "GOOGLE_PAY",
+                sessionIntent = PrimerSessionIntent.CHECKOUT,
+                initialLauncherParams = threeDsInitialLauncherParams,
+            )
 
         runTest {
             // When
@@ -253,7 +260,7 @@ internal class GooglePayComponentTest {
             // Then
             val events = component.uiEvent.toListDuring(1.0.seconds)
             assertTrue(
-                events.any { it is ComposerUiEvent.Navigate && it.params is GooglePayNative3DSActivityLauncherParams }
+                events.any { it is ComposerUiEvent.Navigate && it.params is GooglePayNative3DSActivityLauncherParams },
             )
             verify { mockConfigurationDelegate.isMockedFlow() }
         }
@@ -264,11 +271,12 @@ internal class GooglePayComponentTest {
         // Given
         every { mockConfigurationDelegate.isMockedFlow() } returns true
         val threeDsInitialLauncherParams = ThreeDsInitialLauncherParams(listOf("2.0.0", "2.1.0"))
-        val params = PaymentMethodLauncherParams(
-            paymentMethodType = "GOOGLE_PAY",
-            sessionIntent = PrimerSessionIntent.CHECKOUT,
-            initialLauncherParams = threeDsInitialLauncherParams
-        )
+        val params =
+            PaymentMethodLauncherParams(
+                paymentMethodType = "GOOGLE_PAY",
+                sessionIntent = PrimerSessionIntent.CHECKOUT,
+                initialLauncherParams = threeDsInitialLauncherParams,
+            )
 
         runTest {
             // When
@@ -280,7 +288,7 @@ internal class GooglePayComponentTest {
             assertTrue(
                 events.any {
                     it is ComposerUiEvent.Navigate && it.params is MockGooglePay3DSActivityLauncherParams
-                }
+                },
             )
             verify { mockConfigurationDelegate.isMockedFlow() }
         }
@@ -289,17 +297,20 @@ internal class GooglePayComponentTest {
     @Test
     fun `handleActivityStartEvent() should emit Navigate event for ProcessorThreeDsInitialLauncherParams when is not mocked flow`() {
         // Given
-        val threeDsInitialLauncherParams = ProcessorThreeDsInitialLauncherParams(
-            processor3DS = Processor3DS(
-                redirectUrl = "https://www.example.com/redirect",
-                statusUrl = "https://www.example.com/status"
+        val threeDsInitialLauncherParams =
+            ProcessorThreeDsInitialLauncherParams(
+                processor3DS =
+                    Processor3DS(
+                        redirectUrl = "https://www.example.com/redirect",
+                        statusUrl = "https://www.example.com/status",
+                    ),
             )
-        )
-        val params = PaymentMethodLauncherParams(
-            paymentMethodType = "GOOGLE_PAY",
-            sessionIntent = PrimerSessionIntent.CHECKOUT,
-            initialLauncherParams = threeDsInitialLauncherParams
-        )
+        val params =
+            PaymentMethodLauncherParams(
+                paymentMethodType = "GOOGLE_PAY",
+                sessionIntent = PrimerSessionIntent.CHECKOUT,
+                initialLauncherParams = threeDsInitialLauncherParams,
+            )
 
         runTest {
             // When
@@ -311,7 +322,7 @@ internal class GooglePayComponentTest {
             assertTrue(
                 events.any {
                     it is ComposerUiEvent.Navigate && it.params is GooglePayProcessor3DSActivityLauncherParams
-                }
+                },
             )
             verify(exactly = 0) { mockConfigurationDelegate.isMockedFlow() }
         }
@@ -320,17 +331,20 @@ internal class GooglePayComponentTest {
     @Test
     fun `handleActivityStartEvent() should emit Navigate event for ProcessorThreeDsInitialLauncherParams when is mocked flow`() {
         // Given
-        val threeDsInitialLauncherParams = ProcessorThreeDsInitialLauncherParams(
-            processor3DS = Processor3DS(
-                redirectUrl = "https://www.example.com/redirect",
-                statusUrl = "https://www.example.com/status"
+        val threeDsInitialLauncherParams =
+            ProcessorThreeDsInitialLauncherParams(
+                processor3DS =
+                    Processor3DS(
+                        redirectUrl = "https://www.example.com/redirect",
+                        statusUrl = "https://www.example.com/status",
+                    ),
             )
-        )
-        val params = PaymentMethodLauncherParams(
-            paymentMethodType = "GOOGLE_PAY",
-            sessionIntent = PrimerSessionIntent.CHECKOUT,
-            initialLauncherParams = threeDsInitialLauncherParams
-        )
+        val params =
+            PaymentMethodLauncherParams(
+                paymentMethodType = "GOOGLE_PAY",
+                sessionIntent = PrimerSessionIntent.CHECKOUT,
+                initialLauncherParams = threeDsInitialLauncherParams,
+            )
 
         runTest {
             // When
@@ -342,7 +356,7 @@ internal class GooglePayComponentTest {
             assertTrue(
                 events.any {
                     it is ComposerUiEvent.Navigate && it.params is GooglePayProcessor3DSActivityLauncherParams
-                }
+                },
             )
             verify(exactly = 0) { mockConfigurationDelegate.isMockedFlow() }
         }
@@ -351,11 +365,12 @@ internal class GooglePayComponentTest {
     @Test
     fun `handleActivityStartEvent() should start data collection when initialLauncherParams is null`() {
         // Given
-        val params = PaymentMethodLauncherParams(
-            paymentMethodType = "GOOGLE_PAY",
-            sessionIntent = PrimerSessionIntent.CHECKOUT,
-            initialLauncherParams = null
-        )
+        val params =
+            PaymentMethodLauncherParams(
+                paymentMethodType = "GOOGLE_PAY",
+                sessionIntent = PrimerSessionIntent.CHECKOUT,
+                initialLauncherParams = null,
+            )
 
         runTest {
             // When
@@ -378,13 +393,15 @@ internal class GooglePayComponentTest {
 
         every { PaymentData.getFromIntent(any()) } returns paymentData
 
-        val validationRule = mockk<ValidationRule<PaymentData?>>(relaxed = true) {
-            every { validate(any()) } returns ValidationResult.Success
-        }
+        val validationRule =
+            mockk<ValidationRule<PaymentData?>>(relaxed = true) {
+                every { validate(any()) } returns ValidationResult.Success
+            }
 
-        val validationRulesChain = mockk<ValidationRulesChain<PaymentData?>>(relaxed = true) {
-            every { rules } returns listOf(validationRule)
-        }
+        val validationRulesChain =
+            mockk<ValidationRulesChain<PaymentData?>>(relaxed = true) {
+                every { rules } returns listOf(validationRule)
+            }
 
         every { validationRulesResolver.resolve() } returns validationRulesChain
 
@@ -399,12 +416,13 @@ internal class GooglePayComponentTest {
             component.start("GOOGLE_PAY", PrimerSessionIntent.CHECKOUT)
 
             component.handleActivityResultIntent(
-                params = PaymentMethodLauncherParams(
-                    paymentMethodType = "GOOGLE_PAY",
-                    sessionIntent = PrimerSessionIntent.CHECKOUT
-                ),
+                params =
+                    PaymentMethodLauncherParams(
+                        paymentMethodType = "GOOGLE_PAY",
+                        sessionIntent = PrimerSessionIntent.CHECKOUT,
+                    ),
                 resultCode = Activity.RESULT_OK,
-                intent = Intent()
+                intent = Intent(),
             )
         }
 
@@ -430,13 +448,15 @@ internal class GooglePayComponentTest {
 
         every { PaymentData.getFromIntent(any()) } returns paymentData
 
-        val validationRule = mockk<ValidationRule<PaymentData?>>(relaxed = true) {
-            every { validate(any()) } returns ValidationResult.Success
-        }
+        val validationRule =
+            mockk<ValidationRule<PaymentData?>>(relaxed = true) {
+                every { validate(any()) } returns ValidationResult.Success
+            }
 
-        val validationRulesChain = mockk<ValidationRulesChain<PaymentData?>>(relaxed = true) {
-            every { rules } returns listOf(validationRule)
-        }
+        val validationRulesChain =
+            mockk<ValidationRulesChain<PaymentData?>>(relaxed = true) {
+                every { rules } returns listOf(validationRule)
+            }
 
         every { validationRulesResolver.resolve() } returns validationRulesChain
 
@@ -450,12 +470,13 @@ internal class GooglePayComponentTest {
             component.start("GOOGLE_PAY", PrimerSessionIntent.CHECKOUT)
 
             component.handleActivityResultIntent(
-                params = PaymentMethodLauncherParams(
-                    paymentMethodType = "GOOGLE_PAY",
-                    sessionIntent = PrimerSessionIntent.CHECKOUT
-                ),
+                params =
+                    PaymentMethodLauncherParams(
+                        paymentMethodType = "GOOGLE_PAY",
+                        sessionIntent = PrimerSessionIntent.CHECKOUT,
+                    ),
                 resultCode = Activity.RESULT_OK,
-                intent = Intent()
+                intent = Intent(),
             )
         }
 
@@ -484,13 +505,15 @@ internal class GooglePayComponentTest {
 
         every { PaymentData.getFromIntent(any()) } returns paymentData
 
-        val validationRule = mockk<ValidationRule<PaymentData?>>(relaxed = true) {
-            every { validate(any()) } returns ValidationResult.Failure(Exception("Validation failed"))
-        }
+        val validationRule =
+            mockk<ValidationRule<PaymentData?>>(relaxed = true) {
+                every { validate(any()) } returns ValidationResult.Failure(Exception("Validation failed"))
+            }
 
-        val validationRulesChain = mockk<ValidationRulesChain<PaymentData?>>(relaxed = true) {
-            every { rules } returns listOf(validationRule)
-        }
+        val validationRulesChain =
+            mockk<ValidationRulesChain<PaymentData?>>(relaxed = true) {
+                every { rules } returns listOf(validationRule)
+            }
 
         every { validationRulesResolver.resolve() } returns validationRulesChain
 
@@ -499,12 +522,13 @@ internal class GooglePayComponentTest {
             component.start("GOOGLE_PAY", PrimerSessionIntent.CHECKOUT)
 
             component.handleActivityResultIntent(
-                params = PaymentMethodLauncherParams(
-                    paymentMethodType = "GOOGLE_PAY",
-                    sessionIntent = PrimerSessionIntent.CHECKOUT
-                ),
+                params =
+                    PaymentMethodLauncherParams(
+                        paymentMethodType = "GOOGLE_PAY",
+                        sessionIntent = PrimerSessionIntent.CHECKOUT,
+                    ),
                 resultCode = Activity.RESULT_OK,
-                intent = Intent()
+                intent = Intent(),
             )
         }
 
@@ -532,13 +556,15 @@ internal class GooglePayComponentTest {
 
         every { PaymentData.getFromIntent(any()) } returns paymentData
 
-        val validationRule = mockk<ValidationRule<PaymentData?>>(relaxed = true) {
-            every { validate(any()) } returns ValidationResult.Success
-        }
+        val validationRule =
+            mockk<ValidationRule<PaymentData?>>(relaxed = true) {
+                every { validate(any()) } returns ValidationResult.Success
+            }
 
-        val validationRulesChain = mockk<ValidationRulesChain<PaymentData?>>(relaxed = true) {
-            every { rules } returns listOf(validationRule)
-        }
+        val validationRulesChain =
+            mockk<ValidationRulesChain<PaymentData?>>(relaxed = true) {
+                every { rules } returns listOf(validationRule)
+            }
 
         every { validationRulesResolver.resolve() } returns validationRulesChain
 
@@ -551,12 +577,13 @@ internal class GooglePayComponentTest {
             component.start("GOOGLE_PAY", PrimerSessionIntent.CHECKOUT)
 
             component.handleActivityResultIntent(
-                params = PaymentMethodLauncherParams(
-                    paymentMethodType = "GOOGLE_PAY",
-                    sessionIntent = PrimerSessionIntent.CHECKOUT
-                ),
+                params =
+                    PaymentMethodLauncherParams(
+                        paymentMethodType = "GOOGLE_PAY",
+                        sessionIntent = PrimerSessionIntent.CHECKOUT,
+                    ),
                 resultCode = Activity.RESULT_OK,
-                intent = Intent()
+                intent = Intent(),
             )
         }
 

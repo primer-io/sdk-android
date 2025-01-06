@@ -10,34 +10,36 @@ import io.primer.android.phoneNumber.implementation.tokenization.domain.model.Ph
 import org.junit.jupiter.api.Test
 
 internal class PhoneNumberTokenizationParamsMapperTest {
-
     private val mapper = PhoneNumberTokenizationParamsMapper()
 
     @Test
     fun `map should correctly map TokenizationParams to TokenizationRequestV2`() {
         // Given
         val paymentMethodType = "phoneNumber"
-        val paymentInstrumentParams = PhoneNumberPaymentInstrumentParams(
-            paymentMethodType = paymentMethodType,
-            paymentMethodConfigId = "testPaymentMethodConfigId",
-            locale = "testLocale",
-            phoneNumber = "testPhoneNumber"
-        )
+        val paymentInstrumentParams =
+            PhoneNumberPaymentInstrumentParams(
+                paymentMethodType = paymentMethodType,
+                paymentMethodConfigId = "testPaymentMethodConfigId",
+                locale = "testLocale",
+                phoneNumber = "testPhoneNumber",
+            )
         val sessionIntent = PrimerSessionIntent.CHECKOUT
         val tokenizationParams = TokenizationParams(paymentInstrumentParams, sessionIntent)
 
         // When
         val result = mapper.map(tokenizationParams)
 
-        val instrumentRequest = PhoneNumberPaymentInstrumentDataRequest(
-            paymentMethodType = paymentMethodType,
-            paymentMethodConfigId = "testPaymentMethodConfigId",
-            sessionInfo = PhoneNumberSessionInfoDataRequest(
-                locale = "testLocale",
-                phoneNumber = "testPhoneNumber"
-            ),
-            type = PaymentInstrumentType.OFF_SESSION_PAYMENT
-        )
+        val instrumentRequest =
+            PhoneNumberPaymentInstrumentDataRequest(
+                paymentMethodType = paymentMethodType,
+                paymentMethodConfigId = "testPaymentMethodConfigId",
+                sessionInfo =
+                    PhoneNumberSessionInfoDataRequest(
+                        locale = "testLocale",
+                        phoneNumber = "testPhoneNumber",
+                    ),
+                type = PaymentInstrumentType.OFF_SESSION_PAYMENT,
+            )
 
         // Then
         val expectedRequest = instrumentRequest.toTokenizationRequest(sessionIntent)

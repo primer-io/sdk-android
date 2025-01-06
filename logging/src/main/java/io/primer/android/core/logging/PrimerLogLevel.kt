@@ -11,7 +11,6 @@ package io.primer.android.core.logging
  * - [ERROR]: Error messages are logged, indicating critical issues or failures.
  */
 enum class PrimerLogLevel {
-
     /**
      * Debugging information is logged, useful for development and debugging.
      */
@@ -35,5 +34,5 @@ enum class PrimerLogLevel {
     /**
      * No logging is performed.
      */
-    NONE
+    NONE,
 }

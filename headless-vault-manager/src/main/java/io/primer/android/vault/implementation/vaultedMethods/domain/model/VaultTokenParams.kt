@@ -6,5 +6,5 @@ import io.primer.android.vault.implementation.vaultedMethods.domain.PrimerVaulte
 internal data class VaultTokenParams(
     val vaultedPaymentMethodId: String,
     val paymentMethodType: String,
-    val additionalData: PrimerVaultedPaymentMethodAdditionalData? = null
+    val additionalData: PrimerVaultedPaymentMethodAdditionalData? = null,
 ) : Params

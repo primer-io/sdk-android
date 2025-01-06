@@ -24,15 +24,16 @@ class ClientTokenCoreContainer(private val sdk: () -> SdkContainer) : Dependency
         registerSingleton<ValidateClientTokenRepository> {
             ValidateClientTokenDataRepository(
                 configurationDataSource = sdk().resolve(ConfigurationCoreContainer.CACHED_CONFIGURATION_DI_KEY),
-                validateDataSource = resolve()
+                validateDataSource = resolve(),
             )
         }
 
         registerSingleton<ClientTokenRepository> {
             ClientTokenDataRepository(
-                clientTokenDataSource = resolve<CacheClientTokenDataSource>(
-                    CACHE_CLIENT_TOKEN_DATA_SOURCE_DI_KEY
-                )
+                clientTokenDataSource =
+                    resolve<CacheClientTokenDataSource>(
+                        CACHE_CLIENT_TOKEN_DATA_SOURCE_DI_KEY,
+                    ),
             )
         }
 
@@ -40,7 +41,6 @@ class ClientTokenCoreContainer(private val sdk: () -> SdkContainer) : Dependency
     }
 
     companion object {
-
         const val CACHE_CLIENT_TOKEN_DATA_SOURCE_DI_KEY = "CACHE_CLIENT_TOKEN_DATA_SOURCE"
     }
 }

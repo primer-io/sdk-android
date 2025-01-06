@@ -6,8 +6,10 @@ import io.primer.android.paymentmethods.manager.composable.PrimerHeadlessStartab
 import io.primer.android.paymentmethods.manager.composable.PrimerHeadlessStep
 import io.primer.android.paymentmethods.manager.composable.PrimerHeadlessSteppable
 
-interface PrimerHeadlessMainComponent<TCollectableData : PrimerCollectableData,
-    TStep : PrimerHeadlessStep> :
+interface PrimerHeadlessMainComponent<
+    TCollectableData : PrimerCollectableData,
+    TStep : PrimerHeadlessStep,
+    > :
     PrimerHeadlessCollectDataComponent<TCollectableData>,
     PrimerHeadlessSteppable<TStep>,
     PrimerHeadlessStartable

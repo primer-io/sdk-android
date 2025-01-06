@@ -31,8 +31,9 @@ internal object UnknownBrand : Brand {
         get() = 0
 }
 
-fun Brand.getImageAsset(imageColor: ImageColor) = when (imageColor) {
-    ImageColor.COLORED -> iconResId
-    ImageColor.DARK -> iconDarkResId
-    ImageColor.LIGHT -> iconLightResId
-}
+fun Brand.getImageAsset(imageColor: ImageColor) =
+    when (imageColor) {
+        ImageColor.COLORED -> iconResId
+        ImageColor.DARK -> iconDarkResId
+        ImageColor.LIGHT -> iconLightResId
+    }

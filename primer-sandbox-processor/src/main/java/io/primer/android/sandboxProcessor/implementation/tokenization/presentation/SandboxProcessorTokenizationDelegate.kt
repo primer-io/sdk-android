@@ -11,24 +11,26 @@ import io.primer.android.sandboxProcessor.implementation.tokenization.presentati
 
 internal class SandboxProcessorTokenizationDelegate(
     private val configurationInteractor: ProcessorTestConfigurationInteractor,
-    tokenizationInteractor: ProcessorTestTokenizationInteractor
+    tokenizationInteractor: ProcessorTestTokenizationInteractor,
 ) : PaymentMethodTokenizationDelegate<SandboxProcessorTokenizationInputable, SandboxProcessorPaymentInstrumentParams>(
-    tokenizationInteractor
-),
+        tokenizationInteractor,
+    ),
     TokenizationCollectedDataMapper<SandboxProcessorTokenizationInputable, SandboxProcessorPaymentInstrumentParams> {
-
-    override suspend fun mapTokenizationData(input: SandboxProcessorTokenizationInputable):
-        Result<TokenizationParams<SandboxProcessorPaymentInstrumentParams>> = configurationInteractor(
-        SandboxProcessorConfigParams(paymentMethodType = input.paymentMethodType)
-    ).map { configuration ->
-        TokenizationParams(
-            paymentInstrumentParams = SandboxProcessorPaymentInstrumentParams(
-                paymentMethodType = input.paymentMethodType,
-                paymentMethodConfigId = configuration.paymentMethodConfigId,
-                locale = configuration.locale,
-                flowDecision = input.decisionType.name
-            ),
-            sessionIntent = input.primerSessionIntent
-        )
-    }
+    override suspend fun mapTokenizationData(
+        input: SandboxProcessorTokenizationInputable,
+    ): Result<TokenizationParams<SandboxProcessorPaymentInstrumentParams>> =
+        configurationInteractor(
+            SandboxProcessorConfigParams(paymentMethodType = input.paymentMethodType),
+        ).map { configuration ->
+            TokenizationParams(
+                paymentInstrumentParams =
+                    SandboxProcessorPaymentInstrumentParams(
+                        paymentMethodType = input.paymentMethodType,
+                        paymentMethodConfigId = configuration.paymentMethodConfigId,
+                        locale = configuration.locale,
+                        flowDecision = input.decisionType.name,
+                    ),
+                sessionIntent = input.primerSessionIntent,
+            )
+        }
 }

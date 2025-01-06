@@ -5,26 +5,25 @@ import io.primer.android.payments.core.tokenization.presentation.composable.Toke
 
 internal sealed class PaypalTokenizationInputable(
     override val paymentMethodType: String,
-    override val primerSessionIntent: PrimerSessionIntent
+    override val primerSessionIntent: PrimerSessionIntent,
 ) : TokenizationInputable {
-
     data class PaypalCheckoutTokenizationInputable(
         val orderId: String?,
         val paymentMethodConfigId: String,
         override val paymentMethodType: String,
-        override val primerSessionIntent: PrimerSessionIntent
+        override val primerSessionIntent: PrimerSessionIntent,
     ) : PaypalTokenizationInputable(
-        paymentMethodType = paymentMethodType,
-        primerSessionIntent = primerSessionIntent
-    )
+            paymentMethodType = paymentMethodType,
+            primerSessionIntent = primerSessionIntent,
+        )
 
     data class PaypalVaultTokenizationInputable(
         val tokenId: String?,
         val paymentMethodConfigId: String,
         override val paymentMethodType: String,
-        override val primerSessionIntent: PrimerSessionIntent
+        override val primerSessionIntent: PrimerSessionIntent,
     ) : PaypalTokenizationInputable(
-        paymentMethodType = paymentMethodType,
-        primerSessionIntent = primerSessionIntent
-    )
+            paymentMethodType = paymentMethodType,
+            primerSessionIntent = primerSessionIntent,
+        )
 }

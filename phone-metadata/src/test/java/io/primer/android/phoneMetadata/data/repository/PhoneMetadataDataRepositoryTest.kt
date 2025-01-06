@@ -15,73 +15,77 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
 internal class PhoneMetadataDataRepositoryTest {
-
     private val configurationDataSource = mockk<CacheConfigurationDataSource>()
     private val remoteMetadataDataSource = mockk<RemotePhoneMetadataDataSource>()
     private val repository = PhoneMetadataDataRepository(configurationDataSource, remoteMetadataDataSource)
 
     @Test
-    fun `getPhoneMetadata should throw PhoneValidationException when phoneNumber is blank`() = runTest {
-        val result = repository.getPhoneMetadata("")
-        assertTrue(result.isFailure)
-        val exception = result.exceptionOrNull() as PhoneValidationException
-        assertEquals("Phone number cannot be blank.", exception.message)
-    }
+    fun `getPhoneMetadata should throw PhoneValidationException when phoneNumber is blank`() =
+        runTest {
+            val result = repository.getPhoneMetadata("")
+            assertTrue(result.isFailure)
+            val exception = result.exceptionOrNull() as PhoneValidationException
+            assertEquals("Phone number cannot be blank.", exception.message)
+        }
 
     @Test
-    fun `getPhoneMetadata should return valid PhoneMetadata`() = runTest {
-        val pciUrl = "https://example.com"
-        val phoneNumber = "1234567890"
-        val metadataResponse = PhoneMetadataResponse(
-            isValid = true,
-            countryCode = "US",
-            nationalNumber = "1234567890"
-        )
-
-        coEvery { configurationDataSource.get().pciUrl } returns pciUrl
-        coEvery { remoteMetadataDataSource.execute(any()) } returns metadataResponse
-
-        val result = repository.getPhoneMetadata(phoneNumber)
-
-        assertEquals(Result.success(PhoneMetadata("US", "1234567890")), result)
-
-        coVerify { configurationDataSource.get().pciUrl }
-        coVerify {
-            remoteMetadataDataSource.execute(
-                BaseRemoteHostRequest(
-                    host = pciUrl,
-                    data = phoneNumber
+    fun `getPhoneMetadata should return valid PhoneMetadata`() =
+        runTest {
+            val pciUrl = "https://example.com"
+            val phoneNumber = "1234567890"
+            val metadataResponse =
+                PhoneMetadataResponse(
+                    isValid = true,
+                    countryCode = "US",
+                    nationalNumber = "1234567890",
                 )
-            )
+
+            coEvery { configurationDataSource.get().pciUrl } returns pciUrl
+            coEvery { remoteMetadataDataSource.execute(any()) } returns metadataResponse
+
+            val result = repository.getPhoneMetadata(phoneNumber)
+
+            assertEquals(Result.success(PhoneMetadata("US", "1234567890")), result)
+
+            coVerify { configurationDataSource.get().pciUrl }
+            coVerify {
+                remoteMetadataDataSource.execute(
+                    BaseRemoteHostRequest(
+                        host = pciUrl,
+                        data = phoneNumber,
+                    ),
+                )
+            }
         }
-    }
 
     @Test
-    fun `getPhoneMetadata should throw PhoneValidationException when metadataResponse is invalid`() = runTest {
-        val pciUrl = "https://example.com"
-        val phoneNumber = "1234567890"
-        val metadataResponse = PhoneMetadataResponse(
-            isValid = false,
-            countryCode = null,
-            nationalNumber = null
-        )
-
-        coEvery { configurationDataSource.get().pciUrl } returns pciUrl
-        coEvery { remoteMetadataDataSource.execute(any()) } returns metadataResponse
-
-        val result = repository.getPhoneMetadata(phoneNumber)
-        assertTrue(result.isFailure)
-        val exception = result.exceptionOrNull() as PhoneValidationException
-        assertEquals("Failed to parse phone number.", exception.message)
-
-        coVerify { configurationDataSource.get().pciUrl }
-        coVerify {
-            remoteMetadataDataSource.execute(
-                BaseRemoteHostRequest(
-                    host = pciUrl,
-                    data = phoneNumber
+    fun `getPhoneMetadata should throw PhoneValidationException when metadataResponse is invalid`() =
+        runTest {
+            val pciUrl = "https://example.com"
+            val phoneNumber = "1234567890"
+            val metadataResponse =
+                PhoneMetadataResponse(
+                    isValid = false,
+                    countryCode = null,
+                    nationalNumber = null,
                 )
-            )
+
+            coEvery { configurationDataSource.get().pciUrl } returns pciUrl
+            coEvery { remoteMetadataDataSource.execute(any()) } returns metadataResponse
+
+            val result = repository.getPhoneMetadata(phoneNumber)
+            assertTrue(result.isFailure)
+            val exception = result.exceptionOrNull() as PhoneValidationException
+            assertEquals("Failed to parse phone number.", exception.message)
+
+            coVerify { configurationDataSource.get().pciUrl }
+            coVerify {
+                remoteMetadataDataSource.execute(
+                    BaseRemoteHostRequest(
+                        host = pciUrl,
+                        data = phoneNumber,
+                    ),
+                )
+            }
         }
-    }
 }

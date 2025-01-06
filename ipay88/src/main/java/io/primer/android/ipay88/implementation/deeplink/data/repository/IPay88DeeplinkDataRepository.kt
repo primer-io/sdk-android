@@ -6,9 +6,8 @@ import io.primer.android.ipay88.implementation.deeplink.domain.repository.IPay88
 import io.primer.android.paymentmethods.common.utils.Constants
 
 internal class IPay88DeeplinkDataRepository(
-    private val applicationIdProvider: BaseDataProvider<String>
+    private val applicationIdProvider: BaseDataProvider<String>,
 ) : IPay88DeeplinkRepository {
-
     override fun getDeeplinkUrl(): String {
         return Uri.Builder()
             .scheme(Constants.PRIMER_REDIRECT_SCHEMA)

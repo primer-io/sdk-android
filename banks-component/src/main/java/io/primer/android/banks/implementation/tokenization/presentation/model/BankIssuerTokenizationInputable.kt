@@ -6,5 +6,5 @@ import io.primer.android.payments.core.tokenization.presentation.composable.Toke
 internal data class BankIssuerTokenizationInputable(
     override val paymentMethodType: String,
     override val primerSessionIntent: PrimerSessionIntent,
-    val bankIssuer: String
+    val bankIssuer: String,
 ) : TokenizationInputable

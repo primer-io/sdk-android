@@ -12,5 +12,5 @@ import io.primer.android.configuration.data.model.CardNetwork
 data class PrimerCardNetwork(
     val network: CardNetwork.Type,
     val displayName: String,
-    val allowed: Boolean
+    val allowed: Boolean,
 )

@@ -5,7 +5,6 @@ import io.primer.android.core.data.datasource.BaseCacheDataSource
 
 internal class LocalIssuingBankDataSource :
     BaseCacheDataSource<List<IssuingBankDataResponse>, List<IssuingBankDataResponse>> {
-
     private val issuersList = mutableListOf<IssuingBankDataResponse>()
 
     override fun get() = issuersList

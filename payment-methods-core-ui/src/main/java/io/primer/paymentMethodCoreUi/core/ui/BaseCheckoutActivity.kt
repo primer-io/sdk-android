@@ -20,7 +20,7 @@ open class BaseCheckoutActivity : AppCompatActivity(), DISdkComponent {
 
         if (savedInstanceState != null && DISdkContext.headlessSdkContainer?.containers.isNullOrEmpty()) {
             logReporter.warn(
-                "Finishing activity (hashcode ${hashCode()}) because headless container is null or empty"
+                "Finishing activity (hashcode ${hashCode()}) because headless container is null or empty",
             )
             finish()
         }

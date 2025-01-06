@@ -12,18 +12,19 @@ import kotlinx.coroutines.withContext
 class AnalyticsInteractor(
     private val analyticsRepository: AnalyticsRepository,
     private val logReporter: LogReporter,
-    override val dispatcher: CoroutineDispatcher = Dispatchers.IO
+    override val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : BaseSuspendInteractor<Unit, BaseAnalyticsParams>() {
+    suspend fun startObservingEvents() =
+        withContext(dispatcher) {
+            analyticsRepository.startObservingEvents()
+        }
 
-    suspend fun startObservingEvents() = withContext(dispatcher) {
-        analyticsRepository.startObservingEvents()
-    }
-
-    override suspend fun performAction(params: BaseAnalyticsParams): Result<Unit> = runSuspendCatching {
-        analyticsRepository.addEvent(params)
-    }.onFailure {
-        logReporter.warn(ANALYTICS_ERROR)
-    }
+    override suspend fun performAction(params: BaseAnalyticsParams): Result<Unit> =
+        runSuspendCatching {
+            analyticsRepository.addEvent(params)
+        }.onFailure {
+            logReporter.warn(ANALYTICS_ERROR)
+        }
 
     fun send() = analyticsRepository.send()
 

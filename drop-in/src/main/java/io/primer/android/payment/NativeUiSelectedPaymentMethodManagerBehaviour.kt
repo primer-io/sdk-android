@@ -9,9 +9,8 @@ import io.primer.android.paymentMethods.PaymentMethodBehaviour
 
 internal class NativeUiSelectedPaymentMethodManagerBehaviour(
     @get:VisibleForTesting val paymentMethodType: String,
-    @get:VisibleForTesting val sessionIntent: PrimerSessionIntent
+    @get:VisibleForTesting val sessionIntent: PrimerSessionIntent,
 ) : PaymentMethodBehaviour {
-
     fun execute(context: AppCompatActivity): PrimerHeadlessUniversalCheckoutNativeUiManagerInterface =
         PrimerHeadlessUniversalCheckoutNativeUiManager.newInstance(paymentMethodType)
             .also { manager -> manager.showPaymentMethod(context = context, sessionIntent = sessionIntent) }

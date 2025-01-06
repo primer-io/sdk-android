@@ -13,7 +13,6 @@ import android.util.TypedValue.COMPLEX_UNIT_SP
 import io.primer.android.R
 
 internal class TextDrawable(private val res: Resources, private val text: String) : Drawable() {
-
     private val mPaint: Paint = Paint(Paint.ANTI_ALIAS_FLAG)
 
     init {
@@ -36,7 +35,7 @@ internal class TextDrawable(private val res: Resources, private val text: String
             text,
             (width / 2).toFloat(),
             height / 2 - (mPaint.descent() + mPaint.ascent()) / 2,
-            mPaint
+            mPaint,
         )
 
         canvas.restoreToCount(count)

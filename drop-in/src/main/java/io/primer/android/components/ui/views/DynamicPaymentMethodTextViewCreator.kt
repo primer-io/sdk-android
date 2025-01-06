@@ -9,24 +9,27 @@ import android.view.View
 import android.view.ViewGroup
 import io.primer.android.components.ui.assets.PrimerPaymentMethodAsset
 import io.primer.android.components.ui.extensions.get
-import io.primer.android.ui.settings.PrimerTheme
 import io.primer.android.configuration.data.model.IconPosition
 import io.primer.android.databinding.PrimerPaymentMethodTextButtonBinding
 import io.primer.android.payment.config.TextDisplayMetadata
 import io.primer.android.payment.utils.ButtonViewHelper
+import io.primer.android.ui.settings.PrimerTheme
 
 internal class DynamicPaymentMethodTextViewCreator(
     private val theme: PrimerTheme,
     private val displayMetadata: TextDisplayMetadata,
-    private val paymentMethodAsset: PrimerPaymentMethodAsset
+    private val paymentMethodAsset: PrimerPaymentMethodAsset,
 ) : PaymentMethodViewCreator {
-
-    override fun create(context: Context, container: ViewGroup?): View {
-        val binding = PrimerPaymentMethodTextButtonBinding.inflate(
-            LayoutInflater.from(context),
-            container,
-            false
-        )
+    override fun create(
+        context: Context,
+        container: ViewGroup?,
+    ): View {
+        val binding =
+            PrimerPaymentMethodTextButtonBinding.inflate(
+                LayoutInflater.from(context),
+                container,
+                false,
+            )
         binding.apply {
             val content = ButtonViewHelper.generateButtonContent(context, theme, displayMetadata)
             displayMetadata.backgroundColor?.let {
@@ -37,17 +40,18 @@ internal class DynamicPaymentMethodTextViewCreator(
             paymentMethodParent.contentDescription = displayMetadata.name
             paymentMethodButtonText.text = displayMetadata.text
             paymentMethodButtonText.setTextColor(Color.parseColor(displayMetadata.textColor))
-            val paymentMethodLogo = displayMetadata.imageColor?.let { imageColor ->
-                paymentMethodAsset.paymentMethodLogo.get(
-                    imageColor = imageColor
-                )
-            }
+            val paymentMethodLogo =
+                displayMetadata.imageColor?.let { imageColor ->
+                    paymentMethodAsset.paymentMethodLogo.get(
+                        imageColor = imageColor,
+                    )
+                }
             displayMetadata.iconPosition?.apply {
                 paymentMethodButtonText.setCompoundDrawablesRelativeWithIntrinsicBounds(
                     if (this == IconPosition.START) paymentMethodLogo else null,
                     if (this == IconPosition.ABOVE) paymentMethodLogo else null,
                     if (this == IconPosition.END) paymentMethodLogo else null,
-                    if (this == IconPosition.BELOW) paymentMethodLogo else null
+                    if (this == IconPosition.BELOW) paymentMethodLogo else null,
                 )
             }
         }

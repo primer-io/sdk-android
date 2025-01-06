@@ -8,11 +8,10 @@ import io.primer.cardShared.binData.data.model.CardNetworkDataResponse
 
 class RemoteCardBinMetadataDataSource(private val httpClient: PrimerHttpClient) :
     BaseSuspendDataSource<List<CardNetworkDataResponse>, BaseRemoteHostRequest<String>> {
-
     override suspend fun execute(input: BaseRemoteHostRequest<String>): List<CardNetworkDataResponse> {
         val bin = input.data
         return httpClient.suspendGet<CardBinMetadataDataNetworksResponse>(
-            "${input.host}/v1/bin-data/$bin/networks"
+            "${input.host}/v1/bin-data/$bin/networks",
         ).body.networks
     }
 }

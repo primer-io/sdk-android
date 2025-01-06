@@ -5,7 +5,6 @@ import android.view.View
 import android.view.inputmethod.InputMethodManager
 
 object FieldFocuser {
-
     fun focus(view: View?) {
         view?.let {
             val imm =

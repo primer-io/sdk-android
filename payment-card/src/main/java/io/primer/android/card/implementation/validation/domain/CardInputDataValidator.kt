@@ -14,21 +14,21 @@ import io.primer.cardShared.validation.domain.CardNumberValidator
 import io.primer.cardShared.validation.domain.CardholderNameValidator
 
 internal class CardInputDataValidator(
-    private val checkoutModuleRepository: CheckoutModuleRepository
+    private val checkoutModuleRepository: CheckoutModuleRepository,
 ) : PaymentInputDataValidator<PrimerCardData>, DISdkComponent {
-
     override suspend fun validate(rawData: PrimerCardData): List<PrimerInputValidationError> {
         val shouldValidateCardHolderName = checkoutModuleRepository.getCardInformation().isCardHolderNameEnabled()
 
-        val validators = mutableListOf(
-            CardNumberValidator(metadataCacheHelper = resolve()).validate(rawData.cardNumber.removeSpaces()),
-            CardExpiryDateValidator().run {
-                validate(rawData.expiryDate)
-            },
-            CardCvvValidator(metadataCacheHelper = resolve()).run {
-                validate(CvvData(rawData.cvv, rawData.cardNumber.removeSpaces()))
-            }
-        )
+        val validators =
+            mutableListOf(
+                CardNumberValidator(metadataCacheHelper = resolve()).validate(rawData.cardNumber.removeSpaces()),
+                CardExpiryDateValidator().run {
+                    validate(rawData.expiryDate)
+                },
+                CardCvvValidator(metadataCacheHelper = resolve()).run {
+                    validate(CvvData(rawData.cvv, rawData.cardNumber.removeSpaces()))
+                },
+            )
 
         if (shouldValidateCardHolderName) {
             validators.add(CardholderNameValidator().validate(rawData.cardHolderName))

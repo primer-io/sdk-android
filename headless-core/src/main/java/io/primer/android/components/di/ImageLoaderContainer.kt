@@ -11,12 +11,11 @@ import okhttp3.OkHttpClient
 import java.io.File
 
 internal class ImageLoaderContainer(private val sdk: () -> SdkContainer) : DependencyContainer() {
-
     override fun registerInitialDependencies() {
         registerSingleton(IMAGE_LOADING_CLIENT_NAME) {
             Cache(
                 File(sdk().resolve<Context>().cacheDir, CACHE_DIRECTORY),
-                MAX_CACHE_SIZE_MB
+                MAX_CACHE_SIZE_MB,
             )
         }
 

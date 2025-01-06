@@ -33,28 +33,30 @@ class SdkAnalyticsErrorLoggingDelegateTest {
     }
 
     @Test
-    fun `logSdkAnalyticsErrors should log MessageAnalyticsParams via AnalyticsInteractor when called`() = runTest {
-        val context = ErrorContextParams("errorId", "paymentMethodType")
-        val primerError = mockk<PrimerError> {
-            every { errorId } returns "errorId"
-            every { description } returns "description"
-            every { diagnosticsId } returns "diagnosticsId"
-            every { this@mockk.context } returns context
-        }
-        coEvery { analyticsInteractor(any()) } returns Result.success(Unit)
+    fun `logSdkAnalyticsErrors should log MessageAnalyticsParams via AnalyticsInteractor when called`() =
+        runTest {
+            val context = ErrorContextParams("errorId", "paymentMethodType")
+            val primerError =
+                mockk<PrimerError> {
+                    every { errorId } returns "errorId"
+                    every { description } returns "description"
+                    every { diagnosticsId } returns "diagnosticsId"
+                    every { this@mockk.context } returns context
+                }
+            coEvery { analyticsInteractor(any()) } returns Result.success(Unit)
 
-        delegate.logSdkAnalyticsErrors(primerError)
+            delegate.logSdkAnalyticsErrors(primerError)
 
-        coVerify(exactly = 1) {
-            analyticsInteractor(
-                MessageAnalyticsParams(
-                    messageType = MessageType.ERROR,
-                    message = "description",
-                    severity = Severity.ERROR,
-                    diagnosticsId = "diagnosticsId",
-                    context = context
+            coVerify(exactly = 1) {
+                analyticsInteractor(
+                    MessageAnalyticsParams(
+                        messageType = MessageType.ERROR,
+                        message = "description",
+                        severity = Severity.ERROR,
+                        diagnosticsId = "diagnosticsId",
+                        context = context,
+                    ),
                 )
-            )
+            }
         }
-    }
 }

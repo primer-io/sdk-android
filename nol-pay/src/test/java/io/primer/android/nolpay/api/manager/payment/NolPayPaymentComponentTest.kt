@@ -7,6 +7,7 @@ import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
 import io.primer.android.components.domain.error.PrimerValidationError
 import io.primer.android.components.manager.core.composable.PrimerValidationStatus
+import io.primer.android.domain.tokenization.models.PrimerPaymentMethodTokenData
 import io.primer.android.errors.domain.ErrorMapperRegistry
 import io.primer.android.nolpay.InstantExecutorExtension
 import io.primer.android.nolpay.api.manager.analytics.NolPayAnalyticsConstants
@@ -23,7 +24,6 @@ import io.primer.android.paymentmethods.analytics.delegate.SdkAnalyticsErrorLogg
 import io.primer.android.paymentmethods.analytics.delegate.SdkAnalyticsValidationErrorLoggingDelegate
 import io.primer.android.paymentmethods.common.data.model.PaymentMethodType
 import io.primer.android.payments.core.create.domain.model.PaymentDecision
-import io.primer.android.domain.tokenization.models.PrimerPaymentMethodTokenData
 import io.primer.nolpay.api.exceptions.NolPaySdkException
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -39,7 +39,6 @@ import kotlin.time.Duration.Companion.seconds
 @OptIn(ExperimentalCoroutinesApi::class)
 @ExtendWith(InstantExecutorExtension::class, MockKExtension::class)
 internal class NolPayPaymentComponentTest {
-
     @RelaxedMockK
     lateinit var baseNolPayDelegate: BaseNolPayDelegate
 
@@ -68,16 +67,17 @@ internal class NolPayPaymentComponentTest {
 
     @BeforeEach
     fun setUp() {
-        component = NolPayPaymentComponent(
-            baseNolPayDelegate = baseNolPayDelegate,
-            tokenizationDelegate = tokenizationDelegate,
-            paymentDelegate = paymentDelegate,
-            eventLoggingDelegate = eventLoggingDelegate,
-            errorLoggingDelegate = errorLoggingDelegate,
-            validationErrorLoggingDelegate = validationErrorLoggingDelegate,
-            validatorRegistry = dataValidatorRegistry,
-            errorMapperRegistry = errorMapperRegistry
-        )
+        component =
+            NolPayPaymentComponent(
+                baseNolPayDelegate = baseNolPayDelegate,
+                tokenizationDelegate = tokenizationDelegate,
+                paymentDelegate = paymentDelegate,
+                eventLoggingDelegate = eventLoggingDelegate,
+                errorLoggingDelegate = errorLoggingDelegate,
+                validationErrorLoggingDelegate = validationErrorLoggingDelegate,
+                validatorRegistry = dataValidatorRegistry,
+                errorMapperRegistry = errorMapperRegistry,
+            )
 
         coEvery { paymentDelegate.componentStep } returns MutableSharedFlow()
     }
@@ -94,7 +94,7 @@ internal class NolPayPaymentComponentTest {
             eventLoggingDelegate.logSdkAnalyticsEvent(
                 PaymentMethodType.NOL_PAY.name,
                 NolPayAnalyticsConstants.PAYMENT_START_METHOD,
-                hashMapOf()
+                hashMapOf(),
             )
         }
     }
@@ -107,7 +107,7 @@ internal class NolPayPaymentComponentTest {
             component.start()
             assertEquals(
                 NolPayPaymentStep.CollectCardAndPhoneData,
-                component.componentStep.first()
+                component.componentStep.first(),
             )
         }
 
@@ -128,7 +128,7 @@ internal class NolPayPaymentComponentTest {
         coVerify { errorMapperRegistry.getPrimerError(exception) }
         coVerify {
             errorLoggingDelegate.logSdkAnalyticsErrors(
-                errorMapperRegistry.getPrimerError(exception)
+                errorMapperRegistry.getPrimerError(exception),
             )
         }
     }
@@ -146,7 +146,7 @@ internal class NolPayPaymentComponentTest {
         coVerify {
             eventLoggingDelegate.logSdkAnalyticsEvent(
                 PaymentMethodType.NOL_PAY.name,
-                NolPayAnalyticsConstants.PAYMENT_UPDATE_COLLECTED_DATA_METHOD
+                NolPayAnalyticsConstants.PAYMENT_UPDATE_COLLECTED_DATA_METHOD,
             )
         }
     }
@@ -163,9 +163,9 @@ internal class NolPayPaymentComponentTest {
             assertEquals(
                 listOf(
                     PrimerValidationStatus.Validating(collectableData),
-                    PrimerValidationStatus.Valid(collectableData)
+                    PrimerValidationStatus.Valid(collectableData),
                 ),
-                validationStatuses
+                validationStatuses,
             )
         }
 
@@ -184,9 +184,9 @@ internal class NolPayPaymentComponentTest {
             assertEquals(
                 listOf(
                     PrimerValidationStatus.Validating(collectableData),
-                    PrimerValidationStatus.Invalid(listOf(validationError), collectableData)
+                    PrimerValidationStatus.Invalid(listOf(validationError), collectableData),
                 ),
-                validationStatuses
+                validationStatuses,
             )
         }
 
@@ -210,10 +210,10 @@ internal class NolPayPaymentComponentTest {
                     PrimerValidationStatus.Validating(collectableData),
                     PrimerValidationStatus.Error(
                         errorMapperRegistry.getPrimerError(exception),
-                        collectableData
-                    )
+                        collectableData,
+                    ),
                 ),
-                validationStatuses
+                validationStatuses,
             )
         }
 
@@ -233,7 +233,7 @@ internal class NolPayPaymentComponentTest {
             eventLoggingDelegate.logSdkAnalyticsEvent(
                 PaymentMethodType.NOL_PAY.name,
                 NolPayAnalyticsConstants.PAYMENT_SUBMIT_DATA_METHOD,
-                hashMapOf()
+                hashMapOf(),
             )
         }
     }
@@ -247,9 +247,9 @@ internal class NolPayPaymentComponentTest {
 
         coEvery {
             dataValidatorRegistry.getValidator(
-                collectableData
+                collectableData,
             ).validate(
-                collectableData
+                collectableData,
             )
         } returns Result.success(emptyList<PrimerValidationError>())
 
@@ -271,7 +271,7 @@ internal class NolPayPaymentComponentTest {
         coVerify(exactly = 0) { errorMapperRegistry.getPrimerError(any()) }
         coVerify(exactly = 0) {
             errorLoggingDelegate.logSdkAnalyticsErrors(
-                errorMapperRegistry.getPrimerError(any())
+                errorMapperRegistry.getPrimerError(any()),
             )
         }
     }
@@ -285,9 +285,9 @@ internal class NolPayPaymentComponentTest {
 
         coEvery {
             dataValidatorRegistry.getValidator(
-                collectableData
+                collectableData,
             ).validate(
-                collectableData
+                collectableData,
             )
         } returns Result.success(emptyList<PrimerValidationError>())
 
@@ -309,7 +309,7 @@ internal class NolPayPaymentComponentTest {
         coVerify(exactly = 0) { errorMapperRegistry.getPrimerError(exception) }
         coVerify(exactly = 0) {
             errorLoggingDelegate.logSdkAnalyticsErrors(
-                errorMapperRegistry.getPrimerError(exception)
+                errorMapperRegistry.getPrimerError(exception),
             )
         }
     }
@@ -321,9 +321,9 @@ internal class NolPayPaymentComponentTest {
 
         coEvery {
             dataValidatorRegistry.getValidator(
-                collectableData
+                collectableData,
             ).validate(
-                collectableData
+                collectableData,
             )
         } returns Result.success(emptyList<PrimerValidationError>())
 
@@ -341,7 +341,7 @@ internal class NolPayPaymentComponentTest {
         coVerify(exactly = 0) { errorMapperRegistry.getPrimerError(exception) }
         coVerify(exactly = 0) {
             errorLoggingDelegate.logSdkAnalyticsErrors(
-                errorMapperRegistry.getPrimerError(exception)
+                errorMapperRegistry.getPrimerError(exception),
             )
         }
     }
@@ -353,9 +353,9 @@ internal class NolPayPaymentComponentTest {
 
         coEvery {
             dataValidatorRegistry.getValidator(
-                collectableData
+                collectableData,
             ).validate(
-                collectableData
+                collectableData,
             )
         } returns Result.success(emptyList<PrimerValidationError>())
 
@@ -372,7 +372,7 @@ internal class NolPayPaymentComponentTest {
         coVerify { errorMapperRegistry.getPrimerError(exception) }
         coVerify {
             errorLoggingDelegate.logSdkAnalyticsErrors(
-                errorMapperRegistry.getPrimerError(exception)
+                errorMapperRegistry.getPrimerError(exception),
             )
         }
     }
@@ -383,9 +383,9 @@ internal class NolPayPaymentComponentTest {
 
         coEvery {
             dataValidatorRegistry.getValidator(
-                collectableData
+                collectableData,
             ).validate(
-                collectableData
+                collectableData,
             )
         } returns Result.success(emptyList<PrimerValidationError>())
 

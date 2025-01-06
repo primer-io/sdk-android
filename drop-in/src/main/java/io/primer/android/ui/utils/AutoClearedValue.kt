@@ -10,42 +10,56 @@ import kotlin.reflect.KProperty
 
 internal class AutoClearedValue<T : Any>(
     fragment: Fragment,
-    private val initializer: (() -> T)?
+    private val initializer: (() -> T)?,
 ) : ReadWriteProperty<Fragment, T> {
-
+    @Suppress("ktlint:standard:property-naming")
     private var _value: T? = null
 
     init {
-        fragment.lifecycle.addObserver(object : LifecycleEventObserver {
-            val viewLifecycleOwnerObserver = Observer<LifecycleOwner?> { viewLifecycleOwner ->
+        fragment.lifecycle.addObserver(
+            object : LifecycleEventObserver {
+                val viewLifecycleOwnerObserver =
+                    Observer<LifecycleOwner?> { viewLifecycleOwner ->
 
-                viewLifecycleOwner?.lifecycle?.addObserver(object : LifecycleEventObserver {
-                    override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
-                        when (event) {
-                            Lifecycle.Event.ON_DESTROY -> _value = null
-                            else -> Unit
-                        }
+                        viewLifecycleOwner?.lifecycle?.addObserver(
+                            object : LifecycleEventObserver {
+                                override fun onStateChanged(
+                                    source: LifecycleOwner,
+                                    event: Lifecycle.Event,
+                                ) {
+                                    when (event) {
+                                        Lifecycle.Event.ON_DESTROY -> _value = null
+                                        else -> Unit
+                                    }
+                                }
+                            },
+                        )
                     }
-                })
-            }
 
-            override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
-                when (event) {
-                    Lifecycle.Event.ON_CREATE ->
-                        fragment.viewLifecycleOwnerLiveData.observeForever(
-                            viewLifecycleOwnerObserver
-                        )
-                    Lifecycle.Event.ON_DESTROY ->
-                        fragment.viewLifecycleOwnerLiveData.removeObserver(
-                            viewLifecycleOwnerObserver
-                        )
-                    else -> Unit
+                override fun onStateChanged(
+                    source: LifecycleOwner,
+                    event: Lifecycle.Event,
+                ) {
+                    when (event) {
+                        Lifecycle.Event.ON_CREATE ->
+                            fragment.viewLifecycleOwnerLiveData.observeForever(
+                                viewLifecycleOwnerObserver,
+                            )
+                        Lifecycle.Event.ON_DESTROY ->
+                            fragment.viewLifecycleOwnerLiveData.removeObserver(
+                                viewLifecycleOwnerObserver,
+                            )
+                        else -> Unit
+                    }
                 }
-            }
-        })
+            },
+        )
     }
 
-    override fun getValue(thisRef: Fragment, property: KProperty<*>): T {
+    override fun getValue(
+        thisRef: Fragment,
+        property: KProperty<*>,
+    ): T {
         val value = _value
 
         if (value != null) {
@@ -56,16 +70,20 @@ internal class AutoClearedValue<T : Any>(
         ) {
             return initializer?.invoke().also { _value = it }
                 ?: throw IllegalStateException(
-                    "The value has not yet been set or no default initializer provided"
+                    "The value has not yet been set or no default initializer provided",
                 )
         } else {
             throw IllegalStateException(
-                "Fragment might have been destroyed or not initialized yet"
+                "Fragment might have been destroyed or not initialized yet",
             )
         }
     }
 
-    override fun setValue(thisRef: Fragment, property: KProperty<*>, value: T) {
+    override fun setValue(
+        thisRef: Fragment,
+        property: KProperty<*>,
+        value: T,
+    ) {
         _value = value
     }
 }

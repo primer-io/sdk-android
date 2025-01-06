@@ -10,12 +10,11 @@ import io.primer.android.core.di.DependencyContainer
 import io.primer.android.core.di.SdkContainer
 
 internal class AssetManagerContainer(private val sdk: () -> SdkContainer) : DependencyContainer() {
-
     override fun registerInitialDependencies() {
         registerSingleton<PaymentMethodImplementationRepository> {
             PaymentMethodImplementationDataRepository(
                 sdk().resolve(ConfigurationCoreContainer.CACHED_CONFIGURATION_DI_KEY),
-                sdk().resolve()
+                sdk().resolve(),
             )
         }
 
@@ -33,7 +32,7 @@ internal class AssetManagerContainer(private val sdk: () -> SdkContainer) : Depe
                 sdk().resolve(),
                 sdk().resolve(),
                 sdk().resolve(),
-                sdk().resolve()
+                sdk().resolve(),
             )
         }
     }

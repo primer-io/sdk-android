@@ -14,19 +14,22 @@ import io.primer.android.data.settings.internal.PrimerConfig
 
 internal class ActionUpdateFilter(
     private val configurationRepository: ConfigurationRepository,
-    private val config: PrimerConfig
+    private val config: PrimerConfig,
 ) {
-
     fun filter(updateParams: BaseActionUpdateParams): Boolean {
         return when (updateParams) {
             is ActionUpdateSelectPaymentMethodParams,
-            is ActionUpdateUnselectPaymentMethodParams ->
+            is ActionUpdateUnselectPaymentMethodParams,
+            ->
                 configurationRepository.getConfiguration().let {
                     config.intent.paymentMethodIntent.isVault ||
                         it.clientSession.clientSessionDataResponse
                             .paymentMethod
                             ?.surcharges.orEmpty()
-                            .all { item -> item.value == 0 } // TODO: only consider currently available payment methods as an optimization
+                            .all {
+                                    item ->
+                                item.value == 0
+                            } // TODO: only consider currently available payment methods as an optimization
                 }
 
             is ActionUpdateBillingAddressParams,
@@ -34,7 +37,8 @@ internal class ActionUpdateFilter(
             is ActionUpdateMobileNumberParams,
             is ActionUpdateShippingAddressParams,
             is ActionUpdateShippingOptionIdParams,
-            is ActionUpdateEmailAddressParams -> false
+            is ActionUpdateEmailAddressParams,
+            -> false
         }
     }
 }

@@ -10,34 +10,36 @@ import io.primer.android.vouchers.retailOutlets.implementation.tokenization.doma
 import org.junit.jupiter.api.Test
 
 internal class RetailOutletsTokenizationParamsMapperTest {
-
     private val mapper = RetailOutletsTokenizationParamsMapper()
 
     @Test
     fun `map should correctly map TokenizationParams to TokenizationRequestV2`() {
         // Given
         val paymentMethodType = "multibanco"
-        val paymentInstrumentParams = RetailOutletsPaymentInstrumentParams(
-            paymentMethodType = paymentMethodType,
-            paymentMethodConfigId = "testPaymentMethodConfigId",
-            locale = "testLocale",
-            retailOutlet = "testRetailOutlet"
-        )
+        val paymentInstrumentParams =
+            RetailOutletsPaymentInstrumentParams(
+                paymentMethodType = paymentMethodType,
+                paymentMethodConfigId = "testPaymentMethodConfigId",
+                locale = "testLocale",
+                retailOutlet = "testRetailOutlet",
+            )
         val sessionIntent = PrimerSessionIntent.CHECKOUT
         val tokenizationParams = TokenizationParams(paymentInstrumentParams, sessionIntent)
 
         // When
         val result = mapper.map(tokenizationParams)
 
-        val instrumentRequest = RetailOutletsPaymentInstrumentDataRequest(
-            paymentMethodType = paymentMethodType,
-            paymentMethodConfigId = "testPaymentMethodConfigId",
-            sessionInfo = RetailOutletsSessionInfoDataRequest(
-                locale = "testLocale",
-                retailerOutlet = "testRetailOutlet"
-            ),
-            type = PaymentInstrumentType.OFF_SESSION_PAYMENT
-        )
+        val instrumentRequest =
+            RetailOutletsPaymentInstrumentDataRequest(
+                paymentMethodType = paymentMethodType,
+                paymentMethodConfigId = "testPaymentMethodConfigId",
+                sessionInfo =
+                    RetailOutletsSessionInfoDataRequest(
+                        locale = "testLocale",
+                        retailerOutlet = "testRetailOutlet",
+                    ),
+                type = PaymentInstrumentType.OFF_SESSION_PAYMENT,
+            )
 
         // Then
         val expectedRequest = instrumentRequest.toTokenizationRequest(sessionIntent)

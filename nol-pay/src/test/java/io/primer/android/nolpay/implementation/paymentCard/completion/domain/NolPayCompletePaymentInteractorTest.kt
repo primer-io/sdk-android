@@ -15,7 +15,6 @@ import org.junit.jupiter.api.extension.ExtendWith
 @ExperimentalCoroutinesApi
 @ExtendWith(MockKExtension::class)
 internal class NolPayCompletePaymentInteractorTest {
-
     private lateinit var interactor: NolPayCompletePaymentInteractor
     private val completePaymentRepository: NolPayCompletePaymentRepository = mockk()
 
@@ -25,35 +24,37 @@ internal class NolPayCompletePaymentInteractorTest {
     }
 
     @Test
-    fun `performAction should call completePayment with correct params`() = runTest {
-        // Given
-        val completeUrl = "https://example.com/complete"
-        val params = NolPayCompletePaymentParams(completeUrl)
+    fun `performAction should call completePayment with correct params`() =
+        runTest {
+            // Given
+            val completeUrl = "https://example.com/complete"
+            val params = NolPayCompletePaymentParams(completeUrl)
 
-        coEvery { completePaymentRepository.completePayment(completeUrl) } returns Result.success(Unit)
+            coEvery { completePaymentRepository.completePayment(completeUrl) } returns Result.success(Unit)
 
-        // When
-        interactor(params)
+            // When
+            interactor(params)
 
-        // Then
-        coVerify(exactly = 1) { completePaymentRepository.completePayment(completeUrl) }
-    }
+            // Then
+            coVerify(exactly = 1) { completePaymentRepository.completePayment(completeUrl) }
+        }
 
     @Test
-    fun `performAction should handle exception from completePayment`() = runTest {
-        // Given
-        val completeUrl = "https://example.com/complete"
-        val params = NolPayCompletePaymentParams(completeUrl)
-        val exception = Exception("Unexpected error")
+    fun `performAction should handle exception from completePayment`() =
+        runTest {
+            // Given
+            val completeUrl = "https://example.com/complete"
+            val params = NolPayCompletePaymentParams(completeUrl)
+            val exception = Exception("Unexpected error")
 
-        coEvery { completePaymentRepository.completePayment(completeUrl) } returns Result.failure(exception)
+            coEvery { completePaymentRepository.completePayment(completeUrl) } returns Result.failure(exception)
 
-        // When/Then
-        val result = interactor(params)
+            // When/Then
+            val result = interactor(params)
 
-        assert(result.isFailure)
-        assert(result.exceptionOrNull() == exception)
+            assert(result.isFailure)
+            assert(result.exceptionOrNull() == exception)
 
-        coVerify(exactly = 1) { completePaymentRepository.completePayment(completeUrl) }
-    }
+            coVerify(exactly = 1) { completePaymentRepository.completePayment(completeUrl) }
+        }
 }

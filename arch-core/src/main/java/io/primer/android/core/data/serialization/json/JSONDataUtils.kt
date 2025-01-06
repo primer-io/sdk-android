@@ -4,7 +4,6 @@ import org.json.JSONArray
 import org.json.JSONObject
 
 object JSONDataUtils {
-
     fun stringToJsonData(jsonString: String): JSONData {
         return if (runCatching { JSONObject(jsonString) }.getOrNull() != null) {
             JSONData.JSONObjectData(JSONObject(jsonString))
@@ -15,6 +14,7 @@ object JSONDataUtils {
 
     sealed class JSONData {
         data class JSONObjectData(val json: JSONObject) : JSONData()
+
         data class JSONArrayData(val json: JSONArray) : JSONData()
     }
 }

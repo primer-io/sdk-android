@@ -49,8 +49,7 @@ internal class SelectPaymentMethodFragment : Fragment(), DISdkComponent {
         val TAG = SelectPaymentMethodFragment::class.simpleName
 
         @JvmStatic
-        fun newInstance() =
-            SelectPaymentMethodFragment()
+        fun newInstance() = SelectPaymentMethodFragment()
     }
 
     private val localConfig: PrimerConfig by inject()
@@ -58,20 +57,23 @@ internal class SelectPaymentMethodFragment : Fragment(), DISdkComponent {
     private val methodViewFactory: PrimerPaymentMethodViewFactory by inject()
 
     private val primerViewModel: PrimerViewModel by
-    activityViewModel<PrimerViewModel, PrimerViewModelFactory>()
+        activityViewModel<PrimerViewModel, PrimerViewModelFactory>()
 
     private var binding: FragmentSelectPaymentMethodBinding by autoCleaned()
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
         binding = FragmentSelectPaymentMethodBinding.inflate(inflater, container, false)
         return binding.root
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onViewCreated(
+        view: View,
+        savedInstanceState: Bundle?,
+    ) {
         super.onViewCreated(view, savedInstanceState)
 
         addOnBackPressedCallback()
@@ -105,9 +107,9 @@ internal class SelectPaymentMethodFragment : Fragment(), DISdkComponent {
     }
 
     /*
-    *
-    * title
-    * */
+     *
+     * title
+     * */
     private fun renderTitle() {
         val context = requireContext()
         val textColor = theme.titleText.defaultColor.getColor(context, theme.isDarkMode)
@@ -116,10 +118,6 @@ internal class SelectPaymentMethodFragment : Fragment(), DISdkComponent {
         binding.choosePaymentMethodLabel.setTextSize(TypedValue.COMPLEX_UNIT_PX, fontSize)
     }
 
-    /*
-    *
-    * amount label
-    * */
     // show title label that displays total amount minus any applies surcharges
     private fun renderAmountLabel() {
         binding.primerSheetTitleLayout.apply {
@@ -129,9 +127,9 @@ internal class SelectPaymentMethodFragment : Fragment(), DISdkComponent {
     }
 
     /*
-    *
-    * subtitles
-    * */
+     *
+     * subtitles
+     * */
     private fun renderSubtitles() {
         val context = requireContext()
         val color = theme.subtitleText.defaultColor.getColor(context, theme.isDarkMode)
@@ -143,9 +141,9 @@ internal class SelectPaymentMethodFragment : Fragment(), DISdkComponent {
     }
 
     /*
-    *
-    * saved payment method item
-    * */
+     *
+     * saved payment method item
+     * */
     private fun renderSavedPaymentMethodItem() {
         val context = requireContext()
         val contentDrawable = generateButtonContent(context, theme)
@@ -164,21 +162,23 @@ internal class SelectPaymentMethodFragment : Fragment(), DISdkComponent {
     }
 
     /*
-    *
-    * pay button
-    * */
+     *
+     * pay button
+     * */
 
-    private fun renderPayButton() = binding.payAllButton.apply {
-        isEnabled = true
-        setTheme(theme)
-        setOnClickListener { onPayButtonPressed() }
-    }
-
-    private fun getParentDialogOrNull() = ((parentFragment as? DialogFragment)?.dialog as? ComponentDialog).also {
-        if (it == null) {
-            Log.e(TAG, "Error: expected ComponentDialog parent!")
+    private fun renderPayButton() =
+        binding.payAllButton.apply {
+            isEnabled = true
+            setTheme(theme)
+            setOnClickListener { onPayButtonPressed() }
         }
-    }
+
+    private fun getParentDialogOrNull() =
+        ((parentFragment as? DialogFragment)?.dialog as? ComponentDialog).also {
+            if (it == null) {
+                Log.e(TAG, "Error: expected ComponentDialog parent!")
+            }
+        }
 
     private fun onPayButtonPressed() {
         binding.payAllButton.showProgress()
@@ -195,9 +195,9 @@ internal class SelectPaymentMethodFragment : Fragment(), DISdkComponent {
     }
 
     /*
-    *
-    * add listeners
-    * */
+     *
+     * add listeners
+     * */
 
     private fun addListeners() {
         // add listener for re-rendering based on session state
@@ -221,7 +221,7 @@ internal class SelectPaymentMethodFragment : Fragment(), DISdkComponent {
         primerViewModel.paymentMethods.observe(viewLifecycleOwner) { paymentMethods ->
             addPaymentMethodsToList(
                 paymentMethods,
-                primerViewModel.getPaymentMethodsDisplayMetadata(requireContext())
+                primerViewModel.getPaymentMethodsDisplayMetadata(requireContext()),
             )
         }
 
@@ -260,49 +260,51 @@ internal class SelectPaymentMethodFragment : Fragment(), DISdkComponent {
         binding.seeAllLabel.setTextColor(
             theme.systemText.defaultColor.getColor(
                 context,
-                theme.isDarkMode
-            )
+                theme.isDarkMode,
+            ),
         )
         val fontSize = theme.systemText.fontSize.getDimension(requireContext())
         binding.seeAllLabel.setTextSize(TypedValue.COMPLEX_UNIT_PX, fontSize)
     }
 
-    private fun setupUiForVaultModeIfNeeded() = when (localConfig.intent.paymentMethodIntent) {
-        PrimerSessionIntent.CHECKOUT -> Unit
-        PrimerSessionIntent.VAULT -> {
-            binding.primerSheetTitle.isVisible = false
-            binding.payAllButton.isVisible = false
-            binding.choosePaymentMethodLabel.text =
-                context?.getString(R.string.add_new_payment_method)
+    private fun setupUiForVaultModeIfNeeded() =
+        when (localConfig.intent.paymentMethodIntent) {
+            PrimerSessionIntent.CHECKOUT -> Unit
+            PrimerSessionIntent.VAULT -> {
+                binding.primerSheetTitle.isVisible = false
+                binding.payAllButton.isVisible = false
+                binding.choosePaymentMethodLabel.text =
+                    context?.getString(R.string.add_new_payment_method)
+            }
         }
-    }
 
     private fun addPaymentMethodsToList(
         paymentMethods: List<PaymentMethodDropInDescriptor>,
-        paymentMethodsDisplayMetadata: List<BaseDisplayMetadata>
+        paymentMethodsDisplayMetadata: List<BaseDisplayMetadata>,
     ) {
         val factory = primerViewModel.paymentMethodButtonGroupFactory
 
-        val boxes = factory.build(
-            requireContext(),
-            methodViewFactory,
-            paymentMethodsDisplayMetadata,
-            paymentMethods
-        ) { paymentMethod ->
-            // ensure other buttons can't be clicked
-            disableButtons()
+        val boxes =
+            factory.build(
+                requireContext(),
+                methodViewFactory,
+                paymentMethodsDisplayMetadata,
+                paymentMethods,
+            ) { paymentMethod ->
+                // ensure other buttons can't be clicked
+                disableButtons()
 
-            // select payment method
-            primerViewModel.selectPaymentMethod(paymentMethod)
+                // select payment method
+                primerViewModel.selectPaymentMethod(paymentMethod)
 
-            // handle non-form cases
-            paymentMethod.behaviours.firstOrNull()?.let {
-                val isNotForm = paymentMethod.uiType != PaymentMethodUiType.FORM
-                if (isNotForm) {
-                    primerViewModel.executeBehaviour(it)
+                // handle non-form cases
+                paymentMethod.behaviours.firstOrNull()?.let {
+                    val isNotForm = paymentMethod.uiType != PaymentMethodUiType.FORM
+                    if (isNotForm) {
+                        primerViewModel.executeBehaviour(it)
+                    }
                 }
             }
-        }
 
         boxes.forEachIndexed { i, box ->
             if (primerViewModel.surchargeDisabled) {
@@ -344,7 +346,8 @@ internal class SelectPaymentMethodFragment : Fragment(), DISdkComponent {
                 }
 
                 PaymentMethodType.PAYMENT_CARD.name,
-                PaymentMethodType.GOOGLE_PAY.name -> {
+                PaymentMethodType.GOOGLE_PAY.name,
+                -> {
                     val data = paymentMethod.paymentInstrumentData
                     titleLabel.text = data.cardholderName
                     val last4: Int =
@@ -381,7 +384,10 @@ internal class SelectPaymentMethodFragment : Fragment(), DISdkComponent {
         }
     }
 
-    private fun renderBankSavedPaymentMethodView(bankName: String?, lastFour: String) {
+    private fun renderBankSavedPaymentMethodView(
+        bankName: String?,
+        lastFour: String,
+    ) {
         binding.savedPaymentMethod.apply {
             listOf(titleLabel, lastFourLabel, expiryLabel).forEach { it.isVisible = false }
             with(bankNameLabel) {
@@ -395,9 +401,11 @@ internal class SelectPaymentMethodFragment : Fragment(), DISdkComponent {
         }
     }
 
-    private fun setCardIcon(network: String?) = binding.savedPaymentMethod.paymentMethodIcon.apply {
-        val resId = CardNetwork.Type.valueOrNull(network)?.getCardImageAsset(ImageColor.COLORED)
-            ?: R.drawable.ic_generic_card
-        setImageResource(resId)
-    }
+    private fun setCardIcon(network: String?) =
+        binding.savedPaymentMethod.paymentMethodIcon.apply {
+            val resId =
+                CardNetwork.Type.valueOrNull(network)?.getCardImageAsset(ImageColor.COLORED)
+                    ?: R.drawable.ic_generic_card
+            setImageResource(resId)
+        }
 }

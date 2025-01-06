@@ -64,15 +64,13 @@ class KlarnaComponent internal constructor(
     private val validationErrorLoggingDelegate: SdkAnalyticsValidationErrorLoggingDelegate,
     private val authorizationSessionDataDelegate: GetKlarnaAuthorizationSessionDataDelegate,
     private val errorMapperRegistry: ErrorMapperRegistry,
-    private val createKlarnaPaymentView:
-        (Context, String, KlarnaPaymentViewCallback, String) -> KlarnaPaymentView,
+    private val createKlarnaPaymentView: (Context, String, KlarnaPaymentViewCallback, String) -> KlarnaPaymentView,
     private val primerSettings: PrimerSettings,
-    private val primerSessionIntent: PrimerSessionIntent
+    private val primerSessionIntent: PrimerSessionIntent,
 ) : ViewModel(),
     PrimerHeadlessSteppable<KlarnaPaymentStep>,
     PrimerHeadlessCollectDataComponent<KlarnaPaymentCollectableData>,
     PrimerHeadlessStartable {
-
     @VisibleForTesting
     var klarnaSession: KlarnaSession? = null
 
@@ -84,126 +82,138 @@ class KlarnaComponent internal constructor(
     private val isMockedFlow
         get() = mockConfigurationDelegate.isMockedFlow()
 
-    private val klarnaPaymentViewCallback = object : KlarnaPaymentViewCallback {
-        override fun onAuthorized(
-            view: KlarnaPaymentView,
-            approved: Boolean,
-            authToken: String?,
-            finalizedRequired: Boolean?
-        ) {
-            isFinalizationRequired = finalizedRequired == true
-            if (approved) {
-                viewModelScope.launch {
-                    if (finalizedRequired != true && authToken != null) {
-                        runCatching {
-                            requireKlarnaSession().sessionId
-                        }
-                            .flatMap { sessionId ->
-                                tokenizationDelegate.tokenize(
-                                    KlarnaTokenizationInputable(
-                                        sessionId = sessionId,
-                                        authorizationToken = authToken,
-                                        paymentMethodType = PaymentMethodType.KLARNA.name,
-                                        primerSessionIntent = primerSessionIntent
+    private val klarnaPaymentViewCallback =
+        object : KlarnaPaymentViewCallback {
+            override fun onAuthorized(
+                view: KlarnaPaymentView,
+                approved: Boolean,
+                authToken: String?,
+                finalizedRequired: Boolean?,
+            ) {
+                isFinalizationRequired = finalizedRequired == true
+                if (approved) {
+                    viewModelScope.launch {
+                        if (finalizedRequired != true && authToken != null) {
+                            runCatching {
+                                requireKlarnaSession().sessionId
+                            }
+                                .flatMap { sessionId ->
+                                    tokenizationDelegate.tokenize(
+                                        KlarnaTokenizationInputable(
+                                            sessionId = sessionId,
+                                            authorizationToken = authToken,
+                                            paymentMethodType = PaymentMethodType.KLARNA.name,
+                                            primerSessionIntent = primerSessionIntent,
+                                        ),
                                     )
-                                )
-                                    .recoverCatching { throw CheckoutFailureException(it) }
-                                    .onFailure { paymentDelegate.handleError(it) }
-                            }
-                            .flatMap { paymentMethodTokenData ->
-                                paymentDelegate.handlePaymentMethodToken(
-                                    paymentMethodTokenData = paymentMethodTokenData,
-                                    primerSessionIntent = primerSessionIntent
-                                )
-                                    .recoverCatching { throw CheckoutFailureException(it) }
-                                    .onFailure { paymentDelegate.handleError(it) }
-                            }
-                            .onFailure(::handleError)
-                    }
+                                        .recoverCatching { throw CheckoutFailureException(it) }
+                                        .onFailure { paymentDelegate.handleError(it) }
+                                }
+                                .flatMap { paymentMethodTokenData ->
+                                    paymentDelegate.handlePaymentMethodToken(
+                                        paymentMethodTokenData = paymentMethodTokenData,
+                                        primerSessionIntent = primerSessionIntent,
+                                    )
+                                        .recoverCatching { throw CheckoutFailureException(it) }
+                                        .onFailure { paymentDelegate.handleError(it) }
+                                }
+                                .onFailure(::handleError)
+                        }
 
-                    _componentStep.emit(
-                        KlarnaPaymentStep.PaymentSessionAuthorized(
-                            isFinalized = finalizedRequired == false
+                        _componentStep.emit(
+                            KlarnaPaymentStep.PaymentSessionAuthorized(
+                                isFinalized = finalizedRequired == false,
+                            ),
                         )
-                    )
+                    }
+                } else {
+                    handleError(KlarnaUserUnapprovedException())
                 }
-            } else {
-                handleError(KlarnaUserUnapprovedException())
             }
-        }
 
-        override fun onErrorOccurred(view: KlarnaPaymentView, error: KlarnaPaymentsSDKError) {
-            handleError(KlarnaSdkErrorException("${error.name}: ${error.message}"))
-        }
+            override fun onErrorOccurred(
+                view: KlarnaPaymentView,
+                error: KlarnaPaymentsSDKError,
+            ) {
+                handleError(KlarnaSdkErrorException("${error.name}: ${error.message}"))
+            }
 
-        override fun onFinalized(view: KlarnaPaymentView, approved: Boolean, authToken: String?) {
-            isFinalizationRequired = false
-            if (approved) {
-                if (authToken != null) {
-                    viewModelScope.launch {
-                        runCatching {
-                            requireKlarnaSession().sessionId
-                        }
-                            .flatMap { sessionId ->
-                                tokenizationDelegate.tokenize(
-                                    KlarnaTokenizationInputable(
-                                        sessionId = sessionId,
-                                        authorizationToken = authToken,
-                                        paymentMethodType = PaymentMethodType.KLARNA.name,
-                                        primerSessionIntent = primerSessionIntent
+            override fun onFinalized(
+                view: KlarnaPaymentView,
+                approved: Boolean,
+                authToken: String?,
+            ) {
+                isFinalizationRequired = false
+                if (approved) {
+                    if (authToken != null) {
+                        viewModelScope.launch {
+                            runCatching {
+                                requireKlarnaSession().sessionId
+                            }
+                                .flatMap { sessionId ->
+                                    tokenizationDelegate.tokenize(
+                                        KlarnaTokenizationInputable(
+                                            sessionId = sessionId,
+                                            authorizationToken = authToken,
+                                            paymentMethodType = PaymentMethodType.KLARNA.name,
+                                            primerSessionIntent = primerSessionIntent,
+                                        ),
                                     )
-                                )
-                                    .recoverCatching { throw CheckoutFailureException(it) }
-                                    .onFailure { paymentDelegate.handleError(it) }
-                            }
-                            .flatMap { paymentMethodTokenData ->
-                                paymentDelegate.handlePaymentMethodToken(
-                                    paymentMethodTokenData = paymentMethodTokenData,
-                                    primerSessionIntent = primerSessionIntent
-                                )
-                                    .recoverCatching { throw CheckoutFailureException(it) }
-                                    .onFailure { paymentDelegate.handleError(it) }
-                            }
-                            .onFailure(::handleError)
-                    }
-
-                    viewModelScope.launch {
-                        _componentStep.emit(KlarnaPaymentStep.PaymentSessionFinalized)
-                    }
-                }
-            } else {
-                handleError(KlarnaUserUnapprovedException())
-            }
-        }
-
-        override fun onInitialized(view: KlarnaPaymentView) {
-            view.load(null)
-        }
-
-        override fun onLoadPaymentReview(view: KlarnaPaymentView, showForm: Boolean) {
-            // no-op
-        }
-
-        override fun onLoaded(view: KlarnaPaymentView) {
-            viewModelScope.launch {
-                _componentStep.emit(
-                    KlarnaPaymentStep.PaymentViewLoaded(
-                        paymentView = PrimerKlarnaPaymentView(context = view.context).apply {
-                            addView(view)
+                                        .recoverCatching { throw CheckoutFailureException(it) }
+                                        .onFailure { paymentDelegate.handleError(it) }
+                                }
+                                .flatMap { paymentMethodTokenData ->
+                                    paymentDelegate.handlePaymentMethodToken(
+                                        paymentMethodTokenData = paymentMethodTokenData,
+                                        primerSessionIntent = primerSessionIntent,
+                                    )
+                                        .recoverCatching { throw CheckoutFailureException(it) }
+                                        .onFailure { paymentDelegate.handleError(it) }
+                                }
+                                .onFailure(::handleError)
                         }
+
+                        viewModelScope.launch {
+                            _componentStep.emit(KlarnaPaymentStep.PaymentSessionFinalized)
+                        }
+                    }
+                } else {
+                    handleError(KlarnaUserUnapprovedException())
+                }
+            }
+
+            override fun onInitialized(view: KlarnaPaymentView) {
+                view.load(null)
+            }
+
+            override fun onLoadPaymentReview(
+                view: KlarnaPaymentView,
+                showForm: Boolean,
+            ) {
+                // no-op
+            }
+
+            override fun onLoaded(view: KlarnaPaymentView) {
+                viewModelScope.launch {
+                    _componentStep.emit(
+                        KlarnaPaymentStep.PaymentViewLoaded(
+                            paymentView =
+                                PrimerKlarnaPaymentView(context = view.context).apply {
+                                    addView(view)
+                                },
+                        ),
                     )
-                )
+                }
+            }
+
+            override fun onReauthorized(
+                view: KlarnaPaymentView,
+                approved: Boolean,
+                authToken: String?,
+            ) {
+                // no-op
             }
         }
-
-        override fun onReauthorized(
-            view: KlarnaPaymentView,
-            approved: Boolean,
-            authToken: String?
-        ) {
-            // no-op
-        }
-    }
 
     private val _componentValidationStatus =
         MutableSharedFlow<PrimerValidationStatus<KlarnaPaymentCollectableData>>()
@@ -221,7 +231,7 @@ class KlarnaComponent internal constructor(
             createKlarnaSession()
             eventLoggingDelegate.logSdkAnalyticsEvent(
                 methodName = KlarnaPaymentAnalyticsConstants.KLARNA_PAYMENT_START_METHOD,
-                paymentMethodType = PaymentMethodType.KLARNA.name
+                paymentMethodType = PaymentMethodType.KLARNA.name,
             )
         }
     }
@@ -237,7 +247,7 @@ class KlarnaComponent internal constructor(
             }
             eventLoggingDelegate.logSdkAnalyticsEvent(
                 methodName = KlarnaPaymentAnalyticsConstants.KLARNA_PAYMENT_COLLECTED_DATA_METHOD,
-                paymentMethodType = PaymentMethodType.KLARNA.name
+                paymentMethodType = PaymentMethodType.KLARNA.name,
             )
         }
     }
@@ -255,8 +265,8 @@ class KlarnaComponent internal constructor(
                                 sessionId = requireKlarnaSession().sessionId,
                                 authorizationToken = UUID.randomUUID().toString(),
                                 paymentMethodType = PaymentMethodType.KLARNA.name,
-                                primerSessionIntent = primerSessionIntent
-                            )
+                                primerSessionIntent = primerSessionIntent,
+                            ),
                         )
                             .recoverCatching { throw CheckoutFailureException(it) }
                             .onFailure { paymentDelegate.handleError(it) }
@@ -264,62 +274,61 @@ class KlarnaComponent internal constructor(
                     .flatMap { paymentMethodTokenData ->
                         paymentDelegate.handlePaymentMethodToken(
                             paymentMethodTokenData = paymentMethodTokenData,
-                            primerSessionIntent = primerSessionIntent
+                            primerSessionIntent = primerSessionIntent,
                         )
                             .recoverCatching { throw CheckoutFailureException(it) }
                             .onFailure { paymentDelegate.handleError(it) }
                     }.onFailure(::handleError)
 
                 _componentStep.emit(
-                    KlarnaPaymentStep.PaymentSessionAuthorized(isFinalized = true)
+                    KlarnaPaymentStep.PaymentSessionAuthorized(isFinalized = true),
                 )
             } else {
                 runCatching {
                     requireNotNullCheck(
                         klarnaPaymentView.get(),
-                        KlarnaIllegalValueKey.KLARNA_PAYMENT_VIEW
+                        KlarnaIllegalValueKey.KLARNA_PAYMENT_VIEW,
                     )
                 }
                     .onSuccess {
                         it.authorize(
                             autoFinalize = primerSettings.sdkIntegrationType != SdkIntegrationType.HEADLESS,
-                            sessionData = authorizationSessionDataDelegate.getAuthorizationSessionDataOrNull()
+                            sessionData = authorizationSessionDataDelegate.getAuthorizationSessionDataOrNull(),
                         )
                     }
                     .onFailure(::handleError)
             }
             eventLoggingDelegate.logSdkAnalyticsEvent(
                 methodName = KlarnaPaymentAnalyticsConstants.KLARNA_PAYMENT_SUBMIT_DATA_METHOD,
-                paymentMethodType = PaymentMethodType.KLARNA.name
+                paymentMethodType = PaymentMethodType.KLARNA.name,
             )
         }
     }
 
     // region Utils
-    private fun handleError(
-        throwable: Throwable
-    ) = viewModelScope.launch {
-        val isCheckoutFailureException = throwable is CheckoutFailureException
+    private fun handleError(throwable: Throwable) =
+        viewModelScope.launch {
+            val isCheckoutFailureException = throwable is CheckoutFailureException
         /*
         exclude CheckoutFailureException when in Drop-in because the inner exception is always dispatched.
-        */
-        if (primerSettings.sdkIntegrationType == SdkIntegrationType.DROP_IN && !isCheckoutFailureException) {
-            paymentDelegate.handleError(throwable)
-        }
-
-        errorMapperRegistry.getPrimerError(throwable)
-            .also { error ->
-                _componentError.emit(error)
-                errorLoggingDelegate.logSdkAnalyticsErrors(error = error)
+         */
+            if (primerSettings.sdkIntegrationType == SdkIntegrationType.DROP_IN && !isCheckoutFailureException) {
+                paymentDelegate.handleError(throwable)
             }
-    }
+
+            errorMapperRegistry.getPrimerError(throwable)
+                .also { error ->
+                    _componentError.emit(error)
+                    errorLoggingDelegate.logSdkAnalyticsErrors(error = error)
+                }
+        }
 
     private suspend fun createKlarnaSession() {
         klarnaSessionCreationDelegate.createSession(primerSessionIntent)
             .onSuccess { session ->
                 klarnaSession = session
                 _componentStep.emit(
-                    KlarnaPaymentStep.PaymentSessionCreated(session.availableCategories)
+                    KlarnaPaymentStep.PaymentSessionCreated(session.availableCategories),
                 )
             }
             .recoverCatching { throw CheckoutFailureException(it) }
@@ -329,23 +338,22 @@ class KlarnaComponent internal constructor(
             }
     }
 
-    private suspend fun onCollectPaymentOptions(
-        paymentOptions: KlarnaPaymentCollectableData.PaymentOptions
-    ) {
+    private suspend fun onCollectPaymentOptions(paymentOptions: KlarnaPaymentCollectableData.PaymentOptions) {
         _componentValidationStatus.emit(
-            PrimerValidationStatus.Validating(collectableData = paymentOptions)
+            PrimerValidationStatus.Validating(collectableData = paymentOptions),
         )
 
-        val validationError = KlarnaPaymentCategoryValidator.validate(
-            paymentCategories = klarnaSession?.availableCategories,
-            paymentCategory = paymentOptions.paymentCategory
-        )
+        val validationError =
+            KlarnaPaymentCategoryValidator.validate(
+                paymentCategories = klarnaSession?.availableCategories,
+                paymentCategory = paymentOptions.paymentCategory,
+            )
 
         _componentValidationStatus.emit(
             if (validationError != null) {
                 PrimerValidationStatus.Invalid<KlarnaPaymentCollectableData>(
                     validationErrors = listOf(validationError),
-                    collectableData = paymentOptions
+                    collectableData = paymentOptions,
                 ).also { invalidValidationStatus ->
                     invalidValidationStatus.validationErrors.forEach { error ->
                         validationErrorLoggingDelegate.logSdkAnalyticsError(error)
@@ -360,42 +368,42 @@ class KlarnaComponent internal constructor(
                                     PrimerKlarnaPaymentView(paymentOptions.context).apply {
                                         addView(
                                             TextView(paymentOptions.context).apply {
-                                                text = paymentOptions.context.getText(
-                                                    R.string.mock_klarna_view
-                                                )
-                                            }
+                                                text =
+                                                    paymentOptions.context.getText(
+                                                        R.string.mock_klarna_view,
+                                                    )
+                                            },
                                         )
-                                    }
-                                )
+                                    },
+                                ),
                             )
                         } else {
                             val returnUrl = paymentOptions.returnIntentUrl
 
                             // Will trigger onInitialized/onErrorOccurred in the callback
-                            klarnaPaymentView = WeakReference(
-                                createKlarnaPaymentView(
-                                    context = paymentOptions.context,
-                                    paymentCategory = paymentOptions.paymentCategory.identifier,
-                                    returnUrl = returnUrl
-                                ).apply {
-                                    // Will trigger onInitialized/onErrorOccurred in the callback
-                                    initialize(klarnaSession.clientToken, returnUrl)
-                                }
-                            )
+                            klarnaPaymentView =
+                                WeakReference(
+                                    createKlarnaPaymentView(
+                                        context = paymentOptions.context,
+                                        paymentCategory = paymentOptions.paymentCategory.identifier,
+                                        returnUrl = returnUrl,
+                                    ).apply {
+                                        // Will trigger onInitialized/onErrorOccurred in the callback
+                                        initialize(klarnaSession.clientToken, returnUrl)
+                                    },
+                                )
                         }
                     }
                     .onFailure(::handleError)
 
                 PrimerValidationStatus.Valid(collectableData = paymentOptions)
-            }
+            },
         )
     }
 
-    private suspend fun onCollectFinalizePayment(
-        finalizePayment: KlarnaPaymentCollectableData.FinalizePayment
-    ) {
+    private suspend fun onCollectFinalizePayment(finalizePayment: KlarnaPaymentCollectableData.FinalizePayment) {
         _componentValidationStatus.emit(
-            PrimerValidationStatus.Validating(collectableData = finalizePayment)
+            PrimerValidationStatus.Validating(collectableData = finalizePayment),
         )
 
         val validationError = KlarnaPaymentFinalizationValidator.validate(isFinalizationRequired)
@@ -407,34 +415,35 @@ class KlarnaComponent internal constructor(
             } else {
                 PrimerValidationStatus.Invalid<KlarnaPaymentCollectableData>(
                     validationErrors = listOf(validationError),
-                    collectableData = finalizePayment
+                    collectableData = finalizePayment,
                 ).also {
                     validationErrorLoggingDelegate.logSdkAnalyticsError(validationError)
                 }
-            }
+            },
         )
     }
 
     private fun createKlarnaPaymentView(
         context: Context,
         paymentCategory: String,
-        returnUrl: String
+        returnUrl: String,
     ): KlarnaPaymentView =
         createKlarnaPaymentView(
             context,
             paymentCategory,
             klarnaPaymentViewCallback,
-            returnUrl
+            returnUrl,
         )
 
-    private fun requireKlarnaSession() =
-        requireNotNullCheck(klarnaSession, KlarnaIllegalValueKey.KLARNA_SESSION)
+    private fun requireKlarnaSession() = requireNotNullCheck(klarnaSession, KlarnaIllegalValueKey.KLARNA_SESSION)
     // endregion
 
     internal class CheckoutFailureException(cause: Throwable) : Throwable(cause = cause)
 
     internal companion object {
-        fun provideInstance(owner: ViewModelStoreOwner, primerSessionIntent: PrimerSessionIntent) =
-            KlarnaComponentProvider().provideInstance(owner, primerSessionIntent)
+        fun provideInstance(
+            owner: ViewModelStoreOwner,
+            primerSessionIntent: PrimerSessionIntent,
+        ) = KlarnaComponentProvider().provideInstance(owner, primerSessionIntent)
     }
 }

@@ -6,5 +6,5 @@ data class NolPayClientToken(
     override val clientTokenIntent: String,
     val transactionNumber: String,
     val statusUrl: String,
-    val completeUrl: String
+    val completeUrl: String,
 ) : PaymentMethodResumeClientToken

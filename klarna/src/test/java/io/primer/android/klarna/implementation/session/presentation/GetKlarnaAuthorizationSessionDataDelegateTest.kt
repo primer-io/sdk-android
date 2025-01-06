@@ -24,14 +24,16 @@ class GetKlarnaAuthorizationSessionDataDelegateTest {
     fun `getAuthorizationSessionDataOrNull() should return null when extraMerchantData is not available for Klarna`() {
         every {
             repo.getConfiguration().paymentMethods
-        } returns listOf(
-            mockk {
-                every { type } returns "KLARNA"
-                every { options } returns mockk {
-                    every { extraMerchantData } returns null
-                }
-            }
-        )
+        } returns
+            listOf(
+                mockk {
+                    every { type } returns "KLARNA"
+                    every { options } returns
+                        mockk {
+                            every { extraMerchantData } returns null
+                        }
+                },
+            )
 
         val result = delegate.getAuthorizationSessionDataOrNull()
 
@@ -45,11 +47,12 @@ class GetKlarnaAuthorizationSessionDataDelegateTest {
     fun `getAuthorizationSessionDataOrNull() should return null when KLARNA options are missing`() {
         every {
             repo.getConfiguration().paymentMethods
-        } returns listOf(
-            mockk {
-                every { type } returns "ADYEN_IDEAL"
-            }
-        )
+        } returns
+            listOf(
+                mockk {
+                    every { type } returns "ADYEN_IDEAL"
+                },
+            )
 
         val result = delegate.getAuthorizationSessionDataOrNull()
 
@@ -64,14 +67,16 @@ class GetKlarnaAuthorizationSessionDataDelegateTest {
         val extraMerchantData = JSONObject("""{"a":"b"}""")
         every {
             repo.getConfiguration().paymentMethods
-        } returns listOf(
-            mockk {
-                every { type } returns "KLARNA"
-                every { options } returns mockk options@{
-                    every { this@options.extraMerchantData } returns JSONObject("""{"a":"b"}""")
-                }
-            }
-        )
+        } returns
+            listOf(
+                mockk {
+                    every { type } returns "KLARNA"
+                    every { options } returns
+                        mockk options@{
+                            every { this@options.extraMerchantData } returns JSONObject("""{"a":"b"}""")
+                        }
+                },
+            )
 
         val result = delegate.getAuthorizationSessionDataOrNull()
 
@@ -82,10 +87,10 @@ class GetKlarnaAuthorizationSessionDataDelegateTest {
                     JSONObject().apply {
                         put("content_type", "application/vnd.klarna.internal.emd-v2+json")
                         put("body", extraMerchantData.toString())
-                    }
+                    },
                 )
             }.toString(),
-            result
+            result,
         )
         verify(exactly = 1) {
             repo.getConfiguration().paymentMethods

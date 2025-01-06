@@ -8,7 +8,6 @@ import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
 internal class EmptyAdditionalDataMapperTest {
-
     private lateinit var mapper: EmptyAdditionalDataMapper
 
     @BeforeEach

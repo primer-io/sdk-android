@@ -15,7 +15,6 @@ import org.junit.jupiter.api.extension.ExtendWith
 
 @ExtendWith(MockKExtension::class)
 internal class NolPayClientTokenDataTest {
-
     @BeforeEach
     fun setUp() {
         mockkObject(ClientTokenDecoder)
@@ -32,12 +31,13 @@ internal class NolPayClientTokenDataTest {
             "statusUrl": "testStatusUrl",
             "redirectUrl": "testCompleteUrl"
         }"""
-        val expectedTokenData = NolPayClientTokenData(
-            intent = "testIntent",
-            transactionNumber = "testTransactionNumber",
-            statusUrl = "testStatusUrl",
-            completeUrl = "testCompleteUrl"
-        )
+        val expectedTokenData =
+            NolPayClientTokenData(
+                intent = "testIntent",
+                transactionNumber = "testTransactionNumber",
+                statusUrl = "testStatusUrl",
+                completeUrl = "testCompleteUrl",
+            )
 
         every { ClientTokenDecoder.decode(encodedString) } returns decodedString
 

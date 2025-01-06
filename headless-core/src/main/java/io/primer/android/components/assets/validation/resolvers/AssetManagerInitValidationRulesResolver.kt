@@ -5,8 +5,9 @@ import io.primer.android.core.domain.validation.ValidationRulesChain
 import io.primer.android.core.domain.validation.ValidationRulesResolver
 
 internal class AssetManagerInitValidationRulesResolver(
-    private val sdkInitializedRule: SdkInitializedRule
+    private val sdkInitializedRule: SdkInitializedRule,
 ) : ValidationRulesResolver<Any> {
-    override fun resolve() = ValidationRulesChain<Any>()
-        .addRule(sdkInitializedRule)
+    override fun resolve() =
+        ValidationRulesChain<Any>()
+            .addRule(sdkInitializedRule)
 }

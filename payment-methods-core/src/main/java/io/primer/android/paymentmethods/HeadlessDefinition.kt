@@ -5,9 +5,9 @@ import kotlin.reflect.KClass
 
 data class HeadlessDefinition(
     val paymentMethodManagerCategories: List<PrimerPaymentMethodManagerCategory>,
-    val rawDataDefinition: RawDataDefinition? = null
+    val rawDataDefinition: RawDataDefinition? = null,
 ) {
     data class RawDataDefinition(
-        val requiredInputDataClass: KClass<out PrimerRawData>
+        val requiredInputDataClass: KClass<out PrimerRawData>,
     )
 }

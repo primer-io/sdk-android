@@ -26,7 +26,6 @@ import kotlin.random.Random
 @ExtendWith(MockKExtension::class)
 @ExperimentalCoroutinesApi
 internal class PaymentMethodsImplementationInteractorTest {
-
     @RelaxedMockK
     internal lateinit var implementationRepository: PaymentMethodImplementationRepository
 
@@ -38,10 +37,11 @@ internal class PaymentMethodsImplementationInteractorTest {
     @BeforeEach
     fun setUp() {
         MockKAnnotations.init(this, relaxed = true)
-        interactor = PaymentMethodsImplementationInteractor(
-            implementationRepository,
-            analyticsRepository
-        )
+        interactor =
+            PaymentMethodsImplementationInteractor(
+                implementationRepository,
+                analyticsRepository,
+            )
     }
 
     @Test
@@ -53,8 +53,8 @@ internal class PaymentMethodsImplementationInteractorTest {
         every { buttonMetadata.iconDisplayMetadata }.returns(listOf())
         every { implementationRepository.getPaymentMethodsImplementation() }.returns(
             listOf(
-                paymentMethodImplementation
-            )
+                paymentMethodImplementation,
+            ),
         )
         runTest {
             val filteredPaymentMethodsImplementation = interactor(None)
@@ -74,8 +74,8 @@ internal class PaymentMethodsImplementationInteractorTest {
         every { buttonMetadata.iconDisplayMetadata }.returns(listOf(iconDisplayMetadata))
         every { implementationRepository.getPaymentMethodsImplementation() }.returns(
             listOf(
-                paymentMethodImplementation
-            )
+                paymentMethodImplementation,
+            ),
         )
         runTest {
             val filteredPaymentMethodsImplementation = interactor(None)
@@ -96,14 +96,14 @@ internal class PaymentMethodsImplementationInteractorTest {
         every { iconDisplayMetadata.iconResId }.returns(Random.nextInt(100))
         every { implementationRepository.getPaymentMethodsImplementation() }.returns(
             listOf(
-                paymentMethodImplementation
-            )
+                paymentMethodImplementation,
+            ),
         )
         runTest {
             val filteredPaymentMethodsImplementation = interactor(None)
             assertEquals(
                 implementationRepository.getPaymentMethodsImplementation(),
-                filteredPaymentMethodsImplementation
+                filteredPaymentMethodsImplementation,
             )
         }
 
@@ -121,14 +121,14 @@ internal class PaymentMethodsImplementationInteractorTest {
         every { iconDisplayMetadata.filePath }.returns("/images/")
         every { implementationRepository.getPaymentMethodsImplementation() }.returns(
             listOf(
-                paymentMethodImplementation
-            )
+                paymentMethodImplementation,
+            ),
         )
         runTest {
             val filteredPaymentMethodsImplementation = interactor(None)
             assertEquals(
                 implementationRepository.getPaymentMethodsImplementation(),
-                filteredPaymentMethodsImplementation
+                filteredPaymentMethodsImplementation,
             )
         }
 
@@ -145,8 +145,8 @@ internal class PaymentMethodsImplementationInteractorTest {
         every { buttonMetadata.iconDisplayMetadata }.returns(listOf(iconDisplayMetadata))
         every { implementationRepository.getPaymentMethodsImplementation() }.returns(
             listOf(
-                paymentMethodImplementation
-            )
+                paymentMethodImplementation,
+            ),
         )
 
         val messageAnalyticsParamsSlot = slot<MessageAnalyticsParams>()
@@ -155,7 +155,7 @@ internal class PaymentMethodsImplementationInteractorTest {
             verify { analyticsRepository.addEvent(capture(messageAnalyticsParamsSlot)) }
             assertEquals(
                 MessageType.PM_IMAGE_LOADING_FAILED,
-                messageAnalyticsParamsSlot.captured.messageType
+                messageAnalyticsParamsSlot.captured.messageType,
             )
         }
 

@@ -5,8 +5,5 @@ package io.primer.android.paymentmethods
  * not, at run-time. See [PaymentMethodCheckerRegistry].
  */
 fun interface PaymentMethodChecker {
-
-    suspend fun shouldPaymentMethodBeAvailable(
-        paymentMethod: PaymentMethod
-    ): Boolean
+    suspend fun shouldPaymentMethodBeAvailable(paymentMethod: PaymentMethod): Boolean
 }

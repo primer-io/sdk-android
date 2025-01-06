@@ -2,8 +2,8 @@ package io.primer.android.card.implementation.composer
 
 import android.app.Activity
 import android.content.Intent
-import io.primer.android.analytics.utils.RawDataManagerAnalyticsConstants
 import io.primer.android.PrimerSessionIntent
+import io.primer.android.analytics.utils.RawDataManagerAnalyticsConstants
 import io.primer.android.card.implementation.composer.ui.navigation.CardNative3DSActivityLauncherParams
 import io.primer.android.card.implementation.composer.ui.navigation.CardProcessor3DSActivityLauncherParams
 import io.primer.android.card.implementation.composer.ui.navigation.MockCard3DSActivityLauncherParams
@@ -12,6 +12,10 @@ import io.primer.android.card.implementation.payment.delegate.ProcessorThreeDsIn
 import io.primer.android.card.implementation.payment.delegate.ThreeDsInitialLauncherParams
 import io.primer.android.card.implementation.tokenization.presentation.CardTokenizationDelegate
 import io.primer.android.card.implementation.tokenization.presentation.composable.CardTokenizationInputable
+import io.primer.android.components.domain.core.models.card.PrimerCardData
+import io.primer.android.components.domain.core.models.metadata.PrimerPaymentMethodMetadata
+import io.primer.android.components.domain.core.models.metadata.PrimerPaymentMethodMetadataState
+import io.primer.android.components.domain.error.PrimerInputValidationError
 import io.primer.android.configuration.mock.presentation.MockConfigurationDelegate
 import io.primer.android.core.extensions.debounce
 import io.primer.android.core.extensions.flatMap
@@ -19,16 +23,12 @@ import io.primer.android.core.extensions.getSerializableCompat
 import io.primer.android.core.extensions.runSuspendCatching
 import io.primer.android.errors.data.exception.PaymentMethodCancelledException
 import io.primer.android.paymentmethods.PaymentInputDataValidator
-import io.primer.android.components.domain.error.PrimerInputValidationError
 import io.primer.android.paymentmethods.analytics.delegate.PaymentMethodSdkAnalyticsEventLoggingDelegate
 import io.primer.android.paymentmethods.core.composer.RawDataPaymentMethodComponent
 import io.primer.android.paymentmethods.core.composer.composable.ComposerUiEvent
 import io.primer.android.paymentmethods.core.composer.composable.UiEventable
-import io.primer.android.components.domain.core.models.metadata.PrimerPaymentMethodMetadata
-import io.primer.android.components.domain.core.models.metadata.PrimerPaymentMethodMetadataState
 import io.primer.android.processor3ds.ui.Processor3dsWebViewActivity
 import io.primer.android.threeds.ui.ThreeDsActivity
-import io.primer.android.components.domain.core.models.card.PrimerCardData
 import io.primer.cardShared.binData.domain.CardDataMetadataRetriever
 import io.primer.cardShared.binData.domain.CardMetadataStateRetriever
 import io.primer.paymentMethodCoreUi.core.ui.composable.ActivityResultIntentHandler
@@ -49,12 +49,11 @@ internal class CardComponent(
     private val cardDataMetadataStateRetriever: CardMetadataStateRetriever,
     private val cardInputDataValidator: PaymentInputDataValidator<PrimerCardData>,
     private val sdkAnalyticsEventLoggingDelegate: PaymentMethodSdkAnalyticsEventLoggingDelegate,
-    private val mockConfigurationDelegate: MockConfigurationDelegate
+    private val mockConfigurationDelegate: MockConfigurationDelegate,
 ) : RawDataPaymentMethodComponent<PrimerCardData>(),
     ActivityResultIntentHandler,
     ActivityStartIntentHandler,
     UiEventable {
-
     private var primerSessionIntent by Delegates.notNull<PrimerSessionIntent>()
     private var paymentMethodType by Delegates.notNull<String>()
 
@@ -72,9 +71,12 @@ internal class CardComponent(
     override val metadataStateFlow: Flow<PrimerPaymentMethodMetadataState>
         get() = cardDataMetadataStateRetriever.metadataState
 
-    private val _collectedData: MutableSharedFlow<PrimerCardData> = MutableSharedFlow(replay = 1)
+    private val collectedData: MutableSharedFlow<PrimerCardData> = MutableSharedFlow(replay = 1)
 
-    override fun start(paymentMethodType: String, sessionIntent: PrimerSessionIntent) {
+    override fun start(
+        paymentMethodType: String,
+        sessionIntent: PrimerSessionIntent,
+    ) {
         this.paymentMethodType = paymentMethodType
         this.primerSessionIntent = sessionIntent
         composerScope.launch {
@@ -87,19 +89,21 @@ internal class CardComponent(
     }
 
     override fun updateCollectedData(collectedData: PrimerCardData) {
-        val oldCardCollectableData = _collectedData.replayCache.lastOrNull()
+        val oldCardCollectableData = this@CardComponent.collectedData.replayCache.lastOrNull()
         val cardDataChanged =
             oldCardCollectableData?.copy(cardNetwork = null) != collectedData.copy(cardNetwork = null)
         logSdkAnalyticsEvent(
             methodName = RawDataManagerAnalyticsConstants.SET_RAW_DATA_METHOD,
             paymentMethodType = paymentMethodType,
-            context = mapOf(
-                RawDataManagerAnalyticsConstants.PAYMENT_METHOD_TYPE_PARAM to paymentMethodType,
-                RawDataManagerAnalyticsConstants.PREFERRED_NETWORK_PARAM to collectedData.cardNetwork?.name.orEmpty()
-            ).filterValues { it.isNotBlank() }
+            context =
+                mapOf(
+                    RawDataManagerAnalyticsConstants.PAYMENT_METHOD_TYPE_PARAM to paymentMethodType,
+                    RawDataManagerAnalyticsConstants.PREFERRED_NETWORK_PARAM to
+                        collectedData.cardNetwork?.name.orEmpty(),
+                ).filterValues { it.isNotBlank() },
         )
         composerScope.launch {
-            _collectedData.emit(collectedData)
+            this@CardComponent.collectedData.emit(collectedData)
         }
         // don't trigger side effects in case only card network changed
         if (cardDataChanged) {
@@ -115,25 +119,31 @@ internal class CardComponent(
 
     override fun submit() {
         composerScope.launch {
-            startTokenization(_collectedData.replayCache.last())
+            startTokenization(cardData = collectedData.replayCache.last())
         }
     }
 
-    override fun handleActivityResultIntent(params: PaymentMethodLauncherParams, resultCode: Int, intent: Intent?) {
+    override fun handleActivityResultIntent(
+        params: PaymentMethodLauncherParams,
+        resultCode: Int,
+        intent: Intent?,
+    ) {
         when (resultCode) {
             Activity.RESULT_OK -> {
                 when (params.initialLauncherParams) {
-                    is ThreeDsInitialLauncherParams -> composerScope.launch {
-                        paymentDelegate.resumePayment(
-                            intent?.getStringExtra(ThreeDsActivity.RESUME_TOKEN_EXTRA_KEY).orEmpty()
-                        )
-                    }
+                    is ThreeDsInitialLauncherParams ->
+                        composerScope.launch {
+                            paymentDelegate.resumePayment(
+                                intent?.getStringExtra(ThreeDsActivity.RESUME_TOKEN_EXTRA_KEY).orEmpty(),
+                            )
+                        }
 
-                    is ProcessorThreeDsInitialLauncherParams -> composerScope.launch {
-                        paymentDelegate.resumePayment(
-                            intent?.getStringExtra(Processor3dsWebViewActivity.RESUME_TOKEN_EXTRA_KEY).orEmpty()
-                        )
-                    }
+                    is ProcessorThreeDsInitialLauncherParams ->
+                        composerScope.launch {
+                            paymentDelegate.resumePayment(
+                                intent?.getStringExtra(Processor3dsWebViewActivity.RESUME_TOKEN_EXTRA_KEY).orEmpty(),
+                            )
+                        }
 
                     null -> Unit
                 }
@@ -143,8 +153,8 @@ internal class CardComponent(
                 composerScope.launch {
                     paymentDelegate.handleError(
                         PaymentMethodCancelledException(
-                            paymentMethodType = paymentMethodType
-                        )
+                            paymentMethodType = paymentMethodType,
+                        ),
                     )
                 }
             }
@@ -169,80 +179,80 @@ internal class CardComponent(
                         if (mockConfigurationDelegate.isMockedFlow()) {
                             ComposerUiEvent.Navigate(
                                 MockCard3DSActivityLauncherParams(
-                                    paymentMethodType = paymentMethodType
-                                )
+                                    paymentMethodType = paymentMethodType,
+                                ),
                             )
                         } else {
                             ComposerUiEvent.Navigate(
                                 CardNative3DSActivityLauncherParams(
                                     paymentMethodType = paymentMethodType,
-                                    supportedThreeDsVersions = initialLaunchEvents.supportedThreeDsProtocolVersions
-                                )
+                                    supportedThreeDsVersions = initialLaunchEvents.supportedThreeDsProtocolVersions,
+                                ),
                             )
-                        }
+                        },
                     )
                 }
-                is ProcessorThreeDsInitialLauncherParams -> _uiEvent.emit(
-                    ComposerUiEvent.Navigate(
-                        CardProcessor3DSActivityLauncherParams(
-                            paymentMethodType = paymentMethodType,
-                            redirectUrl = initialLaunchEvents.processor3DS.redirectUrl,
-                            statusUrl = initialLaunchEvents.processor3DS.statusUrl,
-                            title = initialLaunchEvents.processor3DS.title
-                        )
+                is ProcessorThreeDsInitialLauncherParams ->
+                    _uiEvent.emit(
+                        ComposerUiEvent.Navigate(
+                            CardProcessor3DSActivityLauncherParams(
+                                paymentMethodType = paymentMethodType,
+                                redirectUrl = initialLaunchEvents.processor3DS.redirectUrl,
+                                statusUrl = initialLaunchEvents.processor3DS.statusUrl,
+                                title = initialLaunchEvents.processor3DS.title,
+                            ),
+                        ),
                     )
-                )
 
                 else -> Unit
             }
         }
     }
 
-    private fun startTokenization(
-        cardData: PrimerCardData
-    ) = composerScope.launch {
-        tokenizationDelegate.tokenize(
-            CardTokenizationInputable(
-                cardData = cardData,
-                paymentMethodType = paymentMethodType,
-                primerSessionIntent = primerSessionIntent
-            )
-        ).flatMap { paymentMethodTokenData ->
-            paymentDelegate.handlePaymentMethodToken(
-                paymentMethodTokenData = paymentMethodTokenData,
-                primerSessionIntent = primerSessionIntent
-            )
-        }.onFailure {
-            paymentDelegate.handleError(it)
+    private fun startTokenization(cardData: PrimerCardData) =
+        composerScope.launch {
+            tokenizationDelegate.tokenize(
+                CardTokenizationInputable(
+                    cardData = cardData,
+                    paymentMethodType = paymentMethodType,
+                    primerSessionIntent = primerSessionIntent,
+                ),
+            ).flatMap { paymentMethodTokenData ->
+                paymentDelegate.handlePaymentMethodToken(
+                    paymentMethodTokenData = paymentMethodTokenData,
+                    primerSessionIntent = primerSessionIntent,
+                )
+            }.onFailure {
+                paymentDelegate.handleError(it)
+            }
         }
-    }
 
-    private fun closeProxyScreen() = composerScope.launch {
-        _uiEvent.emit(ComposerUiEvent.Finish)
-    }
+    private fun closeProxyScreen() =
+        composerScope.launch {
+            _uiEvent.emit(ComposerUiEvent.Finish)
+        }
 
     private val metadataRawDataDataUpdated: (PrimerCardData) -> Unit =
         composerScope.debounce { rawData ->
             cardDataMetadataStateRetriever.handleInputData(rawData)
         }
 
-    private fun validateRawData(
-        cardData: PrimerCardData
-    ) = composerScope.launch {
-        runSuspendCatching {
-            _componentInputValidations.emit(cardInputDataValidator.validate(cardData))
+    private fun validateRawData(cardData: PrimerCardData) =
+        composerScope.launch {
+            runSuspendCatching {
+                _componentInputValidations.emit(cardInputDataValidator.validate(cardData))
+            }
         }
-    }
 
     private fun logSdkAnalyticsEvent(
         methodName: String,
         paymentMethodType: String,
-        context: Map<String, String> = emptyMap()
+        context: Map<String, String> = emptyMap(),
     ) = composerScope.launch {
         sdkAnalyticsEventLoggingDelegate.logSdkAnalyticsEvent(
             methodName = methodName,
             paymentMethodType = paymentMethodType,
-            context = context
+            context = context,
         )
     }
 }

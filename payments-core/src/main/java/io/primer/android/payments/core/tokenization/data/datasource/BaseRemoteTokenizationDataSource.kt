@@ -9,20 +9,17 @@ import io.primer.android.payments.core.tokenization.data.model.PaymentMethodToke
 import io.primer.android.payments.core.tokenization.data.model.TokenizationRequestV2
 
 open class BaseRemoteTokenizationDataSource<T : BasePaymentInstrumentDataRequest>(
-    private val primerHttpClient: PrimerHttpClient
+    private val primerHttpClient: PrimerHttpClient,
 ) : BaseSuspendDataSource<PaymentMethodTokenInternal, BaseRemoteHostRequest<TokenizationRequestV2<T>>> {
-
-    override suspend fun execute(input: BaseRemoteHostRequest<TokenizationRequestV2<T>>):
-        PaymentMethodTokenInternal {
+    override suspend fun execute(input: BaseRemoteHostRequest<TokenizationRequestV2<T>>): PaymentMethodTokenInternal {
         return primerHttpClient.suspendPost<TokenizationRequestV2<T>, PaymentMethodTokenInternal>(
             url = "${input.host}/payment-instruments",
             request = input.data,
-            headers = mapOf(SDK_API_VERSION_HEADER to PAYMENT_INSTRUMENTS_VERSION)
+            headers = mapOf(SDK_API_VERSION_HEADER to PAYMENT_INSTRUMENTS_VERSION),
         ).body
     }
 
     private companion object {
-
         const val PAYMENT_INSTRUMENTS_VERSION = "2.2"
     }
 }

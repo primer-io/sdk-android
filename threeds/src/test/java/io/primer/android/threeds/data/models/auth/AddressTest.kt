@@ -4,22 +4,22 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
 class AddressTest {
-
     @Test
     fun `serializer should serialize Address to JSONObject correctly`() {
-        val address = Address(
-            firstName = "John",
-            lastName = "Doe",
-            email = "john.doe@example.com",
-            phoneNumber = "1234567890",
-            addressLine1 = "123 Main St",
-            addressLine2 = "Apt 4B",
-            addressLine3 = null,
-            city = "Anytown",
-            state = "Anystate",
-            countryCode = "US",
-            postalCode = "12345"
-        )
+        val address =
+            Address(
+                firstName = "John",
+                lastName = "Doe",
+                email = "john.doe@example.com",
+                phoneNumber = "1234567890",
+                addressLine1 = "123 Main St",
+                addressLine2 = "Apt 4B",
+                addressLine3 = null,
+                city = "Anytown",
+                state = "Anystate",
+                countryCode = "US",
+                postalCode = "12345",
+            )
 
         val jsonObject = Address.serializer.serialize(address)
 
@@ -38,19 +38,20 @@ class AddressTest {
 
     @Test
     fun `serializer should handle null optional fields`() {
-        val address = Address(
-            firstName = null,
-            lastName = null,
-            email = null,
-            phoneNumber = null,
-            addressLine1 = "123 Main St",
-            addressLine2 = null,
-            addressLine3 = null,
-            city = "Anytown",
-            state = null,
-            countryCode = "US",
-            postalCode = "12345"
-        )
+        val address =
+            Address(
+                firstName = null,
+                lastName = null,
+                email = null,
+                phoneNumber = null,
+                addressLine1 = "123 Main St",
+                addressLine2 = null,
+                addressLine3 = null,
+                city = "Anytown",
+                state = null,
+                countryCode = "US",
+                postalCode = "12345",
+            )
 
         val jsonObject = Address.serializer.serialize(address)
 

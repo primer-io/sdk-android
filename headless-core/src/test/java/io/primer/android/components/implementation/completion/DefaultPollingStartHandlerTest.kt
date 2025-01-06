@@ -24,15 +24,17 @@ class DefaultPollingStartHandlerTest {
     }
 
     @Test
-    fun `handle should emit payment to startPolling flow`() = runTest {
-        val pollingStartData = mockk<PollingStartHandler.PollingStartData>()
+    fun `handle should emit payment to startPolling flow`() =
+        runTest {
+            val pollingStartData = mockk<PollingStartHandler.PollingStartData>()
 
-        val job = launch {
-            val data = pollingStartHandler.startPolling.first()
-            assertEquals(pollingStartData, data)
+            val job =
+                launch {
+                    val data = pollingStartHandler.startPolling.first()
+                    assertEquals(pollingStartData, data)
+                }
+
+            pollingStartHandler.handle(pollingStartData)
+            job.cancel()
         }
-
-        pollingStartHandler.handle(pollingStartData)
-        job.cancel()
-    }
 }

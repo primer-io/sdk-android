@@ -13,20 +13,19 @@ import io.primer.paymentMethodCoreUi.core.ui.navigation.launchers.PaymentMethodR
 internal data class MockGooglePay3DSActivityLauncherParams(override val paymentMethodType: String) :
     PaymentMethodRedirectLauncherParams(
         paymentMethodType = paymentMethodType,
-        sessionIntent = PrimerSessionIntent.CHECKOUT
+        sessionIntent = PrimerSessionIntent.CHECKOUT,
     )
 
 internal data class MockGooglePay3DSNavigator(
     private val context: Activity,
-    override val launcher: ActivityResultLauncher<Intent>
+    override val launcher: ActivityResultLauncher<Intent>,
 ) : StartActivityForResultNavigator<MockGooglePay3DSActivityLauncherParams>(launcher) {
-
     override fun navigate(params: MockGooglePay3DSActivityLauncherParams) {
         launcher.launch(
             PaymentMethodMockActivity.getLaunchIntent(
                 context = context,
-                paymentMethodType = PaymentMethodType.PAYMENT_CARD.name
-            )
+                paymentMethodType = PaymentMethodType.PAYMENT_CARD.name,
+            ),
         )
     }
 

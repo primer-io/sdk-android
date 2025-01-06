@@ -23,48 +23,48 @@ internal class ActionDataRepository(
     private val remoteActionDataSource: RemoteActionDataSource,
     private val globalCacheDataSource: GlobalCacheConfigurationCacheDataSource,
     private val clientTokenProvider: BaseDataProvider<String>,
-    private val getCurrentTimeMillis: () -> Long = { System.currentTimeMillis() }
+    private val getCurrentTimeMillis: () -> Long = { System.currentTimeMillis() },
 ) : ActionRepository {
-
-    override suspend fun updateClientActions(params: List<BaseActionUpdateParams>) = runSuspendCatching {
-        configurationDataSource.get()
-            .let {
-                remoteActionDataSource.execute(
-                    BaseRemoteHostRequest(
-                        it.pciUrl,
-                        ClientSessionActionsDataRequest(params.flatMap { it.toActionData() })
+    override suspend fun updateClientActions(params: List<BaseActionUpdateParams>) =
+        runSuspendCatching {
+            configurationDataSource.get()
+                .let {
+                    remoteActionDataSource.execute(
+                        BaseRemoteHostRequest(
+                            it.pciUrl,
+                            ClientSessionActionsDataRequest(params.flatMap { it.toActionData() }),
+                        ),
                     )
-                )
-            }.let { configuration ->
-                val ttlValue =
-                    configuration.headers[PrimerSessionConstants.PRIMER_SESSION_CACHE_TTL_HEADER]?.firstOrNull()
-                        ?.toLongOrNull()
-                        ?: PrimerSessionConstants.DEFAULT_SESSION_TTL_VALUE
+                }.let { configuration ->
+                    val ttlValue =
+                        configuration.headers[PrimerSessionConstants.PRIMER_SESSION_CACHE_TTL_HEADER]?.firstOrNull()
+                            ?.toLongOrNull()
+                            ?: PrimerSessionConstants.DEFAULT_SESSION_TTL_VALUE
 
-                globalCacheDataSource.update(
-                    ConfigurationCache(
-                        validUntil = TimeUnit.SECONDS.toMillis(ttlValue) + getCurrentTimeMillis(),
-                        clientToken = clientTokenProvider.provide()
-                    ) to configuration.body
-                )
-
-                configurationDataSource.get().let { localConfiguration ->
-                    configurationDataSource.update(
-                        localConfiguration
-                            .copy(clientSession = configuration.body.clientSession)
-                            .copy(checkoutModules = configuration.body.checkoutModules)
+                    globalCacheDataSource.update(
+                        ConfigurationCache(
+                            validUntil = TimeUnit.SECONDS.toMillis(ttlValue) + getCurrentTimeMillis(),
+                            clientToken = clientTokenProvider.provide(),
+                        ) to configuration.body,
                     )
-                }.let { configuration.body.clientSession.toClientSessionData() }
+
+                    configurationDataSource.get().let { localConfiguration ->
+                        configurationDataSource.update(
+                            localConfiguration
+                                .copy(clientSession = configuration.body.clientSession)
+                                .copy(checkoutModules = configuration.body.checkoutModules),
+                        )
+                    }.let { configuration.body.clientSession.toClientSessionData() }
+                }
+        }.onError {
+            when {
+                it is HttpException && it.isClientError() ->
+                    throw SessionUpdateException(
+                        diagnosticsId = it.error.diagnosticsId,
+                        description = it.error.description,
+                    )
+
+                else -> throw it
             }
-    }.onError {
-        when {
-            it is HttpException && it.isClientError() ->
-                throw SessionUpdateException(
-                    diagnosticsId = it.error.diagnosticsId,
-                    description = it.error.description
-                )
-
-            else -> throw it
         }
-    }
 }

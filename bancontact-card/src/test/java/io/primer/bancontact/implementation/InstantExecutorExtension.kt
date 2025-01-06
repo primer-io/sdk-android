@@ -17,9 +17,8 @@ import org.junit.jupiter.api.extension.ExtensionContext
 @ExperimentalCoroutinesApi
 class InstantExecutorExtension(
     private val scheduler: TestCoroutineScheduler = TestCoroutineScheduler(),
-    val dispatcher: TestDispatcher = StandardTestDispatcher(scheduler)
+    val dispatcher: TestDispatcher = StandardTestDispatcher(scheduler),
 ) : BeforeEachCallback, AfterEachCallback, AfterTestExecutionCallback {
-
     override fun afterTestExecution(context: ExtensionContext?) {
         scheduler.advanceUntilIdle()
     }
@@ -29,9 +28,11 @@ class InstantExecutorExtension(
         ArchTaskExecutor.getInstance().setDelegate(
             object : TaskExecutor() {
                 override fun executeOnDiskIO(runnable: Runnable) = runnable.run()
+
                 override fun postToMainThread(runnable: Runnable) = runnable.run()
+
                 override fun isMainThread() = true
-            }
+            },
         )
     }
 

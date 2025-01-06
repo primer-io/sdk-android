@@ -36,7 +36,7 @@ class VaultManagerContainer(private val sdk: () -> SdkContainer) : DependencyCon
         registerFactory {
             VaultManagerInitValidationRulesResolver(
                 sdkInitializedRule = resolve(),
-                validClientSessionCustomerIdRule = resolve()
+                validClientSessionCustomerIdRule = resolve(),
             )
         }
 
@@ -50,13 +50,13 @@ class VaultManagerContainer(private val sdk: () -> SdkContainer) : DependencyCon
 
         registerFactory {
             FetchVaultedPaymentMethodsInteractor(
-                vaultedPaymentMethodsRepository = sdk().resolve()
+                vaultedPaymentMethodsRepository = sdk().resolve(),
             )
         }
 
         registerFactory {
             FindVaultedPaymentMethodInteractor(
-                vaultedPaymentMethodsRepository = sdk().resolve()
+                vaultedPaymentMethodsRepository = sdk().resolve(),
             )
         }
 
@@ -70,7 +70,7 @@ class VaultManagerContainer(private val sdk: () -> SdkContainer) : DependencyCon
             VaultedPaymentMethodExchangeDataRepository(
                 configurationDataSource = sdk().resolve(ConfigurationCoreContainer.CACHED_CONFIGURATION_DI_KEY),
                 vaultedPaymentMethodExchangeDataSourceRegistry = resolve(),
-                vaultedPaymentMethodAdditionalDataMapperRegistry = resolve()
+                vaultedPaymentMethodAdditionalDataMapperRegistry = resolve(),
             )
         }
 
@@ -79,14 +79,14 @@ class VaultManagerContainer(private val sdk: () -> SdkContainer) : DependencyCon
                 remoteVaultedPaymentMethodsDataSource = resolve(),
                 localVaultedPaymentMethodsDataSource = resolve(),
                 vaultedPaymentMethodDeleteDataSource = resolve(),
-                configurationDataSource = sdk().resolve(ConfigurationCoreContainer.CACHED_CONFIGURATION_DI_KEY)
+                configurationDataSource = sdk().resolve(ConfigurationCoreContainer.CACHED_CONFIGURATION_DI_KEY),
             )
         }
 
         registerSingleton {
             VaultedPaymentMethodsDeleteInteractor(
                 vaultedPaymentMethodsRepository = resolve(),
-                logReporter = sdk().resolve()
+                logReporter = sdk().resolve(),
             )
         }
 
@@ -95,7 +95,7 @@ class VaultManagerContainer(private val sdk: () -> SdkContainer) : DependencyCon
                 vaultedPaymentMethodExchangeRepository = resolve(),
                 tokenizedPaymentMethodRepository = sdk().resolve(),
                 preTokenizationHandler = sdk().resolve(),
-                logReporter = sdk().resolve()
+                logReporter = sdk().resolve(),
             )
         }
 
@@ -106,7 +106,7 @@ class VaultManagerContainer(private val sdk: () -> SdkContainer) : DependencyCon
                 successHandler = sdk().resolve(),
                 errorHandler = sdk().resolve(),
                 baseErrorResolver = sdk().resolve(),
-                tokenizedPaymentMethodRepository = sdk().resolve()
+                tokenizedPaymentMethodRepository = sdk().resolve(),
             )
         }
 
@@ -120,7 +120,7 @@ class VaultManagerContainer(private val sdk: () -> SdkContainer) : DependencyCon
                     paymentMethod?.let {
                         runCatching { sdk().resolve<PaymentMethodPaymentDelegate>(it) }.getOrNull()
                     } ?: sdk().resolve(DEFAULT_COMPOSER_DI_KEY)
-                }
+                },
             )
         }
 
@@ -133,7 +133,7 @@ class VaultManagerContainer(private val sdk: () -> SdkContainer) : DependencyCon
                 findVaultedPaymentMethodInteractor = resolve(),
                 analyticsInteractor = sdk().resolve(),
                 errorMapperRegistry = sdk().resolve(),
-                vaultedPaymentMethodAdditionalDataValidatorRegistry = sdk().resolve()
+                vaultedPaymentMethodAdditionalDataValidatorRegistry = sdk().resolve(),
             )
         }
 
@@ -141,7 +141,6 @@ class VaultManagerContainer(private val sdk: () -> SdkContainer) : DependencyCon
     }
 
     private companion object {
-
         const val DEFAULT_COMPOSER_DI_KEY = "DEFAULT_COMPOSER"
     }
 }

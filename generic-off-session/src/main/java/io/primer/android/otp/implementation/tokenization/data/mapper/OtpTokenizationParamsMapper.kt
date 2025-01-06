@@ -12,21 +12,25 @@ import io.primer.android.payments.core.tokenization.domain.model.TokenizationPar
 
 internal class OtpTokenizationParamsMapper :
     TokenizationParamsMapper<OtpPaymentInstrumentParams, OtpPaymentInstrumentDataRequest> {
-    override fun map(params: TokenizationParams<OtpPaymentInstrumentParams>):
-        TokenizationRequestV2<OtpPaymentInstrumentDataRequest> {
+    override fun map(
+        params: TokenizationParams<OtpPaymentInstrumentParams>,
+    ): TokenizationRequestV2<OtpPaymentInstrumentDataRequest> {
         val paymentInstrumentParams = params.paymentInstrumentParams
-        val instrumentDataRequest = OtpPaymentInstrumentDataRequest(
-            paymentMethodType = paymentInstrumentParams.paymentMethodType,
-            paymentMethodConfigId = paymentInstrumentParams.paymentMethodConfigId,
-            sessionInfo = when (params.paymentInstrumentParams.paymentMethodType) {
-                PaymentMethodType.ADYEN_BLIK.name -> AdyenBlikSessionInfoDataRequest(
-                    locale = paymentInstrumentParams.locale,
-                    blikCode = paymentInstrumentParams.otp
-                )
-                else -> error("Unsupported payment method type '${paymentInstrumentParams.paymentMethodType}'")
-            },
-            type = PaymentInstrumentType.OFF_SESSION_PAYMENT
-        )
+        val instrumentDataRequest =
+            OtpPaymentInstrumentDataRequest(
+                paymentMethodType = paymentInstrumentParams.paymentMethodType,
+                paymentMethodConfigId = paymentInstrumentParams.paymentMethodConfigId,
+                sessionInfo =
+                    when (params.paymentInstrumentParams.paymentMethodType) {
+                        PaymentMethodType.ADYEN_BLIK.name ->
+                            AdyenBlikSessionInfoDataRequest(
+                                locale = paymentInstrumentParams.locale,
+                                blikCode = paymentInstrumentParams.otp,
+                            )
+                        else -> error("Unsupported payment method type '${paymentInstrumentParams.paymentMethodType}'")
+                    },
+                type = PaymentInstrumentType.OFF_SESSION_PAYMENT,
+            )
         return instrumentDataRequest.toTokenizationRequest(params.sessionIntent)
     }
 }

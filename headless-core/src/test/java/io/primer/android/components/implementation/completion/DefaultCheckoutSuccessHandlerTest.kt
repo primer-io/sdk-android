@@ -11,8 +11,8 @@ import io.primer.android.analytics.domain.repository.AnalyticsRepository
 import io.primer.android.components.InstantExecutorExtension
 import io.primer.android.components.PrimerHeadlessUniversalCheckout
 import io.primer.android.components.PrimerHeadlessUniversalCheckoutListener
-import io.primer.android.payments.core.additionalInfo.PrimerCheckoutAdditionalInfo
 import io.primer.android.domain.payments.create.model.Payment
+import io.primer.android.payments.core.additionalInfo.PrimerCheckoutAdditionalInfo
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
@@ -28,7 +28,6 @@ import kotlin.test.assertEquals
 @ExperimentalCoroutinesApi
 @ExtendWith(InstantExecutorExtension::class, MockKExtension::class)
 class DefaultCheckoutSuccessHandlerTest {
-
     @RelaxedMockK
     internal lateinit var analyticsRepository: AnalyticsRepository
 
@@ -45,18 +44,20 @@ class DefaultCheckoutSuccessHandlerTest {
     }
 
     @Test
-    fun `handle should emit payment to checkoutCompleted flow`() = runTest {
-        val payment = mockk<Payment>(relaxed = true)
-        val additionalInfo = mockk<PrimerCheckoutAdditionalInfo>(relaxed = true)
+    fun `handle should emit payment to checkoutCompleted flow`() =
+        runTest {
+            val payment = mockk<Payment>(relaxed = true)
+            val additionalInfo = mockk<PrimerCheckoutAdditionalInfo>(relaxed = true)
 
-        val job = launch {
-            val emittedPayment = checkoutSuccessHandler.checkoutCompleted.first()
-            assertEquals(payment, emittedPayment)
+            val job =
+                launch {
+                    val emittedPayment = checkoutSuccessHandler.checkoutCompleted.first()
+                    assertEquals(payment, emittedPayment)
+                }
+
+            checkoutSuccessHandler.handle(payment, additionalInfo)
+            job.cancel()
         }
-
-        checkoutSuccessHandler.handle(payment, additionalInfo)
-        job.cancel()
-    }
 
     @Test
     fun `handle should call onCheckoutCompleted with correct data`() {
@@ -73,7 +74,7 @@ class DefaultCheckoutSuccessHandlerTest {
 
         coVerify {
             checkoutListener.onCheckoutCompleted(
-                match { it.payment == payment && it.additionalInfo == additionalInfo }
+                match { it.payment == payment && it.additionalInfo == additionalInfo },
             )
         }
 

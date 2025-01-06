@@ -16,7 +16,6 @@ import org.junit.jupiter.api.extension.ExtendWith
 @ExperimentalCoroutinesApi
 @ExtendWith(MockKExtension::class)
 class DefaultLogReporterTest {
-
     private lateinit var logReporter: DefaultLogReporter
 
     @RelaxedMockK
@@ -93,7 +92,6 @@ class DefaultLogReporterTest {
     }
 
     private companion object {
-
         const val TEST_MESSAGE = "test"
     }
 }

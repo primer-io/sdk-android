@@ -13,7 +13,6 @@ import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 internal class IPay88NavigationHandlerTest {
-
     private val context: Context = mockk()
     private val activity: Activity = mockk()
     private val launcher: ActivityResultLauncher<Intent> = mockk()

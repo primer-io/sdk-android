@@ -26,7 +26,6 @@ import kotlin.test.assertEquals
 @ExperimentalCoroutinesApi
 @ExtendWith(InstantExecutorExtension::class, MockKExtension::class)
 class DefaultPaymentMethodShowedHandlerTest {
-
     @RelaxedMockK
     internal lateinit var analyticsRepository: AnalyticsRepository
 
@@ -43,17 +42,19 @@ class DefaultPaymentMethodShowedHandlerTest {
     }
 
     @Test
-    fun `handle should emit payment to paymentMethodShowed flow`() = runTest {
-        val paymentMethodType = "paymentMethodType"
+    fun `handle should emit payment to paymentMethodShowed flow`() =
+        runTest {
+            val paymentMethodType = "paymentMethodType"
 
-        val job = launch {
-            val emittedPaymentMethodType = paymentMethodShowedHandler.paymentMethodShowed.first()
-            assertEquals(paymentMethodType, emittedPaymentMethodType)
+            val job =
+                launch {
+                    val emittedPaymentMethodType = paymentMethodShowedHandler.paymentMethodShowed.first()
+                    assertEquals(paymentMethodType, emittedPaymentMethodType)
+                }
+
+            paymentMethodShowedHandler.handle(paymentMethodType)
+            job.cancel()
         }
-
-        paymentMethodShowedHandler.handle(paymentMethodType)
-        job.cancel()
-    }
 
     @Test
     fun `handle should call onPaymentMethodShowed with correct data`() {

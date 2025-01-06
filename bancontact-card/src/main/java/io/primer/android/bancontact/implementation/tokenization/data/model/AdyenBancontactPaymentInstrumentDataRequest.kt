@@ -15,11 +15,9 @@ internal data class AdyenBancontactPaymentInstrumentDataRequest(
     val paymentMethodConfigId: String,
     val sessionInfo: AdyenBancontactSessionInfoDataRequest,
     val type: PaymentInstrumentType,
-    val authenticationProvider: String? = null
+    val authenticationProvider: String? = null,
 ) : BasePaymentInstrumentDataRequest {
-
     companion object {
-
         private const val NUMBER_FIELD = "number"
         private const val EXPIRATION_MONTH_FIELD = "expirationMonth"
         private const val EXPIRATION_YEAR_FIELD = "expirationYear"
@@ -40,7 +38,7 @@ internal data class AdyenBancontactPaymentInstrumentDataRequest(
                         SESSION_INFO_FIELD,
                         JSONSerializationUtils
                             .getJsonObjectSerializer<AdyenBancontactSessionInfoDataRequest>()
-                            .serialize(t.sessionInfo)
+                            .serialize(t.sessionInfo),
                     )
                     put(NUMBER_FIELD, t.number)
                     put(EXPIRATION_MONTH_FIELD, t.expirationMonth)

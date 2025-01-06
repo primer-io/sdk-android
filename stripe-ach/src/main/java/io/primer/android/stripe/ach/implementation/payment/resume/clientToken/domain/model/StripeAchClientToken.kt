@@ -6,5 +6,5 @@ internal data class StripeAchClientToken(
     val sdkCompleteUrl: String?,
     val stripePaymentIntentId: String?,
     val stripeClientSecret: String?,
-    override val clientTokenIntent: String
+    override val clientTokenIntent: String,
 ) : PaymentMethodResumeClientToken

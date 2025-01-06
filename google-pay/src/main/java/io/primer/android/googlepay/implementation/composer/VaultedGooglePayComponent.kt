@@ -3,8 +3,8 @@ package io.primer.android.googlepay.implementation.composer
 import android.app.Activity
 import android.content.Intent
 import com.google.android.gms.wallet.AutoResolveHelper
-import io.primer.android.core.extensions.getSerializableCompat
 import io.primer.android.PrimerSessionIntent
+import io.primer.android.core.extensions.getSerializableCompat
 import io.primer.android.errors.data.exception.PaymentMethodCancelledException
 import io.primer.android.googlepay.implementation.composer.ui.navigation.GooglePayNative3DSActivityLauncherParams
 import io.primer.android.googlepay.implementation.composer.ui.navigation.GooglePayProcessor3DSActivityLauncherParams
@@ -31,12 +31,11 @@ import kotlinx.coroutines.launch
 import kotlin.properties.Delegates
 
 internal class VaultedGooglePayComponent(
-    override val paymentDelegate: GooglePayPaymentDelegate
+    override val paymentDelegate: GooglePayPaymentDelegate,
 ) : VaultedPaymentMethodComponent,
     ActivityResultIntentHandler,
     ActivityStartIntentHandler,
     UiEventable {
-
     private val composerScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
 
     private var primerSessionIntent by Delegates.notNull<PrimerSessionIntent>()
@@ -45,7 +44,10 @@ internal class VaultedGooglePayComponent(
     private val _uiEvent = MutableSharedFlow<ComposerUiEvent>()
     override val uiEvent: SharedFlow<ComposerUiEvent> = _uiEvent
 
-    override fun start(paymentMethodType: String, sessionIntent: PrimerSessionIntent) {
+    override fun start(
+        paymentMethodType: String,
+        sessionIntent: PrimerSessionIntent,
+    ) {
         this.paymentMethodType = paymentMethodType
         this.primerSessionIntent = sessionIntent
         composerScope.launch {
@@ -61,21 +63,27 @@ internal class VaultedGooglePayComponent(
         composerScope.cancel()
     }
 
-    override fun handleActivityResultIntent(params: PaymentMethodLauncherParams, resultCode: Int, intent: Intent?) {
+    override fun handleActivityResultIntent(
+        params: PaymentMethodLauncherParams,
+        resultCode: Int,
+        intent: Intent?,
+    ) {
         when (resultCode) {
             Activity.RESULT_OK -> {
                 when (params.initialLauncherParams) {
-                    is ThreeDsInitialLauncherParams -> composerScope.launch {
-                        paymentDelegate.resumePayment(
-                            intent?.getStringExtra(ThreeDsActivity.RESUME_TOKEN_EXTRA_KEY).orEmpty()
-                        )
-                    }
+                    is ThreeDsInitialLauncherParams ->
+                        composerScope.launch {
+                            paymentDelegate.resumePayment(
+                                intent?.getStringExtra(ThreeDsActivity.RESUME_TOKEN_EXTRA_KEY).orEmpty(),
+                            )
+                        }
 
-                    is ProcessorThreeDsInitialLauncherParams -> composerScope.launch {
-                        paymentDelegate.resumePayment(
-                            intent?.getStringExtra(Processor3dsWebViewActivity.RESUME_TOKEN_EXTRA_KEY).orEmpty()
-                        )
-                    }
+                    is ProcessorThreeDsInitialLauncherParams ->
+                        composerScope.launch {
+                            paymentDelegate.resumePayment(
+                                intent?.getStringExtra(Processor3dsWebViewActivity.RESUME_TOKEN_EXTRA_KEY).orEmpty(),
+                            )
+                        }
 
                     null -> Unit
                 }
@@ -85,8 +93,8 @@ internal class VaultedGooglePayComponent(
                 composerScope.launch {
                     paymentDelegate.handleError(
                         PaymentMethodCancelledException(
-                            paymentMethodType = paymentMethodType
-                        )
+                            paymentMethodType = paymentMethodType,
+                        ),
                     )
                 }
             }
@@ -119,28 +127,30 @@ internal class VaultedGooglePayComponent(
                         ComposerUiEvent.Navigate(
                             GooglePayNative3DSActivityLauncherParams(
                                 paymentMethodType = paymentMethodType,
-                                supportedThreeDsVersions = initialLaunchEvents.supportedThreeDsProtocolVersions
-                            )
-                        )
+                                supportedThreeDsVersions = initialLaunchEvents.supportedThreeDsProtocolVersions,
+                            ),
+                        ),
                     )
 
-                is ProcessorThreeDsInitialLauncherParams -> _uiEvent.emit(
-                    ComposerUiEvent.Navigate(
-                        GooglePayProcessor3DSActivityLauncherParams(
-                            paymentMethodType = paymentMethodType,
-                            redirectUrl = initialLaunchEvents.processor3DS.redirectUrl,
-                            statusUrl = initialLaunchEvents.processor3DS.statusUrl,
-                            title = initialLaunchEvents.processor3DS.title
-                        )
+                is ProcessorThreeDsInitialLauncherParams ->
+                    _uiEvent.emit(
+                        ComposerUiEvent.Navigate(
+                            GooglePayProcessor3DSActivityLauncherParams(
+                                paymentMethodType = paymentMethodType,
+                                redirectUrl = initialLaunchEvents.processor3DS.redirectUrl,
+                                statusUrl = initialLaunchEvents.processor3DS.statusUrl,
+                                title = initialLaunchEvents.processor3DS.title,
+                            ),
+                        ),
                     )
-                )
 
                 else -> Unit
             }
         }
     }
 
-    private fun closeProxyScreen() = composerScope.launch {
-        _uiEvent.emit(ComposerUiEvent.Finish)
-    }
+    private fun closeProxyScreen() =
+        composerScope.launch {
+            _uiEvent.emit(ComposerUiEvent.Finish)
+        }
 }

@@ -18,63 +18,64 @@ import io.primer.android.vouchers.retailOutlets.implementation.composer.presenta
 import io.primer.android.vouchers.retailOutlets.implementation.composer.ui.assets.RetailOutletsBrand
 
 internal class RetailOutlets(internal val paymentMethodType: String) : PaymentMethod, DISdkComponent {
-
     override val type = paymentMethodType
 
     override val canBeVaulted: Boolean = false
 
-    override val module: PaymentMethodModule = object : PaymentMethodModule {
-        override fun initialize(applicationContext: Context, configuration: ConfigurationData) {
-            // no-op
-        }
+    override val module: PaymentMethodModule =
+        object : PaymentMethodModule {
+            override fun initialize(
+                applicationContext: Context,
+                configuration: ConfigurationData,
+            ) {
+                // no-op
+            }
 
-        override fun registerPaymentMethodCheckers(
-            paymentMethodCheckerRegistry: PaymentMethodCheckerRegistry
-        ) {
-            // no-op
-        }
+            override fun registerPaymentMethodCheckers(paymentMethodCheckerRegistry: PaymentMethodCheckerRegistry) {
+                // no-op
+            }
 
-        override fun registerPaymentMethodDescriptorFactory(
-            paymentMethodDescriptorFactoryRegistry: PaymentMethodDescriptorFactoryRegistry
-        ) {
-            paymentMethodDescriptorFactoryRegistry.register(
-                type,
-                RetailOutletsDescriptorFactory()
-            )
-        }
+            override fun registerPaymentMethodDescriptorFactory(
+                paymentMethodDescriptorFactoryRegistry: PaymentMethodDescriptorFactoryRegistry,
+            ) {
+                paymentMethodDescriptorFactoryRegistry.register(
+                    type,
+                    RetailOutletsDescriptorFactory(),
+                )
+            }
 
-        override fun registerPaymentMethodProviderFactory(
-            paymentMethodProviderFactoryRegistry: PaymentMethodProviderFactoryRegistry
-        ) {
-            paymentMethodProviderFactoryRegistry.register(
-                paymentMethodType = paymentMethodType,
-                factory = RetailOutletsComposerProviderFactory::class.java
-            )
-        }
+            override fun registerPaymentMethodProviderFactory(
+                paymentMethodProviderFactoryRegistry: PaymentMethodProviderFactoryRegistry,
+            ) {
+                paymentMethodProviderFactoryRegistry.register(
+                    paymentMethodType = paymentMethodType,
+                    factory = RetailOutletsComposerProviderFactory::class.java,
+                )
+            }
 
-        override fun registerSavedPaymentMethodProviderFactory(
-            paymentMethodProviderFactoryRegistry: VaultedPaymentMethodProviderFactoryRegistry
-        ) {
-            // no-op
-        }
+            override fun registerSavedPaymentMethodProviderFactory(
+                paymentMethodProviderFactoryRegistry: VaultedPaymentMethodProviderFactoryRegistry,
+            ) {
+                // no-op
+            }
 
-        override fun registerPaymentMethodNavigationFactory(
-            paymentMethodNavigationFactoryRegistry: PaymentMethodNavigationFactoryRegistry
-        ) {
-            // no-op
-        }
+            override fun registerPaymentMethodNavigationFactory(
+                paymentMethodNavigationFactoryRegistry: PaymentMethodNavigationFactoryRegistry,
+            ) {
+                // no-op
+            }
 
-        override fun registerDependencyContainer(sdkContainers: List<SdkContainer>) {
-            sdkContainers.forEach { sdkContainer ->
-                sdkContainer.registerContainer(RetailOutletsContainer({ getSdkContainer() }, paymentMethodType))
+            override fun registerDependencyContainer(sdkContainers: List<SdkContainer>) {
+                sdkContainers.forEach { sdkContainer ->
+                    sdkContainer.registerContainer(RetailOutletsContainer({ getSdkContainer() }, paymentMethodType))
+                }
+            }
+
+            override fun registerErrorMappers(errorMapperRegistry: ErrorMapperRegistry) {
+            }
+
+            override fun registerBrandProvider(brandRegistry: BrandRegistry) {
+                brandRegistry.register(paymentMethodType = paymentMethodType, RetailOutletsBrand())
             }
         }
-
-        override fun registerErrorMappers(errorMapperRegistry: ErrorMapperRegistry) {
-        }
-
-        override fun registerBrandProvider(brandRegistry: BrandRegistry) {
-            brandRegistry.register(paymentMethodType = paymentMethodType, RetailOutletsBrand())
-        }
-    }
 }

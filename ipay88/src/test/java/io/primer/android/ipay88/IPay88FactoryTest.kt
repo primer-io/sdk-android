@@ -6,7 +6,6 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
 class IPay88FactoryTest {
-
     @Test
     fun `build should return Success with iPay88 instance`() {
         // Given

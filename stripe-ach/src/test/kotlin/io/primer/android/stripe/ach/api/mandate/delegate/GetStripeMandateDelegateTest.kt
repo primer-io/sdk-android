@@ -38,9 +38,10 @@ class GetStripeMandateDelegateTest {
 
     @Test
     fun `invoke() should return full mandate string if it exists in Stripe options`() {
-        val fullMandate = mockk<PrimerStripeOptions.MandateData.FullMandateStringData> {
-            every { value } returns "full mandate"
-        }
+        val fullMandate =
+            mockk<PrimerStripeOptions.MandateData.FullMandateStringData> {
+                every { value } returns "full mandate"
+            }
         every { primerSettings.paymentMethodOptions.stripeOptions.mandateData } returns fullMandate
 
         val result = delegate.invoke()
@@ -56,9 +57,10 @@ class GetStripeMandateDelegateTest {
 
     @Test
     fun `invoke() should return full mandate if it exists in Stripe options`() {
-        val fullMandate = mockk<PrimerStripeOptions.MandateData.FullMandateData> {
-            every { value } returns 1
-        }
+        val fullMandate =
+            mockk<PrimerStripeOptions.MandateData.FullMandateData> {
+                every { value } returns 1
+            }
         every { resources.getString(1) } returns "full mandate"
         every { primerSettings.paymentMethodOptions.stripeOptions.mandateData } returns fullMandate
 
@@ -76,9 +78,10 @@ class GetStripeMandateDelegateTest {
         every {
             resources.getString(R.string.stripe_ach_mandate_template_android, any())
         } returns "This is a template [Merchant name]"
-        val templateMandate = mockk<PrimerStripeOptions.MandateData.TemplateMandateData> {
-            every { merchantName } returns "Merchant name"
-        }
+        val templateMandate =
+            mockk<PrimerStripeOptions.MandateData.TemplateMandateData> {
+                every { merchantName } returns "Merchant name"
+            }
         every { primerSettings.paymentMethodOptions.stripeOptions.mandateData } returns templateMandate
 
         val result = delegate.invoke()
@@ -99,7 +102,7 @@ class GetStripeMandateDelegateTest {
         Assertions.assertInstanceOf(IllegalValueException::class.java, result)
         Assertions.assertEquals(
             StripeIllegalValueKey.MISSING_MANDATE_DATA,
-            result?.key
+            result?.key,
         )
         verify {
             primerSettings.paymentMethodOptions.stripeOptions.mandateData

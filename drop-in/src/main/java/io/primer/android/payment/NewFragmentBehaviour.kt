@@ -15,9 +15,8 @@ internal open class NewFragmentBehaviour(
      * Whether to replace the previous fragment, effectively triggering its onDestroy() callback, or to hide it before
      * adding the new fragment to the sheet.
      */
-    val replacePreviousFragment: Boolean = true
+    val replacePreviousFragment: Boolean = true,
 ) : PaymentMethodBehaviour {
-
     fun execute(parent: Fragment) {
         val fragment = factory()
         openFragment(parent, fragment, returnToPreviousOnBack)
@@ -26,7 +25,7 @@ internal open class NewFragmentBehaviour(
     private fun openFragment(
         parent: Fragment,
         newFragment: Fragment,
-        returnToPreviousOnBack: Boolean
+        returnToPreviousOnBack: Boolean,
     ) {
         parent.childFragmentManager
             .beginTransaction()

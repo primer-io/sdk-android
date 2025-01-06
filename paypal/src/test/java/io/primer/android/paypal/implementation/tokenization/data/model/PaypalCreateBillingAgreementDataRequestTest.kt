@@ -5,28 +5,29 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
 class PaypalCreateBillingAgreementDataRequestTest {
-
     @Test
     fun `PaypalCreateBillingAgreementDataRequest should serialize correctly`() {
         // Arrange
         val paymentMethodConfigId = "config123"
         val returnUrl = "https://example.com/return"
         val cancelUrl = "https://example.com/cancel"
-        val request = PaypalCreateBillingAgreementDataRequest(
-            paymentMethodConfigId = paymentMethodConfigId,
-            returnUrl = returnUrl,
-            cancelUrl = cancelUrl
-        )
+        val request =
+            PaypalCreateBillingAgreementDataRequest(
+                paymentMethodConfigId = paymentMethodConfigId,
+                returnUrl = returnUrl,
+                cancelUrl = cancelUrl,
+            )
 
         // Act
         val json = PaypalCreateBillingAgreementDataRequest.serializer.serialize(request)
 
         // Assert
-        val expectedJson = JSONObject().apply {
-            put("paymentMethodConfigId", paymentMethodConfigId)
-            put("returnUrl", returnUrl)
-            put("cancelUrl", cancelUrl)
-        }
+        val expectedJson =
+            JSONObject().apply {
+                put("paymentMethodConfigId", paymentMethodConfigId)
+                put("returnUrl", returnUrl)
+                put("cancelUrl", cancelUrl)
+            }
         assertEquals(expectedJson.toString(), json.toString())
     }
 

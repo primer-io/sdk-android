@@ -9,7 +9,7 @@ internal typealias OtpConfigurationInteractor =
     PaymentMethodConfigurationInteractor<OtpConfig, OtpConfigParams>
 
 internal class DefaultOtpConfigurationInteractor(
-    configurationRepository: PaymentMethodConfigurationRepository<OtpConfig, OtpConfigParams>
+    configurationRepository: PaymentMethodConfigurationRepository<OtpConfig, OtpConfigParams>,
 ) : PaymentMethodConfigurationInteractor<OtpConfig, OtpConfigParams>(
-    configurationRepository
-)
+        configurationRepository,
+    )

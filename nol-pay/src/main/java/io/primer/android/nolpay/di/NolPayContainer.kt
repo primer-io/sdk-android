@@ -61,13 +61,13 @@ internal class NolPayContainer(private val sdk: () -> SdkContainer) : Dependency
 
         sdk().resolve<WhitelistedHttpBodyKeyProviderRegistry>().apply {
             listOf(
-                NolPaySecretDataRequest.provider
+                NolPaySecretDataRequest.provider,
             ).forEach(::register)
         }
 
         registerFactory<NolPaySdkInitConfigurationRepository> {
             NolPaySdkInitSdkInitConfigurationDataRepository(
-                configurationDataSource = sdk().resolve(ConfigurationCoreContainer.CACHED_CONFIGURATION_DI_KEY)
+                configurationDataSource = sdk().resolve(ConfigurationCoreContainer.CACHED_CONFIGURATION_DI_KEY),
             )
         }
 
@@ -79,13 +79,13 @@ internal class NolPayContainer(private val sdk: () -> SdkContainer) : Dependency
         registerFactory<NolPayAppSecretRepository> {
             NolPayAppSecretDataRepository(
                 configurationDataSource = sdk().resolve(ConfigurationCoreContainer.CACHED_CONFIGURATION_DI_KEY),
-                nolPaySecretDataSource = resolve()
+                nolPaySecretDataSource = resolve(),
             )
         }
 
         registerFactory<NolPayCompletePaymentRepository> {
             NolPayCompletePaymentDataRepository(
-                completePaymentDataSource = resolve()
+                completePaymentDataSource = resolve(),
             )
         }
 
@@ -94,7 +94,7 @@ internal class NolPayContainer(private val sdk: () -> SdkContainer) : Dependency
                 secretRepository = resolve(),
                 nolPaySdkInitConfigurationRepository = resolve(),
                 nolPay = resolve(),
-                logReporter = sdk().resolve()
+                logReporter = sdk().resolve(),
             )
         }
 
@@ -115,8 +115,8 @@ internal class NolPayContainer(private val sdk: () -> SdkContainer) : Dependency
         registerFactory(name = PaymentMethodType.NOL_PAY.name) {
             PaymentMethodSdkAnalyticsEventLoggingDelegate(
                 primerPaymentMethodManagerCategory =
-                PrimerPaymentMethodManagerCategory.NOL_PAY.name,
-                analyticsInteractor = sdk().resolve()
+                    PrimerPaymentMethodManagerCategory.NOL_PAY.name,
+                analyticsInteractor = sdk().resolve(),
             )
         }
 
@@ -126,7 +126,7 @@ internal class NolPayContainer(private val sdk: () -> SdkContainer) : Dependency
                 getLinkPaymentCardOTPInteractor = resolve(),
                 linkPaymentCardInteractor = resolve(),
                 phoneMetadataInteractor = resolve(),
-                sdkInitInteractor = resolve()
+                sdkInitInteractor = resolve(),
             )
         }
 
@@ -135,7 +135,7 @@ internal class NolPayContainer(private val sdk: () -> SdkContainer) : Dependency
                 unlinkPaymentCardOTPInteractor = resolve(),
                 unlinkPaymentCardInteractor = resolve(),
                 phoneMetadataInteractor = resolve(),
-                sdkInitInteractor = resolve()
+                sdkInitInteractor = resolve(),
             )
         }
 
@@ -143,28 +143,29 @@ internal class NolPayContainer(private val sdk: () -> SdkContainer) : Dependency
             NolPayGetLinkedCardsDelegate(
                 getLinkedCardsInteractor = resolve(),
                 phoneMetadataInteractor = resolve(),
-                sdkInitInteractor = resolve()
+                sdkInitInteractor = resolve(),
             )
         }
 
         registerFactory<
-            PaymentMethodConfigurationRepository<NolPayConfig, NolPayConfigParams>>(
-            name = paymentMethodType
+            PaymentMethodConfigurationRepository<NolPayConfig, NolPayConfigParams>,
+            >(
+            name = paymentMethodType,
         ) {
             NolPayConfigurationDataRepository(
                 configurationDataSource = sdk().resolve(ConfigurationCoreContainer.CACHED_CONFIGURATION_DI_KEY),
-                primerSettings = sdk().resolve()
+                primerSettings = sdk().resolve(),
             )
         }
 
         registerFactory<NolPayConfigurationInteractor>(name = paymentMethodType) {
             PaymentMethodConfigurationInteractor(
-                configurationRepository = resolve(name = paymentMethodType)
+                configurationRepository = resolve(name = paymentMethodType),
             )
         }
 
         registerFactory<BaseRemoteTokenizationDataSource<NolPayPaymentInstrumentDataRequest>>(
-            name = paymentMethodType
+            name = paymentMethodType,
         ) {
             NolPayRemoteTokenizationDataSource(primerHttpClient = sdk().resolve())
         }
@@ -173,26 +174,29 @@ internal class NolPayContainer(private val sdk: () -> SdkContainer) : Dependency
 
         registerFactory<NolPayTokenizationInteractor>(name = paymentMethodType) {
             DefaultNolPayTokenizationInteractor(
-                tokenizationRepository = NolPayTokenizationDataRepository(
-                    remoteTokenizationDataSource = sdk().resolve(paymentMethodType),
-                    configurationDataSource = sdk().resolve(ConfigurationCoreContainer.CACHED_CONFIGURATION_DI_KEY),
-                    tokenizationParamsMapper = resolve()
-                ),
+                tokenizationRepository =
+                    NolPayTokenizationDataRepository(
+                        remoteTokenizationDataSource = sdk().resolve(paymentMethodType),
+                        configurationDataSource = sdk().resolve(ConfigurationCoreContainer.CACHED_CONFIGURATION_DI_KEY),
+                        tokenizationParamsMapper = resolve(),
+                    ),
                 tokenizedPaymentMethodRepository = sdk().resolve(),
                 preTokenizationHandler = sdk().resolve(),
-                logReporter = sdk().resolve()
+                logReporter = sdk().resolve(),
             )
         }
 
         registerFactory {
             NolPayTokenizationDelegate(
-                configurationInteractor = resolve(
-                    name = paymentMethodType
-                ),
-                tokenizationInteractor = resolve(
-                    name = paymentMethodType
-                ),
-                phoneMetadataInteractor = sdk().resolve()
+                configurationInteractor =
+                    resolve(
+                        name = paymentMethodType,
+                    ),
+                tokenizationInteractor =
+                    resolve(
+                        name = paymentMethodType,
+                    ),
+                phoneMetadataInteractor = sdk().resolve(),
             )
         }
 
@@ -206,7 +210,7 @@ internal class NolPayContainer(private val sdk: () -> SdkContainer) : Dependency
                 validateClientTokenRepository = sdk().resolve(),
                 clientTokenRepository = sdk().resolve(),
                 tokenizedPaymentMethodRepository = sdk().resolve(),
-                checkoutAdditionalInfoHandler = sdk().resolve()
+                checkoutAdditionalInfoHandler = sdk().resolve(),
             )
         }
 
@@ -220,7 +224,7 @@ internal class NolPayContainer(private val sdk: () -> SdkContainer) : Dependency
                 successHandler = sdk().resolve(),
                 errorHandler = sdk().resolve(),
                 baseErrorResolver = sdk().resolve(),
-                resumeHandler = resolve()
+                resumeHandler = resolve(),
             )
         }
 

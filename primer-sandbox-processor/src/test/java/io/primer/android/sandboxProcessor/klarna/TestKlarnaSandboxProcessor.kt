@@ -85,7 +85,7 @@ class TestKlarnaSandboxProcessor {
         verify {
             mockRegistry.register(
                 type = testKlarna.type,
-                factory = any<SandboxProcessorKlarnaDescriptorFactory>()
+                factory = any<SandboxProcessorKlarnaDescriptorFactory>(),
             )
         }
         confirmVerified(mockRegistry)
@@ -112,7 +112,7 @@ class TestKlarnaSandboxProcessor {
         verify {
             mockBrandRegistry.register(
                 paymentMethodType = paymentMethodType,
-                brand = any<SandboxProcessorKlarnaBrand>()
+                brand = any<SandboxProcessorKlarnaBrand>(),
             )
         }
         confirmVerified(mockBrandRegistry)

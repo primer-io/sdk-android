@@ -40,7 +40,6 @@ import io.primer.android.paymentmethods.common.data.model.PaymentMethodType
 import io.primer.android.payments.core.tokenization.data.datasource.BaseRemoteTokenizationDataSource
 
 internal class KlarnaContainer(private val sdk: () -> SdkContainer) : DependencyContainer() {
-
     override fun registerInitialDependencies() {
         sdk().resolve<WhitelistedHttpBodyKeyProviderRegistry>().apply {
             listOf(
@@ -48,14 +47,14 @@ internal class KlarnaContainer(private val sdk: () -> SdkContainer) : Dependency
                 CreateCheckoutPaymentSessionDataRequest.provider,
                 CreateSessionDataResponse.provider,
                 CreateCustomerTokenDataRequest.provider,
-                CreateCustomerTokenDataResponse.provider
+                CreateCustomerTokenDataResponse.provider,
             ).forEach(::register)
         }
 
         registerFactory(name = PaymentMethodType.KLARNA.name) {
             PaymentMethodSdkAnalyticsEventLoggingDelegate(
                 primerPaymentMethodManagerCategory = PrimerPaymentMethodManagerCategory.KLARNA.name,
-                analyticsInteractor = sdk().resolve()
+                analyticsInteractor = sdk().resolve(),
             )
         }
 
@@ -80,7 +79,7 @@ internal class KlarnaContainer(private val sdk: () -> SdkContainer) : Dependency
                 klarnaCheckoutPaymentSessionDataSource = resolve(),
                 klarnaVaultPaymentSessionDataSource = sdk().resolve(),
                 configurationDataSource = sdk().resolve(ConfigurationCoreContainer.CACHED_CONFIGURATION_DI_KEY),
-                config = sdk().resolve()
+                config = sdk().resolve(),
             )
         }
 
@@ -88,32 +87,32 @@ internal class KlarnaContainer(private val sdk: () -> SdkContainer) : Dependency
             KlarnaCustomerTokenDataRepository(
                 remoteKlarnaCustomerTokenDataSource = resolve(),
                 configurationDataSource = sdk().resolve(ConfigurationCoreContainer.CACHED_CONFIGURATION_DI_KEY),
-                config = sdk().resolve()
+                config = sdk().resolve(),
             )
         }
 
         registerSingleton<FinalizeKlarnaSessionRepository> {
             FinalizeKlarnaSessionDataRepository(
                 remoteFinalizeKlarnaSessionDataSource = resolve(),
-                configurationDataSource = sdk().resolve(ConfigurationCoreContainer.CACHED_CONFIGURATION_DI_KEY)
+                configurationDataSource = sdk().resolve(ConfigurationCoreContainer.CACHED_CONFIGURATION_DI_KEY),
             )
         }
 
         registerSingleton {
             KlarnaSessionInteractor(
-                klarnaSessionRepository = resolve()
+                klarnaSessionRepository = resolve(),
             )
         }
 
         registerSingleton {
             KlarnaCustomerTokenInteractor(
-                klarnaCustomerTokenRepository = resolve()
+                klarnaCustomerTokenRepository = resolve(),
             )
         }
 
         registerSingleton {
             FinalizeKlarnaSessionInteractor(
-                finalizeKlarnaSessionRepository = resolve()
+                finalizeKlarnaSessionRepository = resolve(),
             )
         }
 
@@ -121,7 +120,7 @@ internal class KlarnaContainer(private val sdk: () -> SdkContainer) : Dependency
             KlarnaTokenizationDelegate(
                 klarnaCustomerTokenInteractor = resolve(),
                 finalizeKlarnaSessionInteractor = resolve(),
-                tokenizationInteractor = sdk().resolve()
+                tokenizationInteractor = sdk().resolve(),
             )
         }
 
@@ -130,13 +129,13 @@ internal class KlarnaContainer(private val sdk: () -> SdkContainer) : Dependency
                 actionInteractor = sdk().resolve(ActionsContainer.ACTION_INTERACTOR_IGNORE_ERRORS_DI_KEY),
                 interactor = resolve(),
                 primerSettings = sdk().resolve(),
-                configurationInteractor = sdk().resolve(ConfigurationCoreContainer.CONFIGURATION_INTERACTOR_DI_KEY)
+                configurationInteractor = sdk().resolve(ConfigurationCoreContainer.CONFIGURATION_INTERACTOR_DI_KEY),
             )
         }
 
         registerSingleton {
             GetKlarnaAuthorizationSessionDataDelegate(
-                configurationRepository = sdk().resolve()
+                configurationRepository = sdk().resolve(),
             )
         }
 
@@ -145,21 +144,22 @@ internal class KlarnaContainer(private val sdk: () -> SdkContainer) : Dependency
         }
 
         registerFactory<BaseRemoteTokenizationDataSource<KlarnaPaymentInstrumentDataRequest>>(
-            name = PaymentMethodType.KLARNA.name
+            name = PaymentMethodType.KLARNA.name,
         ) {
             KlarnaPayRemoteTokenizationDataSource(primerHttpClient = sdk().resolve())
         }
 
         registerFactory {
             KlarnaTokenizationInteractor(
-                tokenizationRepository = KlarnaTokenizationDataRepository(
-                    sdk().resolve(dependencyName = PaymentMethodType.KLARNA.name),
-                    sdk().resolve(ConfigurationCoreContainer.CACHED_CONFIGURATION_DI_KEY),
-                    resolve()
-                ),
+                tokenizationRepository =
+                    KlarnaTokenizationDataRepository(
+                        sdk().resolve(dependencyName = PaymentMethodType.KLARNA.name),
+                        sdk().resolve(ConfigurationCoreContainer.CACHED_CONFIGURATION_DI_KEY),
+                        resolve(),
+                    ),
                 tokenizedPaymentMethodRepository = sdk().resolve(),
                 preTokenizationHandler = sdk().resolve(),
-                logReporter = sdk().resolve()
+                logReporter = sdk().resolve(),
             )
         }
 
@@ -171,7 +171,7 @@ internal class KlarnaContainer(private val sdk: () -> SdkContainer) : Dependency
                 resumePaymentHandler = sdk().resolve(),
                 successHandler = sdk().resolve(),
                 errorHandler = sdk().resolve(),
-                baseErrorResolver = sdk().resolve()
+                baseErrorResolver = sdk().resolve(),
             )
         }
     }

@@ -9,5 +9,5 @@ data class PrimerHeadlessUniversalCheckoutPaymentMethod(
     val paymentMethodName: String?,
     val supportedPrimerSessionIntents: List<PrimerSessionIntent>,
     val paymentMethodManagerCategories: List<PrimerPaymentMethodManagerCategory>,
-    val requiredInputDataClass: KClass<out PrimerRawData>? = null
+    val requiredInputDataClass: KClass<out PrimerRawData>? = null,
 )

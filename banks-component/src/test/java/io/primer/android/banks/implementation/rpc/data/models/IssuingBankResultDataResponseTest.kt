@@ -6,56 +6,57 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
 class IssuingBankResultDataResponseTest {
-
     @Test
     fun `test deserializer deserializes correctly`() {
         // Arrange
-        val jsonArray = JSONArray().apply {
-            put(
-                JSONObject().apply {
-                    put(
-                        IssuingBankDataResponse.ID_FIELD,
-                        "bank_id_123"
-                    )
-                    put(
-                        IssuingBankDataResponse.NAME_FIELD,
-                        "Bank ABC"
-                    )
-                    put(
-                        IssuingBankDataResponse.DISABLED_FIELD,
-                        false
-                    )
-                    put(
-                        IssuingBankDataResponse.ICON_URL_FIELD,
-                        "http://icon.url"
-                    )
-                }
-            )
-            put(
-                JSONObject().apply {
-                    put(
-                        IssuingBankDataResponse.ID_FIELD,
-                        "bank_id_456"
-                    )
-                    put(
-                        IssuingBankDataResponse.NAME_FIELD,
-                        "Bank XYZ"
-                    )
-                    put(
-                        IssuingBankDataResponse.DISABLED_FIELD,
-                        true
-                    )
-                    put(
-                        IssuingBankDataResponse.ICON_URL_FIELD,
-                        "http://icon.xyz"
-                    )
-                }
-            )
-        }
+        val jsonArray =
+            JSONArray().apply {
+                put(
+                    JSONObject().apply {
+                        put(
+                            IssuingBankDataResponse.ID_FIELD,
+                            "bank_id_123",
+                        )
+                        put(
+                            IssuingBankDataResponse.NAME_FIELD,
+                            "Bank ABC",
+                        )
+                        put(
+                            IssuingBankDataResponse.DISABLED_FIELD,
+                            false,
+                        )
+                        put(
+                            IssuingBankDataResponse.ICON_URL_FIELD,
+                            "http://icon.url",
+                        )
+                    },
+                )
+                put(
+                    JSONObject().apply {
+                        put(
+                            IssuingBankDataResponse.ID_FIELD,
+                            "bank_id_456",
+                        )
+                        put(
+                            IssuingBankDataResponse.NAME_FIELD,
+                            "Bank XYZ",
+                        )
+                        put(
+                            IssuingBankDataResponse.DISABLED_FIELD,
+                            true,
+                        )
+                        put(
+                            IssuingBankDataResponse.ICON_URL_FIELD,
+                            "http://icon.xyz",
+                        )
+                    },
+                )
+            }
 
-        val json = JSONObject().apply {
-            put("result", jsonArray)
-        }
+        val json =
+            JSONObject().apply {
+                put("result", jsonArray)
+            }
 
         // Act
         val response = IssuingBankResultDataResponse.deserializer.deserialize(json)

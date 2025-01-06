@@ -38,173 +38,191 @@ class StripeAchClientSessionPatchDelegateTest {
     }
 
     @Test
-    fun `invoke() should not patch client session if first name, last name and email address are not changed`() = runTest {
-        stubConfigurationInteractor()
-        coEvery { actionInteractor.invoke(any()) } returns Result.success(mockk())
+    fun `invoke() should not patch client session if first name, last name and email address are not changed`() =
+        runTest {
+            stubConfigurationInteractor()
+            coEvery { actionInteractor.invoke(any()) } returns Result.success(mockk())
 
-        val result = delegate.invoke(
-            firstName = "john",
-            lastName = "doe",
-            emailAddress = "john.doe@example.com"
-        )
-
-        assert(result.isSuccess)
-        coVerify {
-            configurationInteractor.invoke(ConfigurationParams(CachePolicy.ForceCache))
-        }
-        coVerify(exactly = 0) {
-            actionInteractor.invoke(any())
-        }
-    }
-
-    @Test
-    fun `invoke() should patch client session if first name is changed`() = runTest {
-        stubConfigurationInteractor()
-        coEvery { actionInteractor.invoke(any()) } returns Result.success(mockk())
-
-        val result = delegate.invoke(
-            firstName = "johnny",
-            lastName = "doe",
-            emailAddress = "john.doe@example.com"
-        )
-
-        assert(result.isSuccess)
-        coVerify {
-            configurationInteractor.invoke(ConfigurationParams(CachePolicy.ForceCache))
-        }
-        coVerify {
-            actionInteractor.invoke(
-                MultipleActionUpdateParams(
-                    params = listOf(
-                        ActionUpdateCustomerDetailsParams(
-                            firstName = "johnny",
-                            lastName = null,
-                            emailAddress = null
-                        )
-                    )
+            val result =
+                delegate.invoke(
+                    firstName = "john",
+                    lastName = "doe",
+                    emailAddress = "john.doe@example.com",
                 )
-            )
+
+            assert(result.isSuccess)
+            coVerify {
+                configurationInteractor.invoke(ConfigurationParams(CachePolicy.ForceCache))
+            }
+            coVerify(exactly = 0) {
+                actionInteractor.invoke(any())
+            }
         }
-    }
 
     @Test
-    fun `invoke() should patch client session if last name is changed`() = runTest {
-        stubConfigurationInteractor()
-        coEvery { actionInteractor.invoke(any()) } returns Result.success(mockk())
+    fun `invoke() should patch client session if first name is changed`() =
+        runTest {
+            stubConfigurationInteractor()
+            coEvery { actionInteractor.invoke(any()) } returns Result.success(mockk())
 
-        val result = delegate.invoke(
-            firstName = "john",
-            lastName = "doee",
-            emailAddress = "john.doe@example.com"
-        )
-
-        assert(result.isSuccess)
-        coVerify {
-            configurationInteractor.invoke(ConfigurationParams(CachePolicy.ForceCache))
-        }
-        coVerify {
-            actionInteractor.invoke(
-                MultipleActionUpdateParams(
-                    params = listOf(
-                        ActionUpdateCustomerDetailsParams(
-                            firstName = null,
-                            lastName = "doee",
-                            emailAddress = null
-                        )
-                    )
+            val result =
+                delegate.invoke(
+                    firstName = "johnny",
+                    lastName = "doe",
+                    emailAddress = "john.doe@example.com",
                 )
-            )
-        }
-    }
 
-    @Test
-    fun `invoke() should patch client session if email address is changed`() = runTest {
-        stubConfigurationInteractor()
-        coEvery { actionInteractor.invoke(any()) } returns Result.success(mockk())
-
-        val result = delegate.invoke(
-            firstName = "john",
-            lastName = "doe",
-            emailAddress = "john.doe@example.org"
-        )
-
-        assert(result.isSuccess)
-        coVerify {
-            configurationInteractor.invoke(ConfigurationParams(CachePolicy.ForceCache))
-        }
-        coVerify {
-            actionInteractor.invoke(
-                MultipleActionUpdateParams(
-                    params = listOf(
-                        ActionUpdateCustomerDetailsParams(
-                            firstName = null,
-                            lastName = null,
-                            emailAddress = "john.doe@example.org"
-                        )
-                    )
+            assert(result.isSuccess)
+            coVerify {
+                configurationInteractor.invoke(ConfigurationParams(CachePolicy.ForceCache))
+            }
+            coVerify {
+                actionInteractor.invoke(
+                    MultipleActionUpdateParams(
+                        params =
+                            listOf(
+                                ActionUpdateCustomerDetailsParams(
+                                    firstName = "johnny",
+                                    lastName = null,
+                                    emailAddress = null,
+                                ),
+                            ),
+                    ),
                 )
-            )
+            }
         }
-    }
 
     @Test
-    fun `invoke() should return error if configuration is not cached`() = runTest {
-        coEvery { configurationInteractor.invoke(any()) } returns Result.success(mockk())
+    fun `invoke() should patch client session if last name is changed`() =
+        runTest {
+            stubConfigurationInteractor()
+            coEvery { actionInteractor.invoke(any()) } returns Result.success(mockk())
 
-        val result = delegate.invoke(
-            firstName = "john",
-            lastName = "doe",
-            emailAddress = "john.doe@example.org"
-        )
-
-        assert(result.isFailure)
-        coVerify {
-            configurationInteractor.invoke(ConfigurationParams(CachePolicy.ForceCache))
-        }
-        coVerify(exactly = 0) {
-            actionInteractor.invoke(any())
-        }
-    }
-
-    @Test
-    fun `invoke() should return error if action interactor call fails`() = runTest {
-        stubConfigurationInteractor()
-        coEvery { actionInteractor.invoke(any()) } returns Result.failure(Throwable())
-
-        val result = delegate.invoke(
-            firstName = "john",
-            lastName = "doe",
-            emailAddress = "john.doe@example.org"
-        )
-
-        assert(result.isFailure)
-        coVerify {
-            configurationInteractor.invoke(ConfigurationParams(CachePolicy.ForceCache))
-        }
-        coVerify {
-            actionInteractor.invoke(
-                MultipleActionUpdateParams(
-                    params = listOf(
-                        ActionUpdateCustomerDetailsParams(
-                            firstName = null,
-                            lastName = null,
-                            emailAddress = "john.doe@example.org"
-                        )
-                    )
+            val result =
+                delegate.invoke(
+                    firstName = "john",
+                    lastName = "doee",
+                    emailAddress = "john.doe@example.com",
                 )
-            )
+
+            assert(result.isSuccess)
+            coVerify {
+                configurationInteractor.invoke(ConfigurationParams(CachePolicy.ForceCache))
+            }
+            coVerify {
+                actionInteractor.invoke(
+                    MultipleActionUpdateParams(
+                        params =
+                            listOf(
+                                ActionUpdateCustomerDetailsParams(
+                                    firstName = null,
+                                    lastName = "doee",
+                                    emailAddress = null,
+                                ),
+                            ),
+                    ),
+                )
+            }
         }
-    }
+
+    @Test
+    fun `invoke() should patch client session if email address is changed`() =
+        runTest {
+            stubConfigurationInteractor()
+            coEvery { actionInteractor.invoke(any()) } returns Result.success(mockk())
+
+            val result =
+                delegate.invoke(
+                    firstName = "john",
+                    lastName = "doe",
+                    emailAddress = "john.doe@example.org",
+                )
+
+            assert(result.isSuccess)
+            coVerify {
+                configurationInteractor.invoke(ConfigurationParams(CachePolicy.ForceCache))
+            }
+            coVerify {
+                actionInteractor.invoke(
+                    MultipleActionUpdateParams(
+                        params =
+                            listOf(
+                                ActionUpdateCustomerDetailsParams(
+                                    firstName = null,
+                                    lastName = null,
+                                    emailAddress = "john.doe@example.org",
+                                ),
+                            ),
+                    ),
+                )
+            }
+        }
+
+    @Test
+    fun `invoke() should return error if configuration is not cached`() =
+        runTest {
+            coEvery { configurationInteractor.invoke(any()) } returns Result.success(mockk())
+
+            val result =
+                delegate.invoke(
+                    firstName = "john",
+                    lastName = "doe",
+                    emailAddress = "john.doe@example.org",
+                )
+
+            assert(result.isFailure)
+            coVerify {
+                configurationInteractor.invoke(ConfigurationParams(CachePolicy.ForceCache))
+            }
+            coVerify(exactly = 0) {
+                actionInteractor.invoke(any())
+            }
+        }
+
+    @Test
+    fun `invoke() should return error if action interactor call fails`() =
+        runTest {
+            stubConfigurationInteractor()
+            coEvery { actionInteractor.invoke(any()) } returns Result.failure(Throwable())
+
+            val result =
+                delegate.invoke(
+                    firstName = "john",
+                    lastName = "doe",
+                    emailAddress = "john.doe@example.org",
+                )
+
+            assert(result.isFailure)
+            coVerify {
+                configurationInteractor.invoke(ConfigurationParams(CachePolicy.ForceCache))
+            }
+            coVerify {
+                actionInteractor.invoke(
+                    MultipleActionUpdateParams(
+                        params =
+                            listOf(
+                                ActionUpdateCustomerDetailsParams(
+                                    firstName = null,
+                                    lastName = null,
+                                    emailAddress = "john.doe@example.org",
+                                ),
+                            ),
+                    ),
+                )
+            }
+        }
 
     private fun stubConfigurationInteractor() {
-        coEvery { configurationInteractor.invoke(any()) } returns Result.success(
-            mockk {
-                every { clientSession.clientSessionDataResponse } returns mockk {
-                    every { customer?.firstName } returns "john"
-                    every { customer?.lastName } returns "doe"
-                    every { customer?.emailAddress } returns "john.doe@example.com"
-                }
-            }
-        )
+        coEvery { configurationInteractor.invoke(any()) } returns
+            Result.success(
+                mockk {
+                    every { clientSession.clientSessionDataResponse } returns
+                        mockk {
+                            every { customer?.firstName } returns "john"
+                            every { customer?.lastName } returns "doe"
+                            every { customer?.emailAddress } returns "john.doe@example.com"
+                        }
+                },
+            )
     }
 }

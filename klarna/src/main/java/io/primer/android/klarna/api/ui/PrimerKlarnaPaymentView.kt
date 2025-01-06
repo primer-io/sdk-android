@@ -8,5 +8,5 @@ import androidx.annotation.AttrRes
 class PrimerKlarnaPaymentView(
     context: Context,
     attributeSet: AttributeSet? = null,
-    @AttrRes defStyleAttr: Int = 0
+    @AttrRes defStyleAttr: Int = 0,
 ) : FrameLayout(context, attributeSet, defStyleAttr)

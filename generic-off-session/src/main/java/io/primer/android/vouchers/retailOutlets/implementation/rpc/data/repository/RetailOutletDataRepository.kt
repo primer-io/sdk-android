@@ -12,21 +12,20 @@ import io.primer.android.vouchers.retailOutlets.implementation.rpc.domain.reposi
 internal class RetailOutletDataRepository(
     private val remoteRetailOutletBankDataSource: RemoteRetailOutletDataSource,
     private val localRetailOutletDataSource: LocalRetailOutletDataSource,
-    private val configurationDataSource: CacheConfigurationDataSource
+    private val configurationDataSource: CacheConfigurationDataSource,
 ) : RetailOutletRepository {
-
-    override suspend fun getRetailOutlets(paymentMethodConfigId: String) = runSuspendCatching {
-        configurationDataSource.get().let { configuration ->
-            remoteRetailOutletBankDataSource.execute(
-                BaseRemoteHostRequest(
-                    host = configuration.coreUrl,
-                    data = RetailOutletDataRequest(paymentMethodConfigId = paymentMethodConfigId)
+    override suspend fun getRetailOutlets(paymentMethodConfigId: String) =
+        runSuspendCatching {
+            configurationDataSource.get().let { configuration ->
+                remoteRetailOutletBankDataSource.execute(
+                    BaseRemoteHostRequest(
+                        host = configuration.coreUrl,
+                        data = RetailOutletDataRequest(paymentMethodConfigId = paymentMethodConfigId),
+                    ),
                 )
-            )
-        }
-    }.onSuccess { localRetailOutletDataSource.update(it.result) }
-        .map { data -> data.result.map { it.toRetailOutlet() } }
+            }
+        }.onSuccess { localRetailOutletDataSource.update(it.result) }
+            .map { data -> data.result.map { it.toRetailOutlet() } }
 
-    override fun getCachedRetailOutlets() =
-        localRetailOutletDataSource.get().map { result -> result.toRetailOutlet() }
+    override fun getCachedRetailOutlets() = localRetailOutletDataSource.get().map { result -> result.toRetailOutlet() }
 }

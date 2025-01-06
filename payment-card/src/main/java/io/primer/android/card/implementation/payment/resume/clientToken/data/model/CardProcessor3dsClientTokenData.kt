@@ -11,11 +11,9 @@ import org.json.JSONObject
 internal data class CardProcessor3dsClientTokenData(
     val intent: String,
     val statusUrl: String,
-    val redirectUrl: String
+    val redirectUrl: String,
 ) : JSONDeserializable {
-
     companion object {
-
         @Throws(InvalidClientTokenException::class, ExpiredClientTokenException::class)
         fun fromString(encoded: String): CardProcessor3dsClientTokenData {
             ClientTokenDecoder.decode(encoded).let { decoded ->
@@ -30,12 +28,13 @@ internal data class CardProcessor3dsClientTokenData(
         private const val REDIRECT_URL_FIELD = "redirectUrl"
 
         @JvmField
-        val deserializer = JSONObjectDeserializer { t ->
-            CardProcessor3dsClientTokenData(
-                intent = t.getString(INTENT_FIELD),
-                statusUrl = t.getString(STATUS_URL_KEY),
-                redirectUrl = t.getString(REDIRECT_URL_FIELD)
-            )
-        }
+        val deserializer =
+            JSONObjectDeserializer { t ->
+                CardProcessor3dsClientTokenData(
+                    intent = t.getString(INTENT_FIELD),
+                    statusUrl = t.getString(STATUS_URL_KEY),
+                    redirectUrl = t.getString(REDIRECT_URL_FIELD),
+                )
+            }
     }
 }

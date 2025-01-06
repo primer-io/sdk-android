@@ -6,7 +6,6 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 internal class PromptPayBrandTest {
-
     private lateinit var promptPayBrand: PromptPayBrand
 
     @BeforeEach

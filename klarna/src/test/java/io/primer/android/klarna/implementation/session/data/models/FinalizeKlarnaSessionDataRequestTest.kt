@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
 internal class FinalizeKlarnaSessionDataRequestTest {
-
     @Test
     fun `serializer should correctly serialize FinalizeKlarnaSessionDataRequest`() {
         // Given
@@ -32,10 +31,11 @@ internal class FinalizeKlarnaSessionDataRequestTest {
         val jsonObject = FinalizeKlarnaSessionDataRequest.serializer.serialize(request)
 
         // Then
-        val expectedJson = JSONObject().apply {
-            put("paymentMethodConfigId", paymentMethodConfigId)
-            put("sessionId", sessionId)
-        }
+        val expectedJson =
+            JSONObject().apply {
+                put("paymentMethodConfigId", paymentMethodConfigId)
+                put("sessionId", sessionId)
+            }
         assertEquals(expectedJson.toString(), jsonObject.toString())
     }
 }

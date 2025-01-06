@@ -10,29 +10,32 @@ import kotlinx.coroutines.launch
 
 internal class MultibancoComponent(
     private val tokenizationDelegate: MultibancoTokenizationDelegate,
-    private val paymentDelegate: MultibancoPaymentDelegate
+    private val paymentDelegate: MultibancoPaymentDelegate,
 ) : InternalNativeUiPaymentMethodComponent() {
-
-    override fun start(paymentMethodType: String, primerSessionIntent: PrimerSessionIntent) {
+    override fun start(
+        paymentMethodType: String,
+        primerSessionIntent: PrimerSessionIntent,
+    ) {
         this.paymentMethodType = paymentMethodType
         this.primerSessionIntent = primerSessionIntent
 
         startTokenization()
     }
 
-    private fun startTokenization() = composerScope.launch {
-        tokenizationDelegate.tokenize(
-            MultibancoTokenizationInputable(
-                paymentMethodType = paymentMethodType,
-                primerSessionIntent = primerSessionIntent
-            )
-        ).flatMap { paymentMethodTokenData ->
-            paymentDelegate.handlePaymentMethodToken(
-                paymentMethodTokenData = paymentMethodTokenData,
-                primerSessionIntent = primerSessionIntent
-            )
-        }.onFailure {
-            paymentDelegate.handleError(it)
+    private fun startTokenization() =
+        composerScope.launch {
+            tokenizationDelegate.tokenize(
+                MultibancoTokenizationInputable(
+                    paymentMethodType = paymentMethodType,
+                    primerSessionIntent = primerSessionIntent,
+                ),
+            ).flatMap { paymentMethodTokenData ->
+                paymentDelegate.handlePaymentMethodToken(
+                    paymentMethodTokenData = paymentMethodTokenData,
+                    primerSessionIntent = primerSessionIntent,
+                )
+            }.onFailure {
+                paymentDelegate.handleError(it)
+            }
         }
-    }
 }

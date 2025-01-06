@@ -36,54 +36,54 @@ internal class ConfigurationDataRepository(
     private val globalConfigurationCache: GlobalCacheConfigurationCacheDataSource,
     private val timerEventProvider: EventFlowProvider<TimerProperties>,
     private val logReporter: LogReporter,
-    private val getCurrentTimeMillis: () -> Long = { System.currentTimeMillis() }
+    private val getCurrentTimeMillis: () -> Long = { System.currentTimeMillis() },
 ) : ConfigurationRepository {
+    override suspend fun fetchConfiguration(cachePolicy: CachePolicy): Result<Configuration> =
+        runSuspendCatching {
+            when (cachePolicy) {
+                is CachePolicy.ForceCache -> localConfigurationDataSource.get().toConfiguration()
 
-    override suspend fun fetchConfiguration(cachePolicy: CachePolicy): Result<Configuration> = runSuspendCatching {
-        when (cachePolicy) {
-            is CachePolicy.ForceCache -> localConfigurationDataSource.get().toConfiguration()
+                is CachePolicy.ForceNetwork -> getAndCacheConfiguration()
 
-            is CachePolicy.ForceNetwork -> getAndCacheConfiguration()
+                is CachePolicy.CacheFirst -> {
+                    val configurationDataCache = globalConfigurationCache.get()
+                    val isValid =
+                        configurationDataCache?.first?.let { cache ->
+                            cache.clientToken == clientTokenProvider.provide() &&
+                                cache.validUntil >= getCurrentTimeMillis()
+                        } ?: false
+                    when (isValid) {
+                        true -> {
+                            val timeSource = TimeSource.Monotonic
+                            val start = timeSource.markNow()
+                            logConfigurationLoadingEvent(
+                                timerType = TimerType.START,
+                                duration = timeSource.markNow() - start,
+                                analyticsContext = CacheSourceAnalyticsContext(source = ConfigurationSource.CACHE.name),
+                            )
+                            val configurationResponse = requireNotNull(configurationDataCache?.second)
 
-            is CachePolicy.CacheFirst -> {
-                val configurationDataCache = globalConfigurationCache.get()
-                val isValid = configurationDataCache?.first?.let { cache ->
-                    cache.clientToken == clientTokenProvider.provide() &&
-                        cache.validUntil >= getCurrentTimeMillis()
-                } ?: false
-                when (isValid) {
-                    true -> {
-                        val timeSource = TimeSource.Monotonic
-                        val start = timeSource.markNow()
-                        logConfigurationLoadingEvent(
-                            timerType = TimerType.START,
-                            duration = timeSource.markNow() - start,
-                            analyticsContext = CacheSourceAnalyticsContext(source = ConfigurationSource.CACHE.name)
-                        )
-                        val configurationResponse = requireNotNull(configurationDataCache?.second)
+                            logConfigurationLoadingEvent(
+                                timerType = TimerType.END,
+                                duration = timeSource.markNow() - start,
+                                analyticsContext = CacheSourceAnalyticsContext(source = ConfigurationSource.CACHE.name),
+                            )
 
-                        logConfigurationLoadingEvent(
-                            timerType = TimerType.END,
-                            duration = timeSource.markNow() - start,
-                            analyticsContext = CacheSourceAnalyticsContext(source = ConfigurationSource.CACHE.name)
-                        )
+                            remoteConfigurationResourcesDataSource.execute(configurationResponse.paymentMethods)
+                                .let {
+                                    configurationResponse.toConfigurationData(it)
+                                }.also { configurationData ->
+                                    localConfigurationDataSource.update(configurationData)
+                                }.toConfiguration()
+                        }
 
-                        remoteConfigurationResourcesDataSource.execute(configurationResponse.paymentMethods)
-                            .let {
-                                configurationResponse.toConfigurationData(it)
-                            }.also { configurationData ->
-                                localConfigurationDataSource.update(configurationData)
-                            }.toConfiguration()
+                        false -> getAndCacheConfiguration()
                     }
-
-                    false -> getAndCacheConfiguration()
                 }
             }
         }
-    }
 
-    override fun getConfiguration(): Configuration =
-        localConfigurationDataSource.get().toConfiguration()
+    override fun getConfiguration(): Configuration = localConfigurationDataSource.get().toConfiguration()
 
     private suspend fun getAndCacheConfiguration(): Configuration {
         yield()
@@ -93,12 +93,13 @@ internal class ConfigurationDataRepository(
         logConfigurationLoadingEvent(
             timerType = TimerType.START,
             duration = timeSource.markNow() - start,
-            analyticsContext = CacheSourceAnalyticsContext(source = ConfigurationSource.NETWORK.name)
+            analyticsContext = CacheSourceAnalyticsContext(source = ConfigurationSource.NETWORK.name),
         )
-        val configurationResponse = remoteConfigurationDataSource.execute(
-            Uri.parse(configurationUrlProvider.provide())
-                .buildWithQueryParams(mapOf(DISPLAY_METADATA_QUERY_KEY to true))
-        )
+        val configurationResponse =
+            remoteConfigurationDataSource.execute(
+                Uri.parse(configurationUrlProvider.provide())
+                    .buildWithQueryParams(mapOf(DISPLAY_METADATA_QUERY_KEY to true)),
+            )
 
         yield()
         updateGlobalConfigurationCache(configurationResponse)
@@ -115,35 +116,36 @@ internal class ConfigurationDataRepository(
         logConfigurationLoadingEvent(
             timerType = TimerType.END,
             duration = timeSource.markNow() - start,
-            analyticsContext = CacheSourceAnalyticsContext(source = ConfigurationSource.NETWORK.name)
+            analyticsContext = CacheSourceAnalyticsContext(source = ConfigurationSource.NETWORK.name),
         )
 
         return configurationData.toConfiguration()
     }
 
     private fun updateGlobalConfigurationCache(configurationResponse: PrimerResponse<ConfigurationDataResponse>) {
-        val ttlValue = configurationResponse.headers[PrimerSessionConstants.PRIMER_SESSION_CACHE_TTL_HEADER]
-            ?.firstOrNull()?.toLongOrNull()
-            ?: PrimerSessionConstants.DEFAULT_SESSION_TTL_VALUE
+        val ttlValue =
+            configurationResponse.headers[PrimerSessionConstants.PRIMER_SESSION_CACHE_TTL_HEADER]
+                ?.firstOrNull()?.toLongOrNull()
+                ?: PrimerSessionConstants.DEFAULT_SESSION_TTL_VALUE
         globalConfigurationCache.update(
             ConfigurationCache(
                 validUntil = TimeUnit.SECONDS.toMillis(ttlValue) + getCurrentTimeMillis(),
-                clientToken = clientTokenProvider.provide()
-            ) to configurationResponse.body
+                clientToken = clientTokenProvider.provide(),
+            ) to configurationResponse.body,
         )
     }
 
     private suspend fun logConfigurationLoadingEvent(
         timerType: TimerType,
         duration: Duration,
-        analyticsContext: CacheSourceAnalyticsContext
+        analyticsContext: CacheSourceAnalyticsContext,
     ) = timerEventProvider.getEventProvider().emit(
         TimerProperties(
             id = TimerId.CONFIGURATION_LOADING,
             timerType = timerType,
             duration = duration.inWholeMilliseconds,
-            analyticsContext = analyticsContext
-        )
+            analyticsContext = analyticsContext,
+        ),
     )
 
     private companion object {

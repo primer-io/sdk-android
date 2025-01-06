@@ -4,7 +4,6 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
 class BankIssuerSessionInfoDataRequestTest {
-
     @Test
     fun `serializer should correctly serialize BankIssuerSessionInfoDataRequest to JSONObject`() {
         // Arrange
@@ -12,12 +11,13 @@ class BankIssuerSessionInfoDataRequestTest {
         val issuer = "issuer"
         val locale = "en-US"
         val platform = "ANDROID"
-        val request = BankIssuerSessionInfoDataRequest(
-            redirectionUrl = redirectionUrl,
-            locale = locale,
-            platform = platform,
-            issuer = issuer
-        )
+        val request =
+            BankIssuerSessionInfoDataRequest(
+                redirectionUrl = redirectionUrl,
+                locale = locale,
+                platform = platform,
+                issuer = issuer,
+            )
 
         // Act
         val jsonObject = BankIssuerSessionInfoDataRequest.serializer.serialize(request)
@@ -35,11 +35,12 @@ class BankIssuerSessionInfoDataRequestTest {
         val redirectionUrl = "https://example.com"
         val locale = "en-US"
         val issuer = "issuer"
-        val request = BankIssuerSessionInfoDataRequest(
-            redirectionUrl = redirectionUrl,
-            locale = locale,
-            issuer = issuer
-        )
+        val request =
+            BankIssuerSessionInfoDataRequest(
+                redirectionUrl = redirectionUrl,
+                locale = locale,
+                issuer = issuer,
+            )
 
         // Act
         val jsonObject = BankIssuerSessionInfoDataRequest.serializer.serialize(request)
@@ -58,12 +59,13 @@ class BankIssuerSessionInfoDataRequestTest {
         val locale = "en-US"
         val platform = "IOS"
         val issuer = "issuer"
-        val request = BankIssuerSessionInfoDataRequest(
-            redirectionUrl = redirectionUrl,
-            locale = locale,
-            platform = platform,
-            issuer = issuer
-        )
+        val request =
+            BankIssuerSessionInfoDataRequest(
+                redirectionUrl = redirectionUrl,
+                locale = locale,
+                platform = platform,
+                issuer = issuer,
+            )
 
         // Act
         val jsonObject = BankIssuerSessionInfoDataRequest.serializer.serialize(request)

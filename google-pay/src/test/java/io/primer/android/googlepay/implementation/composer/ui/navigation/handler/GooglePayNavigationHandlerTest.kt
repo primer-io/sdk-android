@@ -27,7 +27,6 @@ import kotlin.test.assertEquals
 
 @ExtendWith(MockKExtension::class)
 internal class GooglePayNavigationHandlerTest {
-
     @RelaxedMockK
     private lateinit var context: Context
 
@@ -58,14 +57,16 @@ internal class GooglePayNavigationHandlerTest {
     @Test
     fun `getSupportedNavigators should return GooglePayNavigator, GooglePay3DSNavigator, GooglePayProcessor3DSNavigator and MockGooglePay3DSNavigator when called with Activity and Launcher`() {
         // Given
-        DISdkContext.headlessSdkContainer = mockk<SdkContainer>(relaxed = true).also { sdkContainer ->
-            val cont = spyk<DependencyContainer>().also { container ->
-                container.registerFactory<LogReporter> { mockk(relaxed = true) }
-                container.registerFactory<GooglePayFacadeFactory> { mockk(relaxed = true) }
-            }
+        DISdkContext.headlessSdkContainer =
+            mockk<SdkContainer>(relaxed = true).also { sdkContainer ->
+                val cont =
+                    spyk<DependencyContainer>().also { container ->
+                        container.registerFactory<LogReporter> { mockk(relaxed = true) }
+                        container.registerFactory<GooglePayFacadeFactory> { mockk(relaxed = true) }
+                    }
 
-            every { sdkContainer.containers }.returns(mutableMapOf(cont::class.simpleName.orEmpty() to cont))
-        }
+                every { sdkContainer.containers }.returns(mutableMapOf(cont::class.simpleName.orEmpty() to cont))
+            }
 
         // When
         val navigators = handler.getSupportedNavigators(activity, launcher)

@@ -10,12 +10,11 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.mapLatest
 
 internal class FormsDataRepository(
-    private val factory: LocalFormDataSourceFactory
+    private val factory: LocalFormDataSourceFactory,
 ) : FormsRepository {
-
     override fun getForms(paymentMethodType: String) =
         factory.getLocalFormDataSource(
-            PaymentMethodType.safeValueOf(paymentMethodType)
+            PaymentMethodType.safeValueOf(paymentMethodType),
         ).get()
             .mapLatest { it.toForm() }
 }

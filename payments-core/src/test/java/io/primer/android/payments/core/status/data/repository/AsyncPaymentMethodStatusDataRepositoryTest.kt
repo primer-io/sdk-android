@@ -26,7 +26,6 @@ import kotlin.time.Duration.Companion.seconds
 @ExperimentalCoroutinesApi
 @ExtendWith(InstantExecutorExtension::class, MockKExtension::class)
 class AsyncPaymentMethodStatusDataRepositoryTest {
-
     private lateinit var dataSource: RemoteAsyncPaymentMethodStatusDataSource
     private lateinit var repository: AsyncPaymentMethodStatusDataRepository
 
@@ -37,63 +36,70 @@ class AsyncPaymentMethodStatusDataRepositoryTest {
     }
 
     @Test
-    fun `getAsyncStatus should return AsyncStatus when status is COMPLETE`() = runTest {
-        // Given
-        val url = "http://test.url"
-        val response = AsyncPaymentMethodStatusDataResponse(
-            id = "test_id",
-            status = AsyncMethodStatus.COMPLETE,
-            source = "test_source"
-        )
-        coEvery { dataSource.execute(url) } returns flowOf(response)
+    fun `getAsyncStatus should return AsyncStatus when status is COMPLETE`() =
+        runTest {
+            // Given
+            val url = "http://test.url"
+            val response =
+                AsyncPaymentMethodStatusDataResponse(
+                    id = "test_id",
+                    status = AsyncMethodStatus.COMPLETE,
+                    source = "test_source",
+                )
+            coEvery { dataSource.execute(url) } returns flowOf(response)
 
-        // When
-        val result = repository.getAsyncStatus(url).first()
+            // When
+            val result = repository.getAsyncStatus(url).first()
 
-        // Then
-        assertEquals(AsyncStatus(resumeToken = "test_id"), result)
-    }
-
-    @Disabled
-    @Test
-    fun `getAsyncStatus should retry when status is not COMPLETE`() = runTest {
-        // Given
-        val url = "http://test.url"
-        val incompleteResponse = AsyncPaymentMethodStatusDataResponse(
-            id = "test_id",
-            status = AsyncMethodStatus.PENDING,
-            source = "test_source"
-        )
-        val completeResponse = AsyncPaymentMethodStatusDataResponse(
-            id = "test_id",
-            status = AsyncMethodStatus.COMPLETE,
-            source = "test_source"
-        )
-        coEvery { dataSource.execute(url) } returns flowOf(incompleteResponse, completeResponse)
-
-        // When
-        val results = repository.getAsyncStatus(url).toListDuring(2.0.seconds)
-
-        println(results)
-        // Then
-        assertTrue(results.any { it.resumeToken == "test_id" })
-    }
-
-    @Disabled
-    @Test
-    fun `getAsyncStatus should throw exception for invalid status`() = runTest {
-        // Given
-        val url = "http://test.url"
-        val response = AsyncPaymentMethodStatusDataResponse(
-            id = "test_id",
-            status = AsyncMethodStatus.PROCESSING,
-            source = "test_source"
-        )
-        coEvery { dataSource.execute(url) } returns flowOf(response)
-
-        // When / Then
-        assertThrows<AsyncFlowIncompleteException> {
-            repository.getAsyncStatus(url).first()
+            // Then
+            assertEquals(AsyncStatus(resumeToken = "test_id"), result)
         }
-    }
+
+    @Disabled
+    @Test
+    fun `getAsyncStatus should retry when status is not COMPLETE`() =
+        runTest {
+            // Given
+            val url = "http://test.url"
+            val incompleteResponse =
+                AsyncPaymentMethodStatusDataResponse(
+                    id = "test_id",
+                    status = AsyncMethodStatus.PENDING,
+                    source = "test_source",
+                )
+            val completeResponse =
+                AsyncPaymentMethodStatusDataResponse(
+                    id = "test_id",
+                    status = AsyncMethodStatus.COMPLETE,
+                    source = "test_source",
+                )
+            coEvery { dataSource.execute(url) } returns flowOf(incompleteResponse, completeResponse)
+
+            // When
+            val results = repository.getAsyncStatus(url).toListDuring(2.0.seconds)
+
+            println(results)
+            // Then
+            assertTrue(results.any { it.resumeToken == "test_id" })
+        }
+
+    @Disabled
+    @Test
+    fun `getAsyncStatus should throw exception for invalid status`() =
+        runTest {
+            // Given
+            val url = "http://test.url"
+            val response =
+                AsyncPaymentMethodStatusDataResponse(
+                    id = "test_id",
+                    status = AsyncMethodStatus.PROCESSING,
+                    source = "test_source",
+                )
+            coEvery { dataSource.execute(url) } returns flowOf(response)
+
+            // When / Then
+            assertThrows<AsyncFlowIncompleteException> {
+                repository.getAsyncStatus(url).first()
+            }
+        }
 }

@@ -5,7 +5,6 @@ import io.primer.android.core.di.SdkContainer
 import io.primer.android.ui.fragments.processorTest.ProcessorTestResultSelectorViewModelFactory
 
 internal class ProcessorTestContainer(private val sdk: SdkContainer) : DependencyContainer() {
-
     override fun registerInitialDependencies() {
         registerFactory {
             ProcessorTestResultSelectorViewModelFactory(sdk.resolve())

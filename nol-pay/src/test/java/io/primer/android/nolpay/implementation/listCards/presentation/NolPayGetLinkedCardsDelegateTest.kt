@@ -21,7 +21,6 @@ import kotlin.test.assertTrue
 
 @ExtendWith(MockKExtension::class)
 internal class NolPayGetLinkedCardsDelegateTest {
-
     @RelaxedMockK
     private lateinit var getLinkedCardsInteractor: NolPayGetLinkedCardsInteractor
 
@@ -35,72 +34,78 @@ internal class NolPayGetLinkedCardsDelegateTest {
 
     @BeforeEach
     fun setUp() {
-        delegate = NolPayGetLinkedCardsDelegate(
-            getLinkedCardsInteractor,
-            phoneMetadataInteractor,
-            sdkInitInteractor
-        )
+        delegate =
+            NolPayGetLinkedCardsDelegate(
+                getLinkedCardsInteractor,
+                phoneMetadataInteractor,
+                sdkInitInteractor,
+            )
     }
 
     @Test
-    fun `getLinkedCards should return linked cards when successful`() = runTest {
-        val mobileNumber = "1234567890"
-        val phoneMetadata = PhoneMetadata("1234567890", "US")
-        val linkedCards = listOf(
-            PrimerNolPaymentCard("card1"),
-            PrimerNolPaymentCard("card2")
-        )
+    fun `getLinkedCards should return linked cards when successful`() =
+        runTest {
+            val mobileNumber = "1234567890"
+            val phoneMetadata = PhoneMetadata("1234567890", "US")
+            val linkedCards =
+                listOf(
+                    PrimerNolPaymentCard("card1"),
+                    PrimerNolPaymentCard("card2"),
+                )
 
-        coEvery { sdkInitInteractor(None) } returns Result.success(Unit)
-        coEvery { phoneMetadataInteractor(PhoneMetadataParams(mobileNumber)) } returns Result.success(phoneMetadata)
-        coEvery { getLinkedCardsInteractor(any()) } returns Result.success(linkedCards)
+            coEvery { sdkInitInteractor(None) } returns Result.success(Unit)
+            coEvery { phoneMetadataInteractor(PhoneMetadataParams(mobileNumber)) } returns Result.success(phoneMetadata)
+            coEvery { getLinkedCardsInteractor(any()) } returns Result.success(linkedCards)
 
-        val result = delegate.getLinkedCards(mobileNumber)
+            val result = delegate.getLinkedCards(mobileNumber)
 
-        assertTrue(result.isSuccess)
-        assertEquals(linkedCards, result.getOrThrow())
+            assertTrue(result.isSuccess)
+            assertEquals(linkedCards, result.getOrThrow())
 
-        coVerify { sdkInitInteractor(None) }
-        coVerify { phoneMetadataInteractor(PhoneMetadataParams(mobileNumber)) }
-        coVerify { getLinkedCardsInteractor(any()) }
-        coVerify { getLinkedCardsInteractor(any<NolPayGetLinkedCardsParams>()) }
-    }
-
-    @Test
-    fun `getLinkedCards should return error when phone metadata retrieval fails`() = runTest {
-        val mobileNumber = "1234567890"
-        val expectedException = Exception("Phone metadata retrieval failed")
-
-        coEvery { sdkInitInteractor(None) } returns Result.success(Unit)
-        coEvery { phoneMetadataInteractor(PhoneMetadataParams(mobileNumber)) } returns Result.failure(expectedException)
-
-        val result = delegate.getLinkedCards(mobileNumber)
-
-        assertTrue(result.isFailure)
-        assertEquals(expectedException, result.exceptionOrNull())
-
-        coVerify { sdkInitInteractor(None) }
-        coVerify { phoneMetadataInteractor(PhoneMetadataParams(mobileNumber)) }
-        coVerify(exactly = 0) { getLinkedCardsInteractor(any()) }
-    }
+            coVerify { sdkInitInteractor(None) }
+            coVerify { phoneMetadataInteractor(PhoneMetadataParams(mobileNumber)) }
+            coVerify { getLinkedCardsInteractor(any()) }
+            coVerify { getLinkedCardsInteractor(any<NolPayGetLinkedCardsParams>()) }
+        }
 
     @Test
-    fun `getLinkedCards should return error when get linked cards fails`() = runTest {
-        val mobileNumber = "1234567890"
-        val phoneMetadata = PhoneMetadata("1234567890", "US")
-        val expectedException = Exception("Get linked cards failed")
+    fun `getLinkedCards should return error when phone metadata retrieval fails`() =
+        runTest {
+            val mobileNumber = "1234567890"
+            val expectedException = Exception("Phone metadata retrieval failed")
 
-        coEvery { sdkInitInteractor(None) } returns Result.success(Unit)
-        coEvery { phoneMetadataInteractor(PhoneMetadataParams(mobileNumber)) } returns Result.success(phoneMetadata)
-        coEvery { getLinkedCardsInteractor(any()) } returns Result.failure(expectedException)
+            coEvery { sdkInitInteractor(None) } returns Result.success(Unit)
+            coEvery { phoneMetadataInteractor(PhoneMetadataParams(mobileNumber)) } returns
+                Result.failure(expectedException)
 
-        val result = delegate.getLinkedCards(mobileNumber)
+            val result = delegate.getLinkedCards(mobileNumber)
 
-        assertTrue(result.isFailure)
-        assertEquals(expectedException, result.exceptionOrNull())
+            assertTrue(result.isFailure)
+            assertEquals(expectedException, result.exceptionOrNull())
 
-        coVerify { sdkInitInteractor(None) }
-        coVerify { phoneMetadataInteractor(PhoneMetadataParams(mobileNumber)) }
-        coVerify { getLinkedCardsInteractor(any()) }
-    }
+            coVerify { sdkInitInteractor(None) }
+            coVerify { phoneMetadataInteractor(PhoneMetadataParams(mobileNumber)) }
+            coVerify(exactly = 0) { getLinkedCardsInteractor(any()) }
+        }
+
+    @Test
+    fun `getLinkedCards should return error when get linked cards fails`() =
+        runTest {
+            val mobileNumber = "1234567890"
+            val phoneMetadata = PhoneMetadata("1234567890", "US")
+            val expectedException = Exception("Get linked cards failed")
+
+            coEvery { sdkInitInteractor(None) } returns Result.success(Unit)
+            coEvery { phoneMetadataInteractor(PhoneMetadataParams(mobileNumber)) } returns Result.success(phoneMetadata)
+            coEvery { getLinkedCardsInteractor(any()) } returns Result.failure(expectedException)
+
+            val result = delegate.getLinkedCards(mobileNumber)
+
+            assertTrue(result.isFailure)
+            assertEquals(expectedException, result.exceptionOrNull())
+
+            coVerify { sdkInitInteractor(None) }
+            coVerify { phoneMetadataInteractor(PhoneMetadataParams(mobileNumber)) }
+            coVerify { getLinkedCardsInteractor(any()) }
+        }
 }

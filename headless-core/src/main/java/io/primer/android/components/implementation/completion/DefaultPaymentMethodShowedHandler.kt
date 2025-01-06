@@ -12,9 +12,8 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 
 internal class DefaultPaymentMethodShowedHandler(
     private val analyticsRepository: AnalyticsRepository,
-    private val coroutineDispatcher: MainCoroutineDispatcher = Dispatchers.Main
+    private val coroutineDispatcher: MainCoroutineDispatcher = Dispatchers.Main,
 ) : PaymentMethodShowedHandler {
-
     private val _paymentMethodShowed = MutableSharedFlow<String>()
 
     override val paymentMethodShowed: Flow<String> = _paymentMethodShowed
@@ -25,9 +24,9 @@ internal class DefaultPaymentMethodShowedHandler(
                 HeadlessUniversalCheckoutAnalyticsConstants.ON_PAYMENT_METHOD_SHOWED,
                 mapOf(
                     HeadlessUniversalCheckoutAnalyticsConstants.PAYMENT_METHOD_TYPE
-                        to paymentMethodType
-                )
-            )
+                        to paymentMethodType,
+                ),
+            ),
         )
         _paymentMethodShowed.emit(paymentMethodType)
         coroutineDispatcher.dispatch(coroutineDispatcher.immediate) {

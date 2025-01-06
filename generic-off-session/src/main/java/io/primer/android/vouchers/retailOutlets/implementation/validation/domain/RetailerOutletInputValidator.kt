@@ -5,11 +5,11 @@ import io.primer.android.paymentmethods.PaymentInputDataValidator
 import io.primer.android.vouchers.retailOutlets.implementation.rpc.domain.repository.RetailOutletRepository
 
 internal class RetailerOutletInputValidator(
-    private val retailerOutletRepository: RetailOutletRepository
+    private val retailerOutletRepository: RetailOutletRepository,
 ) : PaymentInputDataValidator<PrimerRetailerData> {
     override suspend fun validate(rawData: PrimerRetailerData) =
         listOfNotNull(
             XenditRetailerOutletValidator(retailerOutletRepository)
-                .validate(rawData.id)
+                .validate(rawData.id),
         )
 }

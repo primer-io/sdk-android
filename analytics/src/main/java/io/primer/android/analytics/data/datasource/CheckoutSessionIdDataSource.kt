@@ -6,8 +6,8 @@ import java.util.UUID
 typealias CheckoutSessionIdProvider = BaseDataProvider<String>
 
 internal class CheckoutSessionIdDataSource : BaseDataProvider<String> {
-
     private val checkoutSessionId by lazy { UUID.randomUUID().toString() }
+
     override fun provide(): String {
         return checkoutSessionId
     }

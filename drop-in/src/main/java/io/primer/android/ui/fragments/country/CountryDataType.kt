@@ -1,5 +1,6 @@
 package io.primer.android.ui.fragments.country
 
 enum class CountryDataType {
-    NAME, DIAL_CODE
+    NAME,
+    DIAL_CODE,
 }

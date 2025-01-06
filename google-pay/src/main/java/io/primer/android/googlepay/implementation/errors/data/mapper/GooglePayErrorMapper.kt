@@ -1,14 +1,13 @@
 package io.primer.android.googlepay.implementation.errors.data.mapper
 
-import io.primer.android.errors.domain.ErrorMapper
 import io.primer.android.domain.error.models.PrimerError
-import io.primer.android.googlepay.implementation.errors.domain.model.ShippingAddressUnserviceableError
+import io.primer.android.errors.domain.ErrorMapper
 import io.primer.android.googlepay.implementation.errors.domain.exception.GooglePayException
 import io.primer.android.googlepay.implementation.errors.domain.exception.ShippingAddressUnserviceableException
 import io.primer.android.googlepay.implementation.errors.domain.model.GooglePayError
+import io.primer.android.googlepay.implementation.errors.domain.model.ShippingAddressUnserviceableError
 
 internal class GooglePayErrorMapper : ErrorMapper {
-
     override fun getPrimerError(throwable: Throwable): PrimerError {
         return when (throwable) {
             is GooglePayException -> GooglePayError.GooglePayInternalError(throwable.status)

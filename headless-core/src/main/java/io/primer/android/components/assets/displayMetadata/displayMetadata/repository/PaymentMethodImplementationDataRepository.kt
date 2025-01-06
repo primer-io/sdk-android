@@ -2,14 +2,14 @@ package io.primer.android.components.assets.displayMetadata.displayMetadata.repo
 
 import io.primer.android.assets.ui.model.getImageAsset
 import io.primer.android.assets.ui.registry.BrandRegistry
-import io.primer.android.configuration.data.model.ConfigurationData
 import io.primer.android.components.assets.displayMetadata.models.PaymentMethodImplementation
 import io.primer.android.components.assets.displayMetadata.repository.PaymentMethodImplementationRepository
+import io.primer.android.configuration.data.model.ConfigurationData
 import io.primer.android.core.data.datasource.BaseCacheDataSource
 
 internal class PaymentMethodImplementationDataRepository(
     private val localConfigurationDataSource: BaseCacheDataSource<ConfigurationData, ConfigurationData>,
-    private val brandRegistry: BrandRegistry
+    private val brandRegistry: BrandRegistry,
 ) : PaymentMethodImplementationRepository {
     override fun getPaymentMethodsImplementation(): List<PaymentMethodImplementation> {
         val configurationData = localConfigurationDataSource.get()
@@ -28,22 +28,21 @@ internal class PaymentMethodImplementationDataRepository(
                             PaymentMethodImplementation.ButtonMetadata.ColorMetadata(
                                 it.colored?.trim(),
                                 it.light?.trim(),
-                                it.dark?.trim()
+                                it.dark?.trim(),
                             )
                         },
                         buttonData.borderColorData?.let {
                             PaymentMethodImplementation.ButtonMetadata.ColorMetadata(
                                 it.colored?.trim(),
                                 it.light?.trim(),
-                                it.dark?.trim()
+                                it.dark?.trim(),
                             )
                         },
-
                         buttonData.borderWidthData?.let {
                             PaymentMethodImplementation.ButtonMetadata.BorderWidthMetadata(
                                 it.colored,
                                 it.light,
-                                it.dark
+                                it.dark,
                             )
                         },
                         buttonData.cornerRadius,
@@ -52,12 +51,12 @@ internal class PaymentMethodImplementationDataRepository(
                             PaymentMethodImplementation.ButtonMetadata.ColorMetadata(
                                 it.colored?.trim(),
                                 it.light?.trim(),
-                                it.dark?.trim()
+                                it.dark?.trim(),
                             )
                         },
-                        buttonData.iconPositionRelativeToText
+                        buttonData.iconPositionRelativeToText,
                     )
-                }
+                },
             )
         }
     }

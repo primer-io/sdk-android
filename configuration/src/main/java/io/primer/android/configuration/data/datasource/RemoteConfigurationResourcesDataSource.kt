@@ -24,102 +24,105 @@ import java.io.FileOutputStream
 class RemoteConfigurationResourcesDataSource(
     private val okHttpClient: OkHttpClient,
     private val imagesFileProvider: FileProvider,
-    private val timerEventProvider: EventFlowProvider<TimerProperties>
+    private val timerEventProvider: EventFlowProvider<TimerProperties>,
 ) : BaseSuspendDataSource<
-        List<Map<String, List<IconDisplayMetadata>>>, List<PaymentMethodConfigDataResponse>
+        List<Map<String, List<IconDisplayMetadata>>>,
+        List<PaymentMethodConfigDataResponse>,
         > {
-
     override suspend fun execute(input: List<PaymentMethodConfigDataResponse>) =
         coroutineScope {
             logAnalyticsAllImageDurationTimerEvent(TimerType.START)
-            val iconsMetadata = input.map { config ->
-                val iconUrl = config.displayMetadata?.buttonData?.iconUrl
-                listOfNotNull(
-                    iconUrl?.colored?.to(ImageColor.COLORED),
-                    iconUrl?.dark?.to(ImageColor.DARK),
-                    iconUrl?.light?.to(ImageColor.LIGHT)
-                ).map { urlColor ->
-                    async(Dispatchers.IO) {
-                        withTimeoutOrNull(DEFAULT_REQUEST_TIMEOUT_MILLIS) {
-                            logAnalyticsImageLoadingTimerEvent(
-                                TimerType.START,
-                                config.type,
-                                urlColor.first
-                            )
+            val iconsMetadata =
+                input.map { config ->
+                    val iconUrl = config.displayMetadata?.buttonData?.iconUrl
+                    listOfNotNull(
+                        iconUrl?.colored?.to(ImageColor.COLORED),
+                        iconUrl?.dark?.to(ImageColor.DARK),
+                        iconUrl?.light?.to(ImageColor.LIGHT),
+                    ).map { urlColor ->
+                        async(Dispatchers.IO) {
+                            withTimeoutOrNull(DEFAULT_REQUEST_TIMEOUT_MILLIS) {
+                                logAnalyticsImageLoadingTimerEvent(
+                                    TimerType.START,
+                                    config.type,
+                                    urlColor.first,
+                                )
 
-                            val request = Request.Builder()
-                                .url(urlColor.first)
-                                .get()
-                                .build()
-                            try {
-                                okHttpClient
-                                    .newCall(request)
-                                    .await().use {
-                                        logAnalyticsImageLoadingTimerEvent(
-                                            TimerType.END,
-                                            config.type,
-                                            urlColor.first
-                                        )
-                                        if (it.isSuccessful) {
-                                            val bufferedInputStream =
-                                                BufferedInputStream(it.body?.byteStream())
-                                            val file = imagesFileProvider.getFile(
-                                                "${config.type}_${urlColor.second}".lowercase()
+                                val request =
+                                    Request.Builder()
+                                        .url(urlColor.first)
+                                        .get()
+                                        .build()
+                                try {
+                                    okHttpClient
+                                        .newCall(request)
+                                        .await().use {
+                                            logAnalyticsImageLoadingTimerEvent(
+                                                TimerType.END,
+                                                config.type,
+                                                urlColor.first,
                                             )
+                                            if (it.isSuccessful) {
+                                                val bufferedInputStream =
+                                                    BufferedInputStream(it.body?.byteStream())
+                                                val file =
+                                                    imagesFileProvider.getFile(
+                                                        "${config.type}_${urlColor.second}".lowercase(),
+                                                    )
 
-                                            FileOutputStream(file).use { outputStream ->
-                                                outputStream.write(bufferedInputStream.readBytes())
-                                                outputStream.flush()
+                                                FileOutputStream(file).use { outputStream ->
+                                                    outputStream.write(bufferedInputStream.readBytes())
+                                                    outputStream.flush()
+                                                    IconDisplayMetadata(
+                                                        imageColor = urlColor.second,
+                                                        url = urlColor.first,
+                                                        filePath = file.absolutePath,
+                                                    )
+                                                }
+                                            } else {
                                                 IconDisplayMetadata(
                                                     imageColor = urlColor.second,
                                                     url = urlColor.first,
-                                                    filePath = file.absolutePath
                                                 )
                                             }
-                                        } else {
-                                            IconDisplayMetadata(
-                                                imageColor = urlColor.second,
-                                                url = urlColor.first
-                                            )
                                         }
-                                    }
-                            } catch (_: Exception) {
+                                } catch (_: Exception) {
+                                    IconDisplayMetadata(
+                                        imageColor = urlColor.second,
+                                        url = urlColor.first,
+                                    )
+                                }
+                            } ?: IconDisplayMetadata(
+                                imageColor = urlColor.second,
+                                url = urlColor.first,
+                            )
+                        }
+                    }.ifEmpty {
+                        listOfNotNull(
+                            iconUrl?.colored?.to(
                                 IconDisplayMetadata(
-                                    imageColor = urlColor.second,
-                                    url = urlColor.first
-                                )
+                                    imageColor = ImageColor.COLORED,
+                                ),
+                            ),
+                            iconUrl?.dark?.to(
+                                IconDisplayMetadata(
+                                    imageColor = ImageColor.DARK,
+                                ),
+                            ),
+                            iconUrl?.light?.to(
+                                IconDisplayMetadata(
+                                    imageColor = ImageColor.LIGHT,
+                                ),
+                            ),
+                        ).map { it.second }.map {
+                            coroutineScope {
+                                async { it }
                             }
-                        } ?: IconDisplayMetadata(
-                            imageColor = urlColor.second,
-                            url = urlColor.first
-                        )
-                    }
-                }.ifEmpty {
-                    listOfNotNull(
-                        iconUrl?.colored?.to(
-                            IconDisplayMetadata(
-                                imageColor = ImageColor.COLORED
-                            )
-                        ),
-                        iconUrl?.dark?.to(
-                            IconDisplayMetadata(
-                                imageColor = ImageColor.DARK
-                            )
-                        ),
-                        iconUrl?.light?.to(
-                            IconDisplayMetadata(
-                                imageColor = ImageColor.LIGHT
-                            )
-                        )
-                    ).map { it.second }.map {
-                        coroutineScope {
-                            async { it }
                         }
                     }
+                }.map { it.awaitAll() }.mapIndexed { index, list ->
+                    mapOf(input[index].type to list)
                 }
-            }.map { it.awaitAll() }.mapIndexed { index, list ->
-                mapOf(input[index].type to list)
-            }
 
             logAnalyticsAllImageDurationTimerEvent(TimerType.END)
             iconsMetadata
@@ -128,26 +131,26 @@ class RemoteConfigurationResourcesDataSource(
     private fun logAnalyticsImageLoadingTimerEvent(
         timerType: TimerType,
         paymentMethodType: String,
-        iconUrl: String
+        iconUrl: String,
     ) = timerEventProvider.getEventProvider().tryEmit(
         TimerProperties(
             id = TimerId.PM_IMAGE_LOADING_DURATION,
             timerType = timerType,
-            analyticsContext = UrlAnalyticsContext(
-                paymentMethodType = paymentMethodType,
-                url = iconUrl
-            )
-        )
+            analyticsContext =
+                UrlAnalyticsContext(
+                    paymentMethodType = paymentMethodType,
+                    url = iconUrl,
+                ),
+        ),
     )
 
-    private fun logAnalyticsAllImageDurationTimerEvent(
-        timerType: TimerType
-    ) = timerEventProvider.getEventProvider().tryEmit(
-        TimerProperties(
-            TimerId.PM_ALL_IMAGES_LOADING_DURATION,
-            timerType
+    private fun logAnalyticsAllImageDurationTimerEvent(timerType: TimerType) =
+        timerEventProvider.getEventProvider().tryEmit(
+            TimerProperties(
+                TimerId.PM_ALL_IMAGES_LOADING_DURATION,
+                timerType,
+            ),
         )
-    )
 
     private companion object {
         const val DEFAULT_REQUEST_TIMEOUT_MILLIS = 2000L

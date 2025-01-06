@@ -13,7 +13,6 @@ import kotlin.test.assertFailsWith
 
 @ExtendWith(MockKExtension::class)
 internal class IPayErrorMapperTest {
-
     // Instantiate the class to be tested
     private lateinit var errorMapper: IPayErrorMapper
 
@@ -59,13 +58,15 @@ internal class IPayErrorMapperTest {
         val exception = IllegalArgumentException("Unsupported exception")
 
         // Act & Assert
-        val error = assertFailsWith<IllegalStateException> {
-            errorMapper.getPrimerError(exception)
-        }
+        val error =
+            assertFailsWith<IllegalStateException> {
+                errorMapper.getPrimerError(exception)
+            }
         assertEquals(
-            expected = "Unsupported mapping for $exception in " +
-                "io.primer.android.ipay88.implementation.errors.data.mapper.IPayErrorMapper",
-            actual = error.message
+            expected =
+                "Unsupported mapping for $exception in " +
+                    "io.primer.android.ipay88.implementation.errors.data.mapper.IPayErrorMapper",
+            actual = error.message,
         )
     }
 }

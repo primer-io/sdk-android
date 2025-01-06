@@ -11,9 +11,9 @@ import io.primer.android.payments.core.tokenization.data.repository.Tokenization
 internal class OtpTokenizationDataRepository(
     remoteTokenizationDataSource: BaseRemoteTokenizationDataSource<OtpPaymentInstrumentDataRequest>,
     configurationDataSource: BaseCacheDataSource<ConfigurationData, ConfigurationData>,
-    tokenizationParamsMapper: OtpTokenizationParamsMapper
+    tokenizationParamsMapper: OtpTokenizationParamsMapper,
 ) : TokenizationDataRepository<OtpPaymentInstrumentParams, OtpPaymentInstrumentDataRequest>(
-    remoteTokenizationDataSource,
-    configurationDataSource,
-    tokenizationParamsMapper
-)
+        remoteTokenizationDataSource,
+        configurationDataSource,
+        tokenizationParamsMapper,
+    )

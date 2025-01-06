@@ -6,7 +6,6 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
 class ConnectivityErrorTest {
-
     @Test
     fun `should create ConnectivityError with given message`() {
         // Arrange

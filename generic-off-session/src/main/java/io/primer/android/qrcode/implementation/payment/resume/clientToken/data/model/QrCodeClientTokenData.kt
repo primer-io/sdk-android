@@ -14,11 +14,9 @@ internal data class QrCodeClientTokenData(
     val statusUrl: String,
     val expiresAt: String?,
     val qrCodeUrl: String?,
-    val qrCodeBase64: String
+    val qrCodeBase64: String,
 ) : JSONDeserializable {
-
     companion object {
-
         @Throws(InvalidClientTokenException::class, ExpiredClientTokenException::class)
         fun fromString(encoded: String): QrCodeClientTokenData {
             ClientTokenDecoder.decode(encoded).let { decoded ->
@@ -35,14 +33,15 @@ internal data class QrCodeClientTokenData(
         private const val QR_CODE_URL_FIELD = "qrCodeUrl"
 
         @JvmField
-        val deserializer = JSONObjectDeserializer { t ->
-            QrCodeClientTokenData(
-                intent = t.getString(INTENT_FIELD),
-                statusUrl = t.getString(STATUS_URL_FIELD),
-                expiresAt = t.optNullableString(EXPIRES_AT_FIELD),
-                qrCodeUrl = t.optNullableString(QR_CODE_URL_FIELD),
-                qrCodeBase64 = t.getString(QR_CODE_FIELD)
-            )
-        }
+        val deserializer =
+            JSONObjectDeserializer { t ->
+                QrCodeClientTokenData(
+                    intent = t.getString(INTENT_FIELD),
+                    statusUrl = t.getString(STATUS_URL_FIELD),
+                    expiresAt = t.optNullableString(EXPIRES_AT_FIELD),
+                    qrCodeUrl = t.optNullableString(QR_CODE_URL_FIELD),
+                    qrCodeBase64 = t.getString(QR_CODE_FIELD),
+                )
+            }
     }
 }

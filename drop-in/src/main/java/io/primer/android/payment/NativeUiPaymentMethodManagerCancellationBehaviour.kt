@@ -7,7 +7,6 @@ import io.primer.android.viewmodel.PrimerViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 internal class NativeUiPaymentMethodManagerCancellationBehaviour : PaymentMethodBehaviour {
-
     operator fun invoke(viewModel: PrimerViewModel) {
         viewModel.clearSelectedPaymentMethodNativeUiManager()
     }

@@ -4,5 +4,5 @@ import io.primer.android.components.domain.core.models.PrimerPaymentMethodManage
 
 internal data class PaymentMethodManagerInitValidationData(
     val paymentMethodType: String,
-    val category: PrimerPaymentMethodManagerCategory
+    val category: PrimerPaymentMethodManagerCategory,
 )

@@ -22,7 +22,6 @@ import io.primer.android.ui.extensions.autoCleaned
 import io.primer.android.ui.fragments.base.BaseFragment
 
 internal abstract class BaseCountryChooserFragment : BaseFragment() {
-
     protected var binding: FragmentSelectCountryBinding by autoCleaned()
 
     protected val viewModel: SelectCountryViewModel
@@ -33,13 +32,16 @@ internal abstract class BaseCountryChooserFragment : BaseFragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
         binding = FragmentSelectCountryBinding.inflate(inflater, container, false)
         return binding.root
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onViewCreated(
+        view: View,
+        savedInstanceState: Bundle?,
+    ) {
         super.onViewCreated(view, savedInstanceState)
         setupTheme()
         setupAdapter()
@@ -57,24 +59,25 @@ internal abstract class BaseCountryChooserFragment : BaseFragment() {
     }
 
     private fun setupTheme() {
-        val imageColorStates = ColorStateList.valueOf(
-            theme.titleText.defaultColor.getColor(
-                requireContext(),
-                theme.isDarkMode
+        val imageColorStates =
+            ColorStateList.valueOf(
+                theme.titleText.defaultColor.getColor(
+                    requireContext(),
+                    theme.isDarkMode,
+                ),
             )
-        )
         binding.ivBack.imageTintList = imageColorStates
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             TextViewCompat.setCompoundDrawableTintList(
                 binding.searchCountry,
-                imageColorStates
+                imageColorStates,
             )
         } else {
             binding.searchCountry.compoundDrawables.forEach { drawable ->
                 drawable?.let {
                     DrawableCompat.setTintList(
                         it.mutate(),
-                        imageColorStates
+                        imageColorStates,
                     )
                 }
             }
@@ -85,13 +88,13 @@ internal abstract class BaseCountryChooserFragment : BaseFragment() {
         binding.rvCountries.addItemDecoration(
             DividerItemDecoration(
                 requireContext(),
-                DividerItemDecoration.VERTICAL
+                DividerItemDecoration.VERTICAL,
             ).apply {
                 ContextCompat.getDrawable(
                     requireContext(),
-                    R.drawable.divider_country_selection
+                    R.drawable.divider_country_selection,
                 )?.let(::setDrawable)
-            }
+            },
         )
 
         adapter = CountriesSelectionAdapter(::onSelectCountryCode, theme)
@@ -103,20 +106,21 @@ internal abstract class BaseCountryChooserFragment : BaseFragment() {
         binding.searchCountry.setTextColor(
             theme.input.text.defaultColor.getColor(
                 requireContext(),
-                theme.isDarkMode
-            )
+                theme.isDarkMode,
+            ),
         )
 
         binding.searchCountry.doOnTextChanged { newText, _, _, _ ->
             viewModel.onFilterChanged(
                 dataSourceType,
-                newText.toString()
+                newText.toString(),
             )
 
-            binding.tvEmptyResultForQuery.text = resources.getString(
-                R.string.no_results_for_query,
-                newText
-            )
+            binding.tvEmptyResultForQuery.text =
+                resources.getString(
+                    R.string.no_results_for_query,
+                    newText,
+                )
         }
     }
 

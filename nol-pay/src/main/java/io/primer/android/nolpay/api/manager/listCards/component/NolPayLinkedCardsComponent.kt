@@ -4,17 +4,16 @@ import io.primer.android.components.domain.core.models.PrimerPaymentMethodManage
 import io.primer.android.core.di.DISdkComponent
 import io.primer.android.core.di.extensions.resolve
 import io.primer.android.nolpay.api.manager.analytics.NolPayAnalyticsConstants
-import io.primer.nolpay.api.models.PrimerNolPaymentCard
 import io.primer.android.nolpay.implementation.listCards.presentation.NolPayGetLinkedCardsDelegate
 import io.primer.android.paymentmethods.analytics.delegate.PaymentMethodSdkAnalyticsEventLoggingDelegate
 import io.primer.android.paymentmethods.common.data.model.PaymentMethodType
 import io.primer.android.paymentmethods.manager.composable.PrimerHeadlessComponent
+import io.primer.nolpay.api.models.PrimerNolPaymentCard
 
 class NolPayLinkedCardsComponent internal constructor(
     private val linkedCardsDelegate: NolPayGetLinkedCardsDelegate,
-    private val eventLoggingDelegate: PaymentMethodSdkAnalyticsEventLoggingDelegate
+    private val eventLoggingDelegate: PaymentMethodSdkAnalyticsEventLoggingDelegate,
 ) : PrimerHeadlessComponent {
-
     /**
      * Retrieves a list of linked Nol Pay cards associated with the specified mobile number and
      * phone country dialing code.
@@ -28,27 +27,25 @@ class NolPayLinkedCardsComponent internal constructor(
      * if an error occurs while fetching validating [mobileNumber].
      * [io.primer.nolpay.api.exceptions.NolPaySdkException] if an error occurs while fetching the linked cards.
      */
-    suspend fun getLinkedCards(
-        mobileNumber: String
-    ): Result<List<PrimerNolPaymentCard>> {
+    suspend fun getLinkedCards(mobileNumber: String): Result<List<PrimerNolPaymentCard>> {
         logSdkFunctionCalls(NolPayAnalyticsConstants.LINKED_CARDS_GET_CARDS_METHOD)
         return linkedCardsDelegate.getLinkedCards(mobileNumber)
     }
 
     private suspend fun logSdkFunctionCalls(
         methodName: String,
-        context: Map<String, String> = hashMapOf()
+        context: Map<String, String> = hashMapOf(),
     ) = eventLoggingDelegate.logSdkAnalyticsEvent(
         PaymentMethodType.NOL_PAY.name,
         methodName,
-        mapOf("category" to PrimerPaymentMethodManagerCategory.NOL_PAY.name).plus(context)
+        mapOf("category" to PrimerPaymentMethodManagerCategory.NOL_PAY.name).plus(context),
     )
 
     internal companion object : DISdkComponent {
-
-        fun getInstance() = NolPayLinkedCardsComponent(
-            linkedCardsDelegate = resolve(),
-            eventLoggingDelegate = resolve(PrimerPaymentMethodManagerCategory.NOL_PAY.name)
-        )
+        fun getInstance() =
+            NolPayLinkedCardsComponent(
+                linkedCardsDelegate = resolve(),
+                eventLoggingDelegate = resolve(PrimerPaymentMethodManagerCategory.NOL_PAY.name),
+            )
     }
 }

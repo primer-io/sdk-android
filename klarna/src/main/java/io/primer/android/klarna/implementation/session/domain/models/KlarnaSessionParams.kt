@@ -5,5 +5,5 @@ import io.primer.android.core.domain.Params
 
 internal data class KlarnaSessionParams(
     val surcharge: Int?,
-    val primerSessionIntent: PrimerSessionIntent
+    val primerSessionIntent: PrimerSessionIntent,
 ) : Params

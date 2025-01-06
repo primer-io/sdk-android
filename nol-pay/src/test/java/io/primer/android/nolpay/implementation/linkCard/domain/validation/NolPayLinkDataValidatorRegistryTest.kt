@@ -21,18 +21,19 @@ import org.junit.jupiter.api.extension.ExtendWith
 
 @ExtendWith(MockKExtension::class)
 internal class NolPayLinkDataValidatorRegistryTest {
-
     private lateinit var registry: NolPayLinkDataValidatorRegistry
 
     @BeforeEach
     fun setUp() {
-        DISdkContext.headlessSdkContainer = mockk<SdkContainer>(relaxed = true).also { sdkContainer ->
-            val cont = spyk<DependencyContainer>().also { container ->
-                container.registerFactory<PhoneMetadataRepository> { mockk(relaxed = true) }
-            }
+        DISdkContext.headlessSdkContainer =
+            mockk<SdkContainer>(relaxed = true).also { sdkContainer ->
+                val cont =
+                    spyk<DependencyContainer>().also { container ->
+                        container.registerFactory<PhoneMetadataRepository> { mockk(relaxed = true) }
+                    }
 
-            every { sdkContainer.containers }.returns(mutableMapOf(cont::class.simpleName.orEmpty() to cont))
-        }
+                every { sdkContainer.containers }.returns(mutableMapOf(cont::class.simpleName.orEmpty() to cont))
+            }
         registry = spyk(NolPayLinkDataValidatorRegistry())
     }
 

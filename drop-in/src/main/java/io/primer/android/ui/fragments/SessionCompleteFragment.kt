@@ -44,26 +44,31 @@ private const val SESSION_COMPLETE_DISMISS_DELAY_DEFAULT = 3000L
 private const val SESSION_COMPLETE_VIEW_TYPE = "SESSION_COMPLETE_VIEW_TYPE"
 
 enum class SuccessType {
-    DEFAULT, VAULT_TOKENIZATION_SUCCESS, PAYMENT_SUCCESS
+    DEFAULT,
+    VAULT_TOKENIZATION_SUCCESS,
+    PAYMENT_SUCCESS,
 }
 
 enum class ErrorType {
-    DEFAULT, VAULT_TOKENIZATION_FAILED, PAYMENT_FAILED, PAYMENT_CANCELLED
+    DEFAULT,
+    VAULT_TOKENIZATION_FAILED,
+    PAYMENT_FAILED,
+    PAYMENT_CANCELLED,
 }
 
 sealed class SessionCompleteViewType : Serializable {
     data class Success(val successType: SuccessType) : SessionCompleteViewType()
+
     data class Error(val errorType: ErrorType, val message: String?) : SessionCompleteViewType()
 }
 
 private const val VIEW_HEIGHT_DP = 300
 
 class SessionCompleteFragment : Fragment(), DISdkComponent {
-
     private val theme: PrimerTheme by inject()
 
     private val viewModel: PrimerViewModel by
-    activityViewModel<PrimerViewModel, PrimerViewModelFactory>()
+        activityViewModel<PrimerViewModel, PrimerViewModelFactory>()
     private val isVaultedPaymentFlow get() = viewModel.selectedPaymentMethod.value == null
     private val isStandalonePaymentMethod
         get() =
@@ -81,13 +86,16 @@ class SessionCompleteFragment : Fragment(), DISdkComponent {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
         binding = FragmentSessionCompleteBinding.inflate(inflater, container, false)
         return binding.root
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onViewCreated(
+        view: View,
+        savedInstanceState: Bundle?,
+    ) {
         super.onViewCreated(view, savedInstanceState)
 
         applyStyle()
@@ -96,30 +104,32 @@ class SessionCompleteFragment : Fragment(), DISdkComponent {
 
         val viewType = arguments?.getSerializableExtraCompat<SessionCompleteViewType>(SESSION_COMPLETE_VIEW_TYPE)
         val isError = viewType is SessionCompleteViewType.Error
-        val isCancellationError = viewType is SessionCompleteViewType.Error &&
-            viewType.errorType == ErrorType.PAYMENT_CANCELLED
+        val isCancellationError =
+            viewType is SessionCompleteViewType.Error &&
+                viewType.errorType == ErrorType.PAYMENT_CANCELLED
 
         viewModel.addAnalyticsEvent(
             UIAnalyticsParams(
                 action = AnalyticsAction.VIEW,
                 objectType = ObjectType.VIEW,
-                place = if (isError) Place.ERROR_SCREEN else Place.SUCCESS_SCREEN
-            )
+                place = if (isError) Place.ERROR_SCREEN else Place.SUCCESS_SCREEN,
+            ),
         )
 
         if (isStripeAchPaymentMethod) {
             binding.paymentMethodTitle.text = resources.getString(R.string.pay_with_ach)
-            binding.sessionCompleteMessage.text = getString(
-                if (isError) {
-                    if (isCancellationError) {
-                        R.string.session_complete_payment_cancellation_title
+            binding.sessionCompleteMessage.text =
+                getString(
+                    if (isError) {
+                        if (isCancellationError) {
+                            R.string.session_complete_payment_cancellation_title
+                        } else {
+                            R.string.session_complete_payment_failure_title
+                        }
                     } else {
-                        R.string.session_complete_payment_failure_title
-                    }
-                } else {
-                    R.string.session_complete_payment_success_title
-                }
-            )
+                        R.string.session_complete_payment_success_title
+                    },
+                )
             binding.sessionCompleteDescription.text = viewType.getCompletedMessageOrNull()
             if (isError) {
                 if (isCancellationError || isVaultedPaymentFlow) {
@@ -158,25 +168,26 @@ class SessionCompleteFragment : Fragment(), DISdkComponent {
                 R.drawable.ic_error
             } else {
                 R.drawable.ic_check_success
-            }
+            },
         )
 
         if (!binding.primaryButton.isVisible && !binding.secondaryButton.isVisible) {
             Handler(Looper.getMainLooper()).postDelayed(
                 { viewModel.setViewStatus(ViewStatus.Dismiss) },
                 arguments?.getLong(SESSION_COMPLETE_DISMISS_DELAY_KEY, SESSION_COMPLETE_DISMISS_DELAY_DEFAULT)
-                    ?: SESSION_COMPLETE_DISMISS_DELAY_DEFAULT
+                    ?: SESSION_COMPLETE_DISMISS_DELAY_DEFAULT,
             )
         }
     }
 
     private fun applyStyle() {
-        val color = ColorStateList.valueOf(
-            theme.titleText.defaultColor.getColor(
-                context = requireContext(),
-                isDarkMode = theme.isDarkMode
+        val color =
+            ColorStateList.valueOf(
+                theme.titleText.defaultColor.getColor(
+                    context = requireContext(),
+                    isDarkMode = theme.isDarkMode,
+                ),
             )
-        )
         binding.paymentMethodTitle.setTextColor(color)
         binding.sessionCompleteMessage.setTextColor(color)
         binding.primaryButton.setTheme(theme)
@@ -201,14 +212,14 @@ class SessionCompleteFragment : Fragment(), DISdkComponent {
     private fun popBackStack() {
         parentFragmentManager.popBackStackImmediate(
             SelectPaymentMethodFragment.TAG,
-            FragmentManager.POP_BACK_STACK_INCLUSIVE
+            FragmentManager.POP_BACK_STACK_INCLUSIVE,
         )
         runCatching {
             parentFragmentManager.commitNow(allowStateLoss = true) {
                 /*
                 Manually remove this fragment as it is not added to the backstack,
                 therefore it won't get removed automatically on pop.
-                */
+                 */
                 remove(this@SessionCompleteFragment)
             }
         }
@@ -217,11 +228,12 @@ class SessionCompleteFragment : Fragment(), DISdkComponent {
 
     private fun updateRootHeight() {
         binding.root.updateLayoutParams<ViewGroup.LayoutParams> {
-            height = if (isStripeAchPaymentMethod) {
-                ViewGroup.LayoutParams.WRAP_CONTENT
-            } else {
-                requireContext().toPx(VIEW_HEIGHT_DP).toInt()
-            }
+            height =
+                if (isStripeAchPaymentMethod) {
+                    ViewGroup.LayoutParams.WRAP_CONTENT
+                } else {
+                    requireContext().toPx(VIEW_HEIGHT_DP).toInt()
+                }
         }
     }
 
@@ -242,7 +254,10 @@ class SessionCompleteFragment : Fragment(), DISdkComponent {
     companion object {
         private val TAG = SessionCompleteFragment::class.simpleName
 
-        private fun getSuccessMessage(successType: SuccessType, isStripeAch: Boolean = false): Int {
+        private fun getSuccessMessage(
+            successType: SuccessType,
+            isStripeAch: Boolean = false,
+        ): Int {
             return when (successType) {
                 SuccessType.DEFAULT -> R.string.success_text
                 SuccessType.VAULT_TOKENIZATION_SUCCESS -> R.string.payment_method_added_message
@@ -250,13 +265,17 @@ class SessionCompleteFragment : Fragment(), DISdkComponent {
             }
         }
 
-        private fun getSuccessStringRes(isStripeAch: Boolean) = if (isStripeAch) {
-            R.string.stripe_ach_payment_request_completed_successfully
-        } else {
-            R.string.payment_request_completed_successfully
-        }
+        private fun getSuccessStringRes(isStripeAch: Boolean) =
+            if (isStripeAch) {
+                R.string.stripe_ach_payment_request_completed_successfully
+            } else {
+                R.string.payment_request_completed_successfully
+            }
 
-        private fun getErrorMessage(errorType: ErrorType, isStripeAch: Boolean = false): Int {
+        private fun getErrorMessage(
+            errorType: ErrorType,
+            isStripeAch: Boolean = false,
+        ): Int {
             return when (errorType) {
                 ErrorType.DEFAULT -> R.string.error_default
                 ErrorType.VAULT_TOKENIZATION_FAILED -> R.string.payment_method_not_added_message
@@ -265,18 +284,23 @@ class SessionCompleteFragment : Fragment(), DISdkComponent {
             }
         }
 
-        private fun getCancellationStringRes(isStripeAch: Boolean) = if (isStripeAch) {
-            R.string.stripe_ach_payment_request_cancelled
-        } else {
-            R.string.payment_request_unsuccessful
-        }
+        private fun getCancellationStringRes(isStripeAch: Boolean) =
+            if (isStripeAch) {
+                R.string.stripe_ach_payment_request_cancelled
+            } else {
+                R.string.payment_request_unsuccessful
+            }
 
-        fun newInstance(delay: Int, viewType: SessionCompleteViewType): SessionCompleteFragment {
+        fun newInstance(
+            delay: Int,
+            viewType: SessionCompleteViewType,
+        ): SessionCompleteFragment {
             return SessionCompleteFragment().apply {
-                arguments = Bundle().apply {
-                    putSerializable(SESSION_COMPLETE_VIEW_TYPE, viewType)
-                    putLong(SESSION_COMPLETE_DISMISS_DELAY_KEY, delay.toLong())
-                }
+                arguments =
+                    Bundle().apply {
+                        putSerializable(SESSION_COMPLETE_VIEW_TYPE, viewType)
+                        putLong(SESSION_COMPLETE_DISMISS_DELAY_KEY, delay.toLong())
+                    }
             }
         }
     }

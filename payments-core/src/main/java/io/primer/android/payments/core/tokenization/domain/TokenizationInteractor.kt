@@ -17,21 +17,20 @@ abstract class TokenizationInteractor<T : BasePaymentInstrumentParams>(
     private val tokenizedPaymentMethodRepository: TokenizedPaymentMethodRepository,
     private val preTokenizationHandler: PreTokenizationHandler,
     private val logReporter: LogReporter,
-    override val dispatcher: CoroutineDispatcher = Dispatchers.IO
+    override val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : BaseSuspendInteractor<PaymentMethodTokenInternal, TokenizationParams<T>>() {
-
     override suspend fun performAction(params: TokenizationParams<T>): Result<PaymentMethodTokenInternal> {
         val paymentMethodType = params.paymentInstrumentParams.paymentMethodType
         return preTokenizationHandler.handle(
             paymentMethodType = paymentMethodType,
-            sessionIntent = params.sessionIntent
+            sessionIntent = params.sessionIntent,
         ).flatMap {
             logReporter.info(
-                "Started tokenization for $paymentMethodType payment method."
+                "Started tokenization for $paymentMethodType payment method.",
             )
             tokenizationRepository.tokenize(params).onSuccess { paymentMethodToken ->
                 logReporter.info(
-                    "Tokenization successful for $paymentMethodType payment method."
+                    "Tokenization successful for $paymentMethodType payment method.",
                 )
                 tokenizedPaymentMethodRepository.setPaymentMethod(paymentMethodToken)
             }

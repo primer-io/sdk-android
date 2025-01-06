@@ -9,35 +9,33 @@ import io.primer.android.payments.core.tokenization.domain.repository.TokenizedP
 
 internal class PaymentDecisionResolver(
     private val tokenizedPaymentMethodRepository: TokenizedPaymentMethodRepository,
-    private val logReporter: LogReporter
+    private val logReporter: LogReporter,
 ) {
-
-    fun resolve(
-        paymentResult: PaymentResult
-    ): PaymentDecision {
+    fun resolve(paymentResult: PaymentResult): PaymentDecision {
         logReporter.info("Received new payment status: ${paymentResult.paymentStatus}.")
         return when {
             paymentResult.paymentStatus == PaymentStatus.PENDING &&
                 paymentResult.showSuccessCheckoutOnPendingPayment.not() -> {
                 logReporter.debug(
                     "Handling required action: ${paymentResult.requiredActionName?.name}" +
-                        " for payment id: ${paymentResult.payment.id}"
+                        " for payment id: ${paymentResult.payment.id}",
                 )
                 PaymentDecision.Pending(
                     clientToken = paymentResult.clientToken.orEmpty(),
-                    payment = paymentResult.payment
+                    payment = paymentResult.payment,
                 )
             }
 
             paymentResult.paymentStatus == PaymentStatus.FAILED -> {
                 PaymentDecision.Error(
-                    error = PaymentError.PaymentFailedError(
-                        paymentId = paymentResult.payment.id,
-                        paymentStatus = paymentResult.paymentStatus,
-                        paymentMethodType =
-                        tokenizedPaymentMethodRepository.getPaymentMethod().paymentMethodType.orEmpty()
-                    ),
-                    payment = paymentResult.payment
+                    error =
+                        PaymentError.PaymentFailedError(
+                            paymentId = paymentResult.payment.id,
+                            paymentStatus = paymentResult.paymentStatus,
+                            paymentMethodType =
+                                tokenizedPaymentMethodRepository.getPaymentMethod().paymentMethodType.orEmpty(),
+                        ),
+                    payment = paymentResult.payment,
                 )
             }
 

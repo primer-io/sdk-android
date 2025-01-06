@@ -11,23 +11,24 @@ import io.primer.android.paymentmethods.CollectableDataValidator
 import kotlin.reflect.KClass
 
 internal class NolPayLinkDataValidatorRegistry : NolPayValidatorRegistry {
-
     private val registry:
-        Map<KClass<out NolPayLinkCollectableData>,
-            CollectableDataValidator<NolPayLinkCollectableData>> = mapOf(
+        Map<
+            KClass<out NolPayLinkCollectableData>,
+            CollectableDataValidator<NolPayLinkCollectableData>,
+            > =
+        mapOf(
             NolPayLinkCollectableData.NolPayOtpData::class to NolPayLinkOtpDataValidator(),
             NolPayLinkCollectableData.NolPayPhoneData::class to
                 NolPayLinkMobileNumberDataValidator(resolve()),
-            NolPayLinkCollectableData.NolPayTagData::class to NolPayLinkTagDataValidator()
+            NolPayLinkCollectableData.NolPayTagData::class to NolPayLinkTagDataValidator(),
         )
 
     override fun getValidator(data: NolPayCollectableData): CollectableDataValidator<NolPayCollectableData> =
         registry[data::class] ?: throw IllegalArgumentException(
-            NOL_DATA_VALIDATOR_NOT_SUPPORTED_MESSAGE
+            NOL_DATA_VALIDATOR_NOT_SUPPORTED_MESSAGE,
         )
 
     private companion object {
-
         const val NOL_DATA_VALIDATOR_NOT_SUPPORTED_MESSAGE = "NolPay data validator not registered."
     }
 }

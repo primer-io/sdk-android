@@ -6,16 +6,16 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
 internal class PrimerPhoneCodeTest {
-
     @Test
     fun `deserializer correctly parses valid JSON`() {
-        val json = """
+        val json =
+            """
             {
                 "name": "United States",
                 "code": "US",
                 "dial_code": "+1"
             }
-        """.trimIndent()
+            """.trimIndent()
 
         val jsonObject = JSONObject(json)
         val primerPhoneCode = PrimerPhoneCode.deserializer.deserialize(jsonObject)

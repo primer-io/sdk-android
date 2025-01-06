@@ -4,5 +4,5 @@ data class IconDisplayMetadata(
     val imageColor: ImageColor,
     val url: String? = null,
     val filePath: String? = null,
-    val iconResId: Int = 0
+    val iconResId: Int = 0,
 )

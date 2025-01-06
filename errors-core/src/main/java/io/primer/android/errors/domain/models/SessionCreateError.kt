@@ -8,7 +8,7 @@ import java.util.UUID
 class SessionCreateError(
     private val paymentMethodType: String,
     serverDiagnosticsId: String?,
-    serverDescription: String?
+    serverDescription: String?,
 ) : PrimerError() {
     override val errorId = "failed-to-create-session"
     override val description = "Failed to create session for $paymentMethodType. $serverDescription"

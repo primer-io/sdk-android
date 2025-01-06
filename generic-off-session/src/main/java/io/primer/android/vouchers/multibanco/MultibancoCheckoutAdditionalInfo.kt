@@ -6,5 +6,5 @@ data class MultibancoCheckoutAdditionalInfo(
     val expiresAt: String,
     val reference: String,
     val entity: String,
-    override val completesCheckout: Boolean = true
+    override val completesCheckout: Boolean = true,
 ) : PrimerCheckoutAdditionalInfo

@@ -7,7 +7,6 @@ import io.primer.nolpay.api.models.PrimerNolPaymentCard
  * A sealed interface representing the steps involved in unlinking a Nol Pay card.
  */
 sealed interface NolPayUnlinkCardStep : PrimerHeadlessStep {
-
     /**
      * Object representing the step to collect card and phone data for unlinking Nol Pay card.
      */

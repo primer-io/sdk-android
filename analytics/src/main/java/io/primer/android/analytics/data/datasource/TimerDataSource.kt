@@ -7,6 +7,5 @@ import kotlinx.coroutines.flow.filterNotNull
 
 internal class TimerDataSource(private val timerEventProvider: EventFlowProvider<TimerProperties>) :
     BaseFlowDataSource<TimerProperties, Unit> {
-
     override fun execute(input: Unit) = timerEventProvider.getEventProvider().filterNotNull()
 }

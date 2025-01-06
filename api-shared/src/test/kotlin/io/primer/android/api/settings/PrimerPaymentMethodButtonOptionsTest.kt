@@ -15,7 +15,6 @@ import org.junit.jupiter.api.Test
 import kotlin.test.assertContentEquals
 
 class PrimerPaymentMethodButtonOptionsTest {
-
     @Test
     fun `should write options to parcel when writeToParcel() is called`() {
         val parcel = mockk<Parcel>(relaxed = true)
@@ -25,13 +24,14 @@ class PrimerPaymentMethodButtonOptionsTest {
         val threeDsOptions = PrimerThreeDsOptions()
         val stripeOptions = PrimerStripeOptions()
 
-        val options = PrimerPaymentMethodOptions(
-            redirectScheme = redirectScheme,
-            googlePayOptions = googlePayOptions,
-            klarnaOptions = klarnaOptions,
-            threeDsOptions = threeDsOptions,
-            stripeOptions = stripeOptions
-        )
+        val options =
+            PrimerPaymentMethodOptions(
+                redirectScheme = redirectScheme,
+                googlePayOptions = googlePayOptions,
+                klarnaOptions = klarnaOptions,
+                threeDsOptions = threeDsOptions,
+                stripeOptions = stripeOptions,
+            )
 
         options.writeToParcel(parcel, 0)
 
@@ -60,12 +60,13 @@ class PrimerPaymentMethodButtonOptionsTest {
         val stripeOptions = PrimerStripeOptions()
 
         every { parcel.readString() } returns redirectScheme
-        every { parcel.readParcelable<Parcelable>(any()) } returnsMany listOf(
-            googlePayOptions,
-            klarnaOptions,
-            threeDsOptions,
-            stripeOptions
-        )
+        every { parcel.readParcelable<Parcelable>(any()) } returnsMany
+            listOf(
+                googlePayOptions,
+                klarnaOptions,
+                threeDsOptions,
+                stripeOptions,
+            )
 
         val options = PrimerPaymentMethodOptions.CREATOR.createFromParcel(parcel)
 

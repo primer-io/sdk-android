@@ -32,7 +32,7 @@ internal class StripeAchBankSelectionHandler(
     private val checkoutAdditionalInfoHandler: CheckoutAdditionalInfoHandler,
     private val stripePublishableKeyDelegate: GetStripePublishableKeyDelegate,
     private val getClientSessionCustomerDetailsDelegate: GetClientSessionCustomerDetailsDelegate,
-    private val mockConfigurationDelegate: MockConfigurationDelegate
+    private val mockConfigurationDelegate: MockConfigurationDelegate,
 ) {
     private val isMockedFlow get() = mockConfigurationDelegate.isMockedFlow()
 
@@ -42,10 +42,11 @@ internal class StripeAchBankSelectionHandler(
         lateinit var publishableKey: String
 
         try {
-            publishableKey = requireNotNullCheck(
-                value = stripePublishableKeyDelegate().getOrNull(),
-                key = StripeIllegalValueKey.MISSING_PUBLISHABLE_KEY
-            )
+            publishableKey =
+                requireNotNullCheck(
+                    value = stripePublishableKeyDelegate().getOrNull(),
+                    key = StripeIllegalValueKey.MISSING_PUBLISHABLE_KEY,
+                )
             val customerDetails = getClientSessionCustomerDetailsDelegate.invoke().getOrThrow()
             fullName = "${customerDetails.firstName} ${customerDetails.lastName}"
             emailAddress = customerDetails.emailAddress
@@ -57,7 +58,7 @@ internal class StripeAchBankSelectionHandler(
             fullName = fullName,
             emailAddress = emailAddress,
             clientSecret = clientSecret,
-            publishableKey = publishableKey
+            publishableKey = publishableKey,
         )
     }
 
@@ -67,7 +68,7 @@ internal class StripeAchBankSelectionHandler(
         fullName: String,
         emailAddress: String,
         clientSecret: String,
-        publishableKey: String
+        publishableKey: String,
     ): Result<String> {
         if (isMockedFlow) {
             delay(MOCK_COLLECTION_DELAY)
@@ -78,49 +79,55 @@ internal class StripeAchBankSelectionHandler(
 
         return suspendCancellableCoroutine<Result<String>> { continuation ->
             activityResultRegistry.register(
-                /* key = */ "bank_collector",
-                /* contract = */ ActivityResultContracts.StartActivityForResult()
+                // key =
+                "bank_collector",
+                // contract =
+                ActivityResultContracts.StartActivityForResult(),
             ) { activityResult ->
                 if (!continuation.isActive) {
                     return@register
                 }
                 continuation.resume(
                     when (activityResult.resultCode) {
-                        Activity.RESULT_OK -> Result.success(
-                            activityResult.data?.extras?.getString(
-                                StripeBankAccountCollectorActivity.PAYMENT_METHOD_ID
-                            ).orEmpty()
-                        )
-
-                        Activity.RESULT_CANCELED -> Result.failure(
-                            PaymentMethodCancelledException(
-                                paymentMethodType = PaymentMethodType.STRIPE_ACH.name
+                        Activity.RESULT_OK ->
+                            Result.success(
+                                activityResult.data?.extras?.getString(
+                                    StripeBankAccountCollectorActivity.PAYMENT_METHOD_ID,
+                                ).orEmpty(),
                             )
-                        )
+
+                        Activity.RESULT_CANCELED ->
+                            Result.failure(
+                                PaymentMethodCancelledException(
+                                    paymentMethodType = PaymentMethodType.STRIPE_ACH.name,
+                                ),
+                            )
 
                         StripeBankAccountCollectorActivity.RESULT_ERROR -> {
                             Result.failure(
                                 activityResult.data?.extras?.getSerializableExtraCompat(
-                                    StripeBankAccountCollectorActivity.ERROR_KEY
-                                ) ?: StripeSdkException("error")
+                                    StripeBankAccountCollectorActivity.ERROR_KEY,
+                                ) ?: StripeSdkException("error"),
                             )
                         }
 
-                        else -> Result.failure(
-                            IllegalStateException("Unsupported activity result code")
-                        )
-                    }
+                        else ->
+                            Result.failure(
+                                IllegalStateException("Unsupported activity result code"),
+                            )
+                    },
                 )
             }.launch(
                 StripeBankAccountCollectorActivity.getLaunchIntent(
                     context = contextProvider(),
-                    params = StripeBankAccountCollectorActivity.Params(
-                        fullName = fullName,
-                        emailAddress = emailAddress,
-                        publishableKey = publishableKey,
-                        clientSecret = clientSecret
-                    )
-                )
+                    params =
+                        StripeBankAccountCollectorActivity.Params(
+                            fullName = fullName,
+                            emailAddress = emailAddress,
+                            publishableKey = publishableKey,
+                            clientSecret = clientSecret,
+                        ),
+                ),
             )
         }
     }
@@ -135,8 +142,8 @@ internal class StripeAchBankSelectionHandler(
                     if (completable.isActive) {
                         completable.complete(activityResultRegistry)
                     }
-                }
-            )
+                },
+            ),
         )
         return completable.await()
     }

@@ -6,9 +6,8 @@ import io.primer.android.ui.fragments.ErrorType
 import io.primer.android.ui.fragments.SuccessType
 
 internal sealed interface PrimerEvent {
-
     data class AvailablePaymentMethodsLoaded(
-        val paymentMethodsHolder: PrimerEventsInteractor.PaymentMethodsHolder
+        val paymentMethodsHolder: PrimerEventsInteractor.PaymentMethodsHolder,
     ) : PrimerEvent
 
     data class CheckoutFailed(val errorMessage: String?, val errorType: ErrorType) : PrimerEvent

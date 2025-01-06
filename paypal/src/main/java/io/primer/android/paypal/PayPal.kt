@@ -21,71 +21,73 @@ import io.primer.android.paypal.implementation.composer.ui.navigation.provider.P
 
 internal class PayPal(override val type: String = PaymentMethodType.PAYPAL.name) :
     PaymentMethod, DISdkComponent {
-
     override val canBeVaulted: Boolean = true
 
-    override val module: PaymentMethodModule = object : PaymentMethodModule {
-        override fun initialize(applicationContext: Context, configuration: ConfigurationData) {
-            // no-op
-        }
+    override val module: PaymentMethodModule =
+        object : PaymentMethodModule {
+            override fun initialize(
+                applicationContext: Context,
+                configuration: ConfigurationData,
+            ) {
+                // no-op
+            }
 
-        override fun registerPaymentMethodCheckers(
-            paymentMethodCheckerRegistry: PaymentMethodCheckerRegistry
-        ) {
-            // no-op
-        }
+            override fun registerPaymentMethodCheckers(paymentMethodCheckerRegistry: PaymentMethodCheckerRegistry) {
+                // no-op
+            }
 
-        override fun registerPaymentMethodDescriptorFactory(
-            paymentMethodDescriptorFactoryRegistry: PaymentMethodDescriptorFactoryRegistry
-        ) {
-            paymentMethodDescriptorFactoryRegistry.register(
-                type,
-                PayPalPaymentMethodDescriptorFactory()
-            )
-        }
-
-        override fun registerPaymentMethodProviderFactory(
-            paymentMethodProviderFactoryRegistry: PaymentMethodProviderFactoryRegistry
-        ) {
-            paymentMethodProviderFactoryRegistry.register(
-                type,
-                PaypalComposerProviderFactory::class.java
-            )
-        }
-
-        override fun registerSavedPaymentMethodProviderFactory(
-            paymentMethodProviderFactoryRegistry: VaultedPaymentMethodProviderFactoryRegistry
-        ) {
-            // no-op
-        }
-
-        override fun registerPaymentMethodNavigationFactory(
-            paymentMethodNavigationFactoryRegistry: PaymentMethodNavigationFactoryRegistry
-        ) {
-            paymentMethodNavigationFactoryRegistry.register(
-                type,
-                PaypalNavigatorProviderFactory::class.java
-            )
-        }
-
-        override fun registerDependencyContainer(sdkContainers: List<SdkContainer>) {
-            sdkContainers.forEach { sdkContainer ->
-                sdkContainer.registerContainer(
-                    name = type,
-                    container = PaypalContainer(
-                        sdk = { getSdkContainer() },
-                        paymentMethodType = type
-                    )
+            override fun registerPaymentMethodDescriptorFactory(
+                paymentMethodDescriptorFactoryRegistry: PaymentMethodDescriptorFactoryRegistry,
+            ) {
+                paymentMethodDescriptorFactoryRegistry.register(
+                    type,
+                    PayPalPaymentMethodDescriptorFactory(),
                 )
             }
-        }
 
-        override fun registerErrorMappers(errorMapperRegistry: ErrorMapperRegistry) {
-            // no-op
-        }
+            override fun registerPaymentMethodProviderFactory(
+                paymentMethodProviderFactoryRegistry: PaymentMethodProviderFactoryRegistry,
+            ) {
+                paymentMethodProviderFactoryRegistry.register(
+                    type,
+                    PaypalComposerProviderFactory::class.java,
+                )
+            }
 
-        override fun registerBrandProvider(brandRegistry: BrandRegistry) {
-            brandRegistry.register(paymentMethodType = type, brand = PaypalBrand())
+            override fun registerSavedPaymentMethodProviderFactory(
+                paymentMethodProviderFactoryRegistry: VaultedPaymentMethodProviderFactoryRegistry,
+            ) {
+                // no-op
+            }
+
+            override fun registerPaymentMethodNavigationFactory(
+                paymentMethodNavigationFactoryRegistry: PaymentMethodNavigationFactoryRegistry,
+            ) {
+                paymentMethodNavigationFactoryRegistry.register(
+                    type,
+                    PaypalNavigatorProviderFactory::class.java,
+                )
+            }
+
+            override fun registerDependencyContainer(sdkContainers: List<SdkContainer>) {
+                sdkContainers.forEach { sdkContainer ->
+                    sdkContainer.registerContainer(
+                        name = type,
+                        container =
+                            PaypalContainer(
+                                sdk = { getSdkContainer() },
+                                paymentMethodType = type,
+                            ),
+                    )
+                }
+            }
+
+            override fun registerErrorMappers(errorMapperRegistry: ErrorMapperRegistry) {
+                // no-op
+            }
+
+            override fun registerBrandProvider(brandRegistry: BrandRegistry) {
+                brandRegistry.register(paymentMethodType = type, brand = PaypalBrand())
+            }
         }
-    }
 }

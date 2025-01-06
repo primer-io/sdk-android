@@ -5,5 +5,5 @@ import io.primer.android.ipay88.implementation.payment.resume.clientToken.domain
 
 internal data class IPay88ValidationData(
     val clientSession: ClientSessionData?,
-    val clientToken: IPay88ClientToken
+    val clientToken: IPay88ClientToken,
 )

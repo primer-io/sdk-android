@@ -31,7 +31,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 internal class QrCodeFragment : BaseFormFragment(), DISdkComponent {
-
     private var binding: FragmentQrCodeBinding by autoCleaned()
 
     override val baseFormBinding: BaseFormBinding by autoCleaned { binding.toBaseFormBinding() }
@@ -50,7 +49,7 @@ internal class QrCodeFragment : BaseFormFragment(), DISdkComponent {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
         binding = FragmentQrCodeBinding.inflate(inflater, container, false)
         with(binding.tvAmount) {
@@ -77,7 +76,10 @@ internal class QrCodeFragment : BaseFormFragment(), DISdkComponent {
         }
     }
 
-    private fun setupQrCode(qrCodeUrl: String?, qrCodeBase64: String?) {
+    private fun setupQrCode(
+        qrCodeUrl: String?,
+        qrCodeBase64: String?,
+    ) {
         if (!qrCodeBase64.isNullOrBlank() && qrCodeBase64.contains(base64Pattern)) {
             lifecycleScope.launch(Dispatchers.Default) {
                 val imageBytes = Base64.decode(qrCodeBase64, Base64.DEFAULT)
@@ -93,7 +95,7 @@ internal class QrCodeFragment : BaseFormFragment(), DISdkComponent {
                     imageLoader.loadImage(
                         qrCodeUrl,
                         placeholder,
-                        binding.ivQrImage
+                        binding.ivQrImage,
                     )
                 }
             }
@@ -114,7 +116,6 @@ internal class QrCodeFragment : BaseFormFragment(), DISdkComponent {
     //endregion
 
     companion object {
-
         private const val QR_CODE_BASE_64_KEY = "QR_CODE_BASE_64"
         private const val QR_CODE_URL_KEY = "QR_CODE_URL"
         private const val STATUS_URL_KEY = "STATUS_URL"
@@ -124,14 +125,15 @@ internal class QrCodeFragment : BaseFormFragment(), DISdkComponent {
             qrCodeBase64: String?,
             qrCodeUrl: String?,
             statusUrl: String,
-            paymentMethodType: String
+            paymentMethodType: String,
         ) = QrCodeFragment().apply {
-            arguments = bundleOf(
-                QR_CODE_BASE_64_KEY to qrCodeBase64,
-                QR_CODE_URL_KEY to qrCodeUrl,
-                STATUS_URL_KEY to statusUrl,
-                PAYMENT_METHOD_TYPE_KEY to paymentMethodType
-            )
+            arguments =
+                bundleOf(
+                    QR_CODE_BASE_64_KEY to qrCodeBase64,
+                    QR_CODE_URL_KEY to qrCodeUrl,
+                    STATUS_URL_KEY to statusUrl,
+                    PAYMENT_METHOD_TYPE_KEY to paymentMethodType,
+                )
         }
     }
 }

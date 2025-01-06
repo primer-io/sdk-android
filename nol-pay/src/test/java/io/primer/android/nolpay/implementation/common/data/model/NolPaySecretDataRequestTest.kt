@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
 internal class NolPaySecretDataRequestTest {
-
     @Test
     fun `serializer should correctly serialize NolPaySecretDataRequest`() {
         // Given
@@ -19,12 +18,13 @@ internal class NolPaySecretDataRequestTest {
         val json = NolPaySecretDataRequest.serializer.serialize(request)
 
         // Then
-        val expectedJson = JSONObject().apply {
-            put("nolSdkId", sdkId)
-            put("nolAppId", appId)
-            put("phoneVendor", deviceVendor)
-            put("phoneModel", deviceModel)
-        }
+        val expectedJson =
+            JSONObject().apply {
+                put("nolSdkId", sdkId)
+                put("nolAppId", appId)
+                put("phoneVendor", deviceVendor)
+                put("phoneModel", deviceModel)
+            }
         assertEquals(expectedJson.toString(), json.toString())
     }
 

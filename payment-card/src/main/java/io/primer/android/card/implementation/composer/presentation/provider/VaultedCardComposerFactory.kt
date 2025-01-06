@@ -9,10 +9,12 @@ import io.primer.android.paymentmethods.core.composer.provider.PaymentMethodComp
 import io.primer.android.payments.core.helpers.PaymentMethodPaymentDelegate
 
 internal class VaultedCardComposerFactory : PaymentMethodComposerProvider.Factory {
-
-    override fun create(paymentMethodType: String, sessionIntent: PrimerSessionIntent): PaymentMethodComposer {
+    override fun create(
+        paymentMethodType: String,
+        sessionIntent: PrimerSessionIntent,
+    ): PaymentMethodComposer {
         return VaultedCardComponent(
-            paymentDelegate = resolve<PaymentMethodPaymentDelegate>(name = paymentMethodType) as CardPaymentDelegate
+            paymentDelegate = resolve<PaymentMethodPaymentDelegate>(name = paymentMethodType) as CardPaymentDelegate,
         )
     }
 }

@@ -7,5 +7,5 @@ data class QrCodeCheckoutAdditionalInfo(
     val expiresAt: String?,
     val qrCodeUrl: String?,
     val qrCodeBase64: String?,
-    val paymentMethodType: String
+    val paymentMethodType: String,
 ) : PrimerCheckoutAdditionalInfo

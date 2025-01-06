@@ -3,5 +3,5 @@ package io.primer.android.vouchers.retailOutlets.implementation.rpc.domain.model
 import io.primer.android.core.domain.Params
 
 internal data class RetailOutletParams(
-    val paymentMethodType: String
+    val paymentMethodType: String,
 ) : Params

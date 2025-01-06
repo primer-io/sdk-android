@@ -4,7 +4,6 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkStatic
 import io.primer.android.PrimerSessionIntent
-import io.primer.android.data.settings.internal.MonetaryAmount
 import io.primer.android.clientToken.core.token.domain.repository.ClientTokenRepository
 import io.primer.android.clientToken.core.validation.domain.repository.ValidateClientTokenRepository
 import io.primer.android.configuration.data.model.ClientSessionDataResponse
@@ -18,6 +17,7 @@ import io.primer.android.configuration.domain.repository.ConfigurationRepository
 import io.primer.android.core.domain.validation.ValidationResult
 import io.primer.android.core.domain.validation.ValidationRule
 import io.primer.android.core.utils.BaseDataWithInputProvider
+import io.primer.android.data.settings.internal.MonetaryAmount
 import io.primer.android.errors.data.exception.IllegalClientSessionValueException
 import io.primer.android.ipay88.implementation.deeplink.domain.repository.IPay88DeeplinkRepository
 import io.primer.android.ipay88.implementation.payment.resume.clientToken.data.IPay88ClientTokenParser
@@ -34,7 +34,6 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 internal class IPay88ResumeHandlerTest {
-
     // Mock dependencies
     private val iPay88DeeplinkRepository: IPay88DeeplinkRepository = mockk()
     private val iPay88ValidationRulesResolver: IPay88ValidationRulesResolver = mockk()
@@ -51,60 +50,67 @@ internal class IPay88ResumeHandlerTest {
 
     @BeforeEach
     fun setUp() {
-        handler = IPay88ResumeHandler(
-            iPay88DeeplinkRepository,
-            iPay88ValidationRulesResolver,
-            clientTokenParser,
-            tokenizedPaymentMethodRepository,
-            configurationRepository,
-            validateClientTokenRepository,
-            formattedAmountProvider,
-            clientTokenRepository,
-            checkoutAdditionalInfoHandler
-        )
+        handler =
+            IPay88ResumeHandler(
+                iPay88DeeplinkRepository,
+                iPay88ValidationRulesResolver,
+                clientTokenParser,
+                tokenizedPaymentMethodRepository,
+                configurationRepository,
+                validateClientTokenRepository,
+                formattedAmountProvider,
+                clientTokenRepository,
+                checkoutAdditionalInfoHandler,
+            )
         mockkStatic(ClientSessionDataResponse::class)
     }
 
     @Test
     fun `getResumeDecision should return correct decision when validation succeeds`() {
         // Mock necessary dependencies and their behavior
-        val clientToken = IPay88ClientToken(
-            intent = "intent",
-            statusUrl = "statusUrl",
-            paymentId = "paymentId",
-            paymentMethod = 1,
-            actionType = "actionType",
-            referenceNumber = "referenceNumber",
-            supportedCurrencyCode = "USD",
-            backendCallbackUrl = "callbackUrl",
-            supportedCountryCode = "US",
-            clientTokenIntent = "intent"
-        )
+        val clientToken =
+            IPay88ClientToken(
+                intent = "intent",
+                statusUrl = "statusUrl",
+                paymentId = "paymentId",
+                paymentMethod = 1,
+                actionType = "actionType",
+                referenceNumber = "referenceNumber",
+                supportedCurrencyCode = "USD",
+                backendCallbackUrl = "callbackUrl",
+                supportedCountryCode = "US",
+                clientTokenIntent = "intent",
+            )
 
         val customerFullName = "John Doe"
         val customerEmailAddress = "john.doe@example.com"
         val customerId = "123456"
 
-        val paymentMethodConfiguration = mockk<PaymentMethodConfig>(relaxed = true) {
-            every { type } returns "credit_card"
-            every { options } returns mockk {
-                every { merchantId } returns "merchant123"
+        val paymentMethodConfiguration =
+            mockk<PaymentMethodConfig>(relaxed = true) {
+                every { type } returns "credit_card"
+                every { options } returns
+                    mockk {
+                        every { merchantId } returns "merchant123"
+                    }
             }
-        }
 
-        val configurationMock = mockk<Configuration>(relaxed = true) {
-            every { paymentMethods } returns listOf(paymentMethodConfiguration)
-        }
-        val orderMock = mockk<OrderDataResponse> {
-            every { currencyCode } returns "USD"
-            every { countryCode } returns CountryCode.US
-            every { currentAmount } returns 100
-            every { lineItems } returns listOf(
-                mockk {
-                    every { description } returns "description"
-                }
-            )
-        }
+        val configurationMock =
+            mockk<Configuration>(relaxed = true) {
+                every { paymentMethods } returns listOf(paymentMethodConfiguration)
+            }
+        val orderMock =
+            mockk<OrderDataResponse> {
+                every { currencyCode } returns "USD"
+                every { countryCode } returns CountryCode.US
+                every { currentAmount } returns 100
+                every { lineItems } returns
+                    listOf(
+                        mockk {
+                            every { description } returns "description"
+                        },
+                    )
+            }
         val clientSessionDataMock = mockk<ClientSessionDataResponse>()
         val clientSessionMock = mockk<ClientSession>()
         val customerMock = mockk<CustomerDataResponse>()
@@ -166,26 +172,31 @@ internal class IPay88ResumeHandlerTest {
         val customerEmailAddress = "john.doe@example.com"
         val customerId = "123456"
 
-        val paymentMethodConfiguration = mockk<PaymentMethodConfig>(relaxed = true) {
-            every { type } returns "credit_card"
-            every { options } returns mockk {
-                every { merchantId } returns "merchant123"
+        val paymentMethodConfiguration =
+            mockk<PaymentMethodConfig>(relaxed = true) {
+                every { type } returns "credit_card"
+                every { options } returns
+                    mockk {
+                        every { merchantId } returns "merchant123"
+                    }
             }
-        }
 
-        val configurationMock = mockk<Configuration>(relaxed = true) {
-            every { paymentMethods } returns listOf(paymentMethodConfiguration)
-        }
-        val orderMock = mockk<OrderDataResponse> {
-            every { currencyCode } returns "USD"
-            every { countryCode } returns CountryCode.US
-            every { currentAmount } returns 100
-            every { lineItems } returns listOf(
-                mockk {
-                    every { description } returns "description"
-                }
-            )
-        }
+        val configurationMock =
+            mockk<Configuration>(relaxed = true) {
+                every { paymentMethods } returns listOf(paymentMethodConfiguration)
+            }
+        val orderMock =
+            mockk<OrderDataResponse> {
+                every { currencyCode } returns "USD"
+                every { countryCode } returns CountryCode.US
+                every { currentAmount } returns 100
+                every { lineItems } returns
+                    listOf(
+                        mockk {
+                            every { description } returns "description"
+                        },
+                    )
+            }
         val clientSessionDataMock = mockk<ClientSessionDataResponse>()
         val clientSessionMock = mockk<ClientSession>()
         val customerMock = mockk<CustomerDataResponse>()
@@ -225,9 +236,10 @@ internal class IPay88ResumeHandlerTest {
     @Test
     fun `supportedClientTokenIntents should return list of client token intents`() {
         // Mock the tokenizedPaymentMethodRepository to return a payment method type
-        val paymentMethod = mockk<PaymentMethodTokenInternal> {
-            every { paymentMethodType } returns "credit_card"
-        }
+        val paymentMethod =
+            mockk<PaymentMethodTokenInternal> {
+                every { paymentMethodType } returns "credit_card"
+            }
         every { tokenizedPaymentMethodRepository.getPaymentMethod() } returns paymentMethod
 
         // Invoke the property

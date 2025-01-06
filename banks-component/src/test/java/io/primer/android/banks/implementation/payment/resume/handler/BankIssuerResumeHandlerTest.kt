@@ -19,7 +19,6 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 class BankIssuerResumeHandlerTest {
-
     private lateinit var bankIssuerResumeHandler: BankIssuerResumeHandler
     private val clientTokenParser = mockk<BankIssuerPaymentMethodClientTokenParser>()
     private val tokenizedPaymentMethodRepository = mockk<TokenizedPaymentMethodRepository>()
@@ -31,38 +30,43 @@ class BankIssuerResumeHandlerTest {
 
     @BeforeEach
     fun setUp() {
-        bankIssuerResumeHandler = BankIssuerResumeHandler(
-            clientTokenParser = clientTokenParser,
-            tokenizedPaymentMethodRepository = tokenizedPaymentMethodRepository,
-            configurationRepository = configurationRepository,
-            deeplinkRepository = deeplinkRepository,
-            validateClientTokenRepository = validateClientTokenRepository,
-            clientTokenRepository = clientTokenRepository,
-            checkoutAdditionalInfoHandler = checkoutAdditionalInfoHandler
-        )
+        bankIssuerResumeHandler =
+            BankIssuerResumeHandler(
+                clientTokenParser = clientTokenParser,
+                tokenizedPaymentMethodRepository = tokenizedPaymentMethodRepository,
+                configurationRepository = configurationRepository,
+                deeplinkRepository = deeplinkRepository,
+                validateClientTokenRepository = validateClientTokenRepository,
+                clientTokenRepository = clientTokenRepository,
+                checkoutAdditionalInfoHandler = checkoutAdditionalInfoHandler,
+            )
     }
 
     @Test
     fun `getResumeDecision should the BankIssuerDecision filled up with the correct data`() {
         // Arrange
         val paymentMethodType = "BANK_ISSUER"
-        val clientToken = BankIssuerClientToken(
-            redirectUrl = "http://redirect.url",
-            statusUrl = "http://status.url",
-            clientTokenIntent = "clientTokenIntent"
-        )
-        val paymentMethodConfig = PaymentMethodConfig(
-            id = "123",
-            type = paymentMethodType,
-            name = "Bank Issuer",
-            options = null
-        )
-        val paymentMethod = mockk<PaymentMethodTokenInternal> {
-            every { this@mockk.paymentMethodType } returns paymentMethodType
-        }
-        val config = mockk<Configuration> {
-            every { paymentMethods } returns listOf(paymentMethodConfig)
-        }
+        val clientToken =
+            BankIssuerClientToken(
+                redirectUrl = "http://redirect.url",
+                statusUrl = "http://status.url",
+                clientTokenIntent = "clientTokenIntent",
+            )
+        val paymentMethodConfig =
+            PaymentMethodConfig(
+                id = "123",
+                type = paymentMethodType,
+                name = "Bank Issuer",
+                options = null,
+            )
+        val paymentMethod =
+            mockk<PaymentMethodTokenInternal> {
+                every { this@mockk.paymentMethodType } returns paymentMethodType
+            }
+        val config =
+            mockk<Configuration> {
+                every { paymentMethods } returns listOf(paymentMethodConfig)
+            }
 
         every { tokenizedPaymentMethodRepository.getPaymentMethod() } returns paymentMethod
         every { configurationRepository.getConfiguration() } returns config
@@ -85,9 +89,10 @@ class BankIssuerResumeHandlerTest {
     fun `supportedClientTokenIntents should return the correct data`() {
         // Arrange
         val paymentMethodType = "BANK_ISSUER"
-        val paymentMethod = mockk<PaymentMethodTokenInternal> {
-            every { this@mockk.paymentMethodType } returns paymentMethodType
-        }
+        val paymentMethod =
+            mockk<PaymentMethodTokenInternal> {
+                every { this@mockk.paymentMethodType } returns paymentMethodType
+            }
 
         every { tokenizedPaymentMethodRepository.getPaymentMethod() } returns paymentMethod
 

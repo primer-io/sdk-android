@@ -30,7 +30,6 @@ import org.junit.jupiter.api.extension.ExtendWith
 @ExperimentalCoroutinesApi
 @ExtendWith(MockKExtension::class)
 internal class DefaultActionInteractorTest {
-
     private lateinit var actionRepository: ActionRepository
     private lateinit var configurationRepository: ConfigurationRepository
     private lateinit var actionUpdateFilter: ActionUpdateFilter
@@ -48,20 +47,22 @@ internal class DefaultActionInteractorTest {
         errorEventResolver = mockk()
         clientSessionActionsHandler = mockk(relaxed = true)
 
-        every { configurationRepository.getConfiguration() } returns mockk<Configuration> {
-            every { clientSession.clientSessionDataResponse.toClientSessionData() } returns mockk()
-        }
+        every { configurationRepository.getConfiguration() } returns
+            mockk<Configuration> {
+                every { clientSession.clientSessionDataResponse.toClientSessionData() } returns mockk()
+            }
     }
 
-    private fun createDefaultActionInteractor(ignoreErrors: Boolean = false) = DefaultActionInteractor(
-        actionRepository = actionRepository,
-        configurationRepository = configurationRepository,
-        actionUpdateFilter = actionUpdateFilter,
-        errorEventResolver = errorEventResolver,
-        clientSessionActionsHandler = clientSessionActionsHandler,
-        ignoreErrors = ignoreErrors,
-        dispatcher = testDispatcher
-    )
+    private fun createDefaultActionInteractor(ignoreErrors: Boolean = false) =
+        DefaultActionInteractor(
+            actionRepository = actionRepository,
+            configurationRepository = configurationRepository,
+            actionUpdateFilter = actionUpdateFilter,
+            errorEventResolver = errorEventResolver,
+            clientSessionActionsHandler = clientSessionActionsHandler,
+            ignoreErrors = ignoreErrors,
+            dispatcher = testDispatcher,
+        )
 
     @AfterEach
     fun tearDown() {
@@ -73,9 +74,10 @@ internal class DefaultActionInteractorTest {
         defaultActionInteractor = createDefaultActionInteractor()
         val params = mockk<BaseActionUpdateParams>()
         val primerClientSession = mockk<PrimerClientSession>()
-        val clientSessionData = mockk<ClientSessionData> {
-            every { clientSession } returns primerClientSession
-        }
+        val clientSessionData =
+            mockk<ClientSessionData> {
+                every { clientSession } returns primerClientSession
+            }
         val configurationData = mockk<ConfigurationData>()
 
         every { actionUpdateFilter.filter(params) } returns false
@@ -99,9 +101,10 @@ internal class DefaultActionInteractorTest {
         val params = mockk<BaseActionUpdateParams>()
 
         val primerClientSession = mockk<PrimerClientSession>()
-        val clientSessionData = mockk<ClientSessionData> {
-            every { clientSession } returns primerClientSession
-        }
+        val clientSessionData =
+            mockk<ClientSessionData> {
+                every { clientSession } returns primerClientSession
+            }
         val configurationData = mockk<Configuration>()
 
         coEvery { actionRepository.updateClientActions(listOf(params)) } returns Result.success(clientSessionData)
@@ -125,44 +128,46 @@ internal class DefaultActionInteractorTest {
     }
 
     @Test
-    fun `performAction calls onClientSessionUpdateError on failure if ignoreErrors is false`() = runTest {
-        defaultActionInteractor = createDefaultActionInteractor(ignoreErrors = false)
-        val params = mockk<BaseActionUpdateParams>()
-        val error = RuntimeException("Test error")
-        val primerError = mockk<PrimerError>()
+    fun `performAction calls onClientSessionUpdateError on failure if ignoreErrors is false`() =
+        runTest {
+            defaultActionInteractor = createDefaultActionInteractor(ignoreErrors = false)
+            val params = mockk<BaseActionUpdateParams>()
+            val error = RuntimeException("Test error")
+            val primerError = mockk<PrimerError>()
 
-        every { actionUpdateFilter.filter(params) } returns false
-        coEvery { actionRepository.updateClientActions(listOf(params)) } returns Result.failure(error)
-        every { errorEventResolver.resolve(error) } returns primerError
+            every { actionUpdateFilter.filter(params) } returns false
+            coEvery { actionRepository.updateClientActions(listOf(params)) } returns Result.failure(error)
+            every { errorEventResolver.resolve(error) } returns primerError
 
-        val result = defaultActionInteractor(MultipleActionUpdateParams(listOf(params)))
+            val result = defaultActionInteractor(MultipleActionUpdateParams(listOf(params)))
 
-        assertTrue(result.isFailure)
-        coVerify {
-            clientSessionActionsHandler.onClientSessionUpdateStarted()
-            clientSessionActionsHandler.onClientSessionUpdateError(primerError)
+            assertTrue(result.isFailure)
+            coVerify {
+                clientSessionActionsHandler.onClientSessionUpdateStarted()
+                clientSessionActionsHandler.onClientSessionUpdateError(primerError)
+            }
         }
-    }
 
     @Test
-    fun `performAction does not call onClientSessionUpdateError on failure if ignoreErrors is true`() = runTest {
-        defaultActionInteractor = createDefaultActionInteractor(ignoreErrors = true)
-        val params = mockk<BaseActionUpdateParams>()
-        val error = RuntimeException("Test error")
-        val primerError = mockk<PrimerError>()
+    fun `performAction does not call onClientSessionUpdateError on failure if ignoreErrors is true`() =
+        runTest {
+            defaultActionInteractor = createDefaultActionInteractor(ignoreErrors = true)
+            val params = mockk<BaseActionUpdateParams>()
+            val error = RuntimeException("Test error")
+            val primerError = mockk<PrimerError>()
 
-        every { actionUpdateFilter.filter(params) } returns false
-        coEvery { actionRepository.updateClientActions(listOf(params)) } returns Result.failure(error)
-        every { errorEventResolver.resolve(error) } returns primerError
+            every { actionUpdateFilter.filter(params) } returns false
+            coEvery { actionRepository.updateClientActions(listOf(params)) } returns Result.failure(error)
+            every { errorEventResolver.resolve(error) } returns primerError
 
-        val result = defaultActionInteractor(MultipleActionUpdateParams(listOf(params)))
+            val result = defaultActionInteractor(MultipleActionUpdateParams(listOf(params)))
 
-        assertTrue(result.isFailure)
-        coVerify {
-            clientSessionActionsHandler.onClientSessionUpdateStarted()
+            assertTrue(result.isFailure)
+            coVerify {
+                clientSessionActionsHandler.onClientSessionUpdateStarted()
+            }
+            coVerify(exactly = 0) {
+                clientSessionActionsHandler.onClientSessionUpdateError(primerError)
+            }
         }
-        coVerify(exactly = 0) {
-            clientSessionActionsHandler.onClientSessionUpdateError(primerError)
-        }
-    }
 }

@@ -2,6 +2,7 @@ package io.primer.android.vault.implementation.vaultedMethods.presentation.deleg
 
 import android.content.Context
 import io.primer.android.PrimerSessionIntent
+import io.primer.android.domain.tokenization.models.PrimerPaymentMethodTokenData
 import io.primer.android.paymentmethods.core.composer.PaymentMethodComposer
 import io.primer.android.paymentmethods.core.composer.VaultedPaymentMethodComponent
 import io.primer.android.paymentmethods.core.composer.composable.ComposerUiEvent
@@ -11,7 +12,6 @@ import io.primer.android.paymentmethods.core.composer.registry.VaultedPaymentMet
 import io.primer.android.paymentmethods.core.ui.navigation.PaymentMethodNavigationFactoryRegistry
 import io.primer.android.payments.core.create.domain.model.PaymentDecision
 import io.primer.android.payments.core.helpers.PaymentMethodPaymentDelegate
-import io.primer.android.domain.tokenization.models.PrimerPaymentMethodTokenData
 import io.primer.android.vault.implementation.composer.presentation.DefaultVaultedPaymentMethodComponent
 import io.primer.paymentMethodCoreUi.core.ui.navigation.PaymentMethodContextNavigationHandler
 import kotlinx.coroutines.CoroutineScope
@@ -23,9 +23,8 @@ internal class VaultManagerComposerDelegate(
     private val composerRegistry: VaultedPaymentMethodComposerRegistry,
     private val providerFactoryRegistry: VaultedPaymentMethodProviderFactoryRegistry,
     private val context: Context,
-    private val paymentDelegateProvider: (paymentMethodType: String?) -> PaymentMethodPaymentDelegate
+    private val paymentDelegateProvider: (paymentMethodType: String?) -> PaymentMethodPaymentDelegate,
 ) {
-
     private val scope: CoroutineScope = CoroutineScope(SupervisorJob())
 
     suspend fun handlePaymentMethod(paymentMethodToken: PrimerPaymentMethodTokenData): Result<PaymentDecision> {
@@ -42,7 +41,7 @@ internal class VaultManagerComposerDelegate(
             start(paymentMethodType = paymentMethodType, sessionIntent = PrimerSessionIntent.CHECKOUT)
             return paymentDelegate.handlePaymentMethodToken(
                 paymentMethodTokenData = paymentMethodToken,
-                primerSessionIntent = PrimerSessionIntent.CHECKOUT
+                primerSessionIntent = PrimerSessionIntent.CHECKOUT,
             ).onFailure { throwable ->
                 paymentDelegate.handleError(throwable = throwable)
             }
@@ -64,7 +63,7 @@ internal class VaultManagerComposerDelegate(
                     (
                         paymentMethodNavigationFactoryRegistry.create(paymentMethodType) as?
                             PaymentMethodContextNavigationHandler
-                        )
+                    )
                         ?.getSupportedNavigators(context)
                         ?.firstOrNull { it.canHandle(event.params) }?.navigate(event.params)
                         ?: println("Navigation handler for ${event.params} not found.")

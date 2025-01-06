@@ -4,7 +4,6 @@ import io.primer.android.assets.ui.model.Brand
 import io.primer.android.banks.R
 
 internal class IdealBrand : Brand {
-
     override val iconResId: Int
         get() = R.drawable.ic_logo_ideal
     override val logoResId: Int

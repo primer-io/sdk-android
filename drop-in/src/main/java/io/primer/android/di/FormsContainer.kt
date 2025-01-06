@@ -9,26 +9,25 @@ import io.primer.android.domain.payments.forms.repository.FormsRepository
 import io.primer.android.presentation.payment.forms.FormsViewModelFactory
 
 internal class FormsContainer(private val sdk: () -> SdkContainer) : DependencyContainer() {
-
     override fun registerInitialDependencies() {
         registerSingleton {
             LocalFormDataSourceFactory(primerTheme = sdk().resolve(), countriesRepository = sdk().resolve())
         }
         registerSingleton<FormsRepository> {
             FormsDataRepository(
-                factory = resolve()
+                factory = resolve(),
             )
         }
         registerSingleton {
             FormsInteractor(
-                formsRepository = resolve()
+                formsRepository = resolve(),
             )
         }
 
         registerFactory {
             FormsViewModelFactory(
                 formsInteractor = resolve(),
-                analyticsInteractor = sdk().resolve()
+                analyticsInteractor = sdk().resolve(),
             )
         }
     }

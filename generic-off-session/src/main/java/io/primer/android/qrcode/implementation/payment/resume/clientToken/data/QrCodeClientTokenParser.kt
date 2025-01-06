@@ -6,7 +6,6 @@ import io.primer.android.qrcode.implementation.payment.resume.domain.model.QrCod
 
 internal class QrCodeClientTokenParser :
     PaymentMethodClientTokenParser<QrCodeClientToken> {
-
     override fun parseClientToken(clientToken: String): QrCodeClientToken {
         return QrCodeClientTokenData.fromString(clientToken).let { clientTokenData ->
             QrCodeClientToken(
@@ -14,7 +13,7 @@ internal class QrCodeClientTokenParser :
                 statusUrl = clientTokenData.statusUrl,
                 expiresAt = clientTokenData.expiresAt,
                 qrCodeUrl = clientTokenData.qrCodeUrl,
-                qrCodeBase64 = clientTokenData.qrCodeBase64
+                qrCodeBase64 = clientTokenData.qrCodeBase64,
             )
         }
     }

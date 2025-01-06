@@ -5,7 +5,6 @@ import io.primer.android.otp.PrimerOtpData
 import io.primer.android.paymentmethods.CollectableDataValidator
 
 internal class OtpValidator : CollectableDataValidator<PrimerOtpData> {
-
     override suspend fun validate(t: PrimerOtpData) =
         Result.success(
             if (OTP_REGEX.matches(t.otp)) {
@@ -14,10 +13,10 @@ internal class OtpValidator : CollectableDataValidator<PrimerOtpData> {
                 listOf(
                     PrimerValidationError(
                         errorId = OtpValidations.INVALID_OTP_ERROR_ID,
-                        description = "OTP should be six digits long."
-                    )
+                        description = "OTP should be six digits long.",
+                    ),
                 )
-            }
+            },
         )
 
     private companion object {

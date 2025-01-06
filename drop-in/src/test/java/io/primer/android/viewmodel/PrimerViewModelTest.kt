@@ -6,12 +6,12 @@ import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
 import io.primer.android.InstantExecutorExtension
 import io.primer.android.analytics.domain.AnalyticsInteractor
-import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.clientSessionActions.domain.ActionInteractor
 import io.primer.android.components.assets.displayMetadata.PaymentMethodsImplementationInteractor
 import io.primer.android.configuration.domain.BasicOrderInfoInteractor
 import io.primer.android.configuration.domain.ConfigurationInteractor
 import io.primer.android.currencyformat.domain.FormatAmountToCurrencyInteractor
+import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.errors.domain.ErrorMapperRegistry
 import io.primer.android.payment.billing.BillingAddressValidator
 import io.primer.android.paymentMethods.core.PaymentMethodMapping
@@ -34,7 +34,6 @@ import org.junit.jupiter.api.extension.ExtendWith
 @OptIn(ExperimentalCoroutinesApi::class)
 @ExtendWith(InstantExecutorExtension::class, MockKExtension::class)
 internal class PrimerViewModelTest {
-
     @RelaxedMockK
     lateinit var configurationInteractor: ConfigurationInteractor
 
@@ -88,24 +87,25 @@ internal class PrimerViewModelTest {
     @BeforeEach
     fun setUp() {
         Dispatchers.setMain(StandardTestDispatcher())
-        viewModel = PrimerViewModel(
-            configurationInteractor = configurationInteractor,
-            paymentMethodsImplementationInteractor = paymentMethodsImplementationInteractor,
-            analyticsInteractor = analyticsInteractor,
-            headlessSdkInitInteractor = headlessSdkInitInteractor,
-            eventsInteractor = eventsInteractor,
-            actionInteractor = actionInteractor,
-            amountToCurrencyInteractor = amountToCurrencyInteractor,
-            config = config,
-            billingAddressValidator = billingAddressValidator,
-            basicOrderInfoInteractor = basicOrderInfoInteractor,
-            surchargeInteractor = surchargeInteractor,
-            registry = registry,
-            paymentMethodMapping = paymentMethodMapping,
-            errorMapperRegistry = errorMapperRegistry,
-            checkoutErrorHandler = checkoutErrorHandler,
-            pollingStartHandler = pollingStartHandler
-        )
+        viewModel =
+            PrimerViewModel(
+                configurationInteractor = configurationInteractor,
+                paymentMethodsImplementationInteractor = paymentMethodsImplementationInteractor,
+                analyticsInteractor = analyticsInteractor,
+                headlessSdkInitInteractor = headlessSdkInitInteractor,
+                eventsInteractor = eventsInteractor,
+                actionInteractor = actionInteractor,
+                amountToCurrencyInteractor = amountToCurrencyInteractor,
+                config = config,
+                billingAddressValidator = billingAddressValidator,
+                basicOrderInfoInteractor = basicOrderInfoInteractor,
+                surchargeInteractor = surchargeInteractor,
+                registry = registry,
+                paymentMethodMapping = paymentMethodMapping,
+                errorMapperRegistry = errorMapperRegistry,
+                checkoutErrorHandler = checkoutErrorHandler,
+                pollingStartHandler = pollingStartHandler,
+            )
     }
 
     @Test

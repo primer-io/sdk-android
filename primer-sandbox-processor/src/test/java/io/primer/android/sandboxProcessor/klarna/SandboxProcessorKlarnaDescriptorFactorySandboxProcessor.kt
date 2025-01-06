@@ -14,12 +14,13 @@ class SandboxProcessorKlarnaDescriptorFactorySandboxProcessor {
 
     @Test
     fun `create() should return TestKlarnaPaymentMethodDescriptor`() {
-        val descriptor = factory.create(
-            localConfig = mockk(),
-            paymentMethodRemoteConfig = mockk(),
-            paymentMethod = mockk(),
-            paymentMethodCheckers = mockk()
-        )
+        val descriptor =
+            factory.create(
+                localConfig = mockk(),
+                paymentMethodRemoteConfig = mockk(),
+                paymentMethod = mockk(),
+                paymentMethodCheckers = mockk(),
+            )
         assertIs<SandboxProcessorKlarnaPaymentMethodDescriptor>(descriptor)
     }
 }

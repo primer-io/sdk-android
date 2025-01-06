@@ -18,7 +18,6 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 internal class PaypalConfirmBillingAgreementDataRepositoryTest {
-
     private lateinit var confirmBillingAgreementDataSource: RemotePaypalConfirmBillingAgreementDataSource
     private lateinit var configurationDataSource: BaseCacheDataSource<ConfigurationData, ConfigurationData>
     private lateinit var repository: PaypalConfirmBillingAgreementDataRepository
@@ -32,71 +31,77 @@ internal class PaypalConfirmBillingAgreementDataRepositoryTest {
     }
 
     @Test
-    fun `confirmBillingAgreement should return PaypalConfirmBillingAgreement on success`() = runTest {
-        // Given
-        val params = PaypalConfirmBillingAgreementParams("configId", "tokenId")
-        val responseData = mockk<PaypalConfirmBillingAgreementDataResponse> {
-            every { billingAgreementId } returns "testBillingAgreementId"
-            every { externalPayerInfo } returns mockk(relaxed = true)
-            every { shippingAddress } returns mockk(relaxed = true)
+    fun `confirmBillingAgreement should return PaypalConfirmBillingAgreement on success`() =
+        runTest {
+            // Given
+            val params = PaypalConfirmBillingAgreementParams("configId", "tokenId")
+            val responseData =
+                mockk<PaypalConfirmBillingAgreementDataResponse> {
+                    every { billingAgreementId } returns "testBillingAgreementId"
+                    every { externalPayerInfo } returns mockk(relaxed = true)
+                    every { shippingAddress } returns mockk(relaxed = true)
+                }
+
+            coEvery { confirmBillingAgreementDataSource.execute(any()) } returns responseData
+            // Mock configuration data retrieval if needed
+            every { configurationDataSource.get().coreUrl } returns "https://example.com"
+
+            // When
+            val result = repository.confirmBillingAgreement(params)
+
+            // Then
+            assertEquals(responseData.toPaypalConfirmBillingAgreement(), result.getOrNull())
         }
 
-        coEvery { confirmBillingAgreementDataSource.execute(any()) } returns responseData
-        // Mock configuration data retrieval if needed
-        every { configurationDataSource.get().coreUrl } returns "https://example.com"
-
-        // When
-        val result = repository.confirmBillingAgreement(params)
-
-        // Then
-        assertEquals(responseData.toPaypalConfirmBillingAgreement(), result.getOrNull())
-    }
-
     @Test
-    fun `confirmBillingAgreement should throw SessionCreateException on HTTP client error`() = runTest {
-        // Given
-        val testDiagnosticsId = "testDiagnosticsId"
-        val testDescription = "testDescription"
-        val params = mockk<PaypalConfirmBillingAgreementParams>(relaxed = true)
-        val httpException = mockk<HttpException>(relaxed = true) {
-            every { isClientError() } returns true
-            every { error } returns mockk(relaxed = true) {
-                every { diagnosticsId } returns testDiagnosticsId
-                every { description } returns testDescription
-            }
+    fun `confirmBillingAgreement should throw SessionCreateException on HTTP client error`() =
+        runTest {
+            // Given
+            val testDiagnosticsId = "testDiagnosticsId"
+            val testDescription = "testDescription"
+            val params = mockk<PaypalConfirmBillingAgreementParams>(relaxed = true)
+            val httpException =
+                mockk<HttpException>(relaxed = true) {
+                    every { isClientError() } returns true
+                    every { error } returns
+                        mockk(relaxed = true) {
+                            every { diagnosticsId } returns testDiagnosticsId
+                            every { description } returns testDescription
+                        }
+                }
+
+            coEvery { confirmBillingAgreementDataSource.execute(any()) } throws httpException
+            // Mock configuration data retrieval if needed
+            every { configurationDataSource.get().coreUrl } returns "https://example.com"
+
+            // When
+            val result = requireNotNull(repository.confirmBillingAgreement(params).exceptionOrNull())
+
+            val expected = SessionCreateException(PaymentMethodType.PAYPAL.name, testDiagnosticsId, testDescription)
+
+            // Then
+            assert(result is SessionCreateException)
+            val unwrappedException = result as SessionCreateException
+            assertEquals(expected.description, unwrappedException.description)
+            assertEquals(expected.diagnosticsId, unwrappedException.diagnosticsId)
+            assertEquals(expected.paymentMethodType, unwrappedException.paymentMethodType)
         }
 
-        coEvery { confirmBillingAgreementDataSource.execute(any()) } throws httpException
-        // Mock configuration data retrieval if needed
-        every { configurationDataSource.get().coreUrl } returns "https://example.com"
-
-        // When
-        val result = requireNotNull(repository.confirmBillingAgreement(params).exceptionOrNull())
-
-        val expected = SessionCreateException(PaymentMethodType.PAYPAL.name, testDiagnosticsId, testDescription)
-
-        // Then
-        assert(result is SessionCreateException)
-        val unwrappedException = result as SessionCreateException
-        assertEquals(expected.description, unwrappedException.description)
-        assertEquals(expected.diagnosticsId, unwrappedException.diagnosticsId)
-        assertEquals(expected.paymentMethodType, unwrappedException.paymentMethodType)
-    }
-
     @Test
-    fun `confirmBillingAgreement should throw SessionCreateException on HTTP server error`() = runTest {
-        // Given
-        val params = mockk<PaypalConfirmBillingAgreementParams>(relaxed = true)
-        val httpException = HttpException(503, mockk(relaxed = true))
+    fun `confirmBillingAgreement should throw SessionCreateException on HTTP server error`() =
+        runTest {
+            // Given
+            val params = mockk<PaypalConfirmBillingAgreementParams>(relaxed = true)
+            val httpException = HttpException(503, mockk(relaxed = true))
 
-        coEvery { confirmBillingAgreementDataSource.execute(any()) } throws httpException
-        // Mock configuration data retrieval if needed
-        every { configurationDataSource.get().coreUrl } returns "https://example.com"
+            coEvery { confirmBillingAgreementDataSource.execute(any()) } throws httpException
+            // Mock configuration data retrieval if needed
+            every { configurationDataSource.get().coreUrl } returns "https://example.com"
 
-        // When
-        val result = repository.confirmBillingAgreement(params)
+            // When
+            val result = repository.confirmBillingAgreement(params)
 
-        // Then
-        assertEquals(httpException, result.exceptionOrNull())
-    }
+            // Then
+            assertEquals(httpException, result.exceptionOrNull())
+        }
 }

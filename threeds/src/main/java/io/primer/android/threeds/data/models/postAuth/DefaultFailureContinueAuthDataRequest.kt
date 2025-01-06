@@ -9,19 +9,18 @@ internal class DefaultFailureContinueAuthDataRequest(
     val initProtocolVersion: String?,
     override val error: BaseContinueAuthErrorDataRequest,
     val threeDsWrapperSdkVersion: String = BuildConfig.SDK_VERSION_STRING,
-    val threeDsSdkProvider: ThreeDsSdkProvider = ThreeDsSdkProvider.NETCETERA
+    val threeDsSdkProvider: ThreeDsSdkProvider = ThreeDsSdkProvider.NETCETERA,
 ) : BaseFailureContinueAuthDataRequest(error) {
-
     companion object {
-
         @JvmField
-        val serializer = JSONObjectSerializer<DefaultFailureContinueAuthDataRequest> { t ->
-            baseErrorSerializer.serialize(t).apply {
-                putOpt(INIT_PROTOCOL_VERSION_FIELD, t.initProtocolVersion)
-                put(SDK_WRAPPER_VERSION_FIELD, t.threeDsWrapperSdkVersion)
-                putOpt(SDK_VERSION_FIELD, t.threeDsSdkVersion)
-                put(SDK_PROVIDER_FIELD, t.threeDsSdkProvider.name)
+        val serializer =
+            JSONObjectSerializer<DefaultFailureContinueAuthDataRequest> { t ->
+                baseErrorSerializer.serialize(t).apply {
+                    putOpt(INIT_PROTOCOL_VERSION_FIELD, t.initProtocolVersion)
+                    put(SDK_WRAPPER_VERSION_FIELD, t.threeDsWrapperSdkVersion)
+                    putOpt(SDK_VERSION_FIELD, t.threeDsSdkVersion)
+                    put(SDK_PROVIDER_FIELD, t.threeDsSdkProvider.name)
+                }
             }
-        }
     }
 }

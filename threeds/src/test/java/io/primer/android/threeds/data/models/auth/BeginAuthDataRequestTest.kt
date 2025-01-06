@@ -6,41 +6,43 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
 class BeginAuthDataRequestTest {
-
     @Test
     fun `serializer should serialize BeginAuthDataRequest to JSONObject correctly`() {
-        val device = SDKAuthDataRequest(
-            sdkAppId = "sdkAppId",
-            sdkTransactionId = "sdkTransactionId",
-            sdkTimeout = 60,
-            sdkEncData = "sdkEncData",
-            sdkEphemPubKey = "sdkEphemPubKey",
-            sdkReferenceNumber = "sdkReferenceNumber"
-        )
+        val device =
+            SDKAuthDataRequest(
+                sdkAppId = "sdkAppId",
+                sdkTransactionId = "sdkTransactionId",
+                sdkTimeout = 60,
+                sdkEncData = "sdkEncData",
+                sdkEphemPubKey = "sdkEphemPubKey",
+                sdkReferenceNumber = "sdkReferenceNumber",
+            )
 
-        val billingAddress = Address(
-            firstName = "John",
-            lastName = "Doe",
-            email = "john.doe@example.com",
-            phoneNumber = "1234567890",
-            addressLine1 = "123 Main St",
-            addressLine2 = "Apt 4B",
-            city = "Anytown",
-            state = "Anystate",
-            countryCode = "US",
-            postalCode = "12345"
-        )
+        val billingAddress =
+            Address(
+                firstName = "John",
+                lastName = "Doe",
+                email = "john.doe@example.com",
+                phoneNumber = "1234567890",
+                addressLine1 = "123 Main St",
+                addressLine2 = "Apt 4B",
+                city = "Anytown",
+                state = "Anystate",
+                countryCode = "US",
+                postalCode = "12345",
+            )
 
-        val request = BeginAuthDataRequest(
-            maxProtocolVersion = "2.1.0",
-            amount = 100,
-            currencyCode = "USD",
-            orderId = "orderId",
-            customer = null,
-            device = device,
-            billingAddress = billingAddress,
-            shippingAddress = null
-        )
+        val request =
+            BeginAuthDataRequest(
+                maxProtocolVersion = "2.1.0",
+                amount = 100,
+                currencyCode = "USD",
+                orderId = "orderId",
+                customer = null,
+                device = device,
+                billingAddress = billingAddress,
+                shippingAddress = null,
+            )
 
         val jsonObject = BeginAuthDataRequest.serializer.serialize(request)
 
@@ -75,14 +77,15 @@ class BeginAuthDataRequestTest {
 
     @Test
     fun `toBeginAuthRequest should create BeginAuthDataRequest from ThreeDsCheckoutParams`() {
-        val threeDsCheckoutParams = ThreeDsCheckoutParams(
-            maxProtocolVersion = ProtocolVersion.V_210,
-            sdkAppId = "sdkAppId",
-            sdkTransactionId = "sdkTransactionId",
-            sdkEncData = "sdkEncData",
-            sdkEphemPubKey = "sdkEphemPubKey",
-            sdkReferenceNumber = "sdkReferenceNumber"
-        )
+        val threeDsCheckoutParams =
+            ThreeDsCheckoutParams(
+                maxProtocolVersion = ProtocolVersion.V_210,
+                sdkAppId = "sdkAppId",
+                sdkTransactionId = "sdkTransactionId",
+                sdkEncData = "sdkEncData",
+                sdkEphemPubKey = "sdkEphemPubKey",
+                sdkReferenceNumber = "sdkReferenceNumber",
+            )
 
         val beginAuthDataRequest = threeDsCheckoutParams.toBeginAuthRequest()
 

@@ -3,8 +3,8 @@ package io.primer.android.vault.implementation.vaultedMethods.domain.validation.
 import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.mockk
-import io.primer.android.configuration.data.model.CardNetwork
 import io.primer.android.components.domain.payments.vault.model.card.PrimerVaultedCardAdditionalData
+import io.primer.android.configuration.data.model.CardNetwork
 import io.primer.android.domain.tokenization.models.PrimerVaultedPaymentMethod
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
@@ -13,7 +13,6 @@ import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 internal class VaultedCardAdditionalDataValidatorTest {
-
     private lateinit var validator: VaultedCardAdditionalDataValidator
 
     @BeforeEach
@@ -34,7 +33,7 @@ internal class VaultedCardAdditionalDataValidatorTest {
             assertEquals(1, errors.size)
             assertEquals(
                 VaultedCardAdditionalDataValidator.INVALID_CVV_ERROR_ID,
-                errors.first().errorId
+                errors.first().errorId,
             )
         }
     }
@@ -45,7 +44,7 @@ internal class VaultedCardAdditionalDataValidatorTest {
         val vaultedTokenData = mockk<PrimerVaultedPaymentMethod>(relaxed = true)
 
         every { vaultedTokenData.paymentInstrumentData.binData?.network }.returns(
-            CardNetwork.Type.VISA.name
+            CardNetwork.Type.VISA.name,
         )
 
         runTest {
@@ -53,7 +52,7 @@ internal class VaultedCardAdditionalDataValidatorTest {
             assertEquals(1, errors.size)
             assertEquals(
                 VaultedCardAdditionalDataValidator.INVALID_CVV_ERROR_ID,
-                errors.first().errorId
+                errors.first().errorId,
             )
         }
     }
@@ -66,7 +65,7 @@ internal class VaultedCardAdditionalDataValidatorTest {
         every { additionalData.cvv }.returns("123")
 
         every { vaultedTokenData.paymentInstrumentData.binData?.network }.returns(
-            CardNetwork.Type.AMEX.name
+            CardNetwork.Type.AMEX.name,
         )
 
         runTest {
@@ -74,7 +73,7 @@ internal class VaultedCardAdditionalDataValidatorTest {
             assertEquals(1, errors.size)
             assertEquals(
                 VaultedCardAdditionalDataValidator.INVALID_CVV_ERROR_ID,
-                errors.first().errorId
+                errors.first().errorId,
             )
         }
     }
@@ -87,7 +86,7 @@ internal class VaultedCardAdditionalDataValidatorTest {
         every { additionalData.cvv }.returns("123a")
 
         every { vaultedTokenData.paymentInstrumentData.binData?.network }.returns(
-            CardNetwork.Type.AMEX.name
+            CardNetwork.Type.AMEX.name,
         )
 
         runTest {
@@ -95,7 +94,7 @@ internal class VaultedCardAdditionalDataValidatorTest {
             assertEquals(1, errors.size)
             assertEquals(
                 VaultedCardAdditionalDataValidator.INVALID_CVV_ERROR_ID,
-                errors.first().errorId
+                errors.first().errorId,
             )
         }
     }
@@ -108,7 +107,7 @@ internal class VaultedCardAdditionalDataValidatorTest {
         every { additionalData.cvv }.returns("1234")
 
         every { vaultedTokenData.paymentInstrumentData.binData?.network }.returns(
-            CardNetwork.Type.AMEX.name
+            CardNetwork.Type.AMEX.name,
         )
 
         runTest {

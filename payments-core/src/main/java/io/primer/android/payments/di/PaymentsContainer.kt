@@ -6,7 +6,6 @@ import io.primer.android.core.di.SdkContainer
 import io.primer.android.errors.domain.ErrorMapperRegistry
 import io.primer.android.payments.core.create.data.datasource.CreatePaymentDataSource
 import io.primer.android.payments.core.create.data.datasource.LocalPaymentDataSource
-import io.primer.android.payments.core.errors.data.mapper.PaymentCreateErrorMapper
 import io.primer.android.payments.core.create.data.repository.CreatePaymentDataRepository
 import io.primer.android.payments.core.create.data.repository.PaymentResultDataRepository
 import io.primer.android.payments.core.create.domain.CreatePaymentInteractor
@@ -15,6 +14,7 @@ import io.primer.android.payments.core.create.domain.handler.DefaultPaymentMetho
 import io.primer.android.payments.core.create.domain.handler.PaymentMethodTokenHandler
 import io.primer.android.payments.core.create.domain.repository.CreatePaymentRepository
 import io.primer.android.payments.core.create.domain.repository.PaymentResultRepository
+import io.primer.android.payments.core.errors.data.mapper.PaymentCreateErrorMapper
 import io.primer.android.payments.core.errors.data.mapper.PaymentResumeErrorMapper
 import io.primer.android.payments.core.helpers.PaymentDecisionResolver
 import io.primer.android.payments.core.resume.data.datasource.ResumePaymentDataSource
@@ -33,18 +33,17 @@ import io.primer.android.payments.core.tokenization.data.repository.TokenizedPay
 import io.primer.android.payments.core.tokenization.domain.repository.TokenizedPaymentMethodRepository
 
 class PaymentsContainer(private val sdk: () -> SdkContainer) : DependencyContainer() {
-
     override fun registerInitialDependencies() {
         registerSingleton<TokenizedPaymentMethodRepository> { TokenizedPaymentMethodDataRepository() }
 
         registerSingleton {
             RemoteAsyncPaymentMethodStatusDataSource(
-                primerHttpClient = sdk().resolve()
+                primerHttpClient = sdk().resolve(),
             )
         }
         registerSingleton<AsyncPaymentMethodStatusRepository> {
             AsyncPaymentMethodStatusDataRepository(
-                asyncPaymentMethodStatusDataSource = resolve()
+                asyncPaymentMethodStatusDataSource = resolve(),
             )
         }
 
@@ -52,7 +51,7 @@ class PaymentsContainer(private val sdk: () -> SdkContainer) : DependencyContain
 
         registerSingleton<PaymentResultRepository> {
             PaymentResultDataRepository(
-                localPaymentDataSource = resolve()
+                localPaymentDataSource = resolve(),
             )
         }
 
@@ -64,21 +63,21 @@ class PaymentsContainer(private val sdk: () -> SdkContainer) : DependencyContain
             CreatePaymentDataRepository(
                 createPaymentDataSource = resolve(),
                 localPaymentDataSource = sdk().resolve(),
-                configurationDataSource = sdk().resolve(ConfigurationCoreContainer.CACHED_CONFIGURATION_DI_KEY)
+                configurationDataSource = sdk().resolve(ConfigurationCoreContainer.CACHED_CONFIGURATION_DI_KEY),
             )
         }
 
         registerSingleton<ResumePaymentsRepository> {
             ResumePaymentDataRepository(
                 resumePaymentDataSource = resolve(),
-                configurationDataSource = sdk().resolve(ConfigurationCoreContainer.CACHED_CONFIGURATION_DI_KEY)
+                configurationDataSource = sdk().resolve(ConfigurationCoreContainer.CACHED_CONFIGURATION_DI_KEY),
             )
         }
 
         registerFactory {
             PaymentDecisionResolver(
                 tokenizedPaymentMethodRepository = sdk().resolve(),
-                logReporter = sdk().resolve()
+                logReporter = sdk().resolve(),
             )
         }
 
@@ -86,7 +85,7 @@ class PaymentsContainer(private val sdk: () -> SdkContainer) : DependencyContain
             DefaultResumePaymentInteractor(
                 resumePaymentsRepository = resolve(),
                 paymentDecisionResolver = resolve(),
-                logReporter = sdk().resolve()
+                logReporter = sdk().resolve(),
             )
         }
 
@@ -94,7 +93,7 @@ class PaymentsContainer(private val sdk: () -> SdkContainer) : DependencyContain
             DefaultCreatePaymentInteractor(
                 createPaymentsRepository = resolve(),
                 paymentDecisionResolver = resolve(),
-                logReporter = sdk().resolve()
+                logReporter = sdk().resolve(),
             )
         }
 
@@ -108,7 +107,7 @@ class PaymentsContainer(private val sdk: () -> SdkContainer) : DependencyContain
 
         registerFactory<AsyncPaymentMethodPollingInteractor>(name = POLLING_INTERACTOR_DI_KEY) {
             DefaultAsyncPaymentMethodPollingInteractor(
-                paymentMethodStatusRepository = resolve()
+                paymentMethodStatusRepository = resolve(),
             )
         }
 
@@ -117,7 +116,6 @@ class PaymentsContainer(private val sdk: () -> SdkContainer) : DependencyContain
     }
 
     companion object {
-
         const val CREATE_PAYMENT_INTERACTOR_DI_KEY = "CREATE_PAYMENT_INTERACTOR"
         const val RESUME_PAYMENT_INTERACTOR_DI_KEY = "RESUME_PAYMENT_INTERACTOR"
         const val POLLING_INTERACTOR_DI_KEY = "POLLING_INTERACTOR"

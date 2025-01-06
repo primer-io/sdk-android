@@ -5,9 +5,7 @@ import io.primer.android.vault.implementation.vaultedMethods.data.model.BasePaym
 import org.json.JSONObject
 
 internal class EmptyExchangeDataRequest : BasePaymentMethodVaultExchangeDataRequest {
-
     companion object {
-
         @JvmField
         val serializer = JSONObjectSerializer<EmptyExchangeDataRequest> { JSONObject() }
     }

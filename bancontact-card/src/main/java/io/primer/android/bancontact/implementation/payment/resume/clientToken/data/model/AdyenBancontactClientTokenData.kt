@@ -11,11 +11,9 @@ import org.json.JSONObject
 internal data class AdyenBancontactClientTokenData(
     val intent: String,
     val statusUrl: String,
-    val redirectUrl: String
+    val redirectUrl: String,
 ) : JSONDeserializable {
-
     companion object {
-
         @Throws(InvalidClientTokenException::class, ExpiredClientTokenException::class)
         fun fromString(encoded: String): AdyenBancontactClientTokenData {
             ClientTokenDecoder.decode(encoded).let { decoded ->
@@ -30,12 +28,13 @@ internal data class AdyenBancontactClientTokenData(
         private const val REDIRECT_URL_FIELD = "redirectUrl"
 
         @JvmField
-        val deserializer = JSONObjectDeserializer { t ->
-            AdyenBancontactClientTokenData(
-                t.getString(INTENT_FIELD),
-                t.getString(STATUS_URL_FIELD),
-                t.getString(REDIRECT_URL_FIELD)
-            )
-        }
+        val deserializer =
+            JSONObjectDeserializer { t ->
+                AdyenBancontactClientTokenData(
+                    t.getString(INTENT_FIELD),
+                    t.getString(STATUS_URL_FIELD),
+                    t.getString(REDIRECT_URL_FIELD),
+                )
+            }
     }
 }

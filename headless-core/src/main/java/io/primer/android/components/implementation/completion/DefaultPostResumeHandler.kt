@@ -15,14 +15,14 @@ import kotlin.coroutines.suspendCoroutine
 
 internal class DefaultPostResumeHandler(
     private val analyticsRepository: AnalyticsRepository,
-    private val coroutineDispatcher: MainCoroutineDispatcher = Dispatchers.Main
+    private val coroutineDispatcher: MainCoroutineDispatcher = Dispatchers.Main,
 ) : PostResumeHandler {
     override suspend fun handle(resumeToken: String): Result<PaymentDecision> {
         return suspendCoroutine { continuation ->
             analyticsRepository.addEvent(
                 SdkFunctionParams(
-                    HeadlessUniversalCheckoutAnalyticsConstants.ON_CHECKOUT_RESUME
-                )
+                    HeadlessUniversalCheckoutAnalyticsConstants.ON_CHECKOUT_RESUME,
+                ),
             )
             coroutineDispatcher.dispatch(coroutineDispatcher.immediate) {
                 val checkoutListener = PrimerHeadlessUniversalCheckout.instance.checkoutListener
@@ -30,14 +30,15 @@ internal class DefaultPostResumeHandler(
                 val handler = createManualDecisionHandler(continuation)
                 checkoutListener?.onCheckoutResume(
                     resumeToken = resumeToken,
-                    decisionHandler = handler
+                    decisionHandler = handler,
                 )
             }
         }
     }
 
-    private fun createManualDecisionHandler(continuation: Continuation<Result<PaymentDecision>>):
-        PrimerHeadlessUniversalCheckoutResumeDecisionHandler {
+    private fun createManualDecisionHandler(
+        continuation: Continuation<Result<PaymentDecision>>,
+    ): PrimerHeadlessUniversalCheckoutResumeDecisionHandler {
         return object : PrimerHeadlessUniversalCheckoutResumeDecisionHandler {
             override fun continueWithNewClientToken(clientToken: String) {
                 continuation.resume(Result.success(PaymentDecision.Pending(clientToken, null)))

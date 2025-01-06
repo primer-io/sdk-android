@@ -25,7 +25,6 @@ import org.junit.jupiter.api.extension.ExtendWith
 
 @ExtendWith(MockKExtension::class)
 class StripeAchTest {
-
     private lateinit var stripeAch: StripeAch
 
     @BeforeEach
@@ -89,7 +88,7 @@ class StripeAchTest {
         verify {
             mockRegistry.register(
                 type = stripeAch.type,
-                factory = any<StripeAchPaymentMethodDescriptorFactory>()
+                factory = any<StripeAchPaymentMethodDescriptorFactory>(),
             )
         }
         confirmVerified(mockRegistry)
@@ -116,7 +115,7 @@ class StripeAchTest {
         verify {
             mockBrandRegistry.register(
                 paymentMethodType = PaymentMethodType.STRIPE_ACH.name,
-                brand = any<StripeAchBrand>()
+                brand = any<StripeAchBrand>(),
             )
         }
         confirmVerified(mockBrandRegistry)

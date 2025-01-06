@@ -6,14 +6,13 @@ import io.primer.android.vouchers.retailOutlets.implementation.payment.resume.cl
 
 internal class RetailOutletsClientTokenParser :
     PaymentMethodClientTokenParser<RetailOutletsClientToken> {
-
     override fun parseClientToken(clientToken: String): RetailOutletsClientToken {
         return RetailOutletsClientTokenData.fromString(clientToken).let { clientTokenData ->
             RetailOutletsClientToken(
                 clientTokenIntent = clientTokenData.intent,
                 expiresAt = clientTokenData.expiresAt,
                 entity = clientTokenData.entity,
-                reference = clientTokenData.reference
+                reference = clientTokenData.reference,
             )
         }
     }

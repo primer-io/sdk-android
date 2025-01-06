@@ -15,44 +15,49 @@ import kotlin.test.assertEquals
 
 @ExtendWith(MockKExtension::class)
 internal class TextDisplayMetadataKtTest {
-
     @MockK
     lateinit var context: Context
 
     @Test
     fun `toTextDisplayMetadata returns correct metadata in dark mode for not STRIPE_ACH`() {
-        val buttonMetadata = PaymentMethodImplementation.ButtonMetadata(
-            iconDisplayMetadata = emptyList(),
-            backgroundColor = PaymentMethodImplementation.ButtonMetadata.ColorMetadata(
-                colored = "#123456",
-                light = "#FFFFFF",
-                dark = "#000000"
-            ),
-            borderColor = PaymentMethodImplementation.ButtonMetadata.ColorMetadata(
-                colored = "#654321",
-                light = "#FFFFFF",
-                dark = "#111111"
-            ),
-            borderWidth = PaymentMethodImplementation.ButtonMetadata.BorderWidthMetadata(
-                colored = 1.5f,
-                light = 1.0f,
-                dark = 2.0f
-            ),
-            cornerRadius = 4.0f,
-            text = "Pay",
-            textColor = PaymentMethodImplementation.ButtonMetadata.ColorMetadata(
-                colored = "#ABCDEF",
-                light = "#FFFFFF",
-                dark = "#222222"
-            ),
-            iconPosition = IconPosition.END
-        )
+        val buttonMetadata =
+            PaymentMethodImplementation.ButtonMetadata(
+                iconDisplayMetadata = emptyList(),
+                backgroundColor =
+                    PaymentMethodImplementation.ButtonMetadata.ColorMetadata(
+                        colored = "#123456",
+                        light = "#FFFFFF",
+                        dark = "#000000",
+                    ),
+                borderColor =
+                    PaymentMethodImplementation.ButtonMetadata.ColorMetadata(
+                        colored = "#654321",
+                        light = "#FFFFFF",
+                        dark = "#111111",
+                    ),
+                borderWidth =
+                    PaymentMethodImplementation.ButtonMetadata.BorderWidthMetadata(
+                        colored = 1.5f,
+                        light = 1.0f,
+                        dark = 2.0f,
+                    ),
+                cornerRadius = 4.0f,
+                text = "Pay",
+                textColor =
+                    PaymentMethodImplementation.ButtonMetadata.ColorMetadata(
+                        colored = "#ABCDEF",
+                        light = "#FFFFFF",
+                        dark = "#222222",
+                    ),
+                iconPosition = IconPosition.END,
+            )
 
-        val paymentMethodImplementation = PaymentMethodImplementation(
-            name = "Test",
-            paymentMethodType = "ADYEN_IDEAL",
-            buttonMetadata = buttonMetadata
-        )
+        val paymentMethodImplementation =
+            PaymentMethodImplementation(
+                name = "Test",
+                paymentMethodType = "ADYEN_IDEAL",
+                buttonMetadata = buttonMetadata,
+            )
 
         val result = paymentMethodImplementation.toTextDisplayMetadata(true, context)
 
@@ -70,38 +75,44 @@ internal class TextDisplayMetadataKtTest {
 
     @Test
     fun `toTextDisplayMetadata returns correct metadata in non-dark mode for not STRIPE_ACH`() {
-        val buttonMetadata = PaymentMethodImplementation.ButtonMetadata(
-            iconDisplayMetadata = emptyList(),
-            backgroundColor = PaymentMethodImplementation.ButtonMetadata.ColorMetadata(
-                colored = "#789012",
-                light = "#444444",
-                dark = "#888888"
-            ),
-            borderColor = PaymentMethodImplementation.ButtonMetadata.ColorMetadata(
-                colored = "#210987",
-                light = "#555555",
-                dark = "#999999"
-            ),
-            borderWidth = PaymentMethodImplementation.ButtonMetadata.BorderWidthMetadata(
-                colored = 2.5f,
-                light = 1.0f,
-                dark = 3.0f
-            ),
-            cornerRadius = 5.0f,
-            text = "Pay",
-            textColor = PaymentMethodImplementation.ButtonMetadata.ColorMetadata(
-                colored = "#FEDCBA",
-                light = "#666666",
-                dark = "#AAAAAA"
-            ),
-            iconPosition = IconPosition.END
-        )
+        val buttonMetadata =
+            PaymentMethodImplementation.ButtonMetadata(
+                iconDisplayMetadata = emptyList(),
+                backgroundColor =
+                    PaymentMethodImplementation.ButtonMetadata.ColorMetadata(
+                        colored = "#789012",
+                        light = "#444444",
+                        dark = "#888888",
+                    ),
+                borderColor =
+                    PaymentMethodImplementation.ButtonMetadata.ColorMetadata(
+                        colored = "#210987",
+                        light = "#555555",
+                        dark = "#999999",
+                    ),
+                borderWidth =
+                    PaymentMethodImplementation.ButtonMetadata.BorderWidthMetadata(
+                        colored = 2.5f,
+                        light = 1.0f,
+                        dark = 3.0f,
+                    ),
+                cornerRadius = 5.0f,
+                text = "Pay",
+                textColor =
+                    PaymentMethodImplementation.ButtonMetadata.ColorMetadata(
+                        colored = "#FEDCBA",
+                        light = "#666666",
+                        dark = "#AAAAAA",
+                    ),
+                iconPosition = IconPosition.END,
+            )
 
-        val paymentMethodImplementation = PaymentMethodImplementation(
-            name = "Test",
-            paymentMethodType = "ADYEN_IDEAL",
-            buttonMetadata = buttonMetadata
-        )
+        val paymentMethodImplementation =
+            PaymentMethodImplementation(
+                name = "Test",
+                paymentMethodType = "ADYEN_IDEAL",
+                buttonMetadata = buttonMetadata,
+            )
 
         val result = paymentMethodImplementation.toTextDisplayMetadata(false, context)
 
@@ -119,38 +130,44 @@ internal class TextDisplayMetadataKtTest {
 
     @Test
     fun `toTextDisplayMetadata returns correct metadata in dark mode for STRIPE_ACH`() {
-        val buttonMetadata = PaymentMethodImplementation.ButtonMetadata(
-            iconDisplayMetadata = emptyList(),
-            backgroundColor = PaymentMethodImplementation.ButtonMetadata.ColorMetadata(
-                colored = "#345678",
-                light = "#FFFFFF",
-                dark = "#888888"
-            ),
-            borderColor = PaymentMethodImplementation.ButtonMetadata.ColorMetadata(
-                colored = "#876543",
-                light = "#FFFFFF",
-                dark = "#999999"
-            ),
-            borderWidth = PaymentMethodImplementation.ButtonMetadata.BorderWidthMetadata(
-                colored = 3.5f,
-                light = 1.0f,
-                dark = 3.0f
-            ),
-            cornerRadius = 6.0f,
-            text = "Pay",
-            textColor = PaymentMethodImplementation.ButtonMetadata.ColorMetadata(
-                colored = "#BAFEDC",
-                light = "#FFFFFF",
-                dark = "#AAAAAA"
-            ),
-            iconPosition = IconPosition.END
-        )
+        val buttonMetadata =
+            PaymentMethodImplementation.ButtonMetadata(
+                iconDisplayMetadata = emptyList(),
+                backgroundColor =
+                    PaymentMethodImplementation.ButtonMetadata.ColorMetadata(
+                        colored = "#345678",
+                        light = "#FFFFFF",
+                        dark = "#888888",
+                    ),
+                borderColor =
+                    PaymentMethodImplementation.ButtonMetadata.ColorMetadata(
+                        colored = "#876543",
+                        light = "#FFFFFF",
+                        dark = "#999999",
+                    ),
+                borderWidth =
+                    PaymentMethodImplementation.ButtonMetadata.BorderWidthMetadata(
+                        colored = 3.5f,
+                        light = 1.0f,
+                        dark = 3.0f,
+                    ),
+                cornerRadius = 6.0f,
+                text = "Pay",
+                textColor =
+                    PaymentMethodImplementation.ButtonMetadata.ColorMetadata(
+                        colored = "#BAFEDC",
+                        light = "#FFFFFF",
+                        dark = "#AAAAAA",
+                    ),
+                iconPosition = IconPosition.END,
+            )
 
-        val paymentMethodImplementation = PaymentMethodImplementation(
-            name = "Test ACH",
-            paymentMethodType = PaymentMethodType.STRIPE_ACH.name,
-            buttonMetadata = buttonMetadata
-        )
+        val paymentMethodImplementation =
+            PaymentMethodImplementation(
+                name = "Test ACH",
+                paymentMethodType = PaymentMethodType.STRIPE_ACH.name,
+                buttonMetadata = buttonMetadata,
+            )
 
         every { context.getString(R.string.pay_with_ach) } returns "Pay with ACH"
 
@@ -172,11 +189,12 @@ internal class TextDisplayMetadataKtTest {
 
     @Test
     fun `toTextDisplayMetadata returns correct metadata when buttonMetadata is null`() {
-        val paymentMethodImplementation = PaymentMethodImplementation(
-            name = "Test",
-            paymentMethodType = "ADYEN_IDEAL",
-            buttonMetadata = null
-        )
+        val paymentMethodImplementation =
+            PaymentMethodImplementation(
+                name = "Test",
+                paymentMethodType = "ADYEN_IDEAL",
+                buttonMetadata = null,
+            )
 
         val result = paymentMethodImplementation.toTextDisplayMetadata(true, context)
 

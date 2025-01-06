@@ -11,24 +11,28 @@ import io.primer.android.vouchers.multibanco.implementation.tokenization.present
 
 internal class MultibancoTokenizationDelegate(
     private val configurationInteractor: MultibancoConfigurationInteractor,
-    tokenizationInteractor: MultibancoTokenizationInteractor
+    tokenizationInteractor: MultibancoTokenizationInteractor,
 ) : PaymentMethodTokenizationDelegate<MultibancoTokenizationInputable, MultibancoPaymentInstrumentParams>(
-    tokenizationInteractor
-),
-    TokenizationCollectedDataMapper<MultibancoTokenizationInputable,
-        MultibancoPaymentInstrumentParams> {
-
-    override suspend fun mapTokenizationData(input: MultibancoTokenizationInputable):
-        Result<TokenizationParams<MultibancoPaymentInstrumentParams>> = configurationInteractor(
-        MultibancoConfigParams(paymentMethodType = input.paymentMethodType)
-    ).map { configuration ->
-        TokenizationParams(
-            paymentInstrumentParams = MultibancoPaymentInstrumentParams(
-                paymentMethodType = input.paymentMethodType,
-                paymentMethodConfigId = configuration.paymentMethodConfigId,
-                locale = configuration.locale
-            ),
-            sessionIntent = input.primerSessionIntent
-        )
-    }
+        tokenizationInteractor,
+    ),
+    TokenizationCollectedDataMapper<
+        MultibancoTokenizationInputable,
+        MultibancoPaymentInstrumentParams,
+        > {
+    override suspend fun mapTokenizationData(
+        input: MultibancoTokenizationInputable,
+    ): Result<TokenizationParams<MultibancoPaymentInstrumentParams>> =
+        configurationInteractor(
+            MultibancoConfigParams(paymentMethodType = input.paymentMethodType),
+        ).map { configuration ->
+            TokenizationParams(
+                paymentInstrumentParams =
+                    MultibancoPaymentInstrumentParams(
+                        paymentMethodType = input.paymentMethodType,
+                        paymentMethodConfigId = configuration.paymentMethodConfigId,
+                        locale = configuration.locale,
+                    ),
+                sessionIntent = input.primerSessionIntent,
+            )
+        }
 }

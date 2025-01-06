@@ -15,9 +15,8 @@ internal class DefaultCreatePaymentInteractor(
     private val createPaymentsRepository: CreatePaymentRepository,
     private val paymentDecisionResolver: PaymentDecisionResolver,
     private val logReporter: LogReporter,
-    override val dispatcher: CoroutineDispatcher = Dispatchers.IO
+    override val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : BaseSuspendInteractor<PaymentDecision, CreatePaymentParams>() {
-
     override suspend fun performAction(params: CreatePaymentParams): Result<PaymentDecision> {
         logReporter.debug("Creating payment for payment method token: ${params.token}")
         return createPaymentsRepository.createPayment(params.token)

@@ -9,22 +9,26 @@ import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
 import androidx.core.text.TextUtilsCompat
-import io.primer.android.R
 import io.primer.android.PrimerSessionIntent
+import io.primer.android.R
 import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.databinding.PaymentMethodButtonCardBinding
 import io.primer.android.payment.utils.ButtonViewHelper
 import java.util.Locale
 
 internal class CreditCardViewCreator(
-    private val config: PrimerConfig
+    private val config: PrimerConfig,
 ) : PaymentMethodViewCreator {
-    override fun create(context: Context, container: ViewGroup?): View {
-        val binding = PaymentMethodButtonCardBinding.inflate(
-            LayoutInflater.from(context),
-            container,
-            false
-        )
+    override fun create(
+        context: Context,
+        container: ViewGroup?,
+    ): View {
+        val binding =
+            PaymentMethodButtonCardBinding.inflate(
+                LayoutInflater.from(context),
+                container,
+                false,
+            )
         val theme = config.settings.uiOptions.theme
 
         val content = ButtonViewHelper.generateButtonContent(context, theme)
@@ -33,31 +37,33 @@ internal class CreditCardViewCreator(
         binding.cardPreviewButton.background = RippleDrawable(rippleColor, content, null)
 
         val text = binding.cardPreviewButtonText
-        val drawable = ContextCompat.getDrawable(
-            context,
-            R.drawable.ic_logo_credit_card
-        )
+        val drawable =
+            ContextCompat.getDrawable(
+                context,
+                R.drawable.ic_logo_credit_card,
+            )
         val layoutDirection = TextUtilsCompat.getLayoutDirectionFromLocale(Locale.getDefault())
         val isLeftToRight = layoutDirection == View.LAYOUT_DIRECTION_LTR
         text.setCompoundDrawablesWithIntrinsicBounds(
             if (isLeftToRight) drawable else null,
             null,
             if (isLeftToRight) null else drawable,
-            null
+            null,
         )
 
         text.setTextColor(
             theme.paymentMethodButton.text.defaultColor.getColor(
                 context,
-                theme.isDarkMode
-            )
+                theme.isDarkMode,
+            ),
         )
 
-        text.text = when (config.paymentMethodIntent) {
-            PrimerSessionIntent.CHECKOUT -> context.getString(R.string.pay_by_card)
-            PrimerSessionIntent.VAULT ->
-                context.getString(R.string.credit_debit_card)
-        }
+        text.text =
+            when (config.paymentMethodIntent) {
+                PrimerSessionIntent.CHECKOUT -> context.getString(R.string.pay_by_card)
+                PrimerSessionIntent.VAULT ->
+                    context.getString(R.string.credit_debit_card)
+            }
 
         val icon = text.compoundDrawables
 
@@ -65,8 +71,8 @@ internal class CreditCardViewCreator(
             DrawableCompat.wrap(icon.first { it != null }),
             theme.paymentMethodButton.text.defaultColor.getColor(
                 context,
-                theme.isDarkMode
-            )
+                theme.isDarkMode,
+            ),
         )
 
         return binding.root

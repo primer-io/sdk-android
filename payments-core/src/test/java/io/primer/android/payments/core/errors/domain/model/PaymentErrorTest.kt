@@ -8,7 +8,6 @@ import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Test
 
 class PaymentErrorTest {
-
     @Test
     fun `PaymentFailedError should return correct values`() {
         // Arrange
@@ -21,7 +20,7 @@ class PaymentErrorTest {
         assertEquals("payment-failed", paymentFailedError.errorId)
         assertEquals(
             "The payment with id $paymentId was created but ended up in a $paymentStatus status.",
-            paymentFailedError.description
+            paymentFailedError.description,
         )
         assertNull(paymentFailedError.errorCode)
         assertNotNull(paymentFailedError.diagnosticsId)
@@ -45,7 +44,7 @@ class PaymentErrorTest {
         assertEquals(paymentCreateFailedError, paymentCreateFailedError.exposedError)
         assertEquals(
             "Contact Primer and provide us with diagnostics id $serverDiagnosticsId",
-            paymentCreateFailedError.recoverySuggestion
+            paymentCreateFailedError.recoverySuggestion,
         )
     }
 
@@ -74,7 +73,7 @@ class PaymentErrorTest {
         assertEquals(paymentResumeFailedError, paymentResumeFailedError.exposedError)
         assertEquals(
             "Contact Primer and provide us with diagnostics id $serverDiagnosticsId",
-            paymentResumeFailedError.recoverySuggestion
+            paymentResumeFailedError.recoverySuggestion,
         )
     }
 

@@ -15,7 +15,6 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 class GooglePayPaymentDataMapperTest {
-
     private val json = """{
     "email": "dragon@primer.io",
     "paymentMethodData": {
@@ -72,16 +71,17 @@ class GooglePayPaymentDataMapperTest {
         }"""
         every { paymentData.toJson() } returns json
 
-        val expected = ActionUpdateBillingAddressParams(
-            firstName = "John",
-            lastName = "Doe",
-            addressLine1 = "123 Main St",
-            addressLine2 = "Apt 4B",
-            city = "Anytown",
-            postalCode = "12345",
-            countryCode = "US",
-            state = "CA"
-        )
+        val expected =
+            ActionUpdateBillingAddressParams(
+                firstName = "John",
+                lastName = "Doe",
+                addressLine1 = "123 Main St",
+                addressLine2 = "Apt 4B",
+                city = "Anytown",
+                postalCode = "12345",
+                countryCode = "US",
+                state = "CA",
+            )
         assertEquals(expected, paymentData.mapToClientSessionUpdateParams())
     }
 
@@ -141,17 +141,18 @@ class GooglePayPaymentDataMapperTest {
 
     @Test
     fun `mapToShippingAddressParams should map PaymentData to ActionUpdateShippingAddressParams`() {
-        val expected = ActionUpdateShippingAddressParams(
-            firstName = "John",
-            lastName = "Doe",
-            addressLine1 = "123 Main St",
-            addressLine2 = "Apt 4B",
-            addressLine3 = "",
-            city = "Anytown",
-            postalCode = "12345",
-            countryCode = "US",
-            state = "CA"
-        )
+        val expected =
+            ActionUpdateShippingAddressParams(
+                firstName = "John",
+                lastName = "Doe",
+                addressLine1 = "123 Main St",
+                addressLine2 = "Apt 4B",
+                addressLine3 = "",
+                city = "Anytown",
+                postalCode = "12345",
+                countryCode = "US",
+                state = "CA",
+            )
         assertEquals(expected, paymentData.mapToShippingAddressParams())
     }
 
@@ -177,33 +178,34 @@ class GooglePayPaymentDataMapperTest {
 
     @Test
     fun `mapToMultipleActionUpdateParams should correctly map PaymentData to MultipleActionUpdateParams`() {
-        val expected = MultipleActionUpdateParams(
-            listOf(
-                ActionUpdateBillingAddressParams(
-                    firstName = "John",
-                    lastName = "Doe",
-                    addressLine1 = "123 Main St",
-                    addressLine2 = "Apt 4B",
-                    city = "Anytown",
-                    postalCode = "12345",
-                    countryCode = "US",
-                    state = "CA"
+        val expected =
+            MultipleActionUpdateParams(
+                listOf(
+                    ActionUpdateBillingAddressParams(
+                        firstName = "John",
+                        lastName = "Doe",
+                        addressLine1 = "123 Main St",
+                        addressLine2 = "Apt 4B",
+                        city = "Anytown",
+                        postalCode = "12345",
+                        countryCode = "US",
+                        state = "CA",
+                    ),
+                    ActionUpdateMobileNumberParams("1234567890"),
+                    ActionUpdateShippingAddressParams(
+                        firstName = "John",
+                        lastName = "Doe",
+                        addressLine1 = "123 Main St",
+                        addressLine2 = "Apt 4B",
+                        addressLine3 = "",
+                        city = "Anytown",
+                        postalCode = "12345",
+                        countryCode = "US",
+                        state = "CA",
+                    ),
+                    ActionUpdateEmailAddressParams("dragon@primer.io"),
                 ),
-                ActionUpdateMobileNumberParams("1234567890"),
-                ActionUpdateShippingAddressParams(
-                    firstName = "John",
-                    lastName = "Doe",
-                    addressLine1 = "123 Main St",
-                    addressLine2 = "Apt 4B",
-                    addressLine3 = "",
-                    city = "Anytown",
-                    postalCode = "12345",
-                    countryCode = "US",
-                    state = "CA"
-                ),
-                ActionUpdateEmailAddressParams("dragon@primer.io")
             )
-        )
 
         assertEquals(expected, paymentData.mapToMultipleActionUpdateParams())
     }

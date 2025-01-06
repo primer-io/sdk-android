@@ -13,11 +13,9 @@ internal data class StripeAchClientTokenData(
     val intent: String,
     val sdkCompleteUrl: String?,
     val stripePaymentIntentId: String?,
-    val stripeClientSecret: String?
+    val stripeClientSecret: String?,
 ) : JSONDeserializable {
-
     companion object {
-
         @Throws(InvalidClientTokenException::class, ExpiredClientTokenException::class)
         fun fromString(encoded: String): StripeAchClientTokenData {
             ClientTokenDecoder.decode(encoded).let { decoded ->
@@ -33,13 +31,14 @@ internal data class StripeAchClientTokenData(
         private const val STRIPE_CLIENT_SECRET_FIELD = "stripeClientSecret"
 
         @JvmField
-        val deserializer = JSONObjectDeserializer { t ->
-            StripeAchClientTokenData(
-                intent = t.getString(INTENT_FIELD),
-                sdkCompleteUrl = t.optNullableString(SDK_COMPLETE_URL_FIELD),
-                stripePaymentIntentId = t.optNullableString(STRIPE_PAYMENT_INTENT_ID_FIELD),
-                stripeClientSecret = t.optNullableString(STRIPE_CLIENT_SECRET_FIELD)
-            )
-        }
+        val deserializer =
+            JSONObjectDeserializer { t ->
+                StripeAchClientTokenData(
+                    intent = t.getString(INTENT_FIELD),
+                    sdkCompleteUrl = t.optNullableString(SDK_COMPLETE_URL_FIELD),
+                    stripePaymentIntentId = t.optNullableString(STRIPE_PAYMENT_INTENT_ID_FIELD),
+                    stripeClientSecret = t.optNullableString(STRIPE_CLIENT_SECRET_FIELD),
+                )
+            }
     }
 }

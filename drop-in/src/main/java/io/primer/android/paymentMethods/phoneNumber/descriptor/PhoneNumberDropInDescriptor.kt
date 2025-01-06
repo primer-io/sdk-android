@@ -21,42 +21,45 @@ internal data class PhoneNumberDropInDescriptor(
     override val paymentMethodType: String,
     override val uiOptions: UiOptions,
     private val brandRegistry: BrandRegistry,
-    private val paymentMethodName: String?
+    private val paymentMethodName: String?,
 ) : PaymentMethodDropInDescriptor {
-
     @VisibleForTesting
-    val fragmentFactory = when (paymentMethodType) {
-        PaymentMethodType.ADYEN_MBWAY.name -> DynamicFormFragment::newInstance
+    val fragmentFactory =
+        when (paymentMethodType) {
+            PaymentMethodType.ADYEN_MBWAY.name -> DynamicFormFragment::newInstance
 
-        else -> error("Unsupported payment method type '$paymentMethodType'")
-    }
+            else -> error("Unsupported payment method type '$paymentMethodType'")
+        }
 
     override val selectedBehaviour: PaymentMethodBehaviour
-        get() = NewFragmentBehaviour(
-            factory = fragmentFactory,
-            returnToPreviousOnBack = uiOptions.isStandalonePaymentMethod.not()
-        )
+        get() =
+            NewFragmentBehaviour(
+                factory = fragmentFactory,
+                returnToPreviousOnBack = uiOptions.isStandalonePaymentMethod.not(),
+            )
 
     override val behaviours: List<PaymentMethodBehaviour> = emptyList()
 
     override fun createPollingStartedBehavior(viewStatus: ViewStatus.PollingStarted): NewFragmentBehaviour =
         NewFragmentBehaviour(
             factory = { PaymentMethodLoadingFragment.newInstance(popBackStackToRoot = true) },
-            replacePreviousFragment = false
+            replacePreviousFragment = false,
         )
 
-    override val loadingState = run {
-        val brand = brandRegistry.getBrand(paymentMethodType)
+    override val loadingState =
+        run {
+            val brand = brandRegistry.getBrand(paymentMethodType)
 
-        LoadingState(
-            imageResIs = when (uiOptions.isDarkMode) {
-                true -> brand.iconDarkResId
-                else -> brand.iconResId
-            },
-            textResId = R.string.completeYourPaymentInTheApp,
-            args = paymentMethodName.orEmpty()
-        )
-    }
+            LoadingState(
+                imageResIs =
+                    when (uiOptions.isDarkMode) {
+                        true -> brand.iconDarkResId
+                        else -> brand.iconResId
+                    },
+                textResId = R.string.completeYourPaymentInTheApp,
+                args = paymentMethodName.orEmpty(),
+            )
+        }
 
     override val uiType: PaymentMethodUiType
         get() = PaymentMethodUiType.FORM

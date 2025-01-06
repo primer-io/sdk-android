@@ -3,8 +3,8 @@ package io.primer.android.banks.implementation.payment.resume.clientToken.data
 import io.mockk.every
 import io.mockk.mockkObject
 import io.mockk.unmockkAll
-import io.primer.android.banks.implementation.payment.resume.clientToken.domain.model.BankIssuerClientToken
 import io.primer.android.banks.implementation.payment.resume.clientToken.data.model.BankIssuerClientTokenData
+import io.primer.android.banks.implementation.payment.resume.clientToken.domain.model.BankIssuerClientToken
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
@@ -12,7 +12,6 @@ import org.junit.jupiter.api.Test
 import kotlin.test.assertFailsWith
 
 class BankIssuerPaymentMethodClientTokenParserTest {
-
     private val validEncodedString = "validEncodedString"
 
     @BeforeEach

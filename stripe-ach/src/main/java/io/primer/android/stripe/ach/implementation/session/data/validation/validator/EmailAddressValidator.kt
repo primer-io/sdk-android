@@ -8,7 +8,7 @@ internal object EmailAddressValidator {
         if (!PatternsCompat.EMAIL_ADDRESS.toRegex().matches(emailAddress)) {
             PrimerValidationError(
                 errorId = StripeAchUserDetailsValidations.INVALID_CUSTOMER_EMAIL_ADDRESS_ERROR_ID,
-                description = "The email address is invalid."
+                description = "The email address is invalid.",
             )
         } else {
             null

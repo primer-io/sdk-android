@@ -52,8 +52,8 @@ class DefaultPendingResumeHandlerTest {
         verify {
             analyticsRepository.addEvent(
                 SdkFunctionParams(
-                    HeadlessUniversalCheckoutAnalyticsConstants.ON_CHECKOUT_PENDING
-                )
+                    HeadlessUniversalCheckoutAnalyticsConstants.ON_CHECKOUT_PENDING,
+                ),
             )
         }
 

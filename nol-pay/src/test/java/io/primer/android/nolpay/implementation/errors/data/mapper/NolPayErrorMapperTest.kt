@@ -10,7 +10,6 @@ import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 class NolPayErrorMapperTest {
-
     private val errorMapper = NolPayErrorMapper()
 
     @Test
@@ -21,10 +20,11 @@ class NolPayErrorMapperTest {
 
         val actualResult = errorMapper.getPrimerError(throwable)
         val expectedDescription = "Nol SDK encountered an error $code. $message"
-        val expectedContext = ErrorContextParams(
-            "nol-pay-sdk-error",
-            PaymentMethodType.NOL_PAY.name
-        )
+        val expectedContext =
+            ErrorContextParams(
+                "nol-pay-sdk-error",
+                PaymentMethodType.NOL_PAY.name,
+            )
 
         assertTrue(actualResult is NolPayError)
         assertEquals(expectedDescription, actualResult.description)
@@ -37,13 +37,14 @@ class NolPayErrorMapperTest {
         val exception = IllegalStateException("Some error")
 
         // When / Then
-        val thrown = assertThrows(IllegalStateException::class.java) {
-            errorMapper.getPrimerError(exception)
-        }
+        val thrown =
+            assertThrows(IllegalStateException::class.java) {
+                errorMapper.getPrimerError(exception)
+            }
         assertEquals(
             "Unsupported mapping for java.lang.IllegalStateException:" +
                 " Some error in io.primer.android.nolpay.implementation.errors.data.mapper.NolPayErrorMapper",
-            thrown.message
+            thrown.message,
         )
     }
 }

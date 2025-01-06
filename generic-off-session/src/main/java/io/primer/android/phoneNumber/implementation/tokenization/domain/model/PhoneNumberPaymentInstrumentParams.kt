@@ -7,10 +7,10 @@ internal data class PhoneNumberPaymentInstrumentParams(
     override val paymentMethodType: String,
     override val paymentMethodConfigId: String,
     override val locale: String,
-    val phoneNumber: String
+    val phoneNumber: String,
 ) : BaseAsyncPaymentInstrumentParams(
-    paymentMethodType,
-    paymentMethodConfigId,
-    locale,
-    PaymentInstrumentType.OFF_SESSION_PAYMENT
-)
+        paymentMethodType,
+        paymentMethodConfigId,
+        locale,
+        PaymentInstrumentType.OFF_SESSION_PAYMENT,
+    )

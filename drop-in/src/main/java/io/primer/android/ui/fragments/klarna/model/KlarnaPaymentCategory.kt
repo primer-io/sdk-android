@@ -10,13 +10,13 @@ internal sealed interface KlarnaPaymentCategory {
     data class UnselectedKlarnaPaymentCategory(
         override val id: String,
         override val name: String,
-        override val iconUrl: String
+        override val iconUrl: String,
     ) : KlarnaPaymentCategory
 
     data class SelectedKlarnaPaymentCategory(
         override val id: String,
         override val name: String,
         override val iconUrl: String,
-        val view: View
+        val view: View,
     ) : KlarnaPaymentCategory
 }

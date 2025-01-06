@@ -13,7 +13,6 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 @ExperimentalCoroutinesApi
 internal class DotPayBankSelectionFragment : BaseBankSelectionFragment() {
-
     private var binding: FragmentDotpayBankSelectionBinding by autoCleaned()
 
     override val baseBinding: BaseBankSelectionBinding by autoCleaned {
@@ -23,7 +22,7 @@ internal class DotPayBankSelectionFragment : BaseBankSelectionFragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
         binding = FragmentDotpayBankSelectionBinding.inflate(inflater, container, false)
         return binding.root
@@ -41,7 +40,7 @@ internal class DotPayBankSelectionFragment : BaseBankSelectionFragment() {
                 R.drawable.ic_logo_dotpay_dark
             } else {
                 R.drawable.ic_logo_dotpay_light
-            }
+            },
         )
     }
 

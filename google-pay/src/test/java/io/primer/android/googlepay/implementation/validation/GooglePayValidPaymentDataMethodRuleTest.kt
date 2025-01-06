@@ -8,7 +8,6 @@ import org.junit.jupiter.api.Test
 import kotlin.test.assertIs
 
 internal class GooglePayValidPaymentDataMethodRuleTest {
-
     private val validPaymentDataMethodRule = GooglePayValidPaymentDataMethodRule()
 
     @Test

@@ -22,50 +22,56 @@ class OtpTokenizationDelegateTest {
     private val delegate = OtpTokenizationDelegate(configurationInteractor, tokenizationInteractor)
 
     @Test
-    fun `mapTokenizationData should return tokenization params successfully`() = runBlocking {
-        val input = OtpTokenizationInputable(
-            paymentMethodType = "ADYEN_BLIK",
-            primerSessionIntent = PrimerSessionIntent.CHECKOUT,
-            otpData = PrimerOtpData("1234")
-        )
+    fun `mapTokenizationData should return tokenization params successfully`() =
+        runBlocking {
+            val input =
+                OtpTokenizationInputable(
+                    paymentMethodType = "ADYEN_BLIK",
+                    primerSessionIntent = PrimerSessionIntent.CHECKOUT,
+                    otpData = PrimerOtpData("1234"),
+                )
 
-        val configParams = OtpConfigParams(paymentMethodType = input.paymentMethodType)
-        val config = OtpConfig(paymentMethodConfigId = "configId", locale = "en-US")
+            val configParams = OtpConfigParams(paymentMethodType = input.paymentMethodType)
+            val config = OtpConfig(paymentMethodConfigId = "configId", locale = "en-US")
 
-        coEvery { configurationInteractor.invoke(configParams) } returns Result.success(config)
+            coEvery { configurationInteractor.invoke(configParams) } returns Result.success(config)
 
-        val result = delegate.mapTokenizationData(input)
+            val result = delegate.mapTokenizationData(input)
 
-        val expected = TokenizationParams(
-            paymentInstrumentParams = OtpPaymentInstrumentParams(
-                paymentMethodType = input.paymentMethodType,
-                paymentMethodConfigId = config.paymentMethodConfigId,
-                locale = config.locale,
-                otp = input.otpData.otp
-            ),
-            sessionIntent = input.primerSessionIntent
-        )
+            val expected =
+                TokenizationParams(
+                    paymentInstrumentParams =
+                        OtpPaymentInstrumentParams(
+                            paymentMethodType = input.paymentMethodType,
+                            paymentMethodConfigId = config.paymentMethodConfigId,
+                            locale = config.locale,
+                            otp = input.otpData.otp,
+                        ),
+                    sessionIntent = input.primerSessionIntent,
+                )
 
-        assertEquals(Result.success(expected), result)
-        coVerify { configurationInteractor.invoke(configParams) }
-    }
+            assertEquals(Result.success(expected), result)
+            coVerify { configurationInteractor.invoke(configParams) }
+        }
 
     @Test
-    fun `mapTokenizationData should return failure when configuration interactor fails`() = runBlocking {
-        val input = OtpTokenizationInputable(
-            paymentMethodType = "ADYEN_BLIK",
-            primerSessionIntent = PrimerSessionIntent.CHECKOUT,
-            otpData = PrimerOtpData("1234")
-        )
+    fun `mapTokenizationData should return failure when configuration interactor fails`() =
+        runBlocking {
+            val input =
+                OtpTokenizationInputable(
+                    paymentMethodType = "ADYEN_BLIK",
+                    primerSessionIntent = PrimerSessionIntent.CHECKOUT,
+                    otpData = PrimerOtpData("1234"),
+                )
 
-        val configParams = OtpConfigParams(paymentMethodType = input.paymentMethodType)
-        val error = Exception("Configuration error")
+            val configParams = OtpConfigParams(paymentMethodType = input.paymentMethodType)
+            val error = Exception("Configuration error")
 
-        coEvery { configurationInteractor.invoke(configParams) } returns Result.failure(error)
+            coEvery { configurationInteractor.invoke(configParams) } returns Result.failure(error)
 
-        val result = delegate.mapTokenizationData(input)
+            val result = delegate.mapTokenizationData(input)
 
-        assertEquals(Result.failure<OtpPaymentInstrumentParams>(error), result)
-        coVerify { configurationInteractor.invoke(configParams) }
-    }
+            assertEquals(Result.failure<OtpPaymentInstrumentParams>(error), result)
+            coVerify { configurationInteractor.invoke(configParams) }
+        }
 }

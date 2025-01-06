@@ -55,12 +55,13 @@ internal class GetBanksDelegateTest {
 
     @BeforeEach
     fun setUp() {
-        delegate = GetBanksDelegate(
-            paymentMethodType = paymentMethodType,
-            banksInteractor = banksInteractor,
-            banksFilterInteractor = banksFilterInteractor,
-            configurationInteractor = configurationInteractor
-        )
+        delegate =
+            GetBanksDelegate(
+                paymentMethodType = paymentMethodType,
+                banksInteractor = banksInteractor,
+                banksFilterInteractor = banksFilterInteractor,
+                configurationInteractor = configurationInteractor,
+            )
     }
 
     @AfterEach
@@ -84,13 +85,13 @@ internal class GetBanksDelegateTest {
                     IssuingBankParams(
                         paymentMethodConfigId = paymentMethodConfigId,
                         paymentMethod = paymentMethodType,
-                        locale = locale
-                    )
+                        locale = locale,
+                    ),
                 )
             }
             coVerify(exactly = 1) {
                 configurationInteractor(
-                    BankIssuerConfigParams(paymentMethodType = paymentMethodType)
+                    BankIssuerConfigParams(paymentMethodType = paymentMethodType),
                 )
             }
         }
@@ -112,13 +113,13 @@ internal class GetBanksDelegateTest {
                     IssuingBankParams(
                         paymentMethodConfigId = paymentMethodConfigId,
                         paymentMethod = paymentMethodType,
-                        locale = locale
-                    )
+                        locale = locale,
+                    ),
                 )
             }
             coVerify(exactly = 1) {
                 configurationInteractor(
-                    BankIssuerConfigParams(paymentMethodType = paymentMethodType)
+                    BankIssuerConfigParams(paymentMethodType = paymentMethodType),
                 )
             }
         }
@@ -136,7 +137,7 @@ internal class GetBanksDelegateTest {
             assertEquals(exception, result.exceptionOrNull())
             coVerify(exactly = 1) {
                 configurationInteractor(
-                    BankIssuerConfigParams(paymentMethodType = paymentMethodType)
+                    BankIssuerConfigParams(paymentMethodType = paymentMethodType),
                 )
             }
         }
@@ -151,7 +152,7 @@ internal class GetBanksDelegateTest {
             assertEquals(banks, result.getOrThrow())
             coVerify(exactly = 1) {
                 banksFilterInteractor(
-                    IssuingBankFilterParams(text = "query")
+                    IssuingBankFilterParams(text = "query"),
                 )
             }
         }
@@ -167,7 +168,7 @@ internal class GetBanksDelegateTest {
             assertEquals(exception, result.exceptionOrNull())
             coVerify(exactly = 1) {
                 banksFilterInteractor(
-                    IssuingBankFilterParams(text = "query")
+                    IssuingBankFilterParams(text = "query"),
                 )
             }
         }

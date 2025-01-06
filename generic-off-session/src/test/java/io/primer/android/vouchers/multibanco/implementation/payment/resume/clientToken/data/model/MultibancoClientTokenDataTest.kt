@@ -12,16 +12,16 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 
 class MultibancoClientTokenDataTest {
-
     private val encodedToken = "encodedToken"
-    private val decodedToken = """
+    private val decodedToken =
+        """
         {
             "intent": "intent",
             "expiresAt": "expiresAt",
             "reference": "reference",
             "entity": "entity"
         }
-    """.trimIndent()
+        """.trimIndent()
 
     @BeforeEach
     fun setUp() {

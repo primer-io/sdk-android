@@ -17,15 +17,15 @@ import io.primer.android.bancontact.implementation.composer.AdyenBancontactCompo
 import io.primer.android.bancontact.implementation.metadata.domain.BancontactCardDataMetadataRetriever
 import io.primer.android.bancontact.implementation.payment.delegate.AdyenBancontactPaymentDelegate
 import io.primer.android.bancontact.implementation.tokenization.presentation.AdyenBancontactTokenizationDelegate
+import io.primer.android.components.domain.error.PrimerInputValidationError
 import io.primer.android.core.di.DISdkContext
 import io.primer.android.core.di.DependencyContainer
 import io.primer.android.core.di.SdkContainer
 import io.primer.android.core.utils.CoroutineScopeProvider
+import io.primer.android.domain.payments.create.model.Payment
 import io.primer.android.paymentmethods.PaymentInputDataValidator
-import io.primer.android.components.domain.error.PrimerInputValidationError
 import io.primer.android.paymentmethods.analytics.delegate.PaymentMethodSdkAnalyticsEventLoggingDelegate
 import io.primer.android.paymentmethods.core.composer.composable.ComposerUiEvent
-import io.primer.android.domain.payments.create.model.Payment
 import io.primer.android.payments.core.create.domain.model.PaymentDecision
 import io.primer.android.payments.core.status.domain.AsyncPaymentMethodPollingInteractor
 import io.primer.android.payments.core.status.domain.model.AsyncStatus
@@ -52,7 +52,6 @@ import kotlin.time.Duration.Companion.seconds
 @ExperimentalCoroutinesApi
 @ExtendWith(InstantExecutorExtension::class, MockKExtension::class)
 class AdyenBancontactComponentTest {
-
     private lateinit var component: AdyenBancontactComponent
     private val tokenizationDelegate: AdyenBancontactTokenizationDelegate = mockk(relaxed = true)
     private val pollingInteractor: AsyncPaymentMethodPollingInteractor = mockk(relaxed = true)
@@ -63,26 +62,29 @@ class AdyenBancontactComponentTest {
 
     @BeforeEach
     fun setUp() {
-        DISdkContext.headlessSdkContainer = mockk<SdkContainer>(relaxed = true).also { sdkContainer ->
-            val cont = spyk<DependencyContainer>().also { container ->
-                container.registerFactory<CoroutineScopeProvider> {
-                    object : CoroutineScopeProvider {
-                        override val scope: CoroutineScope
-                            get() = TestScope()
+        DISdkContext.headlessSdkContainer =
+            mockk<SdkContainer>(relaxed = true).also { sdkContainer ->
+                val cont =
+                    spyk<DependencyContainer>().also { container ->
+                        container.registerFactory<CoroutineScopeProvider> {
+                            object : CoroutineScopeProvider {
+                                override val scope: CoroutineScope
+                                    get() = TestScope()
+                            }
+                        }
                     }
-                }
+                every { sdkContainer.containers }.returns(mutableMapOf(cont::class.simpleName.orEmpty() to cont))
             }
-            every { sdkContainer.containers }.returns(mutableMapOf(cont::class.simpleName.orEmpty() to cont))
-        }
 
-        component = AdyenBancontactComponent(
-            tokenizationDelegate,
-            pollingInteractor,
-            paymentDelegate,
-            cardInputValidator,
-            metadataRetriever,
-            sdkAnalyticsEventLoggingDelegate
-        )
+        component =
+            AdyenBancontactComponent(
+                tokenizationDelegate,
+                pollingInteractor,
+                paymentDelegate,
+                cardInputValidator,
+                metadataRetriever,
+                sdkAnalyticsEventLoggingDelegate,
+            )
         coEvery { paymentDelegate.uiEvent } returns MutableSharedFlow()
     }
 
@@ -95,9 +97,10 @@ class AdyenBancontactComponentTest {
     fun `submit should start tokenization and handle success`() {
         // Arrange
         val primerSessionIntent = PrimerSessionIntent.CHECKOUT
-        val cardData = mockk<PrimerBancontactCardData>() {
-            every { copy(any(), any(), any()) } returns mockk()
-        }
+        val cardData =
+            mockk<PrimerBancontactCardData> {
+                every { copy(any(), any(), any()) } returns mockk()
+            }
         val payment = mockk<Payment>()
 
         coEvery { sdkAnalyticsEventLoggingDelegate.logSdkAnalyticsEvent(any(), any(), any()) } just Runs
@@ -105,7 +108,7 @@ class AdyenBancontactComponentTest {
         coEvery {
             paymentDelegate.handlePaymentMethodToken(
                 any(),
-                any()
+                any(),
             )
         } returns Result.success(PaymentDecision.Success(payment))
 
@@ -127,9 +130,10 @@ class AdyenBancontactComponentTest {
     fun `submit should start tokenization and handle failure`() {
         // Arrange
         val primerSessionIntent = PrimerSessionIntent.CHECKOUT
-        val cardData = mockk<PrimerBancontactCardData>() {
-            every { copy(any(), any(), any()) } returns mockk()
-        }
+        val cardData =
+            mockk<PrimerBancontactCardData> {
+                every { copy(any(), any(), any()) } returns mockk()
+            }
         val exception = Exception("tokenization failed")
         coEvery { tokenizationDelegate.tokenize(any()) } returns Result.failure(exception)
         coEvery { sdkAnalyticsEventLoggingDelegate.logSdkAnalyticsEvent(any(), any(), any()) } just Runs
@@ -153,9 +157,10 @@ class AdyenBancontactComponentTest {
     @Test
     fun `updateCollectedData should emit collectedData and validate`() {
         // Arrange
-        val collectedData = mockk<PrimerBancontactCardData> {
-            every { copy(any(), any(), any()) } returns mockk()
-        }
+        val collectedData =
+            mockk<PrimerBancontactCardData> {
+                every { copy(any(), any(), any()) } returns mockk()
+            }
         val validationErrors = listOf<PrimerInputValidationError>(mockk())
         coEvery { cardInputValidator.validate(any()) } returns validationErrors
 
@@ -173,12 +178,14 @@ class AdyenBancontactComponentTest {
 
     @Test
     fun `handleActivityResultIntent with RESULT_CANCELED should handle PaymentMethodCancelledException`() {
-        val params: PaymentMethodLauncherParams = mockk(relaxed = true) {
-            every { initialLauncherParams } returns mockk<WebRedirectLauncherParams>() {
-                every { statusUrl } returns "testStatusUrl"
-                every { paymentMethodType } returns "testPaymentMethod"
+        val params: PaymentMethodLauncherParams =
+            mockk(relaxed = true) {
+                every { initialLauncherParams } returns
+                    mockk<WebRedirectLauncherParams> {
+                        every { statusUrl } returns "testStatusUrl"
+                        every { paymentMethodType } returns "testPaymentMethod"
+                    }
             }
-        }
 
         runTest {
             component.handleActivityResultIntent(params, Activity.RESULT_CANCELED, null)
@@ -191,12 +198,14 @@ class AdyenBancontactComponentTest {
 
     @Test
     fun `handleActivityResultIntent with RESULT_OK should start polling`() {
-        val params: PaymentMethodLauncherParams = mockk(relaxed = true) {
-            every { initialLauncherParams } returns mockk<WebRedirectLauncherParams>() {
-                every { statusUrl } returns "testStatusUrl"
-                every { paymentMethodType } returns "testPaymentMethod"
+        val params: PaymentMethodLauncherParams =
+            mockk(relaxed = true) {
+                every { initialLauncherParams } returns
+                    mockk<WebRedirectLauncherParams> {
+                        every { statusUrl } returns "testStatusUrl"
+                        every { paymentMethodType } returns "testPaymentMethod"
+                    }
             }
-        }
         val resultCode = Activity.RESULT_OK
         val intent: Intent? = null
 
@@ -211,9 +220,10 @@ class AdyenBancontactComponentTest {
 
     @Test
     fun `handleActivityStartEvent should open redirect screen`() {
-        val params: PaymentMethodLauncherParams = mockk(relaxed = true) {
-            every { initialLauncherParams } returns mockk<WebRedirectLauncherParams>(relaxed = true)
-        }
+        val params: PaymentMethodLauncherParams =
+            mockk(relaxed = true) {
+                every { initialLauncherParams } returns mockk<WebRedirectLauncherParams>(relaxed = true)
+            }
 
         runTest {
             component.handleActivityStartEvent(params)
@@ -268,9 +278,10 @@ class AdyenBancontactComponentTest {
     }
 
     @Test
-    fun `close should emit Finish event`() = runTest {
-        component.close()
-        val events = component.uiEvent.toListDuring(1.0.seconds)
-        assertTrue(events.any { it == ComposerUiEvent.Finish })
-    }
+    fun `close should emit Finish event`() =
+        runTest {
+            component.close()
+            val events = component.uiEvent.toListDuring(1.0.seconds)
+            assertTrue(events.any { it == ComposerUiEvent.Finish })
+        }
 }

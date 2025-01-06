@@ -21,7 +21,6 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 internal class PhoneNumberTest {
-
     private val paymentMethodType = "phoneNumber"
     private lateinit var phoneNumber: PhoneNumber
     private lateinit var mockContext: Context
@@ -69,7 +68,7 @@ internal class PhoneNumberTest {
         verify {
             mockPaymentMethodDescriptorFactoryRegistry.register(
                 paymentMethodType,
-                any<PhoneNumberDescriptorFactory>()
+                any<PhoneNumberDescriptorFactory>(),
             )
         }
     }
@@ -81,7 +80,7 @@ internal class PhoneNumberTest {
         verify {
             mockPaymentMethodProviderFactoryRegistry.register(
                 paymentMethodType,
-                PhoneNumberComposerProviderFactory::class.java
+                PhoneNumberComposerProviderFactory::class.java,
             )
         }
     }

@@ -6,9 +6,8 @@ import io.primer.android.core.domain.validation.ValidationResult
 import io.primer.android.core.domain.validation.ValidationRule
 
 internal class ValidClientSessionCustomerIdRule(
-    private val configurationRepository: ConfigurationRepository
+    private val configurationRepository: ConfigurationRepository,
 ) : ValidationRule<Any> {
-
     override fun validate(t: Any): ValidationResult {
         return runCatching {
             configurationRepository.getConfiguration().clientSession
@@ -16,12 +15,11 @@ internal class ValidClientSessionCustomerIdRule(
                 .not()
         }.fold(
             { ValidationResult.Success },
-            { ValidationResult.Failure(VaultManagerInitException(MISSING_CUSTOMER_ID_MESSAGE)) }
+            { ValidationResult.Failure(VaultManagerInitException(MISSING_CUSTOMER_ID_MESSAGE)) },
         )
     }
 
     private companion object {
-
         const val MISSING_CUSTOMER_ID_MESSAGE =
             "You must provide a `customer.customerId` in the client session"
     }

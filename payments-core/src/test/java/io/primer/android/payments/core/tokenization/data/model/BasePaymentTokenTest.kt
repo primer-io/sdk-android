@@ -5,13 +5,13 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
 class BasePaymentTokenTest {
-
     @Test
     fun `test deserialization of VaultDataResponse`() {
         // Given
-        val json = JSONObject().apply {
-            put("customerId", "test_customer_id")
-        }
+        val json =
+            JSONObject().apply {
+                put("customerId", "test_customer_id")
+            }
 
         // When
         val vaultData = BasePaymentToken.VaultDataResponse.deserializer.deserialize(json)
@@ -23,13 +23,14 @@ class BasePaymentTokenTest {
     @Test
     fun `test deserialization of AuthenticationDetailsDataResponse`() {
         // Given
-        val json = JSONObject().apply {
-            put("responseCode", "AUTH_SUCCESS")
-            putOpt("reasonCode", "123")
-            putOpt("reasonText", "Test reason")
-            putOpt("protocolVersion", "1.0")
-            putOpt("challengeIssued", true)
-        }
+        val json =
+            JSONObject().apply {
+                put("responseCode", "AUTH_SUCCESS")
+                putOpt("reasonCode", "123")
+                putOpt("reasonText", "Test reason")
+                putOpt("protocolVersion", "1.0")
+                putOpt("challengeIssued", true)
+            }
 
         // When
         val authDetails = BasePaymentToken.AuthenticationDetailsDataResponse.deserializer.deserialize(json)

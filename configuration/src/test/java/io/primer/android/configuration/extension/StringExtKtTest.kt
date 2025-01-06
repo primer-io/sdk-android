@@ -4,7 +4,6 @@ import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
 internal class StringExtKtTest {
-
     @Test
     fun `sanitizedCardNumber should remove non-numeric characters`() {
         // Given

@@ -41,9 +41,8 @@ internal class OtpComponent(
     private val pollingStartHandler: PollingStartHandler,
     private val collectableDataValidator: CollectableDataValidator<PrimerOtpData>,
     private val errorMapperRegistry: ErrorMapperRegistry,
-    private val sdkAnalyticsEventLoggingDelegate: PaymentMethodSdkAnalyticsEventLoggingDelegate
+    private val sdkAnalyticsEventLoggingDelegate: PaymentMethodSdkAnalyticsEventLoggingDelegate,
 ) : RawDataPaymentMethodComponent<PrimerOtpData>() {
-
     private var primerSessionIntent by Delegates.notNull<PrimerSessionIntent>()
     private var paymentMethodType by Delegates.notNull<String>()
 
@@ -53,16 +52,19 @@ internal class OtpComponent(
     override val metadataFlow: Flow<PrimerPaymentMethodMetadata> = emptyFlow()
     override val metadataStateFlow: Flow<PrimerPaymentMethodMetadataState> = emptyFlow()
 
-    private val _collectedData: MutableSharedFlow<PrimerOtpData> = MutableSharedFlow(replay = 1)
+    private val collectedData: MutableSharedFlow<PrimerOtpData> = MutableSharedFlow(replay = 1)
 
-    override fun start(paymentMethodType: String, sessionIntent: PrimerSessionIntent) {
+    override fun start(
+        paymentMethodType: String,
+        sessionIntent: PrimerSessionIntent,
+    ) {
         this.paymentMethodType = paymentMethodType
         this.primerSessionIntent = sessionIntent
         composerScope.launch {
             pollingStartHandler.startPolling.collectLatest { pollingStartData ->
                 startPolling(
                     url = pollingStartData.statusUrl,
-                    paymentMethodType = pollingStartData.paymentMethodType
+                    paymentMethodType = pollingStartData.paymentMethodType,
                 )
             }
         }
@@ -70,29 +72,32 @@ internal class OtpComponent(
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
-    internal fun startPolling(url: String, paymentMethodType: String) =
-        composerScope.launch {
-            runCatching {
-                pollingInteractor.execute(
-                    AsyncStatusParams(url, paymentMethodType)
-                ).mapLatest { status ->
-                    paymentDelegate.resumePayment(status.resumeToken)
-                }.catch {
-                    paymentDelegate.handleError(it)
-                }.collect()
-            }.onFailureWithCancellation(paymentMethodType, paymentDelegate::handleError)
-        }
+    internal fun startPolling(
+        url: String,
+        paymentMethodType: String,
+    ) = composerScope.launch {
+        runCatching {
+            pollingInteractor.execute(
+                AsyncStatusParams(url, paymentMethodType),
+            ).mapLatest { status ->
+                paymentDelegate.resumePayment(status.resumeToken)
+            }.catch {
+                paymentDelegate.handleError(it)
+            }.collect()
+        }.onFailureWithCancellation(paymentMethodType, paymentDelegate::handleError)
+    }
 
     override fun updateCollectedData(collectedData: PrimerOtpData) {
         logSdkAnalyticsEvent(
             methodName = RawDataManagerAnalyticsConstants.SET_RAW_DATA_METHOD,
             paymentMethodType = paymentMethodType,
-            context = mapOf(
-                RawDataManagerAnalyticsConstants.PAYMENT_METHOD_TYPE_PARAM to paymentMethodType
-            ).filterValues { it.isNotBlank() }
+            context =
+                mapOf(
+                    RawDataManagerAnalyticsConstants.PAYMENT_METHOD_TYPE_PARAM to paymentMethodType,
+                ).filterValues { it.isNotBlank() },
         )
         composerScope.launch {
-            _collectedData.emit(collectedData)
+            this@OtpComponent.collectedData.emit(collectedData)
         }
 
         validateRawData(collectedData)
@@ -102,66 +107,69 @@ internal class OtpComponent(
         tokenize()
     }
 
-    private fun tokenize() = composerScope.launch {
-        runCatching {
-            requireNotNullCheck(_collectedData.replayCache.last(), OtpIllegalValueKey.OTP_DATA)
-        }
-            .flatMap {
-                tokenizationDelegate.tokenize(
-                    OtpTokenizationInputable(
-                        otpData = it,
-                        paymentMethodType = paymentMethodType,
-                        primerSessionIntent = primerSessionIntent
+    private fun tokenize() =
+        composerScope.launch {
+            runCatching {
+                requireNotNullCheck(collectedData.replayCache.last(), OtpIllegalValueKey.OTP_DATA)
+            }
+                .flatMap {
+                    tokenizationDelegate.tokenize(
+                        OtpTokenizationInputable(
+                            otpData = it,
+                            paymentMethodType = paymentMethodType,
+                            primerSessionIntent = primerSessionIntent,
+                        ),
                     )
-                )
-            }
-            .flatMap { paymentMethodTokenData ->
-                paymentDelegate.handlePaymentMethodToken(
-                    paymentMethodTokenData = paymentMethodTokenData,
-                    primerSessionIntent = primerSessionIntent
-                )
-            }.onFailure {
-                paymentDelegate.handleError(it)
-            }
-    }
-
-    private fun validateRawData(otp: PrimerOtpData) = composerScope.launch {
-        runSuspendCatching {
-            collectableDataValidator.validate(otp)
-                .onSuccess { errors ->
-                    val inputErrors = errors.map {
-                        PrimerInputValidationError(
-                            errorId = it.errorId,
-                            description = it.description,
-                            inputElementType = PrimerInputElementType.OTP_CODE
-                        )
-                    }
-                    _componentInputValidations.emit(inputErrors)
-                }.onFailure { throwable ->
-                    with(errorMapperRegistry.getPrimerError(throwable)) {
-                        _componentInputValidations.emit(
-                            listOf(
-                                PrimerInputValidationError(
-                                    errorId = errorId,
-                                    description = description,
-                                    inputElementType = PrimerInputElementType.OTP_CODE
-                                )
-                            )
-                        )
-                    }
+                }
+                .flatMap { paymentMethodTokenData ->
+                    paymentDelegate.handlePaymentMethodToken(
+                        paymentMethodTokenData = paymentMethodTokenData,
+                        primerSessionIntent = primerSessionIntent,
+                    )
+                }.onFailure {
+                    paymentDelegate.handleError(it)
                 }
         }
-    }
+
+    private fun validateRawData(otp: PrimerOtpData) =
+        composerScope.launch {
+            runSuspendCatching {
+                collectableDataValidator.validate(otp)
+                    .onSuccess { errors ->
+                        val inputErrors =
+                            errors.map {
+                                PrimerInputValidationError(
+                                    errorId = it.errorId,
+                                    description = it.description,
+                                    inputElementType = PrimerInputElementType.OTP_CODE,
+                                )
+                            }
+                        _componentInputValidations.emit(inputErrors)
+                    }.onFailure { throwable ->
+                        with(errorMapperRegistry.getPrimerError(throwable)) {
+                            _componentInputValidations.emit(
+                                listOf(
+                                    PrimerInputValidationError(
+                                        errorId = errorId,
+                                        description = description,
+                                        inputElementType = PrimerInputElementType.OTP_CODE,
+                                    ),
+                                ),
+                            )
+                        }
+                    }
+            }
+        }
 
     private fun logSdkAnalyticsEvent(
         methodName: String,
         paymentMethodType: String,
-        context: Map<String, String> = emptyMap()
+        context: Map<String, String> = emptyMap(),
     ) = composerScope.launch {
         sdkAnalyticsEventLoggingDelegate.logSdkAnalyticsEvent(
             methodName = methodName,
             paymentMethodType = paymentMethodType,
-            context = context
+            context = context,
         )
     }
 }

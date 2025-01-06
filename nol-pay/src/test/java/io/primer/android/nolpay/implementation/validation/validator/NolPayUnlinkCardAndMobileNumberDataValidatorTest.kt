@@ -20,7 +20,6 @@ import org.junit.jupiter.api.assertThrows
 import kotlin.test.assertEquals
 
 internal class NolPayUnlinkCardAndMobileNumberDataValidatorTest {
-
     @RelaxedMockK
     internal lateinit var phoneMetadataRepository: PhoneMetadataRepository
 
@@ -46,11 +45,11 @@ internal class NolPayUnlinkCardAndMobileNumberDataValidatorTest {
             assertEquals(1, errors.size)
             assertEquals(
                 INVALID_CARD_NUMBER_ERROR_ID,
-                errors[0].errorId
+                errors[0].errorId,
             )
             assertEquals(
                 "Card number cannot be blank.",
-                errors[0].description
+                errors[0].description,
             )
         }
     }
@@ -64,16 +63,17 @@ internal class NolPayUnlinkCardAndMobileNumberDataValidatorTest {
         every { collectableData.mobileNumber } returns ""
 
         coEvery { phoneMetadataRepository.getPhoneMetadata(any()) }.returns(
-            Result.failure(expectedException)
+            Result.failure(expectedException),
         )
 
-        val exception = assertThrows<Exception> {
-            runTest {
-                val result = validator.validate(collectableData)
-                assert(result.isFailure)
-                result.getOrThrow()
+        val exception =
+            assertThrows<Exception> {
+                runTest {
+                    val result = validator.validate(collectableData)
+                    assert(result.isFailure)
+                    result.getOrThrow()
+                }
             }
-        }
         assertEquals(expectedException, exception)
 
         coVerify { phoneMetadataRepository.getPhoneMetadata(any()) }
@@ -88,7 +88,7 @@ internal class NolPayUnlinkCardAndMobileNumberDataValidatorTest {
         every { collectableData.nolPaymentCard } returns PrimerNolPaymentCard(VALID_CARD_NUMBER)
 
         coEvery { phoneMetadataRepository.getPhoneMetadata(any()) }.returns(
-            Result.failure(exception)
+            Result.failure(exception),
         )
 
         runTest {
@@ -110,7 +110,7 @@ internal class NolPayUnlinkCardAndMobileNumberDataValidatorTest {
         every { collectableData.nolPaymentCard } returns PrimerNolPaymentCard(VALID_CARD_NUMBER)
 
         coEvery { phoneMetadataRepository.getPhoneMetadata(any()) }.returns(
-            Result.success(phoneMetadata)
+            Result.success(phoneMetadata),
         )
 
         runTest {

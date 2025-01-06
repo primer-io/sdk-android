@@ -14,21 +14,20 @@ import kotlinx.coroutines.flow.Flow
 import java.util.Locale
 
 internal interface ThreeDsServiceRepository {
-
     val threeDsSdkVersion: String?
 
     @Throws(ThreeDsConfigurationException::class)
     suspend fun initializeProvider(
         is3DSSanityCheckEnabled: Boolean,
         locale: Locale,
-        threeDsKeysParams: ThreeDsKeysParams?
+        threeDsKeysParams: ThreeDsKeysParams?,
     ): Result<Unit>
 
     @Throws(ThreeDsMissingDirectoryServerException::class)
     suspend fun performProviderAuth(
         cardNetwork: CardNetwork.Type,
         protocolVersion: ProtocolVersion,
-        environment: Environment
+        environment: Environment,
     ): Result<Transaction>
 
     fun performChallenge(
@@ -36,7 +35,7 @@ internal interface ThreeDsServiceRepository {
         transaction: Transaction,
         authResponse: BeginAuthResponse,
         threeDSAppURL: String?,
-        initProtocolVersion: String
+        initProtocolVersion: String,
     ): Flow<ChallengeStatusData>
 
     fun performCleanup()

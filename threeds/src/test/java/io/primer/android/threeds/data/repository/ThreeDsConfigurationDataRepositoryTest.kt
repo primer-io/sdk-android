@@ -25,7 +25,6 @@ import kotlin.test.assertEquals
 @ExtendWith(InstantExecutorExtension::class, MockKExtension::class)
 @ExperimentalCoroutinesApi
 internal class ThreeDsConfigurationDataRepositoryTest {
-
     @RelaxedMockK
     internal lateinit var configurationDataSource: CacheConfigurationDataSource
 
@@ -48,7 +47,7 @@ internal class ThreeDsConfigurationDataRepositoryTest {
             assertEquals(configurationData.keys?.netceteraApiKey, threeDsParams.apiKey)
             assertEquals(
                 configurationData.keys?.threeDSecureIoCertificates,
-                threeDsParams.threeDsCertificates
+                threeDsParams.threeDsCertificates,
             )
         }
 
@@ -59,7 +58,7 @@ internal class ThreeDsConfigurationDataRepositoryTest {
     @Test
     fun `getConfiguration should return MissingConfigurationException when there is no local cached configuration`() {
         every { configurationDataSource.get() }.throws(
-            MissingConfigurationException(null)
+            MissingConfigurationException(null),
         )
         assertThrows<MissingConfigurationException> {
             runTest {
@@ -121,7 +120,7 @@ internal class ThreeDsConfigurationDataRepositoryTest {
             val preAuthConfiguration = repository.getPreAuthConfiguration(supportedProtocolVersions).getOrThrow()
             assertEquals(
                 listOf(ProtocolVersion.V_210, ProtocolVersion.V_220),
-                preAuthConfiguration.protocolVersions
+                preAuthConfiguration.protocolVersions,
             )
             assertEquals(Environment.PRODUCTION, preAuthConfiguration.environment)
         }
@@ -134,11 +133,12 @@ internal class ThreeDsConfigurationDataRepositoryTest {
     fun `getPreAuthConfiguration should return V_220 when supportedThreeDsProtocolVersions contains 2_1_0, 2_2_0, 2_3_0`() {
         val configurationData = mockk<ConfigurationData>(relaxed = true)
 
-        val supportedProtocolVersions = listOf(
-            ProtocolVersion.V_210.versionNumber,
-            ProtocolVersion.V_220.versionNumber,
-            UNSUPPORTED_PROTOCOL_VERSION
-        )
+        val supportedProtocolVersions =
+            listOf(
+                ProtocolVersion.V_210.versionNumber,
+                ProtocolVersion.V_220.versionNumber,
+                UNSUPPORTED_PROTOCOL_VERSION,
+            )
 
         every { configurationData.environment }.returns(Environment.PRODUCTION)
         coEvery { configurationDataSource.get() }.returns(configurationData)
@@ -147,7 +147,7 @@ internal class ThreeDsConfigurationDataRepositoryTest {
             val preAuthConfiguration = repository.getPreAuthConfiguration(supportedProtocolVersions).getOrThrow()
             assertEquals(
                 listOf(ProtocolVersion.V_210, ProtocolVersion.V_220),
-                preAuthConfiguration.protocolVersions
+                preAuthConfiguration.protocolVersions,
             )
             assertEquals(Environment.PRODUCTION, preAuthConfiguration.environment)
         }
@@ -180,7 +180,7 @@ internal class ThreeDsConfigurationDataRepositoryTest {
         val supportedThreeDsProtocolVersions = listOf(ProtocolVersion.V_210.versionNumber)
 
         every { configurationDataSource.get() }.throws(
-            MissingConfigurationException(null)
+            MissingConfigurationException(null),
         )
         runTest {
             val exception =
@@ -247,7 +247,6 @@ internal class ThreeDsConfigurationDataRepositoryTest {
     }
 
     private companion object {
-
         const val UNSUPPORTED_PROTOCOL_VERSION = "2.3.1"
     }
 }

@@ -23,7 +23,6 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 @OptIn(ExperimentalCoroutinesApi::class)
 internal class ThreeDsContainer(private val sdk: SdkContainer) : DependencyContainer() {
-
     override fun registerInitialDependencies() {
         registerSingleton { ThreeDsSdkClassValidator() }
 
@@ -34,19 +33,19 @@ internal class ThreeDsContainer(private val sdk: SdkContainer) : DependencyConta
         registerSingleton<ThreeDsRepository> {
             ThreeDsDataRepository(
                 dataSource = resolve(),
-                configurationDataSource = sdk.resolve(ConfigurationCoreContainer.CACHED_CONFIGURATION_DI_KEY)
+                configurationDataSource = sdk.resolve(ConfigurationCoreContainer.CACHED_CONFIGURATION_DI_KEY),
             )
         }
 
         registerFactory<ThreeDsServiceRepository> {
             NetceteraThreeDsServiceRepository(
-                context = sdk.resolve()
+                context = sdk.resolve(),
             )
         }
 
         registerFactory<ThreeDsConfigurationRepository> {
             ThreeDsConfigurationDataRepository(
-                configurationDataSource = sdk.resolve(ConfigurationCoreContainer.CACHED_CONFIGURATION_DI_KEY)
+                configurationDataSource = sdk.resolve(ConfigurationCoreContainer.CACHED_CONFIGURATION_DI_KEY),
             )
         }
 
@@ -63,7 +62,7 @@ internal class ThreeDsContainer(private val sdk: SdkContainer) : DependencyConta
                 threeDsConfigurationRepository = resolve(),
                 errorMapperRegistry = sdk.resolve(),
                 analyticsRepository = sdk.resolve(),
-                logReporter = sdk.resolve()
+                logReporter = sdk.resolve(),
             )
         }
 
@@ -71,7 +70,7 @@ internal class ThreeDsContainer(private val sdk: SdkContainer) : DependencyConta
             ThreeDsViewModelFactory(
                 threeDsInteractor = resolve(),
                 analyticsInteractor = sdk.resolve(),
-                settings = sdk.resolve()
+                settings = sdk.resolve(),
             )
         }
 

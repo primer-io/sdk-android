@@ -7,7 +7,6 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
 internal class CardNavigatorProviderFactoryTest {
-
     @Test
     fun `create() should return an instance of GooglePayNavigationHandler when invoked`() {
         // Given

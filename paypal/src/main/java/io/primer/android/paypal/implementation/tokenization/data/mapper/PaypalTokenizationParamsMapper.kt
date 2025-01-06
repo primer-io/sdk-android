@@ -10,28 +10,30 @@ import io.primer.android.paypal.implementation.tokenization.domain.model.PaypalP
 
 internal class PaypalTokenizationParamsMapper :
     TokenizationParamsMapper<PaypalPaymentInstrumentParams, PaypalPaymentInstrumentDataRequest> {
-
-    override fun map(params: TokenizationParams<PaypalPaymentInstrumentParams>):
-        TokenizationRequestV2<PaypalPaymentInstrumentDataRequest> {
-        val instrumentDataRequest = when (val paymentInstrumentParams = params.paymentInstrumentParams) {
-            is PaypalPaymentInstrumentParams.PaypalCheckoutPaymentInstrumentParams ->
-                PaypalPaymentInstrumentDataRequest.PaypalCheckoutPaymentInstrumentDataRequest(
-                    paypalOrderId = paymentInstrumentParams.paypalOrderId,
-                    externalPayerInfo = ExternalPayerInfoRequest(
-                        email = paymentInstrumentParams.externalPayerInfoEmail,
-                        externalPayerId = paymentInstrumentParams.externalPayerId,
-                        firstName = paymentInstrumentParams.externalPayerFirstName,
-                        lastName = paymentInstrumentParams.externalPayerLastName
+    override fun map(
+        params: TokenizationParams<PaypalPaymentInstrumentParams>,
+    ): TokenizationRequestV2<PaypalPaymentInstrumentDataRequest> {
+        val instrumentDataRequest =
+            when (val paymentInstrumentParams = params.paymentInstrumentParams) {
+                is PaypalPaymentInstrumentParams.PaypalCheckoutPaymentInstrumentParams ->
+                    PaypalPaymentInstrumentDataRequest.PaypalCheckoutPaymentInstrumentDataRequest(
+                        paypalOrderId = paymentInstrumentParams.paypalOrderId,
+                        externalPayerInfo =
+                            ExternalPayerInfoRequest(
+                                email = paymentInstrumentParams.externalPayerInfoEmail,
+                                externalPayerId = paymentInstrumentParams.externalPayerId,
+                                firstName = paymentInstrumentParams.externalPayerFirstName,
+                                lastName = paymentInstrumentParams.externalPayerLastName,
+                            ),
                     )
-                )
 
-            is PaypalPaymentInstrumentParams.PaypalVaultPaymentInstrumentParams ->
-                PaypalPaymentInstrumentDataRequest.PaypalVaultPaymentInstrumentDataRequest(
-                    billingAgreementId = paymentInstrumentParams.paypalBillingAgreementId,
-                    externalPayerInfo = paymentInstrumentParams.externalPayerInfo,
-                    shippingAddress = paymentInstrumentParams.shippingAddress
-                )
-        }
+                is PaypalPaymentInstrumentParams.PaypalVaultPaymentInstrumentParams ->
+                    PaypalPaymentInstrumentDataRequest.PaypalVaultPaymentInstrumentDataRequest(
+                        billingAgreementId = paymentInstrumentParams.paypalBillingAgreementId,
+                        externalPayerInfo = paymentInstrumentParams.externalPayerInfo,
+                        shippingAddress = paymentInstrumentParams.shippingAddress,
+                    )
+            }
         return instrumentDataRequest.toTokenizationRequest(params.sessionIntent)
     }
 }

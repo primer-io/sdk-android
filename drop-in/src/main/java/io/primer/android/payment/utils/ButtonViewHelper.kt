@@ -9,13 +9,16 @@ import io.primer.android.ui.settings.PrimerTheme
 import io.primer.android.utils.dPtoPx
 
 internal object ButtonViewHelper {
+    private val buttonStates =
+        arrayOf(
+            intArrayOf(-android.R.attr.state_selected),
+            intArrayOf(android.R.attr.state_selected),
+        )
 
-    private val buttonStates = arrayOf(
-        intArrayOf(-android.R.attr.state_selected),
-        intArrayOf(android.R.attr.state_selected)
-    )
-
-    fun generateButtonContent(context: Context, theme: PrimerTheme): GradientDrawable {
+    fun generateButtonContent(
+        context: Context,
+        theme: PrimerTheme,
+    ): GradientDrawable {
         val contentDrawable = GradientDrawable()
         val border = theme.paymentMethodButton.border
         val unSelectedColor = border.defaultColor.getColor(context, theme.isDarkMode)
@@ -33,7 +36,7 @@ internal object ButtonViewHelper {
     fun generateButtonContent(
         context: Context,
         primerTheme: PrimerTheme,
-        displayMetadata: BaseDisplayMetadata
+        displayMetadata: BaseDisplayMetadata,
     ): GradientDrawable {
         val contentDrawable = GradientDrawable()
         val border = primerTheme.paymentMethodButton.border
@@ -46,9 +49,9 @@ internal object ButtonViewHelper {
                 } ?: ColorStateList.valueOf(
                     border.defaultColor.getColor(
                         context,
-                        primerTheme.isDarkMode
-                    )
-                )
+                        primerTheme.isDarkMode,
+                    ),
+                ),
             )
         }
         displayMetadata.backgroundColor?.let {

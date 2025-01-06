@@ -7,24 +7,24 @@ import org.json.JSONObject
 
 internal data class KlarnaVaultPaymentInstrumentDataRequest(
     val klarnaCustomerToken: String?,
-    val sessionData: KlarnaSessionData
+    val sessionData: KlarnaSessionData,
 ) : KlarnaPaymentInstrumentDataRequest {
     companion object {
-
         private const val KLARNA_CUSTOMER_TOKEN_FIELD = "klarnaCustomerToken"
         private const val SESSION_DATA_FIELD = "sessionData"
 
         @JvmField
-        val serializer = JSONObjectSerializer<KlarnaVaultPaymentInstrumentDataRequest> { t ->
-            JSONObject().apply {
-                putOpt(KLARNA_CUSTOMER_TOKEN_FIELD, t.klarnaCustomerToken)
-                put(
-                    SESSION_DATA_FIELD,
-                    JSONSerializationUtils
-                        .getJsonObjectSerializer<KlarnaSessionData>()
-                        .serialize(t.sessionData)
-                )
+        val serializer =
+            JSONObjectSerializer<KlarnaVaultPaymentInstrumentDataRequest> { t ->
+                JSONObject().apply {
+                    putOpt(KLARNA_CUSTOMER_TOKEN_FIELD, t.klarnaCustomerToken)
+                    put(
+                        SESSION_DATA_FIELD,
+                        JSONSerializationUtils
+                            .getJsonObjectSerializer<KlarnaSessionData>()
+                            .serialize(t.sessionData),
+                    )
+                }
             }
-        }
     }
 }

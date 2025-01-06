@@ -7,27 +7,28 @@ import io.primer.android.paymentmethods.common.data.model.PaymentMethodType
 import java.util.UUID
 
 internal sealed class KlarnaError : PrimerError() {
-
     object UserUnapprovedError : KlarnaError()
 
     class KlarnaSdkError(
-        val message: String
+        val message: String,
     ) : KlarnaError()
 
     override val errorId: String
-        get() = when (this) {
-            is UserUnapprovedError -> "klarna-user-not-approved"
-            is KlarnaSdkError -> "klarna-sdk-error"
-        }
+        get() =
+            when (this) {
+                is UserUnapprovedError -> "klarna-user-not-approved"
+                is KlarnaSdkError -> "klarna-sdk-error"
+            }
 
     override val description: String
-        get() = when (this) {
-            is UserUnapprovedError ->
-                "User is not approved to perform Klarna payments (diagnosticsId: $diagnosticsId)"
+        get() =
+            when (this) {
+                is UserUnapprovedError ->
+                    "User is not approved to perform Klarna payments (diagnosticsId: $diagnosticsId)"
 
-            is KlarnaSdkError ->
-                "Multiple errors occurred: $message (diagnosticsId: $diagnosticsId)"
-        }
+                is KlarnaSdkError ->
+                    "Multiple errors occurred: $message (diagnosticsId: $diagnosticsId)"
+            }
 
     override val diagnosticsId: String
         get() = UUID.randomUUID().toString()

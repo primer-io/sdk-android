@@ -5,21 +5,18 @@ import io.primer.android.completion.PrimerPaymentCreationDecisionHandler
 import io.primer.android.components.domain.core.models.PrimerHeadlessUniversalCheckoutPaymentMethod
 import io.primer.android.domain.PrimerCheckoutData
 import io.primer.android.domain.action.models.PrimerClientSession
-import io.primer.android.domain.tokenization.models.PrimerPaymentMethodData
 import io.primer.android.domain.error.models.PrimerError
-import io.primer.android.payments.core.additionalInfo.PrimerCheckoutAdditionalInfo
+import io.primer.android.domain.tokenization.models.PrimerPaymentMethodData
 import io.primer.android.domain.tokenization.models.PrimerPaymentMethodTokenData
+import io.primer.android.payments.core.additionalInfo.PrimerCheckoutAdditionalInfo
 
 @JvmDefaultWithCompatibility
 interface PrimerHeadlessUniversalCheckoutListener {
-
     /**
      * Called after the [PrimerHeadlessUniversalCheckout] has been initialized.
      * Based on the clientToken provided, the payment methods that should be displayed will be returned.
      */
-    fun onAvailablePaymentMethodsLoaded(
-        paymentMethods: List<PrimerHeadlessUniversalCheckoutPaymentMethod>
-    )
+    fun onAvailablePaymentMethodsLoaded(paymentMethods: List<PrimerHeadlessUniversalCheckoutPaymentMethod>)
 
     /**
      * Called before the payment method tokenization is performed.
@@ -36,7 +33,7 @@ interface PrimerHeadlessUniversalCheckoutListener {
      */
     fun onTokenizeSuccess(
         paymentMethodTokenData: PrimerPaymentMethodTokenData,
-        decisionHandler: PrimerHeadlessUniversalCheckoutResumeDecisionHandler
+        decisionHandler: PrimerHeadlessUniversalCheckoutResumeDecisionHandler,
     ) = Unit
 
     /**
@@ -49,7 +46,7 @@ interface PrimerHeadlessUniversalCheckoutListener {
      */
     fun onCheckoutResume(
         resumeToken: String,
-        decisionHandler: PrimerHeadlessUniversalCheckoutResumeDecisionHandler
+        decisionHandler: PrimerHeadlessUniversalCheckoutResumeDecisionHandler,
     ) = Unit
 
     /**
@@ -82,7 +79,7 @@ interface PrimerHeadlessUniversalCheckoutListener {
      */
     fun onBeforePaymentCreated(
         paymentMethodData: PrimerPaymentMethodData,
-        createPaymentHandler: PrimerPaymentCreationDecisionHandler
+        createPaymentHandler: PrimerPaymentCreationDecisionHandler,
     ) {
         createPaymentHandler.continuePaymentCreation()
     }
@@ -118,5 +115,8 @@ interface PrimerHeadlessUniversalCheckoutListener {
      * [io.primer.android.data.settings.PrimerPaymentHandling.AUTO]
      * @see io.primer.android.data.settings.PrimerSettings
      */
-    fun onFailed(error: PrimerError, checkoutData: PrimerCheckoutData? = null) = Unit
+    fun onFailed(
+        error: PrimerError,
+        checkoutData: PrimerCheckoutData? = null,
+    ) = Unit
 }

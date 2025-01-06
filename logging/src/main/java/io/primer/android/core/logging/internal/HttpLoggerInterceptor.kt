@@ -20,13 +20,15 @@ class HttpLoggerInterceptor(
     private val whitelistedHttpBodyKeyProviderRegistry: WhitelistedHttpBodyKeyProviderRegistry,
     private val pciUrlProvider: () -> String?,
     private val getCurrentTimeMillis: () -> Long = { System.currentTimeMillis() },
-    private val isDebugBuild: Boolean = BuildConfig.DEBUG
+    private val isDebugBuild: Boolean = BuildConfig.DEBUG,
 ) : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
-        val blacklistedHeaders = blacklistedHttpHeaderProviderRegistry.getAll()
-            .flatMap { it.values }
-        val whitelistedBodyKeys = whitelistedHttpBodyKeyProviderRegistry.getAll()
-            .flatMap { it.values }
+        val blacklistedHeaders =
+            blacklistedHttpHeaderProviderRegistry.getAll()
+                .flatMap { it.values }
+        val whitelistedBodyKeys =
+            whitelistedHttpBodyKeyProviderRegistry.getAll()
+                .flatMap { it.values }
 
         val request = chain.request()
         val bodyObfuscationLevel = request.bodyObfuscationLevel
@@ -41,14 +43,14 @@ class HttpLoggerInterceptor(
                 shouldLogHeaders = shouldLogHeaders,
                 blacklistedHeaders = blacklistedHeaders,
                 obfuscationLevel = headersObfuscationLevel,
-                obfuscationString = OBFUSCATION_STRING
+                obfuscationString = OBFUSCATION_STRING,
             )
             logBody(
                 logReporter = logReporter,
                 shouldLogBody = shouldLogBody,
                 whitelistedBodyKeys = whitelistedBodyKeys,
                 obfuscationLevel = bodyObfuscationLevel,
-                obfuscationString = OBFUSCATION_STRING
+                obfuscationString = OBFUSCATION_STRING,
             )
         }
 
@@ -63,23 +65,23 @@ class HttpLoggerInterceptor(
                     shouldLogHeaders = shouldLogHeaders,
                     blacklistedHeaders = blacklistedHeaders,
                     obfuscationLevel = headersObfuscationLevel,
-                    obfuscationString = OBFUSCATION_STRING
+                    obfuscationString = OBFUSCATION_STRING,
                 )
                 logBody(
                     logReporter = logReporter,
                     shouldLogBody = shouldLogBody,
                     whitelistedBodyKeys = whitelistedBodyKeys,
                     obfuscationLevel = bodyObfuscationLevel,
-                    obfuscationString = OBFUSCATION_STRING
+                    obfuscationString = OBFUSCATION_STRING,
                 )
             }
         } catch (e: IOException) {
             logReporter.debug(
                 """
-                    <-- ${request.method} ${request.url}
-                    HTTP failed: ${e.message}
-                    <-- END HTTP
-                """.trimIndent()
+                <-- ${request.method} ${request.url}
+                HTTP failed: ${e.message}
+                <-- END HTTP
+                """.trimIndent(),
             )
             throw e
         }
@@ -88,31 +90,34 @@ class HttpLoggerInterceptor(
     }
 
     private val Request.bodyObfuscationLevel: ObfuscationLevel
-        get() = when {
-            isDebugBuild || PrimerLogging.logger is ConsolePrimerLogger -> {
-                ObfuscationLevel.NONE
+        get() =
+            when {
+                isDebugBuild || PrimerLogging.logger is ConsolePrimerLogger -> {
+                    ObfuscationLevel.NONE
+                }
+
+                containsPciUrl -> ObfuscationLevel.REDACT_BODY
+
+                else -> ObfuscationLevel.LIST
             }
-
-            containsPciUrl -> ObfuscationLevel.REDACT_BODY
-
-            else -> ObfuscationLevel.LIST
-        }
 
     private val headersObfuscationLevel: ObfuscationLevel
-        get() = when {
-            isDebugBuild || PrimerLogging.logger is ConsolePrimerLogger -> {
-                ObfuscationLevel.NONE
-            }
+        get() =
+            when {
+                isDebugBuild || PrimerLogging.logger is ConsolePrimerLogger -> {
+                    ObfuscationLevel.NONE
+                }
 
-            else -> ObfuscationLevel.LIST
-        }
+                else -> ObfuscationLevel.LIST
+            }
 
     private val Request.containsPciUrl: Boolean
         get() {
-            val pciUrl = pciUrlProvider() ?: run {
-                logReporter.warn("Failed to get configuration")
-                return false
-            }
+            val pciUrl =
+                pciUrlProvider() ?: run {
+                    logReporter.warn("Failed to get configuration")
+                    return false
+                }
 
             return url.toUrl().toString().startsWith(pciUrl)
         }
@@ -135,7 +140,7 @@ class HttpLoggerInterceptor(
         /**
          * The entire body is redacted
          */
-        REDACT_BODY
+        REDACT_BODY,
     }
 
     enum class Level {
@@ -191,6 +196,6 @@ class HttpLoggerInterceptor(
          * <-- END HTTP
          * ```
          */
-        BODY
+        BODY,
     }
 }

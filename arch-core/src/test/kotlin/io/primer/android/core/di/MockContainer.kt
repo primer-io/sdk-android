@@ -1,8 +1,6 @@
 package io.primer.android.core.di
 
-
 internal class MockContainer : DependencyContainer() {
-
     override fun registerInitialDependencies() {
         registerSingleton { MockDependency() }
 

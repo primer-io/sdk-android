@@ -7,16 +7,18 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.filterNotNull
 
 internal class UncaughtHandlerDataSource(
-    private val defaultExceptionHandler: Thread.UncaughtExceptionHandler? = Thread.getDefaultUncaughtExceptionHandler()
+    private val defaultExceptionHandler: Thread.UncaughtExceptionHandler? = Thread.getDefaultUncaughtExceptionHandler(),
 ) : BaseFlowDataSource<CrashProperties, Unit>, Thread.UncaughtExceptionHandler {
-
     private val sharedFlow = MutableStateFlow<CrashProperties?>(null)
 
-    override fun uncaughtException(t: Thread, e: Throwable) {
+    override fun uncaughtException(
+        t: Thread,
+        e: Throwable,
+    ) {
         sharedFlow.tryEmit(
             CrashProperties(
-                listOf(e.message.orEmpty()).plus(e.stackTrace.map { it.toString() })
-            )
+                listOf(e.message.orEmpty()).plus(e.stackTrace.map { it.toString() }),
+            ),
         )
         defaultExceptionHandler?.uncaughtException(t, e)
     }

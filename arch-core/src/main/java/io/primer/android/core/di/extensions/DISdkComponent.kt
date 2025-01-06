@@ -30,12 +30,14 @@ inline fun <reified T : DependencyContainer> DISdkComponent.unregisterContainer(
 }
 
 context(ViewModelStoreOwner)
-inline fun <reified T : ViewModel,
-    reified R : ViewModelProvider.Factory> DISdkComponent.viewModel(): Lazy<T> {
+inline fun <
+    reified T : ViewModel,
+    reified R : ViewModelProvider.Factory,
+    > DISdkComponent.viewModel(): Lazy<T> {
     return lazy(LazyThreadSafetyMode.SYNCHRONIZED) {
         ViewModelProvider(
             this@ViewModelStoreOwner,
-            getSdkContainer().resolve<R>()
+            getSdkContainer().resolve<R>(),
         )[T::class.java]
     }
 }

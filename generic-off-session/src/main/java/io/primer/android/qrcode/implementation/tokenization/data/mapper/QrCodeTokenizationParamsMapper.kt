@@ -11,17 +11,20 @@ import io.primer.android.qrcode.implementation.tokenization.domain.model.QrCodeP
 
 internal class QrCodeTokenizationParamsMapper :
     TokenizationParamsMapper<QrCodePaymentInstrumentParams, QrCodePaymentInstrumentDataRequest> {
-    override fun map(params: TokenizationParams<QrCodePaymentInstrumentParams>):
-        TokenizationRequestV2<QrCodePaymentInstrumentDataRequest> {
+    override fun map(
+        params: TokenizationParams<QrCodePaymentInstrumentParams>,
+    ): TokenizationRequestV2<QrCodePaymentInstrumentDataRequest> {
         val paymentInstrumentParams = params.paymentInstrumentParams
-        val instrumentDataRequest = QrCodePaymentInstrumentDataRequest(
-            paymentMethodType = paymentInstrumentParams.paymentMethodType,
-            paymentMethodConfigId = paymentInstrumentParams.paymentMethodConfigId,
-            sessionInfo = QrCodeSessionInfoDataRequest(
-                locale = paymentInstrumentParams.locale
-            ),
-            type = PaymentInstrumentType.OFF_SESSION_PAYMENT
-        )
+        val instrumentDataRequest =
+            QrCodePaymentInstrumentDataRequest(
+                paymentMethodType = paymentInstrumentParams.paymentMethodType,
+                paymentMethodConfigId = paymentInstrumentParams.paymentMethodConfigId,
+                sessionInfo =
+                    QrCodeSessionInfoDataRequest(
+                        locale = paymentInstrumentParams.locale,
+                    ),
+                type = PaymentInstrumentType.OFF_SESSION_PAYMENT,
+            )
         return instrumentDataRequest.toTokenizationRequest(params.sessionIntent)
     }
 }

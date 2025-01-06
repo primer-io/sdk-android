@@ -19,7 +19,6 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 internal class WebRedirectNavigatorTest {
-
     private lateinit var context: Context
     private lateinit var launcher: ActivityResultLauncher<Intent>
     private lateinit var webRedirectNavigator: WebRedirectNavigator
@@ -45,13 +44,14 @@ internal class WebRedirectNavigatorTest {
     @Test
     fun `navigate should launch AsyncPaymentMethodWebViewActivity with specified parameters`() {
         // Arrange
-        val params = WebRedirectActivityLauncherParams(
-            statusUrl = statusUrl,
-            paymentUrl = paymentUrl,
-            title = title,
-            paymentMethodType = paymentMethodType,
-            returnUrl = returnUrl
-        )
+        val params =
+            WebRedirectActivityLauncherParams(
+                statusUrl = statusUrl,
+                paymentUrl = paymentUrl,
+                title = title,
+                paymentMethodType = paymentMethodType,
+                returnUrl = returnUrl,
+            )
         val expectedIntent = mockk<Intent>(relaxed = true)
 
         every {
@@ -60,7 +60,7 @@ internal class WebRedirectNavigatorTest {
                 any(),
                 any(),
                 any(),
-                any()
+                any(),
             )
         } returns expectedIntent
 
@@ -83,7 +83,7 @@ internal class WebRedirectNavigatorTest {
                 eq(paymentUrl),
                 eq(returnUrl),
                 eq(title),
-                eq(paymentMethodType)
+                eq(paymentMethodType),
             )
         }
     }
@@ -91,13 +91,14 @@ internal class WebRedirectNavigatorTest {
     @Test
     fun `canHandle should return true for WebRedirectActivityLauncherParams`() {
         // Arrange
-        val params = WebRedirectActivityLauncherParams(
-            paymentUrl = "https://example.com",
-            returnUrl = "https://example.com/return",
-            title = "Test title",
-            paymentMethodType = "Test payment method type",
-            statusUrl = "https://example.com/status"
-        )
+        val params =
+            WebRedirectActivityLauncherParams(
+                paymentUrl = "https://example.com",
+                returnUrl = "https://example.com/return",
+                title = "Test title",
+                paymentMethodType = "Test payment method type",
+                statusUrl = "https://example.com/status",
+            )
 
         // Act & Assert
         assert(webRedirectNavigator.canHandle(params)) {

@@ -11,21 +11,24 @@ import io.primer.android.payments.core.tokenization.domain.model.TokenizationPar
 
 internal class NolPayTokenizationParamsMapper :
     TokenizationParamsMapper<NolPayPaymentInstrumentParams, NolPayPaymentInstrumentDataRequest> {
-    override fun map(params: TokenizationParams<NolPayPaymentInstrumentParams>):
-        TokenizationRequestV2<NolPayPaymentInstrumentDataRequest> {
+    override fun map(
+        params: TokenizationParams<NolPayPaymentInstrumentParams>,
+    ): TokenizationRequestV2<NolPayPaymentInstrumentDataRequest> {
         val paymentInstrumentParams = params.paymentInstrumentParams
-        val instrumentDataRequest = NolPayPaymentInstrumentDataRequest(
-            paymentMethodType = paymentInstrumentParams.paymentMethodType,
-            paymentMethodConfigId = paymentInstrumentParams.paymentMethodConfigId,
-            sessionInfo = NolPaySessionInfoDataRequest(
-                mobileCountryCode = paymentInstrumentParams.mobileCountryCode,
-                mobileNumber = paymentInstrumentParams.mobileNumber,
-                nolPayCardNumber = paymentInstrumentParams.nolPayCardNumber,
-                deviceVendor = Build.MANUFACTURER,
-                deviceModel = Build.MODEL
-            ),
-            type = params.paymentInstrumentParams.type
-        )
+        val instrumentDataRequest =
+            NolPayPaymentInstrumentDataRequest(
+                paymentMethodType = paymentInstrumentParams.paymentMethodType,
+                paymentMethodConfigId = paymentInstrumentParams.paymentMethodConfigId,
+                sessionInfo =
+                    NolPaySessionInfoDataRequest(
+                        mobileCountryCode = paymentInstrumentParams.mobileCountryCode,
+                        mobileNumber = paymentInstrumentParams.mobileNumber,
+                        nolPayCardNumber = paymentInstrumentParams.nolPayCardNumber,
+                        deviceVendor = Build.MANUFACTURER,
+                        deviceModel = Build.MODEL,
+                    ),
+                type = params.paymentInstrumentParams.type,
+            )
         return instrumentDataRequest.toTokenizationRequest(params.sessionIntent)
     }
 }

@@ -5,7 +5,7 @@ import io.primer.android.configuration.domain.repository.ConfigurationRepository
 import org.json.JSONObject
 
 internal class GetKlarnaAuthorizationSessionDataDelegate(
-    private val configurationRepository: ConfigurationRepository
+    private val configurationRepository: ConfigurationRepository,
 ) {
     fun getAuthorizationSessionDataOrNull(): String? {
         val extraMerchantData = getExtraMerchantDataOrNull() ?: return null
@@ -16,7 +16,7 @@ internal class GetKlarnaAuthorizationSessionDataDelegate(
                 JSONObject().apply {
                     put("content_type", "application/vnd.klarna.internal.emd-v2+json")
                     put("body", extraMerchantData.toString())
-                }
+                },
             )
         }.toString()
     }

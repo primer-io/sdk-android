@@ -24,7 +24,6 @@ import io.primer.android.viewmodel.ViewStatus
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 internal class MultibancoPaymentFragment : BaseFormFragment(), DISdkComponent {
-
     private var binding: FragmentMultibancoPaymentBinding by autoCleaned()
 
     override val baseFormBinding: BaseFormBinding by autoCleaned { binding.toBaseFormBinding() }
@@ -32,13 +31,16 @@ internal class MultibancoPaymentFragment : BaseFormFragment(), DISdkComponent {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
         binding = FragmentMultibancoPaymentBinding.inflate(inflater, container, false)
         return binding.root
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onViewCreated(
+        view: View,
+        savedInstanceState: Bundle?,
+    ) {
         super.onViewCreated(view, savedInstanceState)
         setupAmount()
         setupTheme()
@@ -48,7 +50,7 @@ internal class MultibancoPaymentFragment : BaseFormFragment(), DISdkComponent {
         val titleTextColor = theme.titleText.defaultColor.getColor(requireContext(), theme.isDarkMode)
         binding.tvTitleComplete.setTextColor(titleTextColor)
         binding.tvDescription.setTextColor(
-            theme.subtitleText.defaultColor.getColor(requireContext(), theme.isDarkMode)
+            theme.subtitleText.defaultColor.getColor(requireContext(), theme.isDarkMode),
         )
         binding.tvValueDueDate.setTextColor(titleTextColor)
         binding.tvValueAmount.setTextColor(titleTextColor)
@@ -72,7 +74,11 @@ internal class MultibancoPaymentFragment : BaseFormFragment(), DISdkComponent {
         setupShareButton(entity, reference, expiresAt)
     }
 
-    private fun setupShareButton(entity: String, reference: String, expiresAt: String) {
+    private fun setupShareButton(
+        entity: String,
+        reference: String,
+        expiresAt: String,
+    ) {
         binding.ivShare.setOnClickListener {
             shareContent(
                 buildString {
@@ -85,7 +91,7 @@ internal class MultibancoPaymentFragment : BaseFormFragment(), DISdkComponent {
                     append(getString(R.string.dueAt))
                     append(": ")
                     append(expiresAt)
-                }
+                },
             )
         }
     }
@@ -96,9 +102,10 @@ internal class MultibancoPaymentFragment : BaseFormFragment(), DISdkComponent {
                 Intent(Intent.ACTION_SEND).apply {
                     type = "text/plain"
                     putExtra(Intent.EXTRA_TEXT, paymentInfoData)
-                }
+                },
             )
-        } catch (e: ActivityNotFoundException) { // not have an app for share plain text
+        } catch (e: ActivityNotFoundException) {
+            // not have an app for share plain text
             copyTextToClipboard(paymentInfoData)
             Log.e("Primer", e.localizedMessage ?: "Can't share content, device not support")
         }
@@ -108,7 +115,10 @@ internal class MultibancoPaymentFragment : BaseFormFragment(), DISdkComponent {
         binding.tvValueDueDate.text = expiresAt
     }
 
-    private fun setupReferences(entity: String, reference: String) {
+    private fun setupReferences(
+        entity: String,
+        reference: String,
+    ) {
         binding.tvValueEntity.text = entity.orEmpty()
         binding.tvValueReference.text = reference.orEmpty()
     }
@@ -126,12 +136,17 @@ internal class MultibancoPaymentFragment : BaseFormFragment(), DISdkComponent {
         private const val REFERENCE_KEY = "reference"
         private const val EXPIRES_AT_KEY = "expiresAt"
 
-        fun newInstance(entity: String, reference: String, expiresAt: String) = MultibancoPaymentFragment().apply {
-            arguments = bundleOf(
-                ENTITY_KEY to entity,
-                REFERENCE_KEY to reference,
-                EXPIRES_AT_KEY to expiresAt
-            )
+        fun newInstance(
+            entity: String,
+            reference: String,
+            expiresAt: String,
+        ) = MultibancoPaymentFragment().apply {
+            arguments =
+                bundleOf(
+                    ENTITY_KEY to entity,
+                    REFERENCE_KEY to reference,
+                    EXPIRES_AT_KEY to expiresAt,
+                )
         }
     }
 }

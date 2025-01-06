@@ -29,9 +29,10 @@ import kotlin.test.assertIs
 class AdyenBancontactDropInDescriptorTest {
     private val brand = mockk<Brand>(relaxed = true)
 
-    private val brandRegistry = mockk<BrandRegistry> {
-        every { getBrand(any()) } returns brand
-    }
+    private val brandRegistry =
+        mockk<BrandRegistry> {
+            every { getBrand(any()) } returns brand
+        }
 
     @Test
     fun `paymentMethodType should return ADYEN_BANCONTACT_CARD`() {
@@ -131,13 +132,14 @@ class AdyenBancontactDropInDescriptorTest {
 
     private fun createDescriptor(
         isDarkMode: Boolean = false,
-        isStandalonePaymentMethod: Boolean = false
+        isStandalonePaymentMethod: Boolean = false,
     ) = AdyenBancontactDropInDescriptor(
-        uiOptions = UiOptions(
-            isDarkMode = isDarkMode,
-            isInitScreenEnabled = false,
-            isStandalonePaymentMethod = isStandalonePaymentMethod
-        ),
-        brandRegistry = brandRegistry
+        uiOptions =
+            UiOptions(
+                isDarkMode = isDarkMode,
+                isInitScreenEnabled = false,
+                isStandalonePaymentMethod = isStandalonePaymentMethod,
+            ),
+        brandRegistry = brandRegistry,
     )
 }

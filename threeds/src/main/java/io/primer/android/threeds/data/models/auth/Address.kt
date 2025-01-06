@@ -15,9 +15,8 @@ internal data class Address(
     val city: String,
     val state: String? = null,
     val countryCode: String,
-    val postalCode: String
+    val postalCode: String,
 ) : JSONObjectSerializable {
-
     companion object {
         private const val FIRST_NAME_FIELD = "firstName"
         private const val LAST_NAME_FIELD = "lastName"
@@ -32,20 +31,21 @@ internal data class Address(
         private const val POSTAL_CODE_FIELD = "postalCode"
 
         @JvmField
-        val serializer = JSONObjectSerializer<Address> { t ->
-            JSONObject().apply {
-                putOpt(FIRST_NAME_FIELD, t.firstName)
-                putOpt(LAST_NAME_FIELD, t.lastName)
-                putOpt(EMAIL_FIELD, t.email)
-                putOpt(PHONE_NUMBER_FIELD, t.phoneNumber)
-                put(ADDRESS_LINE_1_FIELD, t.addressLine1)
-                putOpt(ADDRESS_LINE_2_FIELD, t.addressLine2)
-                putOpt(ADDRESS_LINE_3_FIELD, t.addressLine3)
-                put(CITY_FIELD, t.city)
-                putOpt(STATE_FIELD, t.state)
-                put(COUNTRY_CODE_FIELD, t.countryCode)
-                put(POSTAL_CODE_FIELD, t.postalCode)
+        val serializer =
+            JSONObjectSerializer<Address> { t ->
+                JSONObject().apply {
+                    putOpt(FIRST_NAME_FIELD, t.firstName)
+                    putOpt(LAST_NAME_FIELD, t.lastName)
+                    putOpt(EMAIL_FIELD, t.email)
+                    putOpt(PHONE_NUMBER_FIELD, t.phoneNumber)
+                    put(ADDRESS_LINE_1_FIELD, t.addressLine1)
+                    putOpt(ADDRESS_LINE_2_FIELD, t.addressLine2)
+                    putOpt(ADDRESS_LINE_3_FIELD, t.addressLine3)
+                    put(CITY_FIELD, t.city)
+                    putOpt(STATE_FIELD, t.state)
+                    put(COUNTRY_CODE_FIELD, t.countryCode)
+                    put(POSTAL_CODE_FIELD, t.postalCode)
+                }
             }
-        }
     }
 }

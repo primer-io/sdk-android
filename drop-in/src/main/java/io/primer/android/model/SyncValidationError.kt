@@ -8,5 +8,5 @@ internal data class SyncValidationError(
     val errorId: String,
     val fieldId: Int,
     @StringRes val errorResId: Int? = null,
-    @StringRes val errorFormatId: Int? = null // Need for align with other platforms, will remove for BA v2
+    @StringRes val errorFormatId: Int? = null,
 )

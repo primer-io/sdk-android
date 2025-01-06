@@ -5,5 +5,5 @@ import io.primer.android.payments.core.tokenization.presentation.composable.Toke
 
 internal data class QrCodeTokenizationInputable(
     override val paymentMethodType: String,
-    override val primerSessionIntent: PrimerSessionIntent
+    override val primerSessionIntent: PrimerSessionIntent,
 ) : TokenizationInputable

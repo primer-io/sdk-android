@@ -12,15 +12,15 @@ import io.primer.android.card.implementation.tokenization.domain.DefaultCardToke
 import io.primer.android.card.implementation.tokenization.presentation.CardTokenizationDelegate
 import io.primer.android.card.implementation.validation.domain.CardInputDataValidator
 import io.primer.android.components.domain.core.models.PrimerPaymentMethodManagerCategory
+import io.primer.android.components.domain.core.models.card.PrimerCardData
 import io.primer.android.configuration.di.ConfigurationCoreContainer
 import io.primer.android.core.di.DependencyContainer
 import io.primer.android.core.di.SdkContainer
+import io.primer.android.core.logging.WhitelistedHttpBodyKeyProviderRegistry
 import io.primer.android.paymentmethods.PaymentInputDataValidator
 import io.primer.android.paymentmethods.analytics.delegate.PaymentMethodSdkAnalyticsEventLoggingDelegate
 import io.primer.android.payments.core.helpers.PaymentMethodPaymentDelegate
 import io.primer.android.payments.core.tokenization.data.datasource.BaseRemoteTokenizationDataSource
-import io.primer.android.components.domain.core.models.card.PrimerCardData
-import io.primer.android.core.logging.WhitelistedHttpBodyKeyProviderRegistry
 import io.primer.cardShared.binData.data.datasource.InMemoryCardBinMetadataDataSource
 import io.primer.cardShared.binData.data.datasource.RemoteCardBinMetadataDataSource
 import io.primer.cardShared.binData.data.model.CardBinMetadataDataNetworksResponse
@@ -34,17 +34,16 @@ import io.primer.cardShared.networks.domain.repository.OrderedAllowedCardNetwork
 
 internal class CardContainer(private val sdk: () -> SdkContainer, private val paymentMethodType: String) :
     DependencyContainer() {
-
     override fun registerInitialDependencies() {
         sdk().resolve<WhitelistedHttpBodyKeyProviderRegistry>().apply {
             listOf(
-                CardBinMetadataDataNetworksResponse.provider
+                CardBinMetadataDataNetworksResponse.provider,
             ).forEach(::register)
         }
 
         registerSingleton<OrderedAllowedCardNetworksRepository> {
             OrderedAllowedCardNetworksDataRepository(
-                sdk().resolve(ConfigurationCoreContainer.CACHED_CONFIGURATION_DI_KEY)
+                sdk().resolve(ConfigurationCoreContainer.CACHED_CONFIGURATION_DI_KEY),
             )
         }
 
@@ -60,7 +59,7 @@ internal class CardContainer(private val sdk: () -> SdkContainer, private val pa
             CardBinMetadataDataRepository(
                 localConfigurationDataSource = sdk().resolve(ConfigurationCoreContainer.CACHED_CONFIGURATION_DI_KEY),
                 remoteCardBinMetadataDataSource = resolve(),
-                inMemoryCardBinMetadataDataSource = resolve()
+                inMemoryCardBinMetadataDataSource = resolve(),
             )
         }
 
@@ -76,7 +75,7 @@ internal class CardContainer(private val sdk: () -> SdkContainer, private val pa
                 allowedCardNetworksRepository = sdk().resolve(),
                 cardMetadataCacheHelper = resolve(),
                 analyticsRepository = sdk().resolve(),
-                logReporter = sdk().resolve()
+                logReporter = sdk().resolve(),
             )
         }
 
@@ -87,13 +86,13 @@ internal class CardContainer(private val sdk: () -> SdkContainer, private val pa
         registerFactory(name = paymentMethodType) {
             PaymentMethodSdkAnalyticsEventLoggingDelegate(
                 primerPaymentMethodManagerCategory =
-                PrimerPaymentMethodManagerCategory.RAW_DATA.name,
-                analyticsInteractor = sdk().resolve()
+                    PrimerPaymentMethodManagerCategory.RAW_DATA.name,
+                analyticsInteractor = sdk().resolve(),
             )
         }
 
         registerFactory<BaseRemoteTokenizationDataSource<CardPaymentInstrumentDataRequest>>(
-            name = paymentMethodType
+            name = paymentMethodType,
         ) {
             CardRemoteTokenizationDataSource(primerHttpClient = sdk().resolve())
         }
@@ -102,22 +101,24 @@ internal class CardContainer(private val sdk: () -> SdkContainer, private val pa
 
         registerFactory<CardTokenizationInteractor>(name = paymentMethodType) {
             DefaultCardTokenizationInteractor(
-                tokenizationRepository = CardTokenizationDataRepository(
-                    remoteTokenizationDataSource = sdk().resolve(paymentMethodType),
-                    configurationDataSource = sdk().resolve(ConfigurationCoreContainer.CACHED_CONFIGURATION_DI_KEY),
-                    tokenizationParamsMapper = resolve()
-                ),
+                tokenizationRepository =
+                    CardTokenizationDataRepository(
+                        remoteTokenizationDataSource = sdk().resolve(paymentMethodType),
+                        configurationDataSource = sdk().resolve(ConfigurationCoreContainer.CACHED_CONFIGURATION_DI_KEY),
+                        tokenizationParamsMapper = resolve(),
+                    ),
                 tokenizedPaymentMethodRepository = sdk().resolve(),
                 preTokenizationHandler = sdk().resolve(),
-                logReporter = sdk().resolve()
+                logReporter = sdk().resolve(),
             )
         }
 
         registerFactory {
             CardTokenizationDelegate(
-                tokenizationInteractor = resolve(
-                    name = paymentMethodType
-                )
+                tokenizationInteractor =
+                    resolve(
+                        name = paymentMethodType,
+                    ),
             )
         }
 
@@ -132,7 +133,7 @@ internal class CardContainer(private val sdk: () -> SdkContainer, private val pa
                 successHandler = sdk().resolve(),
                 errorHandler = sdk().resolve(),
                 baseErrorResolver = sdk().resolve(),
-                resumeHandler = resolve()
+                resumeHandler = resolve(),
             )
         }
 
@@ -141,7 +142,7 @@ internal class CardContainer(private val sdk: () -> SdkContainer, private val pa
                 clientTokenParser = resolve(),
                 validateClientTokenRepository = sdk().resolve(),
                 clientTokenRepository = sdk().resolve(),
-                checkoutAdditionalInfoHandler = sdk().resolve()
+                checkoutAdditionalInfoHandler = sdk().resolve(),
             )
         }
     }

@@ -7,7 +7,6 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 class LocalIssuingBankDataSourceTest {
-
     private lateinit var dataSource: LocalIssuingBankDataSource
 
     @BeforeEach
@@ -27,10 +26,11 @@ class LocalIssuingBankDataSourceTest {
     @Test
     fun `test update updates the list correctly`() {
         // Arrange
-        val inputList = listOf(
-            mockk<IssuingBankDataResponse>(relaxed = true),
-            mockk<IssuingBankDataResponse>(relaxed = true)
-        )
+        val inputList =
+            listOf(
+                mockk<IssuingBankDataResponse>(relaxed = true),
+                mockk<IssuingBankDataResponse>(relaxed = true),
+            )
 
         // Act
         dataSource.update(inputList)
@@ -43,15 +43,17 @@ class LocalIssuingBankDataSourceTest {
     @Test
     fun `test update clears existing list and adds new items`() {
         // Arrange
-        val initialList = listOf(
-            mockk<IssuingBankDataResponse>(relaxed = true)
-        )
+        val initialList =
+            listOf(
+                mockk<IssuingBankDataResponse>(relaxed = true),
+            )
         dataSource.update(initialList)
 
-        val updatedList = listOf(
-            mockk<IssuingBankDataResponse>(relaxed = true),
-            mockk<IssuingBankDataResponse>(relaxed = true)
-        )
+        val updatedList =
+            listOf(
+                mockk<IssuingBankDataResponse>(relaxed = true),
+                mockk<IssuingBankDataResponse>(relaxed = true),
+            )
 
         // Act
         dataSource.update(updatedList)

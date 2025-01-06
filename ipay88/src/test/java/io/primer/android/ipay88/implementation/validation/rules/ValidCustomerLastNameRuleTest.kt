@@ -18,7 +18,6 @@ import kotlin.test.assertEquals
 @ExtendWith(InstantExecutorExtension::class, MockKExtension::class)
 @ExperimentalCoroutinesApi
 internal class ValidCustomerLastNameRuleTest {
-
     private lateinit var customerLastNameRule: ValidCustomerLastNameRule
 
     @BeforeEach
@@ -31,7 +30,7 @@ internal class ValidCustomerLastNameRuleTest {
     fun `validate() should return Success result when customer lastName validation is successful`() {
         val iPay88ValidationData = mockk<IPay88ValidationData>(relaxed = true)
         every { iPay88ValidationData.clientSession?.clientSession?.customer?.lastName }.returns(
-            "Doe"
+            "Doe",
         )
 
         val validationResult = customerLastNameRule.validate(iPay88ValidationData)
@@ -42,7 +41,7 @@ internal class ValidCustomerLastNameRuleTest {
     fun `validate() should return Failure result when customer lastName validation failed`() {
         val iPay88ValidationData = mockk<IPay88ValidationData>(relaxed = true)
         every { iPay88ValidationData.clientSession?.clientSession?.customer?.lastName }.returns(
-            null
+            null,
         )
         val validationResult = customerLastNameRule.validate(iPay88ValidationData)
         val exception =
@@ -50,11 +49,11 @@ internal class ValidCustomerLastNameRuleTest {
                 as IllegalClientSessionValueException
         assertEquals(
             IllegalClientSessionValueException::class,
-            exception::class
+            exception::class,
         )
         assertEquals(
             IPay88IllegalValueKey.ILLEGAL_CUSTOMER_LAST_NAME,
-            exception.key
+            exception.key,
         )
     }
 }

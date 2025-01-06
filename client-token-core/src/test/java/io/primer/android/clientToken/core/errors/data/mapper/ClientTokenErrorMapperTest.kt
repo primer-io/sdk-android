@@ -8,7 +8,6 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 
 internal class ClientTokenErrorMapperTest {
-
     private val mapper = ClientTokenErrorMapper()
 
     @Test
@@ -41,13 +40,14 @@ internal class ClientTokenErrorMapperTest {
         val unsupportedException = IllegalArgumentException("Unsupported exception")
 
         // Act & Assert
-        val exception = assertThrows<IllegalStateException> {
-            mapper.getPrimerError(unsupportedException)
-        }
+        val exception =
+            assertThrows<IllegalStateException> {
+                mapper.getPrimerError(unsupportedException)
+            }
         assertEquals(
             "Unsupported mapping for java.lang.IllegalArgumentException: Unsupported exception " +
                 "in io.primer.android.clientToken.core.errors.data.mapper.ClientTokenErrorMapper",
-            exception.message
+            exception.message,
         )
     }
 }

@@ -11,9 +11,9 @@ import io.primer.android.payments.core.tokenization.data.repository.Tokenization
 internal class AdyenBancontactCardTokenizationDataRepository(
     remoteTokenizationDataSource: BaseRemoteTokenizationDataSource<AdyenBancontactPaymentInstrumentDataRequest>,
     configurationDataSource: BaseCacheDataSource<ConfigurationData, ConfigurationData>,
-    tokenizationParamsMapper: AdyenBancontactTokenizationParamsMapper
+    tokenizationParamsMapper: AdyenBancontactTokenizationParamsMapper,
 ) : TokenizationDataRepository<AdyenBancontactPaymentInstrumentParams, AdyenBancontactPaymentInstrumentDataRequest>(
-    remoteTokenizationDataSource,
-    configurationDataSource,
-    tokenizationParamsMapper
-)
+        remoteTokenizationDataSource,
+        configurationDataSource,
+        tokenizationParamsMapper,
+    )

@@ -5,16 +5,16 @@ import org.junit.jupiter.api.Test
 import java.util.UUID
 
 internal class ActionUpdateFailedErrorTest {
-
     @Test
     fun `should create ActionUpdateFailedError with given server description and diagnostics ID`() {
         val serverDescription = "Server error occurred"
         val serverDiagnosticsId = "12345"
 
-        val error = ActionUpdateFailedError(
-            serverDescription,
-            serverDiagnosticsId
-        )
+        val error =
+            ActionUpdateFailedError(
+                serverDescription,
+                serverDiagnosticsId,
+            )
 
         assertEquals("failed-to-update-client-session", error.errorId)
         assertEquals(serverDescription, error.description)
@@ -35,7 +35,7 @@ internal class ActionUpdateFailedErrorTest {
         assertEquals(serverDescription, error.description)
         assertEquals(
             "Contact Primer and provide us with diagnostics id ${error.diagnosticsId}",
-            error.recoverySuggestion
+            error.recoverySuggestion,
         )
         assertEquals(error, error.exposedError)
         assertEquals(null, error.errorCode)

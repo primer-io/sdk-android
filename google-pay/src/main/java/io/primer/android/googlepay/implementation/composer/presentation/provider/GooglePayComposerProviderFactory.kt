@@ -8,7 +8,10 @@ import io.primer.android.paymentmethods.core.composer.PaymentMethodComposer
 import io.primer.android.paymentmethods.core.composer.provider.PaymentMethodComposerProvider
 
 internal class GooglePayComposerProviderFactory : PaymentMethodComposerProvider.Factory {
-    override fun create(paymentMethodType: String, sessionIntent: PrimerSessionIntent): PaymentMethodComposer {
+    override fun create(
+        paymentMethodType: String,
+        sessionIntent: PrimerSessionIntent,
+    ): PaymentMethodComposer {
         return GooglePayComponent(
             tokenizationCollectorDelegate = resolve(name = paymentMethodType),
             tokenizationDelegate = resolve(name = paymentMethodType),
@@ -16,7 +19,7 @@ internal class GooglePayComposerProviderFactory : PaymentMethodComposerProvider.
             shippingMethodUpdateValidator = resolve(),
             validationRulesResolver = resolve(),
             paymentDelegate = resolve(name = paymentMethodType),
-            mockConfigurationDelegate = resolve()
+            mockConfigurationDelegate = resolve(),
         )
     }
 }

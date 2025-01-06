@@ -40,7 +40,7 @@ class GetStripePublishableKeyDelegateTest {
         assertInstanceOf(IllegalValueException::class.java, result)
         assertEquals(
             StripeIllegalValueKey.MISSING_PUBLISHABLE_KEY,
-            result?.key
+            result?.key,
         )
     }
 }

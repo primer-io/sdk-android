@@ -8,8 +8,8 @@ import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
 import io.primer.android.configuration.data.datasource.CacheConfigurationDataSource
 import io.primer.android.configuration.data.model.ConfigurationData
-import io.primer.android.threeds.InstantExecutorExtension
 import io.primer.android.core.data.network.PrimerResponse
+import io.primer.android.threeds.InstantExecutorExtension
 import io.primer.android.threeds.data.models.auth.BeginAuthResponse
 import io.primer.android.threeds.data.models.postAuth.PostAuthResponse
 import io.primer.android.threeds.domain.models.SuccessThreeDsContinueAuthParams
@@ -24,7 +24,6 @@ import kotlin.test.assertEquals
 @ExtendWith(InstantExecutorExtension::class, MockKExtension::class)
 @ExperimentalCoroutinesApi
 internal class ThreeDsDataRepositoryTest {
-
     @RelaxedMockK
     internal lateinit var remote3DSAuthDataSource: io.primer.android.threeds.data.datasource.Remote3DSAuthDataSource
 
@@ -48,8 +47,8 @@ internal class ThreeDsDataRepositoryTest {
         coEvery { remote3DSAuthDataSource.get3dsAuthToken(any(), any(), any()) }.returns(
             PrimerResponse(
                 body = beginAuthResponseMock,
-                headers = emptyMap()
-            )
+                headers = emptyMap(),
+            ),
         )
 
         runTest {
@@ -71,15 +70,15 @@ internal class ThreeDsDataRepositoryTest {
         coEvery { remote3DSAuthDataSource.continue3dsAuth(any(), any(), any()) }.returns(
             PrimerResponse(
                 body = continueAuthResponseMock,
-                headers = emptyMap()
-            )
+                headers = emptyMap(),
+            ),
         )
 
         runTest {
             val result =
                 repository.continue3DSAuth(
                     "",
-                    SuccessThreeDsContinueAuthParams("1.0.0", "2.1.0")
+                    SuccessThreeDsContinueAuthParams("1.0.0", "2.1.0"),
                 )
             assertEquals(continueAuthResponseMock, result.getOrThrow())
         }

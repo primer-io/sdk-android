@@ -20,7 +20,6 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 class ResumePaymentDataRepositoryTest {
-
     private lateinit var resumePaymentDataSource: ResumePaymentDataSource
     private lateinit var configurationDataSource: BaseCacheDataSource<ConfigurationData, ConfigurationData>
     private lateinit var repository: ResumePaymentsRepository
@@ -33,84 +32,94 @@ class ResumePaymentDataRepositoryTest {
     }
 
     @Test
-    fun `resumePayment should call resumePaymentDataSource_execute on successful response`() = runTest {
-        // Given
-        val paymentId = "paymentId"
-        val resumeToken = "resumeToken"
-        val configurationData = mockk<ConfigurationData> {
-            every { pciUrl } returns "https://pci.url"
+    fun `resumePayment should call resumePaymentDataSource_execute on successful response`() =
+        runTest {
+            // Given
+            val paymentId = "paymentId"
+            val resumeToken = "resumeToken"
+            val configurationData =
+                mockk<ConfigurationData> {
+                    every { pciUrl } returns "https://pci.url"
+                }
+            val remoteRequest =
+                BaseRemoteHostRequest(
+                    host = configurationData.pciUrl,
+                    data = Pair(paymentId, ResumePaymentDataRequest(resumeToken)),
+                )
+            val expectedResult = mockk<PaymentDataResponse>(relaxed = true)
+
+            coEvery { configurationDataSource.get() } returns configurationData
+            coEvery { resumePaymentDataSource.execute(remoteRequest) } returns expectedResult
+
+            // When
+            val result = repository.resumePayment(paymentId, resumeToken)
+            assertTrue(result.isSuccess)
+
+            // Then
+            coVerify { configurationDataSource.get() }
+            coVerify { resumePaymentDataSource.execute(remoteRequest) }
+            // Add more assertions here to check the result if necessary
         }
-        val remoteRequest = BaseRemoteHostRequest(
-            host = configurationData.pciUrl,
-            data = Pair(paymentId, ResumePaymentDataRequest(resumeToken))
-        )
-        val expectedResult = mockk<PaymentDataResponse>(relaxed = true)
-
-        coEvery { configurationDataSource.get() } returns configurationData
-        coEvery { resumePaymentDataSource.execute(remoteRequest) } returns expectedResult
-
-        // When
-        val result = repository.resumePayment(paymentId, resumeToken)
-        assertTrue(result.isSuccess)
-
-        // Then
-        coVerify { configurationDataSource.get() }
-        coVerify { resumePaymentDataSource.execute(remoteRequest) }
-        // Add more assertions here to check the result if necessary
-    }
 
     @Test
-    fun `resumePayment throws PaymentResumeException on client error`() = runTest {
-        // Given
-        val paymentId = "paymentId"
-        val resumeToken = "resumeToken"
-        val configurationData = mockk<ConfigurationData> {
-            every { pciUrl } returns "https://pci.url"
+    fun `resumePayment throws PaymentResumeException on client error`() =
+        runTest {
+            // Given
+            val paymentId = "paymentId"
+            val resumeToken = "resumeToken"
+            val configurationData =
+                mockk<ConfigurationData> {
+                    every { pciUrl } returns "https://pci.url"
+                }
+            val remoteRequest =
+                BaseRemoteHostRequest(
+                    host = configurationData.pciUrl,
+                    data = Pair(paymentId, ResumePaymentDataRequest(resumeToken)),
+                )
+            val httpException =
+                mockk<HttpException> {
+                    every { isClientError() } returns true
+                }
+
+            coEvery { configurationDataSource.get() } returns configurationData
+            coEvery { resumePaymentDataSource.execute(remoteRequest) } throws httpException
+
+            // When / Then
+
+            val result = repository.resumePayment(paymentId, resumeToken)
+            assertTrue(result.isFailure)
+            assertThrows(PaymentResumeException::class.java) { result.getOrThrow() }
+
+            coVerify { configurationDataSource.get() }
+            coVerify { resumePaymentDataSource.execute(remoteRequest) }
         }
-        val remoteRequest = BaseRemoteHostRequest(
-            host = configurationData.pciUrl,
-            data = Pair(paymentId, ResumePaymentDataRequest(resumeToken))
-        )
-        val httpException = mockk<HttpException> {
-            every { isClientError() } returns true
-        }
-
-        coEvery { configurationDataSource.get() } returns configurationData
-        coEvery { resumePaymentDataSource.execute(remoteRequest) } throws httpException
-
-        // When / Then
-
-        val result = repository.resumePayment(paymentId, resumeToken)
-        assertTrue(result.isFailure)
-        assertThrows(PaymentResumeException::class.java) { result.getOrThrow() }
-
-        coVerify { configurationDataSource.get() }
-        coVerify { resumePaymentDataSource.execute(remoteRequest) }
-    }
 
     @Test
-    fun `resumePayment rethrows non-client error exceptions`() = runTest {
-        // Given
-        val paymentId = "paymentId"
-        val resumeToken = "resumeToken"
-        val configurationData = mockk<ConfigurationData> {
-            every { pciUrl } returns "https://pci.url"
+    fun `resumePayment rethrows non-client error exceptions`() =
+        runTest {
+            // Given
+            val paymentId = "paymentId"
+            val resumeToken = "resumeToken"
+            val configurationData =
+                mockk<ConfigurationData> {
+                    every { pciUrl } returns "https://pci.url"
+                }
+            val remoteRequest =
+                BaseRemoteHostRequest(
+                    host = configurationData.pciUrl,
+                    data = Pair(paymentId, ResumePaymentDataRequest(resumeToken)),
+                )
+            val genericException = RuntimeException("Some other error")
+
+            coEvery { configurationDataSource.get() } returns configurationData
+            coEvery { resumePaymentDataSource.execute(remoteRequest) } throws genericException
+
+            // When / Then
+            val result = repository.resumePayment(paymentId, resumeToken)
+            assertTrue(result.isFailure)
+            assertThrows(genericException::class.java) { result.getOrThrow() }
+
+            coVerify { configurationDataSource.get() }
+            coVerify { resumePaymentDataSource.execute(remoteRequest) }
         }
-        val remoteRequest = BaseRemoteHostRequest(
-            host = configurationData.pciUrl,
-            data = Pair(paymentId, ResumePaymentDataRequest(resumeToken))
-        )
-        val genericException = RuntimeException("Some other error")
-
-        coEvery { configurationDataSource.get() } returns configurationData
-        coEvery { resumePaymentDataSource.execute(remoteRequest) } throws genericException
-
-        // When / Then
-        val result = repository.resumePayment(paymentId, resumeToken)
-        assertTrue(result.isFailure)
-        assertThrows(genericException::class.java) { result.getOrThrow() }
-
-        coVerify { configurationDataSource.get() }
-        coVerify { resumePaymentDataSource.execute(remoteRequest) }
-    }
 }

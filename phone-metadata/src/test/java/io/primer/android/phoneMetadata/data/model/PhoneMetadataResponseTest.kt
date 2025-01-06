@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
 internal class PhoneMetadataResponseTest {
-
     @Test
     fun `test deserialization with valid fields`() {
         val json = """

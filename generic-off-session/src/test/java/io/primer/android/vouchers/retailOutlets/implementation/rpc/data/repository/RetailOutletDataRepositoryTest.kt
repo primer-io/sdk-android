@@ -19,7 +19,6 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 internal class RetailOutletDataRepositoryTest {
-
     private val remoteDataSource: RemoteRetailOutletDataSource = mockk()
     private val localDataSource: LocalRetailOutletDataSource = mockk(relaxed = true)
     private val configurationDataSource: CacheConfigurationDataSource = mockk()
@@ -31,36 +30,45 @@ internal class RetailOutletDataRepositoryTest {
     }
 
     @Test
-    fun `getRetailOutlets should return outlets from remote source and update local cache`() = runTest {
-        val paymentMethodConfigId = "config_id_123"
-        val configuration = mockk<ConfigurationData> {
-            every { coreUrl } returns "https://example.com"
+    fun `getRetailOutlets should return outlets from remote source and update local cache`() =
+        runTest {
+            val paymentMethodConfigId = "config_id_123"
+            val configuration =
+                mockk<ConfigurationData> {
+                    every { coreUrl } returns "https://example.com"
+                }
+            val response =
+                RetailOutletResultDataResponse(
+                    listOf(
+                        RetailOutletDataResponse("outlet_id_123", "Test Outlet", false, "https://example.com/icon.png"),
+                        RetailOutletDataResponse(
+                            "outlet_id_456",
+                            "Another Outlet",
+                            true,
+                            "https://example.com/icon2.png",
+                        ),
+                    ),
+                )
+
+            every { configurationDataSource.get() } returns configuration
+            coEvery { remoteDataSource.execute(any<BaseRemoteHostRequest<RetailOutletDataRequest>>()) } returns response
+
+            val outlets = repository.getRetailOutlets(paymentMethodConfigId).getOrNull()
+
+            assertEquals(2, outlets?.size)
+            assertEquals("outlet_id_123", outlets?.get(0)?.id)
+            assertEquals("outlet_id_456", outlets?.get(1)?.id)
+
+            coVerify { localDataSource.update(response.result) }
         }
-        val response = RetailOutletResultDataResponse(
-            listOf(
-                RetailOutletDataResponse("outlet_id_123", "Test Outlet", false, "https://example.com/icon.png"),
-                RetailOutletDataResponse("outlet_id_456", "Another Outlet", true, "https://example.com/icon2.png")
-            )
-        )
-
-        every { configurationDataSource.get() } returns configuration
-        coEvery { remoteDataSource.execute(any<BaseRemoteHostRequest<RetailOutletDataRequest>>()) } returns response
-
-        val outlets = repository.getRetailOutlets(paymentMethodConfigId).getOrNull()
-
-        assertEquals(2, outlets?.size)
-        assertEquals("outlet_id_123", outlets?.get(0)?.id)
-        assertEquals("outlet_id_456", outlets?.get(1)?.id)
-
-        coVerify { localDataSource.update(response.result) }
-    }
 
     @Test
     fun `getCachedRetailOutlets should return outlets from local cache`() {
-        val cachedData = listOf(
-            RetailOutletDataResponse("outlet_id_123", "Test Outlet", false, "https://example.com/icon.png"),
-            RetailOutletDataResponse("outlet_id_456", "Another Outlet", true, "https://example.com/icon2.png")
-        )
+        val cachedData =
+            listOf(
+                RetailOutletDataResponse("outlet_id_123", "Test Outlet", false, "https://example.com/icon.png"),
+                RetailOutletDataResponse("outlet_id_456", "Another Outlet", true, "https://example.com/icon2.png"),
+            )
 
         every { localDataSource.get() } returns cachedData.toMutableList()
 

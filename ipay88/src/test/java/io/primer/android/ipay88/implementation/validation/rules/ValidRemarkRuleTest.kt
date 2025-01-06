@@ -18,7 +18,6 @@ import kotlin.test.assertEquals
 @ExtendWith(InstantExecutorExtension::class, MockKExtension::class)
 @ExperimentalCoroutinesApi
 internal class ValidRemarkRuleTest {
-
     private lateinit var remarkRule: ValidRemarkRule
 
     @BeforeEach
@@ -31,7 +30,7 @@ internal class ValidRemarkRuleTest {
     fun `validate() should return Success result when customer id validation is successful`() {
         val iPay88ValidationData = mockk<IPay88ValidationData>(relaxed = true)
         every { iPay88ValidationData.clientSession?.clientSession?.customerId }.returns(
-            "1234"
+            "1234",
         )
 
         val validationResult = remarkRule.validate(iPay88ValidationData)
@@ -42,7 +41,7 @@ internal class ValidRemarkRuleTest {
     fun `validate() should return Success result when customer id is null and actionType is empty`() {
         val iPay88ValidationData = mockk<IPay88ValidationData>(relaxed = true)
         every { iPay88ValidationData.clientSession?.clientSession?.customerId }.returns(
-            null
+            null,
         )
         every { iPay88ValidationData.clientToken.actionType }.returns("")
         val validationResult = remarkRule.validate(iPay88ValidationData)
@@ -53,7 +52,7 @@ internal class ValidRemarkRuleTest {
     fun `validate() should return Failure result when customer id validation failed and actionType is not empty`() {
         val iPay88ValidationData = mockk<IPay88ValidationData>(relaxed = true)
         every { iPay88ValidationData.clientSession?.clientSession?.customerId }.returns(
-            null
+            null,
         )
         every { iPay88ValidationData.clientToken.actionType }.returns("BT")
         val validationResult = remarkRule.validate(iPay88ValidationData)
@@ -62,11 +61,11 @@ internal class ValidRemarkRuleTest {
                 as IllegalClientSessionValueException
         assertEquals(
             IllegalClientSessionValueException::class,
-            exception::class
+            exception::class,
         )
         assertEquals(
             IPay88IllegalValueKey.ILLEGAL_CUSTOMER_ID,
-            exception.key
+            exception.key,
         )
     }
 }

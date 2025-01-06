@@ -10,13 +10,13 @@ import io.mockk.just
 import io.mockk.mockk
 import io.mockk.runs
 import io.mockk.verify
-import io.primer.android.analytics.domain.AnalyticsInteractor
 import io.primer.android.PrimerSessionIntent
+import io.primer.android.analytics.domain.AnalyticsInteractor
 import io.primer.android.components.InstantExecutorExtension
 import io.primer.android.components.domain.core.models.PrimerPaymentMethodManagerCategory
-import io.primer.android.paymentmethods.core.composer.registry.PaymentMethodComposerRegistry
 import io.primer.android.paymentmethods.core.composer.composable.ComposerUiEvent
 import io.primer.android.paymentmethods.core.composer.provider.PaymentMethodProviderFactoryRegistry
+import io.primer.android.paymentmethods.core.composer.registry.PaymentMethodComposerRegistry
 import io.primer.android.paymentmethods.core.ui.navigation.NavigationParams
 import io.primer.android.paymentmethods.core.ui.navigation.PaymentMethodNavigationFactoryRegistry
 import io.primer.android.payments.core.helpers.PaymentMethodShowedHandler
@@ -35,7 +35,6 @@ import org.junit.jupiter.api.extension.ExtendWith
 @ExperimentalCoroutinesApi
 @ExtendWith(InstantExecutorExtension::class, MockKExtension::class)
 class DefaultPaymentMethodStarterTest {
-
     private lateinit var analyticsInteractor: AnalyticsInteractor
     private lateinit var composerRegistry: PaymentMethodComposerRegistry
     private lateinit var providerFactoryRegistry: PaymentMethodProviderFactoryRegistry
@@ -50,13 +49,14 @@ class DefaultPaymentMethodStarterTest {
         providerFactoryRegistry = mockk()
         paymentMethodNavigationFactoryRegistry = mockk()
         paymentMethodShowedHandler = mockk()
-        paymentMethodStarter = DefaultPaymentMethodStarter(
-            analyticsInteractor,
-            composerRegistry,
-            providerFactoryRegistry,
-            paymentMethodNavigationFactoryRegistry,
-            paymentMethodShowedHandler
-        )
+        paymentMethodStarter =
+            DefaultPaymentMethodStarter(
+                analyticsInteractor,
+                composerRegistry,
+                providerFactoryRegistry,
+                paymentMethodNavigationFactoryRegistry,
+                paymentMethodShowedHandler,
+            )
     }
 
     @Test
@@ -67,9 +67,10 @@ class DefaultPaymentMethodStarterTest {
         val category = PrimerPaymentMethodManagerCategory.NATIVE_UI
 
         val uiEventFlow = MutableSharedFlow<ComposerUiEvent>()
-        val composer = mockk<BaseWebRedirectComposer>(relaxed = true) {
-            every { uiEvent } returns uiEventFlow
-        }
+        val composer =
+            mockk<BaseWebRedirectComposer>(relaxed = true) {
+                every { uiEvent } returns uiEventFlow
+            }
         every { providerFactoryRegistry.create(paymentMethodType, sessionIntent) } returns composer
 
         val navigationHandler = mockk<PaymentMethodContextNavigationHandler>(relaxed = true)
@@ -78,9 +79,10 @@ class DefaultPaymentMethodStarterTest {
         coEvery { analyticsInteractor(any()) } returns Result.success(Unit)
 
         runTest {
-            val job = launch {
-                paymentMethodStarter.start(context, paymentMethodType, sessionIntent, category)
-            }
+            val job =
+                launch {
+                    paymentMethodStarter.start(context, paymentMethodType, sessionIntent, category)
+                }
             advanceUntilIdle()
             job.cancel()
         }
@@ -98,26 +100,30 @@ class DefaultPaymentMethodStarterTest {
         val category = PrimerPaymentMethodManagerCategory.NATIVE_UI
 
         val uiEventFlow = MutableSharedFlow<ComposerUiEvent>(replay = 1)
-        val composer = mockk<BaseWebRedirectComposer>(relaxed = true) {
-            every { uiEvent } returns uiEventFlow
-        }
+        val composer =
+            mockk<BaseWebRedirectComposer>(relaxed = true) {
+                every { uiEvent } returns uiEventFlow
+            }
         every { providerFactoryRegistry.create(paymentMethodType, sessionIntent) } returns composer
         coEvery { paymentMethodShowedHandler.handle(any()) } just Runs
 
-        val navigator = mockk<Navigator<NavigationParams>>(relaxed = true) {
-            every { canHandle(any()) } returns true
-            every { navigate(any()) } just runs
-        }
-        val navigationHandler = mockk<PaymentMethodContextNavigationHandler>(relaxed = true) {
-            every { getSupportedNavigators(any()) } returns listOf(navigator)
-        }
+        val navigator =
+            mockk<Navigator<NavigationParams>>(relaxed = true) {
+                every { canHandle(any()) } returns true
+                every { navigate(any()) } just runs
+            }
+        val navigationHandler =
+            mockk<PaymentMethodContextNavigationHandler>(relaxed = true) {
+                every { getSupportedNavigators(any()) } returns listOf(navigator)
+            }
         every { paymentMethodNavigationFactoryRegistry.create(paymentMethodType) } returns navigationHandler
 
         runTest {
             uiEventFlow.emit(ComposerUiEvent.Navigate(mockk(relaxed = true)))
-            val job = launch {
-                paymentMethodStarter.start(context, paymentMethodType, sessionIntent, category)
-            }
+            val job =
+                launch {
+                    paymentMethodStarter.start(context, paymentMethodType, sessionIntent, category)
+                }
             advanceUntilIdle()
             job.cancel()
         }
@@ -135,9 +141,10 @@ class DefaultPaymentMethodStarterTest {
         val category = PrimerPaymentMethodManagerCategory.NATIVE_UI
 
         val uiEventFlow = MutableSharedFlow<ComposerUiEvent>(replay = 1)
-        val composer = mockk<BaseWebRedirectComposer>(relaxed = true) {
-            every { uiEvent } returns uiEventFlow
-        }
+        val composer =
+            mockk<BaseWebRedirectComposer>(relaxed = true) {
+                every { uiEvent } returns uiEventFlow
+            }
         every { providerFactoryRegistry.create(paymentMethodType, sessionIntent) } returns composer
 
         val navigationHandler = mockk<PaymentMethodContextNavigationHandler>(relaxed = true)
@@ -145,9 +152,10 @@ class DefaultPaymentMethodStarterTest {
 
         runTest {
             uiEventFlow.emit(ComposerUiEvent.Navigate(mockk(relaxed = true)))
-            val job = launch {
-                paymentMethodStarter.start(context, paymentMethodType, sessionIntent, category)
-            }
+            val job =
+                launch {
+                    paymentMethodStarter.start(context, paymentMethodType, sessionIntent, category)
+                }
             advanceUntilIdle()
             job.cancel()
         }

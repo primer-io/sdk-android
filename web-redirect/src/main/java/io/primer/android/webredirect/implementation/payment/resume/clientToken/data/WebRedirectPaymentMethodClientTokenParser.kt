@@ -6,13 +6,12 @@ import io.primer.android.webredirect.implementation.payment.resume.clientToken.d
 
 internal class WebRedirectPaymentMethodClientTokenParser :
     PaymentMethodClientTokenParser<WebRedirectClientToken> {
-
     override fun parseClientToken(clientToken: String): WebRedirectClientToken {
         return WebRedirectClientTokenData.fromString(clientToken).let { clientTokenData ->
             WebRedirectClientToken(
                 clientTokenIntent = clientTokenData.intent,
                 redirectUrl = clientTokenData.redirectUrl,
-                statusUrl = clientTokenData.statusUrl
+                statusUrl = clientTokenData.statusUrl,
             )
         }
     }

@@ -7,7 +7,7 @@ import java.util.UUID
 
 class SessionUpdateError(
     serverDiagnosticsId: String?,
-    serverDescription: String?
+    serverDescription: String?,
 ) : PrimerError() {
     override val errorId = "failed-to-update-session"
     override val description = "Failed to update session. $serverDescription"

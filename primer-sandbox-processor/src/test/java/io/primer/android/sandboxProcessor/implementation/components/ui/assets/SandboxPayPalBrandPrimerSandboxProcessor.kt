@@ -7,7 +7,6 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 class SandboxPayPalBrandPrimerSandboxProcessor {
-
     private lateinit var testPayPalBrand: SandboxProcessorPayPalBrand
 
     @BeforeEach

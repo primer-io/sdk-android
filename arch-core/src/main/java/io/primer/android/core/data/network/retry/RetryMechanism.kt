@@ -41,7 +41,7 @@ suspend fun retry(
     response: Response,
     config: RetryConfig,
     logProvider: EventFlowProvider<MessageLog>,
-    messagePropertiesEventProvider: EventFlowProvider<MessagePropertiesHelper>
+    messagePropertiesEventProvider: EventFlowProvider<MessagePropertiesHelper>,
 ): Boolean {
     val canRetry = config.canRetry()
     val delayTime = config.calculateBackoffWithJitter()
@@ -61,18 +61,19 @@ suspend fun retry(
 
     if (canRetry) {
         config.retries++
-        val reason = when {
-            isNetworkError ->
-                "Network error encountered and " +
-                    "RetryConfig.retryNetworkErrors is ${if (config.retryNetworkErrors) "enabled" else "disabled"}"
+        val reason =
+            when {
+                isNetworkError ->
+                    "Network error encountered and " +
+                        "RetryConfig.retryNetworkErrors is ${if (config.retryNetworkErrors) "enabled" else "disabled"}"
 
-            isServerError ->
-                "HTTP ${response.code} error encountered and " +
-                    "RetryConfig.retry500Errors is ${if (config.retry500Errors) "enabled" else "disabled"}"
+                isServerError ->
+                    "HTTP ${response.code} error encountered and " +
+                        "RetryConfig.retry500Errors is ${if (config.retry500Errors) "enabled" else "disabled"}"
 
-            else ->
-                "HTTP ${response.code} error encountered"
-        }
+                else ->
+                    "HTTP ${response.code} error encountered"
+            }
         val message =
             "Retry attempt ${config.retries}/${config.maxRetries} due to $reason. " +
                 "Waiting for ${delayTime}ms before next attempt."
@@ -81,8 +82,8 @@ suspend fun retry(
             MessagePropertiesHelper(
                 MessageTypeHelper.RETRY,
                 message,
-                SeverityHelper.WARN
-            )
+                SeverityHelper.WARN,
+            ),
         )
         delay(delayTime)
     }
@@ -97,23 +98,24 @@ internal fun RetryConfig.calculateBackoffWithJitter(): Long {
     return min(backoff, Long.MAX_VALUE)
 }
 
-fun networkError(url: String) = Response.Builder()
-    .request(
-        Request.Builder()
-            .url(url)
-            .build()
-    )
-    .protocol(Protocol.HTTP_2)
-    .code(NETWORK_EXCEPTION_ERROR_CODE)
-    .body(
-        """
+fun networkError(url: String) =
+    Response.Builder()
+        .request(
+            Request.Builder()
+                .url(url)
+                .build(),
+        )
+        .protocol(Protocol.HTTP_2)
+        .code(NETWORK_EXCEPTION_ERROR_CODE)
+        .body(
+            """
             {
                 "description":"Network error encountered when retrying"
             }
-        """.trimIndent().toResponseBody("application/json; charset=utf-8".toMediaType())
-    )
-    .message("")
-    .build()
+            """.trimIndent().toResponseBody("application/json; charset=utf-8".toMediaType()),
+        )
+        .message("")
+        .build()
 
 internal fun RetryConfig.canRetry() = retries < maxRetries
 

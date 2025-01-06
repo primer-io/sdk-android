@@ -16,7 +16,7 @@ data class PrimerCardMetadata(val cardNetwork: CardNetwork.Type) :
  */
 data class PrimerCardNetworksMetadata(
     val items: List<PrimerCardNetwork>,
-    val preferred: PrimerCardNetwork?
+    val preferred: PrimerCardNetwork?,
 )
 
 /**
@@ -30,7 +30,7 @@ data class PrimerCardNetworksMetadata(
 data class PrimerCardNumberEntryMetadata(
     val selectableCardNetworks: PrimerCardNetworksMetadata?,
     val detectedCardNetworks: PrimerCardNetworksMetadata,
-    val source: ValidationSource
+    val source: ValidationSource,
 ) : PrimerPaymentMethodMetadata
 
 /**
@@ -43,5 +43,5 @@ data class PrimerCardNumberEntryMetadata(
 enum class ValidationSource {
     REMOTE,
     LOCAL_FALLBACK,
-    LOCAL
+    LOCAL,
 }

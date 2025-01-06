@@ -4,7 +4,6 @@ import io.primer.android.domain.error.models.PrimerError
 import java.util.UUID
 
 internal class ConnectivityError(message: String) : PrimerError() {
-
     override val errorId = "connectivity-errors"
     override val description = message
     override val errorCode: String? = null

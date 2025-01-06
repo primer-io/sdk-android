@@ -6,7 +6,6 @@ import org.junit.jupiter.api.Test
 import java.util.UUID
 
 class UnauthorizedErrorTest {
-
     @Test
     fun `should create UnauthorizedError with correct properties`() {
         // Arrange

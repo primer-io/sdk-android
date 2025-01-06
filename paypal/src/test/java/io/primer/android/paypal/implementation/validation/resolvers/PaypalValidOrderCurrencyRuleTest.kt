@@ -12,14 +12,14 @@ import kotlin.test.assertIs
 import kotlin.test.assertTrue
 
 internal class PaypalValidOrderCurrencyRuleTest {
-
     private val rule = PaypalValidOrderCurrencyRule()
 
     @Test
     fun `validate should return success for valid currency code`() {
-        val params = mockk<PaypalCreateOrderParams> {
-            every { currencyCode } returns "USD"
-        }
+        val params =
+            mockk<PaypalCreateOrderParams> {
+                every { currencyCode } returns "USD"
+            }
 
         val result = rule.validate(params)
 
@@ -28,9 +28,10 @@ internal class PaypalValidOrderCurrencyRuleTest {
 
     @Test
     fun `validate should return failure for invalid currency code`() {
-        val params = mockk<PaypalCreateOrderParams> {
-            every { currencyCode } returns "dew43"
-        }
+        val params =
+            mockk<PaypalCreateOrderParams> {
+                every { currencyCode } returns "dew43"
+            }
 
         val result = rule.validate(params)
 

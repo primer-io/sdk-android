@@ -6,18 +6,18 @@ import io.primer.android.core.domain.validation.ValidationRule
 import io.primer.android.domain.exception.UnsupportedPaymentIntentException
 
 internal class ValidSessionIntentRule(
-    private val paymentMethodManager: PrimerHeadlessUniversalCheckoutPaymentMethodMapper
+    private val paymentMethodManager: PrimerHeadlessUniversalCheckoutPaymentMethodMapper,
 ) : ValidationRule<PaymentMethodManagerSessionIntentValidationData> {
-    override fun validate(t: PaymentMethodManagerSessionIntentValidationData):
-        ValidationResult {
+    override fun validate(t: PaymentMethodManagerSessionIntentValidationData): ValidationResult {
         return paymentMethodManager.getPrimerHeadlessUniversalCheckoutPaymentMethod(
-            t.paymentMethodType
+            t.paymentMethodType,
         ).let {
             when (it.supportedPrimerSessionIntents.contains(t.sessionIntent)) {
                 true -> ValidationResult.Success
-                false -> ValidationResult.Failure(
-                    UnsupportedPaymentIntentException(t.paymentMethodType, t.sessionIntent)
-                )
+                false ->
+                    ValidationResult.Failure(
+                        UnsupportedPaymentIntentException(t.paymentMethodType, t.sessionIntent),
+                    )
             }
         }
     }

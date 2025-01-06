@@ -1,10 +1,10 @@
 package io.primer.android.otp.implementation.payment.delegate
 
 import io.primer.android.core.extensions.mapSuspendCatching
+import io.primer.android.domain.payments.create.model.Payment
 import io.primer.android.errors.domain.BaseErrorResolver
 import io.primer.android.otp.implementation.payment.resume.handler.OtpResumeHandler
 import io.primer.android.payments.core.create.domain.handler.PaymentMethodTokenHandler
-import io.primer.android.domain.payments.create.model.Payment
 import io.primer.android.payments.core.helpers.CheckoutErrorHandler
 import io.primer.android.payments.core.helpers.CheckoutSuccessHandler
 import io.primer.android.payments.core.helpers.PaymentMethodPaymentDelegate
@@ -20,24 +20,26 @@ internal class OtpPaymentDelegate(
     private val pollingStartHandler: PollingStartHandler,
     baseErrorResolver: BaseErrorResolver,
     private val resumeHandler: OtpResumeHandler,
-    private val tokenizedPaymentMethodRepository: TokenizedPaymentMethodRepository
+    private val tokenizedPaymentMethodRepository: TokenizedPaymentMethodRepository,
 ) : PaymentMethodPaymentDelegate(
-    paymentMethodTokenHandler,
-    resumePaymentHandler,
-    successHandler,
-    errorHandler,
-    baseErrorResolver
-) {
-
-    override suspend fun handleNewClientToken(clientToken: String, payment: Payment?): Result<Unit> {
+        paymentMethodTokenHandler,
+        resumePaymentHandler,
+        successHandler,
+        errorHandler,
+        baseErrorResolver,
+    ) {
+    override suspend fun handleNewClientToken(
+        clientToken: String,
+        payment: Payment?,
+    ): Result<Unit> {
         return resumeHandler.continueWithNewClientToken(clientToken)
             .mapSuspendCatching { decision ->
                 val paymentMethodType = tokenizedPaymentMethodRepository.getPaymentMethod().paymentMethodType
                 pollingStartHandler.handle(
                     PollingStartHandler.PollingStartData(
                         statusUrl = decision.statusUrl,
-                        paymentMethodType = requireNotNull(paymentMethodType)
-                    )
+                        paymentMethodType = requireNotNull(paymentMethodType),
+                    ),
                 )
             }
     }

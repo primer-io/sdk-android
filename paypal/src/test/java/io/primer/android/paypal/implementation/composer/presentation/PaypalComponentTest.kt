@@ -44,7 +44,6 @@ import kotlin.time.Duration.Companion.seconds
 @ExtendWith(InstantExecutorExtension::class, MockKExtension::class)
 @ExperimentalCoroutinesApi
 internal class PaypalComponentTest {
-
     @RelaxedMockK
     internal lateinit var tokenizationCollectorDelegate: PaypalTokenizationCollectorDelegate
 
@@ -59,22 +58,25 @@ internal class PaypalComponentTest {
     @BeforeEach
     fun setUp() {
         MockKAnnotations.init(this, relaxed = true)
-        DISdkContext.headlessSdkContainer = mockk<SdkContainer>(relaxed = true).also { sdkContainer ->
-            val cont = spyk<DependencyContainer>().also { container ->
-                container.registerFactory<CoroutineScopeProvider> {
-                    object : CoroutineScopeProvider {
-                        override val scope: CoroutineScope
-                            get() = TestScope()
+        DISdkContext.headlessSdkContainer =
+            mockk<SdkContainer>(relaxed = true).also { sdkContainer ->
+                val cont =
+                    spyk<DependencyContainer>().also { container ->
+                        container.registerFactory<CoroutineScopeProvider> {
+                            object : CoroutineScopeProvider {
+                                override val scope: CoroutineScope
+                                    get() = TestScope()
+                            }
+                        }
                     }
-                }
+                every { sdkContainer.containers }.returns(mutableMapOf(cont::class.simpleName.orEmpty() to cont))
             }
-            every { sdkContainer.containers }.returns(mutableMapOf(cont::class.simpleName.orEmpty() to cont))
-        }
-        component = PaypalComponent(
-            tokenizationCollectorDelegate = tokenizationCollectorDelegate,
-            tokenizationDelegate = tokenizationDelegate,
-            paymentDelegate = paymentDelegate
-        )
+        component =
+            PaypalComponent(
+                tokenizationCollectorDelegate = tokenizationCollectorDelegate,
+                tokenizationDelegate = tokenizationDelegate,
+                paymentDelegate = paymentDelegate,
+            )
 
         coEvery { tokenizationCollectorDelegate.uiEvent } returns MutableSharedFlow()
         mockkStatic(Uri::class)
@@ -91,10 +93,11 @@ internal class PaypalComponentTest {
         every { Uri.parse(any()) } returns mockk(relaxed = true)
         coEvery { tokenizationCollectorDelegate.startDataCollection(any()) } throws CancellationException()
 
-        val params = mockk<PaymentMethodLauncherParams>(relaxed = true) {
-            every { paymentMethodType } returns "PAYPAL"
-            every { initialLauncherParams } returns mockk<RedirectLauncherParams>(relaxed = true)
-        }
+        val params =
+            mockk<PaymentMethodLauncherParams>(relaxed = true) {
+                every { paymentMethodType } returns "PAYPAL"
+                every { initialLauncherParams } returns mockk<RedirectLauncherParams>(relaxed = true)
+            }
 
         // when
         runTest {
@@ -110,10 +113,11 @@ internal class PaypalComponentTest {
         // given
         every { Uri.parse(any()) } returns mockk(relaxed = true)
 
-        val params = mockk<PaymentMethodLauncherParams>(relaxed = true) {
-            every { paymentMethodType } returns "PAYPAL"
-            every { initialLauncherParams } returns mockk<RedirectLauncherParams>(relaxed = true)
-        }
+        val params =
+            mockk<PaymentMethodLauncherParams>(relaxed = true) {
+                every { paymentMethodType } returns "PAYPAL"
+                every { initialLauncherParams } returns mockk<RedirectLauncherParams>(relaxed = true)
+            }
 
         val resultCode = Activity.RESULT_CANCELED
 
@@ -134,10 +138,11 @@ internal class PaypalComponentTest {
 
         coEvery { tokenizationDelegate.tokenize(any()) } throws CancellationException()
 
-        val params = mockk<PaymentMethodLauncherParams>(relaxed = true) {
-            every { paymentMethodType } returns "PAYPAL"
-            every { initialLauncherParams } returns mockk<RedirectLauncherParams>(relaxed = true)
-        }
+        val params =
+            mockk<PaymentMethodLauncherParams>(relaxed = true) {
+                every { paymentMethodType } returns "PAYPAL"
+                every { initialLauncherParams } returns mockk<RedirectLauncherParams>(relaxed = true)
+            }
         val resultCode = Activity.RESULT_CANCELED
 
         // when
@@ -153,17 +158,20 @@ internal class PaypalComponentTest {
     @Test
     fun `handleActivityResultIntent() should call tokenize with PaypalCheckoutTokenizationInputable when session intent is Checkout`() {
         // given
-        val params = mockk<PaymentMethodLauncherParams>(relaxed = true) {
-            every { sessionIntent } returns PrimerSessionIntent.CHECKOUT
-            every { initialLauncherParams } returns mockk<RedirectLauncherParams>(relaxed = true) {
-                every { successUrl } returns "https://success.url"
-                every { paymentMethodConfigId } returns "configId"
+        val params =
+            mockk<PaymentMethodLauncherParams>(relaxed = true) {
+                every { sessionIntent } returns PrimerSessionIntent.CHECKOUT
+                every { initialLauncherParams } returns
+                    mockk<RedirectLauncherParams>(relaxed = true) {
+                        every { successUrl } returns "https://success.url"
+                        every { paymentMethodConfigId } returns "configId"
+                    }
             }
-        }
         val resultCode = Activity.RESULT_OK
-        val intent = mockk<Intent>(relaxed = true) {
-            every { data } returns Uri.parse("https://success.url?token=sampleToken")
-        }
+        val intent =
+            mockk<Intent>(relaxed = true) {
+                every { data } returns Uri.parse("https://success.url?token=sampleToken")
+            }
 
         coEvery { tokenizationDelegate.tokenize(any()) } returns Result.success(mockk(relaxed = true))
 
@@ -176,7 +184,7 @@ internal class PaypalComponentTest {
         // then
         coVerify {
             tokenizationDelegate.tokenize(
-                input = ofType(PaypalTokenizationInputable.PaypalCheckoutTokenizationInputable::class)
+                input = ofType(PaypalTokenizationInputable.PaypalCheckoutTokenizationInputable::class),
             )
         }
     }
@@ -184,17 +192,20 @@ internal class PaypalComponentTest {
     @Test
     fun `handleActivityResultIntent() should call handleError when tokenization fails`() {
         // given
-        val params = mockk<PaymentMethodLauncherParams>(relaxed = true) {
-            every { sessionIntent } returns PrimerSessionIntent.CHECKOUT
-            every { initialLauncherParams } returns mockk<RedirectLauncherParams>(relaxed = true) {
-                every { successUrl } returns "https://success.url"
-                every { paymentMethodConfigId } returns "configId"
+        val params =
+            mockk<PaymentMethodLauncherParams>(relaxed = true) {
+                every { sessionIntent } returns PrimerSessionIntent.CHECKOUT
+                every { initialLauncherParams } returns
+                    mockk<RedirectLauncherParams>(relaxed = true) {
+                        every { successUrl } returns "https://success.url"
+                        every { paymentMethodConfigId } returns "configId"
+                    }
             }
-        }
         val resultCode = Activity.RESULT_OK
-        val intent = mockk<Intent>(relaxed = true) {
-            every { data } returns Uri.parse("https://success.url?token=sampleToken")
-        }
+        val intent =
+            mockk<Intent>(relaxed = true) {
+                every { data } returns Uri.parse("https://success.url?token=sampleToken")
+            }
 
         coEvery { tokenizationDelegate.tokenize(any()) } returns Result.failure(Exception("Tokenization error"))
 
@@ -207,7 +218,7 @@ internal class PaypalComponentTest {
         // then
         coVerify {
             tokenizationDelegate.tokenize(
-                input = ofType(PaypalTokenizationInputable.PaypalCheckoutTokenizationInputable::class)
+                input = ofType(PaypalTokenizationInputable.PaypalCheckoutTokenizationInputable::class),
             )
         }
         coVerify { paymentDelegate.handleError(ofType(Throwable::class)) }
@@ -216,17 +227,20 @@ internal class PaypalComponentTest {
     @Test
     fun `handleActivityResultIntent() should call tokenize with PaypalVaultTokenizationInputable when session intent is Vault`() {
         // given
-        val params = mockk<PaymentMethodLauncherParams>(relaxed = true) {
-            every { sessionIntent } returns PrimerSessionIntent.VAULT
-            every { initialLauncherParams } returns mockk<RedirectLauncherParams>(relaxed = true) {
-                every { successUrl } returns "https://success.url"
-                every { paymentMethodConfigId } returns "configId"
+        val params =
+            mockk<PaymentMethodLauncherParams>(relaxed = true) {
+                every { sessionIntent } returns PrimerSessionIntent.VAULT
+                every { initialLauncherParams } returns
+                    mockk<RedirectLauncherParams>(relaxed = true) {
+                        every { successUrl } returns "https://success.url"
+                        every { paymentMethodConfigId } returns "configId"
+                    }
             }
-        }
         val resultCode = Activity.RESULT_OK
-        val intent = mockk<Intent>(relaxed = true) {
-            every { data } returns Uri.parse("https://success.url?ba_token=sampleBaToken")
-        }
+        val intent =
+            mockk<Intent>(relaxed = true) {
+                every { data } returns Uri.parse("https://success.url?ba_token=sampleBaToken")
+            }
 
         coEvery { tokenizationDelegate.tokenize(any()) } returns Result.success(mockk(relaxed = true))
 
@@ -239,7 +253,7 @@ internal class PaypalComponentTest {
         // then
         coVerify {
             tokenizationDelegate.tokenize(
-                input = ofType(PaypalTokenizationInputable.PaypalVaultTokenizationInputable::class)
+                input = ofType(PaypalTokenizationInputable.PaypalVaultTokenizationInputable::class),
             )
         }
     }
@@ -248,11 +262,12 @@ internal class PaypalComponentTest {
     fun `handleActivityStartEvent() should emit Navigate event for RedirectLauncherParams`() {
         // given
         val redirectLauncherParams = mockk<RedirectLauncherParams>(relaxed = true)
-        val params = PaymentMethodLauncherParams(
-            paymentMethodType = "PAYPAL",
-            sessionIntent = PrimerSessionIntent.CHECKOUT,
-            initialLauncherParams = redirectLauncherParams
-        )
+        val params =
+            PaymentMethodLauncherParams(
+                paymentMethodType = "PAYPAL",
+                sessionIntent = PrimerSessionIntent.CHECKOUT,
+                initialLauncherParams = redirectLauncherParams,
+            )
 
         runTest {
             // when

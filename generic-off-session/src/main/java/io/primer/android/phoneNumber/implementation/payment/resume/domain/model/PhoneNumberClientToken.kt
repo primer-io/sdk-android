@@ -4,5 +4,5 @@ import io.primer.android.paymentmethods.core.payment.resume.clientToken.domain.m
 
 internal data class PhoneNumberClientToken(
     val statusUrl: String,
-    override val clientTokenIntent: String
+    override val clientTokenIntent: String,
 ) : PaymentMethodResumeClientToken

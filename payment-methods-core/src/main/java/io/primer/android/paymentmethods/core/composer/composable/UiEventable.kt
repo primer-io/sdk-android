@@ -5,10 +5,10 @@ import kotlinx.coroutines.flow.SharedFlow
 
 sealed interface ComposerUiEvent {
     data class Navigate(val params: NavigationParams) : ComposerUiEvent
+
     object Finish : ComposerUiEvent
 }
 
 interface UiEventable {
-
     val uiEvent: SharedFlow<ComposerUiEvent>
 }

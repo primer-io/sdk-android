@@ -6,5 +6,5 @@ internal data class RetailOutletsClientToken(
     override val clientTokenIntent: String,
     val expiresAt: String,
     val reference: String,
-    val entity: String
+    val entity: String,
 ) : PaymentMethodResumeClientToken

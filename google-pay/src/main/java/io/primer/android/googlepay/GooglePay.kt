@@ -14,9 +14,8 @@ internal data class GooglePay(
     val allowedCardNetworks: List<CardNetwork.Type>,
     val buttonStyle: GooglePayButtonStyle = GooglePayButtonStyle.BLACK,
     val billingAddressRequired: Boolean = false,
-    val existingPaymentMethodRequired: Boolean = false
+    val existingPaymentMethodRequired: Boolean = false,
 ) : PaymentMethod {
-
     override val type = PaymentMethodType.GOOGLE_PAY.name
 
     override val canBeVaulted: Boolean = false
@@ -26,13 +25,13 @@ internal data class GooglePay(
     override val module: PaymentMethodModule by lazy { GooglePayModule() }
 
     companion object {
-
-        val allowedCardNetworks: Set<CardNetwork.Type> = setOf(
-            CardNetwork.Type.VISA,
-            CardNetwork.Type.MASTERCARD,
-            CardNetwork.Type.AMEX,
-            CardNetwork.Type.DISCOVER,
-            CardNetwork.Type.JCB
-        )
+        val allowedCardNetworks: Set<CardNetwork.Type> =
+            setOf(
+                CardNetwork.Type.VISA,
+                CardNetwork.Type.MASTERCARD,
+                CardNetwork.Type.AMEX,
+                CardNetwork.Type.DISCOVER,
+                CardNetwork.Type.JCB,
+            )
     }
 }

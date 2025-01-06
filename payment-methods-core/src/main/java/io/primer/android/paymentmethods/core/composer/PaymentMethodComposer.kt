@@ -31,7 +31,6 @@ import kotlin.properties.Delegates
  * the logic for creating and handling payment methods in a standardized way.
  */
 fun interface PaymentMethodComposer {
-
     fun cancel()
 }
 
@@ -51,12 +50,11 @@ abstract class RawDataPaymentMethodComponent<TCollectableData : PrimerCollectabl
     PrimerHeadlessContextualStartable,
     PaymentMethodComposer,
     DISdkComponent {
-
     protected val composerScope by lazy {
         CoroutineScope(
             SupervisorJob(
-                parent = resolve<CoroutineScopeProvider>().scope.coroutineContext.job
-            ) + Dispatchers.Main
+                parent = resolve<CoroutineScopeProvider>().scope.coroutineContext.job,
+            ) + Dispatchers.Main,
         )
     }
 
@@ -68,7 +66,6 @@ abstract class RawDataPaymentMethodComponent<TCollectableData : PrimerCollectabl
 interface VaultedPaymentMethodComponent :
     PrimerHeadlessContextualStartable,
     PaymentMethodComposer {
-
     val paymentDelegate: PaymentMethodPaymentDelegate
 }
 
@@ -77,22 +74,25 @@ abstract class InternalNativeUiPaymentMethodComponent :
     UiEventable,
     PaymentMethodComposer,
     DISdkComponent {
-
     protected val composerScope by lazy {
         CoroutineScope(
             SupervisorJob(
-                parent = resolve<CoroutineScopeProvider>().scope.coroutineContext.job
-            ) + Dispatchers.Main
+                parent = resolve<CoroutineScopeProvider>().scope.coroutineContext.job,
+            ) + Dispatchers.Main,
         )
     }
 
     protected var primerSessionIntent by Delegates.notNull<PrimerSessionIntent>()
     protected var paymentMethodType by Delegates.notNull<String>()
 
+    @Suppress("ktlint:standard:property-naming")
     protected open val _uiEvent = MutableSharedFlow<ComposerUiEvent>()
     override val uiEvent: SharedFlow<ComposerUiEvent> = _uiEvent
 
-    abstract fun start(paymentMethodType: String, primerSessionIntent: PrimerSessionIntent)
+    abstract fun start(
+        paymentMethodType: String,
+        primerSessionIntent: PrimerSessionIntent,
+    )
 
     override fun cancel() {
         composerScope.cancel()

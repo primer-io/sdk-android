@@ -11,12 +11,13 @@ import io.mockk.just
 import io.mockk.mockk
 import io.mockk.spyk
 import io.mockk.verify
-import io.primer.android.analytics.utils.RawDataManagerAnalyticsConstants
 import io.primer.android.PrimerSessionIntent
+import io.primer.android.analytics.utils.RawDataManagerAnalyticsConstants
 import io.primer.android.core.di.DISdkContext
 import io.primer.android.core.di.DependencyContainer
 import io.primer.android.core.di.SdkContainer
 import io.primer.android.core.utils.CoroutineScopeProvider
+import io.primer.android.domain.tokenization.models.PrimerPaymentMethodTokenData
 import io.primer.android.errors.domain.ErrorMapperRegistry
 import io.primer.android.otp.PrimerOtpData
 import io.primer.android.otp.implementation.payment.delegate.OtpPaymentDelegate
@@ -30,7 +31,6 @@ import io.primer.android.payments.core.helpers.PollingStartHandler.PollingStartD
 import io.primer.android.payments.core.status.domain.AsyncPaymentMethodPollingInteractor
 import io.primer.android.payments.core.status.domain.model.AsyncStatus
 import io.primer.android.payments.core.status.domain.model.AsyncStatusParams
-import io.primer.android.domain.tokenization.models.PrimerPaymentMethodTokenData
 import io.primer.android.vouchers.InstantExecutorExtension
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -63,26 +63,29 @@ class OtpComponentTest {
 
     @BeforeEach
     fun setUp() {
-        DISdkContext.headlessSdkContainer = mockk<SdkContainer>(relaxed = true).also { sdkContainer ->
-            val cont = spyk<DependencyContainer>().also { container ->
-                container.registerFactory<CoroutineScopeProvider> {
-                    object : CoroutineScopeProvider {
-                        override val scope: CoroutineScope
-                            get() = TestScope()
+        DISdkContext.headlessSdkContainer =
+            mockk<SdkContainer>(relaxed = true).also { sdkContainer ->
+                val cont =
+                    spyk<DependencyContainer>().also { container ->
+                        container.registerFactory<CoroutineScopeProvider> {
+                            object : CoroutineScopeProvider {
+                                override val scope: CoroutineScope
+                                    get() = TestScope()
+                            }
+                        }
                     }
-                }
+                every { sdkContainer.containers }.returns(mutableMapOf(cont::class.simpleName.orEmpty() to cont))
             }
-            every { sdkContainer.containers }.returns(mutableMapOf(cont::class.simpleName.orEmpty() to cont))
-        }
-        component = OtpComponent(
-            tokenizationDelegate,
-            pollingInteractor,
-            paymentDelegate,
-            pollingStartHandler,
-            collectableDataValidator,
-            errorMapperRegistry,
-            sdkAnalyticsEventLoggingDelegate
-        )
+        component =
+            OtpComponent(
+                tokenizationDelegate,
+                pollingInteractor,
+                paymentDelegate,
+                pollingStartHandler,
+                collectableDataValidator,
+                errorMapperRegistry,
+                sdkAnalyticsEventLoggingDelegate,
+            )
         coEvery { pollingStartHandler.startPolling } returns MutableSharedFlow()
     }
 
@@ -92,178 +95,191 @@ class OtpComponentTest {
     }
 
     @Test
-    fun `start() starts polling on pollingStartHandler emission`() = runTest {
-        val spy = spyk(component)
-        every { pollingStartHandler.startPolling } returns flowOf(
-            PollingStartData(
-                statusUrl = "statusUrl",
-                paymentMethodType = paymentMethodType
-            )
-        )
+    fun `start() starts polling on pollingStartHandler emission`() =
+        runTest {
+            val spy = spyk(component)
+            every { pollingStartHandler.startPolling } returns
+                flowOf(
+                    PollingStartData(
+                        statusUrl = "statusUrl",
+                        paymentMethodType = paymentMethodType,
+                    ),
+                )
 
-        spy.start(paymentMethodType = paymentMethodType, sessionIntent = primerSessionIntent)
+            spy.start(paymentMethodType = paymentMethodType, sessionIntent = primerSessionIntent)
 
-        delay(1.seconds)
+            delay(1.seconds)
 
-        verify {
-            spy.startPolling(url = "statusUrl", paymentMethodType = paymentMethodType)
+            verify {
+                spy.startPolling(url = "statusUrl", paymentMethodType = paymentMethodType)
+            }
         }
-    }
 
     @Test
-    fun `submit() should call tokenize() and handlePaymentMethodToken() when tokenization is successful`() = runTest {
-        every { pollingStartHandler.startPolling } returns flowOf(
-            PollingStartData(
-                statusUrl = "statusUrl",
-                paymentMethodType = paymentMethodType
-            )
-        )
-        coEvery { sdkAnalyticsEventLoggingDelegate.logSdkAnalyticsEvent(any(), any(), any()) } just Runs
-        val otpData = PrimerOtpData("123456")
-        val primerPaymentMethodTokenData = mockk<PrimerPaymentMethodTokenData>()
-        coEvery { tokenizationDelegate.tokenize(any()) } returns Result.success(primerPaymentMethodTokenData)
-        val paymentDecision = mockk<PaymentDecision>()
-        coEvery { paymentDelegate.handlePaymentMethodToken(any(), any()) } returns Result.success(paymentDecision)
-        component.start(paymentMethodType, primerSessionIntent)
-        component.updateCollectedData(otpData)
-        delay(1.seconds)
-
-        component.submit()
-        delay(1.seconds)
-
-        coVerify {
-            sdkAnalyticsEventLoggingDelegate.logSdkAnalyticsEvent(
-                methodName = RawDataManagerAnalyticsConstants.SET_RAW_DATA_METHOD,
-                paymentMethodType = paymentMethodType,
-                context = mapOf(
-                    RawDataManagerAnalyticsConstants.PAYMENT_METHOD_TYPE_PARAM to paymentMethodType
+    fun `submit() should call tokenize() and handlePaymentMethodToken() when tokenization is successful`() =
+        runTest {
+            every { pollingStartHandler.startPolling } returns
+                flowOf(
+                    PollingStartData(
+                        statusUrl = "statusUrl",
+                        paymentMethodType = paymentMethodType,
+                    ),
                 )
-            )
-            tokenizationDelegate.tokenize(
-                OtpTokenizationInputable(
-                    otpData = otpData,
+            coEvery { sdkAnalyticsEventLoggingDelegate.logSdkAnalyticsEvent(any(), any(), any()) } just Runs
+            val otpData = PrimerOtpData("123456")
+            val primerPaymentMethodTokenData = mockk<PrimerPaymentMethodTokenData>()
+            coEvery { tokenizationDelegate.tokenize(any()) } returns Result.success(primerPaymentMethodTokenData)
+            val paymentDecision = mockk<PaymentDecision>()
+            coEvery { paymentDelegate.handlePaymentMethodToken(any(), any()) } returns Result.success(paymentDecision)
+            component.start(paymentMethodType, primerSessionIntent)
+            component.updateCollectedData(otpData)
+            delay(1.seconds)
+
+            component.submit()
+            delay(1.seconds)
+
+            coVerify {
+                sdkAnalyticsEventLoggingDelegate.logSdkAnalyticsEvent(
+                    methodName = RawDataManagerAnalyticsConstants.SET_RAW_DATA_METHOD,
                     paymentMethodType = paymentMethodType,
-                    primerSessionIntent = primerSessionIntent
+                    context =
+                        mapOf(
+                            RawDataManagerAnalyticsConstants.PAYMENT_METHOD_TYPE_PARAM to paymentMethodType,
+                        ),
                 )
-            )
-            paymentDelegate.handlePaymentMethodToken(
-                paymentMethodTokenData = primerPaymentMethodTokenData,
-                primerSessionIntent = primerSessionIntent
-            )
-        }
-        confirmVerified(paymentDecision)
-    }
-
-    @Test
-    fun `start() should not call tokenize() when data is not collected`() = runTest {
-        component.start(paymentMethodType, primerSessionIntent)
-        delay(1.seconds)
-
-        component.submit()
-        delay(1.seconds)
-
-        coVerify(exactly = 0) {
-            tokenizationDelegate.tokenize(any())
-        }
-        coVerify { paymentDelegate.handleError(any()) }
-    }
-
-    @Test
-    fun `submit() should not call tokenize() when component is not started`() = runTest {
-        component.submit()
-        delay(1.seconds)
-
-        coVerify(exactly = 0) {
-            tokenizationDelegate.tokenize(any())
-        }
-        coVerify { paymentDelegate.handleError(any()) }
-    }
-
-    @Test
-    fun `start() should not call handlePaymentMethodToken() when tokenization fails`() = runTest {
-        every { pollingStartHandler.startPolling } returns flowOf(
-            PollingStartData(
-                statusUrl = "statusUrl",
-                paymentMethodType = paymentMethodType
-            )
-        )
-        coEvery { sdkAnalyticsEventLoggingDelegate.logSdkAnalyticsEvent(any(), any(), any()) } just Runs
-        val otpData = PrimerOtpData("123456")
-        coEvery { tokenizationDelegate.tokenize(any()) } returns Result.failure(Exception())
-        component.start(paymentMethodType, primerSessionIntent)
-        component.updateCollectedData(otpData)
-        delay(1.seconds)
-
-        component.submit()
-        delay(1.seconds)
-
-        coVerify {
-            sdkAnalyticsEventLoggingDelegate.logSdkAnalyticsEvent(
-                methodName = RawDataManagerAnalyticsConstants.SET_RAW_DATA_METHOD,
-                paymentMethodType = paymentMethodType,
-                context = mapOf(
-                    RawDataManagerAnalyticsConstants.PAYMENT_METHOD_TYPE_PARAM to paymentMethodType
+                tokenizationDelegate.tokenize(
+                    OtpTokenizationInputable(
+                        otpData = otpData,
+                        paymentMethodType = paymentMethodType,
+                        primerSessionIntent = primerSessionIntent,
+                    ),
                 )
-            )
-            tokenizationDelegate.tokenize(
-                OtpTokenizationInputable(
-                    otpData = otpData,
+                paymentDelegate.handlePaymentMethodToken(
+                    paymentMethodTokenData = primerPaymentMethodTokenData,
+                    primerSessionIntent = primerSessionIntent,
+                )
+            }
+            confirmVerified(paymentDecision)
+        }
+
+    @Test
+    fun `start() should not call tokenize() when data is not collected`() =
+        runTest {
+            component.start(paymentMethodType, primerSessionIntent)
+            delay(1.seconds)
+
+            component.submit()
+            delay(1.seconds)
+
+            coVerify(exactly = 0) {
+                tokenizationDelegate.tokenize(any())
+            }
+            coVerify { paymentDelegate.handleError(any()) }
+        }
+
+    @Test
+    fun `submit() should not call tokenize() when component is not started`() =
+        runTest {
+            component.submit()
+            delay(1.seconds)
+
+            coVerify(exactly = 0) {
+                tokenizationDelegate.tokenize(any())
+            }
+            coVerify { paymentDelegate.handleError(any()) }
+        }
+
+    @Test
+    fun `start() should not call handlePaymentMethodToken() when tokenization fails`() =
+        runTest {
+            every { pollingStartHandler.startPolling } returns
+                flowOf(
+                    PollingStartData(
+                        statusUrl = "statusUrl",
+                        paymentMethodType = paymentMethodType,
+                    ),
+                )
+            coEvery { sdkAnalyticsEventLoggingDelegate.logSdkAnalyticsEvent(any(), any(), any()) } just Runs
+            val otpData = PrimerOtpData("123456")
+            coEvery { tokenizationDelegate.tokenize(any()) } returns Result.failure(Exception())
+            component.start(paymentMethodType, primerSessionIntent)
+            component.updateCollectedData(otpData)
+            delay(1.seconds)
+
+            component.submit()
+            delay(1.seconds)
+
+            coVerify {
+                sdkAnalyticsEventLoggingDelegate.logSdkAnalyticsEvent(
+                    methodName = RawDataManagerAnalyticsConstants.SET_RAW_DATA_METHOD,
                     paymentMethodType = paymentMethodType,
-                    primerSessionIntent = primerSessionIntent
+                    context =
+                        mapOf(
+                            RawDataManagerAnalyticsConstants.PAYMENT_METHOD_TYPE_PARAM to paymentMethodType,
+                        ),
                 )
-            )
+                tokenizationDelegate.tokenize(
+                    OtpTokenizationInputable(
+                        otpData = otpData,
+                        paymentMethodType = paymentMethodType,
+                        primerSessionIntent = primerSessionIntent,
+                    ),
+                )
+            }
+            coVerify(exactly = 0) {
+                paymentDelegate.handlePaymentMethodToken(
+                    paymentMethodTokenData = any(),
+                    primerSessionIntent = any(),
+                )
+            }
+            coVerify { paymentDelegate.handleError(any()) }
         }
-        coVerify(exactly = 0) {
-            paymentDelegate.handlePaymentMethodToken(
-                paymentMethodTokenData = any(),
-                primerSessionIntent = any()
-            )
-        }
-        coVerify { paymentDelegate.handleError(any()) }
-    }
 
     @Test
-    fun `start() should handle error when handlePaymentMethodToken() fails`() = runTest {
-        every { pollingStartHandler.startPolling } returns flowOf(
-            PollingStartData(
-                statusUrl = "statusUrl",
-                paymentMethodType = paymentMethodType
-            )
-        )
-        coEvery { sdkAnalyticsEventLoggingDelegate.logSdkAnalyticsEvent(any(), any(), any()) } just Runs
-        val otpData = PrimerOtpData("123456")
-        val primerPaymentMethodTokenData = mockk<PrimerPaymentMethodTokenData>()
-        coEvery { tokenizationDelegate.tokenize(any()) } returns Result.success(primerPaymentMethodTokenData)
-        coEvery { paymentDelegate.handlePaymentMethodToken(any(), any()) } returns Result.failure(Exception())
-        component.start(paymentMethodType, primerSessionIntent)
-        component.updateCollectedData(otpData)
-        delay(1.seconds)
-
-        component.submit()
-        delay(1.seconds)
-
-        coVerify {
-            sdkAnalyticsEventLoggingDelegate.logSdkAnalyticsEvent(
-                methodName = RawDataManagerAnalyticsConstants.SET_RAW_DATA_METHOD,
-                paymentMethodType = paymentMethodType,
-                context = mapOf(
-                    RawDataManagerAnalyticsConstants.PAYMENT_METHOD_TYPE_PARAM to paymentMethodType
+    fun `start() should handle error when handlePaymentMethodToken() fails`() =
+        runTest {
+            every { pollingStartHandler.startPolling } returns
+                flowOf(
+                    PollingStartData(
+                        statusUrl = "statusUrl",
+                        paymentMethodType = paymentMethodType,
+                    ),
                 )
-            )
-            tokenizationDelegate.tokenize(
-                OtpTokenizationInputable(
-                    otpData = otpData,
+            coEvery { sdkAnalyticsEventLoggingDelegate.logSdkAnalyticsEvent(any(), any(), any()) } just Runs
+            val otpData = PrimerOtpData("123456")
+            val primerPaymentMethodTokenData = mockk<PrimerPaymentMethodTokenData>()
+            coEvery { tokenizationDelegate.tokenize(any()) } returns Result.success(primerPaymentMethodTokenData)
+            coEvery { paymentDelegate.handlePaymentMethodToken(any(), any()) } returns Result.failure(Exception())
+            component.start(paymentMethodType, primerSessionIntent)
+            component.updateCollectedData(otpData)
+            delay(1.seconds)
+
+            component.submit()
+            delay(1.seconds)
+
+            coVerify {
+                sdkAnalyticsEventLoggingDelegate.logSdkAnalyticsEvent(
+                    methodName = RawDataManagerAnalyticsConstants.SET_RAW_DATA_METHOD,
                     paymentMethodType = paymentMethodType,
-                    primerSessionIntent = primerSessionIntent
+                    context =
+                        mapOf(
+                            RawDataManagerAnalyticsConstants.PAYMENT_METHOD_TYPE_PARAM to paymentMethodType,
+                        ),
                 )
-            )
-            paymentDelegate.handlePaymentMethodToken(
-                paymentMethodTokenData = any(),
-                primerSessionIntent = any()
-            )
+                tokenizationDelegate.tokenize(
+                    OtpTokenizationInputable(
+                        otpData = otpData,
+                        paymentMethodType = paymentMethodType,
+                        primerSessionIntent = primerSessionIntent,
+                    ),
+                )
+                paymentDelegate.handlePaymentMethodToken(
+                    paymentMethodTokenData = any(),
+                    primerSessionIntent = any(),
+                )
+            }
+            coVerify { paymentDelegate.handleError(any()) }
         }
-        coVerify { paymentDelegate.handleError(any()) }
-    }
 
     @Test
     fun `startPolling should invoke pollingInteractor and resumePayment when success`() {

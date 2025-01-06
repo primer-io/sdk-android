@@ -20,7 +20,6 @@ import org.junit.jupiter.api.extension.ExtendWith
 @ExtendWith(InstantExecutorExtension::class, MockKExtension::class)
 @ExperimentalCoroutinesApi
 class BanksFilterInteractorTest {
-
     @RelaxedMockK
     internal lateinit var repository: IssuingBankRepository
 
@@ -42,7 +41,7 @@ class BanksFilterInteractorTest {
             assertEquals(
                 banks.sortedBy { it.name.lowercase() }
                     .filter { it.name.contains(filter) },
-                res
+                res,
             )
         }
 
@@ -64,10 +63,11 @@ class BanksFilterInteractorTest {
     }
 
     private companion object {
-        val banks = listOf(
-            IssuingBank("1", "bunq", false, ""),
-            IssuingBank("2", "Revolut", false, ""),
-            IssuingBank("3", "Abn amro", false, "")
-        )
+        val banks =
+            listOf(
+                IssuingBank("1", "bunq", false, ""),
+                IssuingBank("2", "Revolut", false, ""),
+                IssuingBank("3", "Abn amro", false, ""),
+            )
     }
 }

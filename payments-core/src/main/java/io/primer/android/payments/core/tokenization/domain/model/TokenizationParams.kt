@@ -6,5 +6,5 @@ import io.primer.android.payments.core.tokenization.domain.model.paymentInstrume
 
 data class TokenizationParams<T : BasePaymentInstrumentParams>(
     val paymentInstrumentParams: T,
-    val sessionIntent: PrimerSessionIntent
+    val sessionIntent: PrimerSessionIntent,
 ) : Params

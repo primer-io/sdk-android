@@ -7,7 +7,6 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 class InMemoryCardBinMetadataDataSourceTest {
-
     private lateinit var dataSource: InMemoryCardBinMetadataDataSource
 
     @BeforeEach

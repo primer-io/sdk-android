@@ -31,55 +31,59 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 @ExperimentalCoroutinesApi
 internal open class PaymentMethodLoadingFragment : Fragment(), DISdkComponent {
-
     private val viewModel: PrimerViewModel by
-    activityViewModel<PrimerViewModel, PrimerViewModelFactory>()
+        activityViewModel<PrimerViewModel, PrimerViewModelFactory>()
     private val theme: PrimerTheme by inject()
     private val assetsManager: AssetsManager by inject()
 
     private var binding: FragmentPaymentMethodLoadingBinding by autoCleaned()
 
-    private val selectedPaymentMethodObserver = Observer<PaymentMethodDropInDescriptor?> { descriptor ->
-        descriptor?.loadingState?.let { loadingState ->
-            logAnalytics(descriptor.paymentMethodType)
-            binding.apply {
-                if (loadingState != null && loadingState.imageResIs > 0) {
-                    selectedPaymentLogo.setImageResource(loadingState.imageResIs)
-                } else {
-                    selectedPaymentLogo.setImageDrawable(
-                        assetsManager.getPaymentMethodImage(
-                            context = requireContext(),
-                            paymentMethodType = descriptor.paymentMethodType,
-                            imageColor = when (theme.isDarkMode == true) {
-                                true -> ImageColor.DARK
-                                false -> ImageColor.LIGHT
-                            }
+    private val selectedPaymentMethodObserver =
+        Observer<PaymentMethodDropInDescriptor?> { descriptor ->
+            descriptor?.loadingState?.let { loadingState ->
+                logAnalytics(descriptor.paymentMethodType)
+                binding.apply {
+                    if (loadingState != null && loadingState.imageResIs > 0) {
+                        selectedPaymentLogo.setImageResource(loadingState.imageResIs)
+                    } else {
+                        selectedPaymentLogo.setImageDrawable(
+                            assetsManager.getPaymentMethodImage(
+                                context = requireContext(),
+                                paymentMethodType = descriptor.paymentMethodType,
+                                imageColor =
+                                    when (theme.isDarkMode == true) {
+                                        true -> ImageColor.DARK
+                                        false -> ImageColor.LIGHT
+                                    },
+                            ),
                         )
-                    )
-                }
-                loadingState.textResId?.let {
-                    selectedPaymentLoadingText.isVisible = true
-                    progressBar.isVisible = false
-                    selectedPaymentLoadingText.text = loadingState.args
-                        ?.let { args -> getString(it, args) } ?: getString(it)
-                } ?: run {
-                    selectedPaymentLoadingText.isVisible = false
-                    progressBar.isVisible = true
+                    }
+                    loadingState.textResId?.let {
+                        selectedPaymentLoadingText.isVisible = true
+                        progressBar.isVisible = false
+                        selectedPaymentLoadingText.text = loadingState.args
+                            ?.let { args -> getString(it, args) } ?: getString(it)
+                    } ?: run {
+                        selectedPaymentLoadingText.isVisible = false
+                        progressBar.isVisible = true
+                    }
                 }
             }
         }
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
         binding = FragmentPaymentMethodLoadingBinding.inflate(inflater, container, false)
         return binding.root
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onViewCreated(
+        view: View,
+        savedInstanceState: Bundle?,
+    ) {
         super.onViewCreated(view, savedInstanceState)
 
         if (arguments?.getBoolean(POP_BACK_STACK_TO_ROOT_KEY, false) == true) {
@@ -103,8 +107,8 @@ internal open class PaymentMethodLoadingFragment : Fragment(), DISdkComponent {
                 ObjectType.LOADER,
                 Place.PAYMENT_METHOD_LOADING,
                 null,
-                PaymentMethodContextParams(type)
-            )
+                PaymentMethodContextParams(type),
+            ),
         )
     //endregion
 

@@ -48,30 +48,42 @@ import kotlinx.coroutines.yield
 import kotlin.properties.Delegates
 
 interface RawDataDelegate<T : PrimerRawData> {
-
     @Throws(
         SdkUninitializedException::class,
         UnsupportedPaymentMethodManagerException::class,
-        UnsupportedPaymentMethodException::class
+        UnsupportedPaymentMethodException::class,
     )
-    fun init(paymentMethodType: String, category: PrimerPaymentMethodManagerCategory)
+    fun init(
+        paymentMethodType: String,
+        category: PrimerPaymentMethodManagerCategory,
+    )
 
-    fun start(context: Context, paymentMethodType: String, primerSessionIntent: PrimerSessionIntent)
+    fun start(
+        context: Context,
+        paymentMethodType: String,
+        primerSessionIntent: PrimerSessionIntent,
+    )
 
-    fun configure(paymentMethodType: String, completion: (PrimerInitializationData?, PrimerError?) -> Unit)
+    fun configure(
+        paymentMethodType: String,
+        completion: (PrimerInitializationData?, PrimerError?) -> Unit,
+    )
 
     fun startTokenization(
         type: String,
-        rawData: T
+        rawData: T,
     )
 
     fun onRawDataChanged(
         paymentMethodType: String,
         oldRawData: T?,
-        rawData: T
+        rawData: T,
     )
 
-    fun submit(paymentMethodType: String, rawData: T?)
+    fun submit(
+        paymentMethodType: String,
+        rawData: T?,
+    )
 
     fun getRequiredInputElementTypes(paymentMethodType: String): List<PrimerInputElementType>
 
@@ -91,35 +103,39 @@ internal class DefaultRawDataManagerDelegate(
     private val paymentMethodNavigationFactoryRegistry: PaymentMethodNavigationFactoryRegistry,
     private val actionInteractor: ActionInteractor,
     private val logReporter: LogReporter,
-    private val preparationStartHandler: PreparationStartHandler
+    private val preparationStartHandler: PreparationStartHandler,
 ) : RawDataDelegate<PrimerRawData> {
-
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
     private var listener: PrimerHeadlessUniversalCheckoutRawDataManagerListener? = null
     private var composer: RawDataPaymentMethodComponent<PrimerCollectableData> by Delegates.notNull()
 
-    val collector = scope.debounce<Pair<String, PrimerRawData>> {
-        onRawDataChangedImpl(
-            paymentMethodType = it.first,
-            rawData = it.second
-        )
-    }
+    val collector =
+        scope.debounce<Pair<String, PrimerRawData>> {
+            onRawDataChangedImpl(
+                paymentMethodType = it.first,
+                rawData = it.second,
+            )
+        }
 
-    override fun init(paymentMethodType: String, category: PrimerPaymentMethodManagerCategory) {
+    override fun init(
+        paymentMethodType: String,
+        category: PrimerPaymentMethodManagerCategory,
+    ) {
         logSdkAnalyticsEvent(
             methodName = RawDataManagerAnalyticsConstants.NEW_INSTANCE_METHOD,
-            params = mapOf(RawDataManagerAnalyticsConstants.PAYMENT_METHOD_TYPE_PARAM to paymentMethodType)
+            params = mapOf(RawDataManagerAnalyticsConstants.PAYMENT_METHOD_TYPE_PARAM to paymentMethodType),
         )
 
         scope.launch {
-            val validationResults = initValidationRulesResolver.resolve().rules.map {
-                it.validate(
-                    PaymentMethodManagerInitValidationData(
-                        paymentMethodType,
-                        category
+            val validationResults =
+                initValidationRulesResolver.resolve().rules.map {
+                    it.validate(
+                        PaymentMethodManagerInitValidationData(
+                            paymentMethodType,
+                            category,
+                        ),
                     )
-                )
-            }
+                }
 
             validationResults.filterIsInstance<ValidationResult.Failure>()
                 .forEach { validationResult ->
@@ -128,12 +144,17 @@ internal class DefaultRawDataManagerDelegate(
         }
     }
 
-    override fun start(context: Context, paymentMethodType: String, primerSessionIntent: PrimerSessionIntent) {
+    override fun start(
+        context: Context,
+        paymentMethodType: String,
+        primerSessionIntent: PrimerSessionIntent,
+    ) {
         composerRegistry.unregister(paymentMethodType)
-        composer = providerFactoryRegistry.create(
-            paymentMethodType = paymentMethodType,
-            sessionIntent = primerSessionIntent
-        ) as RawDataPaymentMethodComponent<PrimerCollectableData>
+        composer =
+            providerFactoryRegistry.create(
+                paymentMethodType = paymentMethodType,
+                sessionIntent = primerSessionIntent,
+            ) as RawDataPaymentMethodComponent<PrimerCollectableData>
 
         composer.let { composerRegistry.register(paymentMethodType, it) }
 
@@ -145,7 +166,7 @@ internal class DefaultRawDataManagerDelegate(
                         (
                             paymentMethodNavigationFactoryRegistry.create(paymentMethodType) as?
                                 PaymentMethodContextNavigationHandler
-                            )
+                        )
                             ?.getSupportedNavigators(context = context)
                             ?.firstOrNull { it.canHandle(event.params) }?.navigate(event.params)
                             ?: println("Navigation handler for ${event.params} not found.")
@@ -163,7 +184,7 @@ internal class DefaultRawDataManagerDelegate(
                 composer.componentInputValidations.collectLatest { validationErrors ->
                     listener?.onValidationChanged(
                         isValid = validationErrors.isEmpty(),
-                        errors = validationErrors
+                        errors = validationErrors,
                     )
                 }
             }
@@ -174,8 +195,8 @@ internal class DefaultRawDataManagerDelegate(
                         RawDataManagerAnalyticsConstants.ON_METADATA_STATE_CHANGED,
                         mapOf(
                             RawDataManagerAnalyticsConstants.ON_METADATA_STATE_STATE_PARAM
-                                to metadataState.toString()
-                        )
+                                to metadataState.toString(),
+                        ),
                     )
                     listener?.onMetadataStateChanged(metadataState)
                 }
@@ -190,13 +211,16 @@ internal class DefaultRawDataManagerDelegate(
         composer.start(paymentMethodType = paymentMethodType, sessionIntent = primerSessionIntent)
     }
 
-    override fun configure(paymentMethodType: String, completion: (PrimerInitializationData?, PrimerError?) -> Unit) {
+    override fun configure(
+        paymentMethodType: String,
+        completion: (PrimerInitializationData?, PrimerError?) -> Unit,
+    ) {
         (composer as? PrimerHeadlessDataInitializable)?.configure(completion) ?: completion(null, null)
     }
 
     override fun startTokenization(
         type: String,
-        rawData: PrimerRawData
+        rawData: PrimerRawData,
     ) {
         composer.submit()
     }
@@ -204,7 +228,7 @@ internal class DefaultRawDataManagerDelegate(
     override fun onRawDataChanged(
         paymentMethodType: String,
         oldRawData: PrimerRawData?,
-        rawData: PrimerRawData
+        rawData: PrimerRawData,
     ) {
         logReporter.info("Queueing onRawDataChanged call for $paymentMethodType", component = TAG)
         collector(Pair(paymentMethodType, rawData))
@@ -212,23 +236,23 @@ internal class DefaultRawDataManagerDelegate(
 
     private suspend fun onRawDataChangedImpl(
         paymentMethodType: String,
-        rawData: PrimerRawData
+        rawData: PrimerRawData,
     ) {
         logSdkAnalyticsEvent(
             RawDataManagerAnalyticsConstants.SET_RAW_DATA_METHOD,
-            mapOf(RawDataManagerAnalyticsConstants.PAYMENT_METHOD_TYPE_PARAM to paymentMethodType)
+            mapOf(RawDataManagerAnalyticsConstants.PAYMENT_METHOD_TYPE_PARAM to paymentMethodType),
         )
         val requiredInputDataClass =
             paymentMethodMapper.getPrimerHeadlessUniversalCheckoutPaymentMethod(
-                paymentMethodType = paymentMethodType
+                paymentMethodType = paymentMethodType,
             ).requiredInputDataClass
         if (requiredInputDataClass != rawData::class) {
             PrimerHeadlessUniversalCheckout.instance.emitError(
                 HeadlessError.InvalidTokenizationInputDataError(
                     paymentMethodType = paymentMethodType,
                     inputData = rawData::class,
-                    requiredInputData = requiredInputDataClass
-                )
+                    requiredInputData = requiredInputDataClass,
+                ),
             )
         } else {
             actionInteractor.invoke(getActionUpdateParams(paymentMethodType, rawData))
@@ -247,7 +271,7 @@ internal class DefaultRawDataManagerDelegate(
 
     private fun getActionUpdateParams(
         paymentMethodType: String,
-        rawData: PrimerRawData
+        rawData: PrimerRawData,
     ) = when (rawData) {
         is PrimerCardData -> {
             val cardType = CardNetwork.lookup(rawData.cardNumber).type
@@ -256,7 +280,7 @@ internal class DefaultRawDataManagerDelegate(
             } else {
                 ActionUpdateSelectPaymentMethodParams(
                     paymentMethodType = paymentMethodType,
-                    cardNetwork = rawData.cardNetwork?.name ?: cardType.name
+                    cardNetwork = rawData.cardNetwork?.name ?: cardType.name,
                 )
             }
         }
@@ -264,17 +288,20 @@ internal class DefaultRawDataManagerDelegate(
         else -> ActionUpdateSelectPaymentMethodParams(paymentMethodType)
     }.let {
         MultipleActionUpdateParams(
-            listOf(it)
+            listOf(it),
         )
     }
 
-    override fun submit(paymentMethodType: String, rawData: PrimerRawData?) {
+    override fun submit(
+        paymentMethodType: String,
+        rawData: PrimerRawData?,
+    ) {
         scope.launch {
             logSdkAnalyticsEvent(
                 RawDataManagerAnalyticsConstants.SUBMIT_METHOD,
                 mapOf(
-                    RawDataManagerAnalyticsConstants.PAYMENT_METHOD_TYPE_PARAM to paymentMethodType
-                )
+                    RawDataManagerAnalyticsConstants.PAYMENT_METHOD_TYPE_PARAM to paymentMethodType,
+                ),
             )
             preparationStartHandler.handle(paymentMethodType)
             rawData?.let { rawData ->
@@ -285,11 +312,10 @@ internal class DefaultRawDataManagerDelegate(
         }
     }
 
-    override fun getRequiredInputElementTypes(paymentMethodType: String):
-        List<PrimerInputElementType> {
+    override fun getRequiredInputElementTypes(paymentMethodType: String): List<PrimerInputElementType> {
         logSdkAnalyticsEvent(
             RawDataManagerAnalyticsConstants.GET_INPUT_ELEMENT_TYPES_METHOD,
-            mapOf(RawDataManagerAnalyticsConstants.PAYMENT_METHOD_TYPE_PARAM to paymentMethodType)
+            mapOf(RawDataManagerAnalyticsConstants.PAYMENT_METHOD_TYPE_PARAM to paymentMethodType),
         )
         return paymentInputTypesInteractor.execute(paymentMethodType)
     }
@@ -302,7 +328,7 @@ internal class DefaultRawDataManagerDelegate(
     override fun cleanup(paymentMethodType: String?) {
         logSdkAnalyticsEvent(
             RawDataManagerAnalyticsConstants.CLEANUP_METHOD,
-            mapOf(RawDataManagerAnalyticsConstants.PAYMENT_METHOD_TYPE_PARAM to paymentMethodType.orEmpty())
+            mapOf(RawDataManagerAnalyticsConstants.PAYMENT_METHOD_TYPE_PARAM to paymentMethodType.orEmpty()),
         )
         this.listener = null
         composer.cancel()
@@ -311,15 +337,16 @@ internal class DefaultRawDataManagerDelegate(
 
     private fun logSdkAnalyticsEvent(
         methodName: String,
-        params: Map<String, String> = emptyMap()
+        params: Map<String, String> = emptyMap(),
     ) = scope.launch {
         analyticsInteractor(
             SdkFunctionParams(
                 methodName,
-                params + mapOf(
-                    "category" to PrimerPaymentMethodManagerCategory.RAW_DATA.name
-                )
-            )
+                params +
+                    mapOf(
+                        "category" to PrimerPaymentMethodManagerCategory.RAW_DATA.name,
+                    ),
+            ),
         )
     }
 

@@ -1,13 +1,12 @@
 package io.primer.android.components.manager.raw
 
 import io.primer.android.components.domain.inputs.models.PrimerInputElementType
-import io.primer.android.paymentmethods.PrimerInitializationData
 import io.primer.android.domain.error.models.PrimerError
+import io.primer.android.paymentmethods.PrimerInitializationData
 import io.primer.android.paymentmethods.PrimerRawData
 
 @JvmDefaultWithCompatibility
 interface PrimerHeadlessUniversalCheckoutRawDataManagerInterface {
-
     /**
      * This method should be called when payment method require to preload
      * additional data, like retail outlets or banks list.

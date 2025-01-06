@@ -17,18 +17,18 @@ import org.junit.jupiter.api.extension.ExtendWith
 @ExperimentalCoroutinesApi
 @ExtendWith(MockKExtension::class)
 internal class DropInManualFlowSuccessHandlerTest {
-
     @MockK(relaxed = true)
     lateinit var primerHeadlessRepository: PrimerHeadlessRepository
 
     @Test
-    fun `handle should call handleManualFlowSuccess`() = runTest {
-        Dispatchers.setMain(StandardTestDispatcher(testScheduler))
-        val checkoutAdditionalInfo = mockk<PrimerCheckoutAdditionalInfo>()
-        val dropInManualFlowSuccessHandler = DropInManualFlowSuccessHandler(primerHeadlessRepository)
+    fun `handle should call handleManualFlowSuccess`() =
+        runTest {
+            Dispatchers.setMain(StandardTestDispatcher(testScheduler))
+            val checkoutAdditionalInfo = mockk<PrimerCheckoutAdditionalInfo>()
+            val dropInManualFlowSuccessHandler = DropInManualFlowSuccessHandler(primerHeadlessRepository)
 
-        dropInManualFlowSuccessHandler.handle(checkoutAdditionalInfo)
+            dropInManualFlowSuccessHandler.handle(checkoutAdditionalInfo)
 
-        coVerify { primerHeadlessRepository.handleManualFlowSuccess(checkoutAdditionalInfo) }
-    }
+            coVerify { primerHeadlessRepository.handleManualFlowSuccess(checkoutAdditionalInfo) }
+        }
 }

@@ -4,8 +4,5 @@ import io.primer.android.klarna.implementation.session.data.models.FinalizeKlarn
 import io.primer.android.klarna.implementation.session.domain.models.KlarnaCustomerTokenParam
 
 internal fun interface FinalizeKlarnaSessionRepository {
-
-    suspend fun finalize(
-        params: KlarnaCustomerTokenParam
-    ): Result<FinalizeKlarnaSessionDataResponse>
+    suspend fun finalize(params: KlarnaCustomerTokenParam): Result<FinalizeKlarnaSessionDataResponse>
 }

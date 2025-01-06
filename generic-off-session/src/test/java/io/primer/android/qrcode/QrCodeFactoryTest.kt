@@ -7,7 +7,6 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
 class QrCodeFactoryTest {
-
     @Test
     fun `build should return Success with QrCode PaymentMethod`() {
         val paymentMethodType = "qrCode"

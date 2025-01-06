@@ -8,7 +8,6 @@ import io.primer.android.errors.domain.ErrorMapperRegistry
 import io.primer.android.paymentmethods.PrimerPaymentMethodCheckerRegistry
 
 internal class PaymentMethodsContainer(private val sdk: () -> SdkContainer) : DependencyContainer() {
-
     override fun registerInitialDependencies() {
         registerSingleton { PrimerPaymentMethodCheckerRegistry }
 
@@ -19,7 +18,7 @@ internal class PaymentMethodsContainer(private val sdk: () -> SdkContainer) : De
                 config = sdk().resolve(),
                 baseErrorResolver = sdk().resolve(),
                 checkoutErrorHandler = sdk().resolve(),
-                logReporter = sdk().resolve()
+                logReporter = sdk().resolve(),
             )
         }
 

@@ -12,11 +12,9 @@ internal data class NolPayClientTokenData(
     val intent: String,
     val transactionNumber: String,
     val statusUrl: String,
-    val completeUrl: String
+    val completeUrl: String,
 ) : JSONDeserializable {
-
     companion object {
-
         @Throws(InvalidClientTokenException::class, ExpiredClientTokenException::class)
         fun fromString(encoded: String): NolPayClientTokenData {
             ClientTokenDecoder.decode(encoded).let { decoded ->
@@ -32,13 +30,14 @@ internal data class NolPayClientTokenData(
         private const val TRANSACTION_NO_FIELD = "nolPayTransactionNo"
 
         @JvmField
-        val deserializer = JSONObjectDeserializer { t ->
-            NolPayClientTokenData(
-                intent = t.getString(INTENT_FIELD),
-                transactionNumber = t.getString(TRANSACTION_NO_FIELD),
-                statusUrl = t.getString(STATUS_URL_FIELD),
-                completeUrl = t.getString(COMPLETE_URL_FIELD)
-            )
-        }
+        val deserializer =
+            JSONObjectDeserializer { t ->
+                NolPayClientTokenData(
+                    intent = t.getString(INTENT_FIELD),
+                    transactionNumber = t.getString(TRANSACTION_NO_FIELD),
+                    statusUrl = t.getString(STATUS_URL_FIELD),
+                    completeUrl = t.getString(COMPLETE_URL_FIELD),
+                )
+            }
     }
 }

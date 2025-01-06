@@ -9,7 +9,10 @@ import org.json.JSONObject
 data class PrimerDebugOptions(val is3DSSanityCheckEnabled: Boolean = true) : Parcelable, JSONObjectSerializable {
     constructor(parcel: Parcel) : this(parcel.readByte() != 0.toByte())
 
-    override fun writeToParcel(parcel: Parcel, flags: Int) {
+    override fun writeToParcel(
+        parcel: Parcel,
+        flags: Int,
+    ) {
         parcel.writeByte(if (is3DSSanityCheckEnabled) 1 else 0)
     }
 
@@ -29,10 +32,11 @@ data class PrimerDebugOptions(val is3DSSanityCheckEnabled: Boolean = true) : Par
         private const val IS_3DS_SANITY_CHECK_ENABLED_FIELD = "is3DSSanityCheckEnabled"
 
         @JvmField
-        val serializer = JSONObjectSerializer<PrimerDebugOptions> { primerDebugOptions ->
-            JSONObject().apply {
-                put(IS_3DS_SANITY_CHECK_ENABLED_FIELD, primerDebugOptions.is3DSSanityCheckEnabled)
+        val serializer =
+            JSONObjectSerializer<PrimerDebugOptions> { primerDebugOptions ->
+                JSONObject().apply {
+                    put(IS_3DS_SANITY_CHECK_ENABLED_FIELD, primerDebugOptions.is3DSSanityCheckEnabled)
+                }
             }
-        }
     }
 }

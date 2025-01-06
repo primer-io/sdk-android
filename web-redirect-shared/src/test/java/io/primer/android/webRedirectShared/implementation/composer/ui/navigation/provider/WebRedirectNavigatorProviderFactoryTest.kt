@@ -7,7 +7,6 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 class WebRedirectNavigatorProviderFactoryTest {
-
     private lateinit var factory: WebRedirectNavigatorProviderFactory
 
     @BeforeEach

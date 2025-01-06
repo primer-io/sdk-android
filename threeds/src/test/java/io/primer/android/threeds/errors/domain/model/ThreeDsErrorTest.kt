@@ -10,13 +10,13 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 
 internal class ThreeDsErrorTest {
-
-    private val mockContextParams: ThreeDsFailureContextParams = object : ThreeDsFailureContextParams(
-        threeDsSdkVersion = "1.0.0",
-        initProtocolVersion = "2.1.0",
-        threeDsWrapperSdkVersion = "1.0.0",
-        threeDsSdkProvider = "Primer"
-    ) {}
+    private val mockContextParams: ThreeDsFailureContextParams =
+        object : ThreeDsFailureContextParams(
+            threeDsSdkVersion = "1.0.0",
+            initProtocolVersion = "2.1.0",
+            threeDsWrapperSdkVersion = "1.0.0",
+            threeDsSdkProvider = "Primer",
+        ) {}
     private val mockProtocolContextParams: ThreeDsProtocolFailureContextParams = mockk()
     private val mockRuntimeContextParams: ThreeDsRuntimeFailureContextParams = mockk()
     private val mockCardNetwork = CardNetwork.Type.VISA
@@ -26,7 +26,6 @@ internal class ThreeDsErrorTest {
 
     @Nested
     inner class ErrorTypesTests {
-
         @Test
         fun `ThreeDsLibraryMissingError should have correct properties`() {
             val error = ThreeDsError.ThreeDsLibraryMissingError
@@ -56,7 +55,7 @@ internal class ThreeDsErrorTest {
                 Contact Primer and provide us with diagnostics id ${error.diagnosticsId}
                 """
                     .trimIndent(),
-                error.recoverySuggestion
+                error.recoverySuggestion,
             )
         }
 
@@ -67,7 +66,7 @@ internal class ThreeDsErrorTest {
             assertEquals("Cannot perform 3DS due to invalid 3DS configuration. $mockMessage", error.description)
             assertEquals(
                 "Contact Primer and provide us with diagnostics id ${error.diagnosticsId}",
-                error.recoverySuggestion
+                error.recoverySuggestion,
             )
         }
 
@@ -77,10 +76,10 @@ internal class ThreeDsErrorTest {
             assertEquals("3ds-unknown-protocol", error.errorId)
             assertEquals(
                 """
-                     Cannot perform 3DS due to unsupported
-                     3DS protocol version $mockInitProtocolVersion."
+                Cannot perform 3DS due to unsupported
+                3DS protocol version $mockInitProtocolVersion."
                 """.trimIndent(),
-                error.description
+                error.description,
             )
             assertEquals("Update to the newest io.primer:3ds-android version.", error.recoverySuggestion)
         }
@@ -91,11 +90,11 @@ internal class ThreeDsErrorTest {
             assertEquals("3ds-missing-directory-server-id", error.errorId)
             assertEquals(
                 "Cannot perform 3DS due to missing directory server RID for $mockCardNetwork.",
-                error.description
+                error.description,
             )
             assertEquals(
                 "Contact Primer and provide us with diagnostics id ${error.diagnosticsId}",
-                error.recoverySuggestion
+                error.recoverySuggestion,
             )
         }
 
@@ -125,28 +124,30 @@ internal class ThreeDsErrorTest {
 
         @Test
         fun `ThreeDsChallengeInvalidStatusError should have correct properties`() {
-            val error = ThreeDsError.ThreeDsChallengeInvalidStatusError(
-                "mockStatus",
-                "mockTransactionId",
-                null,
-                mockMessage,
-                mockRuntimeContextParams
-            )
+            val error =
+                ThreeDsError.ThreeDsChallengeInvalidStatusError(
+                    "mockStatus",
+                    "mockTransactionId",
+                    null,
+                    mockMessage,
+                    mockRuntimeContextParams,
+                )
             assertEquals("3ds-challenge-failed", error.errorId)
             assertEquals(
                 "3DS challenge for transaction with id (mockTransactionId) failed with status (mockStatus).",
-                error.description
+                error.description,
             )
             assertEquals(error, error.exposedError)
         }
 
         @Test
         fun `ThreeDsChallengeProtocolFailedError should have correct properties`() {
-            val error = ThreeDsError.ThreeDsChallengeProtocolFailedError(
-                "mockErrorCode",
-                mockMessage,
-                mockProtocolContextParams
-            )
+            val error =
+                ThreeDsError.ThreeDsChallengeProtocolFailedError(
+                    "mockErrorCode",
+                    mockMessage,
+                    mockProtocolContextParams,
+                )
             assertEquals("3ds-challenge-failed", error.errorId)
             assertEquals("3DS Challenge failed due to [mockErrorCode]. $mockMessage", error.description)
             assertEquals(error, error.exposedError)
@@ -159,7 +160,7 @@ internal class ThreeDsErrorTest {
             assertEquals("An unknown error occurred while trying to perform 3DS.", error.description)
             assertEquals(
                 "Contact Primer and provide us with diagnostics id ${error.diagnosticsId}",
-                error.recoverySuggestion
+                error.recoverySuggestion,
             )
         }
     }

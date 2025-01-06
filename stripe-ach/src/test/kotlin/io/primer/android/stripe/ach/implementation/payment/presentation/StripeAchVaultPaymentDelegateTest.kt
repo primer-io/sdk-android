@@ -11,7 +11,6 @@ import io.mockk.junit5.MockKExtension
 import io.mockk.just
 import io.mockk.mockk
 import io.mockk.mockkStatic
-import io.mockk.slot
 import io.mockk.spyk
 import io.mockk.unmockkStatic
 import io.mockk.verify
@@ -76,21 +75,22 @@ class StripeAchVaultPaymentDelegateTest {
     fun setUp() {
         MockKAnnotations.init(this)
         mockkStatic("io.primer.android.core.extensions.DateKt")
-        stripeAchVaultPaymentDelegate = spyk(
-            StripeAchVaultPaymentDelegate(
-                paymentMethodTokenHandler = mockk(),
-                resumePaymentHandler = mockk(),
-                successHandler = successHandler,
-                errorHandler = errorHandler,
-                baseErrorResolver = baseErrorResolver,
-                resumeDecisionHandler = resumeDecisionHandler,
-                completeStripeAchPaymentSessionDelegate = completeStripeAchPaymentSessionDelegate,
-                pendingResumeHandler = pendingResumeHandler,
-                manualFlowSuccessHandler = manualFlowSuccessHandler,
-                paymentResultRepository = paymentResultRepository,
-                config = config
+        stripeAchVaultPaymentDelegate =
+            spyk(
+                StripeAchVaultPaymentDelegate(
+                    paymentMethodTokenHandler = mockk(),
+                    resumePaymentHandler = mockk(),
+                    successHandler = successHandler,
+                    errorHandler = errorHandler,
+                    baseErrorResolver = baseErrorResolver,
+                    resumeDecisionHandler = resumeDecisionHandler,
+                    completeStripeAchPaymentSessionDelegate = completeStripeAchPaymentSessionDelegate,
+                    pendingResumeHandler = pendingResumeHandler,
+                    manualFlowSuccessHandler = manualFlowSuccessHandler,
+                    paymentResultRepository = paymentResultRepository,
+                    config = config,
+                ),
             )
-        )
     }
 
     @AfterEach
@@ -104,261 +104,280 @@ class StripeAchVaultPaymentDelegateTest {
             pendingResumeHandler,
             manualFlowSuccessHandler,
             paymentResultRepository,
-            config
+            config,
         )
         unmockkStatic("io.primer.android.core.extensions.DateKt")
     }
 
     @Test
-    fun `given manual mode relevant handlers and delegates are called`() = runBlocking {
-        // Arrange
-        val stripeAchVaultDecision = mockk<StripeAchVaultDecision> {
-            every { sdkCompleteUrl } returns "sdkCompleteUrl"
-        }
-        coEvery { resumeDecisionHandler.continueWithNewClientToken("clientToken") } returns Result.success(
-            stripeAchVaultDecision
-        )
-        every { config.settings.paymentHandling } returns PrimerPaymentHandling.MANUAL
-        coEvery { completeStripeAchPaymentSessionDelegate.invoke(any(), any(), any()) } returns Result.success(Unit)
-        every { any<Date>().toIso8601String() } returns "iso8601"
-        coEvery { pendingResumeHandler.handle(any()) } just Runs
-        coEvery { manualFlowSuccessHandler.handle() } just Runs
+    fun `given manual mode relevant handlers and delegates are called`() =
+        runBlocking {
+            // Arrange
+            val stripeAchVaultDecision =
+                mockk<StripeAchVaultDecision> {
+                    every { sdkCompleteUrl } returns "sdkCompleteUrl"
+                }
+            coEvery { resumeDecisionHandler.continueWithNewClientToken("clientToken") } returns
+                Result.success(
+                    stripeAchVaultDecision,
+                )
+            every { config.settings.paymentHandling } returns PrimerPaymentHandling.MANUAL
+            coEvery { completeStripeAchPaymentSessionDelegate.invoke(any(), any(), any()) } returns Result.success(Unit)
+            every { any<Date>().toIso8601String() } returns "iso8601"
+            coEvery { pendingResumeHandler.handle(any()) } just Runs
+            coEvery { manualFlowSuccessHandler.handle() } just Runs
 
-        // Act
-        launch {
-            stripeAchVaultPaymentDelegate.handleNewClientToken("clientToken", mockk())
-        }
-        delay(1.seconds)
+            // Act
+            launch {
+                stripeAchVaultPaymentDelegate.handleNewClientToken("clientToken", mockk())
+            }
+            delay(1.seconds)
 
-        // Assert
-        coVerify {
-            resumeDecisionHandler.continueWithNewClientToken("clientToken")
-            completeStripeAchPaymentSessionDelegate.invoke("sdkCompleteUrl", null, any<Date>())
-            manualFlowSuccessHandler.handle()
+            // Assert
+            coVerify {
+                resumeDecisionHandler.continueWithNewClientToken("clientToken")
+                completeStripeAchPaymentSessionDelegate.invoke("sdkCompleteUrl", null, any<Date>())
+                manualFlowSuccessHandler.handle()
+            }
+            verify {
+                config.settings.paymentHandling
+                pendingResumeHandler.handle(AchAdditionalInfo.MandateAccepted("iso8601"))
+            }
         }
-        verify {
-            config.settings.paymentHandling
-            pendingResumeHandler.handle(AchAdditionalInfo.MandateAccepted("iso8601"))
-        }
-    }
-
-    @Test
-    fun `given auto mode relevant handlers and delegates are called`() = runBlocking {
-        // Arrange
-        val stripeAchVaultDecision = mockk<StripeAchVaultDecision> {
-            every { sdkCompleteUrl } returns "sdkCompleteUrl"
-        }
-        coEvery { resumeDecisionHandler.continueWithNewClientToken("clientToken") } returns Result.success(
-            stripeAchVaultDecision
-        )
-        every { config.settings.paymentHandling } returns PrimerPaymentHandling.AUTO
-        coEvery { completeStripeAchPaymentSessionDelegate.invoke(any(), any(), any()) } returns Result.success(Unit)
-        coEvery { successHandler.handle(any(), any()) } just Runs
-        val payment = mockk<Payment>()
-        every { paymentResultRepository.getPaymentResult().payment } returns payment
-
-        // Act
-        launch {
-            stripeAchVaultPaymentDelegate.handleNewClientToken("clientToken", mockk())
-        }
-        delay(1.seconds)
-
-        // Assert
-        coVerify {
-            resumeDecisionHandler.continueWithNewClientToken("clientToken")
-            completeStripeAchPaymentSessionDelegate.invoke("sdkCompleteUrl", null, any<Date>())
-            successHandler.handle(payment = payment, additionalInfo = null)
-        }
-        verify {
-            config.settings.paymentHandling
-            paymentResultRepository.getPaymentResult().payment
-        }
-    }
 
     @Test
-    fun `when continueWithNewClientToken fails then error is handled`() = runBlocking {
-        // Arrange
-        val exception = Exception("error")
-        coEvery { resumeDecisionHandler.continueWithNewClientToken(any()) } returns Result.failure(exception)
-        val error = mockk<PrimerError>()
-        every { baseErrorResolver.resolve(any()) } returns error
-        coEvery { errorHandler.handle(any(), any()) } just Runs
+    fun `given auto mode relevant handlers and delegates are called`() =
+        runBlocking {
+            // Arrange
+            val stripeAchVaultDecision =
+                mockk<StripeAchVaultDecision> {
+                    every { sdkCompleteUrl } returns "sdkCompleteUrl"
+                }
+            coEvery { resumeDecisionHandler.continueWithNewClientToken("clientToken") } returns
+                Result.success(
+                    stripeAchVaultDecision,
+                )
+            every { config.settings.paymentHandling } returns PrimerPaymentHandling.AUTO
+            coEvery { completeStripeAchPaymentSessionDelegate.invoke(any(), any(), any()) } returns Result.success(Unit)
+            coEvery { successHandler.handle(any(), any()) } just Runs
+            val payment = mockk<Payment>()
+            every { paymentResultRepository.getPaymentResult().payment } returns payment
 
-        // Act
-        val result = stripeAchVaultPaymentDelegate.handleNewClientToken("clientToken", mockk())
+            // Act
+            launch {
+                stripeAchVaultPaymentDelegate.handleNewClientToken("clientToken", mockk())
+            }
+            delay(1.seconds)
 
-        // Assert
-        assertTrue(result.isFailure)
-        coVerify {
-            resumeDecisionHandler.continueWithNewClientToken("clientToken")
-            errorHandler.handle(error = error, payment = null)
+            // Assert
+            coVerify {
+                resumeDecisionHandler.continueWithNewClientToken("clientToken")
+                completeStripeAchPaymentSessionDelegate.invoke("sdkCompleteUrl", null, any<Date>())
+                successHandler.handle(payment = payment, additionalInfo = null)
+            }
+            verify {
+                config.settings.paymentHandling
+                paymentResultRepository.getPaymentResult().payment
+            }
         }
-        verify {
-            baseErrorResolver.resolve(exception)
-        }
-        coVerify(exactly = 0) { completeStripeAchPaymentSessionDelegate.invoke(any(), any(), any()) }
-    }
-
-    @Test
-    fun `given manual mode, when pending resume handler fails then error is handled`() = runBlocking {
-        // Arrange
-        val stripeAchVaultDecision = mockk<StripeAchVaultDecision> {
-            every { sdkCompleteUrl } returns "sdkCompleteUrl"
-        }
-        coEvery { resumeDecisionHandler.continueWithNewClientToken("clientToken") } returns Result.success(
-            stripeAchVaultDecision
-        )
-        every { config.settings.paymentHandling } returns PrimerPaymentHandling.MANUAL
-        coEvery { completeStripeAchPaymentSessionDelegate.invoke(any(), any(), any()) } returns Result.success(Unit)
-        every { any<Date>().toIso8601String() } returns "iso8601"
-        val exception = Exception("error")
-        coEvery { pendingResumeHandler.handle(any()) } throws exception
-        val error = mockk<PrimerError>()
-        every { baseErrorResolver.resolve(any()) } returns error
-        coEvery { errorHandler.handle(any(), any()) } just Runs
-
-        // Act
-        launch {
-            stripeAchVaultPaymentDelegate.handleNewClientToken("clientToken", mockk())
-        }
-        delay(1.seconds)
-
-        // Assert
-        coVerify {
-            resumeDecisionHandler.continueWithNewClientToken("clientToken")
-            completeStripeAchPaymentSessionDelegate.invoke("sdkCompleteUrl", null, any<Date>())
-        }
-        verify {
-            config.settings.paymentHandling
-            pendingResumeHandler.handle(AchAdditionalInfo.MandateAccepted("iso8601"))
-        }
-        coVerify {
-            resumeDecisionHandler.continueWithNewClientToken("clientToken")
-            errorHandler.handle(error = error, payment = null)
-        }
-        verify {
-            baseErrorResolver.resolve(exception)
-        }
-    }
 
     @Test
-    fun `given manual mode, when manual flow success handler fails then error is handled`() = runBlocking {
-        // Arrange
-        val stripeAchVaultDecision = mockk<StripeAchVaultDecision> {
-            every { sdkCompleteUrl } returns "sdkCompleteUrl"
-        }
-        coEvery { resumeDecisionHandler.continueWithNewClientToken("clientToken") } returns Result.success(
-            stripeAchVaultDecision
-        )
-        every { config.settings.paymentHandling } returns PrimerPaymentHandling.MANUAL
-        coEvery { completeStripeAchPaymentSessionDelegate.invoke(any(), any(), any()) } returns Result.success(Unit)
-        every { any<Date>().toIso8601String() } returns "iso8601"
-        val exception = Exception("error")
-        coEvery { pendingResumeHandler.handle(any()) } just Runs
-        coEvery { manualFlowSuccessHandler.handle() } throws exception
-        val error = mockk<PrimerError>()
-        every { baseErrorResolver.resolve(any()) } returns error
-        coEvery { errorHandler.handle(any(), any()) } just Runs
+    fun `when continueWithNewClientToken fails then error is handled`() =
+        runBlocking {
+            // Arrange
+            val exception = Exception("error")
+            coEvery { resumeDecisionHandler.continueWithNewClientToken(any()) } returns Result.failure(exception)
+            val error = mockk<PrimerError>()
+            every { baseErrorResolver.resolve(any()) } returns error
+            coEvery { errorHandler.handle(any(), any()) } just Runs
 
-        // Act
-        launch {
-            stripeAchVaultPaymentDelegate.handleNewClientToken("clientToken", mockk())
-        }
-        delay(1.seconds)
+            // Act
+            val result = stripeAchVaultPaymentDelegate.handleNewClientToken("clientToken", mockk())
 
-        // Assert
-        coVerify {
-            resumeDecisionHandler.continueWithNewClientToken("clientToken")
-            completeStripeAchPaymentSessionDelegate.invoke("sdkCompleteUrl", null, any<Date>())
-            manualFlowSuccessHandler.handle()
+            // Assert
+            assertTrue(result.isFailure)
+            coVerify {
+                resumeDecisionHandler.continueWithNewClientToken("clientToken")
+                errorHandler.handle(error = error, payment = null)
+            }
+            verify {
+                baseErrorResolver.resolve(exception)
+            }
+            coVerify(exactly = 0) { completeStripeAchPaymentSessionDelegate.invoke(any(), any(), any()) }
         }
-        coVerify {
-            resumeDecisionHandler.continueWithNewClientToken("clientToken")
-            errorHandler.handle(error = error, payment = null)
-        }
-        verify {
-            config.settings.paymentHandling
-            pendingResumeHandler.handle(AchAdditionalInfo.MandateAccepted("iso8601"))
-            baseErrorResolver.resolve(exception)
-        }
-    }
 
     @Test
-    fun `given auto mode, when success handler fails then error is handled`() = runBlocking {
-        // Arrange
-        val stripeAchVaultDecision = mockk<StripeAchVaultDecision> {
-            every { sdkCompleteUrl } returns "sdkCompleteUrl"
-        }
-        coEvery { resumeDecisionHandler.continueWithNewClientToken("clientToken") } returns Result.success(
-            stripeAchVaultDecision
-        )
-        every { config.settings.paymentHandling } returns PrimerPaymentHandling.AUTO
-        coEvery { completeStripeAchPaymentSessionDelegate.invoke(any(), any(), any()) } returns Result.success(Unit)
-        val exception = Exception("error")
-        coEvery { successHandler.handle(any(), any()) } throws exception
-        val payment = mockk<Payment>()
-        every { paymentResultRepository.getPaymentResult().payment } returns payment
-        val error = mockk<PrimerError>()
-        every { baseErrorResolver.resolve(any()) } returns error
-        coEvery { errorHandler.handle(any(), any()) } just Runs
+    fun `given manual mode, when pending resume handler fails then error is handled`() =
+        runBlocking {
+            // Arrange
+            val stripeAchVaultDecision =
+                mockk<StripeAchVaultDecision> {
+                    every { sdkCompleteUrl } returns "sdkCompleteUrl"
+                }
+            coEvery { resumeDecisionHandler.continueWithNewClientToken("clientToken") } returns
+                Result.success(
+                    stripeAchVaultDecision,
+                )
+            every { config.settings.paymentHandling } returns PrimerPaymentHandling.MANUAL
+            coEvery { completeStripeAchPaymentSessionDelegate.invoke(any(), any(), any()) } returns Result.success(Unit)
+            every { any<Date>().toIso8601String() } returns "iso8601"
+            val exception = Exception("error")
+            coEvery { pendingResumeHandler.handle(any()) } throws exception
+            val error = mockk<PrimerError>()
+            every { baseErrorResolver.resolve(any()) } returns error
+            coEvery { errorHandler.handle(any(), any()) } just Runs
 
-        // Act
-        launch {
-            stripeAchVaultPaymentDelegate.handleNewClientToken("clientToken", mockk())
-        }
-        delay(1.seconds)
+            // Act
+            launch {
+                stripeAchVaultPaymentDelegate.handleNewClientToken("clientToken", mockk())
+            }
+            delay(1.seconds)
 
-        // Assert
-        coVerify {
-            resumeDecisionHandler.continueWithNewClientToken("clientToken")
-            completeStripeAchPaymentSessionDelegate.invoke("sdkCompleteUrl", null, any<Date>())
-            successHandler.handle(payment = payment, additionalInfo = null)
-            errorHandler.handle(error = error, payment = null)
+            // Assert
+            coVerify {
+                resumeDecisionHandler.continueWithNewClientToken("clientToken")
+                completeStripeAchPaymentSessionDelegate.invoke("sdkCompleteUrl", null, any<Date>())
+            }
+            verify {
+                config.settings.paymentHandling
+                pendingResumeHandler.handle(AchAdditionalInfo.MandateAccepted("iso8601"))
+            }
+            coVerify {
+                resumeDecisionHandler.continueWithNewClientToken("clientToken")
+                errorHandler.handle(error = error, payment = null)
+            }
+            verify {
+                baseErrorResolver.resolve(exception)
+            }
         }
-        verify {
-            config.settings.paymentHandling
-            paymentResultRepository.getPaymentResult().payment
-            baseErrorResolver.resolve(exception)
-        }
-    }
 
     @Test
-    fun `given auto mode, when payment result repository fails then error is handled`() = runBlocking {
-        // Arrange
-        val stripeAchVaultDecision = mockk<StripeAchVaultDecision> {
-            every { sdkCompleteUrl } returns "sdkCompleteUrl"
-        }
-        coEvery { resumeDecisionHandler.continueWithNewClientToken("clientToken") } returns Result.success(
-            stripeAchVaultDecision
-        )
-        every { config.settings.paymentHandling } returns PrimerPaymentHandling.AUTO
-        coEvery { completeStripeAchPaymentSessionDelegate.invoke(any(), any(), any()) } returns Result.success(Unit)
-        val exception = Exception("error")
-        val payment = mockk<Payment>()
-        every { paymentResultRepository.getPaymentResult().payment } throws exception
-        val error = mockk<PrimerError>()
-        every { baseErrorResolver.resolve(any()) } returns error
-        coEvery { errorHandler.handle(any(), any()) } just Runs
+    fun `given manual mode, when manual flow success handler fails then error is handled`() =
+        runBlocking {
+            // Arrange
+            val stripeAchVaultDecision =
+                mockk<StripeAchVaultDecision> {
+                    every { sdkCompleteUrl } returns "sdkCompleteUrl"
+                }
+            coEvery { resumeDecisionHandler.continueWithNewClientToken("clientToken") } returns
+                Result.success(
+                    stripeAchVaultDecision,
+                )
+            every { config.settings.paymentHandling } returns PrimerPaymentHandling.MANUAL
+            coEvery { completeStripeAchPaymentSessionDelegate.invoke(any(), any(), any()) } returns Result.success(Unit)
+            every { any<Date>().toIso8601String() } returns "iso8601"
+            val exception = Exception("error")
+            coEvery { pendingResumeHandler.handle(any()) } just Runs
+            coEvery { manualFlowSuccessHandler.handle() } throws exception
+            val error = mockk<PrimerError>()
+            every { baseErrorResolver.resolve(any()) } returns error
+            coEvery { errorHandler.handle(any(), any()) } just Runs
 
-        // Act
-        launch {
-            stripeAchVaultPaymentDelegate.handleNewClientToken("clientToken", mockk())
-        }
-        delay(1.seconds)
+            // Act
+            launch {
+                stripeAchVaultPaymentDelegate.handleNewClientToken("clientToken", mockk())
+            }
+            delay(1.seconds)
 
-        // Assert
-        coVerify {
-            resumeDecisionHandler.continueWithNewClientToken("clientToken")
-            completeStripeAchPaymentSessionDelegate.invoke("sdkCompleteUrl", null, any<Date>())
-            errorHandler.handle(error = error, payment = null)
+            // Assert
+            coVerify {
+                resumeDecisionHandler.continueWithNewClientToken("clientToken")
+                completeStripeAchPaymentSessionDelegate.invoke("sdkCompleteUrl", null, any<Date>())
+                manualFlowSuccessHandler.handle()
+            }
+            coVerify {
+                resumeDecisionHandler.continueWithNewClientToken("clientToken")
+                errorHandler.handle(error = error, payment = null)
+            }
+            verify {
+                config.settings.paymentHandling
+                pendingResumeHandler.handle(AchAdditionalInfo.MandateAccepted("iso8601"))
+                baseErrorResolver.resolve(exception)
+            }
         }
-        verify {
-            config.settings.paymentHandling
-            paymentResultRepository.getPaymentResult().payment
-            baseErrorResolver.resolve(exception)
+
+    @Test
+    fun `given auto mode, when success handler fails then error is handled`() =
+        runBlocking {
+            // Arrange
+            val stripeAchVaultDecision =
+                mockk<StripeAchVaultDecision> {
+                    every { sdkCompleteUrl } returns "sdkCompleteUrl"
+                }
+            coEvery { resumeDecisionHandler.continueWithNewClientToken("clientToken") } returns
+                Result.success(
+                    stripeAchVaultDecision,
+                )
+            every { config.settings.paymentHandling } returns PrimerPaymentHandling.AUTO
+            coEvery { completeStripeAchPaymentSessionDelegate.invoke(any(), any(), any()) } returns Result.success(Unit)
+            val exception = Exception("error")
+            coEvery { successHandler.handle(any(), any()) } throws exception
+            val payment = mockk<Payment>()
+            every { paymentResultRepository.getPaymentResult().payment } returns payment
+            val error = mockk<PrimerError>()
+            every { baseErrorResolver.resolve(any()) } returns error
+            coEvery { errorHandler.handle(any(), any()) } just Runs
+
+            // Act
+            launch {
+                stripeAchVaultPaymentDelegate.handleNewClientToken("clientToken", mockk())
+            }
+            delay(1.seconds)
+
+            // Assert
+            coVerify {
+                resumeDecisionHandler.continueWithNewClientToken("clientToken")
+                completeStripeAchPaymentSessionDelegate.invoke("sdkCompleteUrl", null, any<Date>())
+                successHandler.handle(payment = payment, additionalInfo = null)
+                errorHandler.handle(error = error, payment = null)
+            }
+            verify {
+                config.settings.paymentHandling
+                paymentResultRepository.getPaymentResult().payment
+                baseErrorResolver.resolve(exception)
+            }
         }
-        coVerify(exactly = 0) {
-            successHandler.handle(payment = any(), additionalInfo = any())
+
+    @Test
+    fun `given auto mode, when payment result repository fails then error is handled`() =
+        runBlocking {
+            // Arrange
+            val stripeAchVaultDecision =
+                mockk<StripeAchVaultDecision> {
+                    every { sdkCompleteUrl } returns "sdkCompleteUrl"
+                }
+            coEvery { resumeDecisionHandler.continueWithNewClientToken("clientToken") } returns
+                Result.success(
+                    stripeAchVaultDecision,
+                )
+            every { config.settings.paymentHandling } returns PrimerPaymentHandling.AUTO
+            coEvery { completeStripeAchPaymentSessionDelegate.invoke(any(), any(), any()) } returns Result.success(Unit)
+            val exception = Exception("error")
+            val payment = mockk<Payment>()
+            every { paymentResultRepository.getPaymentResult().payment } throws exception
+            val error = mockk<PrimerError>()
+            every { baseErrorResolver.resolve(any()) } returns error
+            coEvery { errorHandler.handle(any(), any()) } just Runs
+
+            // Act
+            launch {
+                stripeAchVaultPaymentDelegate.handleNewClientToken("clientToken", mockk())
+            }
+            delay(1.seconds)
+
+            // Assert
+            coVerify {
+                resumeDecisionHandler.continueWithNewClientToken("clientToken")
+                completeStripeAchPaymentSessionDelegate.invoke("sdkCompleteUrl", null, any<Date>())
+                errorHandler.handle(error = error, payment = null)
+            }
+            verify {
+                config.settings.paymentHandling
+                paymentResultRepository.getPaymentResult().payment
+                baseErrorResolver.resolve(exception)
+            }
+            coVerify(exactly = 0) {
+                successHandler.handle(payment = any(), additionalInfo = any())
+            }
         }
-    }
 }

@@ -17,28 +17,30 @@ import java.util.UUID
 internal class StripeAchMandateTimestampLoggingDelegate(
     private val logReporter: LogReporter,
     private val analyticsInteractor: AnalyticsInteractor,
-    private val dispatcher: CoroutineDispatcher = Dispatchers.IO
+    private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) {
     suspend fun logTimestamp(
         stripePaymentIntentId: String,
-        date: Date
-    ): Unit = withContext(dispatcher) {
-        supervisorScope {
-            val message = "Stripe ACH mandate for payment intent with id " +
-                "'$stripePaymentIntentId' was approved at '${date.toIso8601String()}'"
-            launch {
-                analyticsInteractor(
-                    MessageAnalyticsParams(
-                        messageType = MessageType.INFO,
-                        message = message,
-                        severity = Severity.INFO,
-                        diagnosticsId = UUID.randomUUID().toString()
+        date: Date,
+    ): Unit =
+        withContext(dispatcher) {
+            supervisorScope {
+                val message =
+                    "Stripe ACH mandate for payment intent with id " +
+                        "'$stripePaymentIntentId' was approved at '${date.toIso8601String()}'"
+                launch {
+                    analyticsInteractor(
+                        MessageAnalyticsParams(
+                            messageType = MessageType.INFO,
+                            message = message,
+                            severity = Severity.INFO,
+                            diagnosticsId = UUID.randomUUID().toString(),
+                        ),
                     )
-                )
-            }
-            launch {
-                logReporter.info(message = message)
+                }
+                launch {
+                    logReporter.info(message = message)
+                }
             }
         }
-    }
 }

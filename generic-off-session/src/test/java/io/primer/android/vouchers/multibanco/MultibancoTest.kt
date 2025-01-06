@@ -18,7 +18,6 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 internal class MultibancoTest {
-
     private val paymentMethodType = "multibanco"
     private lateinit var multibanco: Multibanco
     private lateinit var mockContext: Context
@@ -66,7 +65,7 @@ internal class MultibancoTest {
         verify {
             mockPaymentMethodDescriptorFactoryRegistry.register(
                 paymentMethodType,
-                any<MultibancoDescriptorFactory>()
+                any<MultibancoDescriptorFactory>(),
             )
         }
     }
@@ -78,7 +77,7 @@ internal class MultibancoTest {
         verify {
             mockPaymentMethodProviderFactoryRegistry.register(
                 paymentMethodType,
-                MultibancoComposerProviderFactory::class.java
+                MultibancoComposerProviderFactory::class.java,
             )
         }
     }

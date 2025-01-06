@@ -1,14 +1,13 @@
 package io.primer.android.klarna.api.composable
 
 import android.content.Context
-import io.primer.android.paymentmethods.manager.composable.PrimerCollectableData
 import io.primer.android.klarna.implementation.session.domain.models.KlarnaPaymentCategory
+import io.primer.android.paymentmethods.manager.composable.PrimerCollectableData
 
 /**
  * A sealed interface representing collectable data needed for Klarna payments.
  */
 sealed interface KlarnaPaymentCollectableData : PrimerCollectableData {
-
     /**
      * A data class representing the step of choosing a Klarna Payment method.
      *
@@ -20,7 +19,7 @@ sealed interface KlarnaPaymentCollectableData : PrimerCollectableData {
     data class PaymentOptions(
         val context: Context,
         val returnIntentUrl: String,
-        val paymentCategory: KlarnaPaymentCategory
+        val paymentCategory: KlarnaPaymentCategory,
     ) : KlarnaPaymentCollectableData
 
     /**

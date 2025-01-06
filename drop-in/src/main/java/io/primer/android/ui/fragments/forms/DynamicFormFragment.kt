@@ -38,7 +38,6 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 @ExperimentalCoroutinesApi
 internal class DynamicFormFragment : BaseFormFragment(), PrimerHeadlessUniversalCheckoutRawDataManagerListener {
-
     private val localConfig: PrimerConfig by inject()
 
     private var binding: FragmentDynamicFormBinding by autoCleaned()
@@ -51,13 +50,16 @@ internal class DynamicFormFragment : BaseFormFragment(), PrimerHeadlessUniversal
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
         binding = FragmentDynamicFormBinding.inflate(inflater, container, false)
         return binding.root
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onViewCreated(
+        view: View,
+        savedInstanceState: Bundle?,
+    ) {
         super.onViewCreated(view, savedInstanceState)
         rawDataManager = PrimerHeadlessUniversalCheckoutRawDataManager.newInstance(descriptor.paymentMethodType)
         rawDataManager.setListener(this)
@@ -72,7 +74,10 @@ internal class DynamicFormFragment : BaseFormFragment(), PrimerHeadlessUniversal
         }
     }
 
-    override fun onValidationChanged(isValid: Boolean, errors: List<PrimerInputValidationError>) {
+    override fun onValidationChanged(
+        isValid: Boolean,
+        errors: List<PrimerInputValidationError>,
+    ) {
         binding.formButton.isEnabled = isValid
     }
 
@@ -80,28 +85,30 @@ internal class DynamicFormFragment : BaseFormFragment(), PrimerHeadlessUniversal
         super.setupForm(form)
         val parentLayout = binding.mainLayout.also { it.removeAllViews() }
 
-        val inputs = form.inputs?.map { formData ->
-            val childView = LayoutInflater.from(requireContext())
-                .inflate(R.layout.payment_method_dynamic_input, parentLayout, false)
-                as TextInputWidget
+        val inputs =
+            form.inputs?.map { formData ->
+                val childView =
+                    LayoutInflater.from(requireContext())
+                        .inflate(R.layout.payment_method_dynamic_input, parentLayout, false)
+                        as TextInputWidget
 
-            handleFormInputPrefix(childView, formData)
+                handleFormInputPrefix(childView, formData)
 
-            childView
-                .apply {
-                    id = View.generateViewId()
-                    hint = getString(formData.hint)
-                    editText?.inputType = formData.inputType
-                    onValueChanged = createValueChangedListener(formData)
-                }.also {
-                    it.setupEditTextTheme(withTextPrefix = formData.formType == FormType.PHONE)
-                    it.setupEditTextInputFilters(
-                        formData.inputCharacters,
-                        formData.maxInputLength
-                    )
-                    it.setupEditTextListeners()
-                }
-        }
+                childView
+                    .apply {
+                        id = View.generateViewId()
+                        hint = getString(formData.hint)
+                        editText?.inputType = formData.inputType
+                        onValueChanged = createValueChangedListener(formData)
+                    }.also {
+                        it.setupEditTextTheme(withTextPrefix = formData.formType == FormType.PHONE)
+                        it.setupEditTextInputFilters(
+                            formData.inputCharacters,
+                            formData.maxInputLength,
+                        )
+                        it.setupEditTextListeners()
+                    }
+            }
         inputs?.forEach {
             parentLayout.addView(it)
         }
@@ -112,28 +119,34 @@ internal class DynamicFormFragment : BaseFormFragment(), PrimerHeadlessUniversal
         FieldFocuser.focus(inputs?.first()?.editText)
     }
 
-    private fun TextInputWidget.createValueChangedListener(formData: FormInput): (CharSequence?) -> Unit = {
-        when (descriptor.paymentMethodType) {
-            PaymentMethodType.XENDIT_OVO.name,
-            PaymentMethodType.ADYEN_MBWAY.name -> {
-                val digits = "${prefixText ?: ""} $it".keepDigits()
-                rawDataManager.setRawData(PrimerPhoneNumberData(phoneNumber = "+$digits"))
+    private fun TextInputWidget.createValueChangedListener(formData: FormInput): (CharSequence?) -> Unit =
+        {
+            when (descriptor.paymentMethodType) {
+                PaymentMethodType.XENDIT_OVO.name,
+                PaymentMethodType.ADYEN_MBWAY.name,
+                -> {
+                    val digits = "${prefixText ?: ""} $it".keepDigits()
+                    rawDataManager.setRawData(PrimerPhoneNumberData(phoneNumber = "+$digits"))
+                }
+                PaymentMethodType.ADYEN_BLIK.name -> rawDataManager.setRawData(PrimerOtpData(it.toString()))
+
+                else -> error("Unsupported payment method '${descriptor.paymentMethodType}'")
             }
-            PaymentMethodType.ADYEN_BLIK.name -> rawDataManager.setRawData(PrimerOtpData(it.toString()))
-
-            else -> error("Unsupported payment method '${descriptor.paymentMethodType}'")
         }
-    }
 
-    private fun handleFormInputPrefix(childView: TextInputWidget, formData: FormInput) {
+    private fun handleFormInputPrefix(
+        childView: TextInputWidget,
+        formData: FormInput,
+    ) {
         when (val prefixData = formData.inputPrefix) {
             is DialCodeCountryPrefix -> {
-                childView.prefixText = String.format(
-                    localConfig.settings.locale,
-                    "%s %s",
-                    prefixData.phoneCode.code.emojiFlag(),
-                    prefixData.phoneCode.dialCode
-                )
+                childView.prefixText =
+                    String.format(
+                        localConfig.settings.locale,
+                        "%s %s",
+                        prefixData.phoneCode.code.emojiFlag(),
+                        prefixData.phoneCode.dialCode,
+                    )
                 childView.addDialCodeCountryPrefixDivider()
             }
         }
@@ -165,8 +178,8 @@ internal class DynamicFormFragment : BaseFormFragment(), PrimerHeadlessUniversal
                 ObjectType.BUTTON,
                 Place.DYNAMIC_FORM,
                 ObjectId.SUBMIT,
-                PaymentMethodContextParams(paymentMethodType)
-            )
+                PaymentMethodContextParams(paymentMethodType),
+            ),
         )
 
     // region Utils
@@ -178,7 +191,7 @@ internal class DynamicFormFragment : BaseFormFragment(), PrimerHeadlessUniversal
             null,
             null,
             ContextCompat.getDrawable(requireContext(), R.drawable.divider_input_prefix),
-            null
+            null,
         )
     }
     // endregion

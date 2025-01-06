@@ -10,7 +10,6 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
 class GeneralErrorTest {
-
     @Test
     fun `should create MissingConfigurationError with correct properties`() {
         // Act
@@ -28,9 +27,10 @@ class GeneralErrorTest {
     @Test
     fun `should create InvalidValueError with correct properties`() {
         // Arrange
-        val key = mockk<IllegalValueKey>(relaxed = true) {
-            every { key } returns "invalid-key"
-        }
+        val key =
+            mockk<IllegalValueKey>(relaxed = true) {
+                every { key } returns "invalid-key"
+            }
         val message = "Invalid value provided"
 
         // Act
@@ -44,16 +44,17 @@ class GeneralErrorTest {
         assertNull(error.errorCode)
         assertEquals(
             "Contact Primer and provide us with diagnostics id ${error.diagnosticsId}",
-            error.recoverySuggestion
+            error.recoverySuggestion,
         )
     }
 
     @Test
     fun `should create InvalidClientSessionValueError with correct properties`() {
         // Arrange
-        val key = mockk<IllegalValueKey>(relaxed = true) {
-            every { key } returns "session-key"
-        }
+        val key =
+            mockk<IllegalValueKey>(relaxed = true) {
+                every { key } returns "session-key"
+            }
         val value = "invalid-value"
         val allowedValue = "allowed-value"
         val message = "Invalid session value"
@@ -65,7 +66,7 @@ class GeneralErrorTest {
         assertEquals("invalid-client-session-value", error.errorId)
         assertEquals(
             "Invalid client session value for 'session-key' with value 'invalid-value'",
-            error.description
+            error.description,
         )
         assertNotNull(error.diagnosticsId)
         assertTrue(error.diagnosticsId.isNotBlank())
@@ -73,7 +74,7 @@ class GeneralErrorTest {
         assertEquals(
             "Check if you have provided a valid value for session-key in your client " +
                 "session, Allowed values are [allowed-value]",
-            error.recoverySuggestion
+            error.recoverySuggestion,
         )
     }
 
@@ -93,7 +94,7 @@ class GeneralErrorTest {
         assertNull(error.errorCode)
         assertEquals(
             "Contact Primer and provide us with diagnostics id ${error.diagnosticsId}.",
-            error.recoverySuggestion
+            error.recoverySuggestion,
         )
     }
 
@@ -113,7 +114,7 @@ class GeneralErrorTest {
         assertNull(error.errorCode)
         assertEquals(
             "Contact Primer and provide us with diagnostics id ${error.diagnosticsId}.",
-            error.recoverySuggestion
+            error.recoverySuggestion,
         )
     }
 }

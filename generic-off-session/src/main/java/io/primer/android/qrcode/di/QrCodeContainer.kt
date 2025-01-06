@@ -24,22 +24,21 @@ import io.primer.android.qrcode.implementation.tokenization.presentation.QrCodeT
 
 internal class QrCodeContainer(private val sdk: () -> SdkContainer, private val paymentMethodType: String) :
     DependencyContainer() {
-
     override fun registerInitialDependencies() {
         registerFactory(name = paymentMethodType) {
             PaymentMethodSdkAnalyticsEventLoggingDelegate(
                 primerPaymentMethodManagerCategory =
-                PrimerPaymentMethodManagerCategory.NATIVE_UI.name,
-                analyticsInteractor = sdk().resolve()
+                    PrimerPaymentMethodManagerCategory.NATIVE_UI.name,
+                analyticsInteractor = sdk().resolve(),
             )
         }
 
         registerFactory<PaymentMethodConfigurationRepository<QrCodeConfig, QrCodeConfigParams>>(
-            name = paymentMethodType
+            name = paymentMethodType,
         ) {
             QrCodeConfigurationDataRepository(
                 configurationDataSource = sdk().resolve(ConfigurationCoreContainer.CACHED_CONFIGURATION_DI_KEY),
-                settings = sdk().resolve()
+                settings = sdk().resolve(),
             )
         }
 
@@ -48,7 +47,7 @@ internal class QrCodeContainer(private val sdk: () -> SdkContainer, private val 
         }
 
         registerFactory<BaseRemoteTokenizationDataSource<QrCodePaymentInstrumentDataRequest>>(
-            name = paymentMethodType
+            name = paymentMethodType,
         ) {
             QrCodeRemoteTokenizationDataSource(primerHttpClient = sdk().resolve())
         }
@@ -57,21 +56,22 @@ internal class QrCodeContainer(private val sdk: () -> SdkContainer, private val 
 
         registerFactory<QrCodeTokenizationInteractor>(name = paymentMethodType) {
             DefaultQrCodeTokenizationInteractor(
-                tokenizationRepository = QrCodeTokenizationDataRepository(
-                    remoteTokenizationDataSource = sdk().resolve(paymentMethodType),
-                    configurationDataSource = sdk().resolve(ConfigurationCoreContainer.CACHED_CONFIGURATION_DI_KEY),
-                    tokenizationParamsMapper = resolve()
-                ),
+                tokenizationRepository =
+                    QrCodeTokenizationDataRepository(
+                        remoteTokenizationDataSource = sdk().resolve(paymentMethodType),
+                        configurationDataSource = sdk().resolve(ConfigurationCoreContainer.CACHED_CONFIGURATION_DI_KEY),
+                        tokenizationParamsMapper = resolve(),
+                    ),
                 tokenizedPaymentMethodRepository = sdk().resolve(),
                 preTokenizationHandler = sdk().resolve(),
-                logReporter = sdk().resolve()
+                logReporter = sdk().resolve(),
             )
         }
 
         registerFactory {
             QrCodeTokenizationDelegate(
                 configurationInteractor = resolve(name = paymentMethodType),
-                tokenizationInteractor = resolve(name = paymentMethodType)
+                tokenizationInteractor = resolve(name = paymentMethodType),
             )
         }
 
@@ -85,7 +85,7 @@ internal class QrCodeContainer(private val sdk: () -> SdkContainer, private val 
                 validateClientTokenRepository = sdk().resolve(),
                 clientTokenRepository = sdk().resolve(),
                 checkoutAdditionalInfoHandler = sdk().resolve(),
-                tokenizedPaymentMethodRepository = sdk().resolve()
+                tokenizedPaymentMethodRepository = sdk().resolve(),
             )
         }
     }

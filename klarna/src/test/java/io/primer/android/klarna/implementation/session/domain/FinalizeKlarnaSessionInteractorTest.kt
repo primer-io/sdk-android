@@ -24,28 +24,30 @@ class FinalizeKlarnaSessionInteractorTest {
     private lateinit var interactor: FinalizeKlarnaSessionInteractor
 
     @Test
-    fun `performAction() returns response when repository call succeeds`() = runTest {
-        val response = mockk<FinalizeKlarnaSessionDataResponse>()
-        val params = mockk<KlarnaCustomerTokenParam>()
-        coEvery {
-            finalizeKlarnaSessionRepository.finalize(params)
-        } returns Result.success(response)
+    fun `performAction() returns response when repository call succeeds`() =
+        runTest {
+            val response = mockk<FinalizeKlarnaSessionDataResponse>()
+            val params = mockk<KlarnaCustomerTokenParam>()
+            coEvery {
+                finalizeKlarnaSessionRepository.finalize(params)
+            } returns Result.success(response)
 
-        val result = interactor.invoke(params)
+            val result = interactor.invoke(params)
 
-        assertEquals(response, result.getOrThrow())
-    }
+            assertEquals(response, result.getOrThrow())
+        }
 
     @Test
-    fun `performAction() returns error when repository call fails`() = runTest {
-        val exception = Exception()
-        val params = mockk<KlarnaCustomerTokenParam>()
-        coEvery {
-            finalizeKlarnaSessionRepository.finalize(params)
-        } returns Result.failure(exception)
+    fun `performAction() returns error when repository call fails`() =
+        runTest {
+            val exception = Exception()
+            val params = mockk<KlarnaCustomerTokenParam>()
+            coEvery {
+                finalizeKlarnaSessionRepository.finalize(params)
+            } returns Result.failure(exception)
 
-        val result = interactor.invoke(params)
+            val result = interactor.invoke(params)
 
-        assertEquals(exception, result.exceptionOrNull())
-    }
+            assertEquals(exception, result.exceptionOrNull())
+        }
 }

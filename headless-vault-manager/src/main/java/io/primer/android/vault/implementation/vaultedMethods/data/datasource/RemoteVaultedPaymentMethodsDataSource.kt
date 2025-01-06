@@ -9,12 +9,11 @@ import io.primer.android.vault.implementation.vaultedMethods.data.model.PaymentM
 import io.primer.android.vault.implementation.vaultedMethods.data.model.PaymentMethodVaultTokenInternal
 
 internal class RemoteVaultedPaymentMethodsDataSource(
-    private val primerHttpClient: PrimerHttpClient
+    private val primerHttpClient: PrimerHttpClient,
 ) : BaseSuspendDataSource<List<PaymentMethodVaultTokenInternal>, ConfigurationData> {
-
     override suspend fun execute(input: ConfigurationData) =
         primerHttpClient.suspendGet<PaymentMethodTokenInternalResponse>(
             "${input.pciUrl}/payment-instruments",
-            mapOf(SDK_API_VERSION_HEADER to Constants.PAYMENT_INSTRUMENTS_VERSION)
+            mapOf(SDK_API_VERSION_HEADER to Constants.PAYMENT_INSTRUMENTS_VERSION),
         ).body.data
 }

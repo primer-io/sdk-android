@@ -15,9 +15,8 @@ data class ClientToken(
     val analyticsUrlV2: String?,
     val intent: String,
     val accessToken: String,
-    val exp: Int
+    val exp: Int,
 ) : JSONDeserializable {
-
     companion object {
         private fun checkIfExpired(expInSeconds: Long): Boolean {
             return TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()) >= expInSeconds
@@ -33,8 +32,9 @@ data class ClientToken(
                 val bytes = Base64.decode(elm, Base64.URL_SAFE)
                 val decoded = String(bytes)
                 if (decoded.contains("\"accessToken\":")) {
-                    val token = JSONSerializationUtils.getJsonObjectDeserializer<ClientToken>()
-                        .deserialize(JSONObject(decoded))
+                    val token =
+                        JSONSerializationUtils.getJsonObjectDeserializer<ClientToken>()
+                            .deserialize(JSONObject(decoded))
 
                     val isExpired = checkIfExpired(token.exp.toLong())
 
@@ -54,14 +54,15 @@ data class ClientToken(
         private const val EXP_FIELD = "exp"
 
         @JvmField
-        val deserializer = JSONObjectDeserializer { t ->
-            ClientToken(
-                configurationUrl = t.optNullableString(CONFIGURATION_URL_FIELD),
-                analyticsUrlV2 = t.optNullableString(ANALYTICS_URL_V2_FIELD),
-                intent = t.getString(INTENT_FIELD),
-                accessToken = t.getString(ACCESS_TOKEN_FIELD),
-                exp = t.getInt(EXP_FIELD)
-            )
-        }
+        val deserializer =
+            JSONObjectDeserializer { t ->
+                ClientToken(
+                    configurationUrl = t.optNullableString(CONFIGURATION_URL_FIELD),
+                    analyticsUrlV2 = t.optNullableString(ANALYTICS_URL_V2_FIELD),
+                    intent = t.getString(INTENT_FIELD),
+                    accessToken = t.getString(ACCESS_TOKEN_FIELD),
+                    exp = t.getInt(EXP_FIELD),
+                )
+            }
     }
 }

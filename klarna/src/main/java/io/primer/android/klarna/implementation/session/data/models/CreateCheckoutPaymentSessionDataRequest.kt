@@ -17,7 +17,7 @@ internal data class CreateCheckoutPaymentSessionDataRequest(
     val localeData: LocaleDataRequest,
     val orderItems: List<OrderItem>,
     val billingAddress: AddressData?,
-    val shippingAddress: AddressData?
+    val shippingAddress: AddressData?,
 ) : JSONObjectSerializable {
     internal data class OrderItem(
         val name: String,
@@ -26,7 +26,7 @@ internal data class CreateCheckoutPaymentSessionDataRequest(
         val quantity: Int,
         val discountAmount: Int?,
         val productType: String?,
-        val taxAmount: Int?
+        val taxAmount: Int?,
     ) : JSONObjectSerializable {
         companion object {
             private const val NAME_FIELD = "name"
@@ -38,22 +38,22 @@ internal data class CreateCheckoutPaymentSessionDataRequest(
             const val TAX_AMOUNT_FIELD = "taxAmount"
 
             @JvmField
-            val serializer = JSONObjectSerializer<OrderItem> { t ->
-                JSONObject().apply {
-                    put(NAME_FIELD, t.name)
-                    put(UNIT_AMOUNT_FIELD, t.unitAmount)
-                    put(REFERENCE_FIELD, t.reference)
-                    put(QUANTITY_FIELD, t.quantity)
-                    put(DISCOUNT_AMOUNT_FIELD, t.discountAmount)
-                    put(PRODUCT_TYPE_FIELD, t.productType)
-                    put(TAX_AMOUNT_FIELD, t.taxAmount)
+            val serializer =
+                JSONObjectSerializer<OrderItem> { t ->
+                    JSONObject().apply {
+                        put(NAME_FIELD, t.name)
+                        put(UNIT_AMOUNT_FIELD, t.unitAmount)
+                        put(REFERENCE_FIELD, t.reference)
+                        put(QUANTITY_FIELD, t.quantity)
+                        put(DISCOUNT_AMOUNT_FIELD, t.discountAmount)
+                        put(PRODUCT_TYPE_FIELD, t.productType)
+                        put(TAX_AMOUNT_FIELD, t.taxAmount)
+                    }
                 }
-            }
         }
     }
 
     companion object {
-
         private const val PAYMENT_METHOD_CONFIG_ID_FIELD = "paymentMethodConfigId"
         private const val SESSION_TYPE_FIELD = "sessionType"
         private const val TOTAL_AMOUNT_FIELD = "totalAmount"
@@ -62,58 +62,61 @@ internal data class CreateCheckoutPaymentSessionDataRequest(
         private const val BILLING_ADDRESS_FIELD = "billingAddress"
         private const val SHIPPING_ADDRESS_FIELD = "shippingAddress"
 
-        val provider = object : WhitelistedHttpBodyKeysProvider {
-            override val values: List<WhitelistedKey> = whitelistedKeys {
-                primitiveKey(PAYMENT_METHOD_CONFIG_ID_FIELD)
-                primitiveKey(SESSION_TYPE_FIELD)
-                primitiveKey(TOTAL_AMOUNT_FIELD)
-                nonPrimitiveKey(LOCALE_DATA_FIELD) {
-                    primitiveKey(LocaleDataRequest.COUNTRY_CODE_FIELD)
-                    primitiveKey(LocaleDataRequest.CURRENCY_CODE_FIELD)
-                    primitiveKey(LocaleDataRequest.LOCALE_CODE_FIELD)
-                }
-                nonPrimitiveKey(ORDER_ITEMS_FIELD) {
-                    primitiveKey(OrderItem.UNIT_AMOUNT_FIELD)
-                    primitiveKey(OrderItem.QUANTITY_FIELD)
-                    primitiveKey(OrderItem.DISCOUNT_AMOUNT_FIELD)
-                    primitiveKey(OrderItem.TAX_AMOUNT_FIELD)
-                }
+        val provider =
+            object : WhitelistedHttpBodyKeysProvider {
+                override val values: List<WhitelistedKey> =
+                    whitelistedKeys {
+                        primitiveKey(PAYMENT_METHOD_CONFIG_ID_FIELD)
+                        primitiveKey(SESSION_TYPE_FIELD)
+                        primitiveKey(TOTAL_AMOUNT_FIELD)
+                        nonPrimitiveKey(LOCALE_DATA_FIELD) {
+                            primitiveKey(LocaleDataRequest.COUNTRY_CODE_FIELD)
+                            primitiveKey(LocaleDataRequest.CURRENCY_CODE_FIELD)
+                            primitiveKey(LocaleDataRequest.LOCALE_CODE_FIELD)
+                        }
+                        nonPrimitiveKey(ORDER_ITEMS_FIELD) {
+                            primitiveKey(OrderItem.UNIT_AMOUNT_FIELD)
+                            primitiveKey(OrderItem.QUANTITY_FIELD)
+                            primitiveKey(OrderItem.DISCOUNT_AMOUNT_FIELD)
+                            primitiveKey(OrderItem.TAX_AMOUNT_FIELD)
+                        }
+                    }
             }
-        }
 
         @JvmField
-        val serializer = JSONObjectSerializer<CreateCheckoutPaymentSessionDataRequest> { t ->
-            JSONObject().apply {
-                put(PAYMENT_METHOD_CONFIG_ID_FIELD, t.paymentMethodConfigId)
-                put(SESSION_TYPE_FIELD, t.sessionType.name)
-                put(TOTAL_AMOUNT_FIELD, t.totalAmount)
-                put(
-                    LOCALE_DATA_FIELD,
-                    JSONSerializationUtils.getJsonObjectSerializer<LocaleDataRequest>()
-                        .serialize(t.localeData)
-                )
-                val serializer = JSONSerializationUtils.getJsonObjectSerializer<OrderItem>()
-                put(
-                    ORDER_ITEMS_FIELD,
-                    JSONArray(t.orderItems.map(serializer::serialize))
-                )
-                t.billingAddress?.let {
+        val serializer =
+            JSONObjectSerializer<CreateCheckoutPaymentSessionDataRequest> { t ->
+                JSONObject().apply {
+                    put(PAYMENT_METHOD_CONFIG_ID_FIELD, t.paymentMethodConfigId)
+                    put(SESSION_TYPE_FIELD, t.sessionType.name)
+                    put(TOTAL_AMOUNT_FIELD, t.totalAmount)
                     put(
-                        BILLING_ADDRESS_FIELD,
-                        JSONSerializationUtils
-                            .getJsonObjectSerializer<AddressData>()
-                            .serialize(it)
+                        LOCALE_DATA_FIELD,
+                        JSONSerializationUtils.getJsonObjectSerializer<LocaleDataRequest>()
+                            .serialize(t.localeData),
                     )
-                }
-                t.shippingAddress?.let {
+                    val serializer = JSONSerializationUtils.getJsonObjectSerializer<OrderItem>()
                     put(
-                        SHIPPING_ADDRESS_FIELD,
-                        JSONSerializationUtils
-                            .getJsonObjectSerializer<AddressData>()
-                            .serialize(it)
+                        ORDER_ITEMS_FIELD,
+                        JSONArray(t.orderItems.map(serializer::serialize)),
                     )
+                    t.billingAddress?.let {
+                        put(
+                            BILLING_ADDRESS_FIELD,
+                            JSONSerializationUtils
+                                .getJsonObjectSerializer<AddressData>()
+                                .serialize(it),
+                        )
+                    }
+                    t.shippingAddress?.let {
+                        put(
+                            SHIPPING_ADDRESS_FIELD,
+                            JSONSerializationUtils
+                                .getJsonObjectSerializer<AddressData>()
+                                .serialize(it),
+                        )
+                    }
                 }
             }
-        }
     }
 }

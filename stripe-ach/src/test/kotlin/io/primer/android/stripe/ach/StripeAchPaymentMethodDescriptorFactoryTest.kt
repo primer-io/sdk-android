@@ -14,12 +14,13 @@ class StripeAchPaymentMethodDescriptorFactoryTest {
 
     @Test
     fun `create() should return StripeAchDescriptor`() {
-        val descriptor = factory.create(
-            localConfig = mockk(),
-            paymentMethodRemoteConfig = mockk(),
-            paymentMethod = mockk(),
-            paymentMethodCheckers = mockk()
-        )
+        val descriptor =
+            factory.create(
+                localConfig = mockk(),
+                paymentMethodRemoteConfig = mockk(),
+                paymentMethod = mockk(),
+                paymentMethodCheckers = mockk(),
+            )
         assertIs<StripeAchDescriptor>(descriptor)
     }
 }

@@ -6,12 +6,14 @@ import androidx.lifecycle.viewmodel.CreationExtras
 import io.primer.android.analytics.domain.AnalyticsInteractor
 
 internal class WebRedirectViewModelFactory(
-    private val analyticsInteractor: AnalyticsInteractor
+    private val analyticsInteractor: AnalyticsInteractor,
 ) : ViewModelProvider.Factory {
-
-    override fun <T : ViewModel> create(modelClass: Class<T>, extras: CreationExtras): T {
+    override fun <T : ViewModel> create(
+        modelClass: Class<T>,
+        extras: CreationExtras,
+    ): T {
         return WebRedirectViewModel(
-            analyticsInteractor = analyticsInteractor
+            analyticsInteractor = analyticsInteractor,
         ) as T
     }
 }

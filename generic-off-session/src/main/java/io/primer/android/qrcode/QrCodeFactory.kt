@@ -6,7 +6,6 @@ import io.primer.android.paymentmethods.PaymentMethod
 import io.primer.android.paymentmethods.PaymentMethodFactory
 
 class QrCodeFactory(val paymentMethodType: String) : PaymentMethodFactory {
-
     override fun build(): Either<PaymentMethod, Exception> {
         return Success(QrCode(paymentMethodType))
     }

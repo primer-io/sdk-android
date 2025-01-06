@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Test
 
 class ResumePaymentDataRequestTest {
-
     @Test
     fun `test ResumePaymentDataRequest serialization`() {
         // Given

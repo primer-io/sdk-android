@@ -11,9 +11,8 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 
 internal class GooglePayTokenizationCollectorDelegate(
-    private val configurationInteractor: GooglePayConfigurationInteractor
+    private val configurationInteractor: GooglePayConfigurationInteractor,
 ) : PaymentMethodTokenizationCollectorDelegate<NoOpPaymentMethodTokenizationCollectorParams>, UiEventable {
-
     private val _uiEvent = MutableSharedFlow<ComposerUiEvent>()
     override val uiEvent: SharedFlow<ComposerUiEvent> = _uiEvent
 
@@ -34,9 +33,9 @@ internal class GooglePayTokenizationCollectorDelegate(
                         shippingOptions = configuration.shippingOptions,
                         shippingAddressParameters = configuration.shippingAddressParameters,
                         requireShippingMethod = configuration.requireShippingMethod,
-                        emailAddressRequired = configuration.emailAddressRequired
-                    )
-                )
+                        emailAddressRequired = configuration.emailAddressRequired,
+                    ),
+                ),
             )
         }
     }

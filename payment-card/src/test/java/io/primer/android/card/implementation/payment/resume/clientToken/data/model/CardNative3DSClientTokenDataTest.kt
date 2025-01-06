@@ -14,7 +14,6 @@ import org.junit.jupiter.api.Test
 import kotlin.test.assertFailsWith
 
 internal class CardNative3DSClientTokenDataTest {
-
     private val validEncodedString = "validEncodedString"
     private val decodedString = """
         {
@@ -38,10 +37,11 @@ internal class CardNative3DSClientTokenDataTest {
         val result = CardNative3DSClientTokenData.fromString(validEncodedString)
 
         // Then
-        val expected = CardNative3DSClientTokenData(
-            intent = "testIntent",
-            supportedThreeDsProtocolVersions = listOf("1.0", "2.0")
-        )
+        val expected =
+            CardNative3DSClientTokenData(
+                intent = "testIntent",
+                supportedThreeDsProtocolVersions = listOf("1.0", "2.0"),
+            )
         assertEquals(expected, result)
     }
 

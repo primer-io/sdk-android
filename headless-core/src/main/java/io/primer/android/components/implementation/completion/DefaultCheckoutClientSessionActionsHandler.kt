@@ -16,13 +16,13 @@ import kotlinx.coroutines.launch
 internal class DefaultCheckoutClientSessionActionsHandler(
     private val analyticsRepository: AnalyticsRepository,
     private val checkoutErrorHandler: CheckoutErrorHandler,
-    private val coroutineDispatcher: MainCoroutineDispatcher = Dispatchers.Main
+    private val coroutineDispatcher: MainCoroutineDispatcher = Dispatchers.Main,
 ) : CheckoutClientSessionActionsHandler {
     override fun onClientSessionUpdateStarted() {
         analyticsRepository.addEvent(
             SdkFunctionParams(
-                HeadlessUniversalCheckoutAnalyticsConstants.ON_BEFORE_CLIENT_SESSION_UPDATED
-            )
+                HeadlessUniversalCheckoutAnalyticsConstants.ON_BEFORE_CLIENT_SESSION_UPDATED,
+            ),
         )
         coroutineDispatcher.dispatch(coroutineDispatcher.immediate) {
             PrimerHeadlessUniversalCheckout.instance.checkoutListener?.onBeforeClientSessionUpdated()
@@ -32,12 +32,12 @@ internal class DefaultCheckoutClientSessionActionsHandler(
     override fun onClientSessionUpdateSuccess(clientSession: PrimerClientSession) {
         analyticsRepository.addEvent(
             SdkFunctionParams(
-                HeadlessUniversalCheckoutAnalyticsConstants.ON_CLIENT_SESSION_UPDATED
-            )
+                HeadlessUniversalCheckoutAnalyticsConstants.ON_CLIENT_SESSION_UPDATED,
+            ),
         )
         coroutineDispatcher.dispatch(coroutineDispatcher.immediate) {
             PrimerHeadlessUniversalCheckout.instance.checkoutListener?.onClientSessionUpdated(
-                clientSession = clientSession
+                clientSession = clientSession,
             )
         }
     }

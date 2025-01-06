@@ -18,7 +18,6 @@ import java.text.SimpleDateFormat
 import java.util.Locale
 
 internal class QrCodeResumeHandlerTest {
-
     private lateinit var clientTokenParser: QrCodeClientTokenParser
     private lateinit var tokenizedPaymentMethodRepository: TokenizedPaymentMethodRepository
     private lateinit var validateClientTokenRepository: ValidateClientTokenRepository
@@ -33,22 +32,24 @@ internal class QrCodeResumeHandlerTest {
         validateClientTokenRepository = mockk()
         clientTokenRepository = mockk()
         checkoutAdditionalInfoHandler = mockk()
-        handler = QrCodeResumeHandler(
-            clientTokenParser,
-            tokenizedPaymentMethodRepository,
-            validateClientTokenRepository,
-            clientTokenRepository,
-            checkoutAdditionalInfoHandler
-        )
+        handler =
+            QrCodeResumeHandler(
+                clientTokenParser,
+                tokenizedPaymentMethodRepository,
+                validateClientTokenRepository,
+                clientTokenRepository,
+                checkoutAdditionalInfoHandler,
+            )
     }
 
     @Test
     fun `supportedClientTokenIntents should return the correct data`() {
         // Arrange
         val paymentMethodType = "OMISE_PROMPTPAY"
-        val paymentMethod = mockk<PaymentMethodTokenInternal> {
-            every { this@mockk.paymentMethodType } returns paymentMethodType
-        }
+        val paymentMethod =
+            mockk<PaymentMethodTokenInternal> {
+                every { this@mockk.paymentMethodType } returns paymentMethodType
+            }
 
         every { tokenizedPaymentMethodRepository.getPaymentMethod() } returns paymentMethod
 
@@ -61,27 +62,31 @@ internal class QrCodeResumeHandlerTest {
 
     @Test
     fun `getResumeDecision should correctly parse client token and return QrCodeDecision`() {
-        val clientToken = QrCodeClientToken(
-            clientTokenIntent = "PAYMENT_METHOD_VOUCHER",
-            statusUrl = "statusUrl",
-            expiresAt = "2024-07-10T00:00:00",
-            qrCodeUrl = "qrCodeUrl",
-            qrCodeBase64 = "qrCodeBase64"
-        )
+        val clientToken =
+            QrCodeClientToken(
+                clientTokenIntent = "PAYMENT_METHOD_VOUCHER",
+                statusUrl = "statusUrl",
+                expiresAt = "2024-07-10T00:00:00",
+                qrCodeUrl = "qrCodeUrl",
+                qrCodeBase64 = "qrCodeBase64",
+            )
 
-        val expiresDateFormat = DateFormat.getDateTimeInstance(
-            DateFormat.MEDIUM,
-            DateFormat.SHORT
-        )
+        val expiresDateFormat =
+            DateFormat.getDateTimeInstance(
+                DateFormat.MEDIUM,
+                DateFormat.SHORT,
+            )
 
-        val expectedDecision = QrCodeDecision(
-            statusUrl = clientToken.statusUrl,
-            expiresAt = expiresDateFormat.format(
-                SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault()).parse(clientToken.expiresAt)
-            ),
-            qrCodeUrl = clientToken.qrCodeUrl,
-            qrCodeBase64 = clientToken.qrCodeBase64
-        )
+        val expectedDecision =
+            QrCodeDecision(
+                statusUrl = clientToken.statusUrl,
+                expiresAt =
+                    expiresDateFormat.format(
+                        SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault()).parse(clientToken.expiresAt),
+                    ),
+                qrCodeUrl = clientToken.qrCodeUrl,
+                qrCodeBase64 = clientToken.qrCodeBase64,
+            )
 
         runTest {
             val result = handler.getResumeDecision(clientToken)

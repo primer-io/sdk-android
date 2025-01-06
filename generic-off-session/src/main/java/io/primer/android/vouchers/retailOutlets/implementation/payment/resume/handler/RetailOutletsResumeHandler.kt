@@ -20,7 +20,7 @@ internal data class RetailOutletsDecision(
     val expiresAt: String,
     val reference: String,
     val entity: String,
-    val retailerName: String
+    val retailerName: String,
 ) : PaymentMethodResumeDecision
 
 internal class RetailOutletsResumeHandler(
@@ -29,19 +29,19 @@ internal class RetailOutletsResumeHandler(
     clientTokenRepository: ClientTokenRepository,
     private val retailOutletRepository: RetailOutletRepository,
     private val tokenizedPaymentMethodRepository: TokenizedPaymentMethodRepository,
-    checkoutAdditionalInfoHandler: CheckoutAdditionalInfoHandler
+    checkoutAdditionalInfoHandler: CheckoutAdditionalInfoHandler,
 ) : PrimerResumeDecisionHandlerV2<RetailOutletsDecision, RetailOutletsClientToken>(
-    clientTokenRepository = clientTokenRepository,
-    validateClientTokenRepository = validateClientTokenRepository,
-    clientTokenParser = clientTokenParser,
-    checkoutAdditionalInfoHandler = checkoutAdditionalInfoHandler
-) {
-
+        clientTokenRepository = clientTokenRepository,
+        validateClientTokenRepository = validateClientTokenRepository,
+        clientTokenParser = clientTokenParser,
+        checkoutAdditionalInfoHandler = checkoutAdditionalInfoHandler,
+    ) {
     private val dateFormatISO = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
-    private val expiresDateFormat = DateFormat.getDateTimeInstance(
-        DateFormat.MEDIUM,
-        DateFormat.SHORT
-    )
+    private val expiresDateFormat =
+        DateFormat.getDateTimeInstance(
+            DateFormat.MEDIUM,
+            DateFormat.SHORT,
+        )
     override var checkoutAdditionalInfo: PrimerCheckoutAdditionalInfo? = null
 
     override val supportedClientTokenIntents: () -> List<String> =
@@ -49,23 +49,27 @@ internal class RetailOutletsResumeHandler(
 
     override suspend fun getResumeDecision(clientToken: RetailOutletsClientToken): RetailOutletsDecision {
         return RetailOutletsDecision(
-            expiresAt = clientToken.expiresAt.let {
-                dateFormatISO.parse(it).let { expiresAt ->
-                    expiresDateFormat.format(expiresAt)
-                }
-            },
+            expiresAt =
+                clientToken.expiresAt.let {
+                    dateFormatISO.parse(it).let { expiresAt ->
+                        expiresDateFormat.format(expiresAt)
+                    }
+                },
             reference = clientToken.reference,
             entity = clientToken.entity,
-            retailerName = retailOutletRepository.getCachedRetailOutlets().first { retailOutlet ->
-                retailOutlet.id ==
-                    tokenizedPaymentMethodRepository.getPaymentMethod().paymentInstrumentData?.sessionInfo?.retailOutlet
-            }.name
+            retailerName =
+                retailOutletRepository.getCachedRetailOutlets().first { retailOutlet ->
+                    retailOutlet.id ==
+                        tokenizedPaymentMethodRepository.getPaymentMethod()
+                            .paymentInstrumentData?.sessionInfo?.retailOutlet
+                }.name,
         ).also { decision ->
-            checkoutAdditionalInfo = XenditCheckoutVoucherAdditionalInfo(
-                expiresAt = decision.expiresAt,
-                couponCode = decision.reference,
-                retailerName = decision.retailerName
-            )
+            checkoutAdditionalInfo =
+                XenditCheckoutVoucherAdditionalInfo(
+                    expiresAt = decision.expiresAt,
+                    couponCode = decision.reference,
+                    retailerName = decision.retailerName,
+                )
         }
     }
 }

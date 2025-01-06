@@ -25,9 +25,9 @@ class FirstNameValidatorTest {
             PrimerValidationError(
                 errorId = StripeAchUserDetailsValidations.INVALID_CUSTOMER_FIRST_NAME_ERROR_ID,
                 description = "The first name may not be blank.",
-                diagnosticsId = "uuid"
+                diagnosticsId = "uuid",
             ),
-            result
+            result,
         )
         unmockkStatic(UUID::class)
     }

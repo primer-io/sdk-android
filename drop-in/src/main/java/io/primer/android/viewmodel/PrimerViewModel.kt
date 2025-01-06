@@ -96,20 +96,20 @@ internal class PrimerViewModel(
     private val errorMapperRegistry: ErrorMapperRegistry,
     private val checkoutErrorHandler: CheckoutErrorHandler,
     private val pollingStartHandler: PollingStartHandler,
-    private val savedStateHandle: SavedStateHandle = SavedStateHandle()
+    private val savedStateHandle: SavedStateHandle = SavedStateHandle(),
 ) : BaseViewModel(analyticsInteractor), DISdkComponent {
-
     private val vaultManager: PrimerHeadlessUniversalCheckoutVaultManagerInterface by lazy {
         PrimerHeadlessUniversalCheckoutVaultManager.newInstance()
     }
 
-    private val _selectedPaymentMethodId = MutableLiveData("")
+    private val selectedPaymentMethodId = MutableLiveData("")
 
     private val _selectedCountryCode = MutableLiveData<PrimerCountry?>()
-    val selectCountryCode: LiveData<PrimerCountry?> = _selectedCountryCode
+    val selectedCountryCode: LiveData<PrimerCountry?>
+        get() = _selectedCountryCode
 
     private val _selectedPhoneCode = MutableLiveData<PrimerPhoneCode?>()
-    val selectPhoneCode: LiveData<PrimerPhoneCode?> = _selectedPhoneCode
+    val selectedPhoneCode: LiveData<PrimerPhoneCode?> = _selectedPhoneCode
 
     private val _keyboardVisible = MutableLiveData(false)
     val keyboardVisible: LiveData<Boolean> = _keyboardVisible
@@ -118,7 +118,7 @@ internal class PrimerViewModel(
         MutableLiveData<ViewStatus>(ViewStatus.Initializing)
     val viewStatus: LiveData<ViewStatus> = _viewStatus
 
-    private var _selectedPaymentMethodNativeUiManager: PrimerHeadlessUniversalCheckoutNativeUiManagerInterface? = null
+    private var selectedPaymentMethodNativeUiManager: PrimerHeadlessUniversalCheckoutNativeUiManagerInterface? = null
 
     init {
         viewModelScope.launch {
@@ -140,14 +140,15 @@ internal class PrimerViewModel(
     }
 
     val selectedSavedPaymentMethod: PrimerVaultedPaymentMethod?
-        get() = vaultedPaymentMethods.value?.find { it.id == _selectedPaymentMethodId.value }
+        get() = vaultedPaymentMethods.value?.find { it.id == selectedPaymentMethodId.value }
 
     val shouldDisplaySavedPaymentMethod: Boolean
         get() = config.intent.paymentMethodIntent.isNotVault && selectedSavedPaymentMethod != null
 
-    private val _vaultedPaymentMethods = MutableLiveData<List<PrimerVaultedPaymentMethod>>(
-        Collections.emptyList()
-    )
+    private val _vaultedPaymentMethods =
+        MutableLiveData<List<PrimerVaultedPaymentMethod>>(
+            Collections.emptyList(),
+        )
     val vaultedPaymentMethods: LiveData<List<PrimerVaultedPaymentMethod>> =
         _vaultedPaymentMethods
 
@@ -182,12 +183,13 @@ internal class PrimerViewModel(
             .asLiveData()
     }
 
-    val showCardInformation: LiveData<CheckoutModule.CardInformation?> = _state.asFlow()
-        .map { configurationInteractor(ConfigurationParams(CachePolicy.ForceCache)).getOrThrow() }
-        .map { configuration ->
-            configuration.checkoutModules.findFirstInstance<CheckoutModule.CardInformation>()
-        }
-        .asLiveData()
+    val showCardInformation: LiveData<CheckoutModule.CardInformation?> =
+        _state.asFlow()
+            .map { configurationInteractor(ConfigurationParams(CachePolicy.ForceCache)).getOrThrow() }
+            .map { configuration ->
+                configuration.checkoutModules.findFirstInstance<CheckoutModule.CardInformation>()
+            }
+            .asLiveData()
 
     suspend fun shouldShowCaptureCvv(): Boolean =
         configurationInteractor(ConfigurationParams(CachePolicy.ForceCache)).map { configuration ->
@@ -218,18 +220,18 @@ internal class PrimerViewModel(
     }
 
     fun setSelectedPaymentMethodNativeUiManager(
-        nativeUiManager: PrimerHeadlessUniversalCheckoutNativeUiManagerInterface
+        nativeUiManager: PrimerHeadlessUniversalCheckoutNativeUiManagerInterface,
     ) {
         addCloseable {
-            _selectedPaymentMethodNativeUiManager = null
+            selectedPaymentMethodNativeUiManager = null
             nativeUiManager.cleanup()
         }
-        _selectedPaymentMethodNativeUiManager = nativeUiManager
+        selectedPaymentMethodNativeUiManager = nativeUiManager
     }
 
     fun clearSelectedPaymentMethodNativeUiManager() {
-        _selectedPaymentMethodNativeUiManager?.cleanup()
-        _selectedPaymentMethodNativeUiManager = null
+        selectedPaymentMethodNativeUiManager?.cleanup()
+        selectedPaymentMethodNativeUiManager = null
     }
 
     fun setKeyboardVisibility(visible: Boolean) {
@@ -273,13 +275,13 @@ internal class PrimerViewModel(
                                                         paymentMethodType = paymentMethod.paymentMethodType,
                                                         paymentMethodName = paymentMethod.paymentMethodName,
                                                         paymentMethodManagerCategory =
-                                                        paymentMethod.paymentMethodManagerCategories.first()
+                                                            paymentMethod.paymentMethodManagerCategories.first(),
                                                     )
                                                 }
                                                     .onFailure {
                                                         checkoutErrorHandler.handle(
                                                             error = errorMapperRegistry.getPrimerError(it),
-                                                            payment = null
+                                                            payment = null,
                                                         )
                                                     }
                                                     .getOrNull()
@@ -313,54 +315,59 @@ internal class PrimerViewModel(
                                     {
                                         checkoutErrorHandler.handle(
                                             error = errorMapperRegistry.getPrimerError(it),
-                                            payment = null
+                                            payment = null,
                                         )
-                                    }
+                                    },
                                 )
                             TimerAnalyticsParams(
                                 id = TimerId.DROP_IN_LOADING,
                                 timerType = TimerType.END,
                                 duration = (timeSource.markNow() - start).inWholeMilliseconds,
-                                context = DropInSourceAnalyticsContext(
-                                    source = config.toDropInSource()
-                                )
+                                context =
+                                    DropInSourceAnalyticsContext(
+                                        source = config.toDropInSource(),
+                                    ),
                             )
                         }
 
-                        is PrimerEvent.CheckoutCompleted -> _viewStatus.postValue(
-                            ViewStatus.ShowSuccess(
-                                successType = event.successType,
-                                checkoutAdditionalInfo = event.checkoutData?.additionalInfo
+                        is PrimerEvent.CheckoutCompleted ->
+                            _viewStatus.postValue(
+                                ViewStatus.ShowSuccess(
+                                    successType = event.successType,
+                                    checkoutAdditionalInfo = event.checkoutData?.additionalInfo,
+                                ),
                             )
-                        )
 
-                        is PrimerEvent.CheckoutFailed -> _viewStatus.postValue(
-                            ViewStatus.ShowError(
-                                errorType = event.errorType,
-                                message = event.errorMessage
+                        is PrimerEvent.CheckoutFailed ->
+                            _viewStatus.postValue(
+                                ViewStatus.ShowError(
+                                    errorType = event.errorType,
+                                    message = event.errorMessage,
+                                ),
                             )
-                        )
 
                         PrimerEvent.Dismiss -> _viewStatus.postValue(ViewStatus.Dismiss)
 
-                        is PrimerEvent.DisableDismiss -> _viewStatus.postValue(
-                            ViewStatus.DisableDismiss
-                        )
+                        is PrimerEvent.DisableDismiss ->
+                            _viewStatus.postValue(
+                                ViewStatus.DisableDismiss,
+                            )
                     }
                 }
             }
             launch {
                 headlessSdkInitInteractor.execute(
-                    HeadlessSdkInitParams(clientToken = config.clientTokenBase64.orEmpty())
+                    HeadlessSdkInitParams(clientToken = config.clientTokenBase64.orEmpty()),
                 )
                 addAnalyticsEvent(
                     TimerAnalyticsParams(
                         id = TimerId.DROP_IN_LOADING,
                         timerType = TimerType.START,
-                        context = DropInSourceAnalyticsContext(
-                            source = config.toDropInSource()
-                        )
-                    )
+                        context =
+                            DropInSourceAnalyticsContext(
+                                source = config.toDropInSource(),
+                            ),
+                    ),
                 )
             }
         }
@@ -369,7 +376,7 @@ internal class PrimerViewModel(
     fun dispatchAction(
         actionUpdateParams: BaseActionUpdateParams,
         resetState: Boolean = true,
-        completion: ((Error?) -> Unit) = {}
+        completion: ((Error?) -> Unit) = {},
     ) {
         viewModelScope.launch {
             setState(SessionState.AWAITING_APP)
@@ -392,19 +399,20 @@ internal class PrimerViewModel(
         dispatchAction(
             ActionUpdateSelectPaymentMethodParams(
                 token.paymentMethodType,
-                network
-            )
+                network,
+            ),
         )
     }
 
-    fun getPaymentMethodsDisplayMetadata(context: Context) = paymentMethodsImplementationInteractor.execute(None)
-        .map {
-            val isDarkMode = config.settings.uiOptions.theme.isDarkMode == true
-            when (it.buttonMetadata?.text.isNullOrBlank()) {
-                true -> it.toImageDisplayMetadata(isDarkMode)
-                false -> it.toTextDisplayMetadata(isDarkMode, context)
+    fun getPaymentMethodsDisplayMetadata(context: Context) =
+        paymentMethodsImplementationInteractor.execute(None)
+            .map {
+                val isDarkMode = config.settings.uiOptions.theme.isDarkMode == true
+                when (it.buttonMetadata?.text.isNullOrBlank()) {
+                    true -> it.toImageDisplayMetadata(isDarkMode)
+                    false -> it.toTextDisplayMetadata(isDarkMode, context)
+                }
             }
-        }
 
     val paymentMethodButtonGroupFactory: PaymentMethodButtonGroupFactory
         get() = PaymentMethodButtonGroupFactory(surcharges = surchargeInteractor(None), formatter = formatter)
@@ -423,35 +431,38 @@ internal class PrimerViewModel(
         }
 
     private val formatter: SurchargeFormatter
-        get() = SurchargeFormatter(
-            surchargeInteractor = surchargeInteractor,
-            amountToCurrencyInteractor = amountToCurrencyInteractor,
-            currency = Currency.getInstance(basicOrderInfoInteractor(None).currencyCode)
-        )
+        get() =
+            SurchargeFormatter(
+                surchargeInteractor = surchargeInteractor,
+                amountToCurrencyInteractor = amountToCurrencyInteractor,
+                currency = Currency.getInstance(basicOrderInfoInteractor(None).currencyCode),
+            )
 
     private val token: PrimerVaultedPaymentMethod?
-        get() = _selectedPaymentMethodId.value
-            ?.let { id -> _vaultedPaymentMethods.value?.find { it.id == id } }
+        get() =
+            selectedPaymentMethodId.value
+                ?.let { id -> _vaultedPaymentMethods.value?.find { it.id == id } }
 
     private val savedPaymentMethodSurcharge: Int
         get() = formatter.getSurchargeForSavedPaymentMethod(token)
 
-    fun savedPaymentMethodSurchargeLabel(context: Context): String = formatter
-        .getSurchargeLabelTextForPaymentMethodType(savedPaymentMethodSurcharge, context)
+    fun savedPaymentMethodSurchargeLabel(context: Context): String =
+        formatter
+            .getSurchargeLabelTextForPaymentMethodType(savedPaymentMethodSurcharge, context)
 
     fun amountLabel(): String = getTotalAmountFormatted()
 
     fun findSurchargeAmount(
         type: String,
-        network: String? = null
+        network: String? = null,
     ): Int = formatter.getSurchargeForPaymentMethodType(type, network)
 
     fun setSelectedPaymentMethodId(id: String) {
         _selectedPaymentMethod.value = null
-        _selectedPaymentMethodId.value = id
+        selectedPaymentMethodId.value = id
     }
 
-    fun getSelectedPaymentMethodId(): String = _selectedPaymentMethodId.value.orEmpty()
+    fun getSelectedPaymentMethodId(): String = selectedPaymentMethodId.value.orEmpty()
 
     fun emitBillingAddress(completion: ((error: String?) -> Unit) = {}) {
         val enabledBillingAddressFields = showBillingFields.value
@@ -461,10 +472,11 @@ internal class PrimerViewModel(
             completion(null)
             return
         }
-        val billingAddressFields = this.billingAddressFields.value ?: run {
-            completion(null)
-            return
-        }
+        val billingAddressFields =
+            this.billingAddressFields.value ?: run {
+                completion(null)
+                return
+            }
         val countryCode = billingAddressFields[PrimerInputElementType.COUNTRY_CODE]
         val firstName = billingAddressFields[PrimerInputElementType.FIRST_NAME].orNull()
         val lastName = billingAddressFields[PrimerInputElementType.LAST_NAME].orNull()
@@ -474,16 +486,17 @@ internal class PrimerViewModel(
         val city = billingAddressFields[PrimerInputElementType.CITY].orNull()
         val state = billingAddressFields[PrimerInputElementType.STATE].orNull()
 
-        val action = ActionUpdateBillingAddressParams(
-            firstName,
-            lastName,
-            addressLine1,
-            addressLine2,
-            city,
-            postalCode,
-            countryCode,
-            state
-        )
+        val action =
+            ActionUpdateBillingAddressParams(
+                firstName,
+                lastName,
+                addressLine1,
+                addressLine2,
+                city,
+                postalCode,
+                countryCode,
+                state,
+            )
 
         dispatchAction(action) { error ->
             completion(error?.message)
@@ -506,8 +519,8 @@ internal class PrimerViewModel(
                 AnalyticsAction.CLICK,
                 ObjectType.BUTTON,
                 config.toPlace(),
-                ObjectId.MANAGE
-            )
+                ObjectId.MANAGE,
+            ),
         )
     }
 
@@ -517,8 +530,8 @@ internal class PrimerViewModel(
                 AnalyticsAction.CLICK,
                 ObjectType.BUTTON,
                 Place.PAYMENT_METHODS_LIST,
-                ObjectId.BACK
-            )
+                ObjectId.BACK,
+            ),
         )
     }
 
@@ -529,8 +542,8 @@ internal class PrimerViewModel(
                 ObjectType.BUTTON,
                 config.toPlace(),
                 ObjectId.SELECT,
-                PaymentMethodContextParams(paymentMethodType)
-            )
+                PaymentMethodContextParams(paymentMethodType),
+            ),
         )
     }
 
@@ -546,43 +559,47 @@ internal class PrimerViewModel(
         _selectedPhoneCode.postValue(phoneCode)
     }
 
-    fun validateBillingAddress(): List<SyncValidationError> = billingAddressValidator.validate(
-        billingAddressFields.value.orEmpty(),
-        showBillingFields.value.orEmpty()
-    )
+    fun validateBillingAddress(): List<SyncValidationError> =
+        billingAddressValidator.validate(
+            billingAddressFields.value.orEmpty(),
+            showBillingFields.value.orEmpty(),
+        )
 
-    fun getTotalAmountFormatted(): String = basicOrderInfoInteractor.execute(None).let { orderInfo ->
-        orderInfo.let {
-            amountToCurrencyInteractor.execute(
-                params = FormatCurrencyParams(
-                    requireNotNull(
-                        MonetaryAmount.create(
-                            orderInfo.currencyCode,
-                            orderInfo.totalAmount
-                        )
-                    )
+    fun getTotalAmountFormatted(): String =
+        basicOrderInfoInteractor.execute(None).let { orderInfo ->
+            orderInfo.let {
+                amountToCurrencyInteractor.execute(
+                    params =
+                        FormatCurrencyParams(
+                            requireNotNull(
+                                MonetaryAmount.create(
+                                    orderInfo.currencyCode,
+                                    orderInfo.totalAmount,
+                                ),
+                            ),
+                        ),
                 )
-            )
+            }
         }
-    }
 
     fun getAmountFormatted(amount: Int): String =
         amount.let {
             amountToCurrencyInteractor.execute(
-                params = FormatCurrencyParams(
-                    requireNotNull(
-                        MonetaryAmount.create(
-                            currency = basicOrderInfoInteractor(None).currencyCode,
-                            value = amount
-                        )
-                    )
-                )
+                params =
+                    FormatCurrencyParams(
+                        requireNotNull(
+                            MonetaryAmount.create(
+                                currency = basicOrderInfoInteractor(None).currencyCode,
+                                value = amount,
+                            ),
+                        ),
+                    ),
             )
         }
 
     fun exchangePaymentMethodToken(
         paymentMethod: PrimerVaultedPaymentMethod,
-        additionalData: PrimerVaultedPaymentMethodAdditionalData?
+        additionalData: PrimerVaultedPaymentMethodAdditionalData?,
     ) = viewModelScope.launch {
         additionalData?.let {
             vaultManager.startPaymentFlow(vaultedPaymentMethodId = paymentMethod.id, additionalData = additionalData)
@@ -596,22 +613,21 @@ internal class PrimerViewModel(
         }
     }
 
-    fun deletePaymentMethodToken(
-        paymentMethod: PrimerVaultedPaymentMethod
-    ) = viewModelScope.launch {
-        vaultManager.deleteVaultedPaymentMethod(vaultedPaymentMethodId = paymentMethod.id)
-            .onSuccess {
-                _vaultedPaymentMethods.postValue(
-                    _vaultedPaymentMethods.value.orEmpty()
-                        .filterNot { vaultedPaymentMethod ->
-                            vaultedPaymentMethod.analyticsId == paymentMethod.analyticsId
-                        }
-                )
-            }
-            .onFailure { throwable ->
-                handleError(throwable = throwable)
-            }
-    }
+    fun deletePaymentMethodToken(paymentMethod: PrimerVaultedPaymentMethod) =
+        viewModelScope.launch {
+            vaultManager.deleteVaultedPaymentMethod(vaultedPaymentMethodId = paymentMethod.id)
+                .onSuccess {
+                    _vaultedPaymentMethods.postValue(
+                        _vaultedPaymentMethods.value.orEmpty()
+                            .filterNot { vaultedPaymentMethod ->
+                                vaultedPaymentMethod.analyticsId == paymentMethod.analyticsId
+                            },
+                    )
+                }
+                .onFailure { throwable ->
+                    handleError(throwable = throwable)
+                }
+        }
 
     private suspend fun handleError(throwable: Throwable) {
         checkoutErrorHandler.handle(error = errorMapperRegistry.getPrimerError(throwable), payment = null)

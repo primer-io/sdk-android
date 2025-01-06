@@ -8,11 +8,10 @@ import io.primer.android.core.data.network.PrimerHttpClient
 
 internal class RemoteFinalizeMockedFlowDataSource(private val httpClient: PrimerHttpClient) :
     BaseSuspendDataSource<EmptyDataResponse, BaseRemoteHostRequest<EmptyDataRequest>> {
-
     override suspend fun execute(input: BaseRemoteHostRequest<EmptyDataRequest>): EmptyDataResponse {
         return httpClient.suspendPost<EmptyDataRequest, EmptyDataResponse>(
             "${input.host}/finalize-polling",
-            input.data
+            input.data,
         ).body
     }
 }

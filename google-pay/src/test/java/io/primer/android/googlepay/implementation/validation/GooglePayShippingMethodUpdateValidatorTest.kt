@@ -29,72 +29,83 @@ internal class GooglePayShippingMethodUpdateValidatorTest {
     }
 
     @Test
-    fun `should throw ShippingAddressUnserviceableException when shipping options is null`(): Unit = runBlocking {
-        val mockConfiguration = mockk<GooglePayConfiguration> {
-            every { shippingOptions } returns null
-        }
-        every {
-            configurationRepository.getPaymentMethodConfiguration(NoOpPaymentMethodConfigurationParams)
-        } returns Result.success(mockConfiguration)
+    fun `should throw ShippingAddressUnserviceableException when shipping options is null`(): Unit =
+        runBlocking {
+            val mockConfiguration =
+                mockk<GooglePayConfiguration> {
+                    every { shippingOptions } returns null
+                }
+            every {
+                configurationRepository.getPaymentMethodConfiguration(NoOpPaymentMethodConfigurationParams)
+            } returns Result.success(mockConfiguration)
 
-        assertThrows<ShippingAddressUnserviceableException> {
-            validator(validUpdate)
+            assertThrows<ShippingAddressUnserviceableException> {
+                validator(validUpdate)
+            }
         }
-    }
 
     @Test
-    fun `should throw ShippingAddressUnserviceableException when shipping methods empty`(): Unit = runBlocking {
-        val emptyShippingOptions = CheckoutModule.Shipping(shippingMethods = listOf(), selectedMethod = VALID_ID)
-        val mockConfiguration = mockk<GooglePayConfiguration> {
-            every { shippingOptions } returns emptyShippingOptions
-        }
-        every {
-            configurationRepository.getPaymentMethodConfiguration(NoOpPaymentMethodConfigurationParams)
-        } returns Result.success(mockConfiguration)
+    fun `should throw ShippingAddressUnserviceableException when shipping methods empty`(): Unit =
+        runBlocking {
+            val emptyShippingOptions = CheckoutModule.Shipping(shippingMethods = listOf(), selectedMethod = VALID_ID)
+            val mockConfiguration =
+                mockk<GooglePayConfiguration> {
+                    every { shippingOptions } returns emptyShippingOptions
+                }
+            every {
+                configurationRepository.getPaymentMethodConfiguration(NoOpPaymentMethodConfigurationParams)
+            } returns Result.success(mockConfiguration)
 
-        assertThrows<ShippingAddressUnserviceableException> {
-            validator(validUpdate)
+            assertThrows<ShippingAddressUnserviceableException> {
+                validator(validUpdate)
+            }
         }
-    }
 
     @Test
-    fun `should throw ShippingAddressUnserviceableException when shipping method is not listed`(): Unit = runBlocking {
-        val otherShippingOptions = CheckoutModule.Shipping(
-            shippingMethods = listOf(
-                ShippingMethod("name", "description", 100, "other_id")
+    fun `should throw ShippingAddressUnserviceableException when shipping method is not listed`(): Unit =
+        runBlocking {
+            val otherShippingOptions =
+                CheckoutModule.Shipping(
+                    shippingMethods =
+                        listOf(
+                            ShippingMethod("name", "description", 100, "other_id"),
+                        ),
+                    selectedMethod = VALID_ID,
+                )
+            val mockConfiguration =
+                mockk<GooglePayConfiguration> {
+                    every { shippingOptions } returns otherShippingOptions
+                }
+            every {
+                configurationRepository.getPaymentMethodConfiguration(NoOpPaymentMethodConfigurationParams)
+            } returns Result.success(mockConfiguration)
 
-            ),
-            selectedMethod = VALID_ID
-        )
-        val mockConfiguration = mockk<GooglePayConfiguration> {
-            every { shippingOptions } returns otherShippingOptions
+            assertThrows<ShippingAddressUnserviceableException> {
+                validator(validUpdate)
+            }
         }
-        every {
-            configurationRepository.getPaymentMethodConfiguration(NoOpPaymentMethodConfigurationParams)
-        } returns Result.success(mockConfiguration)
-
-        assertThrows<ShippingAddressUnserviceableException> {
-            validator(validUpdate)
-        }
-    }
 
     @Test
-    fun `should emit Unit when configuration is valid `() = runBlocking {
-        val validShippingOptions = CheckoutModule.Shipping(
-            shippingMethods = listOf(
-                ShippingMethod("name", "description", 100, "valid_id")
-            ),
-            selectedMethod = VALID_ID
-        )
-        val mockConfiguration = mockk<GooglePayConfiguration>(relaxed = true) {
-            every { shippingOptions } returns validShippingOptions
+    fun `should emit Unit when configuration is valid `() =
+        runBlocking {
+            val validShippingOptions =
+                CheckoutModule.Shipping(
+                    shippingMethods =
+                        listOf(
+                            ShippingMethod("name", "description", 100, "valid_id"),
+                        ),
+                    selectedMethod = VALID_ID,
+                )
+            val mockConfiguration =
+                mockk<GooglePayConfiguration>(relaxed = true) {
+                    every { shippingOptions } returns validShippingOptions
+                }
+            every {
+                configurationRepository.getPaymentMethodConfiguration(NoOpPaymentMethodConfigurationParams)
+            } returns Result.success(mockConfiguration)
+
+            val result = validator.invoke(validUpdate).getOrThrow()
+
+            assertEquals(Unit, result)
         }
-        every {
-            configurationRepository.getPaymentMethodConfiguration(NoOpPaymentMethodConfigurationParams)
-        } returns Result.success(mockConfiguration)
-
-        val result = validator.invoke(validUpdate).getOrThrow()
-
-        assertEquals(Unit, result)
-    }
 }

@@ -4,5 +4,5 @@ import io.primer.android.paymentmethods.core.configuration.domain.model.PaymentM
 
 internal data class WebRedirectConfig(
     val paymentMethodConfigId: String,
-    val locale: String
+    val locale: String,
 ) : PaymentMethodConfiguration

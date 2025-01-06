@@ -8,10 +8,10 @@ import io.primer.android.stripe.ach.implementation.validation.rules.ValidStripeP
 
 class StripeInitValidationRulesResolver internal constructor(
     private val validStripePublishableKeyRule: ValidStripePublishableKeyRule,
-    private val validStripeMandateDataRule: ValidStripeMandateDataRule
+    private val validStripeMandateDataRule: ValidStripeMandateDataRule,
 ) : ValidationRulesResolver<PrimerStripeOptions> {
-
-    override fun resolve() = ValidationRulesChain<PrimerStripeOptions>()
-        .addRule(validStripePublishableKeyRule)
-        .addRule(validStripeMandateDataRule)
+    override fun resolve() =
+        ValidationRulesChain<PrimerStripeOptions>()
+            .addRule(validStripePublishableKeyRule)
+            .addRule(validStripeMandateDataRule)
 }

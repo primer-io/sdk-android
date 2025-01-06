@@ -6,14 +6,13 @@ import io.primer.android.vouchers.multibanco.implementation.payment.resume.clien
 
 internal class MultibancoClientTokenParser :
     PaymentMethodClientTokenParser<MultibancoClientToken> {
-
     override fun parseClientToken(clientToken: String): MultibancoClientToken {
         return MultibancoClientTokenData.fromString(clientToken).let { clientTokenData ->
             MultibancoClientToken(
                 clientTokenIntent = clientTokenData.intent,
                 expiresAt = clientTokenData.expiresAt,
                 entity = clientTokenData.entity,
-                reference = clientTokenData.reference
+                reference = clientTokenData.reference,
             )
         }
     }

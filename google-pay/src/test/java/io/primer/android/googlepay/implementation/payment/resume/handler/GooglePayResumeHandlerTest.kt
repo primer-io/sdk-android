@@ -18,18 +18,18 @@ import kotlin.test.assertContains
 import kotlin.test.assertEquals
 
 class GooglePayResumeHandlerTest {
-
     private val clientTokenParser = mockk<GooglePayClientTokenParser>()
     private val validateClientTokenRepository = mockk<ValidateClientTokenRepository>()
     private val clientTokenRepository = mockk<ClientTokenRepository>()
     private val checkoutAdditionalInfoHandler = mockk<CheckoutAdditionalInfoHandler>()
 
-    private val handler = GooglePayResumeHandler(
-        clientTokenParser,
-        validateClientTokenRepository,
-        clientTokenRepository,
-        checkoutAdditionalInfoHandler
-    )
+    private val handler =
+        GooglePayResumeHandler(
+            clientTokenParser,
+            validateClientTokenRepository,
+            clientTokenRepository,
+            checkoutAdditionalInfoHandler,
+        )
 
     @BeforeEach
     fun setUp() {
@@ -44,10 +44,11 @@ class GooglePayResumeHandlerTest {
     @Test
     fun `getResumeDecision should return the correct GooglePayResumeDecision when called with a GooglePayNative3DSClientToken`() {
         // Given
-        val clientToken = GooglePayClientToken.GooglePayNative3DSClientToken(
-            clientTokenIntent = ClientTokenIntent.`3DS_AUTHENTICATION`.name,
-            supportedThreeDsProtocolVersions = listOf("1.0", "2.0")
-        )
+        val clientToken =
+            GooglePayClientToken.GooglePayNative3DSClientToken(
+                clientTokenIntent = ClientTokenIntent.`3DS_AUTHENTICATION`.name,
+                supportedThreeDsProtocolVersions = listOf("1.0", "2.0"),
+            )
         every { clientTokenParser.parseClientToken(any()) } returns clientToken
 
         runTest {
@@ -63,13 +64,15 @@ class GooglePayResumeHandlerTest {
     @Test
     fun `getResumeDecision should return the correct GooglePayResumeDecision when called with a GooglePayProcessor3DSClientToken`() {
         // Given
-        val clientToken = GooglePayClientToken.GooglePayProcessor3DSClientToken(
-            clientTokenIntent = ClientTokenIntent.`3DS_AUTHENTICATION`.name,
-            processor3DS = Processor3DS(
-                redirectUrl = "https://www.example/redirect",
-                statusUrl = "https://www.example/status"
+        val clientToken =
+            GooglePayClientToken.GooglePayProcessor3DSClientToken(
+                clientTokenIntent = ClientTokenIntent.`3DS_AUTHENTICATION`.name,
+                processor3DS =
+                    Processor3DS(
+                        redirectUrl = "https://www.example/redirect",
+                        statusUrl = "https://www.example/status",
+                    ),
             )
-        )
         every { clientTokenParser.parseClientToken(any()) } returns clientToken
 
         runTest {
@@ -77,12 +80,13 @@ class GooglePayResumeHandlerTest {
             val decision = handler.getResumeDecision(clientToken)
 
             // Then
-            val expected = GooglePayResumeDecision.GooglePayProcessor3dsResumeDecision(
-                Processor3DS(
-                    redirectUrl = "https://www.example/redirect",
-                    statusUrl = "https://www.example/status"
+            val expected =
+                GooglePayResumeDecision.GooglePayProcessor3dsResumeDecision(
+                    Processor3DS(
+                        redirectUrl = "https://www.example/redirect",
+                        statusUrl = "https://www.example/status",
+                    ),
                 )
-            )
             assertEquals(expected, decision)
         }
     }

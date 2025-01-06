@@ -30,7 +30,7 @@ inline fun <T, R> Result<T>.flatMap(block: (T) -> (Result<R>)): Result<R> {
 
 suspend inline fun <T1, T2, R> Result<T1>.zipWith(
     other: Result<T2>,
-    crossinline transform: suspend (T1, T2) -> R
+    crossinline transform: suspend (T1, T2) -> R,
 ): Result<R> =
     coroutineScope {
         val deferredT1 = async { this@zipWith }

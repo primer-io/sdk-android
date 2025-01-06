@@ -11,5 +11,5 @@ data class PaymentResult(
     val requiredActionName: RequiredActionName?,
     val clientToken: String?,
     val paymentMethodData: PrimerCheckoutAdditionalInfo? = null,
-    val showSuccessCheckoutOnPendingPayment: Boolean = false
+    val showSuccessCheckoutOnPendingPayment: Boolean = false,
 )

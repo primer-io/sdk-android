@@ -10,9 +10,8 @@ import kotlinx.coroutines.flow.flowOn
 
 internal class FormsInteractor(
     private val formsRepository: FormsRepository,
-    override val dispatcher: CoroutineDispatcher = Dispatchers.Default
+    override val dispatcher: CoroutineDispatcher = Dispatchers.Default,
 ) : BaseFlowInteractor<Form, FormInputParams>() {
-
     override fun execute(params: FormInputParams) =
         formsRepository.getForms(params.paymentMethodType).flowOn(dispatcher)
 }

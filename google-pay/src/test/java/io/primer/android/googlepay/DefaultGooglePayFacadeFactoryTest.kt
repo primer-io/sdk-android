@@ -19,7 +19,6 @@ import org.junit.jupiter.api.extension.ExtendWith
 
 @ExtendWith(MockKExtension::class)
 internal class DefaultGooglePayFacadeFactoryTest {
-
     @MockK
     private lateinit var applicationContext: Context
 
@@ -43,18 +42,20 @@ internal class DefaultGooglePayFacadeFactoryTest {
     fun `create should return GooglePayFacade with test environment when the environment is set to ENVIRONMENT_TEST`() {
         // Arrange
         val mockPaymentsClient = mockk<PaymentsClient>(relaxed = true)
-        val walletOptions = Wallet.WalletOptions.Builder()
-            .setEnvironment(WalletConstants.ENVIRONMENT_TEST)
-            .build()
+        val walletOptions =
+            Wallet.WalletOptions.Builder()
+                .setEnvironment(WalletConstants.ENVIRONMENT_TEST)
+                .build()
 
         every { Wallet.getPaymentsClient(applicationContext, walletOptions) } returns mockPaymentsClient
 
         // Act
-        val googlePayFacade = factory.create(
-            applicationContext,
-            GooglePayFacade.Environment.TEST,
-            logReporter
-        )
+        val googlePayFacade =
+            factory.create(
+                applicationContext,
+                GooglePayFacade.Environment.TEST,
+                logReporter,
+            )
 
         // Assert
         assertNotNull(googlePayFacade)
@@ -65,18 +66,20 @@ internal class DefaultGooglePayFacadeFactoryTest {
     fun `create should return GooglePayFacade with production environment, when the environment is set to ENVIRONMENT_PRODUCTION`() {
         // Arrange
         val mockPaymentsClient = mockk<PaymentsClient>(relaxed = true)
-        val walletOptions = Wallet.WalletOptions.Builder()
-            .setEnvironment(WalletConstants.ENVIRONMENT_PRODUCTION)
-            .build()
+        val walletOptions =
+            Wallet.WalletOptions.Builder()
+                .setEnvironment(WalletConstants.ENVIRONMENT_PRODUCTION)
+                .build()
 
         every { Wallet.getPaymentsClient(applicationContext, walletOptions) } returns mockPaymentsClient
 
         // Act
-        val googlePayFacade = factory.create(
-            applicationContext,
-            GooglePayFacade.Environment.PRODUCTION,
-            logReporter
-        )
+        val googlePayFacade =
+            factory.create(
+                applicationContext,
+                GooglePayFacade.Environment.PRODUCTION,
+                logReporter,
+            )
 
         // Assert
         assertNotNull(googlePayFacade)

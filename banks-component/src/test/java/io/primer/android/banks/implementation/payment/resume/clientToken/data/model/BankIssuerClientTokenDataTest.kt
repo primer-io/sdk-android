@@ -12,15 +12,15 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 
 class BankIssuerClientTokenDataTest {
-
     private val encodedToken = "encodedToken"
-    private val decodedToken = """
+    private val decodedToken =
+        """
         {
             "intent": "BANK_ISSUER",
             "statusUrl": "http://status.url",
             "redirectUrl": "http://redirect.url"
         }
-    """.trimIndent()
+        """.trimIndent()
 
     @BeforeEach
     fun setUp() {

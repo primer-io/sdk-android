@@ -9,7 +9,6 @@ import io.primer.nolpay.api.models.PrimerNolPaymentCard
  * This data includes information related to the payment process.
  */
 sealed interface NolPayPaymentCollectableData : NolPayCollectableData {
-
     /**
      * Data class representing Nol Pay card and phone data used in payment process.
      *
@@ -19,7 +18,7 @@ sealed interface NolPayPaymentCollectableData : NolPayCollectableData {
      * */
     data class NolPayCardAndPhoneData(
         val nolPaymentCard: PrimerNolPaymentCard,
-        val mobileNumber: String
+        val mobileNumber: String,
     ) : NolPayPaymentCollectableData
 
     /**

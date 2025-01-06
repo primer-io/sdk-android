@@ -7,7 +7,6 @@ import io.primer.android.core.extensions.flatMap
 import io.primer.android.errors.data.exception.PaymentMethodCancelledException
 import io.primer.android.paymentmethods.core.composer.InternalNativeUiPaymentMethodComponent
 import io.primer.android.paymentmethods.core.composer.composable.ComposerUiEvent
-import io.primer.paymentMethodCoreUi.core.ui.navigation.launchers.PaymentMethodLauncherParams
 import io.primer.android.paypal.implementation.composer.ui.navigation.launcher.BrowserLauncherParams
 import io.primer.android.paypal.implementation.payment.presentation.delegate.presentation.PaypalPaymentDelegate
 import io.primer.android.paypal.implementation.tokenization.presentation.PaypalTokenizationCollectorDelegate
@@ -16,18 +15,21 @@ import io.primer.android.paypal.implementation.tokenization.presentation.PaypalT
 import io.primer.android.paypal.implementation.tokenization.presentation.model.PaypalTokenizationInputable
 import io.primer.paymentMethodCoreUi.core.ui.composable.ActivityResultIntentHandler
 import io.primer.paymentMethodCoreUi.core.ui.composable.ActivityStartIntentHandler
+import io.primer.paymentMethodCoreUi.core.ui.navigation.launchers.PaymentMethodLauncherParams
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.launch
 
 internal class PaypalComponent(
     private val tokenizationCollectorDelegate: PaypalTokenizationCollectorDelegate,
     private val tokenizationDelegate: PaypalTokenizationDelegate,
-    private val paymentDelegate: PaypalPaymentDelegate
+    private val paymentDelegate: PaypalPaymentDelegate,
 ) : InternalNativeUiPaymentMethodComponent(),
     ActivityStartIntentHandler,
     ActivityResultIntentHandler {
-
-    override fun start(paymentMethodType: String, primerSessionIntent: PrimerSessionIntent) {
+    override fun start(
+        paymentMethodType: String,
+        primerSessionIntent: PrimerSessionIntent,
+    ) {
         this.paymentMethodType = paymentMethodType
         this.primerSessionIntent = primerSessionIntent
         composerScope.launch {
@@ -39,9 +41,10 @@ internal class PaypalComponent(
         composerScope.launch {
             try {
                 tokenizationCollectorDelegate.startDataCollection(
-                    params = PaypalTokenizationCollectorParams(
-                        primerSessionIntent = primerSessionIntent
-                    )
+                    params =
+                        PaypalTokenizationCollectorParams(
+                            primerSessionIntent = primerSessionIntent,
+                        ),
                 ).onFailure { throwable ->
                     paymentDelegate.handleError(throwable)
                 }
@@ -51,26 +54,32 @@ internal class PaypalComponent(
         }
     }
 
-    override fun handleActivityResultIntent(params: PaymentMethodLauncherParams, resultCode: Int, intent: Intent?) {
+    override fun handleActivityResultIntent(
+        params: PaymentMethodLauncherParams,
+        resultCode: Int,
+        intent: Intent?,
+    ) {
         val redirectParams = params.initialLauncherParams as RedirectLauncherParams
         when (intent?.data?.buildUpon()?.clearQuery()?.build()) {
             Uri.parse(redirectParams.successUrl) -> {
                 tokenize(
                     when (params.sessionIntent) {
-                        PrimerSessionIntent.CHECKOUT -> PaypalTokenizationInputable.PaypalCheckoutTokenizationInputable(
-                            orderId = intent?.data?.getQueryParameter(TOKEN_QUERY_PARAM),
-                            paymentMethodType = paymentMethodType,
-                            paymentMethodConfigId = redirectParams.paymentMethodConfigId,
-                            primerSessionIntent = primerSessionIntent
-                        )
+                        PrimerSessionIntent.CHECKOUT ->
+                            PaypalTokenizationInputable.PaypalCheckoutTokenizationInputable(
+                                orderId = intent?.data?.getQueryParameter(TOKEN_QUERY_PARAM),
+                                paymentMethodType = paymentMethodType,
+                                paymentMethodConfigId = redirectParams.paymentMethodConfigId,
+                                primerSessionIntent = primerSessionIntent,
+                            )
 
-                        PrimerSessionIntent.VAULT -> PaypalTokenizationInputable.PaypalVaultTokenizationInputable(
-                            tokenId = intent?.data?.getQueryParameter(BA_TOKEN_QUERY_PARAM),
-                            paymentMethodConfigId = redirectParams.paymentMethodConfigId,
-                            paymentMethodType = paymentMethodType,
-                            primerSessionIntent = primerSessionIntent
-                        )
-                    }
+                        PrimerSessionIntent.VAULT ->
+                            PaypalTokenizationInputable.PaypalVaultTokenizationInputable(
+                                tokenId = intent?.data?.getQueryParameter(BA_TOKEN_QUERY_PARAM),
+                                paymentMethodConfigId = redirectParams.paymentMethodConfigId,
+                                paymentMethodType = paymentMethodType,
+                                primerSessionIntent = primerSessionIntent,
+                            )
+                    },
                 )
             }
 
@@ -78,8 +87,8 @@ internal class PaypalComponent(
                 composerScope.launch {
                     paymentDelegate.handleError(
                         PaymentMethodCancelledException(
-                            params.paymentMethodType
-                        )
+                            params.paymentMethodType,
+                        ),
                     )
                 }
             }
@@ -91,23 +100,22 @@ internal class PaypalComponent(
         openRedirectScreen(params.initialLauncherParams as RedirectLauncherParams)
     }
 
-    private fun tokenize(
-        tokenizationInputable: PaypalTokenizationInputable
-    ) = composerScope.launch {
-        try {
-            tokenizationDelegate.tokenize(tokenizationInputable)
-                .flatMap { paymentMethodTokenData ->
-                    paymentDelegate.handlePaymentMethodToken(
-                        paymentMethodTokenData = paymentMethodTokenData,
-                        primerSessionIntent = primerSessionIntent
-                    )
-                }.onFailure { throwable ->
-                    paymentDelegate.handleError(throwable)
-                }
-        } catch (e: CancellationException) {
-            paymentDelegate.handleError(PaymentMethodCancelledException(paymentMethodType = paymentMethodType))
+    private fun tokenize(tokenizationInputable: PaypalTokenizationInputable) =
+        composerScope.launch {
+            try {
+                tokenizationDelegate.tokenize(tokenizationInputable)
+                    .flatMap { paymentMethodTokenData ->
+                        paymentDelegate.handlePaymentMethodToken(
+                            paymentMethodTokenData = paymentMethodTokenData,
+                            primerSessionIntent = primerSessionIntent,
+                        )
+                    }.onFailure { throwable ->
+                        paymentDelegate.handleError(throwable)
+                    }
+            } catch (e: CancellationException) {
+                paymentDelegate.handleError(PaymentMethodCancelledException(paymentMethodType = paymentMethodType))
+            }
         }
-    }
 
     private fun openRedirectScreen(event: RedirectLauncherParams) {
         composerScope.launch {
@@ -117,19 +125,19 @@ internal class PaypalComponent(
                         url = event.url,
                         host = event.successUrl,
                         paymentMethodType = event.paymentMethodType,
-                        sessionIntent = event.sessionIntent
-                    )
-                )
+                        sessionIntent = event.sessionIntent,
+                    ),
+                ),
             )
         }
     }
 
-    private fun close() = composerScope.launch {
-        _uiEvent.emit(ComposerUiEvent.Finish)
-    }
+    private fun close() =
+        composerScope.launch {
+            _uiEvent.emit(ComposerUiEvent.Finish)
+        }
 
     private companion object {
-
         private const val TOKEN_QUERY_PARAM = "token"
         private const val BA_TOKEN_QUERY_PARAM = "ba_token"
     }

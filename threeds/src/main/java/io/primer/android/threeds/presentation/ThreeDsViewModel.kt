@@ -29,9 +29,8 @@ import kotlinx.coroutines.launch
 internal class ThreeDsViewModel(
     private val threeDsInteractor: ThreeDsInteractor,
     private val analyticsInteractor: AnalyticsInteractor,
-    private val settings: PrimerSettings
+    private val settings: PrimerSettings,
 ) : ViewModel() {
-
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     internal var challengeInProgress: Boolean = false
 
@@ -56,8 +55,8 @@ internal class ThreeDsViewModel(
             threeDsInteractor.initialize(
                 ThreeDsInitParams(
                     is3DSSanityCheckEnabled = settings.debugOptions.is3DSSanityCheckEnabled,
-                    locale = settings.locale
-                )
+                    locale = settings.locale,
+                ),
             ).onFailure { throwable ->
                 _threeDsErrorEvent.postValue(throwable)
             }.onSuccess {
@@ -74,18 +73,19 @@ internal class ThreeDsViewModel(
                         _threeDsErrorEvent.postValue(throwable)
                     }.onSuccess { transaction ->
                         threeDsInteractor.beginRemoteAuth(
-                            getThreeDsParams(transaction.authenticationRequestParameters)
+                            getThreeDsParams(transaction.authenticationRequestParameters),
                         ).onFailure { throwable ->
                             _threeDsErrorEvent.postValue(throwable)
                             transaction.close()
                         }.onSuccess { result ->
                             when (result.authentication.responseCode) {
-                                ResponseCode.CHALLENGE -> _challengeRequiredEvent.postValue(
-                                    ThreeDsEventData.ChallengeRequiredData(
-                                        transaction,
-                                        result
+                                ResponseCode.CHALLENGE ->
+                                    _challengeRequiredEvent.postValue(
+                                        ThreeDsEventData.ChallengeRequiredData(
+                                            transaction,
+                                            result,
+                                        ),
                                     )
-                                )
 
                                 else -> {
                                     _threeDsFinishedEvent.postValue(result.resumeToken)
@@ -101,7 +101,7 @@ internal class ThreeDsViewModel(
     fun performChallenge(
         activity: Activity,
         transaction: Transaction,
-        authData: BeginAuthResponse
+        authData: BeginAuthResponse,
     ) {
         runIfChallengeNotInProgress {
             challengeInProgress = true
@@ -110,7 +110,7 @@ internal class ThreeDsViewModel(
                 threeDsInteractor.performChallenge(
                     activity,
                     transaction,
-                    authData
+                    authData,
                 ).catch { throwable ->
                     logThreeDsScreenDismissed()
                     _threeDsErrorEvent.postValue(throwable)
@@ -125,12 +125,12 @@ internal class ThreeDsViewModel(
 
     fun continueRemoteAuth(
         challengeStatusData: ChallengeStatusData,
-        supportedThreeDsProtocolVersions: List<String>
+        supportedThreeDsProtocolVersions: List<String>,
     ) {
         viewModelScope.launch {
             threeDsInteractor.continueRemoteAuth(
                 challengeStatusData = challengeStatusData,
-                supportedThreeDsProtocolVersions = supportedThreeDsProtocolVersions
+                supportedThreeDsProtocolVersions = supportedThreeDsProtocolVersions,
             )
                 .onFailure { throwable ->
                     _threeDsErrorEvent.postValue(throwable)
@@ -143,12 +143,12 @@ internal class ThreeDsViewModel(
 
     fun continueRemoteAuthWithException(
         throwable: Throwable,
-        supportedThreeDsProtocolVersions: List<String>
+        supportedThreeDsProtocolVersions: List<String>,
     ) {
         viewModelScope.launch {
             threeDsInteractor.continueRemoteAuthWithException(
                 throwable = throwable,
-                supportedThreeDsProtocolVersions = supportedThreeDsProtocolVersions
+                supportedThreeDsProtocolVersions = supportedThreeDsProtocolVersions,
             ).onFailure {
                 _threeDsErrorEvent.postValue(throwable)
             }
@@ -164,41 +164,45 @@ internal class ThreeDsViewModel(
         threeDsInteractor.cleanup()
     }
 
-    fun addAnalyticsEvent(params: BaseAnalyticsParams) = viewModelScope.launch {
-        analyticsInteractor(params)
-    }
+    fun addAnalyticsEvent(params: BaseAnalyticsParams) =
+        viewModelScope.launch {
+            analyticsInteractor(params)
+        }
 
     sealed class ThreeDsEventData {
         class ChallengeRequiredData(
             val transaction: Transaction,
-            val authData: BeginAuthResponse
+            val authData: BeginAuthResponse,
         )
     }
 
     private fun getThreeDsParams(authenticationRequestParameters: AuthenticationRequestParameters) =
         run {
             ThreeDsCheckoutParams(
-                authenticationRequestParameters
+                authenticationRequestParameters,
             )
         }
 
-    private fun logThreeDsScreenPresented() = addAnalyticsEvent(
-        UIAnalyticsParams(
-            AnalyticsAction.PRESENT,
-            ObjectType.`3RD_PARTY_VIEW`,
-            Place.`3DS_VIEW`
+    private fun logThreeDsScreenPresented() =
+        addAnalyticsEvent(
+            UIAnalyticsParams(
+                AnalyticsAction.PRESENT,
+                ObjectType.`3RD_PARTY_VIEW`,
+                Place.`3DS_VIEW`,
+            ),
         )
-    )
 
-    private fun logThreeDsScreenDismissed() = addAnalyticsEvent(
-        UIAnalyticsParams(
-            AnalyticsAction.DISMISS,
-            ObjectType.`3RD_PARTY_VIEW`,
-            Place.`3DS_VIEW`
+    private fun logThreeDsScreenDismissed() =
+        addAnalyticsEvent(
+            UIAnalyticsParams(
+                AnalyticsAction.DISMISS,
+                ObjectType.`3RD_PARTY_VIEW`,
+                Place.`3DS_VIEW`,
+            ),
         )
-    )
 
-    private fun runIfChallengeNotInProgress(block: () -> Unit) = challengeInProgress.takeIf { it.not() }?.run {
-        block()
-    }
+    private fun runIfChallengeNotInProgress(block: () -> Unit) =
+        challengeInProgress.takeIf { it.not() }?.run {
+            block()
+        }
 }

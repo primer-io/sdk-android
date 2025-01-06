@@ -16,16 +16,16 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 internal class GooglePay3DSNavigatorTest {
-
     private lateinit var activity: Activity
     private lateinit var launcher: ActivityResultLauncher<Intent>
     private lateinit var navigator: GooglePay3DSNavigator
 
     @BeforeEach
     fun setUp() {
-        activity = mockk(relaxed = true) {
-            every { applicationContext } returns mockk(relaxed = true)
-        }
+        activity =
+            mockk(relaxed = true) {
+                every { applicationContext } returns mockk(relaxed = true)
+            }
         launcher = mockk(relaxed = true)
         navigator = GooglePay3DSNavigator(activity, launcher)
 
@@ -37,10 +37,11 @@ internal class GooglePay3DSNavigatorTest {
     fun `navigate() should launch ThreeDsActivity with correct parameters`() {
         // Given
         val supportedThreeDsVersions = listOf("1.0", "2.0", "2.1")
-        val params = GooglePayNative3DSActivityLauncherParams(
-            paymentMethodType = "google_pay",
-            supportedThreeDsVersions = supportedThreeDsVersions
-        )
+        val params =
+            GooglePayNative3DSActivityLauncherParams(
+                paymentMethodType = "google_pay",
+                supportedThreeDsVersions = supportedThreeDsVersions,
+            )
         val expectedIntent = mockk<Intent>()
         every { ThreeDsActivity.Companion.getLaunchIntent(any(), any()) } returns expectedIntent
 
@@ -59,10 +60,11 @@ internal class GooglePay3DSNavigatorTest {
     @Test
     fun `canHandle() should return true when the params received are of type GooglePayNative3DSActivityLauncherParams`() {
         // Given
-        val params = GooglePayNative3DSActivityLauncherParams(
-            paymentMethodType = "google_pay",
-            supportedThreeDsVersions = emptyList()
-        )
+        val params =
+            GooglePayNative3DSActivityLauncherParams(
+                paymentMethodType = "google_pay",
+                supportedThreeDsVersions = emptyList(),
+            )
 
         // When
         val result = navigator.canHandle(params)

@@ -16,27 +16,27 @@ import io.primer.android.payments.core.errors.data.exception.PaymentCreateExcept
 internal class CreatePaymentDataRepository(
     private val createPaymentDataSource: CreatePaymentDataSource,
     private val localPaymentDataSource: LocalPaymentDataSource,
-    private val configurationDataSource: BaseCacheDataSource<ConfigurationData, ConfigurationData>
+    private val configurationDataSource: BaseCacheDataSource<ConfigurationData, ConfigurationData>,
 ) : CreatePaymentRepository {
-
-    override suspend fun createPayment(token: String) = runSuspendCatching {
-        configurationDataSource.get().let {
-            createPaymentDataSource.execute(
-                BaseRemoteHostRequest(
-                    host = it.pciUrl,
-                    data = CreatePaymentDataRequest(token)
+    override suspend fun createPayment(token: String) =
+        runSuspendCatching {
+            configurationDataSource.get().let {
+                createPaymentDataSource.execute(
+                    BaseRemoteHostRequest(
+                        host = it.pciUrl,
+                        data = CreatePaymentDataRequest(token),
+                    ),
                 )
-            )
-        }.let { paymentResponse ->
-            localPaymentDataSource.update(paymentResponse)
-            paymentResponse.toPaymentResult()
-        }
-    }.onError { throwable ->
-        throw when {
-            throwable is HttpException && (throwable.isClientError() || throwable.isPaymentError()) ->
-                PaymentCreateException(cause = throwable)
+            }.let { paymentResponse ->
+                localPaymentDataSource.update(paymentResponse)
+                paymentResponse.toPaymentResult()
+            }
+        }.onError { throwable ->
+            throw when {
+                throwable is HttpException && (throwable.isClientError() || throwable.isPaymentError()) ->
+                    PaymentCreateException(cause = throwable)
 
-            else -> throwable
+                else -> throwable
+            }
         }
-    }
 }

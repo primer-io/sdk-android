@@ -10,10 +10,11 @@ internal object StripeSdkClassValidator {
     private const val STRIPE_CLASS_NAME =
         "io.primer.android.stripe.StripeBankAccountCollectorActivity"
 
-    fun isStripeSdkIncluded(): Boolean = try {
-        Class.forName(STRIPE_CLASS_NAME)
-        true
-    } catch (ignored: ClassNotFoundException) {
-        false
-    }
+    fun isStripeSdkIncluded(): Boolean =
+        try {
+            Class.forName(STRIPE_CLASS_NAME)
+            true
+        } catch (ignored: ClassNotFoundException) {
+            false
+        }
 }

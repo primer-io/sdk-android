@@ -16,7 +16,7 @@ internal data class WebRedirectDecision(
     val paymentMethodType: String,
     val redirectUrl: String,
     val statusUrl: String,
-    val deeplinkUrl: String
+    val deeplinkUrl: String,
 ) : PaymentMethodResumeDecision
 
 internal class WebRedirectResumeHandler(
@@ -26,14 +26,13 @@ internal class WebRedirectResumeHandler(
     private val deeplinkRepository: RedirectDeeplinkRepository,
     validateClientTokenRepository: ValidateClientTokenRepository,
     clientTokenRepository: ClientTokenRepository,
-    checkoutAdditionalInfoHandler: CheckoutAdditionalInfoHandler
+    checkoutAdditionalInfoHandler: CheckoutAdditionalInfoHandler,
 ) : PrimerResumeDecisionHandlerV2<WebRedirectDecision, WebRedirectClientToken>(
-    clientTokenRepository = clientTokenRepository,
-    validateClientTokenRepository = validateClientTokenRepository,
-    clientTokenParser = clientTokenParser,
-    checkoutAdditionalInfoHandler = checkoutAdditionalInfoHandler
-) {
-
+        clientTokenRepository = clientTokenRepository,
+        validateClientTokenRepository = validateClientTokenRepository,
+        clientTokenParser = clientTokenParser,
+        checkoutAdditionalInfoHandler = checkoutAdditionalInfoHandler,
+    ) {
     override val supportedClientTokenIntents: () -> List<String> = {
         listOf(tokenizedPaymentMethodRepository.getPaymentMethod().paymentMethodType.orEmpty())
             .map { paymentMethodType -> "${paymentMethodType}_REDIRECTION" }
@@ -41,15 +40,17 @@ internal class WebRedirectResumeHandler(
 
     override suspend fun getResumeDecision(clientToken: WebRedirectClientToken): WebRedirectDecision {
         return WebRedirectDecision(
-            title = configurationRepository.getConfiguration().paymentMethods.find { config ->
-                config.type == tokenizedPaymentMethodRepository.getPaymentMethod().paymentMethodType
-            }?.name.orEmpty(),
-            paymentMethodType = requireNotNull(
-                tokenizedPaymentMethodRepository.getPaymentMethod().paymentMethodType
-            ),
+            title =
+                configurationRepository.getConfiguration().paymentMethods.find { config ->
+                    config.type == tokenizedPaymentMethodRepository.getPaymentMethod().paymentMethodType
+                }?.name.orEmpty(),
+            paymentMethodType =
+                requireNotNull(
+                    tokenizedPaymentMethodRepository.getPaymentMethod().paymentMethodType,
+                ),
             redirectUrl = clientToken.redirectUrl,
             statusUrl = clientToken.statusUrl,
-            deeplinkUrl = deeplinkRepository.getDeeplinkUrl()
+            deeplinkUrl = deeplinkRepository.getDeeplinkUrl(),
         )
     }
 }

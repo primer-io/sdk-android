@@ -10,28 +10,32 @@ import io.primer.android.paymentmethods.core.composer.provider.PaymentMethodComp
 import io.primer.android.payments.di.PaymentsContainer
 
 internal class OtpComposerProviderFactory : PaymentMethodComposerProvider.Factory {
-
-    override fun create(paymentMethodType: String, sessionIntent: PrimerSessionIntent): PaymentMethodComposer {
+    override fun create(
+        paymentMethodType: String,
+        sessionIntent: PrimerSessionIntent,
+    ): PaymentMethodComposer {
         return OtpComponent(
-            tokenizationDelegate = OtpTokenizationDelegate(
-                tokenizationInteractor = resolve(name = paymentMethodType),
-                configurationInteractor = resolve(name = paymentMethodType)
-            ),
+            tokenizationDelegate =
+                OtpTokenizationDelegate(
+                    tokenizationInteractor = resolve(name = paymentMethodType),
+                    configurationInteractor = resolve(name = paymentMethodType),
+                ),
             pollingInteractor = resolve(PaymentsContainer.POLLING_INTERACTOR_DI_KEY),
-            paymentDelegate = OtpPaymentDelegate(
-                paymentMethodTokenHandler = resolve(),
-                resumePaymentHandler = resolve(),
-                successHandler = resolve(),
-                errorHandler = resolve(),
-                pollingStartHandler = resolve(),
-                baseErrorResolver = resolve(),
-                resumeHandler = resolve(),
-                tokenizedPaymentMethodRepository = resolve()
-            ),
+            paymentDelegate =
+                OtpPaymentDelegate(
+                    paymentMethodTokenHandler = resolve(),
+                    resumePaymentHandler = resolve(),
+                    successHandler = resolve(),
+                    errorHandler = resolve(),
+                    pollingStartHandler = resolve(),
+                    baseErrorResolver = resolve(),
+                    resumeHandler = resolve(),
+                    tokenizedPaymentMethodRepository = resolve(),
+                ),
             pollingStartHandler = resolve(),
             collectableDataValidator = resolve(),
             sdkAnalyticsEventLoggingDelegate = resolve(name = paymentMethodType),
-            errorMapperRegistry = resolve()
+            errorMapperRegistry = resolve(),
         )
     }
 }

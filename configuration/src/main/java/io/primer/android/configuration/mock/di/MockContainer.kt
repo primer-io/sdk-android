@@ -17,7 +17,7 @@ class MockContainer(private val sdk: () -> SdkContainer) : DependencyContainer()
         registerSingleton<MockConfigurationRepository> {
             MockDataConfigurationRepository(
                 sdk().resolve(ConfigurationCoreContainer.CACHED_CONFIGURATION_DI_KEY),
-                resolve()
+                resolve(),
             )
         }
 

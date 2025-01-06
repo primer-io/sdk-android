@@ -20,21 +20,24 @@ import androidx.core.net.toUri
 abstract class BaseWebViewClient(
     private val activity: WebViewActivity,
     private val url: String?,
-    private val returnUrl: String?
+    private val returnUrl: String?,
 ) : WebViewClient() {
-
     private val browserApps by lazy {
         activity.packageManager.queryIntentActivities(
             Intent(Intent.ACTION_VIEW).apply {
                 data = Uri.parse(SAMPLE_URL)
             },
-            0
+            0,
         ).map { it.activityInfo.packageName }.toSet()
     }
 
-    override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {
-        val isDeeplink = URLUtil.isNetworkUrl(request?.url?.toString().orEmpty()).not() ||
-            canAnyAppHandleUrl(request?.url)
+    override fun shouldOverrideUrlLoading(
+        view: WebView?,
+        request: WebResourceRequest?,
+    ): Boolean {
+        val isDeeplink =
+            URLUtil.isNetworkUrl(request?.url?.toString().orEmpty()).not() ||
+                canAnyAppHandleUrl(request?.url)
         return if (isDeeplink) {
             handleDeepLink(request?.url)
         } else {
@@ -48,7 +51,7 @@ abstract class BaseWebViewClient(
         view: WebView?,
         errorCode: Int,
         description: String?,
-        failingUrl: String?
+        failingUrl: String?,
     ) {
         super.onReceivedError(view, errorCode, description, failingUrl)
         handleError(failingUrl, errorCode)
@@ -58,7 +61,7 @@ abstract class BaseWebViewClient(
     override fun onReceivedError(
         view: WebView?,
         request: WebResourceRequest?,
-        error: WebResourceError?
+        error: WebResourceError?,
     ) {
         super.onReceivedError(view, request, error)
         handleError(request?.url?.toString(), error?.errorCode)
@@ -93,7 +96,10 @@ abstract class BaseWebViewClient(
         return shouldOverride
     }
 
-    protected open fun handleResult(resultCode: Int, intent: Intent) {
+    protected open fun handleResult(
+        resultCode: Int,
+        intent: Intent,
+    ) {
         activity.apply {
             setResult(resultCode, intent)
             finish()
@@ -123,11 +129,12 @@ abstract class BaseWebViewClient(
     @VisibleForTesting(otherwise = VisibleForTesting.PROTECTED)
     open fun onUrlCaptured(intent: Intent) {
         try {
-            val resultCode = when (getUrlState(intent.data.toString())) {
-                UrlState.CANCELLED -> AppCompatActivity.RESULT_CANCELED
-                UrlState.ERROR -> WebViewActivity.RESULT_ERROR
-                else -> AppCompatActivity.RESULT_OK
-            }
+            val resultCode =
+                when (getUrlState(intent.data.toString())) {
+                    UrlState.CANCELLED -> AppCompatActivity.RESULT_CANCELED
+                    UrlState.ERROR -> WebViewActivity.RESULT_ERROR
+                    else -> AppCompatActivity.RESULT_OK
+                }
             handleResult(resultCode, intent)
         } catch (ignored: UnsupportedOperationException) {
             handleResult(AppCompatActivity.RESULT_CANCELED, intent)
@@ -178,10 +185,11 @@ abstract class BaseWebViewClient(
 
     private fun canAnyAppHandleUrl(uri: Uri?): Boolean {
         val intent = getIntentFromUri(uri)
-        val apps = intent?.let {
-            activity.packageManager.queryIntentActivities(intent, 0)
-                .map { it.activityInfo.packageName }.toSet()
-        } ?: emptySet()
+        val apps =
+            intent?.let {
+                activity.packageManager.queryIntentActivities(intent, 0)
+                    .map { it.activityInfo.packageName }.toSet()
+            } ?: emptySet()
         return apps.minus(browserApps).isEmpty().not()
     }
 
@@ -190,7 +198,10 @@ abstract class BaseWebViewClient(
      * 2. In case there is an HTTP POST redirect, we won't enter @see [shouldOverrideUrlLoading].
      * We will try to handle the deeplink in that case for ERROR_UNSUPPORTED_SCHEME.
      */
-    private fun handleError(requestUrl: String?, errorCode: Int?) {
+    private fun handleError(
+        requestUrl: String?,
+        errorCode: Int?,
+    ) {
         when {
             requestUrl == url -> cannotHandleIntent(Intent(requestUrl))
             errorCode == ERROR_UNSUPPORTED_SCHEME && canCaptureUrl(requestUrl)
@@ -202,11 +213,10 @@ abstract class BaseWebViewClient(
         CANCELLED,
         ERROR,
         PROCESSING,
-        SUCCESS
+        SUCCESS,
     }
 
     protected companion object {
-
         const val TAG: String = "BaseWebViewClient"
         const val INTENT_SCHEMA = "intent"
         const val SAMPLE_URL = "https://primer.io"

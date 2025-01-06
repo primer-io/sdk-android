@@ -1,12 +1,11 @@
 package io.primer.android.ipay88.implementation.payment.resume.clientToken.data
 
-import io.primer.android.paymentmethods.core.payment.resume.clientToken.domain.parser.PaymentMethodClientTokenParser
 import io.primer.android.ipay88.implementation.payment.resume.clientToken.data.model.IPay88ClientTokenData
 import io.primer.android.ipay88.implementation.payment.resume.clientToken.domain.model.IPay88ClientToken
+import io.primer.android.paymentmethods.core.payment.resume.clientToken.domain.parser.PaymentMethodClientTokenParser
 
 internal class IPay88ClientTokenParser :
     PaymentMethodClientTokenParser<IPay88ClientToken> {
-
     override fun parseClientToken(clientToken: String): IPay88ClientToken {
         return IPay88ClientTokenData.fromString(clientToken).let { clientTokenData ->
             IPay88ClientToken(
@@ -19,7 +18,7 @@ internal class IPay88ClientTokenParser :
                 supportedCurrencyCode = clientTokenData.currencyCode,
                 backendCallbackUrl = clientTokenData.backendCallbackUrl,
                 supportedCountryCode = clientTokenData.countryCode,
-                clientTokenIntent = clientTokenData.intent
+                clientTokenIntent = clientTokenData.intent,
             )
         }
     }

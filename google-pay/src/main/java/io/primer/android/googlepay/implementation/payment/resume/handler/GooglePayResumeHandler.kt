@@ -11,7 +11,6 @@ import io.primer.android.payments.core.helpers.CheckoutAdditionalInfoHandler
 import io.primer.android.processor3ds.domain.model.Processor3DS
 
 internal sealed interface GooglePayResumeDecision : PaymentMethodResumeDecision {
-
     data class GooglePayNative3dsResumeDecision(val supportedThreeDsProtocolVersions: List<String>) :
         GooglePayResumeDecision
 
@@ -22,14 +21,13 @@ internal class GooglePayResumeHandler(
     clientTokenParser: GooglePayClientTokenParser,
     validateClientTokenRepository: ValidateClientTokenRepository,
     clientTokenRepository: ClientTokenRepository,
-    checkoutAdditionalInfoHandler: CheckoutAdditionalInfoHandler
+    checkoutAdditionalInfoHandler: CheckoutAdditionalInfoHandler,
 ) : PrimerResumeDecisionHandlerV2<GooglePayResumeDecision, GooglePayClientToken>(
-    clientTokenRepository = clientTokenRepository,
-    validateClientTokenRepository = validateClientTokenRepository,
-    clientTokenParser = clientTokenParser,
-    checkoutAdditionalInfoHandler = checkoutAdditionalInfoHandler
-) {
-
+        clientTokenRepository = clientTokenRepository,
+        validateClientTokenRepository = validateClientTokenRepository,
+        clientTokenParser = clientTokenParser,
+        checkoutAdditionalInfoHandler = checkoutAdditionalInfoHandler,
+    ) {
     override val supportedClientTokenIntents: () -> List<String> =
         { listOf(ClientTokenIntent.`3DS_AUTHENTICATION`.name, ClientTokenIntent.PROCESSOR_3DS.name) }
 
@@ -37,12 +35,12 @@ internal class GooglePayResumeHandler(
         return when (clientToken) {
             is GooglePayClientToken.GooglePayNative3DSClientToken ->
                 GooglePayResumeDecision.GooglePayNative3dsResumeDecision(
-                    supportedThreeDsProtocolVersions = clientToken.supportedThreeDsProtocolVersions
+                    supportedThreeDsProtocolVersions = clientToken.supportedThreeDsProtocolVersions,
                 )
 
             is GooglePayClientToken.GooglePayProcessor3DSClientToken ->
                 GooglePayResumeDecision.GooglePayProcessor3dsResumeDecision(
-                    processor3DS = clientToken.processor3DS
+                    processor3DS = clientToken.processor3DS,
                 )
         }
     }

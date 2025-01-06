@@ -3,16 +3,16 @@ package io.primer.android.core.logging
 import android.util.Log
 
 internal class ConsolePrimerLogger : PrimerLogger {
-
     override var logLevel: PrimerLogLevel =
         if (BuildConfig.DEBUG) PrimerLogLevel.DEBUG else PrimerLogLevel.NONE
 
-    override fun log(primerLog: PrimerLog) = when (primerLog) {
-        is PrimerLog.Debug -> logDebug(primerLog.message)
-        is PrimerLog.Info -> logInfo(primerLog.message)
-        is PrimerLog.Warning -> logWarning(primerLog.message)
-        is PrimerLog.Error -> logError(primerLog.message, primerLog.throwable)
-    }
+    override fun log(primerLog: PrimerLog) =
+        when (primerLog) {
+            is PrimerLog.Debug -> logDebug(primerLog.message)
+            is PrimerLog.Info -> logInfo(primerLog.message)
+            is PrimerLog.Warning -> logWarning(primerLog.message)
+            is PrimerLog.Error -> logError(primerLog.message, primerLog.throwable)
+        }
 
     private fun logDebug(message: String) {
         largeLog(tag = TAG, content = message, logAction = Log::d)
@@ -26,7 +26,10 @@ internal class ConsolePrimerLogger : PrimerLogger {
         largeLog(tag = TAG, content = message, logAction = Log::w)
     }
 
-    private fun logError(message: String, throwable: Throwable?) {
+    private fun logError(
+        message: String,
+        throwable: Throwable?,
+    ) {
         largeLog(tag = TAG, content = message, throwable = throwable, logAction = Log::e)
     }
 
@@ -34,7 +37,7 @@ internal class ConsolePrimerLogger : PrimerLogger {
         tag: String,
         content: String,
         throwable: Throwable? = null,
-        logAction: (String, String, Throwable?) -> Unit
+        logAction: (String, String, Throwable?) -> Unit,
     ) {
         var remainingContent = content
         while (remainingContent.length > MAX_LOG_SIZE_IN_CHARS) {
@@ -48,7 +51,6 @@ internal class ConsolePrimerLogger : PrimerLogger {
     }
 
     private companion object {
-
         const val TAG = "PrimerSDK"
         const val MAX_LOG_SIZE_IN_CHARS = 4096
     }

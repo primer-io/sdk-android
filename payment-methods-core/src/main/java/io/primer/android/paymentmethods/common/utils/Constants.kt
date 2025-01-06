@@ -1,7 +1,6 @@
 package io.primer.android.paymentmethods.common.utils
 
 object Constants {
-
     const val PRIMER_REDIRECT_SCHEMA = "primer"
     const val PRIMER_REDIRECT_PREFIX = "requestor."
 

@@ -38,17 +38,21 @@ internal class StripeAchMandateFragment : BaseFragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
-        binding = FragmentStripeAchMandateBinding.inflate(
-            inflater,
-            container,
-            false
-        )
+        binding =
+            FragmentStripeAchMandateBinding.inflate(
+                inflater,
+                container,
+                false,
+            )
         return binding.root
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onViewCreated(
+        view: View,
+        savedInstanceState: Bundle?,
+    ) {
         super.onViewCreated(view, savedInstanceState)
 
         applyStyle()
@@ -56,10 +60,11 @@ internal class StripeAchMandateFragment : BaseFragment() {
             lifecycleScope.launch {
                 popBackStack()
                 errorHandler.handle(
-                    error = errorMapperRegistry.getPrimerError(
-                        PaymentMethodCancelledException(PaymentMethodType.STRIPE_ACH.name)
-                    ),
-                    payment = null
+                    error =
+                        errorMapperRegistry.getPrimerError(
+                            PaymentMethodCancelledException(PaymentMethodType.STRIPE_ACH.name),
+                        ),
+                    payment = null,
                 )
             }
         }
@@ -86,9 +91,9 @@ internal class StripeAchMandateFragment : BaseFragment() {
             ColorStateList.valueOf(
                 theme.titleText.defaultColor.getColor(
                     context = requireContext(),
-                    isDarkMode = theme.isDarkMode
-                )
-            )
+                    isDarkMode = theme.isDarkMode,
+                ),
+            ),
         )
     }
 

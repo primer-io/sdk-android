@@ -6,7 +6,6 @@ import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
 internal class SdkContainerTest {
-
     private lateinit var sdkContainer: SdkContainer
 
     @Test
@@ -56,8 +55,9 @@ internal class SdkContainerTest {
 
     @Test
     fun `should throw an unregistered type error when resolve() can not resolve the dependency`() {
-        val expectedMessage = "Unable to resolve type io.primer.android.core.di.MockDependency with dependency chain:" +
-            " Unregistered type class io.primer.android.core.di.MockDependency for a key NotARegisteredName"
+        val expectedMessage =
+            "Unable to resolve type io.primer.android.core.di.MockDependency with dependency chain:" +
+                " Unregistered type class io.primer.android.core.di.MockDependency for a key NotARegisteredName"
 
         whenMockContainerIsRegistered(MockContainer())
 
@@ -69,9 +69,10 @@ internal class SdkContainerTest {
     }
 
     private fun whenMockContainerIsRegistered(container: MockContainer) {
-        sdkContainer = SdkContainer().apply {
-            registerContainer(container)
-        }
+        sdkContainer =
+            SdkContainer().apply {
+                registerContainer(container)
+            }
     }
 
     private inline fun <reified T : Any> whenNonExistingDependencyIsResolved() {
@@ -90,7 +91,10 @@ internal class SdkContainerTest {
         assertNotNull(expectedDependency)
     }
 
-    private fun thenUnregisteredTypeErrorIsThrown(e: Exception, expectedMessage: String) {
+    private fun thenUnregisteredTypeErrorIsThrown(
+        e: Exception,
+        expectedMessage: String,
+    ) {
         assertEquals(expectedMessage, e.message)
     }
 }

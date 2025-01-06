@@ -8,5 +8,5 @@ interface AydenBancontactCardCollectableData : PrimerCollectableData
 data class PrimerBancontactCardData(
     val cardNumber: String,
     val expiryDate: String,
-    val cardHolderName: String
+    val cardHolderName: String,
 ) : PrimerRawData, AydenBancontactCardCollectableData

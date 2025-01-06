@@ -40,7 +40,6 @@ import okhttp3.Interceptor
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class AnalyticsContainer(private val sdk: () -> SdkContainer) : DependencyContainer() {
-
     override fun registerInitialDependencies() {
         registerSingleton<CheckoutSessionIdProvider>(CHECKOUT_SESSION_ID_PROVIDER_DI_KEY) {
             CheckoutSessionIdDataSource()
@@ -71,17 +70,17 @@ class AnalyticsContainer(private val sdk: () -> SdkContainer) : DependencyContai
 
         registerSingleton(HTTP_CLIENT_DI_KEY) {
             PrimerHttpClient(
-                okHttpClient = HttpClientFactory(
-                    logReporter = sdk().resolve(),
-                    blacklistedHttpHeaderProviderRegistry =
-                    sdk().resolve(),
-                    whitelistedHttpBodyKeyProviderRegistry =
-                    sdk().resolve(),
-                    pciUrlProvider = resolve(PCI_URL_PROVIDER_INTERNAL_DI_KEY)
-
-                ).build(),
+                okHttpClient =
+                    HttpClientFactory(
+                        logReporter = sdk().resolve(),
+                        blacklistedHttpHeaderProviderRegistry =
+                            sdk().resolve(),
+                        whitelistedHttpBodyKeyProviderRegistry =
+                            sdk().resolve(),
+                        pciUrlProvider = resolve(PCI_URL_PROVIDER_INTERNAL_DI_KEY),
+                    ).build(),
                 logProvider = resolve(MESSAGE_LOG_PROVIDER_DI_KEY),
-                messagePropertiesEventProvider = resolve(MESSAGE_PROPERTIES_PROVIDER_DI_KEY)
+                messagePropertiesEventProvider = resolve(MESSAGE_PROPERTIES_PROVIDER_DI_KEY),
             )
         }
 
@@ -100,12 +99,13 @@ class AnalyticsContainer(private val sdk: () -> SdkContainer) : DependencyContai
         val localAnalyticsDataSource = LocalAnalyticsDataSource.instance
         val analyticsFileProvider = AnalyticsFileProvider(sdk().resolve())
         val fileAnalyticsDataSource = FileAnalyticsDataSource(analyticsFileProvider)
-        val analyticsDataSender = AnalyticsDataSender(
-            RemoteAnalyticsDataSource(resolve(HTTP_CLIENT_DI_KEY))
-        )
+        val analyticsDataSender =
+            AnalyticsDataSender(
+                RemoteAnalyticsDataSource(resolve(HTTP_CLIENT_DI_KEY)),
+            )
 
         registerSingleton<BaseDataProvider<AnalyticsProviderData>>(
-            name = ANALYTICS_PROVIDER_DATA_DI_KEY
+            name = ANALYTICS_PROVIDER_DATA_DI_KEY,
         ) {
             BaseDataProvider {
                 AnalyticsProviderData(
@@ -113,7 +113,7 @@ class AnalyticsContainer(private val sdk: () -> SdkContainer) : DependencyContai
                     runCatching {
                         sdk().resolve<BaseDataProvider<AnalyticsData>>(ANALYTICS_DATA_DI_KEY)
                             .provide()
-                    }.getOrNull()
+                    }.getOrNull(),
                 )
             }
         }
@@ -128,16 +128,18 @@ class AnalyticsContainer(private val sdk: () -> SdkContainer) : DependencyContai
                 batteryStatusDataSource = BatteryStatusDataSource(sdk().resolve()),
                 deviceIdDataSource = DeviceIdDataSource(sdk().resolve()),
                 networkTypeDataSource = NetworkTypeDataSource(sdk().resolve()),
-                uncaughtHandlerDataSource = UncaughtHandlerDataSource().also {
-                    Thread.setDefaultUncaughtExceptionHandler(it)
-                },
+                uncaughtHandlerDataSource =
+                    UncaughtHandlerDataSource().also {
+                        Thread.setDefaultUncaughtExceptionHandler(it)
+                    },
                 networkCallDataSource = sdk().resolve(HTTP_INTERCEPTOR_DI_KEY),
                 timerDataSource = sdk().resolve(),
                 checkoutSessionIdDataSource = resolve(CHECKOUT_SESSION_ID_PROVIDER_DI_KEY),
-                provider = sdk().resolve(
-                    ANALYTICS_PROVIDER_DATA_DI_KEY
-                ),
-                messagePropertiesDataSource = resolve()
+                provider =
+                    sdk().resolve(
+                        ANALYTICS_PROVIDER_DATA_DI_KEY,
+                    ),
+                messagePropertiesDataSource = resolve(),
             )
         }
 
@@ -145,7 +147,6 @@ class AnalyticsContainer(private val sdk: () -> SdkContainer) : DependencyContai
     }
 
     companion object {
-
         private const val HTTP_CLIENT_DI_KEY = "ANALYTICS_HTTP_CLIENT"
         private const val ANALYTICS_PROVIDER_DATA_DI_KEY = "ANALYTICS_PROVIDER_DATA"
         const val HTTP_INTERCEPTOR_DI_KEY = "ANALYTICS_HTTP_INTERCEPTOR"

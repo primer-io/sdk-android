@@ -10,8 +10,8 @@ import io.mockk.verify
 import io.primer.android.R
 import io.primer.android.assets.ui.model.Brand
 import io.primer.android.payment.NewFragmentBehaviour
-import io.primer.android.paymentMethods.PaymentMethodUiType
 import io.primer.android.paymentMethods.PaymentMethodBehaviour
+import io.primer.android.paymentMethods.PaymentMethodUiType
 import io.primer.android.paymentMethods.core.ui.descriptors.UiOptions
 import io.primer.android.paymentmethods.common.data.model.PaymentMethodType
 import io.primer.android.ui.fragments.forms.DynamicFormFragment
@@ -38,10 +38,11 @@ class OtpDropInDescriptorTest {
         mockkObject(DynamicFormFragment.Companion)
         val fragment = mockk<DynamicFormFragment>()
         every { DynamicFormFragment.newInstance() } returns fragment
-        val descriptor = createDescriptor(
-            paymentMethodType = PaymentMethodType.ADYEN_BLIK,
-            isStandalonePaymentMethod = true
-        )
+        val descriptor =
+            createDescriptor(
+                paymentMethodType = PaymentMethodType.ADYEN_BLIK,
+                isStandalonePaymentMethod = true,
+            )
 
         val selectedBehaviour = descriptor.selectedBehaviour
 
@@ -63,10 +64,11 @@ class OtpDropInDescriptorTest {
 
     @Test
     fun `selectedBehaviour returns correct NewFragmentBehaviour when isStandalonePaymentMethod is true`() {
-        val descriptor = createDescriptor(
-            paymentMethodType = PaymentMethodType.ADYEN_BLIK,
-            isStandalonePaymentMethod = true
-        )
+        val descriptor =
+            createDescriptor(
+                paymentMethodType = PaymentMethodType.ADYEN_BLIK,
+                isStandalonePaymentMethod = true,
+            )
 
         val selectedBehaviour = descriptor.selectedBehaviour
 
@@ -76,10 +78,11 @@ class OtpDropInDescriptorTest {
 
     @Test
     fun `selectedBehaviour returns correct NewFragmentBehaviour when isStandalonePaymentMethod is false`() {
-        val descriptor = createDescriptor(
-            paymentMethodType = PaymentMethodType.ADYEN_BLIK,
-            isStandalonePaymentMethod = false
-        )
+        val descriptor =
+            createDescriptor(
+                paymentMethodType = PaymentMethodType.ADYEN_BLIK,
+                isStandalonePaymentMethod = false,
+            )
 
         val selectedBehaviour = descriptor.selectedBehaviour
 
@@ -99,10 +102,11 @@ class OtpDropInDescriptorTest {
     @Test
     fun `loadingState returns correct LoadingState when payment method type is ADYEN_BLIK`() {
         every { brand.iconResId } returns R.drawable.ic_logo_blik_square
-        val descriptor = createDescriptor(
-            paymentMethodType = PaymentMethodType.ADYEN_BLIK,
-            isDarkMode = false
-        )
+        val descriptor =
+            createDescriptor(
+                paymentMethodType = PaymentMethodType.ADYEN_BLIK,
+                isDarkMode = false,
+            )
 
         val loadingState = descriptor.loadingState
 
@@ -112,9 +116,10 @@ class OtpDropInDescriptorTest {
 
     @Test
     fun `uiType returns correct PaymentMethodUiType when payment method type is ADYEN_BLIK`() {
-        val descriptor = createDescriptor(
-            paymentMethodType = PaymentMethodType.ADYEN_BLIK
-        )
+        val descriptor =
+            createDescriptor(
+                paymentMethodType = PaymentMethodType.ADYEN_BLIK,
+            )
 
         assertEquals(PaymentMethodUiType.FORM, descriptor.uiType)
     }
@@ -122,13 +127,14 @@ class OtpDropInDescriptorTest {
     private fun createDescriptor(
         paymentMethodType: PaymentMethodType,
         isDarkMode: Boolean = false,
-        isStandalonePaymentMethod: Boolean = false
+        isStandalonePaymentMethod: Boolean = false,
     ) = OtpDropInDescriptor(
         paymentMethodType = paymentMethodType.name,
-        uiOptions = UiOptions(
-            isDarkMode = isDarkMode,
-            isInitScreenEnabled = false,
-            isStandalonePaymentMethod = isStandalonePaymentMethod
-        )
+        uiOptions =
+            UiOptions(
+                isDarkMode = isDarkMode,
+                isInitScreenEnabled = false,
+                isStandalonePaymentMethod = isStandalonePaymentMethod,
+            ),
     )
 }

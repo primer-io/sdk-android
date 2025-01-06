@@ -10,7 +10,7 @@ import io.primer.android.phoneNumber.implementation.payment.resume.clientToken.d
 import io.primer.android.phoneNumber.implementation.payment.resume.domain.model.PhoneNumberClientToken
 
 internal data class PhoneNumberDecision(
-    val statusUrl: String
+    val statusUrl: String,
 ) : PaymentMethodResumeDecision
 
 internal class PhoneNumberResumeHandler(
@@ -18,14 +18,13 @@ internal class PhoneNumberResumeHandler(
     private val tokenizedPaymentMethodRepository: TokenizedPaymentMethodRepository,
     private val validateClientTokenRepository: ValidateClientTokenRepository,
     private val clientTokenRepository: ClientTokenRepository,
-    checkoutAdditionalInfoHandler: CheckoutAdditionalInfoHandler
+    checkoutAdditionalInfoHandler: CheckoutAdditionalInfoHandler,
 ) : PrimerResumeDecisionHandlerV2<PhoneNumberDecision, PhoneNumberClientToken>(
-    clientTokenRepository = clientTokenRepository,
-    validateClientTokenRepository = validateClientTokenRepository,
-    clientTokenParser = clientTokenParser,
-    checkoutAdditionalInfoHandler = checkoutAdditionalInfoHandler
-) {
-
+        clientTokenRepository = clientTokenRepository,
+        validateClientTokenRepository = validateClientTokenRepository,
+        clientTokenParser = clientTokenParser,
+        checkoutAdditionalInfoHandler = checkoutAdditionalInfoHandler,
+    ) {
     override val supportedClientTokenIntents: () -> List<String> = {
         listOf(tokenizedPaymentMethodRepository.getPaymentMethod().paymentMethodType.orEmpty())
             .map { paymentMethodType -> "${paymentMethodType}_REDIRECTION" }
@@ -33,7 +32,7 @@ internal class PhoneNumberResumeHandler(
 
     override suspend fun getResumeDecision(clientToken: PhoneNumberClientToken): PhoneNumberDecision {
         return PhoneNumberDecision(
-            statusUrl = clientToken.statusUrl
+            statusUrl = clientToken.statusUrl,
         )
     }
 }

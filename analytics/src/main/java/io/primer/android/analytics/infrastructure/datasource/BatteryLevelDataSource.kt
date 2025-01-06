@@ -7,7 +7,6 @@ import io.primer.android.core.data.datasource.BaseDataSource
 
 internal class BatteryLevelDataSource(private val context: Context) :
     BaseDataSource<Int, Unit> {
-
     private val batteryManager by lazy {
         context.getSystemService(BATTERY_SERVICE) as BatteryManager
     }

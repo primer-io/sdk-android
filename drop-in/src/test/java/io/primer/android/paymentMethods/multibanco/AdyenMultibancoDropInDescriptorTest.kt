@@ -30,9 +30,10 @@ import kotlin.test.assertIs
 
 class AdyenMultibancoDropInDescriptorTest {
     private val brand = mockk<Brand>(relaxed = true)
-    private val brandRegistry = mockk<BrandRegistry> {
-        every { getBrand(any()) } returns brand
-    }
+    private val brandRegistry =
+        mockk<BrandRegistry> {
+            every { getBrand(any()) } returns brand
+        }
 
     @Test
     fun `paymentMethodType returns ADYEN_MULTIBANCO`() {
@@ -57,7 +58,7 @@ class AdyenMultibancoDropInDescriptorTest {
         verify {
             MultibancoConditionsFragment.newInstance(
                 sessionIntent = PrimerSessionIntent.CHECKOUT,
-                paymentMethodType = PaymentMethodType.ADYEN_MULTIBANCO.name
+                paymentMethodType = PaymentMethodType.ADYEN_MULTIBANCO.name,
             )
         }
         unmockkObject(MultibancoConditionsFragment.Companion)
@@ -79,7 +80,7 @@ class AdyenMultibancoDropInDescriptorTest {
         verify {
             MultibancoConditionsFragment.newInstance(
                 sessionIntent = PrimerSessionIntent.CHECKOUT,
-                paymentMethodType = PaymentMethodType.ADYEN_MULTIBANCO.name
+                paymentMethodType = PaymentMethodType.ADYEN_MULTIBANCO.name,
             )
         }
         unmockkObject(MultibancoConditionsFragment.Companion)
@@ -100,7 +101,7 @@ class AdyenMultibancoDropInDescriptorTest {
         verify {
             MultibancoConditionsFragment.newInstance(
                 sessionIntent = PrimerSessionIntent.VAULT,
-                paymentMethodType = PaymentMethodType.ADYEN_MULTIBANCO.name
+                paymentMethodType = PaymentMethodType.ADYEN_MULTIBANCO.name,
             )
         }
         unmockkObject(MultibancoConditionsFragment.Companion)
@@ -116,16 +117,18 @@ class AdyenMultibancoDropInDescriptorTest {
         every { MultibancoPaymentFragment.newInstance(any(), any(), any()) } returns fragment
         val descriptor = createDescriptor()
 
-        val successBehavior = descriptor.createSuccessBehavior(
-            ViewStatus.ShowSuccess(
-                successType = SuccessType.PAYMENT_SUCCESS,
-                checkoutAdditionalInfo = MultibancoCheckoutAdditionalInfo(
-                    expiresAt = expiresAt,
-                    reference = reference,
-                    entity = entity
-                )
+        val successBehavior =
+            descriptor.createSuccessBehavior(
+                ViewStatus.ShowSuccess(
+                    successType = SuccessType.PAYMENT_SUCCESS,
+                    checkoutAdditionalInfo =
+                        MultibancoCheckoutAdditionalInfo(
+                            expiresAt = expiresAt,
+                            reference = reference,
+                            entity = entity,
+                        ),
+                ),
             )
-        )
 
         assertIs<NewFragmentBehaviour>(successBehavior)
         assertEquals(fragment, successBehavior.factory.invoke())
@@ -190,14 +193,15 @@ class AdyenMultibancoDropInDescriptorTest {
     private fun createDescriptor(
         isDarkMode: Boolean = false,
         isStandalonePaymentMethod: Boolean = false,
-        sessionIntent: PrimerSessionIntent = PrimerSessionIntent.CHECKOUT
+        sessionIntent: PrimerSessionIntent = PrimerSessionIntent.CHECKOUT,
     ) = AdyenMultibancoDropInDescriptor(
-        uiOptions = UiOptions(
-            isDarkMode = isDarkMode,
-            isInitScreenEnabled = false,
-            isStandalonePaymentMethod = isStandalonePaymentMethod
-        ),
+        uiOptions =
+            UiOptions(
+                isDarkMode = isDarkMode,
+                isInitScreenEnabled = false,
+                isStandalonePaymentMethod = isStandalonePaymentMethod,
+            ),
         brandRegistry = brandRegistry,
-        sessionIntent = sessionIntent
+        sessionIntent = sessionIntent,
     )
 }

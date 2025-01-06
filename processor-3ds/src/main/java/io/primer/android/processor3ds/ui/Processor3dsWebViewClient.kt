@@ -9,9 +9,8 @@ import io.primer.paymentMethodCoreUi.core.ui.webview.WebViewActivity
 internal class Processor3dsWebViewClient(
     activity: WebViewActivity,
     url: String?,
-    returnUrl: String?
+    returnUrl: String?,
 ) : BaseWebViewClient(activity, url, returnUrl) {
-
     override fun getUrlState(url: String) = UrlState.PROCESSING
 
     override fun getCaptureUrl(url: String?) = url

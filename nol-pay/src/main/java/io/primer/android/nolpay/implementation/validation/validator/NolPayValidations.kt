@@ -1,7 +1,6 @@
 package io.primer.android.nolpay.implementation.validation.validator
 
 internal object NolPayValidations {
-
     const val INVALID_OTP_CODE_ERROR_ID = "invalid-otp-code"
     val OTP_CODE_REGEX = Regex("^(\\d){6}$")
 

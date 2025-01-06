@@ -5,7 +5,6 @@ import io.primer.android.clientToken.core.errors.data.exception.ExpiredClientTok
 import io.primer.android.clientToken.core.errors.data.exception.InvalidClientTokenException
 
 object ClientTokenDecoder {
-
     @Throws(InvalidClientTokenException::class, ExpiredClientTokenException::class)
     fun decode(encoded: String): String {
         if (encoded.isBlank()) throw InvalidClientTokenException()

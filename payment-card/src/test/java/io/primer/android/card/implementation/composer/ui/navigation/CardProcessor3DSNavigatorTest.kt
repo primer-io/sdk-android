@@ -20,7 +20,6 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 internal class CardProcessor3DSNavigatorTest {
-
     private lateinit var activityContext: Activity
     private lateinit var launcher: ActivityResultLauncher<Intent>
     private lateinit var navigator: CardProcessor3DSNavigator
@@ -42,12 +41,13 @@ internal class CardProcessor3DSNavigatorTest {
     fun `navigate should call launcher launch() with the correct intent`() {
         // Arrange
 
-        val params = CardProcessor3DSActivityLauncherParams(
-            paymentMethodType = "card",
-            redirectUrl = "https://example.com",
-            statusUrl = "https://example.com/status",
-            title = "Test title"
-        )
+        val params =
+            CardProcessor3DSActivityLauncherParams(
+                paymentMethodType = "card",
+                redirectUrl = "https://example.com",
+                statusUrl = "https://example.com/status",
+                title = "Test title",
+            )
         val intent = mockk<Intent>()
         every {
             Processor3dsWebViewActivity.Companion.getLaunchIntent(
@@ -55,7 +55,7 @@ internal class CardProcessor3DSNavigatorTest {
                 paymentUrl = params.redirectUrl,
                 statusUrl = params.statusUrl,
                 title = params.title,
-                paymentMethodType = params.paymentMethodType
+                paymentMethodType = params.paymentMethodType,
             )
         } returns intent
         every { launcher.launch(intent) } just runs
@@ -72,12 +72,13 @@ internal class CardProcessor3DSNavigatorTest {
     @Test
     fun `navigate should launch Processor3dsWebViewActivity with specified parameters`() {
         // Arrange
-        val params = CardProcessor3DSActivityLauncherParams(
-            paymentMethodType = "card",
-            redirectUrl = "https://example.com",
-            statusUrl = "https://example.com/status",
-            title = "Test title"
-        )
+        val params =
+            CardProcessor3DSActivityLauncherParams(
+                paymentMethodType = "card",
+                redirectUrl = "https://example.com",
+                statusUrl = "https://example.com/status",
+                title = "Test title",
+            )
         val expectedIntent = mockk<Intent>(relaxed = true)
 
         every {
@@ -86,7 +87,7 @@ internal class CardProcessor3DSNavigatorTest {
                 paymentUrl = params.redirectUrl,
                 statusUrl = params.statusUrl,
                 title = params.title,
-                paymentMethodType = params.paymentMethodType
+                paymentMethodType = params.paymentMethodType,
             )
         } returns expectedIntent
 
@@ -109,7 +110,7 @@ internal class CardProcessor3DSNavigatorTest {
                 eq(params.redirectUrl),
                 eq(params.statusUrl),
                 eq(params.title),
-                eq(params.paymentMethodType)
+                eq(params.paymentMethodType),
             )
         }
     }
@@ -117,12 +118,13 @@ internal class CardProcessor3DSNavigatorTest {
     @Test
     fun `canHandle should return true for CardProcessor3DSActivityLauncherParams`() {
         // Arrange
-        val params = CardProcessor3DSActivityLauncherParams(
-            paymentMethodType = "card",
-            redirectUrl = "https://example.com",
-            statusUrl = "https://example.com/status",
-            title = "Test title"
-        )
+        val params =
+            CardProcessor3DSActivityLauncherParams(
+                paymentMethodType = "card",
+                redirectUrl = "https://example.com",
+                statusUrl = "https://example.com/status",
+                title = "Test title",
+            )
 
         // Act
         val result = navigator.canHandle(params)

@@ -25,7 +25,6 @@ import kotlin.test.assertEquals
 @OptIn(ExperimentalCoroutinesApi::class)
 @ExtendWith(MockKExtension::class)
 internal class NolPayTokenizationDelegateTest {
-
     @MockK
     lateinit var phoneMetadataInteractor: PhoneMetadataInteractor
 
@@ -39,117 +38,129 @@ internal class NolPayTokenizationDelegateTest {
 
     @BeforeEach
     fun setUp() {
-        delegate = NolPayTokenizationDelegate(
-            phoneMetadataInteractor,
-            configurationInteractor,
-            tokenizationInteractor
-        )
-    }
-
-    @Test
-    fun `mapTokenizationData should return TokenizationParams when successful`() = runTest {
-        // Given
-        val input = NolPayTokenizationInputable(
-            paymentMethodType = "NOL_PAY",
-            mobileNumber = "1234567890",
-            nolPayCardNumber = "1234",
-            primerSessionIntent = PrimerSessionIntent.CHECKOUT
-        )
-
-        val configuration = NolPayConfig(
-            paymentMethodConfigId = "configId",
-            locale = "en-US"
-        )
-
-        val phoneMetadata = PhoneMetadata(
-            countryCode = "1",
-            nationalNumber = "1234567890"
-        )
-
-        coEvery { configurationInteractor(any<NolPayConfigParams>()) } returns Result.success(configuration)
-        coEvery { phoneMetadataInteractor(any<PhoneMetadataParams>()) } returns Result.success(phoneMetadata)
-
-        // When
-        val result = delegate.mapTokenizationData(input)
-
-        // Then
-        assert(result.isSuccess)
-        val tokenizationParams = result.getOrThrow()
-        val expectedTokenizationParams = TokenizationParams(
-            NolPayPaymentInstrumentParams(
-                paymentMethodType = "NOL_PAY",
-                paymentMethodConfigId = "configId",
-                locale = "en-US",
-                mobileCountryCode = "1",
-                mobileNumber = "1234567890",
-                nolPayCardNumber = "1234"
-            ),
-            PrimerSessionIntent.CHECKOUT
-        )
-
-        assertEquals(expectedTokenizationParams, tokenizationParams)
-
-        coVerify { configurationInteractor(NolPayConfigParams(paymentMethodType = "NOL_PAY")) }
-        coVerify { phoneMetadataInteractor(PhoneMetadataParams("1234567890")) }
-    }
-
-    @Test
-    fun `mapTokenizationData should return failure when configurationInteractor fails`() = runTest {
-        // Given
-        val input = NolPayTokenizationInputable(
-            paymentMethodType = "NOL_PAY",
-            mobileNumber = "1234567890",
-            nolPayCardNumber = "1234",
-            primerSessionIntent = PrimerSessionIntent.CHECKOUT
-        )
-
-        val exception = Exception("Configuration error")
-        coEvery { configurationInteractor(any<NolPayConfigParams>()) } returns Result.failure(exception)
-        coEvery { phoneMetadataInteractor(any<PhoneMetadataParams>()) } returns Result.success(
-            PhoneMetadata(
-                countryCode = "1",
-                nationalNumber = "1234567890"
+        delegate =
+            NolPayTokenizationDelegate(
+                phoneMetadataInteractor,
+                configurationInteractor,
+                tokenizationInteractor,
             )
-        )
-
-        // When
-        val result = delegate.mapTokenizationData(input)
-
-        // Then
-        assert(result.isFailure)
-        assertEquals(exception, result.exceptionOrNull())
-
-        coVerify { configurationInteractor(NolPayConfigParams(paymentMethodType = "NOL_PAY")) }
-        coVerify { phoneMetadataInteractor(PhoneMetadataParams("1234567890")) }
     }
 
     @Test
-    fun `mapTokenizationData should return failure when phoneMetadataInteractor fails`() = runTest {
-        // Given
-        val input = NolPayTokenizationInputable(
-            paymentMethodType = "NOL_PAY",
-            mobileNumber = "1234567890",
-            nolPayCardNumber = "1234",
-            primerSessionIntent = PrimerSessionIntent.CHECKOUT
-        )
+    fun `mapTokenizationData should return TokenizationParams when successful`() =
+        runTest {
+            // Given
+            val input =
+                NolPayTokenizationInputable(
+                    paymentMethodType = "NOL_PAY",
+                    mobileNumber = "1234567890",
+                    nolPayCardNumber = "1234",
+                    primerSessionIntent = PrimerSessionIntent.CHECKOUT,
+                )
 
-        val configuration = NolPayConfig(
-            paymentMethodConfigId = "configId",
-            locale = "en-US"
-        )
+            val configuration =
+                NolPayConfig(
+                    paymentMethodConfigId = "configId",
+                    locale = "en-US",
+                )
 
-        val exception = Exception("Phone metadata error")
-        coEvery { configurationInteractor(any<NolPayConfigParams>()) } returns Result.success(configuration)
-        coEvery { phoneMetadataInteractor(any<PhoneMetadataParams>()) } returns Result.failure(exception)
+            val phoneMetadata =
+                PhoneMetadata(
+                    countryCode = "1",
+                    nationalNumber = "1234567890",
+                )
 
-        // When
-        val result = delegate.mapTokenizationData(input)
+            coEvery { configurationInteractor(any<NolPayConfigParams>()) } returns Result.success(configuration)
+            coEvery { phoneMetadataInteractor(any<PhoneMetadataParams>()) } returns Result.success(phoneMetadata)
 
-        // Then
-        assert(result.isFailure)
-        assertEquals(exception, result.exceptionOrNull())
+            // When
+            val result = delegate.mapTokenizationData(input)
 
-        coVerify { configurationInteractor(NolPayConfigParams(paymentMethodType = "NOL_PAY")) }
-        coVerify { phoneMetadataInteractor(PhoneMetadataParams("1234567890")) }
-    }
+            // Then
+            assert(result.isSuccess)
+            val tokenizationParams = result.getOrThrow()
+            val expectedTokenizationParams =
+                TokenizationParams(
+                    NolPayPaymentInstrumentParams(
+                        paymentMethodType = "NOL_PAY",
+                        paymentMethodConfigId = "configId",
+                        locale = "en-US",
+                        mobileCountryCode = "1",
+                        mobileNumber = "1234567890",
+                        nolPayCardNumber = "1234",
+                    ),
+                    PrimerSessionIntent.CHECKOUT,
+                )
+
+            assertEquals(expectedTokenizationParams, tokenizationParams)
+
+            coVerify { configurationInteractor(NolPayConfigParams(paymentMethodType = "NOL_PAY")) }
+            coVerify { phoneMetadataInteractor(PhoneMetadataParams("1234567890")) }
+        }
+
+    @Test
+    fun `mapTokenizationData should return failure when configurationInteractor fails`() =
+        runTest {
+            // Given
+            val input =
+                NolPayTokenizationInputable(
+                    paymentMethodType = "NOL_PAY",
+                    mobileNumber = "1234567890",
+                    nolPayCardNumber = "1234",
+                    primerSessionIntent = PrimerSessionIntent.CHECKOUT,
+                )
+
+            val exception = Exception("Configuration error")
+            coEvery { configurationInteractor(any<NolPayConfigParams>()) } returns Result.failure(exception)
+            coEvery { phoneMetadataInteractor(any<PhoneMetadataParams>()) } returns
+                Result.success(
+                    PhoneMetadata(
+                        countryCode = "1",
+                        nationalNumber = "1234567890",
+                    ),
+                )
+
+            // When
+            val result = delegate.mapTokenizationData(input)
+
+            // Then
+            assert(result.isFailure)
+            assertEquals(exception, result.exceptionOrNull())
+
+            coVerify { configurationInteractor(NolPayConfigParams(paymentMethodType = "NOL_PAY")) }
+            coVerify { phoneMetadataInteractor(PhoneMetadataParams("1234567890")) }
+        }
+
+    @Test
+    fun `mapTokenizationData should return failure when phoneMetadataInteractor fails`() =
+        runTest {
+            // Given
+            val input =
+                NolPayTokenizationInputable(
+                    paymentMethodType = "NOL_PAY",
+                    mobileNumber = "1234567890",
+                    nolPayCardNumber = "1234",
+                    primerSessionIntent = PrimerSessionIntent.CHECKOUT,
+                )
+
+            val configuration =
+                NolPayConfig(
+                    paymentMethodConfigId = "configId",
+                    locale = "en-US",
+                )
+
+            val exception = Exception("Phone metadata error")
+            coEvery { configurationInteractor(any<NolPayConfigParams>()) } returns Result.success(configuration)
+            coEvery { phoneMetadataInteractor(any<PhoneMetadataParams>()) } returns Result.failure(exception)
+
+            // When
+            val result = delegate.mapTokenizationData(input)
+
+            // Then
+            assert(result.isFailure)
+            assertEquals(exception, result.exceptionOrNull())
+
+            coVerify { configurationInteractor(NolPayConfigParams(paymentMethodType = "NOL_PAY")) }
+            coVerify { phoneMetadataInteractor(PhoneMetadataParams("1234567890")) }
+        }
 }

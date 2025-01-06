@@ -10,29 +10,30 @@ import androidx.appcompat.widget.AppCompatEditText
 import androidx.core.content.ContextCompat
 import androidx.core.widget.doAfterTextChanged
 import io.primer.android.R
-import io.primer.android.ui.settings.PrimerTheme
 import io.primer.android.core.di.DISdkComponent
 import io.primer.android.core.di.extensions.inject
 import io.primer.android.ui.extensions.NO_COLOR
 import io.primer.android.ui.extensions.setCompoundDrawablesWithIntrinsicBoundsTinted
+import io.primer.android.ui.settings.PrimerTheme
 
 @SuppressLint("ClickableViewAccessibility")
 internal class SearchViewWidgetV2(
     context: Context,
-    attrs: AttributeSet? = null
+    attrs: AttributeSet? = null,
 ) : AppCompatEditText(context, attrs), DISdkComponent {
-
     private val theme: PrimerTheme by
-    if (isInEditMode) {
-        lazy { PrimerTheme.build() }
-    } else { inject() }
+        if (isInEditMode) {
+            lazy { PrimerTheme.build() }
+        } else {
+            inject()
+        }
 
     init {
         setHintTextColor(
             theme.searchInput.hintText.defaultColor.getColor(
                 context,
-                theme.isDarkMode
-            )
+                theme.isDarkMode,
+            ),
         )
         setTextColor(theme.searchInput.text.defaultColor.getColor(context, theme.isDarkMode))
 
@@ -41,7 +42,7 @@ internal class SearchViewWidgetV2(
                 searchIconDrawable,
                 null,
                 null,
-                null
+                null,
             )
         }
 
@@ -52,7 +53,7 @@ internal class SearchViewWidgetV2(
                 if (it.isNullOrBlank()) 0 else R.drawable.ic_search_clear,
                 0,
                 theme.searchInput.text.defaultColor.getColor(context, theme.isDarkMode),
-                tintColorLeft = NO_COLOR
+                tintColorLeft = NO_COLOR,
             )
         }
 
@@ -72,8 +73,8 @@ internal class SearchViewWidgetV2(
         roundedBackground.setColor(
             theme.searchInput.backgroundColor.getColor(
                 context,
-                theme.isDarkMode
-            )
+                theme.isDarkMode,
+            ),
         )
         background = roundedBackground
 

@@ -21,71 +21,72 @@ import io.primer.android.paymentmethods.core.composer.provider.VaultedPaymentMet
 import io.primer.android.paymentmethods.core.ui.navigation.PaymentMethodNavigationFactoryRegistry
 
 internal class Card : PaymentMethod, DISdkComponent {
-
     override val type = PaymentMethodType.PAYMENT_CARD.name
 
     override val canBeVaulted: Boolean = true
 
-    override val module: PaymentMethodModule = object : PaymentMethodModule {
-        override fun initialize(applicationContext: Context, configuration: ConfigurationData) {
-            // no-op
-        }
+    override val module: PaymentMethodModule =
+        object : PaymentMethodModule {
+            override fun initialize(
+                applicationContext: Context,
+                configuration: ConfigurationData,
+            ) {
+                // no-op
+            }
 
-        override fun registerPaymentMethodCheckers(
-            paymentMethodCheckerRegistry: PaymentMethodCheckerRegistry
-        ) {
-            // no-op
-        }
+            override fun registerPaymentMethodCheckers(paymentMethodCheckerRegistry: PaymentMethodCheckerRegistry) {
+                // no-op
+            }
 
-        override fun registerPaymentMethodDescriptorFactory(
-            paymentMethodDescriptorFactoryRegistry: PaymentMethodDescriptorFactoryRegistry
-        ) {
-            paymentMethodDescriptorFactoryRegistry.register(
-                type,
-                CardPaymentMethodDescriptorFactory()
-            )
-        }
-
-        override fun registerPaymentMethodProviderFactory(
-            paymentMethodProviderFactoryRegistry: PaymentMethodProviderFactoryRegistry
-        ) {
-            paymentMethodProviderFactoryRegistry.register(
-                PaymentMethodType.PAYMENT_CARD.name,
-                CardComposerProviderFactory::class.java
-            )
-        }
-
-        override fun registerSavedPaymentMethodProviderFactory(
-            paymentMethodProviderFactoryRegistry: VaultedPaymentMethodProviderFactoryRegistry
-        ) {
-            paymentMethodProviderFactoryRegistry.register(
-                PaymentMethodType.PAYMENT_CARD.name,
-                VaultedCardComposerFactory::class.java
-            )
-        }
-
-        override fun registerPaymentMethodNavigationFactory(
-            paymentMethodNavigationFactoryRegistry: PaymentMethodNavigationFactoryRegistry
-        ) {
-            paymentMethodNavigationFactoryRegistry.register(type, CardNavigatorProviderFactory::class.java)
-        }
-
-        override fun registerDependencyContainer(sdkContainers: List<SdkContainer>) {
-            sdkContainers.forEach { sdkContainer ->
-                sdkContainer.registerContainer(
-                    CardContainer(
-                        { getSdkContainer() },
-                        PaymentMethodType.PAYMENT_CARD.name
-                    )
+            override fun registerPaymentMethodDescriptorFactory(
+                paymentMethodDescriptorFactoryRegistry: PaymentMethodDescriptorFactoryRegistry,
+            ) {
+                paymentMethodDescriptorFactoryRegistry.register(
+                    type,
+                    CardPaymentMethodDescriptorFactory(),
                 )
             }
-        }
 
-        override fun registerErrorMappers(errorMapperRegistry: ErrorMapperRegistry) {
-        }
+            override fun registerPaymentMethodProviderFactory(
+                paymentMethodProviderFactoryRegistry: PaymentMethodProviderFactoryRegistry,
+            ) {
+                paymentMethodProviderFactoryRegistry.register(
+                    PaymentMethodType.PAYMENT_CARD.name,
+                    CardComposerProviderFactory::class.java,
+                )
+            }
 
-        override fun registerBrandProvider(brandRegistry: BrandRegistry) {
-            brandRegistry.register(paymentMethodType = PaymentMethodType.PAYMENT_CARD.name, CardBrand())
+            override fun registerSavedPaymentMethodProviderFactory(
+                paymentMethodProviderFactoryRegistry: VaultedPaymentMethodProviderFactoryRegistry,
+            ) {
+                paymentMethodProviderFactoryRegistry.register(
+                    PaymentMethodType.PAYMENT_CARD.name,
+                    VaultedCardComposerFactory::class.java,
+                )
+            }
+
+            override fun registerPaymentMethodNavigationFactory(
+                paymentMethodNavigationFactoryRegistry: PaymentMethodNavigationFactoryRegistry,
+            ) {
+                paymentMethodNavigationFactoryRegistry.register(type, CardNavigatorProviderFactory::class.java)
+            }
+
+            override fun registerDependencyContainer(sdkContainers: List<SdkContainer>) {
+                sdkContainers.forEach { sdkContainer ->
+                    sdkContainer.registerContainer(
+                        CardContainer(
+                            { getSdkContainer() },
+                            PaymentMethodType.PAYMENT_CARD.name,
+                        ),
+                    )
+                }
+            }
+
+            override fun registerErrorMappers(errorMapperRegistry: ErrorMapperRegistry) {
+            }
+
+            override fun registerBrandProvider(brandRegistry: BrandRegistry) {
+                brandRegistry.register(paymentMethodType = PaymentMethodType.PAYMENT_CARD.name, CardBrand())
+            }
         }
-    }
 }

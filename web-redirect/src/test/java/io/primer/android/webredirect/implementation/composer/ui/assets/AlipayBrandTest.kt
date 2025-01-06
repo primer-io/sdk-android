@@ -8,7 +8,6 @@ import org.junit.jupiter.api.extension.ExtendWith
 
 @ExtendWith(MockKExtension::class)
 class AlipayBrandTest {
-
     private val alipayBrand = AlipayBrand()
 
     @Test

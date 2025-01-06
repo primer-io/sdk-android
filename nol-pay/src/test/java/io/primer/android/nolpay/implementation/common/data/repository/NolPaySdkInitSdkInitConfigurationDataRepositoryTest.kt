@@ -20,7 +20,6 @@ import org.junit.jupiter.api.extension.ExtendWith
 @ExperimentalCoroutinesApi
 @ExtendWith(MockKExtension::class)
 internal class NolPaySdkInitSdkInitConfigurationDataRepositoryTest {
-
     private lateinit var repository: NolPaySdkInitSdkInitConfigurationDataRepository
     private val configurationDataSource: CacheConfigurationDataSource = mockk()
 
@@ -30,27 +29,30 @@ internal class NolPaySdkInitSdkInitConfigurationDataRepositoryTest {
     }
 
     @Test
-    fun `getConfiguration should return NolPayConfiguration`() = runTest {
-        // Given
-        val merchantAppId = "testMerchantAppId"
-        val envSandbox = Environment.SANDBOX
-        val paymentMethodType = PaymentMethodType.NOL_PAY.name
-        val paymentMethodConfig = mockk<PaymentMethodConfigDataResponse> {
-            every { type } returns paymentMethodType
-            every { options?.merchantAppId } returns merchantAppId
+    fun `getConfiguration should return NolPayConfiguration`() =
+        runTest {
+            // Given
+            val merchantAppId = "testMerchantAppId"
+            val envSandbox = Environment.SANDBOX
+            val paymentMethodType = PaymentMethodType.NOL_PAY.name
+            val paymentMethodConfig =
+                mockk<PaymentMethodConfigDataResponse> {
+                    every { type } returns paymentMethodType
+                    every { options?.merchantAppId } returns merchantAppId
+                }
+            val configurationData =
+                mockk<ConfigurationData> {
+                    every { paymentMethods } returns listOf(paymentMethodConfig)
+                    every { environment } returns envSandbox
+                }
+
+            coEvery { configurationDataSource.get() } returns configurationData
+
+            // When
+            val result = repository.getConfiguration().getOrThrow()
+
+            // Then
+            assertEquals(NolPayConfiguration(merchantAppId, envSandbox), result)
+            verify { configurationDataSource.get() }
         }
-        val configurationData = mockk<ConfigurationData> {
-            every { paymentMethods } returns listOf(paymentMethodConfig)
-            every { environment } returns envSandbox
-        }
-
-        coEvery { configurationDataSource.get() } returns configurationData
-
-        // When
-        val result = repository.getConfiguration().getOrThrow()
-
-        // Then
-        assertEquals(NolPayConfiguration(merchantAppId, envSandbox), result)
-        verify { configurationDataSource.get() }
-    }
 }

@@ -6,12 +6,11 @@ import io.primer.android.phoneNumber.implementation.payment.resume.domain.model.
 
 internal class PhoneNumberClientTokenParser :
     PaymentMethodClientTokenParser<PhoneNumberClientToken> {
-
     override fun parseClientToken(clientToken: String): PhoneNumberClientToken {
         with(PhoneNumberClientTokenData.fromString(clientToken)) {
             return PhoneNumberClientToken(
                 clientTokenIntent = intent,
-                statusUrl = statusUrl
+                statusUrl = statusUrl,
             )
         }
     }

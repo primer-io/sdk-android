@@ -42,12 +42,11 @@ const val CONTENT_TYPE_APPLICATION_JSON = "application/json"
 class PrimerHttpClient(
     val okHttpClient: OkHttpClient,
     val logProvider: EventFlowProvider<MessageLog>,
-    val messagePropertiesEventProvider: EventFlowProvider<MessagePropertiesHelper>
+    val messagePropertiesEventProvider: EventFlowProvider<MessagePropertiesHelper>,
 ) {
-
     inline fun <reified R : JSONDeserializable> get(
         url: String,
-        headers: Map<String, String> = hashMapOf()
+        headers: Map<String, String> = hashMapOf(),
     ): Flow<PrimerResponse<R>> =
         flow {
             if (url.toHttpUrlOrNull() == null) throw InvalidUrlException(url = url)
@@ -57,14 +56,14 @@ class PrimerHttpClient(
                         .url(url)
                         .headers(headers.toHeaders())
                         .get()
-                        .build()
-                )
+                        .build(),
+                ),
             )
         }
 
     suspend inline fun <reified R : JSONDeserializable> suspendGet(
         url: String,
-        headers: Map<String, String> = hashMapOf()
+        headers: Map<String, String> = hashMapOf(),
     ): PrimerResponse<R> {
         if (url.toHttpUrlOrNull() == null) throw InvalidUrlException(url = url)
         return executeRequest<R>(
@@ -72,14 +71,14 @@ class PrimerHttpClient(
                 .url(url)
                 .headers(headers.toHeaders())
                 .get()
-                .build()
+                .build(),
         )
     }
 
     suspend inline fun <reified R : JSONDeserializable> retrySuspendGet(
         url: String,
         headers: Map<String, String> = hashMapOf(),
-        retryConfig: RetryConfig
+        retryConfig: RetryConfig,
     ): PrimerResponse<R> {
         if (url.toHttpUrlOrNull() == null) throw InvalidUrlException(url = url)
         return executeRequest(
@@ -88,14 +87,14 @@ class PrimerHttpClient(
                 .headers(headers.toHeaders())
                 .get()
                 .build(),
-            retryConfig
+            retryConfig,
         )
     }
 
     inline fun <reified T : JSONSerializable, reified R : JSONDeserializable> post(
         url: String,
         request: T,
-        headers: Map<String, String> = hashMapOf()
+        headers: Map<String, String> = hashMapOf(),
     ): Flow<PrimerResponse<R>> =
         flow {
             if (url.toHttpUrlOrNull() == null) throw InvalidUrlException(url = url)
@@ -105,8 +104,8 @@ class PrimerHttpClient(
                         .url(url)
                         .headers(headers.toHeaders())
                         .post(getRequestBody(request))
-                        .build()
-                )
+                        .build(),
+                ),
             )
         }
 
@@ -114,7 +113,7 @@ class PrimerHttpClient(
         url: String,
         request: T,
         headers: Map<String, String> = hashMapOf(),
-        retryConfig: RetryConfig
+        retryConfig: RetryConfig,
     ): Flow<PrimerResponse<R>> =
         flow {
             if (url.toHttpUrlOrNull() == null) throw InvalidUrlException(url = url)
@@ -125,15 +124,15 @@ class PrimerHttpClient(
                         .headers(headers.toHeaders())
                         .post(getRequestBody(request))
                         .build(),
-                    retryConfig
-                )
+                    retryConfig,
+                ),
             )
         }
 
     suspend inline fun <reified T : JSONSerializable, reified R : JSONDeserializable> suspendPost(
         url: String,
         request: T,
-        headers: Map<String, String> = hashMapOf()
+        headers: Map<String, String> = hashMapOf(),
     ): PrimerResponse<R> {
         if (url.toHttpUrlOrNull() == null) throw InvalidUrlException(url = url)
         return executeRequest<R>(
@@ -141,7 +140,7 @@ class PrimerHttpClient(
                 .url(url)
                 .headers(headers.toHeaders())
                 .post(getRequestBody(request))
-                .build()
+                .build(),
         )
     }
 
@@ -149,7 +148,7 @@ class PrimerHttpClient(
         url: String,
         request: T,
         headers: Map<String, String> = hashMapOf(),
-        retryConfig: RetryConfig
+        retryConfig: RetryConfig,
     ): PrimerResponse<R> {
         if (url.toHttpUrlOrNull() == null) throw InvalidUrlException(url = url)
         return executeRequest(
@@ -158,13 +157,13 @@ class PrimerHttpClient(
                 .headers(headers.toHeaders())
                 .post(getRequestBody(request))
                 .build(),
-            retryConfig
+            retryConfig,
         )
     }
 
     suspend inline fun <reified R : JSONDeserializable> delete(
         url: String,
-        headers: Map<String, String> = hashMapOf()
+        headers: Map<String, String> = hashMapOf(),
     ): PrimerResponse<R> {
         if (url.toHttpUrlOrNull() == null) throw InvalidUrlException(url = url)
         return executeRequest<R>(
@@ -172,14 +171,14 @@ class PrimerHttpClient(
                 .url(url)
                 .headers(headers.toHeaders())
                 .delete()
-                .build()
+                .build(),
         )
     }
 
     suspend inline fun <reified R : JSONDeserializable> retryDelete(
         url: String,
         headers: Map<String, String> = hashMapOf(),
-        retryConfig: RetryConfig
+        retryConfig: RetryConfig,
     ): PrimerResponse<R> {
         if (url.toHttpUrlOrNull() == null) throw InvalidUrlException(url = url)
         return executeRequest(
@@ -188,37 +187,40 @@ class PrimerHttpClient(
                 .headers(headers.toHeaders())
                 .delete()
                 .build(),
-            retryConfig
+            retryConfig,
         )
     }
 
     @Suppress("ComplexMethod")
     suspend inline fun <reified R : JSONDeserializable> executeRequest(
         request: Request,
-        retryConfig: RetryConfig = RetryConfig(false)
+        retryConfig: RetryConfig = RetryConfig(false),
     ): PrimerResponse<R> {
         var response: Response
 
         do {
-            response = try {
-                okHttpClient.newCall(request).await()
-            } catch (exception: IOException) {
-                if (retryConfig.enabled) {
-                    networkError(request.url.toString())
-                } else {
-                    throw exception
+            response =
+                try {
+                    okHttpClient.newCall(request).await()
+                } catch (exception: IOException) {
+                    if (retryConfig.enabled) {
+                        networkError(request.url.toString())
+                    } else {
+                        throw exception
+                    }
                 }
-            }
         } while (retry(response, retryConfig, logProvider, messagePropertiesEventProvider))
 
         if (retryConfig.enabled) {
             if (response.containsError()) {
-                val errorMessage = "Failed after ${retryConfig.retries} retries.\n" + when {
-                    retryConfig.isLastAttempt() -> "Reached maximum retries (${retryConfig.maxRetries})."
-                    response.code == NETWORK_EXCEPTION_ERROR_CODE -> "Network error."
-                    response.code in SERVER_ERRORS -> "Server error: ${response.code}."
-                    else -> ""
-                }
+                val errorMessage =
+                    "Failed after ${retryConfig.retries} retries.\n" +
+                        when {
+                            retryConfig.isLastAttempt() -> "Reached maximum retries (${retryConfig.maxRetries})."
+                            response.code == NETWORK_EXCEPTION_ERROR_CODE -> "Network error."
+                            response.code in SERVER_ERRORS -> "Server error: ${response.code}."
+                            else -> ""
+                        }
                 logRetryFailedAttempt(message = errorMessage)
                 throw if (response.code == NETWORK_EXCEPTION_ERROR_CODE) {
                     IOException(errorMessage)
@@ -246,7 +248,7 @@ class PrimerHttpClient(
                     body?.close()
                     PrimerResponse(
                         body = JSONSerializationUtils.getJsonObjectDeserializer<R>().deserialize(jsonData.json),
-                        headers = headers
+                        headers = headers,
                     )
                 }
 
@@ -254,7 +256,7 @@ class PrimerHttpClient(
                     body?.close()
                     PrimerResponse(
                         body = JSONSerializationUtils.getJsonArrayDeserializer<R>().deserialize(jsonData.json),
-                        headers = headers
+                        headers = headers,
                     )
                 }
             }
@@ -269,8 +271,8 @@ class PrimerHttpClient(
             MessagePropertiesHelper(
                 MessageTypeHelper.RETRY_SUCCESS,
                 message,
-                SeverityHelper.INFO
-            )
+                SeverityHelper.INFO,
+            ),
         )
     }
 
@@ -280,17 +282,18 @@ class PrimerHttpClient(
             MessagePropertiesHelper(
                 MessageTypeHelper.RETRY_FAILED,
                 message,
-                SeverityHelper.ERROR
-            )
+                SeverityHelper.ERROR,
+            ),
         )
     }
 
     inline fun <reified T : JSONSerializable> getRequestBody(request: T): RequestBody {
         return try {
-            val serialized = when (val serializer = JSONSerializationUtils.getJsonSerializer<T>()) {
-                is JSONObjectSerializer -> serializer.serialize(request).toString()
-                is JSONArraySerializer -> serializer.serialize(request).toString()
-            }
+            val serialized =
+                when (val serializer = JSONSerializationUtils.getJsonSerializer<T>()) {
+                    is JSONObjectSerializer -> serializer.serialize(request).toString()
+                    is JSONArraySerializer -> serializer.serialize(request).toString()
+                }
             serialized.toRequestBody(CONTENT_TYPE_APPLICATION_JSON.toMediaType())
         } catch (expected: Exception) {
             throw JsonEncodingException(expected)

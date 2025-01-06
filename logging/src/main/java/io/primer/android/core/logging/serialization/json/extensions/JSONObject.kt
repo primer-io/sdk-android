@@ -4,7 +4,10 @@ import io.primer.android.core.logging.internal.WhitelistedKey
 import org.json.JSONArray
 import org.json.JSONObject
 
-internal fun JSONObject.update(whitelistedKeys: List<WhitelistedKey>, newValue: String) {
+internal fun JSONObject.update(
+    whitelistedKeys: List<WhitelistedKey>,
+    newValue: String,
+) {
     val keysToObfuscate = mutableListOf<String>()
 
     val primitiveKeys by lazy {

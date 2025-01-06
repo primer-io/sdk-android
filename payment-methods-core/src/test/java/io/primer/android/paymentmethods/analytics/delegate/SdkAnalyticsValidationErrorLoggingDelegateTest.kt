@@ -31,77 +31,83 @@ class SdkAnalyticsValidationErrorLoggingDelegateTest {
     }
 
     @Test
-    fun `logSdkAnalyticsError(PrimerValidationError) should log MessageAnalyticsParams via AnalyticsInteractor when called`() = runTest {
-        val primerError = mockk<PrimerValidationError> {
-            every { errorId } returns "errorId"
-            every { description } returns "description"
-            every { diagnosticsId } returns "diagnosticsId"
-        }
-        coEvery { analyticsInteractor(any()) } returns Result.success(Unit)
+    fun `logSdkAnalyticsError(PrimerValidationError) should log MessageAnalyticsParams via AnalyticsInteractor when called`() =
+        runTest {
+            val primerError =
+                mockk<PrimerValidationError> {
+                    every { errorId } returns "errorId"
+                    every { description } returns "description"
+                    every { diagnosticsId } returns "diagnosticsId"
+                }
+            coEvery { analyticsInteractor(any()) } returns Result.success(Unit)
 
-        delegate.logSdkAnalyticsError(primerError)
+            delegate.logSdkAnalyticsError(primerError)
 
-        coVerify(exactly = 1) {
-            analyticsInteractor(
-                MessageAnalyticsParams(
-                    messageType = MessageType.VALIDATION_FAILED,
-                    message = "description",
-                    severity = Severity.WARN,
-                    diagnosticsId = "diagnosticsId",
-                    context = ErrorContextParams("errorId")
+            coVerify(exactly = 1) {
+                analyticsInteractor(
+                    MessageAnalyticsParams(
+                        messageType = MessageType.VALIDATION_FAILED,
+                        message = "description",
+                        severity = Severity.WARN,
+                        diagnosticsId = "diagnosticsId",
+                        context = ErrorContextParams("errorId"),
+                    ),
                 )
-            )
+            }
         }
-    }
 
     @Test
-    fun `logSdkAnalyticsError(PrimerError) should log MessageAnalyticsParams via AnalyticsInteractor when called`() = runTest {
-        val context = ErrorContextParams("errorId", "paymentMethodType")
-        val primerError = mockk<PrimerError> {
-            every { errorId } returns "errorId"
-            every { description } returns "description"
-            every { diagnosticsId } returns "diagnosticsId"
-            every { this@mockk.context } returns context
-        }
-        coEvery { analyticsInteractor(any()) } returns Result.success(Unit)
+    fun `logSdkAnalyticsError(PrimerError) should log MessageAnalyticsParams via AnalyticsInteractor when called`() =
+        runTest {
+            val context = ErrorContextParams("errorId", "paymentMethodType")
+            val primerError =
+                mockk<PrimerError> {
+                    every { errorId } returns "errorId"
+                    every { description } returns "description"
+                    every { diagnosticsId } returns "diagnosticsId"
+                    every { this@mockk.context } returns context
+                }
+            coEvery { analyticsInteractor(any()) } returns Result.success(Unit)
 
-        delegate.logSdkAnalyticsError(primerError)
+            delegate.logSdkAnalyticsError(primerError)
 
-        coVerify(exactly = 1) {
-            analyticsInteractor(
-                MessageAnalyticsParams(
-                    messageType = MessageType.VALIDATION_FAILED,
-                    message = "description",
-                    severity = Severity.WARN,
-                    diagnosticsId = "diagnosticsId",
-                    context = context
+            coVerify(exactly = 1) {
+                analyticsInteractor(
+                    MessageAnalyticsParams(
+                        messageType = MessageType.VALIDATION_FAILED,
+                        message = "description",
+                        severity = Severity.WARN,
+                        diagnosticsId = "diagnosticsId",
+                        context = context,
+                    ),
                 )
-            )
+            }
         }
-    }
 
     @Test
-    fun `logSdkAnalyticsError(PrimerError) should log MessageAnalyticsParams via AnalyticsInteractor when called with null context`() = runTest {
-        val primerError = mockk<PrimerError> {
-            every { errorId } returns "errorId"
-            every { description } returns "description"
-            every { diagnosticsId } returns "diagnosticsId"
-            every { this@mockk.context } returns null
-        }
-        coEvery { analyticsInteractor(any()) } returns Result.success(Unit)
+    fun `logSdkAnalyticsError(PrimerError) should log MessageAnalyticsParams via AnalyticsInteractor when called with null context`() =
+        runTest {
+            val primerError =
+                mockk<PrimerError> {
+                    every { errorId } returns "errorId"
+                    every { description } returns "description"
+                    every { diagnosticsId } returns "diagnosticsId"
+                    every { this@mockk.context } returns null
+                }
+            coEvery { analyticsInteractor(any()) } returns Result.success(Unit)
 
-        delegate.logSdkAnalyticsError(primerError)
+            delegate.logSdkAnalyticsError(primerError)
 
-        coVerify(exactly = 1) {
-            analyticsInteractor(
-                MessageAnalyticsParams(
-                    messageType = MessageType.VALIDATION_FAILED,
-                    message = "description",
-                    severity = Severity.WARN,
-                    diagnosticsId = "diagnosticsId",
-                    context = ErrorContextParams("errorId")
+            coVerify(exactly = 1) {
+                analyticsInteractor(
+                    MessageAnalyticsParams(
+                        messageType = MessageType.VALIDATION_FAILED,
+                        message = "description",
+                        severity = Severity.WARN,
+                        diagnosticsId = "diagnosticsId",
+                        context = ErrorContextParams("errorId"),
+                    ),
                 )
-            )
+            }
         }
-    }
 }

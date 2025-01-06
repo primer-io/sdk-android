@@ -6,7 +6,6 @@ import java.util.Currency
 import kotlin.math.pow
 
 class PaymentUtilsTest {
-
     @Test
     fun `minorToAmount with currency should return correct amount`() {
         // Arrange

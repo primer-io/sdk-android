@@ -21,7 +21,6 @@ import io.primer.android.processor3ds.presentation.Processor3DSViewModelFactory
 import io.primer.paymentMethodCoreUi.core.ui.webview.WebViewActivity
 
 class Processor3dsWebViewActivity : WebViewActivity(), DISdkComponent {
-
     private val viewModel: Processor3DSViewModel
         by viewModel<Processor3DSViewModel, Processor3DSViewModelFactory>()
 
@@ -31,8 +30,7 @@ class Processor3dsWebViewActivity : WebViewActivity(), DISdkComponent {
         logAnalyticsViewed()
         viewModel.getStatus(
             statusUrl = intent?.extras?.getString(STATUS_URL_KEY).orEmpty(),
-            paymentMethodType = intent?.extras?.getString(PAYMENT_METHOD_TYPE_KEY).orEmpty()
-
+            paymentMethodType = intent?.extras?.getString(PAYMENT_METHOD_TYPE_KEY).orEmpty(),
         )
         setupObservers()
     }
@@ -48,11 +46,11 @@ class Processor3dsWebViewActivity : WebViewActivity(), DISdkComponent {
                     ERROR_KEY,
                     PaymentMethodCancelledException(
                         intent?.extras?.getString(
-                            PAYMENT_METHOD_TYPE_KEY
-                        ).orEmpty()
-                    )
+                            PAYMENT_METHOD_TYPE_KEY,
+                        ).orEmpty(),
+                    ),
                 )
-            }
+            },
         )
     }
 
@@ -65,11 +63,11 @@ class Processor3dsWebViewActivity : WebViewActivity(), DISdkComponent {
                     ERROR_KEY,
                     PaymentMethodCancelledException(
                         intent?.extras?.getString(
-                            PAYMENT_METHOD_TYPE_KEY
-                        ).orEmpty()
-                    )
+                            PAYMENT_METHOD_TYPE_KEY,
+                        ).orEmpty(),
+                    ),
                 )
-            }
+            },
         )
         return super.onSupportNavigateUp()
     }
@@ -82,11 +80,12 @@ class Processor3dsWebViewActivity : WebViewActivity(), DISdkComponent {
     override fun setupWebViewClient() {
         val url = intent.extras?.getString(PAYMENT_URL_KEY)
         val captureUrl = intent.extras?.getString(CAPTURE_URL_KEY)
-        webView.webViewClient = Processor3dsWebViewClient(
-            this,
-            url,
-            captureUrl
-        )
+        webView.webViewClient =
+            Processor3dsWebViewClient(
+                this,
+                url,
+                captureUrl,
+            )
     }
 
     private fun setupObservers() {
@@ -95,7 +94,7 @@ class Processor3dsWebViewActivity : WebViewActivity(), DISdkComponent {
                 RESULT_OK,
                 Intent().apply {
                     putExtra(RESUME_TOKEN_EXTRA_KEY, resumeToken)
-                }
+                },
             )
             finish()
         }
@@ -104,36 +103,39 @@ class Processor3dsWebViewActivity : WebViewActivity(), DISdkComponent {
                 RESULT_ERROR,
                 Intent().apply {
                     putExtra(ERROR_KEY, throwable)
-                }
+                },
             )
             finish()
         }
     }
 
-    private fun logAnalyticsViewed() = viewModel.addAnalyticsEvent(
-        UIAnalyticsParams(
-            AnalyticsAction.VIEW,
-            ObjectType.WEB_PAGE,
-            Place.PAYMENT_METHOD_POPUP,
-            context = UrlContextParams(
-                url = Uri.parse(
-                    intent.extras?.getString(PAYMENT_URL_KEY).orEmpty()
-                ).host.orEmpty()
-            )
+    private fun logAnalyticsViewed() =
+        viewModel.addAnalyticsEvent(
+            UIAnalyticsParams(
+                AnalyticsAction.VIEW,
+                ObjectType.WEB_PAGE,
+                Place.PAYMENT_METHOD_POPUP,
+                context =
+                    UrlContextParams(
+                        url =
+                            Uri.parse(
+                                intent.extras?.getString(PAYMENT_URL_KEY).orEmpty(),
+                            ).host.orEmpty(),
+                    ),
+            ),
         )
-    )
 
-    private fun logBackPressed() = viewModel.addAnalyticsEvent(
-        UIAnalyticsParams(
-            AnalyticsAction.CLICK,
-            ObjectType.BUTTON,
-            Place.PAYMENT_METHOD_POPUP,
-            ObjectId.BACK
+    private fun logBackPressed() =
+        viewModel.addAnalyticsEvent(
+            UIAnalyticsParams(
+                AnalyticsAction.CLICK,
+                ObjectType.BUTTON,
+                Place.PAYMENT_METHOD_POPUP,
+                ObjectId.BACK,
+            ),
         )
-    )
 
     companion object {
-
         // url that polls payment status
         const val STATUS_URL_KEY = "STATUS_URL_KEY"
         const val RESUME_TOKEN_EXTRA_KEY = "RESUME_TOKEN"
@@ -144,7 +146,7 @@ class Processor3dsWebViewActivity : WebViewActivity(), DISdkComponent {
             paymentUrl: String,
             statusUrl: String,
             title: String,
-            paymentMethodType: String
+            paymentMethodType: String,
         ): Intent {
             return Intent(context, Processor3dsWebViewActivity::class.java).apply {
                 putExtra(PAYMENT_URL_KEY, paymentUrl)

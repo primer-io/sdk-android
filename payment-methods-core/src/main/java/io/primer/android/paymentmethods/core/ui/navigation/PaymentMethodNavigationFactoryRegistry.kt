@@ -1,7 +1,6 @@
 package io.primer.android.paymentmethods.core.ui.navigation
 
 class PaymentMethodNavigationFactoryRegistry {
-
     private val factories: MutableMap<String, Class<out PaymentMethodNavigationHandlerFactory>> =
         mutableMapOf()
 
@@ -11,7 +10,7 @@ class PaymentMethodNavigationFactoryRegistry {
 
     fun register(
         type: String,
-        factory: Class<out PaymentMethodNavigationHandlerFactory>
+        factory: Class<out PaymentMethodNavigationHandlerFactory>,
     ) {
         factories[type] = factory
     }

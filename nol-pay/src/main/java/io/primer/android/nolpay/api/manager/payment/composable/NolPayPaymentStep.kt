@@ -6,7 +6,6 @@ import io.primer.android.paymentmethods.manager.composable.PrimerHeadlessStep
  * A sealed interface representing the steps involved in a Nol Pay payment process.
  */
 sealed interface NolPayPaymentStep : PrimerHeadlessStep {
-
     /**
      * Object representing the step of collecting card and phone data for Nol Pay payment.
      */

@@ -14,7 +14,6 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 internal class NolPayResumeHandlerTest {
-
     private lateinit var nolPayResumeHandler: NolPayResumeHandler
     private lateinit var clientTokenParser: NolPayClientTokenParser
     private lateinit var validateClientTokenRepository: ValidateClientTokenRepository
@@ -30,33 +29,36 @@ internal class NolPayResumeHandlerTest {
         tokenizedPaymentMethodRepository = mockk()
         checkoutAdditionalInfoHandler = mockk()
 
-        nolPayResumeHandler = NolPayResumeHandler(
-            clientTokenParser,
-            validateClientTokenRepository,
-            clientTokenRepository,
-            checkoutAdditionalInfoHandler,
-            tokenizedPaymentMethodRepository
-        )
+        nolPayResumeHandler =
+            NolPayResumeHandler(
+                clientTokenParser,
+                validateClientTokenRepository,
+                clientTokenRepository,
+                checkoutAdditionalInfoHandler,
+                tokenizedPaymentMethodRepository,
+            )
     }
 
     @Test
-    fun `getResumeDecision should return correct NolPayResumeDecision`() = runTest {
-        // Given
-        val clientToken = NolPayClientToken(
-            clientTokenIntent = "intent",
-            transactionNumber = "transaction123",
-            statusUrl = "http://status.url",
-            completeUrl = "http://complete.url"
-        )
+    fun `getResumeDecision should return correct NolPayResumeDecision`() =
+        runTest {
+            // Given
+            val clientToken =
+                NolPayClientToken(
+                    clientTokenIntent = "intent",
+                    transactionNumber = "transaction123",
+                    statusUrl = "http://status.url",
+                    completeUrl = "http://complete.url",
+                )
 
-        // When
-        val result = nolPayResumeHandler.getResumeDecision(clientToken)
+            // When
+            val result = nolPayResumeHandler.getResumeDecision(clientToken)
 
-        // Then
-        assertEquals("transaction123", result.transactionNumber)
-        assertEquals("http://status.url", result.statusUrl)
-        assertEquals("http://complete.url", result.completeUrl)
-    }
+            // Then
+            assertEquals("transaction123", result.transactionNumber)
+            assertEquals("http://status.url", result.statusUrl)
+            assertEquals("http://complete.url", result.completeUrl)
+        }
 
     @Test
     fun `supportedClientTokenIntents should return correct list of intents`() {

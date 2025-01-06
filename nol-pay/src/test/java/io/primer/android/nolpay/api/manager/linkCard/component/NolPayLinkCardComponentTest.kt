@@ -34,7 +34,6 @@ import kotlin.time.Duration.Companion.seconds
 @OptIn(ExperimentalCoroutinesApi::class)
 @ExtendWith(InstantExecutorExtension::class, MockKExtension::class)
 internal class NolPayLinkCardComponentTest {
-
     @RelaxedMockK
     lateinit var linkPaymentCardDelegate: NolPayLinkPaymentCardDelegate
 
@@ -60,15 +59,16 @@ internal class NolPayLinkCardComponentTest {
 
     @BeforeEach
     fun setUp() {
-        component = NolPayLinkCardComponent(
-            linkPaymentCardDelegate = linkPaymentCardDelegate,
-            validatorRegistry = dataValidatorRegistry,
-            errorLoggingDelegate = errorLoggingDelegate,
-            eventLoggingDelegate = eventLoggingDelegate,
-            validationErrorLoggingDelegate = validationErrorLoggingDelegate,
-            errorMapperRegistry = errorMapperRegistry,
-            savedStateHandle = savedStateHandle
-        )
+        component =
+            NolPayLinkCardComponent(
+                linkPaymentCardDelegate = linkPaymentCardDelegate,
+                validatorRegistry = dataValidatorRegistry,
+                errorLoggingDelegate = errorLoggingDelegate,
+                eventLoggingDelegate = eventLoggingDelegate,
+                validationErrorLoggingDelegate = validationErrorLoggingDelegate,
+                errorMapperRegistry = errorMapperRegistry,
+                savedStateHandle = savedStateHandle,
+            )
     }
 
     @Test
@@ -83,7 +83,7 @@ internal class NolPayLinkCardComponentTest {
             eventLoggingDelegate.logSdkAnalyticsEvent(
                 PaymentMethodType.NOL_PAY.name,
                 NolPayAnalyticsConstants.LINK_CARD_START_METHOD,
-                hashMapOf()
+                hashMapOf(),
             )
         }
     }
@@ -114,7 +114,7 @@ internal class NolPayLinkCardComponentTest {
         coVerify { errorMapperRegistry.getPrimerError(exception) }
         coVerify {
             errorLoggingDelegate.logSdkAnalyticsErrors(
-                errorMapperRegistry.getPrimerError(exception)
+                errorMapperRegistry.getPrimerError(exception),
             )
         }
     }
@@ -132,7 +132,7 @@ internal class NolPayLinkCardComponentTest {
         coVerify {
             eventLoggingDelegate.logSdkAnalyticsEvent(
                 PaymentMethodType.NOL_PAY.name,
-                NolPayAnalyticsConstants.LINK_CARD_UPDATE_COLLECTED_DATA_METHOD
+                NolPayAnalyticsConstants.LINK_CARD_UPDATE_COLLECTED_DATA_METHOD,
             )
         }
     }
@@ -149,9 +149,9 @@ internal class NolPayLinkCardComponentTest {
             assertEquals(
                 listOf(
                     PrimerValidationStatus.Validating(collectableData),
-                    PrimerValidationStatus.Valid(collectableData)
+                    PrimerValidationStatus.Valid(collectableData),
                 ),
-                validationStatuses
+                validationStatuses,
             )
         }
 
@@ -172,9 +172,9 @@ internal class NolPayLinkCardComponentTest {
             assertEquals(
                 listOf(
                     PrimerValidationStatus.Validating(collectableData),
-                    PrimerValidationStatus.Invalid(listOf(validationError), collectableData)
+                    PrimerValidationStatus.Invalid(listOf(validationError), collectableData),
                 ),
-                validationStatuses
+                validationStatuses,
             )
         }
 
@@ -199,10 +199,10 @@ internal class NolPayLinkCardComponentTest {
                     PrimerValidationStatus.Validating(collectableData),
                     PrimerValidationStatus.Error(
                         errorMapperRegistry.getPrimerError(exception),
-                        collectableData
-                    )
+                        collectableData,
+                    ),
                 ),
-                validationStatuses
+                validationStatuses,
             )
         }
 
@@ -218,7 +218,7 @@ internal class NolPayLinkCardComponentTest {
         coEvery {
             linkPaymentCardDelegate.handleCollectedCardData(
                 any(),
-                any()
+                any(),
             )
         }.returns(Result.success(step))
 
@@ -230,7 +230,7 @@ internal class NolPayLinkCardComponentTest {
             eventLoggingDelegate.logSdkAnalyticsEvent(
                 PaymentMethodType.NOL_PAY.name,
                 NolPayAnalyticsConstants.LINK_CARD_SUBMIT_DATA_METHOD,
-                hashMapOf()
+                hashMapOf(),
             )
         }
     }
@@ -241,7 +241,7 @@ internal class NolPayLinkCardComponentTest {
         coEvery {
             linkPaymentCardDelegate.handleCollectedCardData(
                 any(),
-                any()
+                any(),
             )
         }.returns(Result.success(step))
 
@@ -254,7 +254,7 @@ internal class NolPayLinkCardComponentTest {
         coVerify(exactly = 0) { errorMapperRegistry.getPrimerError(any()) }
         coVerify(exactly = 0) {
             errorLoggingDelegate.logSdkAnalyticsErrors(
-                errorMapperRegistry.getPrimerError(any())
+                errorMapperRegistry.getPrimerError(any()),
             )
         }
     }
@@ -265,7 +265,7 @@ internal class NolPayLinkCardComponentTest {
         coEvery {
             linkPaymentCardDelegate.handleCollectedCardData(
                 any(),
-                any()
+                any(),
             )
         }.returns(Result.failure(exception))
 
@@ -278,7 +278,7 @@ internal class NolPayLinkCardComponentTest {
         coVerify { errorMapperRegistry.getPrimerError(exception) }
         coVerify {
             errorLoggingDelegate.logSdkAnalyticsErrors(
-                errorMapperRegistry.getPrimerError(exception)
+                errorMapperRegistry.getPrimerError(exception),
             )
         }
     }

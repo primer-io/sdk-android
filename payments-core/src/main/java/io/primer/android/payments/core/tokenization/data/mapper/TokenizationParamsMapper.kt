@@ -6,6 +6,5 @@ import io.primer.android.payments.core.tokenization.domain.model.TokenizationPar
 import io.primer.android.payments.core.tokenization.domain.model.paymentInstruments.BasePaymentInstrumentParams
 
 interface TokenizationParamsMapper<T : BasePaymentInstrumentParams, U : BasePaymentInstrumentDataRequest> {
-
     fun map(params: TokenizationParams<T>): TokenizationRequestV2<U>
 }

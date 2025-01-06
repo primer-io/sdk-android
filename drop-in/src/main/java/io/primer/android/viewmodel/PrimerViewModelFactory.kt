@@ -4,12 +4,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.CreationExtras
 import io.primer.android.analytics.domain.AnalyticsInteractor
-import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.clientSessionActions.domain.ActionInteractor
 import io.primer.android.components.assets.displayMetadata.PaymentMethodsImplementationInteractor
 import io.primer.android.configuration.domain.BasicOrderInfoInteractor
 import io.primer.android.configuration.domain.ConfigurationInteractor
 import io.primer.android.currencyformat.domain.FormatAmountToCurrencyInteractor
+import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.errors.domain.ErrorMapperRegistry
 import io.primer.android.payment.billing.BillingAddressValidator
 import io.primer.android.paymentMethods.core.PaymentMethodMapping
@@ -39,11 +39,12 @@ internal class PrimerViewModelFactory(
     private val checkoutErrorHandler: CheckoutErrorHandler,
     private val paymentMethodMapping: PaymentMethodMapping,
     private val billingAddressValidator: BillingAddressValidator,
-    private val pollingStartHandler: PollingStartHandler
-
+    private val pollingStartHandler: PollingStartHandler,
 ) : ViewModelProvider.Factory {
-
-    override fun <T : ViewModel> create(modelClass: Class<T>, extras: CreationExtras): T {
+    override fun <T : ViewModel> create(
+        modelClass: Class<T>,
+        extras: CreationExtras,
+    ): T {
         return PrimerViewModel(
             configurationInteractor = configurationInteractor,
             paymentMethodsImplementationInteractor = paymentMethodsImplementationInteractor,
@@ -60,7 +61,7 @@ internal class PrimerViewModelFactory(
             errorMapperRegistry = errorMapperRegistry,
             checkoutErrorHandler = checkoutErrorHandler,
             paymentMethodMapping = paymentMethodMapping,
-            pollingStartHandler = pollingStartHandler
+            pollingStartHandler = pollingStartHandler,
         ) as T
     }
 }

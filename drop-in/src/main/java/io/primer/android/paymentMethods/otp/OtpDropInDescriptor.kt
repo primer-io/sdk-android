@@ -17,33 +17,37 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 internal class OtpDropInDescriptor(
     override val uiOptions: UiOptions,
-    override val paymentMethodType: String
+    override val paymentMethodType: String,
 ) : PaymentMethodDropInDescriptor {
     override val selectedBehaviour: PaymentMethodBehaviour
-        get() = NewFragmentBehaviour(
-            factory = when (paymentMethodType) {
-                PaymentMethodType.ADYEN_BLIK.name -> DynamicFormFragment::newInstance
-                else -> error("Unsupported payment method type '$paymentMethodType'")
-            },
-            returnToPreviousOnBack = uiOptions.isStandalonePaymentMethod.not()
-        )
+        get() =
+            NewFragmentBehaviour(
+                factory =
+                    when (paymentMethodType) {
+                        PaymentMethodType.ADYEN_BLIK.name -> DynamicFormFragment::newInstance
+                        else -> error("Unsupported payment method type '$paymentMethodType'")
+                    },
+                returnToPreviousOnBack = uiOptions.isStandalonePaymentMethod.not(),
+            )
 
     override val behaviours: List<PaymentMethodBehaviour> = emptyList()
 
     override fun createPollingStartedBehavior(viewStatus: ViewStatus.PollingStarted): NewFragmentBehaviour =
         NewFragmentBehaviour(
             factory = { PaymentMethodLoadingFragment.newInstance(popBackStackToRoot = true) },
-            replacePreviousFragment = false
+            replacePreviousFragment = false,
         )
 
-    override val loadingState = when (paymentMethodType) {
-        PaymentMethodType.ADYEN_BLIK.name -> LoadingState(
-            imageResIs = R.drawable.ic_logo_blik_square,
-            textResId = R.string.payment_method_blik_loading_placeholder
-        )
+    override val loadingState =
+        when (paymentMethodType) {
+            PaymentMethodType.ADYEN_BLIK.name ->
+                LoadingState(
+                    imageResIs = R.drawable.ic_logo_blik_square,
+                    textResId = R.string.payment_method_blik_loading_placeholder,
+                )
 
-        else -> error("Unsupported payment method type '$paymentMethodType'")
-    }
+            else -> error("Unsupported payment method type '$paymentMethodType'")
+        }
 
     override val uiType: PaymentMethodUiType
         get() = PaymentMethodUiType.FORM

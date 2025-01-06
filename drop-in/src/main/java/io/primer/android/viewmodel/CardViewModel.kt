@@ -24,9 +24,8 @@ import java.util.Collections
 
 internal class CardViewModel(
     private val cardManager: PrimerHeadlessUniversalCheckoutRawDataManagerInterface =
-        PrimerHeadlessUniversalCheckoutRawDataManager.newInstance(PaymentMethodType.PAYMENT_CARD.name)
+        PrimerHeadlessUniversalCheckoutRawDataManager.newInstance(PaymentMethodType.PAYMENT_CARD.name),
 ) : ViewModel() {
-
     private val _cardValidationErrors: MutableStateFlow<List<SyncValidationError>> = MutableStateFlow(emptyList())
     val cardValidationErrors: StateFlow<List<SyncValidationError>> = _cardValidationErrors
 
@@ -39,9 +38,10 @@ internal class CardViewModel(
     var submitted = false
         private set
 
-    val autoFocusFields: MutableLiveData<Set<PrimerInputElementType>> = MutableLiveData(
-        Collections.emptySet()
-    )
+    val autoFocusFields: MutableLiveData<Set<PrimerInputElementType>> =
+        MutableLiveData(
+            Collections.emptySet(),
+        )
 
     private val _cardNetworksState: MutableStateFlow<CardNetworksState> =
         MutableStateFlow(CardNetworksState(emptyList(), null, null))
@@ -58,45 +58,53 @@ internal class CardViewModel(
     }
 
     fun initialize() {
-        cardManager.setListener(object : PrimerHeadlessUniversalCheckoutRawDataManagerListener {
-
-            override fun onValidationChanged(isValid: Boolean, errors: List<PrimerInputValidationError>) {
-                _cardValidationErrors.value = errors.map { inputValidationError ->
-                    inputValidationError.toSyncValidationError(cachedCardData)
+        cardManager.setListener(
+            object : PrimerHeadlessUniversalCheckoutRawDataManagerListener {
+                override fun onValidationChanged(
+                    isValid: Boolean,
+                    errors: List<PrimerInputValidationError>,
+                ) {
+                    _cardValidationErrors.value =
+                        errors.map { inputValidationError ->
+                            inputValidationError.toSyncValidationError(cachedCardData)
+                        }
+                    autoFocusFields.postValue(getValidAutoFocusableFields(errors))
                 }
-                autoFocusFields.postValue(getValidAutoFocusableFields(errors))
-            }
 
-            override fun onMetadataStateChanged(metadataState: PrimerPaymentMethodMetadataState) {
-                when (metadataState) {
-                    is PrimerCardMetadataState.Fetched -> {
-                        handleFetchedMetadata(metadataState.cardNumberEntryMetadata)
-                        isMetadataUpdating = false
-                    }
-                    is PrimerCardMetadataState.Fetching -> {
-                        isMetadataUpdating = true
+                override fun onMetadataStateChanged(metadataState: PrimerPaymentMethodMetadataState) {
+                    when (metadataState) {
+                        is PrimerCardMetadataState.Fetched -> {
+                            handleFetchedMetadata(metadataState.cardNumberEntryMetadata)
+                            isMetadataUpdating = false
+                        }
+                        is PrimerCardMetadataState.Fetching -> {
+                            isMetadataUpdating = true
+                        }
                     }
                 }
-            }
-        })
+            },
+        )
     }
 
     @VisibleForTesting
     internal fun handleFetchedMetadata(metadata: PrimerCardNumberEntryMetadata) {
         val selectableNetworks = metadata.selectableCardNetworks?.items
-        val detectedNonSelectableNetwork = metadata.detectedCardNetworks.let {
-            it.preferred ?: it.items.firstOrNull()
-        }
+        val detectedNonSelectableNetwork =
+            metadata.detectedCardNetworks.let {
+                it.preferred ?: it.items.firstOrNull()
+            }
 
         val resolvedNetworks = selectableNetworks ?: listOf(detectedNonSelectableNetwork)
 
-        val state = CardNetworksState(
-            networks = resolvedNetworks.mapNotNull { it },
-            preferredNetwork = metadata.selectableCardNetworks?.preferred?.network,
-            selectedNetwork = cachedCardData?.cardNetwork
-                ?: metadata.selectableCardNetworks?.preferred?.network
-                ?: resolvedNetworks.first()?.network
-        )
+        val state =
+            CardNetworksState(
+                networks = resolvedNetworks.mapNotNull { it },
+                preferredNetwork = metadata.selectableCardNetworks?.preferred?.network,
+                selectedNetwork =
+                    cachedCardData?.cardNetwork
+                        ?: metadata.selectableCardNetworks?.preferred?.network
+                        ?: resolvedNetworks.first()?.network,
+            )
         _cardNetworksState.update { state }
     }
 
@@ -106,11 +114,12 @@ internal class CardViewModel(
     }
 
     fun onCardDataChanged(cardData: PrimerCardData) {
-        val newCardData = when {
-            cachedCardData == null -> cardData
-            cardData.cardNetwork == null -> cardData.copy(cardNetwork = cachedCardData?.cardNetwork)
-            else -> cardData
-        }
+        val newCardData =
+            when {
+                cachedCardData == null -> cardData
+                cardData.cardNetwork == null -> cardData.copy(cardNetwork = cachedCardData?.cardNetwork)
+                else -> cardData
+            }
         cardManager.setRawData(newCardData)
         this.cachedCardData = newCardData
     }
@@ -120,10 +129,11 @@ internal class CardViewModel(
         submitted = true
     }
 
-    fun isValid() = _cardValidationErrors.value.isEmpty() &&
-        _billingAddressValidationErrors.value.isEmpty() &&
-        cachedCardData != null &&
-        isSubmitButtonEnabled(tokenizationStatus.value)
+    fun isValid() =
+        _cardValidationErrors.value.isEmpty() &&
+            _billingAddressValidationErrors.value.isEmpty() &&
+            cachedCardData != null &&
+            isSubmitButtonEnabled(tokenizationStatus.value)
 
     fun updateValidationErrors(errors: List<SyncValidationError>) {
         _billingAddressValidationErrors.value = errors
@@ -134,7 +144,7 @@ internal class CardViewModel(
         return (
             tokenizationStatus == TokenizationStatus.NONE ||
                 tokenizationStatus == TokenizationStatus.ERROR
-            ) && !isMetadataUpdating
+        ) && !isMetadataUpdating
     }
 
     @VisibleForTesting
@@ -166,5 +176,5 @@ internal class CardViewModel(
 internal data class CardNetworksState(
     val networks: List<PrimerCardNetwork>,
     val preferredNetwork: CardNetwork.Type?,
-    val selectedNetwork: CardNetwork.Type?
+    val selectedNetwork: CardNetwork.Type?,
 )

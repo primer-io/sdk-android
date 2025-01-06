@@ -15,22 +15,22 @@ internal typealias NetworkCallDataSource = HttpAnalyticsInterceptor
 
 internal class HttpAnalyticsInterceptor :
     BaseFlowDataSource<NetworkCallProperties, Unit>, Interceptor {
-
     private val sharedFlow = MutableStateFlow<NetworkCallProperties?>(null)
 
     override fun intercept(chain: Interceptor.Chain): Response {
         val id = UUID.randomUUID().toString()
-        val request = chain.request().newBuilder().addHeader(
-            name = X_REQUEST_ID_HEADER,
-            value = id
-        ).build()
+        val request =
+            chain.request().newBuilder().addHeader(
+                name = X_REQUEST_ID_HEADER,
+                value = id,
+            ).build()
         sharedFlow.tryEmit(
             NetworkCallProperties(
                 NetworkCallType.REQUEST_START,
                 id,
                 request.url.toString(),
-                request.method
-            )
+                request.method,
+            ),
         )
 
         val response: Response?
@@ -49,8 +49,8 @@ internal class HttpAnalyticsInterceptor :
                     } else {
                         response.peekBody(Long.MAX_VALUE).string()
                     },
-                    duration = System.currentTimeMillis() - start
-                )
+                    duration = System.currentTimeMillis() - start,
+                ),
             )
         } catch (e: IOException) {
             sharedFlow.tryEmit(
@@ -61,8 +61,8 @@ internal class HttpAnalyticsInterceptor :
                     request.method,
                     null,
                     e.stackTraceToString(),
-                    duration = System.currentTimeMillis() - start
-                )
+                    duration = System.currentTimeMillis() - start,
+                ),
             )
             throw e
         }
@@ -73,7 +73,6 @@ internal class HttpAnalyticsInterceptor :
     override fun execute(input: Unit) = sharedFlow.asStateFlow().filterNotNull()
 
     private companion object {
-
         const val X_REQUEST_ID_HEADER = "X-Request-ID"
     }
 }

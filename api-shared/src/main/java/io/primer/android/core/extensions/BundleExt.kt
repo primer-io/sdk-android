@@ -5,9 +5,7 @@ import android.os.Bundle
 import android.os.Parcelable
 import java.io.Serializable
 
-inline fun <reified T : Parcelable> Bundle.getParcelableArrayListCompat(
-    key: String
-): ArrayList<T>? =
+inline fun <reified T : Parcelable> Bundle.getParcelableArrayListCompat(key: String): ArrayList<T>? =
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
         getParcelableArrayList(key, T::class.java)
     } else {

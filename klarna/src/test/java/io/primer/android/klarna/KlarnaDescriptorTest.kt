@@ -2,8 +2,8 @@ package io.primer.android.klarna
 
 import io.mockk.mockk
 import io.primer.android.components.domain.core.models.PrimerPaymentMethodManagerCategory
-import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.configuration.data.model.PaymentMethodConfigDataResponse
+import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.paymentmethods.HeadlessDefinition
 import io.primer.android.paymentmethods.VaultCapability
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -13,7 +13,6 @@ import org.junit.jupiter.api.Test
 
 @ExperimentalCoroutinesApi
 internal class KlarnaDescriptorTest {
-
     private lateinit var klarna: Klarna
     private lateinit var localConfig: PrimerConfig
     private lateinit var config: PaymentMethodConfigDataResponse

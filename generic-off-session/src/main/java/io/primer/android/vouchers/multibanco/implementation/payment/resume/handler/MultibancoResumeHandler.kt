@@ -15,39 +15,40 @@ import java.util.Locale
 internal data class MultibancoDecision(
     val expiresAt: String,
     val reference: String,
-    val entity: String
+    val entity: String,
 ) : PaymentMethodResumeDecision
 
 internal class MultibancoResumeHandler(
     clientTokenParser: MultibancoClientTokenParser,
     validateClientTokenRepository: ValidateClientTokenRepository,
     clientTokenRepository: ClientTokenRepository,
-    checkoutAdditionalInfoHandler: CheckoutAdditionalInfoHandler
+    checkoutAdditionalInfoHandler: CheckoutAdditionalInfoHandler,
 ) : PrimerResumeDecisionHandlerV2<MultibancoDecision, MultibancoClientToken>(
-    clientTokenRepository = clientTokenRepository,
-    validateClientTokenRepository = validateClientTokenRepository,
-    clientTokenParser = clientTokenParser,
-    checkoutAdditionalInfoHandler = checkoutAdditionalInfoHandler
-) {
-
+        clientTokenRepository = clientTokenRepository,
+        validateClientTokenRepository = validateClientTokenRepository,
+        clientTokenParser = clientTokenParser,
+        checkoutAdditionalInfoHandler = checkoutAdditionalInfoHandler,
+    ) {
     private val dateFormatISO = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
-    private val expiresDateFormat = DateFormat.getDateTimeInstance(
-        DateFormat.MEDIUM,
-        DateFormat.SHORT
-    )
+    private val expiresDateFormat =
+        DateFormat.getDateTimeInstance(
+            DateFormat.MEDIUM,
+            DateFormat.SHORT,
+        )
 
     override val supportedClientTokenIntents: () -> List<String> =
         { listOf(ClientTokenIntent.PAYMENT_METHOD_VOUCHER.name) }
 
     override suspend fun getResumeDecision(clientToken: MultibancoClientToken): MultibancoDecision {
         return MultibancoDecision(
-            expiresAt = clientToken.expiresAt.let {
-                dateFormatISO.parse(it).let { expiresAt ->
-                    expiresDateFormat.format(expiresAt)
-                }
-            },
+            expiresAt =
+                clientToken.expiresAt.let {
+                    dateFormatISO.parse(it).let { expiresAt ->
+                        expiresDateFormat.format(expiresAt)
+                    }
+                },
             reference = clientToken.reference,
-            entity = clientToken.entity
+            entity = clientToken.entity,
         )
     }
 }

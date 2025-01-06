@@ -7,5 +7,5 @@ import io.primer.android.sandboxProcessor.SandboxProcessorDecisionType
 internal data class SandboxProcessorTokenizationInputable(
     override val paymentMethodType: String,
     override val primerSessionIntent: PrimerSessionIntent,
-    val decisionType: SandboxProcessorDecisionType
+    val decisionType: SandboxProcessorDecisionType,
 ) : TokenizationInputable

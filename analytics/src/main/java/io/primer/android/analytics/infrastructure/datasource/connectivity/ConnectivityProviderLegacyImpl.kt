@@ -12,9 +12,8 @@ import android.net.wifi.WifiManager.EXTRA_NETWORK_INFO
 @Suppress("DEPRECATION")
 internal class ConnectivityProviderLegacyImpl(
     private val context: Context,
-    private val cm: ConnectivityManager
+    private val cm: ConnectivityManager,
 ) : ConnectivityProviderBaseImpl() {
-
     private val receiver = ConnectivityReceiver()
 
     override fun subscribe() {
@@ -35,7 +34,10 @@ internal class ConnectivityProviderLegacyImpl(
     }
 
     private inner class ConnectivityReceiver : BroadcastReceiver() {
-        override fun onReceive(c: Context, intent: Intent) {
+        override fun onReceive(
+            c: Context,
+            intent: Intent,
+        ) {
             // on some devices ConnectivityManager.getActiveNetworkInfo() does not provide the correct network state
             // https://issuetracker.google.com/issues/37137911
             val networkInfo = cm.activeNetworkInfo
@@ -49,13 +51,15 @@ internal class ConnectivityProviderLegacyImpl(
                     fallbackNetworkInfo.isConnectedOrConnecting
                 ) {
                     ConnectivityProvider.NetworkState.ConnectedState.ConnectedLegacy(
-                        fallbackNetworkInfo
+                        fallbackNetworkInfo,
                     )
                 } else {
                     val state = networkInfo ?: fallbackNetworkInfo
                     if (state != null) {
                         ConnectivityProvider.NetworkState.ConnectedState.ConnectedLegacy(state)
-                    } else { ConnectivityProvider.NetworkState.NotConnectedState }
+                    } else {
+                        ConnectivityProvider.NetworkState.NotConnectedState
+                    }
                 }
             dispatchChange(state)
         }

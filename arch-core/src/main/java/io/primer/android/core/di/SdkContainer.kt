@@ -22,7 +22,10 @@ class SdkContainer {
         containers[T::class.java.name] = container.apply { registerInitialDependencies() }
     }
 
-    inline fun <reified T : DependencyContainer> registerContainer(name: String, container: T) {
+    inline fun <reified T : DependencyContainer> registerContainer(
+        name: String,
+        container: T,
+    ) {
         containers[name] = container.apply { registerInitialDependencies() }
     }
 
@@ -61,7 +64,7 @@ class SdkContainer {
             }
         } ?: error(
             "Unable to resolve type ${T::class.java.name} with dependency chain:" +
-                " ${dependencyErrorChain.filterNotNull().joinToString(" -> ")}"
+                " ${dependencyErrorChain.filterNotNull().joinToString(" -> ")}",
         )
     }
 }

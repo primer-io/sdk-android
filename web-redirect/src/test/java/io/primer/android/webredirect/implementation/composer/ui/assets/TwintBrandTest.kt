@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
 class TwintBrandTest {
-
     private val twintBrand = TwintBrand()
 
     @Test

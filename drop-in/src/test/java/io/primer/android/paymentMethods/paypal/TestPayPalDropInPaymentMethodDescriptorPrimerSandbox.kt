@@ -102,14 +102,15 @@ class TestPayPalDropInPaymentMethodDescriptorPrimerSandbox {
 
     private fun createDescriptor(
         isStandalonePaymentMethod: Boolean = false,
-        isInitScreenEnabled: Boolean = false
+        isInitScreenEnabled: Boolean = false,
     ) = TestPayPalDropInPaymentMethodDescriptor(
         paymentMethodType = paymentMethodType,
-        uiOptions = UiOptions(
-            isStandalonePaymentMethod = isStandalonePaymentMethod,
-            isInitScreenEnabled = isInitScreenEnabled,
-            isDarkMode = null
-        ),
-        brand = brand
+        uiOptions =
+            UiOptions(
+                isStandalonePaymentMethod = isStandalonePaymentMethod,
+                isInitScreenEnabled = isInitScreenEnabled,
+                isDarkMode = null,
+            ),
+        brand = brand,
     )
 }

@@ -7,10 +7,12 @@ import io.primer.android.core.data.serialization.json.JSONObjectSerializer
 import org.json.JSONObject
 
 data class PrimerThreeDsOptions(val threeDsAppRequestorUrl: String? = null) : Parcelable, JSONObjectSerializable {
-
     constructor(parcel: Parcel) : this(parcel.readString())
 
-    override fun writeToParcel(parcel: Parcel, flags: Int) {
+    override fun writeToParcel(
+        parcel: Parcel,
+        flags: Int,
+    ) {
         parcel.writeString(threeDsAppRequestorUrl)
     }
 
@@ -30,10 +32,11 @@ data class PrimerThreeDsOptions(val threeDsAppRequestorUrl: String? = null) : Pa
         private const val THREE_DS_APP_REQUESTOR_URL_FIELD = "threeDsAppRequestorUrl"
 
         @JvmField
-        val serializer = JSONObjectSerializer<PrimerThreeDsOptions> { t ->
-            JSONObject().apply {
-                put(THREE_DS_APP_REQUESTOR_URL_FIELD, t.threeDsAppRequestorUrl)
+        val serializer =
+            JSONObjectSerializer<PrimerThreeDsOptions> { t ->
+                JSONObject().apply {
+                    put(THREE_DS_APP_REQUESTOR_URL_FIELD, t.threeDsAppRequestorUrl)
+                }
             }
-        }
     }
 }

@@ -2,7 +2,6 @@ package io.primer.android.core.di
 
 import io.mockk.spyk
 import io.primer.android.core.di.exception.SdkContainerUninitializedException
-import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
@@ -10,7 +9,6 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 
 internal class DISdkComponentTest {
-
     private val diSdkComponent = object : DISdkComponent {}
 
     @BeforeEach

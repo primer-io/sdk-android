@@ -2,13 +2,13 @@ package io.primer.android.googlepay
 
 import io.mockk.every
 import io.mockk.mockk
-import io.primer.android.data.settings.PrimerSettings
 import io.primer.android.configuration.data.model.ConfigurationData
 import io.primer.android.configuration.data.model.CountryCode
 import io.primer.android.core.data.datasource.BaseCacheDataSource
 import io.primer.android.core.utils.Failure
 import io.primer.android.core.utils.Success
 import io.primer.android.data.settings.GooglePayButtonStyle
+import io.primer.android.data.settings.PrimerSettings
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -19,12 +19,13 @@ internal class GooglePayFactoryTest {
 
     @BeforeEach
     fun setUp() {
-        primerSettings = mockk {
-            every { paymentMethodOptions.googlePayOptions.merchantName } returns "Test Merchant"
-            every { paymentMethodOptions.googlePayOptions.buttonStyle } returns GooglePayButtonStyle.WHITE
-            every { paymentMethodOptions.googlePayOptions.captureBillingAddress } returns true
-            every { paymentMethodOptions.googlePayOptions.existingPaymentMethodRequired } returns false
-        }
+        primerSettings =
+            mockk {
+                every { paymentMethodOptions.googlePayOptions.merchantName } returns "Test Merchant"
+                every { paymentMethodOptions.googlePayOptions.buttonStyle } returns GooglePayButtonStyle.WHITE
+                every { paymentMethodOptions.googlePayOptions.captureBillingAddress } returns true
+                every { paymentMethodOptions.googlePayOptions.existingPaymentMethodRequired } returns false
+            }
         configurationDataSource = mockk()
     }
 
@@ -53,31 +54,35 @@ internal class GooglePayFactoryTest {
     }
 
     private fun mockConfigurationData(currencyCodeStr: String) {
-        every { configurationDataSource.get() } returns mockk {
-            every {
-                clientSession
-            } returns mockk {
+        every { configurationDataSource.get() } returns
+            mockk {
                 every {
-                    order
-                } returns mockk {
-                    every {
-                        currentAmount
-                    } returns 1000
-                    every {
-                        currencyCode
-                    } returns currencyCodeStr
-                    every {
-                        countryCode
-                    } returns CountryCode.US
-                }
-                every {
-                    paymentMethod
-                } returns mockk {
-                    every {
-                        orderedAllowedCardNetworks
-                    } returns emptyList()
-                }
+                    clientSession
+                } returns
+                    mockk {
+                        every {
+                            order
+                        } returns
+                            mockk {
+                                every {
+                                    currentAmount
+                                } returns 1000
+                                every {
+                                    currencyCode
+                                } returns currencyCodeStr
+                                every {
+                                    countryCode
+                                } returns CountryCode.US
+                            }
+                        every {
+                            paymentMethod
+                        } returns
+                            mockk {
+                                every {
+                                    orderedAllowedCardNetworks
+                                } returns emptyList()
+                            }
+                    }
             }
-        }
     }
 }

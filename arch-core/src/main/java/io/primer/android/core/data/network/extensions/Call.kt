@@ -11,25 +11,32 @@ import kotlin.coroutines.resumeWithException
 
 suspend inline fun Call.await(): Response =
     suspendCancellableCoroutine { continuation ->
-        val callback = object : Callback, CompletionHandler {
-            override fun onFailure(call: Call, e: IOException) {
-                if (!call.isCanceled()) {
-                    continuation.resumeWithException(e)
+        val callback =
+            object : Callback, CompletionHandler {
+                override fun onFailure(
+                    call: Call,
+                    e: IOException,
+                ) {
+                    if (!call.isCanceled()) {
+                        continuation.resumeWithException(e)
+                    }
+                }
+
+                override fun onResponse(
+                    call: Call,
+                    response: Response,
+                ) {
+                    continuation.resume(response)
+                }
+
+                override fun invoke(cause: Throwable?) {
+                    try {
+                        cancel()
+                    } catch (_: Throwable) {
+                        // do nothing
+                    }
                 }
             }
-
-            override fun onResponse(call: Call, response: Response) {
-                continuation.resume(response)
-            }
-
-            override fun invoke(cause: Throwable?) {
-                try {
-                    cancel()
-                } catch (_: Throwable) {
-                    // do nothing
-                }
-            }
-        }
         enqueue(callback)
         continuation.invokeOnCancellation(callback)
     }

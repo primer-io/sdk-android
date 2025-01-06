@@ -8,15 +8,15 @@ typealias CacheConfigurationDataSource = BaseCacheDataSource<ConfigurationData, 
 
 internal class LocalConfigurationDataSource :
     BaseCacheDataSource<ConfigurationData, ConfigurationData> {
-
     private var configuration: ConfigurationData? = null
 
     @Throws(MissingConfigurationException::class)
-    override fun get() = try {
-        requireNotNull(configuration)
-    } catch (e: IllegalArgumentException) {
-        throw MissingConfigurationException(e)
-    }
+    override fun get() =
+        try {
+            requireNotNull(configuration)
+        } catch (e: IllegalArgumentException) {
+            throw MissingConfigurationException(e)
+        }
 
     override fun update(input: ConfigurationData) {
         this.configuration = input

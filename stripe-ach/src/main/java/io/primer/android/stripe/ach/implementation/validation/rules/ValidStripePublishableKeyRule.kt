@@ -10,12 +10,14 @@ internal class ValidStripePublishableKeyRule : ValidationRule<PrimerStripeOption
     override fun validate(t: PrimerStripeOptions): ValidationResult =
         when (t.publishableKey.isNullOrBlank()) {
             false -> ValidationResult.Success
-            true -> ValidationResult.Failure(
-                IllegalValueException(
-                    key = StripeIllegalValueKey.STRIPE_PUBLISHABLE_KEY,
-                    message = "Required value for " +
-                        "${StripeIllegalValueKey.STRIPE_PUBLISHABLE_KEY.key} was null or blank."
+            true ->
+                ValidationResult.Failure(
+                    IllegalValueException(
+                        key = StripeIllegalValueKey.STRIPE_PUBLISHABLE_KEY,
+                        message =
+                            "Required value for " +
+                                "${StripeIllegalValueKey.STRIPE_PUBLISHABLE_KEY.key} was null or blank.",
+                    ),
                 )
-            )
         }
 }

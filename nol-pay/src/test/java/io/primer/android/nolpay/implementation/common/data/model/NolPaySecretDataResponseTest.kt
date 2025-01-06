@@ -5,14 +5,14 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
 internal class NolPaySecretDataResponseTest {
-
     @Test
     fun `deserializer should correctly deserialize NolPaySecretDataResponse`() {
         // Given
         val sdkSecret = "secret-123"
-        val json = JSONObject().apply {
-            put("sdkSecret", sdkSecret)
-        }
+        val json =
+            JSONObject().apply {
+                put("sdkSecret", sdkSecret)
+            }
 
         // When
         val actualResponse = NolPaySecretDataResponse.deserializer.deserialize(json)

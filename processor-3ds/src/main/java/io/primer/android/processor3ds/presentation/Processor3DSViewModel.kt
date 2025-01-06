@@ -13,22 +13,24 @@ import kotlinx.coroutines.launch
 
 internal class Processor3DSViewModel(
     private val pollingInteractor: AsyncPaymentMethodPollingInteractor,
-    private val analyticsInteractor: AnalyticsInteractor
+    private val analyticsInteractor: AnalyticsInteractor,
 ) : ViewModel() {
-
     private val _statusUrlLiveData = MutableLiveData<String>()
     val statusUrlLiveData: LiveData<String> = _statusUrlLiveData
 
     private val _statusUrlErrorData = MutableLiveData<Throwable>()
     val statusUrlErrorData: LiveData<Throwable> = _statusUrlErrorData
 
-    fun getStatus(statusUrl: String, paymentMethodType: String) {
+    fun getStatus(
+        statusUrl: String,
+        paymentMethodType: String,
+    ) {
         viewModelScope.launch {
             pollingInteractor(
                 AsyncStatusParams(
                     url = statusUrl,
-                    paymentMethodType = paymentMethodType
-                )
+                    paymentMethodType = paymentMethodType,
+                ),
             ).catch { throwable ->
                 _statusUrlErrorData.postValue(throwable)
             }.collect { status ->
@@ -37,7 +39,8 @@ internal class Processor3DSViewModel(
         }
     }
 
-    fun addAnalyticsEvent(params: BaseAnalyticsParams) = viewModelScope.launch {
-        analyticsInteractor(params)
-    }
+    fun addAnalyticsEvent(params: BaseAnalyticsParams) =
+        viewModelScope.launch {
+            analyticsInteractor(params)
+        }
 }

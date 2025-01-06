@@ -19,7 +19,6 @@ import kotlin.io.encoding.Base64
 import kotlin.io.encoding.ExperimentalEncodingApi
 
 class GooglePayTokenizationParamsMapperTest {
-
     private val mapper = GooglePayTokenizationParamsMapper()
 
     @OptIn(ExperimentalEncodingApi::class)
@@ -34,41 +33,44 @@ class GooglePayTokenizationParamsMapperTest {
         mockkStatic(android.util.Base64::class)
         every { android.util.Base64.encodeToString(any(), any()) } returns encodedToken
 
-        val paymentDataJson = JSONObject().apply {
-            put(
-                PAYMENT_METHOD_DATA_FIELD,
-                JSONObject().apply {
-                    put(
-                        TOKENIZATION_DATA_FIELD,
-                        JSONObject().apply {
-                            put(
-                                TOKENIZATION_FIELD,
-                                token
-                            )
-                        }
-                    )
-                }
-            )
-        }.toString()
+        val paymentDataJson =
+            JSONObject().apply {
+                put(
+                    PAYMENT_METHOD_DATA_FIELD,
+                    JSONObject().apply {
+                        put(
+                            TOKENIZATION_DATA_FIELD,
+                            JSONObject().apply {
+                                put(
+                                    TOKENIZATION_FIELD,
+                                    token,
+                                )
+                            },
+                        )
+                    },
+                )
+            }.toString()
         every { paymentData.toJson() } returns paymentDataJson
         val flow = GooglePayFlow.GATEWAY
-        val paymentInstrumentParams = GooglePayPaymentInstrumentParams(
-            paymentMethodType = "google_pay",
-            merchantId = merchantId,
-            paymentData = paymentData,
-            flow = flow
-        )
+        val paymentInstrumentParams =
+            GooglePayPaymentInstrumentParams(
+                paymentMethodType = "google_pay",
+                merchantId = merchantId,
+                paymentData = paymentData,
+                flow = flow,
+            )
         val sessionIntent = PrimerSessionIntent.CHECKOUT
         val tokenizationParams = TokenizationParams(paymentInstrumentParams, sessionIntent)
 
         // When
         val result = mapper.map(tokenizationParams)
 
-        val instrumentRequest = GooglePayPaymentInstrumentDataRequest(
-            merchantId = merchantId,
-            encryptedPayload = encodedToken,
-            flow = flow
-        )
+        val instrumentRequest =
+            GooglePayPaymentInstrumentDataRequest(
+                merchantId = merchantId,
+                encryptedPayload = encodedToken,
+                flow = flow,
+            )
 
         // Then
         val expectedRequest = instrumentRequest.toTokenizationRequest(sessionIntent)

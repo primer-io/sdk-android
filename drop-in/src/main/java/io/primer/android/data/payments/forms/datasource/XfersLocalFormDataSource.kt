@@ -9,13 +9,13 @@ import kotlinx.coroutines.flow.flowOf
 
 internal class XfersLocalFormDataSource() :
     BaseFlowCacheDataSource<FormDataResponse, String> {
-
-    override fun get(): Flow<FormDataResponse> = flowOf(
-        FormDataResponse(
-            title = R.string.payment_method_xfers_title,
-            logo = R.drawable.ic_logo_xfers_colored,
-            buttonType = ButtonType.CONFIRM,
-            description = R.string.payment_method_xfers_description
+    override fun get(): Flow<FormDataResponse> =
+        flowOf(
+            FormDataResponse(
+                title = R.string.payment_method_xfers_title,
+                logo = R.drawable.ic_logo_xfers_colored,
+                buttonType = ButtonType.CONFIRM,
+                description = R.string.payment_method_xfers_description,
+            ),
         )
-    )
 }

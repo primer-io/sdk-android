@@ -4,13 +4,12 @@ import android.content.Context
 import io.primer.android.data.settings.PrimerSettings
 
 interface PrimerInterface {
-
     /**
      * Configures the Primer SDK with [PrimerSettings] & [PrimerCheckoutListener].
      */
     fun configure(
         settings: PrimerSettings? = null,
-        listener: PrimerCheckoutListener? = null
+        listener: PrimerCheckoutListener? = null,
     )
 
     /**
@@ -27,7 +26,10 @@ interface PrimerInterface {
      * @param clientToken base64 string containing information about this Primer session.
      * It expires after 24 hours. An expired client token will throw an [IllegalArgumentException].
      */
-    fun showUniversalCheckout(context: Context, clientToken: String)
+    fun showUniversalCheckout(
+        context: Context,
+        clientToken: String,
+    )
 
     /**
      * Initialise and show Primer's Vault Manager.
@@ -35,7 +37,10 @@ interface PrimerInterface {
      * @param clientToken base64 string containing information about this Primer session.
      * It expires after 24 hours. An expired client token will throw an [IllegalArgumentException].
      */
-    fun showVaultManager(context: Context, clientToken: String)
+    fun showVaultManager(
+        context: Context,
+        clientToken: String,
+    )
 
     /**
      * Initialise and show specific payment method flows with Primer.
@@ -49,7 +54,7 @@ interface PrimerInterface {
         context: Context,
         clientToken: String,
         paymentMethod: String,
-        intent: PrimerSessionIntent
+        intent: PrimerSessionIntent,
     )
 
     /**

@@ -10,15 +10,16 @@ import io.primer.android.stripe.ach.implementation.tokenization.domain.model.Str
 
 internal class StripeAchTokenizationParamsMapper :
     TokenizationParamsMapper<StripeAchPaymentInstrumentParams, StripeAchPaymentInstrumentDataRequest> {
-
-    override fun map(params: TokenizationParams<StripeAchPaymentInstrumentParams>):
-        TokenizationRequestV2<StripeAchPaymentInstrumentDataRequest> {
-        val instrumentDataRequest = StripeAchPaymentInstrumentDataRequest(
-            paymentMethodType = params.paymentInstrumentParams.paymentMethodType,
-            paymentMethodConfigId = params.paymentInstrumentParams.paymentMethodConfigId,
-            sessionInfo = StripeAchSessionInfoDataRequest(locale = params.paymentInstrumentParams.locale),
-            type = params.paymentInstrumentParams.type
-        )
+    override fun map(
+        params: TokenizationParams<StripeAchPaymentInstrumentParams>,
+    ): TokenizationRequestV2<StripeAchPaymentInstrumentDataRequest> {
+        val instrumentDataRequest =
+            StripeAchPaymentInstrumentDataRequest(
+                paymentMethodType = params.paymentInstrumentParams.paymentMethodType,
+                paymentMethodConfigId = params.paymentInstrumentParams.paymentMethodConfigId,
+                sessionInfo = StripeAchSessionInfoDataRequest(locale = params.paymentInstrumentParams.locale),
+                type = params.paymentInstrumentParams.type,
+            )
         return instrumentDataRequest.toTokenizationRequest(params.sessionIntent)
     }
 }

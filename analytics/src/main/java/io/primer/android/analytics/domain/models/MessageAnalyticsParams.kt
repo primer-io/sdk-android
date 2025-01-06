@@ -8,5 +8,5 @@ data class MessageAnalyticsParams(
     val message: String,
     val severity: Severity,
     val diagnosticsId: String? = null,
-    val context: BaseContextParams? = null
+    val context: BaseContextParams? = null,
 ) : BaseAnalyticsParams()

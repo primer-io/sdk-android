@@ -22,9 +22,8 @@ internal data class KlarnaSessionData(
     val billingAddress: AddressData?,
     val shippingAddress: AddressData?,
     val tokenDetails: TokenDetailsData?,
-    val orderTaxAmount: Int?
+    val orderTaxAmount: Int?,
 ) : JSONObjectSerializable, JSONDeserializable {
-
     companion object {
         private const val RECURRING_DESCRIPTION_FIELD = "recurringDescription"
         private const val PURCHASE_COUNTRY_FIELD = "purchaseCountry"
@@ -38,81 +37,87 @@ internal data class KlarnaSessionData(
         private const val ORDER_TAX_AMOUNT_FIELD = "orderTaxAmount"
 
         @JvmField
-        val serializer = JSONObjectSerializer<KlarnaSessionData> { t ->
-            JSONObject().apply {
-                putOpt(RECURRING_DESCRIPTION_FIELD, t.recurringDescription)
-                putOpt(PURCHASE_COUNTRY_FIELD, t.purchaseCountry)
-                putOpt(PURCHASE_CURRENCY_FIELD, t.purchaseCurrency)
-                putOpt(LOCALE_FIELD, t.locale)
-                putOpt(ORDER_AMOUNT_FIELD, t.orderAmount)
-                put(
-                    ORDER_LINES_FIELD,
-                    JSONArray().apply {
-                        t.orderLines.map {
-                            put(
-                                JSONSerializationUtils
-                                    .getJsonObjectSerializer<SessionOrderLines>()
-                                    .serialize(it)
-                            )
-                        }
+        val serializer =
+            JSONObjectSerializer<KlarnaSessionData> { t ->
+                JSONObject().apply {
+                    putOpt(RECURRING_DESCRIPTION_FIELD, t.recurringDescription)
+                    putOpt(PURCHASE_COUNTRY_FIELD, t.purchaseCountry)
+                    putOpt(PURCHASE_CURRENCY_FIELD, t.purchaseCurrency)
+                    putOpt(LOCALE_FIELD, t.locale)
+                    putOpt(ORDER_AMOUNT_FIELD, t.orderAmount)
+                    put(
+                        ORDER_LINES_FIELD,
+                        JSONArray().apply {
+                            t.orderLines.map {
+                                put(
+                                    JSONSerializationUtils
+                                        .getJsonObjectSerializer<SessionOrderLines>()
+                                        .serialize(it),
+                                )
+                            }
+                        },
+                    )
+                    t.billingAddress?.let {
+                        put(
+                            BILLING_ADDRESS_FIELD,
+                            JSONSerializationUtils
+                                .getJsonObjectSerializer<AddressData>()
+                                .serialize(it),
+                        )
                     }
-                )
-                t.billingAddress?.let {
-                    put(
-                        BILLING_ADDRESS_FIELD,
-                        JSONSerializationUtils
-                            .getJsonObjectSerializer<AddressData>()
-                            .serialize(it)
-                    )
+                    t.shippingAddress?.let {
+                        put(
+                            SHIPPING_ADDRESS_FIELD,
+                            JSONSerializationUtils
+                                .getJsonObjectSerializer<AddressData>()
+                                .serialize(it),
+                        )
+                    }
+                    t.tokenDetails?.let {
+                        put(
+                            TOKEN_DETAILS_FIELD,
+                            JSONSerializationUtils.getJsonObjectSerializer<TokenDetailsData>()
+                                .serialize(it),
+                        )
+                    }
+                    putOpt(ORDER_TAX_AMOUNT_FIELD, t.orderTaxAmount)
                 }
-                t.shippingAddress?.let {
-                    put(
-                        SHIPPING_ADDRESS_FIELD,
-                        JSONSerializationUtils
-                            .getJsonObjectSerializer<AddressData>()
-                            .serialize(it)
-                    )
-                }
-                t.tokenDetails?.let {
-                    put(
-                        TOKEN_DETAILS_FIELD,
-                        JSONSerializationUtils.getJsonObjectSerializer<TokenDetailsData>()
-                            .serialize(it)
-                    )
-                }
-                putOpt(ORDER_TAX_AMOUNT_FIELD, t.orderTaxAmount)
             }
-        }
 
         @JvmField
-        val deserializer = JSONObjectDeserializer { t ->
-            KlarnaSessionData(
-                recurringDescription = t.optNullableString(RECURRING_DESCRIPTION_FIELD),
-                purchaseCountry = t.optNullableString(PURCHASE_COUNTRY_FIELD),
-                purchaseCurrency = t.optNullableString(PURCHASE_CURRENCY_FIELD),
-                locale = t.optNullableString(LOCALE_FIELD),
-                orderAmount = t.optNullableInt(ORDER_AMOUNT_FIELD),
-                orderLines = t.getJSONArray(ORDER_LINES_FIELD).sequence<JSONObject>()
-                    .map {
-                        JSONSerializationUtils
-                            .getJsonObjectDeserializer<SessionOrderLines>()
-                            .deserialize(it)
-                    }.toList(),
-                billingAddress = t.optJSONObject(BILLING_ADDRESS_FIELD)?.let {
-                    JSONSerializationUtils.getJsonObjectDeserializer<AddressData>()
-                        .deserialize(it)
-                },
-                shippingAddress = t.optJSONObject(SHIPPING_ADDRESS_FIELD)?.let {
-                    JSONSerializationUtils.getJsonObjectDeserializer<AddressData>()
-                        .deserialize(it)
-                },
-                tokenDetails = t.optJSONObject(TOKEN_DETAILS_FIELD)?.let {
-                    JSONSerializationUtils.getJsonObjectDeserializer<TokenDetailsData>()
-                        .deserialize(it)
-                },
-                orderTaxAmount = t.optNullableInt(ORDER_TAX_AMOUNT_FIELD)
-            )
-        }
+        val deserializer =
+            JSONObjectDeserializer { t ->
+                KlarnaSessionData(
+                    recurringDescription = t.optNullableString(RECURRING_DESCRIPTION_FIELD),
+                    purchaseCountry = t.optNullableString(PURCHASE_COUNTRY_FIELD),
+                    purchaseCurrency = t.optNullableString(PURCHASE_CURRENCY_FIELD),
+                    locale = t.optNullableString(LOCALE_FIELD),
+                    orderAmount = t.optNullableInt(ORDER_AMOUNT_FIELD),
+                    orderLines =
+                        t.getJSONArray(ORDER_LINES_FIELD).sequence<JSONObject>()
+                            .map {
+                                JSONSerializationUtils
+                                    .getJsonObjectDeserializer<SessionOrderLines>()
+                                    .deserialize(it)
+                            }.toList(),
+                    billingAddress =
+                        t.optJSONObject(BILLING_ADDRESS_FIELD)?.let {
+                            JSONSerializationUtils.getJsonObjectDeserializer<AddressData>()
+                                .deserialize(it)
+                        },
+                    shippingAddress =
+                        t.optJSONObject(SHIPPING_ADDRESS_FIELD)?.let {
+                            JSONSerializationUtils.getJsonObjectDeserializer<AddressData>()
+                                .deserialize(it)
+                        },
+                    tokenDetails =
+                        t.optJSONObject(TOKEN_DETAILS_FIELD)?.let {
+                            JSONSerializationUtils.getJsonObjectDeserializer<TokenDetailsData>()
+                                .deserialize(it)
+                        },
+                    orderTaxAmount = t.optNullableInt(ORDER_TAX_AMOUNT_FIELD),
+                )
+            }
     }
 }
 
@@ -123,9 +128,8 @@ internal data class SessionOrderLines(
     val reference: String?,
     val unitPrice: Int?,
     val totalAmount: Int?,
-    val totalDiscountAmount: Int?
+    val totalDiscountAmount: Int?,
 ) : JSONObjectSerializable, JSONDeserializable {
-
     companion object {
         const val TYPE_FIELD = "type"
         private const val NAME_FIELD = "name"
@@ -159,7 +163,7 @@ internal data class SessionOrderLines(
                     t.optNullableString(REFERENCE_FIELD),
                     t.optNullableInt(UNIT_PRICE_FIELD),
                     t.optNullableInt(TOTAL_AMOUNT_FIELD),
-                    t.optNullableInt(TOTAL_DISCOUNT_AMOUNT_FIELD)
+                    t.optNullableInt(TOTAL_DISCOUNT_AMOUNT_FIELD),
                 )
             }
     }
@@ -169,9 +173,8 @@ internal data class TokenDetailsData(
     val brand: String?,
     val maskedNumber: String?,
     val type: String,
-    val expiryDate: String?
+    val expiryDate: String?,
 ) : JSONObjectSerializable, JSONDeserializable {
-
     companion object {
         private const val BRAND_FIELD = "brand"
         private const val MASKED_NUMBER_FIELD = "masked_number"
@@ -196,7 +199,7 @@ internal data class TokenDetailsData(
                     t.optNullableString(BRAND_FIELD),
                     t.optNullableString(MASKED_NUMBER_FIELD),
                     t.getString(TYPE_FIELD),
-                    t.optNullableString(EXPIRY_DATE_FIELD)
+                    t.optNullableString(EXPIRY_DATE_FIELD),
                 )
             }
     }

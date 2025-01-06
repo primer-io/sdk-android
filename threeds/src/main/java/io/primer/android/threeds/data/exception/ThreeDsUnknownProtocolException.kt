@@ -4,6 +4,6 @@ import io.primer.android.analytics.domain.models.ThreeDsFailureContextParams
 
 internal class ThreeDsUnknownProtocolException(
     val initProtocolVersion: String,
-    val context: ThreeDsFailureContextParams
+    val context: ThreeDsFailureContextParams,
 ) :
     IllegalStateException()

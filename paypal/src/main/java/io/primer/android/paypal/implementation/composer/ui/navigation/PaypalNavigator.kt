@@ -8,9 +8,8 @@ import io.primer.paymentMethodCoreUi.core.ui.HeadlessActivity
 import io.primer.paymentMethodCoreUi.core.ui.navigation.StartActivityNavigator
 
 internal data class PaypalNavigator(
-    private val activity: Activity
+    private val activity: Activity,
 ) : StartActivityNavigator<BrowserLauncherParams>(activity) {
-
     override fun navigate(params: BrowserLauncherParams) {
         activity.apply {
             intent.putExtra(HeadlessActivity.LAUNCHED_BROWSER_KEY, true)

@@ -7,7 +7,6 @@ import io.primer.android.components.domain.core.models.metadata.PrimerPaymentMet
  * A sealed class that encapsulates various states related to card metadata retrieval and processing.
  */
 sealed class PrimerCardMetadataState : PrimerPaymentMethodMetadataState {
-
     /**
      * Represents the state when fetching card metadata, including the associated [PrimerCardNumberEntryState].
      *
@@ -24,6 +23,6 @@ sealed class PrimerCardMetadataState : PrimerPaymentMethodMetadataState {
      */
     data class Fetched(
         val cardNumberEntryMetadata: PrimerCardNumberEntryMetadata,
-        val cardNumberEntryState: PrimerCardNumberEntryState
+        val cardNumberEntryState: PrimerCardNumberEntryState,
     ) : PrimerCardMetadataState()
 }

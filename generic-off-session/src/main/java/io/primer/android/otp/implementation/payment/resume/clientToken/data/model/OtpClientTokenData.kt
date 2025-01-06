@@ -10,11 +10,9 @@ import org.json.JSONObject
 
 internal data class OtpClientTokenData(
     val intent: String,
-    val statusUrl: String
+    val statusUrl: String,
 ) : JSONDeserializable {
-
     companion object {
-
         @Throws(InvalidClientTokenException::class, ExpiredClientTokenException::class)
         fun fromString(encoded: String): OtpClientTokenData {
             ClientTokenDecoder.decode(encoded).let { decoded ->
@@ -28,11 +26,12 @@ internal data class OtpClientTokenData(
         private const val STATUS_URL_FIELD = "statusUrl"
 
         @JvmField
-        val deserializer = JSONObjectDeserializer { t ->
-            OtpClientTokenData(
-                intent = t.getString(INTENT_FIELD),
-                statusUrl = t.getString(STATUS_URL_FIELD)
-            )
-        }
+        val deserializer =
+            JSONObjectDeserializer { t ->
+                OtpClientTokenData(
+                    intent = t.getString(INTENT_FIELD),
+                    statusUrl = t.getString(STATUS_URL_FIELD),
+                )
+            }
     }
 }

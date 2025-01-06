@@ -44,40 +44,40 @@ internal class AnalyticsDataRepository(
     private val timerDataSource: TimerDataSource,
     private val checkoutSessionIdDataSource: CheckoutSessionIdProvider,
     private val provider: BaseDataProvider<AnalyticsProviderData>,
-    private val messagePropertiesDataSource: MessagePropertiesDataSource
+    private val messagePropertiesDataSource: MessagePropertiesDataSource,
 ) : AnalyticsRepository {
-
     private val sdkSessionId by lazy { SdkSessionDataSource.getSessionId() }
 
-    override suspend fun startObservingEvents() = merge(
-        networkCallDataSource.execute(Unit),
-        uncaughtHandlerDataSource.execute(Unit),
-        networkTypeDataSource.execute(Unit),
-        timerDataSource.execute(Unit),
-        messagePropertiesDataSource.execute(Unit)
-    ).mapLatest { properties ->
-        val providerData = provider.provide()
+    override suspend fun startObservingEvents() =
+        merge(
+            networkCallDataSource.execute(Unit),
+            uncaughtHandlerDataSource.execute(Unit),
+            networkTypeDataSource.execute(Unit),
+            timerDataSource.execute(Unit),
+            messagePropertiesDataSource.execute(Unit),
+        ).mapLatest { properties ->
+            val providerData = provider.provide()
 
-        localAnalyticsDataSource.addEvent(
-            properties.toAnalyticsEvent(
-                batteryLevel = batteryLevelDataSource.get(),
-                batteryStatus = batteryStatusDataSource.get(),
-                screenData = screenSizeDataSource.get(),
-                deviceId = deviceIdDataSource.get(),
-                appIdentifier = providerData.applicationId,
-                sdkSessionId = sdkSessionId,
-                sdkIntegrationType = providerData.data?.sdkIntegrationType,
-                sdkPaymentHandling = providerData.data?.paymentHandling,
-                checkoutSessionId = checkoutSessionIdDataSource.provide(),
-                clientSessionId = providerData.data?.clientSessionId,
-                orderId = providerData.data?.orderId,
-                primerAccountId = providerData.data?.primerAccountId,
-                analyticsUrl = providerData.data?.analyticsUrl
+            localAnalyticsDataSource.addEvent(
+                properties.toAnalyticsEvent(
+                    batteryLevel = batteryLevelDataSource.get(),
+                    batteryStatus = batteryStatusDataSource.get(),
+                    screenData = screenSizeDataSource.get(),
+                    deviceId = deviceIdDataSource.get(),
+                    appIdentifier = providerData.applicationId,
+                    sdkSessionId = sdkSessionId,
+                    sdkIntegrationType = providerData.data?.sdkIntegrationType,
+                    sdkPaymentHandling = providerData.data?.paymentHandling,
+                    checkoutSessionId = checkoutSessionIdDataSource.provide(),
+                    clientSessionId = providerData.data?.clientSessionId,
+                    orderId = providerData.data?.orderId,
+                    primerAccountId = providerData.data?.primerAccountId,
+                    analyticsUrl = providerData.data?.analyticsUrl,
+                ),
             )
-        )
-    }.onEach {
-        fileAnalyticsDataSource.update(localAnalyticsDataSource.get())
-    }.distinctUntilChanged().collect()
+        }.onEach {
+            fileAnalyticsDataSource.update(localAnalyticsDataSource.get())
+        }.distinctUntilChanged().collect()
 
     override fun addEvent(params: BaseAnalyticsParams) {
         val providerData = provider.provide()
@@ -95,16 +95,17 @@ internal class AnalyticsDataRepository(
                 clientSessionId = providerData.data?.clientSessionId,
                 orderId = providerData.data?.orderId,
                 primerAccountId = providerData.data?.primerAccountId,
-                analyticsUrl = providerData.data?.analyticsUrl
-            )
+                analyticsUrl = providerData.data?.analyticsUrl,
+            ),
         )
         fileAnalyticsDataSource.update(localAnalyticsDataSource.get())
     }
 
-    override fun send() = analyticsDataSender.sendEvents(localAnalyticsDataSource.get())
-        .onEach { sentEvents ->
-            localAnalyticsDataSource.remove(sentEvents)
-        }.onCompletion {
-            fileAnalyticsDataSource.update(localAnalyticsDataSource.get())
-        }.map { }
+    override fun send() =
+        analyticsDataSender.sendEvents(localAnalyticsDataSource.get())
+            .onEach { sentEvents ->
+                localAnalyticsDataSource.remove(sentEvents)
+            }.onCompletion {
+                fileAnalyticsDataSource.update(localAnalyticsDataSource.get())
+            }.map { }
 }

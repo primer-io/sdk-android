@@ -26,7 +26,6 @@ import kotlin.test.assertFailsWith
 @OptIn(ExperimentalCoroutinesApi::class)
 @ExtendWith(InstantExecutorExtension::class, MockKExtension::class)
 internal class NolPaySdkInitInteractorTest {
-
     @RelaxedMockK
     lateinit var secretRepository: NolPayAppSecretRepository
 
@@ -53,7 +52,7 @@ internal class NolPaySdkInitInteractorTest {
         val transitConfiguration = mockk<TransitConfiguration>(relaxed = true)
 
         coEvery { configurationRepository.getConfiguration() }.returns(
-            Result.success(configuration)
+            Result.success(configuration),
         )
 
         every { nolPay.initSDK(any(), any(), any(), any()) }.returns(transitConfiguration)
@@ -74,11 +73,11 @@ internal class NolPaySdkInitInteractorTest {
         val configuration = mockk<NolPayConfiguration>(relaxed = true)
 
         coEvery { nolPay.initSDK(any(), any(), any(), any()) }.throws(
-            expectedException
+            expectedException,
         )
 
         coEvery { configurationRepository.getConfiguration() }.returns(
-            Result.success(configuration)
+            Result.success(configuration),
         )
 
         assertThrows<java.lang.Exception> {
@@ -98,16 +97,17 @@ internal class NolPaySdkInitInteractorTest {
         val expectedException = mockk<io.primer.android.errors.data.exception.IllegalValueException>(relaxed = true)
 
         coEvery { configurationRepository.getConfiguration() }.throws(
-            expectedException
+            expectedException,
         )
 
-        val exception = assertThrows<io.primer.android.errors.data.exception.IllegalValueException> {
-            runTest {
-                val result = interactor(params)
-                assert(result.isFailure)
-                result.getOrThrow()
+        val exception =
+            assertThrows<io.primer.android.errors.data.exception.IllegalValueException> {
+                runTest {
+                    val result = interactor(params)
+                    assert(result.isFailure)
+                    result.getOrThrow()
+                }
             }
-        }
 
         assertEquals(expectedException, exception)
 
@@ -116,43 +116,47 @@ internal class NolPaySdkInitInteractorTest {
     }
 
     @Test
-    fun `handler should return app secret key from server`() = runTest {
-        val sdkId = "sdkId"
-        val appId = "merchantAppId"
-        val appSecret = "appSecret"
+    fun `handler should return app secret key from server`() =
+        runTest {
+            val sdkId = "sdkId"
+            val appId = "merchantAppId"
+            val appSecret = "appSecret"
 
-        coEvery {
-            configurationRepository.getConfiguration()
-        } returns Result.success(
-            mockk {
-                every { merchantAppId } returns appId
-            }
-        )
+            coEvery {
+                configurationRepository.getConfiguration()
+            } returns
+                Result.success(
+                    mockk {
+                        every { merchantAppId } returns appId
+                    },
+                )
 
-        coEvery { secretRepository.getAppSecret(sdkId, appId) }.returns(Result.success(appSecret))
+            coEvery { secretRepository.getAppSecret(sdkId, appId) }.returns(Result.success(appSecret))
 
-        val result = interactor.handler.getAppSecretKeyFromServer(sdkId)
+            val result = interactor.handler.getAppSecretKeyFromServer(sdkId)
 
-        assertEquals(appSecret, result)
-    }
+            assertEquals(appSecret, result)
+        }
 
     @Test
-    fun `handler should throw exception when secret repository fails`(): Unit = runTest {
-        val sdkId = "sdkId"
-        val appId = "merchantAppId"
-        val exception = Exception("Error fetching app secret")
+    fun `handler should throw exception when secret repository fails`(): Unit =
+        runTest {
+            val sdkId = "sdkId"
+            val appId = "merchantAppId"
+            val exception = Exception("Error fetching app secret")
 
-        coEvery {
-            configurationRepository.getConfiguration()
-        } returns Result.success(
-            mockk {
-                every { merchantAppId } returns appId
+            coEvery {
+                configurationRepository.getConfiguration()
+            } returns
+                Result.success(
+                    mockk {
+                        every { merchantAppId } returns appId
+                    },
+                )
+            coEvery { secretRepository.getAppSecret(sdkId, appId) } returns Result.failure(exception)
+
+            assertFailsWith<Exception> {
+                interactor.handler.getAppSecretKeyFromServer(sdkId)
             }
-        )
-        coEvery { secretRepository.getAppSecret(sdkId, appId) } returns Result.failure(exception)
-
-        assertFailsWith<Exception> {
-            interactor.handler.getAppSecretKeyFromServer(sdkId)
         }
-    }
 }

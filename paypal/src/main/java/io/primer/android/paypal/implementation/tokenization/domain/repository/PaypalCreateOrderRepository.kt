@@ -4,6 +4,5 @@ import io.primer.android.paypal.implementation.tokenization.domain.model.PaypalC
 import io.primer.android.paypal.implementation.tokenization.domain.model.PaypalOrder
 
 internal fun interface PaypalCreateOrderRepository {
-
     suspend fun createOrder(params: PaypalCreateOrderParams): Result<PaypalOrder>
 }

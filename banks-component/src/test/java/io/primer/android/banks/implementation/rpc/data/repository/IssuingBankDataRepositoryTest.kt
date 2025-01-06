@@ -16,28 +16,30 @@ import org.junit.jupiter.api.Test
 import kotlin.test.assertTrue
 
 class IssuingBankDataRepositoryTest {
-
     private val mockRemoteDataSource: RemoteIssuingBankSuspendDataSource = mockk()
     private val mockLocalDataSource: LocalIssuingBankDataSource = mockk()
     private val mockConfigurationDataSource: BaseCacheDataSource<ConfigurationData, ConfigurationData> = mockk()
 
-    private val repository = IssuingBankDataRepository(
-        mockRemoteDataSource,
-        mockLocalDataSource,
-        mockConfigurationDataSource
-    )
+    private val repository =
+        IssuingBankDataRepository(
+            mockRemoteDataSource,
+            mockLocalDataSource,
+            mockConfigurationDataSource,
+        )
 
     @Test
     fun `test getIssuingBanks fetches from remote and updates local`() {
         // Arrange
         val params = mockk<IssuingBankParams>(relaxed = true)
-        val configurationData = mockk<ConfigurationData> {
-            every { coreUrl } returns "https://core.url"
-        }
-        val expectedRemoteResponse = listOf(
-            IssuingBankDataResponse("bank_id_1", "Bank A", false, ""),
-            IssuingBankDataResponse("bank_id_2", "Bank B", true, "")
-        )
+        val configurationData =
+            mockk<ConfigurationData> {
+                every { coreUrl } returns "https://core.url"
+            }
+        val expectedRemoteResponse =
+            listOf(
+                IssuingBankDataResponse("bank_id_1", "Bank A", false, ""),
+                IssuingBankDataResponse("bank_id_2", "Bank B", true, ""),
+            )
         val resultDataResponse = IssuingBankResultDataResponse(expectedRemoteResponse)
 
         coEvery { mockConfigurationDataSource.get() } returns configurationData
@@ -63,10 +65,11 @@ class IssuingBankDataRepositoryTest {
     @Test
     fun `test getCachedIssuingBanks fetches from local`() {
         // Arrange
-        val expectedLocalResponse = mutableListOf(
-            IssuingBankDataResponse("bank_id_1", "Bank A", false, ""),
-            IssuingBankDataResponse("bank_id_2", "Bank B", true, "")
-        )
+        val expectedLocalResponse =
+            mutableListOf(
+                IssuingBankDataResponse("bank_id_1", "Bank A", false, ""),
+                IssuingBankDataResponse("bank_id_2", "Bank B", true, ""),
+            )
 
         coEvery { mockLocalDataSource.get() } returns expectedLocalResponse
 

@@ -6,16 +6,16 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
 class PaypalCreateOrderDataResponseTest {
-
     @Test
     fun `PaypalCreateOrderDataResponse should deserialize correctly`() {
         // Arrange
         val orderId = "order123"
         val approvalUrl = "https://example.com/approval"
-        val json = JSONObject().apply {
-            put("orderId", orderId)
-            put("approvalUrl", approvalUrl)
-        }
+        val json =
+            JSONObject().apply {
+                put("orderId", orderId)
+                put("approvalUrl", approvalUrl)
+            }
 
         // Act
         val response = PaypalCreateOrderDataResponse.deserializer.deserialize(json)

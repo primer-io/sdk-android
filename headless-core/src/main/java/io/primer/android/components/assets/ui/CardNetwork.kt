@@ -8,7 +8,7 @@ import io.primer.android.headlessCore.R
 internal enum class Brand(
     @DrawableRes internal val iconResId: Int,
     @DrawableRes internal val iconLightResId: Int? = null,
-    @DrawableRes internal val iconDarkResId: Int? = null
+    @DrawableRes internal val iconDarkResId: Int? = null,
 ) {
     VISA(iconResId = R.drawable.ic_visa_card_colored),
     MASTERCARD(iconResId = R.drawable.ic_mastercard_card_colored),
@@ -16,7 +16,7 @@ internal enum class Brand(
     DISCOVER(iconResId = R.drawable.ic_discover_card_colored),
     JCB(iconResId = R.drawable.ic_jcb_card_colored),
     DINERS_CLUB(
-        iconResId = R.drawable.ic_diners_club_card_colored
+        iconResId = R.drawable.ic_diners_club_card_colored,
     ),
     MIR(iconResId = R.drawable.ic_mir_card_colored),
     UNIONPAY(iconResId = R.drawable.ic_unionpay_card_colored),
@@ -25,33 +25,36 @@ internal enum class Brand(
     DANKORT(iconResId = R.drawable.ic_dankort_card_colored),
     MEASTRO(iconResId = R.drawable.ic_maestro_card_colored),
     ELO(iconResId = R.drawable.ic_elo_card_colored),
-    GENERIC(iconResId = R.drawable.ic_generic_card);
+    GENERIC(iconResId = R.drawable.ic_generic_card),
+    ;
 
-    internal fun getImageAsset(imageColor: ImageColor) = when (imageColor) {
-        ImageColor.COLORED -> iconResId
-        ImageColor.DARK -> iconDarkResId
-        ImageColor.LIGHT -> iconLightResId
-    }
+    internal fun getImageAsset(imageColor: ImageColor) =
+        when (imageColor) {
+            ImageColor.COLORED -> iconResId
+            ImageColor.DARK -> iconDarkResId
+            ImageColor.LIGHT -> iconLightResId
+        }
 }
 
 @Suppress("ComplexMethod")
-internal fun CardNetwork.Type.getCardBrand() = when (this) {
-    CardNetwork.Type.VISA -> Brand.VISA
-    CardNetwork.Type.MASTERCARD -> Brand.MASTERCARD
-    CardNetwork.Type.AMEX -> Brand.AMEX
-    CardNetwork.Type.DANKORT -> Brand.DANKORT
-    CardNetwork.Type.DINERS_CLUB -> Brand.DINERS_CLUB
-    CardNetwork.Type.DISCOVER -> Brand.DISCOVER
-    CardNetwork.Type.JCB -> Brand.JCB
-    CardNetwork.Type.UNIONPAY -> Brand.UNIONPAY
-    CardNetwork.Type.MIR -> Brand.MIR
-    CardNetwork.Type.HIPER -> Brand.HIPER
-    CardNetwork.Type.CARTES_BANCAIRES -> Brand.CARTES_BANCAIRES
-    CardNetwork.Type.MAESTRO -> Brand.MEASTRO
-    CardNetwork.Type.ELO -> Brand.ELO
-    CardNetwork.Type.HIPERCARD -> Brand.GENERIC
-    CardNetwork.Type.OTHER -> Brand.GENERIC
-}
+internal fun CardNetwork.Type.getCardBrand() =
+    when (this) {
+        CardNetwork.Type.VISA -> Brand.VISA
+        CardNetwork.Type.MASTERCARD -> Brand.MASTERCARD
+        CardNetwork.Type.AMEX -> Brand.AMEX
+        CardNetwork.Type.DANKORT -> Brand.DANKORT
+        CardNetwork.Type.DINERS_CLUB -> Brand.DINERS_CLUB
+        CardNetwork.Type.DISCOVER -> Brand.DISCOVER
+        CardNetwork.Type.JCB -> Brand.JCB
+        CardNetwork.Type.UNIONPAY -> Brand.UNIONPAY
+        CardNetwork.Type.MIR -> Brand.MIR
+        CardNetwork.Type.HIPER -> Brand.HIPER
+        CardNetwork.Type.CARTES_BANCAIRES -> Brand.CARTES_BANCAIRES
+        CardNetwork.Type.MAESTRO -> Brand.MEASTRO
+        CardNetwork.Type.ELO -> Brand.ELO
+        CardNetwork.Type.HIPERCARD -> Brand.GENERIC
+        CardNetwork.Type.OTHER -> Brand.GENERIC
+    }
 
 @DrawableRes
 fun CardNetwork.Type.getCardImageAsset(imageColor: ImageColor): Int =

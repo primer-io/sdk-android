@@ -4,7 +4,7 @@ import io.primer.android.vault.implementation.vaultedMethods.data.model.BasePaym
 import io.primer.android.vault.implementation.vaultedMethods.domain.PrimerVaultedPaymentMethodAdditionalData
 
 internal fun interface VaultedPaymentMethodAdditionalDataMapper<
-    out T : PrimerVaultedPaymentMethodAdditionalData?> {
-
+    out T : PrimerVaultedPaymentMethodAdditionalData?,
+    > {
     fun map(t: @UnsafeVariance T): BasePaymentMethodVaultExchangeDataRequest
 }

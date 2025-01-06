@@ -11,9 +11,9 @@ import io.primer.android.qrcode.implementation.tokenization.domain.model.QrCodeP
 internal class QrCodeTokenizationDataRepository(
     remoteTokenizationDataSource: BaseRemoteTokenizationDataSource<QrCodePaymentInstrumentDataRequest>,
     configurationDataSource: BaseCacheDataSource<ConfigurationData, ConfigurationData>,
-    tokenizationParamsMapper: QrCodeTokenizationParamsMapper
+    tokenizationParamsMapper: QrCodeTokenizationParamsMapper,
 ) : TokenizationDataRepository<QrCodePaymentInstrumentParams, QrCodePaymentInstrumentDataRequest>(
-    remoteTokenizationDataSource,
-    configurationDataSource,
-    tokenizationParamsMapper
-)
+        remoteTokenizationDataSource,
+        configurationDataSource,
+        tokenizationParamsMapper,
+    )

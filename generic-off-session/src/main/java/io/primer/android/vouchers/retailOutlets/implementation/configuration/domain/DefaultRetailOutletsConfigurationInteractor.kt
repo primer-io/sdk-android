@@ -9,7 +9,7 @@ internal typealias RetailOutletsConfigurationInteractor =
     PaymentMethodConfigurationInteractor<RetailOutletsConfig, RetailOutletsConfigParams>
 
 internal class DefaultRetailOutletsConfigurationInteractor(
-    configurationRepository: PaymentMethodConfigurationRepository<RetailOutletsConfig, RetailOutletsConfigParams>
+    configurationRepository: PaymentMethodConfigurationRepository<RetailOutletsConfig, RetailOutletsConfigParams>,
 ) : PaymentMethodConfigurationInteractor<RetailOutletsConfig, RetailOutletsConfigParams>(
-    configurationRepository
-)
+        configurationRepository,
+    )

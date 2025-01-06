@@ -21,7 +21,6 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 internal class Card3DSNavigatorTest {
-
     private lateinit var activityContext: Activity
     private lateinit var launcher: ActivityResultLauncher<Intent>
     private lateinit var navigator: Card3DSNavigator
@@ -42,17 +41,19 @@ internal class Card3DSNavigatorTest {
     @Test
     fun `navigate should call launcher launch() with the correct intent`() {
         // Arrange
-        val threeDsParams = CardNative3DSActivityLauncherParams(
-            paymentMethodType = "card",
-            supportedThreeDsVersions = listOf("2.0.0", "2.1.0")
-        )
+        val threeDsParams =
+            CardNative3DSActivityLauncherParams(
+                paymentMethodType = "card",
+                supportedThreeDsVersions = listOf("2.0.0", "2.1.0"),
+            )
         val intent = mockk<Intent>()
         every {
             ThreeDsActivity.Companion.getLaunchIntent(
                 context = activityContext,
-                params = ThreeDsActivityLauncherParams(
-                    supportedThreeDsProtocolVersions = threeDsParams.supportedThreeDsVersions
-                )
+                params =
+                    ThreeDsActivityLauncherParams(
+                        supportedThreeDsProtocolVersions = threeDsParams.supportedThreeDsVersions,
+                    ),
             )
         } returns intent
         every { launcher.launch(intent) } just runs
@@ -69,19 +70,21 @@ internal class Card3DSNavigatorTest {
     @Test
     fun `navigate should launch ThreeDsActivity with specified parameters`() {
         // Arrange
-        val params = CardNative3DSActivityLauncherParams(
-            paymentMethodType = "card",
-            supportedThreeDsVersions = listOf("2.0.0", "2.1.0")
-        )
-        val threeDsLauncherParams = ThreeDsActivityLauncherParams(
-            supportedThreeDsProtocolVersions = params.supportedThreeDsVersions
-        )
+        val params =
+            CardNative3DSActivityLauncherParams(
+                paymentMethodType = "card",
+                supportedThreeDsVersions = listOf("2.0.0", "2.1.0"),
+            )
+        val threeDsLauncherParams =
+            ThreeDsActivityLauncherParams(
+                supportedThreeDsProtocolVersions = params.supportedThreeDsVersions,
+            )
         val expectedIntent = mockk<Intent>(relaxed = true)
 
         every {
             ThreeDsActivity.Companion.getLaunchIntent(
                 activityContext,
-                threeDsLauncherParams
+                threeDsLauncherParams,
             )
         } returns expectedIntent
 
@@ -101,7 +104,7 @@ internal class Card3DSNavigatorTest {
         verify {
             ThreeDsActivity.getLaunchIntent(
                 eq(activityContext),
-                eq(threeDsLauncherParams)
+                eq(threeDsLauncherParams),
             )
         }
     }
@@ -109,10 +112,11 @@ internal class Card3DSNavigatorTest {
     @Test
     fun `canHandle should return true for CardNative3DSActivityLauncherParams`() {
         // Arrange
-        val params = CardNative3DSActivityLauncherParams(
-            paymentMethodType = "card",
-            supportedThreeDsVersions = listOf("2.0.0", "2.1.0")
-        )
+        val params =
+            CardNative3DSActivityLauncherParams(
+                paymentMethodType = "card",
+                supportedThreeDsVersions = listOf("2.0.0", "2.1.0"),
+            )
 
         // Act
         val result = navigator.canHandle(params)

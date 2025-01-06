@@ -12,25 +12,25 @@ import io.primer.paymentMethodCoreUi.core.ui.navigation.launchers.PaymentMethodR
 
 internal data class CardNative3DSActivityLauncherParams(
     override val paymentMethodType: String,
-    val supportedThreeDsVersions: List<String>
+    val supportedThreeDsVersions: List<String>,
 ) : PaymentMethodRedirectLauncherParams(
-    paymentMethodType,
-    PrimerSessionIntent.CHECKOUT
-)
+        paymentMethodType,
+        PrimerSessionIntent.CHECKOUT,
+    )
 
 internal data class Card3DSNavigator(
     private val context: Activity,
-    override val launcher: ActivityResultLauncher<Intent>
+    override val launcher: ActivityResultLauncher<Intent>,
 ) : StartActivityForResultNavigator<CardNative3DSActivityLauncherParams>(launcher) {
-
     override fun navigate(params: CardNative3DSActivityLauncherParams) {
         launcher.launch(
             ThreeDsActivity.getLaunchIntent(
                 context = context,
-                params = ThreeDsActivityLauncherParams(
-                    supportedThreeDsProtocolVersions = params.supportedThreeDsVersions
-                )
-            )
+                params =
+                    ThreeDsActivityLauncherParams(
+                        supportedThreeDsProtocolVersions = params.supportedThreeDsVersions,
+                    ),
+            ),
         )
     }
 

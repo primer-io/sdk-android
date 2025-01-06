@@ -8,10 +8,12 @@ import io.primer.android.paymentmethods.core.composer.PaymentMethodComposer
 import io.primer.android.paymentmethods.core.composer.provider.PaymentMethodComposerProvider
 
 internal class VaultedGooglePayComposerFactory : PaymentMethodComposerProvider.Factory {
-
-    override fun create(paymentMethodType: String, sessionIntent: PrimerSessionIntent): PaymentMethodComposer {
+    override fun create(
+        paymentMethodType: String,
+        sessionIntent: PrimerSessionIntent,
+    ): PaymentMethodComposer {
         return VaultedGooglePayComponent(
-            paymentDelegate = resolve<GooglePayPaymentDelegate>(name = paymentMethodType)
+            paymentDelegate = resolve<GooglePayPaymentDelegate>(name = paymentMethodType),
         )
     }
 }

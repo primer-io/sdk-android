@@ -7,15 +7,16 @@ import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
 import io.mockk.verify
-import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.assets.ui.registry.BrandRegistry
 import io.primer.android.configuration.data.model.ConfigurationData
 import io.primer.android.configuration.data.model.PaymentMethodConfigDataResponse
+import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.paymentmethods.PaymentMethodCheckerRegistry
 import io.primer.android.paymentmethods.PaymentMethodDescriptorFactoryRegistry
 import io.primer.android.paymentmethods.common.data.model.PaymentMethodType
 import io.primer.android.paymentmethods.core.composer.provider.PaymentMethodProviderFactoryRegistry
 import io.primer.android.paymentmethods.core.ui.navigation.PaymentMethodNavigationFactoryRegistry
+import io.primer.android.webRedirectShared.implementation.composer.ui.navigation.provider.WebRedirectNavigatorProviderFactory
 import io.primer.android.webredirect.implementation.composer.presentation.provider.WebRedirectComposerProviderFactory
 import io.primer.android.webredirect.implementation.composer.ui.assets.AlipayBrand
 import io.primer.android.webredirect.implementation.composer.ui.assets.AtomeBrand
@@ -39,7 +40,6 @@ import io.primer.android.webredirect.implementation.composer.ui.assets.TrustlyBr
 import io.primer.android.webredirect.implementation.composer.ui.assets.TwintBrand
 import io.primer.android.webredirect.implementation.composer.ui.assets.TwoC2PBrand
 import io.primer.android.webredirect.implementation.composer.ui.assets.VippsBrand
-import io.primer.android.webRedirectShared.implementation.composer.ui.navigation.provider.WebRedirectNavigatorProviderFactory
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -47,7 +47,6 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 
 internal class WebRedirectPaymentMethodTest {
-
     private lateinit var webRedirectPaymentMethod: WebRedirectPaymentMethod
     private val paymentMethodType = "testPaymentMethodType"
 
@@ -98,9 +97,9 @@ internal class WebRedirectPaymentMethodTest {
                         localConfig = localConfig,
                         paymentMethodRemoteConfig = paymentMethodRemoteConfig,
                         paymentMethod = webRedirectPaymentMethod,
-                        paymentMethodCheckers = paymentMethodCheckers
+                        paymentMethodCheckers = paymentMethodCheckers,
                     ) is WebRedirectPaymentMethodDescriptor
-                }
+                },
             )
         }
     }
@@ -116,7 +115,7 @@ internal class WebRedirectPaymentMethodTest {
         verify {
             registry.register(
                 paymentMethodType,
-                WebRedirectComposerProviderFactory::class.java
+                WebRedirectComposerProviderFactory::class.java,
             )
         }
     }
@@ -132,7 +131,7 @@ internal class WebRedirectPaymentMethodTest {
         verify {
             registry.register(
                 paymentMethodType,
-                WebRedirectNavigatorProviderFactory::class.java
+                WebRedirectNavigatorProviderFactory::class.java,
             )
         }
     }

@@ -8,9 +8,8 @@ import io.primer.android.configuration.domain.model.toCheckoutModule
 import io.primer.android.core.data.datasource.BaseCacheDataSource
 
 internal class CheckoutModuleDataRepository(
-    private val configurationDataSource: BaseCacheDataSource<ConfigurationData, ConfigurationData>
+    private val configurationDataSource: BaseCacheDataSource<ConfigurationData, ConfigurationData>,
 ) : CheckoutModuleRepository {
-
     override fun getCardInformation(): CheckoutModule.CardInformation? {
         return getCheckoutModule(CheckoutModuleType.CARD_INFORMATION)?.let {
             it as CheckoutModule.CardInformation

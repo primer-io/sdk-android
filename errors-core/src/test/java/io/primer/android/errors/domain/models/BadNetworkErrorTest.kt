@@ -3,7 +3,6 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
 class BadNetworkErrorTest {
-
     @Test
     fun `should create BadNetworkError with given diagnostics ID`() {
         val diagnosticsId = "12345"

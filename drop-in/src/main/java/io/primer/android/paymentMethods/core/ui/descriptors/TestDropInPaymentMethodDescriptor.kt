@@ -12,14 +12,15 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 internal abstract class TestDropInPaymentMethodDescriptor(
     override val paymentMethodType: String,
     override val uiOptions: UiOptions,
-    val brand: Brand
+    val brand: Brand,
 ) : PaymentMethodDropInDescriptor {
     override val behaviours: List<PaymentMethodBehaviour>
-        get() = if (uiOptions.isInitScreenEnabled.not() && uiOptions.isStandalonePaymentMethod) {
-            emptyList()
-        } else {
-            listOf(NewFragmentBehaviour(PaymentMethodLoadingFragment::newInstance))
-        }
+        get() =
+            if (uiOptions.isInitScreenEnabled.not() && uiOptions.isStandalonePaymentMethod) {
+                emptyList()
+            } else {
+                listOf(NewFragmentBehaviour(PaymentMethodLoadingFragment::newInstance))
+            }
 
     override val loadingState: LoadingState
         get() = LoadingState(brand.logoResId)

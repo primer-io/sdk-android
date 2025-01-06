@@ -35,21 +35,20 @@ import io.primer.android.webRedirectShared.implementation.deeplink.domain.reposi
 
 internal class AdyenBancontactContainer(
     private val sdk: () -> SdkContainer,
-    private val paymentMethodType: String
+    private val paymentMethodType: String,
 ) :
     DependencyContainer() {
-
     override fun registerInitialDependencies() {
         registerFactory<AdyenBancontactConfigurationInteractor>(name = paymentMethodType) {
             DefaultAydenBancontactConfigurationInteractor(configurationRepository = resolve(name = paymentMethodType))
         }
 
         registerFactory<PaymentMethodConfigurationRepository<AdyenBancontactConfig, AdyenBancontactConfigParams>>(
-            name = paymentMethodType
+            name = paymentMethodType,
         ) {
             AdyenBancontactConfigurationDataRepository(
                 configurationDataSource = sdk().resolve(ConfigurationCoreContainer.CACHED_CONFIGURATION_DI_KEY),
-                settings = sdk().resolve()
+                settings = sdk().resolve(),
             )
         }
 
@@ -60,8 +59,8 @@ internal class AdyenBancontactContainer(
         registerFactory(name = paymentMethodType) {
             PaymentMethodSdkAnalyticsEventLoggingDelegate(
                 primerPaymentMethodManagerCategory =
-                PrimerPaymentMethodManagerCategory.RAW_DATA.name,
-                analyticsInteractor = sdk().resolve()
+                    PrimerPaymentMethodManagerCategory.RAW_DATA.name,
+                analyticsInteractor = sdk().resolve(),
             )
         }
 
@@ -70,14 +69,14 @@ internal class AdyenBancontactContainer(
         }
 
         registerFactory<BaseRemoteTokenizationDataSource<AdyenBancontactPaymentInstrumentDataRequest>>(
-            name = paymentMethodType
+            name = paymentMethodType,
         ) {
             AdyenBancontactRemoteTokenizationDataSource(primerHttpClient = sdk().resolve())
         }
 
         registerFactory<RedirectDeeplinkRepository> {
             RedirectDeeplinkDataRepository(
-                applicationIdProvider = sdk().resolve(Constants.APPLICATION_ID_PROVIDER_DI_KEY)
+                applicationIdProvider = sdk().resolve(Constants.APPLICATION_ID_PROVIDER_DI_KEY),
             )
         }
 
@@ -89,14 +88,15 @@ internal class AdyenBancontactContainer(
 
         registerFactory<AdyenBancontactTokenizationInteractor>(name = paymentMethodType) {
             DefaultAdyenBancontactTokenizationInteractor(
-                tokenizationRepository = AdyenBancontactCardTokenizationDataRepository(
-                    remoteTokenizationDataSource = sdk().resolve(paymentMethodType),
-                    configurationDataSource = sdk().resolve(ConfigurationCoreContainer.CACHED_CONFIGURATION_DI_KEY),
-                    tokenizationParamsMapper = resolve()
-                ),
+                tokenizationRepository =
+                    AdyenBancontactCardTokenizationDataRepository(
+                        remoteTokenizationDataSource = sdk().resolve(paymentMethodType),
+                        configurationDataSource = sdk().resolve(ConfigurationCoreContainer.CACHED_CONFIGURATION_DI_KEY),
+                        tokenizationParamsMapper = resolve(),
+                    ),
                 tokenizedPaymentMethodRepository = sdk().resolve(),
                 preTokenizationHandler = sdk().resolve(),
-                logReporter = sdk().resolve()
+                logReporter = sdk().resolve(),
             )
         }
 
@@ -104,7 +104,7 @@ internal class AdyenBancontactContainer(
             AdyenBancontactTokenizationDelegate(
                 tokenizationInteractor = resolve(name = paymentMethodType),
                 deeplinkInteractor = resolve<RedirectDeeplinkInteractor>(name = paymentMethodType),
-                configurationInteractor = resolve(name = paymentMethodType)
+                configurationInteractor = resolve(name = paymentMethodType),
             )
         }
 
@@ -119,7 +119,7 @@ internal class AdyenBancontactContainer(
                 successHandler = sdk().resolve(),
                 errorHandler = sdk().resolve(),
                 baseErrorResolver = sdk().resolve(),
-                resumeHandler = resolve()
+                resumeHandler = resolve(),
             )
         }
 
@@ -131,7 +131,7 @@ internal class AdyenBancontactContainer(
                 checkoutAdditionalInfoHandler = sdk().resolve(),
                 tokenizedPaymentMethodRepository = sdk().resolve(),
                 configurationRepository = sdk().resolve(),
-                deeplinkRepository = sdk().resolve()
+                deeplinkRepository = sdk().resolve(),
             )
         }
     }

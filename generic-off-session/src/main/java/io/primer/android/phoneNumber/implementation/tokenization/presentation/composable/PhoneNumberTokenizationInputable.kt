@@ -7,5 +7,5 @@ import io.primer.android.phoneNumber.PrimerPhoneNumberData
 internal data class PhoneNumberTokenizationInputable(
     val phoneNumberData: PrimerPhoneNumberData,
     override val paymentMethodType: String,
-    override val primerSessionIntent: PrimerSessionIntent
+    override val primerSessionIntent: PrimerSessionIntent,
 ) : TokenizationInputable

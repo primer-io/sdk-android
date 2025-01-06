@@ -11,37 +11,34 @@ abstract class BaseDisplayMetadata(
     open val backgroundColor: String?,
     open val borderColor: String?,
     open val borderWidth: Float?,
-    open val cornerRadius: Float?
+    open val cornerRadius: Float?,
 ) {
     enum class DisplayMetadataType {
         IMAGE,
-        TEXT
+        TEXT,
     }
 }
 
-internal fun PaymentMethodImplementation.ButtonMetadata.ColorMetadata.getColor(
-    isDarkMode: Boolean
-) = when {
-    dark.isNullOrBlank().not() && isDarkMode -> dark
-    colored.isNullOrBlank().not() -> colored
-    light.isNullOrBlank().not() -> light
-    else -> null
-}
+internal fun PaymentMethodImplementation.ButtonMetadata.ColorMetadata.getColor(isDarkMode: Boolean) =
+    when {
+        dark.isNullOrBlank().not() && isDarkMode -> dark
+        colored.isNullOrBlank().not() -> colored
+        light.isNullOrBlank().not() -> light
+        else -> null
+    }
 
-internal fun PaymentMethodImplementation.ButtonMetadata.BorderWidthMetadata.getBorderWidth(
-    isDarkMode: Boolean
-) = when {
-    dark != null && isDarkMode -> dark
-    colored != null -> colored
-    light != null -> light
-    else -> null
-}
+internal fun PaymentMethodImplementation.ButtonMetadata.BorderWidthMetadata.getBorderWidth(isDarkMode: Boolean) =
+    when {
+        dark != null && isDarkMode -> dark
+        colored != null -> colored
+        light != null -> light
+        else -> null
+    }
 
-internal fun List<IconDisplayMetadata>.getImageColor(
-    isDarkMode: Boolean
-) = when {
-    any { it.imageColor == ImageColor.DARK } && isDarkMode -> ImageColor.DARK
-    any { it.imageColor == ImageColor.COLORED } -> ImageColor.COLORED
-    any { it.imageColor == ImageColor.LIGHT } -> ImageColor.LIGHT
-    else -> null
-}
+internal fun List<IconDisplayMetadata>.getImageColor(isDarkMode: Boolean) =
+    when {
+        any { it.imageColor == ImageColor.DARK } && isDarkMode -> ImageColor.DARK
+        any { it.imageColor == ImageColor.COLORED } -> ImageColor.COLORED
+        any { it.imageColor == ImageColor.LIGHT } -> ImageColor.LIGHT
+        else -> null
+    }

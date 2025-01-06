@@ -6,7 +6,6 @@ import io.primer.android.paymentmethods.PaymentMethod
 import io.primer.android.paymentmethods.PaymentMethodFactory
 
 class OtpFactory(val paymentMethodType: String) : PaymentMethodFactory {
-
     override fun build(): Either<PaymentMethod, Exception> {
         return Success(Otp(paymentMethodType))
     }

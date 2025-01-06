@@ -51,12 +51,14 @@ internal class GooglePayComponent(
     private val actionInteractor: ActionInteractor,
     private val validationRulesResolver: GooglePayValidationRulesResolver,
     private val paymentDelegate: GooglePayPaymentDelegate,
-    private val mockConfigurationDelegate: MockConfigurationDelegate
+    private val mockConfigurationDelegate: MockConfigurationDelegate,
 ) : InternalNativeUiPaymentMethodComponent(),
     ActivityResultIntentHandler,
     ActivityStartIntentHandler {
-
-    override fun start(paymentMethodType: String, primerSessionIntent: PrimerSessionIntent) {
+    override fun start(
+        paymentMethodType: String,
+        primerSessionIntent: PrimerSessionIntent,
+    ) {
         this.paymentMethodType = paymentMethodType
         this.primerSessionIntent = primerSessionIntent
         composerScope.launch {
@@ -77,28 +79,34 @@ internal class GooglePayComponent(
                 ComposerUiEvent.Navigate(
                     PaymentMethodLauncherParams(
                         paymentMethodType = paymentMethodType,
-                        sessionIntent = primerSessionIntent
-                    )
-                )
+                        sessionIntent = primerSessionIntent,
+                    ),
+                ),
             )
         }
     }
 
-    override fun handleActivityResultIntent(params: PaymentMethodLauncherParams, resultCode: Int, intent: Intent?) {
+    override fun handleActivityResultIntent(
+        params: PaymentMethodLauncherParams,
+        resultCode: Int,
+        intent: Intent?,
+    ) {
         when (resultCode) {
             Activity.RESULT_OK -> {
                 when (params.initialLauncherParams) {
-                    is ThreeDsInitialLauncherParams -> composerScope.launch {
-                        paymentDelegate.resumePayment(
-                            intent?.getStringExtra(ThreeDsActivity.RESUME_TOKEN_EXTRA_KEY).orEmpty()
-                        )
-                    }
+                    is ThreeDsInitialLauncherParams ->
+                        composerScope.launch {
+                            paymentDelegate.resumePayment(
+                                intent?.getStringExtra(ThreeDsActivity.RESUME_TOKEN_EXTRA_KEY).orEmpty(),
+                            )
+                        }
 
-                    is ProcessorThreeDsInitialLauncherParams -> composerScope.launch {
-                        paymentDelegate.resumePayment(
-                            intent?.getStringExtra(Processor3dsWebViewActivity.RESUME_TOKEN_EXTRA_KEY).orEmpty()
-                        )
-                    }
+                    is ProcessorThreeDsInitialLauncherParams ->
+                        composerScope.launch {
+                            paymentDelegate.resumePayment(
+                                intent?.getStringExtra(Processor3dsWebViewActivity.RESUME_TOKEN_EXTRA_KEY).orEmpty(),
+                            )
+                        }
 
                     null -> handlePaymentData(intent?.let { PaymentData.getFromIntent(it) })
                 }
@@ -108,8 +116,8 @@ internal class GooglePayComponent(
                 composerScope.launch {
                     paymentDelegate.handleError(
                         PaymentMethodCancelledException(
-                            paymentMethodType
-                        )
+                            paymentMethodType,
+                        ),
                     )
                 }
             }
@@ -142,34 +150,36 @@ internal class GooglePayComponent(
                         if (mockConfigurationDelegate.isMockedFlow()) {
                             ComposerUiEvent.Navigate(
                                 MockGooglePay3DSActivityLauncherParams(
-                                    paymentMethodType = paymentMethodType
-                                )
+                                    paymentMethodType = paymentMethodType,
+                                ),
                             )
                         } else {
                             ComposerUiEvent.Navigate(
                                 GooglePayNative3DSActivityLauncherParams(
                                     paymentMethodType = paymentMethodType,
-                                    supportedThreeDsVersions = initialLaunchEvents.supportedThreeDsProtocolVersions
-                                )
+                                    supportedThreeDsVersions = initialLaunchEvents.supportedThreeDsProtocolVersions,
+                                ),
                             )
-                        }
+                        },
                     )
                 }
 
-                is ProcessorThreeDsInitialLauncherParams -> _uiEvent.emit(
-                    ComposerUiEvent.Navigate(
-                        GooglePayProcessor3DSActivityLauncherParams(
-                            paymentMethodType = paymentMethodType,
-                            redirectUrl = initialLaunchEvents.processor3DS.redirectUrl,
-                            statusUrl = initialLaunchEvents.processor3DS.statusUrl,
-                            title = initialLaunchEvents.processor3DS.title
-                        )
+                is ProcessorThreeDsInitialLauncherParams ->
+                    _uiEvent.emit(
+                        ComposerUiEvent.Navigate(
+                            GooglePayProcessor3DSActivityLauncherParams(
+                                paymentMethodType = paymentMethodType,
+                                redirectUrl = initialLaunchEvents.processor3DS.redirectUrl,
+                                statusUrl = initialLaunchEvents.processor3DS.statusUrl,
+                                title = initialLaunchEvents.processor3DS.title,
+                            ),
+                        ),
                     )
-                )
 
-                else -> tokenizationCollectorDelegate.startDataCollection(
-                    params = NoOpPaymentMethodTokenizationCollectorParams
-                )
+                else ->
+                    tokenizationCollectorDelegate.startDataCollection(
+                        params = NoOpPaymentMethodTokenizationCollectorParams,
+                    )
             }
         }
     }
@@ -181,12 +191,12 @@ internal class GooglePayComponent(
                     GooglePayTokenizationInputable(
                         paymentData = paymentData,
                         paymentMethodType = paymentMethodType,
-                        primerSessionIntent = primerSessionIntent
-                    )
+                        primerSessionIntent = primerSessionIntent,
+                    ),
                 ).flatMap { paymentMethodTokenData ->
                     paymentDelegate.handlePaymentMethodToken(
                         paymentMethodTokenData = paymentMethodTokenData,
-                        primerSessionIntent = primerSessionIntent
+                        primerSessionIntent = primerSessionIntent,
                     )
                 }.onFailure {
                     paymentDelegate.handleError(it)
@@ -202,7 +212,7 @@ internal class GooglePayComponent(
             combine(
                 validationRulesResolver.resolve().rules.map {
                     flowOf(it.validate(paymentData))
-                }
+                },
             ) { validationResults ->
                 validationResults.forEach { result ->
                     if (result is ValidationResult.Failure) throw result.exception
@@ -229,12 +239,14 @@ internal class GooglePayComponent(
         val action = paymentData.mapToShippingOptionIdParams()
         return when {
             action == null -> Result.success(Unit)
-            else -> shippingMethodUpdateValidator(action)
-                .flatMap { actionInteractor(MultipleActionUpdateParams(params = listOf(action))).map { } }
+            else ->
+                shippingMethodUpdateValidator(action)
+                    .flatMap { actionInteractor(MultipleActionUpdateParams(params = listOf(action))).map { } }
         }
     }
 
-    private fun closeProxyScreen() = composerScope.launch {
-        _uiEvent.emit(ComposerUiEvent.Finish)
-    }
+    private fun closeProxyScreen() =
+        composerScope.launch {
+            _uiEvent.emit(ComposerUiEvent.Finish)
+        }
 }

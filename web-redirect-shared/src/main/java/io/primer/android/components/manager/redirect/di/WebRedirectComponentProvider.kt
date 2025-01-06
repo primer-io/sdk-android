@@ -14,21 +14,23 @@ import io.primer.android.core.di.extensions.resolve
 object WebRedirectComponentProvider : DISdkComponent {
     fun provideInstance(
         owner: ViewModelStoreOwner,
-        paymentMethodType: String
+        paymentMethodType: String,
     ): PrimerHeadlessRedirectComponent<RedirectCollectableData, WebRedirectStep> {
         return ViewModelProvider(
             owner = owner,
-            factory = object : ViewModelProvider.Factory {
-                @Suppress("UNCHECKED_CAST")
-                override fun <T : ViewModel> create(
-                    modelClass: Class<T>,
-                    extras: CreationExtras
-                ): T = WebRedirectComponent(
-                    paymentMethodType = paymentMethodType,
-                    webRedirectDelegate = resolve(),
-                    loggingDelegate = resolve()
-                ) as T
-            }
+            factory =
+                object : ViewModelProvider.Factory {
+                    @Suppress("UNCHECKED_CAST")
+                    override fun <T : ViewModel> create(
+                        modelClass: Class<T>,
+                        extras: CreationExtras,
+                    ): T =
+                        WebRedirectComponent(
+                            paymentMethodType = paymentMethodType,
+                            webRedirectDelegate = resolve(),
+                            loggingDelegate = resolve(),
+                        ) as T
+                },
         )[WebRedirectComponent::class.java]
     }
 }

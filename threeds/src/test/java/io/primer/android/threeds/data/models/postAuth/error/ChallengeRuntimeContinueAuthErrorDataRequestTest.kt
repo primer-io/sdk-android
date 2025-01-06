@@ -8,7 +8,6 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
 internal class ChallengeRuntimeContinueAuthErrorDataRequestTest {
-
     @AfterEach
     fun tearDown() {
         unmockkAll()
@@ -21,21 +20,23 @@ internal class ChallengeRuntimeContinueAuthErrorDataRequestTest {
         val threeDsErrorCode = "123"
         val threeDsErrorDescription = "Error description"
 
-        val request = ChallengeRuntimeContinueAuthErrorDataRequest(
-            reasonCode,
-            reasonText,
-            threeDsErrorCode,
-            threeDsErrorDescription
-        )
+        val request =
+            ChallengeRuntimeContinueAuthErrorDataRequest(
+                reasonCode,
+                reasonText,
+                threeDsErrorCode,
+                threeDsErrorDescription,
+            )
 
         val json = ChallengeRuntimeContinueAuthErrorDataRequest.serializer.serialize(request)
 
-        val expectedJson = JSONObject().apply {
-            put("reasonCode", reasonCode.name)
-            put("reasonText", reasonText)
-            putOpt("threeDsErrorCode", threeDsErrorCode)
-            put("threeDsErrorDescription", threeDsErrorDescription)
-        }
+        val expectedJson =
+            JSONObject().apply {
+                put("reasonCode", reasonCode.name)
+                put("reasonText", reasonText)
+                putOpt("threeDsErrorCode", threeDsErrorCode)
+                put("threeDsErrorDescription", threeDsErrorDescription)
+            }
 
         assertEquals(expectedJson.toString(), json.toString())
     }

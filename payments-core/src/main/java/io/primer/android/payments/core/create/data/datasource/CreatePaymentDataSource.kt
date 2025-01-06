@@ -9,16 +9,15 @@ import io.primer.android.payments.core.create.data.model.PaymentDataResponse
 
 internal class CreatePaymentDataSource(private val primerHttpClient: PrimerHttpClient) :
     BaseSuspendDataSource<PaymentDataResponse, BaseRemoteHostRequest<CreatePaymentDataRequest>> {
-
-    override suspend fun execute(input: BaseRemoteHostRequest<CreatePaymentDataRequest>):
-        PaymentDataResponse {
+    override suspend fun execute(input: BaseRemoteHostRequest<CreatePaymentDataRequest>): PaymentDataResponse {
         return primerHttpClient.suspendPost<CreatePaymentDataRequest, PaymentDataResponse>(
             url = "${input.host}/payments",
             request = input.data,
-            headers = mapOf(
-                SDK_API_VERSION_HEADER to PAYMENTS_VERSION,
-                HEADER_ACCEPT to "*/*"
-            )
+            headers =
+                mapOf(
+                    SDK_API_VERSION_HEADER to PAYMENTS_VERSION,
+                    HEADER_ACCEPT to "*/*",
+                ),
         ).body
     }
 

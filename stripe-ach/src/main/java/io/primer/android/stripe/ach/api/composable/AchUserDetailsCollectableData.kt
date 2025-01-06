@@ -6,7 +6,6 @@ import io.primer.android.paymentmethods.manager.composable.PrimerCollectableData
  * A sealed interface representing collectable data needed for ACH payments.
  */
 sealed interface AchUserDetailsCollectableData : PrimerCollectableData {
-
     /**
      * A data class representing the customer's first name.
      */
@@ -14,7 +13,7 @@ sealed interface AchUserDetailsCollectableData : PrimerCollectableData {
         /**
          * The customer's first name.
          */
-        val value: String
+        val value: String,
     ) : AchUserDetailsCollectableData
 
     /**
@@ -24,7 +23,7 @@ sealed interface AchUserDetailsCollectableData : PrimerCollectableData {
         /**
          * The customer's first name.
          */
-        val value: String
+        val value: String,
     ) : AchUserDetailsCollectableData
 
     /**
@@ -34,6 +33,6 @@ sealed interface AchUserDetailsCollectableData : PrimerCollectableData {
         /**
          * The customer's email address.
          */
-        val value: String
+        val value: String,
     ) : AchUserDetailsCollectableData
 }

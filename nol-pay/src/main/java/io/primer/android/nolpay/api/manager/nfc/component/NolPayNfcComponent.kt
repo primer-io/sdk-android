@@ -15,7 +15,6 @@ import io.primer.nolpay.api.models.NfcStatus
  * foreground dispatch, retrieving NFC tag information, and checking the NFC status.
  */
 class NolPayNfcComponent private constructor() : PrimerHeadlessComponent {
-
     /**
      * Disable foreground dispatch for NFC events in the given activity.
      *
@@ -31,7 +30,10 @@ class NolPayNfcComponent private constructor() : PrimerHeadlessComponent {
      * @param activity The activity in which NFC foreground dispatch should be enabled.
      * @param requestCode The request code to associate with NFC events.
      */
-    fun enableForegroundDispatch(activity: Activity, requestCode: Int) {
+    fun enableForegroundDispatch(
+        activity: Activity,
+        requestCode: Int,
+    ) {
         PrimerNolPayNfcUtils.enableForegroundDispatch(activity, requestCode)
     }
 
@@ -53,7 +55,6 @@ class NolPayNfcComponent private constructor() : PrimerHeadlessComponent {
     fun getNfcStatus(): NfcStatus = PrimerNolPayNfcUtils.getNfcStatus()
 
     companion object {
-
         fun provideInstance() = NolPayNfcComponent()
     }
 }

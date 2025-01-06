@@ -22,7 +22,7 @@ internal class BaseBankSelectionBinding(
     val errorLayout: ErrorLoadingLayoutBinding,
     val spacer: Space,
     val recyclerView: RecyclerView,
-    val chooseBankDividerBottom: View
+    val chooseBankDividerBottom: View,
 )
 
 internal fun FragmentIdealBankSelectionBinding.toBaseBankSelectionBinding() =
@@ -35,7 +35,7 @@ internal fun FragmentIdealBankSelectionBinding.toBaseBankSelectionBinding() =
         errorLayout = errorLayout,
         spacer = spacer,
         recyclerView = banksList,
-        chooseBankDividerBottom = chooseBankDividerBottom
+        chooseBankDividerBottom = chooseBankDividerBottom,
     )
 
 internal fun FragmentDotpayBankSelectionBinding.toBaseBankSelectionBinding() =
@@ -48,5 +48,5 @@ internal fun FragmentDotpayBankSelectionBinding.toBaseBankSelectionBinding() =
         errorLayout = errorLayout,
         spacer = spacer,
         recyclerView = banksList,
-        chooseBankDividerBottom = chooseBankDividerBottom
+        chooseBankDividerBottom = chooseBankDividerBottom,
     )

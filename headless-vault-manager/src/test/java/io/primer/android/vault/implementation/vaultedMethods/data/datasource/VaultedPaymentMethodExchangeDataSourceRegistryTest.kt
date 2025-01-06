@@ -3,9 +3,9 @@ package io.primer.android.vault.implementation.vaultedMethods.data.datasource
 import io.mockk.MockKAnnotations
 import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.mockk
+import io.primer.android.components.domain.payments.vault.model.card.PrimerVaultedCardAdditionalData
 import io.primer.android.core.data.network.PrimerHttpClient
 import io.primer.android.vault.implementation.vaultedMethods.domain.PrimerVaultedPaymentMethodAdditionalData
-import io.primer.android.components.domain.payments.vault.model.card.PrimerVaultedCardAdditionalData
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -13,7 +13,6 @@ import org.junit.jupiter.api.assertThrows
 import kotlin.test.assertEquals
 
 internal class VaultedPaymentMethodExchangeDataSourceRegistryTest {
-
     @RelaxedMockK
     internal lateinit var httpClient: PrimerHttpClient
 

@@ -14,7 +14,6 @@ import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
 internal class NolPayTokenizationParamsMapperTest {
-
     private lateinit var mapper: NolPayTokenizationParamsMapper
 
     @BeforeEach
@@ -30,32 +29,36 @@ internal class NolPayTokenizationParamsMapperTest {
         modifyClassProperty<Build>("MANUFACTURER", manufacturer)
         modifyClassProperty<Build>("MODEL", model)
 
-        val paymentInstrumentParams = NolPayPaymentInstrumentParams(
-            paymentMethodType = "NOL_PAY",
-            paymentMethodConfigId = "configId",
-            mobileCountryCode = "US",
-            mobileNumber = "1234567890",
-            nolPayCardNumber = "1234567812345678",
-            locale = "en"
-        )
-
-        val tokenizationParams = TokenizationParams(
-            paymentInstrumentParams = paymentInstrumentParams,
-            sessionIntent = PrimerSessionIntent.CHECKOUT
-        )
-
-        val expectedRequest = NolPayPaymentInstrumentDataRequest(
-            paymentMethodType = "NOL_PAY",
-            paymentMethodConfigId = "configId",
-            sessionInfo = NolPaySessionInfoDataRequest(
+        val paymentInstrumentParams =
+            NolPayPaymentInstrumentParams(
+                paymentMethodType = "NOL_PAY",
+                paymentMethodConfigId = "configId",
                 mobileCountryCode = "US",
                 mobileNumber = "1234567890",
                 nolPayCardNumber = "1234567812345678",
-                deviceVendor = manufacturer,
-                deviceModel = model
-            ),
-            type = PaymentInstrumentType.OFF_SESSION_PAYMENT
-        ).toTokenizationRequest(PrimerSessionIntent.CHECKOUT)
+                locale = "en",
+            )
+
+        val tokenizationParams =
+            TokenizationParams(
+                paymentInstrumentParams = paymentInstrumentParams,
+                sessionIntent = PrimerSessionIntent.CHECKOUT,
+            )
+
+        val expectedRequest =
+            NolPayPaymentInstrumentDataRequest(
+                paymentMethodType = "NOL_PAY",
+                paymentMethodConfigId = "configId",
+                sessionInfo =
+                    NolPaySessionInfoDataRequest(
+                        mobileCountryCode = "US",
+                        mobileNumber = "1234567890",
+                        nolPayCardNumber = "1234567812345678",
+                        deviceVendor = manufacturer,
+                        deviceModel = model,
+                    ),
+                type = PaymentInstrumentType.OFF_SESSION_PAYMENT,
+            ).toTokenizationRequest(PrimerSessionIntent.CHECKOUT)
 
         val result = mapper.map(tokenizationParams)
 

@@ -26,7 +26,6 @@ import org.junit.jupiter.api.extension.ExtendWith
 @ExtendWith(InstantExecutorExtension::class, MockKExtension::class)
 @ExperimentalCoroutinesApi
 class VaultedPaymentMethodsExchangeInteractorTest {
-
     @RelaxedMockK
     internal lateinit var vaultedPaymentMethodExchangeRepository: VaultedPaymentMethodExchangeRepository
 
@@ -44,12 +43,13 @@ class VaultedPaymentMethodsExchangeInteractorTest {
     @BeforeEach
     fun setUp() {
         MockKAnnotations.init(this, relaxed = true)
-        interactor = VaultedPaymentMethodsExchangeInteractor(
-            vaultedPaymentMethodExchangeRepository = vaultedPaymentMethodExchangeRepository,
-            tokenizedPaymentMethodRepository = tokenizedPaymentMethodRepository,
-            preTokenizationHandler = preTokenizationHandler,
-            logReporter = logReporter
-        )
+        interactor =
+            VaultedPaymentMethodsExchangeInteractor(
+                vaultedPaymentMethodExchangeRepository = vaultedPaymentMethodExchangeRepository,
+                tokenizedPaymentMethodRepository = tokenizedPaymentMethodRepository,
+                preTokenizationHandler = preTokenizationHandler,
+                logReporter = logReporter,
+            )
     }
 
     @Test
@@ -63,7 +63,7 @@ class VaultedPaymentMethodsExchangeInteractorTest {
         coEvery {
             vaultedPaymentMethodExchangeRepository.exchangeVaultedPaymentToken(
                 any(),
-                any()
+                any(),
             )
         }.returns(Result.success(paymentMethodTokenInternal))
 
@@ -75,7 +75,7 @@ class VaultedPaymentMethodsExchangeInteractorTest {
         coVerify {
             vaultedPaymentMethodExchangeRepository.exchangeVaultedPaymentToken(
                 any(),
-                any()
+                any(),
             )
         }
         verify { tokenizedPaymentMethodRepository.setPaymentMethod(paymentMethodTokenInternal) }
@@ -89,7 +89,7 @@ class VaultedPaymentMethodsExchangeInteractorTest {
         coEvery {
             vaultedPaymentMethodExchangeRepository.exchangeVaultedPaymentToken(
                 any(),
-                any()
+                any(),
             )
         }.returns(Result.failure(expectedException))
 
@@ -97,16 +97,17 @@ class VaultedPaymentMethodsExchangeInteractorTest {
             preTokenizationHandler.handle(any(), any())
         }.returns(Result.success(Unit))
 
-        val exception = assertThrows<Exception> {
-            runTest {
-                interactor(params).getOrThrow()
+        val exception =
+            assertThrows<Exception> {
+                runTest {
+                    interactor(params).getOrThrow()
+                }
             }
-        }
 
         coVerify {
             vaultedPaymentMethodExchangeRepository.exchangeVaultedPaymentToken(
                 any(),
-                any()
+                any(),
             )
         }
         assertEquals(exception.javaClass, expectedException.javaClass)

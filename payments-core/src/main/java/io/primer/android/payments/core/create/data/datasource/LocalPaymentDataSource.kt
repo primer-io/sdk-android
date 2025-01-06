@@ -1,7 +1,7 @@
 package io.primer.android.payments.core.create.data.datasource
 
-import io.primer.android.payments.core.create.data.model.PaymentDataResponse
 import io.primer.android.core.data.datasource.BaseCacheDataSource
+import io.primer.android.payments.core.create.data.model.PaymentDataResponse
 
 class LocalPaymentDataSource :
     BaseCacheDataSource<PaymentDataResponse, PaymentDataResponse> {

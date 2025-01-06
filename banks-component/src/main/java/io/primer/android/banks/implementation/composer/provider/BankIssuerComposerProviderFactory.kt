@@ -7,8 +7,10 @@ import io.primer.android.paymentmethods.core.composer.PaymentMethodComposer
 import io.primer.android.paymentmethods.core.composer.provider.PaymentMethodComposerProvider
 
 internal class BankIssuerComposerProviderFactory : PaymentMethodComposerProvider.Factory {
-
-    override fun create(paymentMethodType: String, sessionIntent: PrimerSessionIntent): PaymentMethodComposer {
+    override fun create(
+        paymentMethodType: String,
+        sessionIntent: PrimerSessionIntent,
+    ): PaymentMethodComposer {
         return resolve<BankWebRedirectComposer>(name = paymentMethodType)
     }
 }

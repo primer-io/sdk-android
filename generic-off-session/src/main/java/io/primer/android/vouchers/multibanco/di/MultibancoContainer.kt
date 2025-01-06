@@ -24,22 +24,21 @@ import io.primer.android.vouchers.multibanco.implementation.tokenization.present
 
 internal class MultibancoContainer(private val sdk: () -> SdkContainer, private val paymentMethodType: String) :
     DependencyContainer() {
-
     override fun registerInitialDependencies() {
         registerFactory(name = paymentMethodType) {
             PaymentMethodSdkAnalyticsEventLoggingDelegate(
                 primerPaymentMethodManagerCategory =
-                PrimerPaymentMethodManagerCategory.NATIVE_UI.name,
-                analyticsInteractor = sdk().resolve()
+                    PrimerPaymentMethodManagerCategory.NATIVE_UI.name,
+                analyticsInteractor = sdk().resolve(),
             )
         }
 
         registerFactory<PaymentMethodConfigurationRepository<MultibancoConfig, MultibancoConfigParams>>(
-            name = paymentMethodType
+            name = paymentMethodType,
         ) {
             MultibancoConfigurationDataRepository(
                 configurationDataSource = sdk().resolve(ConfigurationCoreContainer.CACHED_CONFIGURATION_DI_KEY),
-                settings = sdk().resolve()
+                settings = sdk().resolve(),
             )
         }
 
@@ -48,7 +47,7 @@ internal class MultibancoContainer(private val sdk: () -> SdkContainer, private 
         }
 
         registerFactory<BaseRemoteTokenizationDataSource<MultibancoPaymentInstrumentDataRequest>>(
-            name = paymentMethodType
+            name = paymentMethodType,
         ) {
             MultibancoRemoteTokenizationDataSource(primerHttpClient = sdk().resolve())
         }
@@ -57,21 +56,22 @@ internal class MultibancoContainer(private val sdk: () -> SdkContainer, private 
 
         registerFactory<MultibancoTokenizationInteractor>(name = paymentMethodType) {
             DefaultMultibancoTokenizationInteractor(
-                tokenizationRepository = MultibancoTokenizationDataRepository(
-                    remoteTokenizationDataSource = sdk().resolve(paymentMethodType),
-                    configurationDataSource = sdk().resolve(ConfigurationCoreContainer.CACHED_CONFIGURATION_DI_KEY),
-                    tokenizationParamsMapper = resolve()
-                ),
+                tokenizationRepository =
+                    MultibancoTokenizationDataRepository(
+                        remoteTokenizationDataSource = sdk().resolve(paymentMethodType),
+                        configurationDataSource = sdk().resolve(ConfigurationCoreContainer.CACHED_CONFIGURATION_DI_KEY),
+                        tokenizationParamsMapper = resolve(),
+                    ),
                 tokenizedPaymentMethodRepository = sdk().resolve(),
                 preTokenizationHandler = sdk().resolve(),
-                logReporter = sdk().resolve()
+                logReporter = sdk().resolve(),
             )
         }
 
         registerFactory {
             MultibancoTokenizationDelegate(
                 configurationInteractor = resolve(name = paymentMethodType),
-                tokenizationInteractor = resolve(name = paymentMethodType)
+                tokenizationInteractor = resolve(name = paymentMethodType),
             )
         }
 
@@ -84,7 +84,7 @@ internal class MultibancoContainer(private val sdk: () -> SdkContainer, private 
                 clientTokenParser = resolve(),
                 validateClientTokenRepository = sdk().resolve(),
                 clientTokenRepository = sdk().resolve(),
-                checkoutAdditionalInfoHandler = sdk().resolve()
+                checkoutAdditionalInfoHandler = sdk().resolve(),
             )
         }
     }

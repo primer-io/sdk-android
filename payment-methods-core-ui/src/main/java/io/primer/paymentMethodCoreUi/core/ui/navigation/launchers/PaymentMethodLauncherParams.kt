@@ -6,8 +6,8 @@ import io.primer.android.paymentmethods.common.InitialLauncherParams
 data class PaymentMethodLauncherParams(
     override val paymentMethodType: String,
     override val sessionIntent: PrimerSessionIntent,
-    val initialLauncherParams: InitialLauncherParams? = null
+    val initialLauncherParams: InitialLauncherParams? = null,
 ) : ActivityLauncherParams(
-    paymentMethodType,
-    sessionIntent
-)
+        paymentMethodType,
+        sessionIntent,
+    )

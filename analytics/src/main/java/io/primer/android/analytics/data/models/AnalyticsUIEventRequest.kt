@@ -19,48 +19,52 @@ internal data class AnalyticsUIEventRequest(
     override val primerAccountId: String?,
     override val analyticsUrl: String?,
     override val eventType: AnalyticsEventType = AnalyticsEventType.UI_EVENT,
-    override val createdAt: Long = System.currentTimeMillis()
+    override val createdAt: Long = System.currentTimeMillis(),
 ) : BaseAnalyticsEventRequest() {
-
-    override fun copy(newAnalyticsUrl: String?): AnalyticsUIEventRequest = copy(
-        analyticsUrl = newAnalyticsUrl
-    )
+    override fun copy(newAnalyticsUrl: String?): AnalyticsUIEventRequest =
+        copy(
+            analyticsUrl = newAnalyticsUrl,
+        )
 
     companion object {
+        @JvmField
+        val serializer =
+            JSONObjectSerializer<AnalyticsUIEventRequest> { t ->
+                baseSerializer.serialize(t).apply {
+                    put(
+                        PROPERTIES_FIELD,
+                        JSONSerializationUtils.getJsonObjectSerializer<UIProperties>()
+                            .serialize(t.properties),
+                    )
+                }
+            }
 
         @JvmField
-        val serializer = JSONObjectSerializer<AnalyticsUIEventRequest> { t ->
-            baseSerializer.serialize(t).apply {
-                put(
-                    PROPERTIES_FIELD,
-                    JSONSerializationUtils.getJsonObjectSerializer<UIProperties>()
-                        .serialize(t.properties)
+        val deserializer =
+            JSONObjectDeserializer { t ->
+                AnalyticsUIEventRequest(
+                    device =
+                        JSONSerializationUtils.getJsonObjectDeserializer<DeviceData>().deserialize(
+                            t.getJSONObject(DEVICE_FIELD),
+                        ),
+                    properties =
+                        JSONSerializationUtils.getJsonObjectDeserializer<UIProperties>().deserialize(
+                            t.getJSONObject(PROPERTIES_FIELD),
+                        ),
+                    appIdentifier = t.getString(APP_IDENTIFIER_FIELD),
+                    sdkSessionId = t.getString(SDK_SESSION_ID_FIELD),
+                    sdkIntegrationType =
+                        t.optNullableString(SDK_INTEGRATION_TYPE_FIELD)
+                            ?.let { SdkIntegrationType.valueOf(it) },
+                    sdkPaymentHandling = t.optNullableString(SDK_PAYMENT_HANDLING_FIELD),
+                    checkoutSessionId = t.getString(CHECKOUT_SESSION_ID_FIELD),
+                    clientSessionId = t.optNullableString(CLIENT_SESSION_ID_FIELD),
+                    orderId = t.optNullableString(ORDER_ID_FIELD),
+                    primerAccountId = t.optNullableString(PRIMER_ACCOUNT_ID_FIELD),
+                    analyticsUrl = t.optNullableString(ANALYTICS_URL_FIELD),
+                    createdAt = t.getLong(CREATED_AT_FIELD),
                 )
             }
-        }
-
-        @JvmField
-        val deserializer = JSONObjectDeserializer { t ->
-            AnalyticsUIEventRequest(
-                device = JSONSerializationUtils.getJsonObjectDeserializer<DeviceData>().deserialize(
-                    t.getJSONObject(DEVICE_FIELD)
-                ),
-                properties = JSONSerializationUtils.getJsonObjectDeserializer<UIProperties>().deserialize(
-                    t.getJSONObject(PROPERTIES_FIELD)
-                ),
-                appIdentifier = t.getString(APP_IDENTIFIER_FIELD),
-                sdkSessionId = t.getString(SDK_SESSION_ID_FIELD),
-                sdkIntegrationType = t.optNullableString(SDK_INTEGRATION_TYPE_FIELD)
-                    ?.let { SdkIntegrationType.valueOf(it) },
-                sdkPaymentHandling = t.optNullableString(SDK_PAYMENT_HANDLING_FIELD),
-                checkoutSessionId = t.getString(CHECKOUT_SESSION_ID_FIELD),
-                clientSessionId = t.optNullableString(CLIENT_SESSION_ID_FIELD),
-                orderId = t.optNullableString(ORDER_ID_FIELD),
-                primerAccountId = t.optNullableString(PRIMER_ACCOUNT_ID_FIELD),
-                analyticsUrl = t.optNullableString(ANALYTICS_URL_FIELD),
-                createdAt = t.getLong(CREATED_AT_FIELD)
-            )
-        }
     }
 }
 
@@ -69,11 +73,9 @@ internal data class UIProperties(
     val objectType: ObjectType,
     val place: Place,
     val objectId: ObjectId?,
-    val context: AnalyticsContext?
+    val context: AnalyticsContext?,
 ) : BaseAnalyticsProperties() {
-
     companion object {
-
         private const val ACTION_FIELD = "action"
         private const val OBJECT_TYPE_FIELD = "objectType"
         private const val PLACE_FIELD = "place"
@@ -81,44 +83,62 @@ internal data class UIProperties(
         private const val ANALYTICS_CONTEXT_FIELD = "context"
 
         @JvmField
-        val serializer = JSONObjectSerializer<UIProperties> { t ->
-            JSONObject().apply {
-                put(ACTION_FIELD, t.action.name)
-                put(OBJECT_TYPE_FIELD, t.objectType.name)
-                put(PLACE_FIELD, t.place)
-                putOpt(OBJECT_ID_FIELD, t.objectId?.name)
-                putOpt(
-                    ANALYTICS_CONTEXT_FIELD,
-                    t.context?.let {
-                        JSONSerializationUtils.getJsonObjectSerializer<AnalyticsContext>()
-                            .serialize(it)
-                    }
-                )
+        val serializer =
+            JSONObjectSerializer<UIProperties> { t ->
+                JSONObject().apply {
+                    put(ACTION_FIELD, t.action.name)
+                    put(OBJECT_TYPE_FIELD, t.objectType.name)
+                    put(PLACE_FIELD, t.place)
+                    putOpt(OBJECT_ID_FIELD, t.objectId?.name)
+                    putOpt(
+                        ANALYTICS_CONTEXT_FIELD,
+                        t.context?.let {
+                            JSONSerializationUtils.getJsonObjectSerializer<AnalyticsContext>()
+                                .serialize(it)
+                        },
+                    )
+                }
             }
-        }
 
         @JvmField
-        val deserializer = JSONObjectDeserializer { t ->
-            UIProperties(
-                AnalyticsAction.valueOf(t.getString(ACTION_FIELD)),
-                ObjectType.valueOf(t.getString(OBJECT_TYPE_FIELD)),
-                Place.valueOf(t.getString(PLACE_FIELD)),
-                t.optNullableString(OBJECT_ID_FIELD)?.let { ObjectId.valueOf(it) },
-                t.optJSONObject(ANALYTICS_CONTEXT_FIELD)?.let {
-                    JSONSerializationUtils.getJsonObjectDeserializer<AnalyticsContext>()
-                        .deserialize(it)
-                }
-            )
-        }
+        val deserializer =
+            JSONObjectDeserializer { t ->
+                UIProperties(
+                    AnalyticsAction.valueOf(t.getString(ACTION_FIELD)),
+                    ObjectType.valueOf(t.getString(OBJECT_TYPE_FIELD)),
+                    Place.valueOf(t.getString(PLACE_FIELD)),
+                    t.optNullableString(OBJECT_ID_FIELD)?.let { ObjectId.valueOf(it) },
+                    t.optJSONObject(ANALYTICS_CONTEXT_FIELD)?.let {
+                        JSONSerializationUtils.getJsonObjectDeserializer<AnalyticsContext>()
+                            .deserialize(it)
+                    },
+                )
+            }
     }
 }
 
 enum class AnalyticsAction {
-    CLICK, HOVER, VIEW, FOCUS, BLUR, PRESENT, DISMISS
+    CLICK,
+    HOVER,
+    VIEW,
+    FOCUS,
+    BLUR,
+    PRESENT,
+    DISMISS,
 }
 
+@Suppress("EnumEntryName")
 enum class ObjectType {
-    BUTTON, LABEL, INPUT, IMAGE, ALERT, LOADER, LIST_ITEM, WEB_PAGE, VIEW, `3RD_PARTY_VIEW`
+    BUTTON,
+    LABEL,
+    INPUT,
+    IMAGE,
+    ALERT,
+    LOADER,
+    LIST_ITEM,
+    WEB_PAGE,
+    VIEW,
+    `3RD_PARTY_VIEW`,
 }
 
 enum class ObjectId {
@@ -138,10 +158,10 @@ enum class ObjectId {
     MANAGE,
     ZIP_C0DE,
     CARD_HOLDER,
-    EXPIRY
+    EXPIRY,
 }
 
-@Suppress("EnumNaming")
+@Suppress("EnumEntryName")
 enum class Place {
     PAYMENT_METHODS_LIST, // The vaulted payment methods
     UNIVERSAL_CHECKOUT,
@@ -159,5 +179,5 @@ enum class Place {
     `3DS_VIEW`,
     DIRECT_CHECKOUT,
     IPAY88_VIEW,
-    CVV_RECAPTURE_VIEW
+    CVV_RECAPTURE_VIEW,
 }

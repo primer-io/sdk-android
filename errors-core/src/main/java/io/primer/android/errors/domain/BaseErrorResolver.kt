@@ -13,7 +13,7 @@ import io.primer.android.domain.error.models.PrimerError
 abstract class BaseErrorResolver(
     private val errorMapperRegistry: ErrorMapperRegistry,
     private val analyticsRepository: AnalyticsRepository,
-    private val logReporter: LogReporter
+    private val logReporter: LogReporter,
 ) {
     /**
      * Maps the given [Throwable] to a [PrimerError] and logs the error to analytics.
@@ -21,7 +21,7 @@ abstract class BaseErrorResolver(
     fun resolve(throwable: Throwable): PrimerError {
         val error = errorMapperRegistry.getPrimerError(throwable)
         logReporter.error(
-            "SDK encountered an error: [${error.errorId}] ${error.description}"
+            "SDK encountered an error: [${error.errorId}] ${error.description}",
         )
         analyticsRepository.addEvent(
             MessageAnalyticsParams(
@@ -29,8 +29,8 @@ abstract class BaseErrorResolver(
                 error.description,
                 Severity.ERROR,
                 error.diagnosticsId,
-                error.context
-            )
+                error.context,
+            ),
         )
 
         return error.exposedError

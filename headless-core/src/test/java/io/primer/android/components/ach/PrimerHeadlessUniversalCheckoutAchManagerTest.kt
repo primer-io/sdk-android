@@ -14,7 +14,6 @@ import io.mockk.spyk
 import io.mockk.unmockkObject
 import io.mockk.verify
 import io.primer.android.PrimerSessionIntent
-import io.primer.android.data.settings.PrimerSettings
 import io.primer.android.components.PaymentMethodManagerDelegate
 import io.primer.android.components.domain.core.models.PrimerPaymentMethodManagerCategory
 import io.primer.android.core.di.DISdkContext
@@ -22,6 +21,7 @@ import io.primer.android.core.di.DependencyContainer
 import io.primer.android.core.di.SdkContainer
 import io.primer.android.core.domain.validation.ValidationResult
 import io.primer.android.core.domain.validation.ValidationRule
+import io.primer.android.data.settings.PrimerSettings
 import io.primer.android.data.settings.PrimerStripeOptions
 import io.primer.android.domain.exception.UnsupportedPaymentMethodException
 import io.primer.android.paymentmethods.common.data.model.PaymentMethodType
@@ -54,9 +54,10 @@ class PrimerHeadlessUniversalCheckoutAchManagerTest {
 
     @BeforeEach
     fun setUp() {
-        DISdkContext.headlessSdkContainer = SdkContainer().apply {
-            registerContainer(MockContainer())
-        }
+        DISdkContext.headlessSdkContainer =
+            SdkContainer().apply {
+                registerContainer(MockContainer())
+            }
         manager = spyk(manager)
     }
 
@@ -76,9 +77,10 @@ class PrimerHeadlessUniversalCheckoutAchManagerTest {
             primerSettings.paymentMethodOptions.stripeOptions
         } returns primerStripeOptions
 
-        val rule = mockk<ValidationRule<PrimerStripeOptions>> {
-            every { validate(any()) } returns ValidationResult.Failure(Exception())
-        }
+        val rule =
+            mockk<ValidationRule<PrimerStripeOptions>> {
+                every { validate(any()) } returns ValidationResult.Failure(Exception())
+            }
         every { stripeInitValidationRulesResolver.resolve().rules } returns listOf(rule)
 
         assertThrows<java.lang.Exception> {
@@ -105,9 +107,10 @@ class PrimerHeadlessUniversalCheckoutAchManagerTest {
         every { paymentMethodInitializer.init(any(), any()) } just Runs
         every { paymentMethodInitializer.start(any(), any(), any(), any()) } just Runs
 
-        val rule = mockk<ValidationRule<PrimerStripeOptions>> {
-            every { validate(any()) } returns ValidationResult.Success
-        }
+        val rule =
+            mockk<ValidationRule<PrimerStripeOptions>> {
+                every { validate(any()) } returns ValidationResult.Success
+            }
         every { stripeInitValidationRulesResolver.resolve().rules } returns listOf(rule)
 
         val component = manager.provide<StripeAchUserDetailsComponent>(PaymentMethodType.STRIPE_ACH.name)
@@ -119,13 +122,13 @@ class PrimerHeadlessUniversalCheckoutAchManagerTest {
             rule.validate(primerStripeOptions)
             paymentMethodInitializer.init(
                 PaymentMethodType.STRIPE_ACH.name,
-                PrimerPaymentMethodManagerCategory.STRIPE_ACH
+                PrimerPaymentMethodManagerCategory.STRIPE_ACH,
             )
             paymentMethodInitializer.start(
                 context = any(),
                 paymentMethodType = PaymentMethodType.STRIPE_ACH.name,
                 sessionIntent = PrimerSessionIntent.CHECKOUT,
-                category = PrimerPaymentMethodManagerCategory.STRIPE_ACH
+                category = PrimerPaymentMethodManagerCategory.STRIPE_ACH,
             )
         }
         unmockkObject(StripeAchUserDetailsComponent.Companion)
@@ -142,9 +145,10 @@ class PrimerHeadlessUniversalCheckoutAchManagerTest {
             primerSettings.paymentMethodOptions.stripeOptions
         } returns primerStripeOptions
         every { paymentMethodInitializer.init(any(), any()) } just Runs
-        val rule = mockk<ValidationRule<PrimerStripeOptions>> {
-            every { validate(any()) } returns ValidationResult.Success
-        }
+        val rule =
+            mockk<ValidationRule<PrimerStripeOptions>> {
+                every { validate(any()) } returns ValidationResult.Success
+            }
         every { stripeInitValidationRulesResolver.resolve().rules } returns listOf(rule)
 
         assertThrows<UnsupportedPaymentMethodException> {
@@ -157,7 +161,7 @@ class PrimerHeadlessUniversalCheckoutAchManagerTest {
             rule.validate(primerStripeOptions)
             paymentMethodInitializer.init(
                 PaymentMethodType.STRIPE_ACH.name,
-                PrimerPaymentMethodManagerCategory.STRIPE_ACH
+                PrimerPaymentMethodManagerCategory.STRIPE_ACH,
             )
         }
         unmockkObject(StripeAchUserDetailsComponent.Companion)
@@ -167,7 +171,7 @@ class PrimerHeadlessUniversalCheckoutAchManagerTest {
     fun `provide() should throw exception when payment type is not STRIPE_ACH`() {
         assertThrows<UnsupportedPaymentMethodException> {
             manager.provide<StripeAchUserDetailsComponent>(
-                PaymentMethodType.ADYEN_IDEAL.name
+                PaymentMethodType.ADYEN_IDEAL.name,
             )
         }
 

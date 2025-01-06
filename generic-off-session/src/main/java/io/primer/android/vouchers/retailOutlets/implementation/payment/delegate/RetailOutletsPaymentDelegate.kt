@@ -1,8 +1,8 @@
 package io.primer.android.vouchers.retailOutlets.implementation.payment.delegate
 
+import io.primer.android.domain.payments.create.model.Payment
 import io.primer.android.errors.domain.BaseErrorResolver
 import io.primer.android.payments.core.create.domain.handler.PaymentMethodTokenHandler
-import io.primer.android.domain.payments.create.model.Payment
 import io.primer.android.payments.core.helpers.CheckoutErrorHandler
 import io.primer.android.payments.core.helpers.CheckoutSuccessHandler
 import io.primer.android.payments.core.helpers.PaymentMethodPaymentDelegate
@@ -15,17 +15,20 @@ internal class RetailOutletsPaymentDelegate(
     successHandler: CheckoutSuccessHandler,
     errorHandler: CheckoutErrorHandler,
     baseErrorResolver: BaseErrorResolver,
-    private val resumeHandler: RetailOutletsResumeHandler
+    private val resumeHandler: RetailOutletsResumeHandler,
 ) : PaymentMethodPaymentDelegate(
-    paymentMethodTokenHandler,
-    resumePaymentHandler,
-    successHandler,
-    errorHandler,
-    baseErrorResolver
-) {
-    override suspend fun handleNewClientToken(clientToken: String, payment: Payment?): Result<Unit> {
+        paymentMethodTokenHandler,
+        resumePaymentHandler,
+        successHandler,
+        errorHandler,
+        baseErrorResolver,
+    ) {
+    override suspend fun handleNewClientToken(
+        clientToken: String,
+        payment: Payment?,
+    ): Result<Unit> {
         return resumeHandler.continueWithNewClientToken(clientToken).map {
-            /* no-op */
+            // no-op
         }
     }
 }

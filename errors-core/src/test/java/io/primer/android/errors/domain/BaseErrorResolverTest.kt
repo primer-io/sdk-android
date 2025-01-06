@@ -13,7 +13,6 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 class BaseErrorResolverTest {
-
     private lateinit var errorMapperRegistry: ErrorMapperRegistry
     private lateinit var analyticsRepository: AnalyticsRepository
     private lateinit var logReporter: LogReporter
@@ -22,12 +21,14 @@ class BaseErrorResolverTest {
     @BeforeEach
     fun setUp() {
         errorMapperRegistry = mockk()
-        analyticsRepository = mockk {
-            every { addEvent(any()) } returns Unit
-        }
-        logReporter = mockk {
-            every { error(any()) } returns Unit
-        }
+        analyticsRepository =
+            mockk {
+                every { addEvent(any()) } returns Unit
+            }
+        logReporter =
+            mockk {
+                every { error(any()) } returns Unit
+            }
         baseErrorResolver = DefaultErrorResolver(analyticsRepository, errorMapperRegistry, logReporter)
     }
 
@@ -35,13 +36,14 @@ class BaseErrorResolverTest {
     fun `resolve should log error and send analytics event`() {
         // Arrange
         val throwable = RuntimeException("Test error")
-        val primerError = mockk<PrimerError> {
-            every { errorId } returns "test-error"
-            every { description } returns "Test error occurred"
-            every { diagnosticsId } returns "123456"
-            every { context } returns null // Mock context as needed
-            every { exposedError } returns this
-        }
+        val primerError =
+            mockk<PrimerError> {
+                every { errorId } returns "test-error"
+                every { description } returns "Test error occurred"
+                every { diagnosticsId } returns "123456"
+                every { context } returns null // Mock context as needed
+                every { exposedError } returns this
+            }
         every { errorMapperRegistry.getPrimerError(throwable) } returns primerError
 
         // Act
@@ -56,8 +58,8 @@ class BaseErrorResolverTest {
                     "Test error occurred",
                     Severity.ERROR,
                     "123456",
-                    null
-                )
+                    null,
+                ),
             )
         }
     }

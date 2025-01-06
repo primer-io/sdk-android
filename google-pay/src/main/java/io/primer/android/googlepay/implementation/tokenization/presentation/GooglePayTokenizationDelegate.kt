@@ -12,24 +12,25 @@ import io.primer.android.payments.core.tokenization.presentation.composable.Toke
 
 internal class GooglePayTokenizationDelegate(
     private val configurationInteractor: GooglePayConfigurationInteractor,
-    tokenizationInteractor: GooglePayTokenizationInteractor
+    tokenizationInteractor: GooglePayTokenizationInteractor,
 ) : PaymentMethodTokenizationDelegate<GooglePayTokenizationInputable, GooglePayPaymentInstrumentParams>(
-    tokenizationInteractor
-),
+        tokenizationInteractor,
+    ),
     TokenizationCollectedDataMapper<GooglePayTokenizationInputable, GooglePayPaymentInstrumentParams> {
-
-    override suspend fun mapTokenizationData(input: GooglePayTokenizationInputable):
-        Result<TokenizationParams<GooglePayPaymentInstrumentParams>> = configurationInteractor.invoke(
-        NoOpPaymentMethodConfigurationParams
-    ).map { configuration ->
-        TokenizationParams(
-            GooglePayPaymentInstrumentParams(
-                input.paymentMethodType,
-                configuration.gatewayMerchantId,
-                input.paymentData,
-                GooglePayFlow.GATEWAY
-            ),
-            input.primerSessionIntent
-        )
-    }
+    override suspend fun mapTokenizationData(
+        input: GooglePayTokenizationInputable,
+    ): Result<TokenizationParams<GooglePayPaymentInstrumentParams>> =
+        configurationInteractor.invoke(
+            NoOpPaymentMethodConfigurationParams,
+        ).map { configuration ->
+            TokenizationParams(
+                GooglePayPaymentInstrumentParams(
+                    input.paymentMethodType,
+                    configuration.gatewayMerchantId,
+                    input.paymentData,
+                    GooglePayFlow.GATEWAY,
+                ),
+                input.primerSessionIntent,
+            )
+        }
 }

@@ -17,9 +17,8 @@ import kotlinx.coroutines.Dispatchers
  */
 open class PaymentMethodConfigurationInteractor<T : PaymentMethodConfiguration, P : PaymentMethodConfigurationParams>(
     private val configurationRepository: PaymentMethodConfigurationRepository<T, P>,
-    override val dispatcher: CoroutineDispatcher = Dispatchers.Default
+    override val dispatcher: CoroutineDispatcher = Dispatchers.Default,
 ) : BaseSuspendInteractor<T, P>() {
-
     /**
      * Performs the action to retrieve the payment method configuration based on the given parameters.
      *

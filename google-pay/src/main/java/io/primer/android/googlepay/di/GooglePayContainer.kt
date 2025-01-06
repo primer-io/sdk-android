@@ -27,20 +27,19 @@ import io.primer.android.payments.core.tokenization.data.datasource.BaseRemoteTo
 
 internal class GooglePayContainer(private val sdk: () -> SdkContainer, private val paymentMethodType: String) :
     DependencyContainer() {
-
     override fun registerInitialDependencies() {
         registerFactory<GooglePayConfigurationRepository>(
-            name = paymentMethodType
+            name = paymentMethodType,
         ) {
             GooglePayConfigurationDataRepository(
                 configurationDataSource = sdk().resolve(ConfigurationCoreContainer.CACHED_CONFIGURATION_DI_KEY),
-                settings = sdk().resolve()
+                settings = sdk().resolve(),
             )
         }
 
         registerFactory<GooglePayConfigurationInteractor>(name = paymentMethodType) {
             PaymentMethodConfigurationInteractor(
-                configurationRepository = resolve(name = paymentMethodType)
+                configurationRepository = resolve(name = paymentMethodType),
             )
         }
 
@@ -48,18 +47,18 @@ internal class GooglePayContainer(private val sdk: () -> SdkContainer, private v
 
         registerFactory {
             GooglePayValidationRulesResolver(
-                validPaymentDataMethodRule = resolve()
+                validPaymentDataMethodRule = resolve(),
             )
         }
 
         registerSingleton {
             GooglePayShippingMethodUpdateValidator(
-                configurationRepository = resolve(name = paymentMethodType)
+                configurationRepository = resolve(name = paymentMethodType),
             )
         }
 
         registerFactory<BaseRemoteTokenizationDataSource<GooglePayPaymentInstrumentDataRequest>>(
-            name = paymentMethodType
+            name = paymentMethodType,
         ) {
             GooglePayRemoteTokenizationDataSource(primerHttpClient = sdk().resolve())
         }
@@ -68,33 +67,37 @@ internal class GooglePayContainer(private val sdk: () -> SdkContainer, private v
 
         registerFactory<GooglePayTokenizationInteractor>(name = paymentMethodType) {
             DefaultGooglePayTokenizationInteractor(
-                tokenizationRepository = GooglePayTokenizationDataRepository(
-                    remoteTokenizationDataSource = sdk().resolve(paymentMethodType),
-                    configurationDataSource = sdk().resolve(ConfigurationCoreContainer.CACHED_CONFIGURATION_DI_KEY),
-                    tokenizationParamsMapper = resolve()
-                ),
+                tokenizationRepository =
+                    GooglePayTokenizationDataRepository(
+                        remoteTokenizationDataSource = sdk().resolve(paymentMethodType),
+                        configurationDataSource = sdk().resolve(ConfigurationCoreContainer.CACHED_CONFIGURATION_DI_KEY),
+                        tokenizationParamsMapper = resolve(),
+                    ),
                 tokenizedPaymentMethodRepository = sdk().resolve(),
                 preTokenizationHandler = sdk().resolve(),
-                logReporter = sdk().resolve()
+                logReporter = sdk().resolve(),
             )
         }
 
         registerFactory(name = paymentMethodType) {
             GooglePayTokenizationCollectorDelegate(
-                configurationInteractor = resolve(
-                    name = paymentMethodType
-                )
+                configurationInteractor =
+                    resolve(
+                        name = paymentMethodType,
+                    ),
             )
         }
 
         registerFactory(name = paymentMethodType) {
             GooglePayTokenizationDelegate(
-                configurationInteractor = resolve(
-                    name = paymentMethodType
-                ),
-                tokenizationInteractor = resolve(
-                    name = paymentMethodType
-                )
+                configurationInteractor =
+                    resolve(
+                        name = paymentMethodType,
+                    ),
+                tokenizationInteractor =
+                    resolve(
+                        name = paymentMethodType,
+                    ),
             )
         }
 
@@ -111,7 +114,7 @@ internal class GooglePayContainer(private val sdk: () -> SdkContainer, private v
                 clientTokenParser = resolve(),
                 validateClientTokenRepository = sdk().resolve(),
                 clientTokenRepository = sdk().resolve(),
-                checkoutAdditionalInfoHandler = sdk().resolve()
+                checkoutAdditionalInfoHandler = sdk().resolve(),
             )
         }
 
@@ -122,7 +125,7 @@ internal class GooglePayContainer(private val sdk: () -> SdkContainer, private v
                 successHandler = sdk().resolve(),
                 errorHandler = sdk().resolve(),
                 baseErrorResolver = sdk().resolve(),
-                resumeHandler = resolve()
+                resumeHandler = resolve(),
             )
         }
     }

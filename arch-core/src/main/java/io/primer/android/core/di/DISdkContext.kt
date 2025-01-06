@@ -15,11 +15,12 @@ object DISdkContext {
 
     val container: () -> SdkContainer
         get() = {
-            val selectedContainer = if (isDropIn) {
-                dropInSdkContainer + coreContainer
-            } else {
-                headlessSdkContainer + coreContainer
-            }
+            val selectedContainer =
+                if (isDropIn) {
+                    dropInSdkContainer + coreContainer
+                } else {
+                    headlessSdkContainer + coreContainer
+                }
 
             selectedContainer?.let { container ->
                 // this is necessary in case we use `getSdkContainer().registerContainer`
@@ -33,7 +34,10 @@ object DISdkContext {
         }
 
     fun getContainerOrNull(): SdkContainer? =
-        runCatching { container() }.getOrNull() ?: run { Log.e("DISdkContextKt", "Container is not initialized"); null }
+        runCatching { container() }.getOrNull() ?: run {
+            Log.e("DISdkContextKt", "Container is not initialized")
+            null
+        }
 
     fun clear() = merged.clear()
 }

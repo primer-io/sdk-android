@@ -15,7 +15,6 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 internal class PaypalOrderInfoDataRepositoryTest {
-
     private lateinit var remotePaypalOrderInfoDataSource: RemotePaypalOrderInfoDataSource
     private lateinit var configurationDataSource: BaseCacheDataSource<ConfigurationData, ConfigurationData>
     private lateinit var repository: PaypalOrderInfoDataRepository
@@ -36,37 +35,42 @@ internal class PaypalOrderInfoDataRepositoryTest {
     }
 
     @Test
-    fun `getPaypalOrderInfo should return PaypalOrderInfo on success`() = runTest {
-        // Given
-        val params = PaypalOrderInfoParams("configId", "orderId")
-        val responseData = mockk<PaypalOrderInfoResponse>() {
-            every { orderId } returns testOrderId
-            every { externalPayerInfo } returns mockk(relaxed = true) {
-                every { email } returns testEmail
-                every { externalPayerId } returns testExternalPayerId
-                every { firstName } returns testFirstName
-                every { lastName } returns testLastName
-            }
+    fun `getPaypalOrderInfo should return PaypalOrderInfo on success`() =
+        runTest {
+            // Given
+            val params = PaypalOrderInfoParams("configId", "orderId")
+            val responseData =
+                mockk<PaypalOrderInfoResponse> {
+                    every { orderId } returns testOrderId
+                    every { externalPayerInfo } returns
+                        mockk(relaxed = true) {
+                            every { email } returns testEmail
+                            every { externalPayerId } returns testExternalPayerId
+                            every { firstName } returns testFirstName
+                            every { lastName } returns testLastName
+                        }
+                }
+
+            every { configurationDataSource.get() } returns
+                mockk(relaxed = true) {
+                    every { coreUrl } returns testCoreUrl
+                }
+
+            coEvery { remotePaypalOrderInfoDataSource.execute(any()) } returns responseData
+
+            // When
+            val result = repository.getPaypalOrderInfo(params)
+
+            val expectedResult =
+                PaypalOrderInfo(
+                    orderId = testOrderId,
+                    email = testEmail,
+                    externalPayerId = testExternalPayerId,
+                    externalPayerFirstName = testFirstName,
+                    externalPayerLastName = testLastName,
+                )
+
+            // Then
+            assertEquals(expectedResult, result.getOrNull())
         }
-
-        every { configurationDataSource.get() } returns mockk(relaxed = true) {
-            every { coreUrl } returns testCoreUrl
-        }
-
-        coEvery { remotePaypalOrderInfoDataSource.execute(any()) } returns responseData
-
-        // When
-        val result = repository.getPaypalOrderInfo(params)
-
-        val expectedResult = PaypalOrderInfo(
-            orderId = testOrderId,
-            email = testEmail,
-            externalPayerId = testExternalPayerId,
-            externalPayerFirstName = testFirstName,
-            externalPayerLastName = testLastName
-        )
-
-        // Then
-        assertEquals(expectedResult, result.getOrNull())
-    }
 }

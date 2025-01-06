@@ -62,7 +62,7 @@ class StripeAchUserDetailsComponent internal constructor(
     private val manualFlowSuccessHandler: ManualFlowSuccessHandler,
     private val primerSettings: PrimerSettings,
     private val config: PrimerConfig,
-    private val savedStateHandle: SavedStateHandle
+    private val savedStateHandle: SavedStateHandle,
 ) : ViewModel(),
     PrimerHeadlessAchComponent<AchUserDetailsCollectableData, AchUserDetailsStep> {
     private var firstName: String = savedStateHandle.get<String>(FIRST_NAME_KEY).orEmpty()
@@ -107,16 +107,16 @@ class StripeAchUserDetailsComponent internal constructor(
                         AchUserDetailsStep.UserDetailsRetrieved(
                             firstName = it.firstName,
                             lastName = it.lastName,
-                            emailAddress = it.emailAddress
-                        )
+                            emailAddress = it.emailAddress,
+                        ),
                     )
                 }
                 .onFailure(::handleError)
 
             eventLoggingDelegate.logSdkAnalyticsEvent(
                 methodName =
-                StripeAchUserDetailsAnalyticsConstants.STRIPE_ACH_USER_DETAIL_START_METHOD,
-                paymentMethodType = PaymentMethodType.STRIPE_ACH.name
+                    StripeAchUserDetailsAnalyticsConstants.STRIPE_ACH_USER_DETAIL_START_METHOD,
+                paymentMethodType = PaymentMethodType.STRIPE_ACH.name,
             )
         }
     }
@@ -130,25 +130,26 @@ class StripeAchUserDetailsComponent internal constructor(
     private suspend fun updateCollectedDataImpl(collectedData: AchUserDetailsCollectableData): Boolean {
         _componentValidationStatus.emit(PrimerValidationStatus.Validating(collectedData))
 
-        val validationError = when (collectedData) {
-            is AchUserDetailsCollectableData.FirstName -> {
-                val error = FirstNameValidator.validate(collectedData.value)
-                if (error == null) firstName = collectedData.value
-                error
-            }
+        val validationError =
+            when (collectedData) {
+                is AchUserDetailsCollectableData.FirstName -> {
+                    val error = FirstNameValidator.validate(collectedData.value)
+                    if (error == null) firstName = collectedData.value
+                    error
+                }
 
-            is AchUserDetailsCollectableData.LastName -> {
-                val error = LastNameValidator.validate(collectedData.value)
-                if (error == null) lastName = collectedData.value
-                error
-            }
+                is AchUserDetailsCollectableData.LastName -> {
+                    val error = LastNameValidator.validate(collectedData.value)
+                    if (error == null) lastName = collectedData.value
+                    error
+                }
 
-            is AchUserDetailsCollectableData.EmailAddress -> {
-                val error = EmailAddressValidator.validate(collectedData.value)
-                if (error == null) emailAddress = collectedData.value
-                error
+                is AchUserDetailsCollectableData.EmailAddress -> {
+                    val error = EmailAddressValidator.validate(collectedData.value)
+                    if (error == null) emailAddress = collectedData.value
+                    error
+                }
             }
-        }
 
         _componentValidationStatus.emit(
             if (validationError == null) {
@@ -156,13 +157,13 @@ class StripeAchUserDetailsComponent internal constructor(
             } else {
                 validationErrorLoggingDelegate.logSdkAnalyticsError(validationError)
                 PrimerValidationStatus.Invalid(validationError, collectedData)
-            }
+            },
         )
 
         eventLoggingDelegate.logSdkAnalyticsEvent(
             methodName =
-            StripeAchUserDetailsAnalyticsConstants.STRIPE_ACH_USER_DETAIL_COLLECTED_DATA_METHOD,
-            paymentMethodType = PaymentMethodType.STRIPE_ACH.name
+                StripeAchUserDetailsAnalyticsConstants.STRIPE_ACH_USER_DETAIL_COLLECTED_DATA_METHOD,
+            paymentMethodType = PaymentMethodType.STRIPE_ACH.name,
         )
         return validationError == null
     }
@@ -171,8 +172,8 @@ class StripeAchUserDetailsComponent internal constructor(
         viewModelScope.launch {
             eventLoggingDelegate.logSdkAnalyticsEvent(
                 methodName =
-                StripeAchUserDetailsAnalyticsConstants.STRIPE_ACH_USER_DETAIL_SUBMIT_DATA_METHOD,
-                paymentMethodType = PaymentMethodType.STRIPE_ACH.name
+                    StripeAchUserDetailsAnalyticsConstants.STRIPE_ACH_USER_DETAIL_SUBMIT_DATA_METHOD,
+                paymentMethodType = PaymentMethodType.STRIPE_ACH.name,
             )
 
             if (!hadFirstSubmission) {
@@ -189,25 +190,28 @@ class StripeAchUserDetailsComponent internal constructor(
 
             runCatching {
                 object {
-                    val firstName = requireNotNullCheck(
-                        value = this@StripeAchUserDetailsComponent.firstName.takeIf { it.isNotBlank() },
-                        key = StripeAchUserDetailsIllegalValueKey.MISSING_FIRST_NAME
-                    )
-                    val lastName = requireNotNullCheck(
-                        value = this@StripeAchUserDetailsComponent.lastName.takeIf { it.isNotBlank() },
-                        key = StripeAchUserDetailsIllegalValueKey.MISSING_LAST_NAME
-                    )
-                    val emailAddress = requireNotNullCheck(
-                        value = this@StripeAchUserDetailsComponent.emailAddress.takeIf { it.isNotBlank() },
-                        key = StripeAchUserDetailsIllegalValueKey.MISSING_EMAIL_ADDRESS
-                    )
+                    val firstName =
+                        requireNotNullCheck(
+                            value = this@StripeAchUserDetailsComponent.firstName.takeIf { it.isNotBlank() },
+                            key = StripeAchUserDetailsIllegalValueKey.MISSING_FIRST_NAME,
+                        )
+                    val lastName =
+                        requireNotNullCheck(
+                            value = this@StripeAchUserDetailsComponent.lastName.takeIf { it.isNotBlank() },
+                            key = StripeAchUserDetailsIllegalValueKey.MISSING_LAST_NAME,
+                        )
+                    val emailAddress =
+                        requireNotNullCheck(
+                            value = this@StripeAchUserDetailsComponent.emailAddress.takeIf { it.isNotBlank() },
+                            key = StripeAchUserDetailsIllegalValueKey.MISSING_EMAIL_ADDRESS,
+                        )
                 }
             }
                 .flatMap { userDetails ->
                     stripeAchClientSessionPatchDelegate(
                         firstName = userDetails.firstName,
                         lastName = userDetails.lastName,
-                        emailAddress = userDetails.emailAddress
+                        emailAddress = userDetails.emailAddress,
                     )
                         .recoverCatching { throw CheckoutFailureException(it) }
                         .onFailure { stripeAchPaymentDelegate.handleError(it.requireCause()) }
@@ -219,8 +223,8 @@ class StripeAchUserDetailsComponent internal constructor(
                     stripeAchTokenizationDelegate.tokenize(
                         StripeAchTokenizationInputable(
                             paymentMethodType = PaymentMethodType.STRIPE_ACH.name,
-                            primerSessionIntent = PrimerSessionIntent.CHECKOUT
-                        )
+                            primerSessionIntent = PrimerSessionIntent.CHECKOUT,
+                        ),
                     )
                         .recoverCatching { throw CheckoutFailureException(it) }
                         .onFailure { stripeAchPaymentDelegate.handleError(it.requireCause()) }
@@ -228,7 +232,7 @@ class StripeAchUserDetailsComponent internal constructor(
                 .flatMap { paymentMethodTokenData ->
                     stripeAchPaymentDelegate.handlePaymentMethodToken(
                         paymentMethodTokenData = paymentMethodTokenData,
-                        primerSessionIntent = PrimerSessionIntent.CHECKOUT
+                        primerSessionIntent = PrimerSessionIntent.CHECKOUT,
                     )
                         .recoverCatching { throw CheckoutFailureException(it) }
                         .onFailure { stripeAchPaymentDelegate.handleError(it.requireCause()) }
@@ -246,21 +250,22 @@ class StripeAchUserDetailsComponent internal constructor(
                         stripeAchBankFlowDelegate.handle(
                             clientSecret = stripeAchDecision.stripeClientSecret,
                             paymentIntentId = stripeAchDecision.stripePaymentIntentId,
-                            sdkCompleteUrl = stripeAchDecision.sdkCompleteUrl
+                            sdkCompleteUrl = stripeAchDecision.sdkCompleteUrl,
                         )
                             .map {
                                 when (config.settings.paymentHandling) {
                                     PrimerPaymentHandling.MANUAL -> {
                                         pendingResumeHandler.handle(
-                                            additionalInfo = AchAdditionalInfo.MandateAccepted(it.mandateTimestamp)
+                                            additionalInfo = AchAdditionalInfo.MandateAccepted(it.mandateTimestamp),
                                         )
                                         manualFlowSuccessHandler.handle()
                                     }
 
-                                    PrimerPaymentHandling.AUTO -> successHandler.handle(
-                                        payment = requireNotNull(it.payment),
-                                        additionalInfo = null
-                                    )
+                                    PrimerPaymentHandling.AUTO ->
+                                        successHandler.handle(
+                                            payment = requireNotNull(it.payment),
+                                            additionalInfo = null,
+                                        )
                                 }
                             }
                             .recoverCatching {
@@ -275,7 +280,7 @@ class StripeAchUserDetailsComponent internal constructor(
                                         it.requireCause()
                                     } else {
                                         it
-                                    }
+                                    },
                                 )
                             }
                     } ?: Result.success(Unit)
@@ -284,26 +289,27 @@ class StripeAchUserDetailsComponent internal constructor(
         }
     }
 
-    private fun handleError(throwable: Throwable) = viewModelScope.launch {
-        val isCheckoutFailureException = throwable is CheckoutFailureException
+    private fun handleError(throwable: Throwable) =
+        viewModelScope.launch {
+            val isCheckoutFailureException = throwable is CheckoutFailureException
         /*
         exclude CheckoutFailureException when in Drop-in because the inner exception is always dispatched.
-        */
-        if (primerSettings.sdkIntegrationType == SdkIntegrationType.DROP_IN && !isCheckoutFailureException) {
-            stripeAchPaymentDelegate.handleError(throwable)
+         */
+            if (primerSettings.sdkIntegrationType == SdkIntegrationType.DROP_IN && !isCheckoutFailureException) {
+                stripeAchPaymentDelegate.handleError(throwable)
+            }
+            errorMapperRegistry.getPrimerError(
+                if (isCheckoutFailureException) {
+                    requireNotNull(throwable.cause)
+                } else {
+                    throwable
+                },
+            )
+                .also { error ->
+                    _componentError.emit(error)
+                    errorLoggingDelegate.logSdkAnalyticsErrors(error = error)
+                }
         }
-        errorMapperRegistry.getPrimerError(
-            if (isCheckoutFailureException) {
-                requireNotNull(throwable.cause)
-            } else {
-                throwable
-            }
-        )
-            .also { error ->
-                _componentError.emit(error)
-                errorLoggingDelegate.logSdkAnalyticsErrors(error = error)
-            }
-    }
 
     internal class CheckoutFailureException(cause: Throwable) : Throwable(cause = cause)
 
@@ -313,8 +319,6 @@ class StripeAchUserDetailsComponent internal constructor(
         private const val EMAIL_ADDRESS_KEY = "email_address"
         private const val HAD_FIRST_SUBMISSION_KEY = "had_first_submission"
 
-        fun provideInstance(
-            owner: ViewModelStoreOwner
-        ) = StripeAchUserDetailsComponentProvider.provideInstance(owner)
+        fun provideInstance(owner: ViewModelStoreOwner) = StripeAchUserDetailsComponentProvider.provideInstance(owner)
     }
 }

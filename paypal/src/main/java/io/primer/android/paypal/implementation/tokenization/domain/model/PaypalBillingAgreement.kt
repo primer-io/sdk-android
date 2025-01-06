@@ -4,5 +4,5 @@ internal data class PaypalBillingAgreement(
     val paymentMethodConfigId: String,
     val approvalUrl: String,
     val successUrl: String,
-    val cancelUrl: String
+    val cancelUrl: String,
 )

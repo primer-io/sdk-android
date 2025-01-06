@@ -23,18 +23,18 @@ import org.junit.jupiter.api.Test
 import kotlin.test.assertIs
 
 class NativeUiDropInDescriptorTest {
-
     private val paymentMethodType = "OMISE_PROMPTPAY"
     private val uiOptions = UiOptions(isDarkMode = false, isStandalonePaymentMethod = true, isInitScreenEnabled = false)
     private val primerSessionIntent = mockk<PrimerSessionIntent>()
     private val brandRegistry = mockk<BrandRegistry>()
 
-    private val nativeUiDropInDescriptor = NativeUiDropInDescriptor(
-        paymentMethodType = paymentMethodType,
-        uiOptions = uiOptions,
-        primerSessionIntent = primerSessionIntent,
-        brandRegistry = brandRegistry
-    )
+    private val nativeUiDropInDescriptor =
+        NativeUiDropInDescriptor(
+            paymentMethodType = paymentMethodType,
+            uiOptions = uiOptions,
+            primerSessionIntent = primerSessionIntent,
+            brandRegistry = brandRegistry,
+        )
 
     @Test
     fun `paymentMethodType returns OMISE_PROMPTPAY when payment method type is OMISE_PROMPTPAY`() {
@@ -59,17 +59,19 @@ class NativeUiDropInDescriptorTest {
 
     @Test
     fun `behaviours returns empty list when isInitScreenEnabled is false and isStandalonePaymentMethod is true`() {
-        val uiOptions = mockk<UiOptions> {
-            every { isInitScreenEnabled } returns false
-            every { isStandalonePaymentMethod } returns true
-        }
+        val uiOptions =
+            mockk<UiOptions> {
+                every { isInitScreenEnabled } returns false
+                every { isStandalonePaymentMethod } returns true
+            }
 
-        val descriptor = NativeUiDropInDescriptor(
-            paymentMethodType = paymentMethodType,
-            uiOptions = uiOptions,
-            primerSessionIntent = primerSessionIntent,
-            brandRegistry = brandRegistry
-        )
+        val descriptor =
+            NativeUiDropInDescriptor(
+                paymentMethodType = paymentMethodType,
+                uiOptions = uiOptions,
+                primerSessionIntent = primerSessionIntent,
+                brandRegistry = brandRegistry,
+            )
 
         assertEquals(emptyList<PaymentMethodBehaviour>(), descriptor.behaviours)
     }
@@ -78,17 +80,19 @@ class NativeUiDropInDescriptorTest {
     fun `behaviours returns list with NewFragmentBehaviour when isInitScreenEnabled is true or isStandalonePaymentMethod is false`() {
         mockkObject(PaymentMethodLoadingFragment)
         every { PaymentMethodLoadingFragment.Companion.newInstance(popBackStackToRoot = true) } returns mockk()
-        val uiOptions = mockk<UiOptions> {
-            every { isInitScreenEnabled } returns true
-            every { isStandalonePaymentMethod } returns false
-        }
+        val uiOptions =
+            mockk<UiOptions> {
+                every { isInitScreenEnabled } returns true
+                every { isStandalonePaymentMethod } returns false
+            }
 
-        val descriptor = NativeUiDropInDescriptor(
-            paymentMethodType = paymentMethodType,
-            uiOptions = uiOptions,
-            primerSessionIntent = primerSessionIntent,
-            brandRegistry = brandRegistry
-        )
+        val descriptor =
+            NativeUiDropInDescriptor(
+                paymentMethodType = paymentMethodType,
+                uiOptions = uiOptions,
+                primerSessionIntent = primerSessionIntent,
+                brandRegistry = brandRegistry,
+            )
 
         val behaviour = descriptor.behaviours.single()
         assertIs<NewFragmentBehaviour>(behaviour)

@@ -12,5 +12,5 @@ internal data class IPay88ClientToken(
     val supportedCurrencyCode: String,
     val supportedCountryCode: String?,
     val backendCallbackUrl: String,
-    override val clientTokenIntent: String
+    override val clientTokenIntent: String,
 ) : PaymentMethodResumeClientToken

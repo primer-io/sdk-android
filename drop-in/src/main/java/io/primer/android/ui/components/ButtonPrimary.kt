@@ -11,16 +11,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.widget.LinearLayout
 import io.primer.android.R
-import io.primer.android.ui.settings.PrimerTheme
 import io.primer.android.core.di.DISdkComponent
 import io.primer.android.core.di.extensions.inject
 import io.primer.android.databinding.LayoutButtonPrimaryBinding
+import io.primer.android.ui.settings.PrimerTheme
 
 internal class ButtonPrimary(
     ctx: Context,
-    attrs: AttributeSet
+    attrs: AttributeSet,
 ) : LinearLayout(ctx, attrs), DISdkComponent {
-
     private val binding = LayoutButtonPrimaryBinding.inflate(LayoutInflater.from(context), this)
     private val theme: PrimerTheme by inject()
 
@@ -48,19 +47,21 @@ internal class ButtonPrimary(
     private fun createBackground(): Drawable {
         val splash = theme.splashColor.getColor(context, theme.isDarkMode)
         val rippleColor = ColorStateList.valueOf(splash)
-        val content = GradientDrawable().apply {
-            cornerRadius = theme.defaultCornerRadius.getDimension(context)
-            color = ColorStateList(
-                arrayOf(
-                    intArrayOf(android.R.attr.state_enabled),
-                    intArrayOf(-android.R.attr.state_enabled)
-                ),
-                intArrayOf(
-                    theme.mainButton.defaultColor.getColor(context, theme.isDarkMode),
-                    theme.mainButton.disabledColor.getColor(context, theme.isDarkMode)
-                )
-            )
-        }
+        val content =
+            GradientDrawable().apply {
+                cornerRadius = theme.defaultCornerRadius.getDimension(context)
+                color =
+                    ColorStateList(
+                        arrayOf(
+                            intArrayOf(android.R.attr.state_enabled),
+                            intArrayOf(-android.R.attr.state_enabled),
+                        ),
+                        intArrayOf(
+                            theme.mainButton.defaultColor.getColor(context, theme.isDarkMode),
+                            theme.mainButton.disabledColor.getColor(context, theme.isDarkMode),
+                        ),
+                    )
+            }
         return RippleDrawable(rippleColor, content, null)
     }
 }

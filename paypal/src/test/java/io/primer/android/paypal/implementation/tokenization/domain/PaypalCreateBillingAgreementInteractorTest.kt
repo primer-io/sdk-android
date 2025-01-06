@@ -13,32 +13,33 @@ import org.junit.jupiter.api.Test
 
 @ExperimentalCoroutinesApi
 class PaypalCreateBillingAgreementInteractorTest {
-
     private lateinit var interactor: PaypalCreateBillingAgreementInteractor
     private val createBillingAgreementRepository: PaypalCreateBillingAgreementRepository = mockk()
 
     @BeforeEach
     fun setUp() {
-        interactor = PaypalCreateBillingAgreementInteractor(
-            createBillingAgreementRepository
-        )
+        interactor =
+            PaypalCreateBillingAgreementInteractor(
+                createBillingAgreementRepository,
+            )
     }
 
     @Test
-    fun `performAction() should call createBillingAgreement with the provided params`() = runTest {
-        // Given
-        val params = mockk<PaypalCreateBillingAgreementParams>(relaxed = true)
+    fun `performAction() should call createBillingAgreement with the provided params`() =
+        runTest {
+            // Given
+            val params = mockk<PaypalCreateBillingAgreementParams>(relaxed = true)
 
-        val expectedResult = mockk<PaypalBillingAgreement>(relaxed = true)
+            val expectedResult = mockk<PaypalBillingAgreement>(relaxed = true)
 
-        coEvery {
-            createBillingAgreementRepository.createBillingAgreement(params)
-        } returns Result.success(expectedResult)
+            coEvery {
+                createBillingAgreementRepository.createBillingAgreement(params)
+            } returns Result.success(expectedResult)
 
-        // When
-        val result = interactor(params)
+            // When
+            val result = interactor(params)
 
-        // Then
-        assertEquals(Result.success(expectedResult), result)
-    }
+            // Then
+            assertEquals(Result.success(expectedResult), result)
+        }
 }

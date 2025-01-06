@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
 class PaypalBrandTest {
-
     @Test
     fun `iconResId should return PayPal logo drawable resource ID`() {
         // Arrange

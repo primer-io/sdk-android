@@ -21,5 +21,5 @@ data class PrimerCardData(
     val expiryDate: String,
     val cvv: String,
     val cardHolderName: String? = null,
-    val cardNetwork: CardNetwork.Type? = null
+    val cardNetwork: CardNetwork.Type? = null,
 ) : PrimerRawData

@@ -12,7 +12,7 @@ import io.primer.android.klarna.api.component.KlarnaComponent
  * @param viewModelStoreOwner The [ViewModelStoreOwner] to associate with the component.
  */
 class PrimerHeadlessUniversalCheckoutKlarnaManager(
-    private val viewModelStoreOwner: ViewModelStoreOwner
+    private val viewModelStoreOwner: ViewModelStoreOwner,
 ) {
     /**
      * Provides an instance of the [KlarnaComponent] to handle Klarna session.

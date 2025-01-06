@@ -9,7 +9,6 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
 class FullMandateStringDataTest {
-
     @Test
     fun `should write value to parcel when writeToParcel() is called`() {
         val parcel = mockk<Parcel>(relaxed = true)

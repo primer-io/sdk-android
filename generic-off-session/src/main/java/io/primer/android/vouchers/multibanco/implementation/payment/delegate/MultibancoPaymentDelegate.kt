@@ -24,31 +24,36 @@ internal class MultibancoPaymentDelegate(
     private val pendingResumeHandler: PendingResumeHandler,
     errorHandler: CheckoutErrorHandler,
     baseErrorResolver: BaseErrorResolver,
-    private val resumeHandler: MultibancoResumeHandler
+    private val resumeHandler: MultibancoResumeHandler,
 ) : PaymentMethodPaymentDelegate(
-    paymentMethodTokenHandler,
-    resumePaymentHandler,
-    successHandler,
-    errorHandler,
-    baseErrorResolver
-) {
-    override suspend fun handleNewClientToken(clientToken: String, payment: Payment?): Result<Unit> {
+        paymentMethodTokenHandler,
+        resumePaymentHandler,
+        successHandler,
+        errorHandler,
+        baseErrorResolver,
+    ) {
+    override suspend fun handleNewClientToken(
+        clientToken: String,
+        payment: Payment?,
+    ): Result<Unit> {
         return resumeHandler.continueWithNewClientToken(clientToken).mapSuspendCatching { decision ->
-            val additionalInfo = MultibancoCheckoutAdditionalInfo(
-                expiresAt = decision.expiresAt,
-                reference = decision.reference,
-                entity = decision.entity
-            )
+            val additionalInfo =
+                MultibancoCheckoutAdditionalInfo(
+                    expiresAt = decision.expiresAt,
+                    reference = decision.reference,
+                    entity = decision.entity,
+                )
 
             when (config.settings.paymentHandling) {
                 PrimerPaymentHandling.MANUAL -> {
                     pendingResumeHandler.handle(additionalInfo = additionalInfo)
                     manualFlowSuccessHandler.handle(additionalInfo = additionalInfo)
                 }
-                PrimerPaymentHandling.AUTO -> successHandler.handle(
-                    payment = requireNotNull(payment),
-                    additionalInfo = additionalInfo
-                )
+                PrimerPaymentHandling.AUTO ->
+                    successHandler.handle(
+                        payment = requireNotNull(payment),
+                        additionalInfo = additionalInfo,
+                    )
             }
         }
     }

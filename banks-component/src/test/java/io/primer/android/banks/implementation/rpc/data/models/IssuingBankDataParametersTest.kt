@@ -4,7 +4,6 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
 class IssuingBankDataParametersTest {
-
     @Test
     fun `test serializer serializes correctly`() {
         // Arrange

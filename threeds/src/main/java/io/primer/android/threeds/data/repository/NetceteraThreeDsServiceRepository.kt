@@ -50,111 +50,113 @@ import kotlin.coroutines.coroutineContext
 @ExperimentalCoroutinesApi
 internal class NetceteraThreeDsServiceRepository(
     private val context: Context,
-    threeDS2ServiceLazy: Lazy<ThreeDS2Service> = lazy { ThreeDS2ServiceInstance.get() }
+    threeDS2ServiceLazy: Lazy<ThreeDS2Service> = lazy { ThreeDS2ServiceInstance.get() },
 ) : ThreeDsServiceRepository {
-
     private val threeDS2Service: ThreeDS2Service by threeDS2ServiceLazy
 
     override val threeDsSdkVersion: String?
-        get() = try {
-            threeDS2Service.sdkVersion
-        } catch (ignored: Exception) {
-            null
-        } catch (ignored: NoClassDefFoundError) {
-            null
-        }
+        get() =
+            try {
+                threeDS2Service.sdkVersion
+            } catch (ignored: Exception) {
+                null
+            } catch (ignored: NoClassDefFoundError) {
+                null
+            }
 
     override suspend fun initializeProvider(
         is3DSSanityCheckEnabled: Boolean,
         locale: Locale,
-        threeDsKeysParams: ThreeDsKeysParams?
-    ): Result<Unit> = runSuspendCatching {
-        coroutineContext.ensureActive()
+        threeDsKeysParams: ThreeDsKeysParams?,
+    ): Result<Unit> =
+        runSuspendCatching {
+            coroutineContext.ensureActive()
 
-        try {
-            requireNotNull(threeDsKeysParams) { KEYS_CONFIG_ERROR }
-            requireNotNull(threeDsKeysParams.apiKey) { API_KEY_CONFIG_ERROR }
-        } catch (expected: IllegalArgumentException) {
-            throw ThreeDsConfigurationException(
-                expected.message,
-                ThreeDsFailureContextParams(
-                    threeDsSdkVersion = null,
-                    initProtocolVersion = null,
-                    threeDsWrapperSdkVersion = BuildConfig.SDK_VERSION_STRING,
-                    threeDsSdkProvider = ThreeDsSdkProvider.NETCETERA.name
+            try {
+                requireNotNull(threeDsKeysParams) { KEYS_CONFIG_ERROR }
+                requireNotNull(threeDsKeysParams.apiKey) { API_KEY_CONFIG_ERROR }
+            } catch (expected: IllegalArgumentException) {
+                throw ThreeDsConfigurationException(
+                    expected.message,
+                    ThreeDsFailureContextParams(
+                        threeDsSdkVersion = null,
+                        initProtocolVersion = null,
+                        threeDsWrapperSdkVersion = BuildConfig.SDK_VERSION_STRING,
+                        threeDsSdkProvider = ThreeDsSdkProvider.NETCETERA.name,
+                    ),
                 )
-            )
-        }
+            }
 
-        val configurationBuilder = ConfigurationBuilder()
-            .apiKey(threeDsKeysParams.apiKey)
+            val configurationBuilder =
+                ConfigurationBuilder()
+                    .apiKey(threeDsKeysParams.apiKey)
 
-        threeDsKeysParams.let { (environment, _, threeDsSecureCertificates) ->
-            if (environment != Environment.PRODUCTION) {
-                threeDsSecureCertificates?.forEach { (_, rootCertificate, encryptionKey) ->
-                    configurationBuilder.configureScheme(
-                        SchemeConfiguration.newSchemeConfiguration(TEST_SCHEME_NAME)
-                            .logo(R.drawable.ds_logo_visa.toString())
-                            .logoDark(R.drawable.ds_logo_visa.toString())
-                            .ids(listOf(TEST_SCHEME_ID))
-                            .encryptionPublicKey(encryptionKey)
-                            .rootPublicKey(rootCertificate)
-                            .build()
-                    )
+            threeDsKeysParams.let { (environment, _, threeDsSecureCertificates) ->
+                if (environment != Environment.PRODUCTION) {
+                    threeDsSecureCertificates?.forEach { (_, rootCertificate, encryptionKey) ->
+                        configurationBuilder.configureScheme(
+                            SchemeConfiguration.newSchemeConfiguration(TEST_SCHEME_NAME)
+                                .logo(R.drawable.ds_logo_visa.toString())
+                                .logoDark(R.drawable.ds_logo_visa.toString())
+                                .ids(listOf(TEST_SCHEME_ID))
+                                .encryptionPublicKey(encryptionKey)
+                                .rootPublicKey(rootCertificate)
+                                .build(),
+                        )
+                    }
                 }
             }
-        }
 
-        try {
-            threeDS2Service.initialize(
-                context,
-                configurationBuilder.build(),
-                if (DeviceInfo.isSdkVersionAtLeast(Build.VERSION_CODES.O)) {
-                    locale.stripExtensions().toString()
-                } else {
-                    locale.toString()
-                },
-                emptyMap<UiCustomization.UiCustomizationType, UiCustomization>()
-            )
-        } catch (expected: Exception) {
-            throw ThreeDsInitException(
-                expected.message,
-                ThreeDsFailureContextParams(
-                    threeDsSdkVersion = threeDsSdkVersion,
-                    initProtocolVersion = null,
-                    threeDsWrapperSdkVersion = BuildConfig.SDK_VERSION_STRING,
-                    threeDsSdkProvider = ThreeDsSdkProvider.NETCETERA.name
+            try {
+                threeDS2Service.initialize(
+                    context,
+                    configurationBuilder.build(),
+                    if (DeviceInfo.isSdkVersionAtLeast(Build.VERSION_CODES.O)) {
+                        locale.stripExtensions().toString()
+                    } else {
+                        locale.toString()
+                    },
+                    emptyMap<UiCustomization.UiCustomizationType, UiCustomization>(),
                 )
-            )
-        }
+            } catch (expected: Exception) {
+                throw ThreeDsInitException(
+                    expected.message,
+                    ThreeDsFailureContextParams(
+                        threeDsSdkVersion = threeDsSdkVersion,
+                        initProtocolVersion = null,
+                        threeDsWrapperSdkVersion = BuildConfig.SDK_VERSION_STRING,
+                        threeDsSdkProvider = ThreeDsSdkProvider.NETCETERA.name,
+                    ),
+                )
+            }
 
-        coroutineContext.ensureActive()
-        val warnings = threeDS2Service.warnings
-        coroutineContext.ensureActive()
-        if (is3DSSanityCheckEnabled.not() || warnings.isEmpty()) {
-            Unit
-        } else {
-            throw ThreeDsInitException(
-                warnings.joinToString(" | ") { "${it.severity}  ${it.message}" },
-                ThreeDsFailureContextParams(
-                    threeDsSdkVersion = threeDsSdkVersion,
-                    initProtocolVersion = null,
-                    threeDsWrapperSdkVersion = BuildConfig.SDK_VERSION_STRING,
-                    threeDsSdkProvider = ThreeDsSdkProvider.NETCETERA.name
+            coroutineContext.ensureActive()
+            val warnings = threeDS2Service.warnings
+            coroutineContext.ensureActive()
+            if (is3DSSanityCheckEnabled.not() || warnings.isEmpty()) {
+                Unit
+            } else {
+                throw ThreeDsInitException(
+                    warnings.joinToString(" | ") { "${it.severity}  ${it.message}" },
+                    ThreeDsFailureContextParams(
+                        threeDsSdkVersion = threeDsSdkVersion,
+                        initProtocolVersion = null,
+                        threeDsWrapperSdkVersion = BuildConfig.SDK_VERSION_STRING,
+                        threeDsSdkProvider = ThreeDsSdkProvider.NETCETERA.name,
+                    ),
                 )
-            )
+            }
         }
-    }
 
     override suspend fun performProviderAuth(
         cardNetwork: CardNetwork.Type,
         protocolVersion: ProtocolVersion,
-        environment: Environment
+        environment: Environment,
     ): Result<Transaction> =
         runSuspendCatching {
             threeDS2Service.createTransaction(
                 directoryServerIdForCard(cardNetwork, environment),
-                protocolVersion.versionNumber
+                protocolVersion.versionNumber,
             )
         }
 
@@ -163,7 +165,7 @@ internal class NetceteraThreeDsServiceRepository(
         transaction: Transaction,
         authResponse: BeginAuthResponse,
         threeDSAppURL: String?,
-        initProtocolVersion: String
+        initProtocolVersion: String,
     ): Flow<ChallengeStatusData> =
         callbackFlow {
             transaction.doChallenge(
@@ -186,8 +188,8 @@ internal class NetceteraThreeDsServiceRepository(
                             trySend(
                                 ChallengeStatusData(
                                     authResponse.token.token,
-                                    completionEvent.transactionStatus
-                                )
+                                    completionEvent.transactionStatus,
+                                ),
                             )
                         } else {
                             cancel(
@@ -200,10 +202,10 @@ internal class NetceteraThreeDsServiceRepository(
                                         initProtocolVersion = initProtocolVersion,
                                         threeDsWrapperSdkVersion = BuildConfig.SDK_VERSION_STRING,
                                         threeDsSdkProvider = ThreeDsSdkProvider.NETCETERA.name,
-                                        THREE_DS_CHALLENGE_INVALID_STATUS_CODE
+                                        THREE_DS_CHALLENGE_INVALID_STATUS_CODE,
                                     ),
-                                    "3DS challenge failed."
-                                )
+                                    "3DS challenge failed.",
+                                ),
                             )
                         }
                         close()
@@ -218,10 +220,10 @@ internal class NetceteraThreeDsServiceRepository(
                                     initProtocolVersion = initProtocolVersion,
                                     threeDsWrapperSdkVersion = BuildConfig.SDK_VERSION_STRING,
                                     threeDsSdkProvider = ThreeDsSdkProvider.NETCETERA.name,
-                                    THREE_DS_CHALLENGE_CANCELLED_ERROR_CODE
+                                    THREE_DS_CHALLENGE_CANCELLED_ERROR_CODE,
                                 ),
-                                "3DS Challenge cancelled."
-                            )
+                                "3DS Challenge cancelled.",
+                            ),
                         )
                     }
 
@@ -234,10 +236,10 @@ internal class NetceteraThreeDsServiceRepository(
                                     initProtocolVersion = initProtocolVersion,
                                     threeDsWrapperSdkVersion = BuildConfig.SDK_VERSION_STRING,
                                     threeDsSdkProvider = ThreeDsSdkProvider.NETCETERA.name,
-                                    errorCode = THREE_DS_CHALLENGE_TIMEOUT_ERROR_CODE
+                                    errorCode = THREE_DS_CHALLENGE_TIMEOUT_ERROR_CODE,
                                 ),
-                                "3DS Challenge timed out."
-                            )
+                                "3DS Challenge timed out.",
+                            ),
                         )
                     }
 
@@ -257,10 +259,10 @@ internal class NetceteraThreeDsServiceRepository(
                                     threeDsSdkVersion = threeDsSdkVersion,
                                     initProtocolVersion = initProtocolVersion,
                                     threeDsWrapperSdkVersion = BuildConfig.SDK_VERSION_STRING,
-                                    threeDsSdkProvider = ThreeDsSdkProvider.NETCETERA.name
+                                    threeDsSdkProvider = ThreeDsSdkProvider.NETCETERA.name,
                                 ),
-                                errorMessage.errorDescription
-                            )
+                                errorMessage.errorDescription,
+                            ),
                         )
                     }
 
@@ -272,48 +274,49 @@ internal class NetceteraThreeDsServiceRepository(
                                     initProtocolVersion = initProtocolVersion,
                                     threeDsWrapperSdkVersion = BuildConfig.SDK_VERSION_STRING,
                                     threeDsSdkProvider = ThreeDsSdkProvider.NETCETERA.name,
-                                    errorCode = errorEvent.errorCode
+                                    errorCode = errorEvent.errorCode,
                                 ),
-                                errorEvent.errorMessage
-                            )
+                                errorEvent.errorMessage,
+                            ),
                         )
                     }
                 },
-                CHALLENGE_TIMEOUT_IN_SECONDS
+                CHALLENGE_TIMEOUT_IN_SECONDS,
             )
 
             awaitClose {}
         }
 
-    override fun performCleanup() =
-        threeDS2Service.cleanup(context)
+    override fun performCleanup() = threeDS2Service.cleanup(context)
 
     @Throws(ThreeDsMissingDirectoryServerException::class)
-    private fun directoryServerIdForCard(cardNetwork: CardNetwork.Type, environment: Environment) =
-        when (cardNetwork) {
-            CardNetwork.Type.VISA -> DsRidValues.VISA
-            CardNetwork.Type.AMEX -> DsRidValues.AMEX
-            CardNetwork.Type.DINERS_CLUB, CardNetwork.Type.DISCOVER -> DsRidValues.DINERS
-            CardNetwork.Type.UNIONPAY -> DsRidValues.UNION
-            CardNetwork.Type.JCB -> DsRidValues.JCB
-            CardNetwork.Type.MASTERCARD, CardNetwork.Type.MAESTRO -> DsRidValues.MASTERCARD
-            else -> when (environment == Environment.PRODUCTION) {
+    private fun directoryServerIdForCard(
+        cardNetwork: CardNetwork.Type,
+        environment: Environment,
+    ) = when (cardNetwork) {
+        CardNetwork.Type.VISA -> DsRidValues.VISA
+        CardNetwork.Type.AMEX -> DsRidValues.AMEX
+        CardNetwork.Type.DINERS_CLUB, CardNetwork.Type.DISCOVER -> DsRidValues.DINERS
+        CardNetwork.Type.UNIONPAY -> DsRidValues.UNION
+        CardNetwork.Type.JCB -> DsRidValues.JCB
+        CardNetwork.Type.MASTERCARD, CardNetwork.Type.MAESTRO -> DsRidValues.MASTERCARD
+        else ->
+            when (environment == Environment.PRODUCTION) {
                 true -> throw ThreeDsMissingDirectoryServerException(
                     cardNetwork,
                     ThreeDsFailureContextParams(
                         threeDsSdkVersion = threeDsSdkVersion,
                         initProtocolVersion = null,
                         threeDsWrapperSdkVersion = BuildConfig.SDK_VERSION_STRING,
-                        threeDsSdkProvider = ThreeDsSdkProvider.NETCETERA.name
-                    )
+                        threeDsSdkProvider = ThreeDsSdkProvider.NETCETERA.name,
+                    ),
                 )
 
                 false -> TEST_SCHEME_ID
             }
-        }
+    }
 
     internal companion object {
-
         private const val TEST_SCHEME_NAME = "test_schema"
         private const val CHALLENGE_TIMEOUT_IN_SECONDS = 60
 

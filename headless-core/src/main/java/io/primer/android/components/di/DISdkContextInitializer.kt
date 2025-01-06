@@ -20,7 +20,10 @@ import io.primer.paymentMethodCoreUi.core.ui.mock.di.PaymentMethodsMockContainer
 object DISdkContextInitializer : DISdkComponent {
     private var previousHeadlessSdkContainer: SdkContainer? = null
 
-    fun initHeadless(config: PrimerConfig, context: Context) {
+    fun initHeadless(
+        config: PrimerConfig,
+        context: Context,
+    ) {
         SdkContainer().let { container ->
             container.init(config, context)
             DISdkContext.headlessSdkContainer?.clear()
@@ -28,7 +31,10 @@ object DISdkContextInitializer : DISdkComponent {
         }
     }
 
-    fun initDropIn(config: PrimerConfig, context: Context) {
+    fun initDropIn(
+        config: PrimerConfig,
+        context: Context,
+    ) {
         DISdkContext.isDropIn = true
         SdkContainer().let { container ->
             container.init(config, context)
@@ -65,7 +71,10 @@ object DISdkContextInitializer : DISdkComponent {
     }
     // endregion
 
-    private fun SdkContainer.init(config: PrimerConfig, context: Context) {
+    private fun SdkContainer.init(
+        config: PrimerConfig,
+        context: Context,
+    ) {
         apply {
             val container = { requireNotNull(getSdkContainer() + this) }
 
@@ -77,8 +86,8 @@ object DISdkContextInitializer : DISdkComponent {
                 SharedContainer(
                     context = context,
                     config = config,
-                    clientToken = ClientToken.fromString(config.clientTokenBase64.orEmpty())
-                ) { container() }
+                    clientToken = ClientToken.fromString(config.clientTokenBase64.orEmpty()),
+                ) { container() },
             )
 
             registerContainer(ConfigurationCoreContainer { container() })

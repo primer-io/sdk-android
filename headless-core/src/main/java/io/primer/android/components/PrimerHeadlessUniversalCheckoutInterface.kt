@@ -8,9 +8,7 @@ interface PrimerHeadlessUniversalCheckoutInterface {
      * Sets the [PrimerHeadlessUniversalCheckoutListener]
      * Use the listener in order to receive different events from the SDK.
      */
-    fun setCheckoutListener(
-        listener: PrimerHeadlessUniversalCheckoutListener
-    )
+    fun setCheckoutListener(listener: PrimerHeadlessUniversalCheckoutListener)
 
     /**
      * Sets the [PrimerHeadlessUniversalCheckoutUiListener]
@@ -31,7 +29,7 @@ interface PrimerHeadlessUniversalCheckoutInterface {
         clientToken: String,
         settings: PrimerSettings? = null,
         checkoutListener: PrimerHeadlessUniversalCheckoutListener? = null,
-        uiListener: PrimerHeadlessUniversalCheckoutUiListener? = null
+        uiListener: PrimerHeadlessUniversalCheckoutUiListener? = null,
     )
 
     /**

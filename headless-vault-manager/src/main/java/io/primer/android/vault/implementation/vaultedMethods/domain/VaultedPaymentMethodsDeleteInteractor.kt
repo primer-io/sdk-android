@@ -11,12 +11,11 @@ import kotlinx.coroutines.Dispatchers
 internal class VaultedPaymentMethodsDeleteInteractor(
     private val vaultedPaymentMethodsRepository: VaultedPaymentMethodsRepository,
     private val logReporter: LogReporter,
-    override val dispatcher: CoroutineDispatcher = Dispatchers.IO
+    override val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : BaseSuspendInteractor<String, VaultDeleteParams>() {
-
     override suspend fun performAction(params: VaultDeleteParams) =
         vaultedPaymentMethodsRepository.deleteVaultedPaymentMethod(
-            params.id
+            params.id,
         ).map { params.id }.onError { throwable ->
             logReporter.error(throwable.message.orEmpty(), throwable = throwable)
             throw throwable

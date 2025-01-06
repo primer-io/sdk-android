@@ -2,8 +2,8 @@ package io.primer.android.klarna
 
 import io.mockk.every
 import io.mockk.mockk
-import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.configuration.data.model.PaymentMethodConfigDataResponse
+import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.paymentmethods.PaymentMethodCheckerRegistry
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -11,7 +11,6 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 class KlarnaPaymentMethodDescriptorFactoryTest {
-
     private lateinit var factory: KlarnaPaymentMethodDescriptorFactory
     private lateinit var localConfig: PrimerConfig
     private lateinit var paymentMethodRemoteConfig: PaymentMethodConfigDataResponse

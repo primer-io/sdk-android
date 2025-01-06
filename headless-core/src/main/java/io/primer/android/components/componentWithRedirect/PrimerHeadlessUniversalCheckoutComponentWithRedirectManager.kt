@@ -18,30 +18,32 @@ import io.primer.android.paymentmethods.manager.composable.PrimerCollectableData
 import io.primer.android.paymentmethods.manager.composable.PrimerHeadlessStep
 
 class PrimerHeadlessUniversalCheckoutComponentWithRedirectManager(
-    private val viewModelStoreOwner: ViewModelStoreOwner
+    private val viewModelStoreOwner: ViewModelStoreOwner,
 ) : DISdkComponent {
-
     private val paymentMethodInitializer: PaymentMethodManagerDelegate by inject()
 
     @Throws(SdkUninitializedException::class, UnsupportedPaymentMethodException::class)
-    fun <T : PrimerHeadlessMainComponent<
+    fun <
+        T : PrimerHeadlessMainComponent<
             out PrimerCollectableData,
-            out PrimerHeadlessStep>> provide(
-        paymentMethodType: String
+            out PrimerHeadlessStep,
+            >,
+        > provide(
+        paymentMethodType: String,
     ): T {
         val category: PrimerPaymentMethodManagerCategory = PrimerPaymentMethodManagerCategory.COMPONENT_WITH_REDIRECT
 
         paymentMethodInitializer.apply {
             init(
                 paymentMethodType = paymentMethodType,
-                category = category
+                category = category,
             ).also {
                 start(
                     context = resolve<Context>(),
                     paymentMethodType = paymentMethodType,
                     sessionIntent = PrimerSessionIntent.CHECKOUT,
                     category = category,
-                    onPostStart = {}
+                    onPostStart = {},
                 )
             }
         }
@@ -56,9 +58,9 @@ class PrimerHeadlessUniversalCheckoutComponentWithRedirectManager(
                         onFinished = {
                             WebRedirectComponentProvider.provideInstance(
                                 owner = viewModelStoreOwner,
-                                paymentMethodType = paymentMethodType
+                                paymentMethodType = paymentMethodType,
                             ).start()
-                        }
+                        },
                     )
                 }
 

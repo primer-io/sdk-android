@@ -35,23 +35,24 @@ internal class AnalyticsInitializer : Initializer<AnalyticsInitDataRepository>, 
         }
         val fileAnalyticsDataSource =
             FileAnalyticsDataSource(AnalyticsFileProvider(context))
-        val remoteAnalyticsFlowDataSource = RemoteAnalyticsDataSource(
-            PrimerHttpClient(
-                HttpClientFactory(
-                    logReporter = resolve(),
-                    blacklistedHttpHeaderProviderRegistry = resolve(),
-                    whitelistedHttpBodyKeyProviderRegistry = resolve(),
-                    pciUrlProvider = resolve(AnalyticsContainer.PCI_URL_PROVIDER_INTERNAL_DI_KEY)
-                ).build(),
-                logProvider = { MutableStateFlow(value = null) },
-                messagePropertiesEventProvider = { MutableStateFlow(value = null) }
+        val remoteAnalyticsFlowDataSource =
+            RemoteAnalyticsDataSource(
+                PrimerHttpClient(
+                    HttpClientFactory(
+                        logReporter = resolve(),
+                        blacklistedHttpHeaderProviderRegistry = resolve(),
+                        whitelistedHttpBodyKeyProviderRegistry = resolve(),
+                        pciUrlProvider = resolve(AnalyticsContainer.PCI_URL_PROVIDER_INTERNAL_DI_KEY),
+                    ).build(),
+                    logProvider = { MutableStateFlow(value = null) },
+                    messagePropertiesEventProvider = { MutableStateFlow(value = null) },
+                ),
             )
-        )
 
         return AnalyticsInitDataRepository(
             AnalyticsDataSender(remoteAnalyticsFlowDataSource),
             LocalAnalyticsDataSource.instance,
-            fileAnalyticsDataSource
+            fileAnalyticsDataSource,
         )
     }
 
@@ -61,15 +62,18 @@ internal class AnalyticsInitializer : Initializer<AnalyticsInitDataRepository>, 
     }
 
     private fun initializeCoreContainer(context: Context) {
-        DISdkContext.coreContainer = SdkContainer().apply {
-            registerContainer(object : DependencyContainer() {
-                override fun registerInitialDependencies() {
-                    registerSingleton { context.applicationContext }
-                    registerSingleton<LogReporter> { DefaultLogReporter() }
-                }
-            })
-            registerContainer(HttpLogObfuscationContainer())
-        }
+        DISdkContext.coreContainer =
+            SdkContainer().apply {
+                registerContainer(
+                    object : DependencyContainer() {
+                        override fun registerInitialDependencies() {
+                            registerSingleton { context.applicationContext }
+                            registerSingleton<LogReporter> { DefaultLogReporter() }
+                        }
+                    },
+                )
+                registerContainer(HttpLogObfuscationContainer())
+            }
         DISdkContext.coreContainer?.registerContainer(AnalyticsContainer { getSdkContainer() })
     }
 }

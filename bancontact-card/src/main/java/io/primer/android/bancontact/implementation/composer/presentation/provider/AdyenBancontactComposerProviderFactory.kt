@@ -10,17 +10,20 @@ import io.primer.android.payments.core.helpers.PaymentMethodPaymentDelegate
 import io.primer.android.payments.di.PaymentsContainer
 
 internal class AdyenBancontactComposerProviderFactory : PaymentMethodComposerProvider.Factory {
-
-    override fun create(paymentMethodType: String, sessionIntent: PrimerSessionIntent): PaymentMethodComposer {
+    override fun create(
+        paymentMethodType: String,
+        sessionIntent: PrimerSessionIntent,
+    ): PaymentMethodComposer {
         return AdyenBancontactComponent(
             tokenizationDelegate = resolve(),
             pollingInteractor = resolve(PaymentsContainer.POLLING_INTERACTOR_DI_KEY),
-            paymentDelegate = resolve<PaymentMethodPaymentDelegate>(
-                name = paymentMethodType
-            ) as AdyenBancontactPaymentDelegate,
+            paymentDelegate =
+                resolve<PaymentMethodPaymentDelegate>(
+                    name = paymentMethodType,
+                ) as AdyenBancontactPaymentDelegate,
             cardInputDataValidator = resolve(name = paymentMethodType),
             metadataRetriever = resolve(),
-            sdkAnalyticsEventLoggingDelegate = resolve(name = paymentMethodType)
+            sdkAnalyticsEventLoggingDelegate = resolve(name = paymentMethodType),
         )
     }
 }

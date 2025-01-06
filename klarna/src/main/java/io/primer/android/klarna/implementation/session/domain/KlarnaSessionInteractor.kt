@@ -9,7 +9,7 @@ import kotlinx.coroutines.Dispatchers
 
 internal class KlarnaSessionInteractor(
     private val klarnaSessionRepository: KlarnaSessionRepository,
-    override val dispatcher: CoroutineDispatcher = Dispatchers.IO
+    override val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : BaseSuspendInteractor<KlarnaSession, KlarnaSessionParams>() {
     override suspend fun performAction(params: KlarnaSessionParams): Result<KlarnaSession> =
         klarnaSessionRepository.createSession(params.surcharge, params.primerSessionIntent)

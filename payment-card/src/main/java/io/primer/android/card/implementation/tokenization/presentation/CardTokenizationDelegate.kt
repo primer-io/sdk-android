@@ -10,30 +10,32 @@ import io.primer.android.payments.core.tokenization.presentation.composable.Toke
 import io.primer.cardShared.extension.removeSpaces
 
 internal class CardTokenizationDelegate(
-    tokenizationInteractor: CardTokenizationInteractor
+    tokenizationInteractor: CardTokenizationInteractor,
 ) : PaymentMethodTokenizationDelegate<CardTokenizationInputable, CardPaymentInstrumentParams>(
-    tokenizationInteractor
-),
+        tokenizationInteractor,
+    ),
     TokenizationCollectedDataMapper<CardTokenizationInputable, CardPaymentInstrumentParams> {
-
-    override suspend fun mapTokenizationData(input: CardTokenizationInputable):
-        Result<TokenizationParams<CardPaymentInstrumentParams>> = runSuspendCatching {
-        TokenizationParams(
-            CardPaymentInstrumentParams(
-                paymentMethodType = input.paymentMethodType,
-                number = input.cardData.cardNumber.removeSpaces(),
-                expirationMonth = input.cardData.expiryDate.split("/").first().padStart(
-                    EXPIRATION_MONTH_PAD_START_LENGTH,
-                    EXPIRATION_MONTH_PAD_START_CHAR
+    override suspend fun mapTokenizationData(
+        input: CardTokenizationInputable,
+    ): Result<TokenizationParams<CardPaymentInstrumentParams>> =
+        runSuspendCatching {
+            TokenizationParams(
+                CardPaymentInstrumentParams(
+                    paymentMethodType = input.paymentMethodType,
+                    number = input.cardData.cardNumber.removeSpaces(),
+                    expirationMonth =
+                        input.cardData.expiryDate.split("/").first().padStart(
+                            EXPIRATION_MONTH_PAD_START_LENGTH,
+                            EXPIRATION_MONTH_PAD_START_CHAR,
+                        ),
+                    expirationYear = input.cardData.expiryDate.split("/")[1],
+                    cvv = input.cardData.cvv,
+                    cardholderName = input.cardData.cardHolderName,
+                    preferredNetwork = input.cardData.cardNetwork,
                 ),
-                expirationYear = input.cardData.expiryDate.split("/")[1],
-                cvv = input.cardData.cvv,
-                cardholderName = input.cardData.cardHolderName,
-                preferredNetwork = input.cardData.cardNetwork
-            ),
-            input.primerSessionIntent
-        )
-    }
+                input.primerSessionIntent,
+            )
+        }
 
     private companion object {
         private const val EXPIRATION_MONTH_PAD_START_LENGTH = 2

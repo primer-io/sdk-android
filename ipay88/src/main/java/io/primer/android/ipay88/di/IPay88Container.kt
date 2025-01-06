@@ -35,7 +35,6 @@ import io.primer.android.payments.core.tokenization.domain.repository.Tokenizati
 
 internal class IPay88Container(private val sdk: () -> SdkContainer, private val paymentMethodType: String) :
     DependencyContainer() {
-
     override fun registerInitialDependencies() {
         registerFactory { ValidClientSessionAmountRule() }
 
@@ -62,22 +61,22 @@ internal class IPay88Container(private val sdk: () -> SdkContainer, private val 
                 customerFirstNameRule = resolve(),
                 customerLastNameRule = resolve(),
                 customerEmailRule = resolve(),
-                validRemarkRule = resolve()
+                validRemarkRule = resolve(),
             )
         }
 
         registerSingleton<IPay88DeeplinkRepository> {
             IPay88DeeplinkDataRepository(
-                sdk().resolve(dependencyName = Constants.APPLICATION_ID_PROVIDER_DI_KEY)
+                sdk().resolve(dependencyName = Constants.APPLICATION_ID_PROVIDER_DI_KEY),
             )
         }
 
         registerFactory<PaymentMethodConfigurationRepository<IPay88Config, IPay88ConfigParams>>(
-            name = paymentMethodType
+            name = paymentMethodType,
         ) {
             IPay88ConfigurationDataRepository(
                 configurationDataSource = sdk().resolve(ConfigurationCoreContainer.CACHED_CONFIGURATION_DI_KEY),
-                settings = sdk().resolve()
+                settings = sdk().resolve(),
             )
         }
 
@@ -88,7 +87,7 @@ internal class IPay88Container(private val sdk: () -> SdkContainer, private val 
         registerFactory { IPay88TokenizationParamsMapper() }
 
         registerFactory<BaseRemoteTokenizationDataSource<IPay88PaymentInstrumentDataRequest>>(
-            name = paymentMethodType
+            name = paymentMethodType,
         ) {
             IPay88RemoteTokenizationDataSource(primerHttpClient = sdk().resolve())
         }
@@ -97,7 +96,7 @@ internal class IPay88Container(private val sdk: () -> SdkContainer, private val 
             IPay88TokenizationDataRepository(
                 remoteTokenizationDataSource = resolve(name = paymentMethodType),
                 cacheDataSource = sdk().resolve(ConfigurationCoreContainer.CACHED_CONFIGURATION_DI_KEY),
-                tokenizationParamsMapper = resolve()
+                tokenizationParamsMapper = resolve(),
             )
         }
 
@@ -113,7 +112,7 @@ internal class IPay88Container(private val sdk: () -> SdkContainer, private val 
                 validateClientTokenRepository = sdk().resolve(),
                 formattedAmountProvider = sdk().resolve(FORMATTED_AMOUNT_PROVIDER_DI_KEY),
                 clientTokenRepository = sdk().resolve(),
-                checkoutAdditionalInfoHandler = sdk().resolve()
+                checkoutAdditionalInfoHandler = sdk().resolve(),
             )
         }
 
@@ -122,13 +121,12 @@ internal class IPay88Container(private val sdk: () -> SdkContainer, private val 
                 tokenizationRepository = resolve(name = paymentMethodType),
                 tokenizedPaymentMethodRepository = sdk().resolve(),
                 preTokenizationHandler = sdk().resolve(),
-                logReporter = sdk().resolve()
+                logReporter = sdk().resolve(),
             )
         }
     }
 
     companion object {
-
         const val FORMATTED_AMOUNT_PROVIDER_DI_KEY = "FORMATTED_AMOUNT_PROVIDER"
     }
 }

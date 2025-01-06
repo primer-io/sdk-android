@@ -17,8 +17,8 @@ import io.primer.android.core.di.DISdkContext
 import io.primer.android.core.di.DependencyContainer
 import io.primer.android.core.di.SdkContainer
 import io.primer.android.core.utils.CoroutineScopeProvider
-import io.primer.android.payments.core.create.domain.model.PaymentDecision
 import io.primer.android.domain.tokenization.models.PrimerPaymentMethodTokenData
+import io.primer.android.payments.core.create.domain.model.PaymentDecision
 import io.primer.android.sandboxProcessor.InstantExecutorExtension
 import io.primer.android.sandboxProcessor.SandboxProcessorDecisionType
 import io.primer.android.sandboxProcessor.implementation.payment.delegate.SandboxProcessorPaymentDelegate
@@ -39,7 +39,6 @@ import kotlin.time.Duration.Companion.seconds
 
 @ExtendWith(MockKExtension::class, InstantExecutorExtension::class)
 internal class ProcessorTestComponentTest {
-
     @MockK
     lateinit var tokenizationDelegate: SandboxProcessorTokenizationDelegate
 
@@ -52,142 +51,154 @@ internal class ProcessorTestComponentTest {
 
     @BeforeEach
     fun setUp() {
-        DISdkContext.headlessSdkContainer = mockk<SdkContainer>(relaxed = true).also { sdkContainer ->
-            val cont = spyk<DependencyContainer>().also { container ->
-                container.registerFactory<CoroutineScopeProvider> {
-                    object : CoroutineScopeProvider {
-                        override val scope: CoroutineScope
-                            get() = TestScope()
+        DISdkContext.headlessSdkContainer =
+            mockk<SdkContainer>(relaxed = true).also { sdkContainer ->
+                val cont =
+                    spyk<DependencyContainer>().also { container ->
+                        container.registerFactory<CoroutineScopeProvider> {
+                            object : CoroutineScopeProvider {
+                                override val scope: CoroutineScope
+                                    get() = TestScope()
+                            }
+                        }
                     }
-                }
+                every { sdkContainer.containers }.returns(mutableMapOf(cont::class.simpleName.orEmpty() to cont))
             }
-            every { sdkContainer.containers }.returns(mutableMapOf(cont::class.simpleName.orEmpty() to cont))
-        }
         component = ProcessorTestComponent(tokenizationDelegate, paymentDelegate)
     }
 
     @Test
-    fun `start() method should call tokenize() and handlePaymentMethodToken() when tokenization is successful`() = runTest {
-        val primerPaymentMethodTokenData = mockk<PrimerPaymentMethodTokenData>()
-        coEvery { tokenizationDelegate.tokenize(any()) } returns Result.success(primerPaymentMethodTokenData)
-        val paymentDecision = mockk<PaymentDecision>()
-        coEvery { paymentDelegate.handlePaymentMethodToken(any(), any()) } returns Result.success(paymentDecision)
-        component.updateCollectedData(ProcessorTestCollectableData(decisionType = SandboxProcessorDecisionType.SUCCESS))
+    fun `start() method should call tokenize() and handlePaymentMethodToken() when tokenization is successful`() =
+        runTest {
+            val primerPaymentMethodTokenData = mockk<PrimerPaymentMethodTokenData>()
+            coEvery { tokenizationDelegate.tokenize(any()) } returns Result.success(primerPaymentMethodTokenData)
+            val paymentDecision = mockk<PaymentDecision>()
+            coEvery { paymentDelegate.handlePaymentMethodToken(any(), any()) } returns Result.success(paymentDecision)
+            component.updateCollectedData(
+                ProcessorTestCollectableData(decisionType = SandboxProcessorDecisionType.SUCCESS),
+            )
 
-        val list = async { component.componentStep.toListDuring(5.seconds) }
-        launch {
-            component.start("paymentMethodType", primerSessionIntent)
-        }
+            val list = async { component.componentStep.toListDuring(5.seconds) }
+            launch {
+                component.start("paymentMethodType", primerSessionIntent)
+            }
 
-        assertEquals(
-            listOf(
-                ProcessorTestStep.Started,
-                ProcessorTestStep.Tokenized,
-                ProcessorTestStep.Finished
-            ),
-            list.await()
-        )
-        coVerify {
-            tokenizationDelegate.tokenize(
-                SandboxProcessorTokenizationInputable(
-                    paymentMethodType = "paymentMethodType",
-                    primerSessionIntent = primerSessionIntent,
-                    decisionType = SandboxProcessorDecisionType.SUCCESS
+            assertEquals(
+                listOf(
+                    ProcessorTestStep.Started,
+                    ProcessorTestStep.Tokenized,
+                    ProcessorTestStep.Finished,
+                ),
+                list.await(),
+            )
+            coVerify {
+                tokenizationDelegate.tokenize(
+                    SandboxProcessorTokenizationInputable(
+                        paymentMethodType = "paymentMethodType",
+                        primerSessionIntent = primerSessionIntent,
+                        decisionType = SandboxProcessorDecisionType.SUCCESS,
+                    ),
                 )
-            )
-            paymentDelegate.handlePaymentMethodToken(
-                paymentMethodTokenData = primerPaymentMethodTokenData,
-                primerSessionIntent = primerSessionIntent
-            )
+                paymentDelegate.handlePaymentMethodToken(
+                    paymentMethodTokenData = primerPaymentMethodTokenData,
+                    primerSessionIntent = primerSessionIntent,
+                )
+            }
+            confirmVerified(paymentDecision)
         }
-        confirmVerified(paymentDecision)
-    }
 
     @Test
-    fun `start() method should not call tokenize() and call handleError() when data is not collected`() = runTest {
-        coEvery { paymentDelegate.handleError(any()) } just Awaits
-        val list = async { component.componentStep.toListDuring(5.seconds) }
-        launch {
-            component.start("paymentMethodType", primerSessionIntent)
-        }
+    fun `start() method should not call tokenize() and call handleError() when data is not collected`() =
+        runTest {
+            coEvery { paymentDelegate.handleError(any()) } just Awaits
+            val list = async { component.componentStep.toListDuring(5.seconds) }
+            launch {
+                component.start("paymentMethodType", primerSessionIntent)
+            }
 
-        assertEquals(
-            listOf(
-                ProcessorTestStep.Started
-            ),
-            list.await()
-        )
-        coVerify(exactly = 0) {
-            tokenizationDelegate.tokenize(any())
+            assertEquals(
+                listOf(
+                    ProcessorTestStep.Started,
+                ),
+                list.await(),
+            )
+            coVerify(exactly = 0) {
+                tokenizationDelegate.tokenize(any())
+            }
+            coVerify { paymentDelegate.handleError(any()) }
         }
-        coVerify { paymentDelegate.handleError(any()) }
-    }
 
     @Test
-    fun `start() method should call tokenize() and handleError() when tokenization fails`() = runTest {
-        coEvery { paymentDelegate.handleError(any()) } just Awaits
-        component.updateCollectedData(ProcessorTestCollectableData(decisionType = SandboxProcessorDecisionType.SUCCESS))
-        coEvery { tokenizationDelegate.tokenize(any()) } returns Result.failure(Exception())
-
-        val list = async { component.componentStep.toListDuring(5.seconds) }
-        launch {
-            component.start("paymentMethodType", primerSessionIntent)
-        }
-
-        assertEquals(
-            listOf(
-                ProcessorTestStep.Started
-            ),
-            list.await()
-        )
-        coVerify {
-            tokenizationDelegate.tokenize(
-                SandboxProcessorTokenizationInputable(
-                    paymentMethodType = "paymentMethodType",
-                    primerSessionIntent = primerSessionIntent,
-                    decisionType = SandboxProcessorDecisionType.SUCCESS
-                )
+    fun `start() method should call tokenize() and handleError() when tokenization fails`() =
+        runTest {
+            coEvery { paymentDelegate.handleError(any()) } just Awaits
+            component.updateCollectedData(
+                ProcessorTestCollectableData(decisionType = SandboxProcessorDecisionType.SUCCESS),
             )
-            paymentDelegate.handleError(any())
+            coEvery { tokenizationDelegate.tokenize(any()) } returns Result.failure(Exception())
+
+            val list = async { component.componentStep.toListDuring(5.seconds) }
+            launch {
+                component.start("paymentMethodType", primerSessionIntent)
+            }
+
+            assertEquals(
+                listOf(
+                    ProcessorTestStep.Started,
+                ),
+                list.await(),
+            )
+            coVerify {
+                tokenizationDelegate.tokenize(
+                    SandboxProcessorTokenizationInputable(
+                        paymentMethodType = "paymentMethodType",
+                        primerSessionIntent = primerSessionIntent,
+                        decisionType = SandboxProcessorDecisionType.SUCCESS,
+                    ),
+                )
+                paymentDelegate.handleError(any())
+            }
+            coVerify(exactly = 0) {
+                paymentDelegate.handlePaymentMethodToken(any(), any())
+            }
         }
-        coVerify(exactly = 0) {
-            paymentDelegate.handlePaymentMethodToken(any(), any())
-        }
-    }
 
     @Test
-    fun `start() method should call tokenize(), handlePaymentMethodToken() and handleError() when handlePaymentMethodToken() fails`() = runTest {
-        coEvery { paymentDelegate.handleError(any()) } just Awaits
-        component.updateCollectedData(ProcessorTestCollectableData(decisionType = SandboxProcessorDecisionType.SUCCESS))
-        val primerPaymentMethodTokenData = mockk<PrimerPaymentMethodTokenData>()
-        coEvery { tokenizationDelegate.tokenize(any()) } returns Result.success(primerPaymentMethodTokenData)
-        coEvery { paymentDelegate.handlePaymentMethodToken(any(), any()) } returns Result.failure(Exception())
+    fun `start() method should call tokenize(), handlePaymentMethodToken() and handleError() when handlePaymentMethodToken() fails`() =
+        runTest {
+            coEvery { paymentDelegate.handleError(any()) } just Awaits
+            component.updateCollectedData(
+                ProcessorTestCollectableData(decisionType = SandboxProcessorDecisionType.SUCCESS),
+            )
+            val primerPaymentMethodTokenData = mockk<PrimerPaymentMethodTokenData>()
+            coEvery { tokenizationDelegate.tokenize(any()) } returns Result.success(primerPaymentMethodTokenData)
+            coEvery { paymentDelegate.handlePaymentMethodToken(any(), any()) } returns Result.failure(Exception())
 
-        val list = async { component.componentStep.toListDuring(5.seconds) }
-        launch {
-            component.start("paymentMethodType", primerSessionIntent)
-        }
+            val list = async { component.componentStep.toListDuring(5.seconds) }
+            launch {
+                component.start("paymentMethodType", primerSessionIntent)
+            }
 
-        assertEquals(
-            listOf(
-                ProcessorTestStep.Started,
-                ProcessorTestStep.Tokenized
-            ),
-            list.await()
-        )
-        coVerify {
-            tokenizationDelegate.tokenize(
-                SandboxProcessorTokenizationInputable(
-                    paymentMethodType = "paymentMethodType",
-                    primerSessionIntent = primerSessionIntent,
-                    decisionType = SandboxProcessorDecisionType.SUCCESS
+            assertEquals(
+                listOf(
+                    ProcessorTestStep.Started,
+                    ProcessorTestStep.Tokenized,
+                ),
+                list.await(),
+            )
+            coVerify {
+                tokenizationDelegate.tokenize(
+                    SandboxProcessorTokenizationInputable(
+                        paymentMethodType = "paymentMethodType",
+                        primerSessionIntent = primerSessionIntent,
+                        decisionType = SandboxProcessorDecisionType.SUCCESS,
+                    ),
                 )
-            )
-            paymentDelegate.handlePaymentMethodToken(
-                paymentMethodTokenData = primerPaymentMethodTokenData,
-                primerSessionIntent = primerSessionIntent
-            )
-            paymentDelegate.handleError(any())
+                paymentDelegate.handlePaymentMethodToken(
+                    paymentMethodTokenData = primerPaymentMethodTokenData,
+                    primerSessionIntent = primerSessionIntent,
+                )
+                paymentDelegate.handleError(any())
+            }
         }
-    }
 }

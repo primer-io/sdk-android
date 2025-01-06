@@ -21,9 +21,8 @@ internal data class AuthenticationDataResponse(
     val skippedReasonText: String? = null,
     // declined
     val declinedReasonCode: DeclinedReasonCode? = null,
-    val declinedReasonText: String? = null
+    val declinedReasonText: String? = null,
 ) : JSONDeserializable {
-
     companion object {
         private const val ACS_REFERENCE_NUMBER_FIELD = "acsReferenceNumber"
         private const val ACS_SIGNED_CONTENT_FIELD = "acsSignedContent"
@@ -41,24 +40,26 @@ internal data class AuthenticationDataResponse(
         private const val DECLINED_REASON_TEXT_FIELD = "declinedReasonText"
 
         @JvmField
-        val deserializer = JSONObjectDeserializer { t ->
-            AuthenticationDataResponse(
-                acsReferenceNumber = t.optNullableString(ACS_REFERENCE_NUMBER_FIELD),
-                acsSignedContent = t.optNullableString(ACS_SIGNED_CONTENT_FIELD),
-                acsTransactionId = t.optNullableString(ACS_TRANSACTION_ID_FIELD),
-                responseCode = ResponseCode.valueOf(t.getString(RESPONSE_CODE_FIELD)),
-                transactionId = t.optNullableString(TRANSACTION_ID_FIELD),
-                acsOperatorId = t.optNullableString(ACS_OPERATOR_ID_FIELD),
-                dsReferenceNumber = t.optNullableString(DS_REFERENCE_NUMBER_FIELD),
-                dsTransactionId = t.optNullableString(DS_TRANSACTION_ID_FIELD),
-                eci = t.optNullableString(ECI_FIELD),
-                protocolVersion = t.optNullableString(PROTOCOL_VERSION_FIELD),
-                skippedReasonCode = t.optNullableString(SKIPPED_REASON_CODE_FIELD)?.let { SkippedCode.valueOf(it) },
-                skippedReasonText = t.optNullableString(SKIPPED_REASON_TEXT_FIELD),
-                declinedReasonCode = t.optNullableString(DECLINED_REASON_CODE_FIELD)
-                    ?.let { DeclinedReasonCode.valueOf(it) },
-                declinedReasonText = t.optNullableString(DECLINED_REASON_TEXT_FIELD)
-            )
-        }
+        val deserializer =
+            JSONObjectDeserializer { t ->
+                AuthenticationDataResponse(
+                    acsReferenceNumber = t.optNullableString(ACS_REFERENCE_NUMBER_FIELD),
+                    acsSignedContent = t.optNullableString(ACS_SIGNED_CONTENT_FIELD),
+                    acsTransactionId = t.optNullableString(ACS_TRANSACTION_ID_FIELD),
+                    responseCode = ResponseCode.valueOf(t.getString(RESPONSE_CODE_FIELD)),
+                    transactionId = t.optNullableString(TRANSACTION_ID_FIELD),
+                    acsOperatorId = t.optNullableString(ACS_OPERATOR_ID_FIELD),
+                    dsReferenceNumber = t.optNullableString(DS_REFERENCE_NUMBER_FIELD),
+                    dsTransactionId = t.optNullableString(DS_TRANSACTION_ID_FIELD),
+                    eci = t.optNullableString(ECI_FIELD),
+                    protocolVersion = t.optNullableString(PROTOCOL_VERSION_FIELD),
+                    skippedReasonCode = t.optNullableString(SKIPPED_REASON_CODE_FIELD)?.let { SkippedCode.valueOf(it) },
+                    skippedReasonText = t.optNullableString(SKIPPED_REASON_TEXT_FIELD),
+                    declinedReasonCode =
+                        t.optNullableString(DECLINED_REASON_CODE_FIELD)
+                            ?.let { DeclinedReasonCode.valueOf(it) },
+                    declinedReasonText = t.optNullableString(DECLINED_REASON_TEXT_FIELD),
+                )
+            }
     }
 }

@@ -6,7 +6,6 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
 class PaypalOrderInfoDataRequestTest {
-
     @Test
     fun `PaypalOrderInfoDataRequest should serialize correctly`() {
         // Arrange
@@ -18,10 +17,11 @@ class PaypalOrderInfoDataRequestTest {
         val json = PaypalOrderInfoDataRequest.serializer.serialize(request)
 
         // Assert
-        val expectedJson = JSONObject().apply {
-            put("paymentMethodConfigId", paymentMethodConfigId)
-            put("orderId", orderId)
-        }
+        val expectedJson =
+            JSONObject().apply {
+                put("paymentMethodConfigId", paymentMethodConfigId)
+                put("orderId", orderId)
+            }
         assertEquals(expectedJson.toString(), json.toString())
     }
 
