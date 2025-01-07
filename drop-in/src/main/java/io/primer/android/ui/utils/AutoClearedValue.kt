@@ -69,11 +69,11 @@ internal class AutoClearedValue<T : Any>(
         if (thisRef.viewLifecycleOwner.lifecycle.currentState.isAtLeast(Lifecycle.State.INITIALIZED)
         ) {
             return initializer?.invoke().also { _value = it }
-                ?: throw IllegalStateException(
+                ?: error(
                     "The value has not yet been set or no default initializer provided",
                 )
         } else {
-            throw IllegalStateException(
+            error(
                 "Fragment might have been destroyed or not initialized yet",
             )
         }

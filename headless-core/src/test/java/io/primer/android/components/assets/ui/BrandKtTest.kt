@@ -14,10 +14,10 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 
 @ExtendWith(MockKExtension::class)
-class CardNetworkKtTest {
+class BrandKtTest {
     @Test
     fun `getCardImageAsset should return specific image asset when available`() {
-        mockkStatic("io.primer.android.components.assets.ui.CardNetworkKt")
+        mockkStatic("io.primer.android.components.assets.ui.BrandKt")
         val brand = mockk<Brand>()
         val imageColor = mockk<ImageColor>()
         val cardNetworkType = mockk<CardNetwork.Type>()
@@ -31,12 +31,12 @@ class CardNetworkKtTest {
             cardNetworkType.getCardBrand()
             brand.getImageAsset(imageColor)
         }
-        unmockkStatic("io.primer.android.components.assets.ui.CardNetworkKt")
+        unmockkStatic("io.primer.android.components.assets.ui.BrandKt")
     }
 
     @Test
     fun `getCardImageAsset should return generic card drawable when image asset is not available`() {
-        mockkStatic("io.primer.android.components.assets.ui.CardNetworkKt")
+        mockkStatic("io.primer.android.components.assets.ui.BrandKt")
         val brand = mockk<Brand>()
         val imageColor = mockk<ImageColor>()
         val cardNetworkType = mockk<CardNetwork.Type>()
@@ -50,6 +50,6 @@ class CardNetworkKtTest {
             cardNetworkType.getCardBrand()
             brand.getImageAsset(imageColor)
         }
-        unmockkStatic("io.primer.android.components.assets.ui.CardNetworkKt")
+        unmockkStatic("io.primer.android.components.assets.ui.BrandKt")
     }
 }

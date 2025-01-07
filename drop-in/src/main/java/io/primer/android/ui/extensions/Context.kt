@@ -6,6 +6,7 @@ import android.view.WindowManager
 import androidx.annotation.DimenRes
 
 private const val DISPLAY_RATIO = 9 / 16
+private const val BASELINE_DENSITY = 160
 
 internal fun Context.getScreenHeight() = getDisplaySize().y - getStatusBarHeight()
 
@@ -33,6 +34,6 @@ internal fun Context.getDimensionAsPx(
 ): Int {
     val dpi = resources.displayMetrics.densityDpi
     val dp = resources.getDimension(dimenResId)
-    val px = dp * (dpi / 160)
+    val px = dp * (dpi / BASELINE_DENSITY)
     return px.toInt()
 }

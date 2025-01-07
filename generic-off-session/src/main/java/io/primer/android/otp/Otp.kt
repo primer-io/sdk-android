@@ -71,8 +71,7 @@ internal class Otp(internal val paymentMethodType: String) : PaymentMethod, DISd
                 }
             }
 
-            override fun registerErrorMappers(errorMapperRegistry: ErrorMapperRegistry) {
-            }
+            override fun registerErrorMappers(errorMapperRegistry: ErrorMapperRegistry) = Unit
 
             override fun registerBrandProvider(brandRegistry: BrandRegistry) {
                 brandRegistry.register(paymentMethodType = paymentMethodType, AdyenBlikBrand())

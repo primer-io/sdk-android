@@ -1,4 +1,4 @@
-package io.primer.android.domain.action
+package io.primer.android.clientSessionActions.domain
 
 import io.mockk.Runs
 import io.mockk.coEvery
@@ -8,15 +8,11 @@ import io.mockk.junit5.MockKExtension
 import io.mockk.just
 import io.mockk.mockk
 import io.mockk.verify
-import io.primer.android.clientSessionActions.domain.ActionInteractor
-import io.primer.android.clientSessionActions.domain.DefaultActionInteractor
 import io.primer.android.clientSessionActions.domain.handlers.CheckoutClientSessionActionsHandler
-import io.primer.android.clientSessionActions.domain.models.BaseActionUpdateParams
 import io.primer.android.clientSessionActions.domain.models.MultipleActionUpdateParams
 import io.primer.android.clientSessionActions.domain.repository.ActionRepository
 import io.primer.android.clientSessionActions.domain.validator.ActionUpdateFilter
 import io.primer.android.configuration.data.datasource.CacheConfigurationDataSource
-import io.primer.android.configuration.data.model.ClientSessionDataResponse
 import io.primer.android.configuration.domain.model.ClientSessionData
 import io.primer.android.configuration.domain.repository.ConfigurationRepository
 import io.primer.android.domain.action.models.PrimerClientSession
@@ -34,15 +30,6 @@ import org.junit.jupiter.api.extension.ExtendWith
 @ExtendWith(MockKExtension::class)
 @ExperimentalCoroutinesApi
 internal class ActionInteractorTest {
-    private val paymentMethodData: ClientSessionDataResponse.PaymentMethodDataResponse =
-        mockk {
-            every { surcharges } returns mapOf("method1" to 100, "method2" to 200)
-        }
-    private val clientSessionDataResponse: ClientSessionDataResponse =
-        mockk {
-            every { paymentMethod } returns paymentMethodData
-        }
-
     private val clientSessionData =
         ClientSessionData(
             clientSession =
@@ -59,19 +46,6 @@ internal class ActionInteractorTest {
                 ),
         )
 
-    private val emptyClientSession =
-        PrimerClientSession(
-            customerId = null,
-            orderId = null,
-            currencyCode = null,
-            totalAmount = null,
-            lineItems = null,
-            orderDetails = null,
-            customer = null,
-            paymentMethod = null,
-            fees = null,
-        )
-
     private lateinit var actionRepository: ActionRepository
     private lateinit var actionUpdateFilter: ActionUpdateFilter
     private lateinit var localConfigurationDataSource: CacheConfigurationDataSource
@@ -79,8 +53,6 @@ internal class ActionInteractorTest {
     private lateinit var errorEventResolver: BaseErrorResolver
     private lateinit var clientSessionActionsHandler: CheckoutClientSessionActionsHandler
     private lateinit var actionInteractor: ActionInteractor
-    private val baseActionParams = mockk<BaseActionUpdateParams>()
-    private val multipleActionUpdateParams = MultipleActionUpdateParams(listOf(baseActionParams))
 
     @BeforeEach
     fun setUp() {

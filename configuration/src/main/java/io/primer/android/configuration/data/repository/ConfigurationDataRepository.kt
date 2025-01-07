@@ -12,16 +12,15 @@ import io.primer.android.configuration.data.datasource.GlobalCacheConfigurationC
 import io.primer.android.configuration.data.datasource.RemoteConfigurationDataSource
 import io.primer.android.configuration.data.datasource.RemoteConfigurationResourcesDataSource
 import io.primer.android.configuration.data.model.ConfigurationDataResponse
+import io.primer.android.configuration.data.model.ConfigurationSource
 import io.primer.android.configuration.domain.CachePolicy
 import io.primer.android.configuration.domain.model.Configuration
 import io.primer.android.configuration.domain.repository.ConfigurationRepository
 import io.primer.android.core.data.network.PrimerResponse
 import io.primer.android.core.extensions.buildWithQueryParams
 import io.primer.android.core.extensions.runSuspendCatching
-import io.primer.android.core.logging.internal.LogReporter
 import io.primer.android.core.utils.BaseDataProvider
 import io.primer.android.core.utils.EventFlowProvider
-import io.primer.android.data.configuration.models.ConfigurationSource
 import kotlinx.coroutines.yield
 import java.util.concurrent.TimeUnit
 import kotlin.time.Duration
@@ -35,7 +34,6 @@ internal class ConfigurationDataRepository(
     private val clientTokenProvider: BaseDataProvider<String>,
     private val globalConfigurationCache: GlobalCacheConfigurationCacheDataSource,
     private val timerEventProvider: EventFlowProvider<TimerProperties>,
-    private val logReporter: LogReporter,
     private val getCurrentTimeMillis: () -> Long = { System.currentTimeMillis() },
 ) : ConfigurationRepository {
     override suspend fun fetchConfiguration(cachePolicy: CachePolicy): Result<Configuration> =

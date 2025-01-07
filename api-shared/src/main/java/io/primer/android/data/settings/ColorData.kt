@@ -83,6 +83,7 @@ sealed class ColorData(private val dataType: ColorDataType) : Parcelable, JSONOb
                             put(DEFAULT_COLOR_FIELD, t.default)
                             put(DARK_COLOR_FIELD, t.dark)
                         }
+
                         is DynamicColor -> {
                             put(DEFAULT_COLOR_FIELD, t.default)
                             put(DARK_COLOR_FIELD, t.dark)
@@ -131,11 +132,8 @@ class DynamicColor private constructor(
         private val HEX_PATTERN = Regex("^#[0-9a-fA-F]{6,8}$")
 
         private fun hexToColorInt(hex: String): Int {
-            return if (hex.matches(HEX_PATTERN)) {
-                Color.parseColor(hex)
-            } else {
-                throw IllegalArgumentException("color input ($hex) is not a hex value")
-            }
+            require(hex.matches(HEX_PATTERN)) { "color input ($hex) is not a hex value" }
+            return Color.parseColor(hex)
         }
 
         fun valueOf(

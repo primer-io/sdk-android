@@ -268,7 +268,7 @@ internal class VaultedPaymentMethodRecyclerAdapter(
                 )
             }
 
-            else -> throw IllegalStateException("View type \"$viewType\" not valid")
+            else -> error("View type \"$viewType\" not valid")
         }
     }
 
@@ -322,6 +322,6 @@ internal class VaultedPaymentMethodRecyclerAdapter(
             is CardData -> VIEW_TYPE_CARD
             is BankData -> VIEW_TYPE_BANK
             is AlternativePaymentMethodData -> VIEW_TYPE_ALTERNATIVE_PAYMENT_METHOD
-            else -> throw IllegalStateException("Unexpected view type \"${itemData[position]}\"")
+            else -> error("Unexpected view type \"${itemData[position]}\"")
         }
 }

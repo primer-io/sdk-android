@@ -1,4 +1,4 @@
-package io.primer.android
+package io.primer.android.core
 
 @Retention(AnnotationRetention.BINARY)
 @Target(

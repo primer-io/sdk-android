@@ -25,7 +25,7 @@ abstract class TokenizationRequestV2<T : BasePaymentInstrumentDataRequest> :
                     is TokenizationVaultRequestV2 ->
                         TokenizationVaultRequestV2.serializer.serialize(t)
 
-                    else -> throw IllegalStateException("Unsupported instance of $t")
+                    else -> error("Unsupported instance of $t")
                 }
             }
     }

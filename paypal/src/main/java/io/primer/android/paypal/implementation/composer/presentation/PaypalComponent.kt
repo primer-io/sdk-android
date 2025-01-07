@@ -48,7 +48,7 @@ internal class PaypalComponent(
                 ).onFailure { throwable ->
                     paymentDelegate.handleError(throwable)
                 }
-            } catch (e: CancellationException) {
+            } catch (ignored: CancellationException) {
                 paymentDelegate.handleError(PaymentMethodCancelledException(paymentMethodType = paymentMethodType))
             }
         }
@@ -112,7 +112,7 @@ internal class PaypalComponent(
                     }.onFailure { throwable ->
                         paymentDelegate.handleError(throwable)
                     }
-            } catch (e: CancellationException) {
+            } catch (ignored: CancellationException) {
                 paymentDelegate.handleError(PaymentMethodCancelledException(paymentMethodType = paymentMethodType))
             }
         }

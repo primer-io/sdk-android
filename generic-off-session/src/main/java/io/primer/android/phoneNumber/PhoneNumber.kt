@@ -75,8 +75,7 @@ internal class PhoneNumber(internal val paymentMethodType: String) : PaymentMeth
                 }
             }
 
-            override fun registerErrorMappers(errorMapperRegistry: ErrorMapperRegistry) {
-            }
+            override fun registerErrorMappers(errorMapperRegistry: ErrorMapperRegistry) = Unit
 
             override fun registerBrandProvider(brandRegistry: BrandRegistry) {
                 when (paymentMethodType) {

@@ -201,7 +201,7 @@ internal class GooglePayComponent(
                 }.onFailure {
                     paymentDelegate.handleError(it)
                 }
-            } catch (e: CancellationException) {
+            } catch (ignored: CancellationException) {
                 paymentDelegate.handleError(PaymentMethodCancelledException(paymentMethodType = paymentMethodType))
             }
         }

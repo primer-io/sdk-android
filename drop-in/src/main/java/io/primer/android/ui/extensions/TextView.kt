@@ -5,6 +5,7 @@ import androidx.annotation.ColorInt
 import androidx.annotation.DrawableRes
 import androidx.core.content.res.ResourcesCompat
 
+@Suppress("LongParameterList")
 internal fun TextView.setCompoundDrawablesWithIntrinsicBoundsTinted(
     @DrawableRes left: Int,
     @DrawableRes top: Int,

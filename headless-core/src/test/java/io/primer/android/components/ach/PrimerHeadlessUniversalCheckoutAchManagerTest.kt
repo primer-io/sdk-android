@@ -41,13 +41,13 @@ class PrimerHeadlessUniversalCheckoutAchManagerTest {
     private lateinit var primerSettings: PrimerSettings
 
     @MockK
+    private lateinit var viewModelStoreOwner: ViewModelStoreOwner
+
+    @MockK
     private lateinit var paymentMethodInitializer: PaymentMethodManagerDelegate
 
     @MockK
     private lateinit var stripeInitValidationRulesResolver: StripeInitValidationRulesResolver
-
-    @MockK
-    private lateinit var viewModelStoreOwner: ViewModelStoreOwner
 
     @InjectMockKs
     private lateinit var manager: PrimerHeadlessUniversalCheckoutAchManager

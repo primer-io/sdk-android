@@ -21,6 +21,6 @@
 #-renamesourcefileattribute SourceFile
 
 # for annotations
--keep @interface io.primer.android.ExperimentalPrimerApi
+-keep @interface io.primer.android.core.ExperimentalPrimerApi
 
 -keepattributes RuntimeVisibleAnnotations

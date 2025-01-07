@@ -83,7 +83,7 @@ data class RequiredActionData(
 }
 
 enum class RequiredActionName {
-    @Suppress("EnumEntryName")
+    @Suppress("EnumEntryName", "EnumNaming")
     `3DS_AUTHENTICATION`,
     USE_PRIMER_SDK,
     PROCESSOR_3DS,

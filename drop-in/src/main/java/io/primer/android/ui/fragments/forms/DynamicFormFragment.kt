@@ -99,7 +99,7 @@ internal class DynamicFormFragment : BaseFormFragment(), PrimerHeadlessUniversal
                         id = View.generateViewId()
                         hint = getString(formData.hint)
                         editText?.inputType = formData.inputType
-                        onValueChanged = createValueChangedListener(formData)
+                        onValueChanged = createValueChangedListener()
                     }.also {
                         it.setupEditTextTheme(withTextPrefix = formData.formType == FormType.PHONE)
                         it.setupEditTextInputFilters(
@@ -119,7 +119,7 @@ internal class DynamicFormFragment : BaseFormFragment(), PrimerHeadlessUniversal
         FieldFocuser.focus(inputs?.first()?.editText)
     }
 
-    private fun TextInputWidget.createValueChangedListener(formData: FormInput): (CharSequence?) -> Unit =
+    private fun TextInputWidget.createValueChangedListener(): (CharSequence?) -> Unit =
         {
             when (descriptor.paymentMethodType) {
                 PaymentMethodType.XENDIT_OVO.name,

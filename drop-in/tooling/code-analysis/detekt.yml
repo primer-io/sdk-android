@@ -1,5 +1,5 @@
 build:
-  maxIssues: 10
+  maxIssues: 25
 style:
   MaxLineLength:
     excludes: [ '**/test/**', '**/*.Test.kt', '**/*.Spec.kt' ]

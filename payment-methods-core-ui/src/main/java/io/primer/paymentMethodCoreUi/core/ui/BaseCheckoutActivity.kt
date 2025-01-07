@@ -1,6 +1,5 @@
 package io.primer.paymentMethodCoreUi.core.ui
 
-import android.os.Build
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import io.primer.android.core.di.DISdkComponent
@@ -36,13 +35,6 @@ open class BaseCheckoutActivity : AppCompatActivity(), DISdkComponent {
             block()
         }
     }
-
-    private fun getConfigFromState(savedInstanceState: Bundle?) =
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            savedInstanceState?.getParcelable(SAVED_STATE_CONFIG_KEY, PrimerConfig::class.java)
-        } else {
-            savedInstanceState?.getParcelable(SAVED_STATE_CONFIG_KEY) as? PrimerConfig
-        }
 
     private companion object {
         const val SAVED_STATE_CONFIG_KEY = "CONFIG"

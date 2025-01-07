@@ -7,7 +7,7 @@ import io.primer.android.data.payments.forms.models.FormDataResponse
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 
-internal class XfersLocalFormDataSource() :
+internal class XfersLocalFormDataSource :
     BaseFlowCacheDataSource<FormDataResponse, String> {
     override fun get(): Flow<FormDataResponse> =
         flowOf(

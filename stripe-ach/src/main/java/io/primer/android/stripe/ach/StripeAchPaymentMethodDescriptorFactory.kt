@@ -7,7 +7,7 @@ import io.primer.android.paymentmethods.PaymentMethodCheckerRegistry
 import io.primer.android.paymentmethods.PaymentMethodDescriptor
 import io.primer.android.paymentmethods.PaymentMethodDescriptorFactory
 
-internal class StripeAchPaymentMethodDescriptorFactory() : PaymentMethodDescriptorFactory {
+internal class StripeAchPaymentMethodDescriptorFactory : PaymentMethodDescriptorFactory {
     override fun create(
         localConfig: PrimerConfig,
         paymentMethodRemoteConfig: PaymentMethodConfigDataResponse,

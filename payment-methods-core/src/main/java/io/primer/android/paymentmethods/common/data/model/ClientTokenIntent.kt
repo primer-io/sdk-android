@@ -1,6 +1,6 @@
 package io.primer.android.paymentmethods.common.data.model
 
-@Suppress("EnumEntryName")
+@Suppress("EnumEntryName", "EnumNaming")
 enum class ClientTokenIntent {
     CHECKOUT,
     `3DS_AUTHENTICATION`,

@@ -18,7 +18,7 @@ class MonetaryAmount private constructor(
                 else ->
                     try {
                         MonetaryAmount(value, Currency.getInstance(currency).currencyCode)
-                    } catch (e: IllegalArgumentException) {
+                    } catch (ignored: IllegalArgumentException) {
                         // FIXME handle invalid currency code
                         null
                     }

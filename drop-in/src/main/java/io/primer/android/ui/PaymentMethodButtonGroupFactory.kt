@@ -6,6 +6,7 @@ import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.view.View
 import android.widget.LinearLayout
+import io.primer.android.R
 import io.primer.android.components.ui.views.PrimerPaymentMethodViewFactory
 import io.primer.android.payment.config.BaseDisplayMetadata
 import io.primer.android.paymentMethods.core.ui.descriptors.PaymentMethodDropInDescriptor
@@ -74,7 +75,8 @@ internal class PaymentMethodButtonGroupFactory(
                         button.layoutParams =
                             button.layoutParams.apply {
                                 val layoutParams = this as LinearLayout.LayoutParams
-                                layoutParams.bottomMargin = 20
+                                layoutParams.bottomMargin =
+                                    context.resources.getDimension(R.dimen.medium_vertical_margin2).toInt()
                             }
                     }
 

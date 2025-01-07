@@ -107,8 +107,7 @@ internal class VaultedPaymentMethodsCvvRecaptureFragment : BaseFragment() {
     private fun setCardDetails() {
         val paymentMethod = viewModel.selectedSavedPaymentMethod ?: return
         val data = paymentMethod.paymentInstrumentData
-        val last4: Int =
-            data.last4Digits ?: throw IllegalStateException("card data is invalid!")
+        val last4: Int = requireNotNull(data.last4Digits) { "card data is invalid!" }
         binding.vaultedPaymentMethodCvvLastFourLabel.text = getString(R.string.last_four, last4)
         binding.vaultedPaymentMethodCvvDescLabel.text =
             getString(
@@ -177,7 +176,7 @@ internal class VaultedPaymentMethodsCvvRecaptureFragment : BaseFragment() {
         binding.vaultedPaymentMethodCvvCardCvvInput.doAfterTextChanged { editable ->
             viewModel.selectedSavedPaymentMethod?.let { token ->
                 val data = token.paymentInstrumentData
-                val network = data.binData?.network ?: throw IllegalStateException("card data is invalid!")
+                val network = requireNotNull(data.binData?.network) { "card data is invalid!" }
                 val expectedLength = CardNetwork.lookupByCardNetwork(network).cvvLength
                 binding.vaultedPaymentMethodCvvBtnSubmit.isEnabled = editable.toString().trim().length == expectedLength
             }

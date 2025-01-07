@@ -1,6 +1,5 @@
 package io.primer.android.configuration.data.repository
 
-import android.content.SharedPreferences
 import android.net.Uri
 import io.mockk.MockKAnnotations
 import io.mockk.Runs
@@ -29,7 +28,6 @@ import io.primer.android.configuration.data.model.ConfigurationDataResponse
 import io.primer.android.configuration.domain.CachePolicy
 import io.primer.android.configuration.domain.model.Configuration
 import io.primer.android.core.data.network.PrimerResponse
-import io.primer.android.core.logging.internal.LogReporter
 import io.primer.android.core.utils.BaseDataProvider
 import io.primer.android.core.utils.EventFlowProvider
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -43,9 +41,6 @@ import org.junit.jupiter.api.extension.ExtendWith
 @ExtendWith(MockKExtension::class)
 internal class ConfigurationDataRepositoryTest {
     private lateinit var repository: ConfigurationDataRepository
-
-    @RelaxedMockK
-    internal lateinit var sharedPreferences: SharedPreferences
 
     @RelaxedMockK
     internal lateinit var remoteConfigurationDataSource: RemoteConfigurationDataSource
@@ -64,9 +59,6 @@ internal class ConfigurationDataRepositoryTest {
 
     @RelaxedMockK
     internal lateinit var globalConfigurationCache: GlobalConfigurationCacheDataSource
-
-    @RelaxedMockK
-    internal lateinit var logReporter: LogReporter
 
     @RelaxedMockK
     internal lateinit var timerEventProvider: EventFlowProvider<TimerProperties>
@@ -94,7 +86,6 @@ internal class ConfigurationDataRepositoryTest {
                 clientTokenProvider = clientTokenProvider,
                 globalConfigurationCache = globalConfigurationCache,
                 timerEventProvider = timerEventProvider,
-                logReporter = logReporter,
                 getCurrentTimeMillis = { CURRENT_TIME_IN_MILLIS },
             )
     }

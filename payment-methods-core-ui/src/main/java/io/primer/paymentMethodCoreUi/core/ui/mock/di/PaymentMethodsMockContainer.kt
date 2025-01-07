@@ -9,9 +9,6 @@ class PaymentMethodsMockContainer(private val sdk: () -> SdkContainer) : Depende
         registerFactory {
             PaymentMethodMockViewModelFactory(
                 finaliseMockedFlowInteractor = sdk().resolve(),
-                paymentResumeHandler = sdk().resolve(),
-                errorHandler = sdk().resolve(),
-                successHandler = sdk().resolve(),
             )
         }
     }

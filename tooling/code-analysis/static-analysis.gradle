@@ -1,19 +1,21 @@
 apply plugin: 'io.gitlab.arturbosch.detekt'
 
 // static-analysis.gradle setup - https://github.com/detekt/detekt
-
 repositories {
     google()
     mavenCentral()
-    maven {
-        url "https://maven.pkg.jetbrains.space/public/p/kotlinx-html/maven"
-    }
 }
 
 detekt {
     buildUponDefaultConfig = true
+    def defaultConfig = file("$rootDir/tooling/code-analysis/detekt.yml")
+    def moduleOverrideConfig = file("$projectDir/tooling/code-analysis/detekt.yml")
 
-    config = files("$rootDir/tooling/code-analysis/detekt.yml")
+    if (moduleOverrideConfig.exists()) {
+        config.setFrom(defaultConfig, moduleOverrideConfig)
+    } else {
+        config.setFrom(files(defaultConfig))
+    }
 
     debug = true
     parallel = true
@@ -22,10 +24,10 @@ detekt {
     ignoredBuildTypes = ["debug"]
 
     reports {
-        html.enabled = true
-        xml.enabled = false
-        txt.enabled = true
-        sarif.enabled = true // https://sarifweb.azurewebsites.net - for integrations with Github
+        html.required.set(true)
+        xml.required.set(false)
+        txt.required.set(true)
+        sarif.required.set(true)
     }
 }
 

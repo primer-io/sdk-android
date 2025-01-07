@@ -29,7 +29,7 @@ archCore = "2.2.0"
 
 # plugin versions
 androidGradlePlugin = "8.1.4"
-detekt = "1.16.0"
+detekt = "1.23.7"
 sonarqube = "5.0.0.4638"
 dexcount = "4.0.0"
 kover = "0.8.0"

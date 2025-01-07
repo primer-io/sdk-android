@@ -2,15 +2,17 @@ package io.primer.android.ui.components
 
 import android.content.Context
 import android.content.res.ColorStateList
-import android.graphics.Color
 import android.graphics.Typeface
 import android.graphics.drawable.GradientDrawable
 import android.util.AttributeSet
 import android.view.Gravity
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.core.content.ContextCompat
+import androidx.core.graphics.ColorUtils
 import androidx.core.view.isVisible
 import androidx.core.view.setPadding
+import io.primer.android.R
 import io.primer.android.core.di.DISdkComponent
 import io.primer.android.core.di.extensions.inject
 import io.primer.android.ui.settings.PrimerTheme
@@ -35,15 +37,21 @@ class PaymentMethodButtonGroupBox
 
         private fun render() {
             orientation = VERTICAL
-            val backgroundColor = ColorStateList.valueOf(Color.argb(12, 0, 0, 0))
+            val backgroundColor =
+                ColorStateList.valueOf(
+                    ColorUtils.setAlphaComponent(
+                        ContextCompat.getColor(context, R.color.primer_secondary),
+                        BACKGROUND_ALPHA,
+                    ),
+                )
             background =
                 GradientDrawable().apply {
                     color = backgroundColor
-                    cornerRadius = 16f
+                    cornerRadius = context.resources.getDimension(R.dimen.primer_default_corner_radius)
                 }
             val params = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT)
             layoutParams = params
-            setPadding(24)
+            setPadding(context.resources.getDimension(R.dimen.medium_padding).toInt())
             setMargin()
         }
 
@@ -81,8 +89,17 @@ class PaymentMethodButtonGroupBox
                 )
             label.setTextColor(textColor)
             val params = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT)
-            params.setMargins(0, 0, 0, 16)
+            params.setMargins(
+                0,
+                0,
+                0,
+                context.resources.getDimension(R.dimen.medium_vertical_margin2).toInt(),
+            )
             label.layoutParams = params
             label.isVisible = true
+        }
+
+        private companion object {
+            const val BACKGROUND_ALPHA = 12
         }
     }

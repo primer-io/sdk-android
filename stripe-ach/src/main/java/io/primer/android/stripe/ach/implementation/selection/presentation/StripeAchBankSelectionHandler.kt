@@ -50,8 +50,8 @@ internal class StripeAchBankSelectionHandler(
             val customerDetails = getClientSessionCustomerDetailsDelegate.invoke().getOrThrow()
             fullName = "${customerDetails.firstName} ${customerDetails.lastName}"
             emailAddress = customerDetails.emailAddress
-        } catch (throwable: Throwable) {
-            return Result.failure(throwable)
+        } catch (expected: Throwable) {
+            return Result.failure(expected)
         }
 
         return fetchSelectedBankId(

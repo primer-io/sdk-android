@@ -61,7 +61,6 @@ class ConfigurationCoreContainer(private val sdk: () -> SdkContainer) : Dependen
                 configurationUrlProvider = sdk().resolve(CONFIGURATION_URL_PROVIDER_DI_KEY),
                 clientTokenProvider = sdk().resolve(CLIENT_TOKEN_PROVIDER_DI_KEY),
                 globalConfigurationCache = resolve(GLOBAL_CACHED_CONFIGURATION_DI_KEY),
-                logReporter = sdk().resolve(),
                 timerEventProvider = sdk().resolve(TIMER_PROPERTIES_PROVIDER_DI_KEY),
             )
         }

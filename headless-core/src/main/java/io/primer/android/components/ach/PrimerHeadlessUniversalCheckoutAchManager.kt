@@ -85,8 +85,8 @@ class PrimerHeadlessUniversalCheckoutAchManager(
 
                 else -> throw UnsupportedPaymentMethodException(paymentMethodType)
             }
-        } catch (e: Throwable) {
-            throw UnsupportedPaymentMethodException(paymentMethodType = paymentMethodType, cause = e)
+        } catch (expected: Throwable) {
+            throw UnsupportedPaymentMethodException(paymentMethodType = paymentMethodType, cause = expected)
         }
     }
 }

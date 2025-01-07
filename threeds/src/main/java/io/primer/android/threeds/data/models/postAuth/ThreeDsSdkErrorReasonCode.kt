@@ -1,6 +1,6 @@
 package io.primer.android.threeds.data.models.postAuth
 
-@Suppress("EnumEntryName")
+@Suppress("EnumEntryName", "EnumNaming")
 internal enum class ThreeDsSdkErrorReasonCode {
     MISSING_SDK_DEPENDENCY,
     INVALID_3DS_SDK_VERSION,

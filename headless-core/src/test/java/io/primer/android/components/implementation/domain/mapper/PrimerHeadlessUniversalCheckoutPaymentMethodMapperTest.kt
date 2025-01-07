@@ -171,7 +171,7 @@ class PrimerHeadlessUniversalCheckoutPaymentMethodMapperTest {
     }
 
     @Test
-    fun `getPrimerHeadlessUniversalCheckoutPaymentMethod() throws IllegalStateException when payment method is supported but headless definition is null`() {
+    fun `getPrimerHeadlessUniversalCheckoutPaymentMethod() throws IllegalArgumentException when payment method is supported but headless definition is null`() {
         val paymentMethodType = PaymentMethodType.STRIPE_ACH.name
         val descriptor =
             mockk<PaymentMethodDescriptor> {
@@ -182,7 +182,7 @@ class PrimerHeadlessUniversalCheckoutPaymentMethodMapperTest {
             }
         every { paymentMethodDescriptorsRepository.getPaymentMethodDescriptors() } returns listOf(descriptor)
 
-        assertThrows<IllegalStateException> {
+        assertThrows<IllegalArgumentException> {
             mapper.getPrimerHeadlessUniversalCheckoutPaymentMethod(paymentMethodType)
         }
 

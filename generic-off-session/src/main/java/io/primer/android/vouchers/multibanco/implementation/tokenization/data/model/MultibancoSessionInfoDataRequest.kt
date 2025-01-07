@@ -11,7 +11,6 @@ internal data class MultibancoSessionInfoDataRequest(
     companion object {
         private const val PLATFORM_FIELD = "platform"
         private const val LOCALE_FIELD = "locale"
-        private const val RETAIL_OUTLET_FIELD = "retailOutlet"
 
         @JvmField
         val serializer =

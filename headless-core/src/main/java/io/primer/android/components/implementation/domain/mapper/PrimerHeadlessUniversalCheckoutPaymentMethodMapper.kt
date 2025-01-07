@@ -16,9 +16,9 @@ internal class PrimerHeadlessUniversalCheckoutPaymentMethodMapper(
             .firstOrNull { descriptor -> descriptor.config.type == paymentMethodType }
             ?.let { descriptor ->
                 val headlessDefinition =
-                    descriptor.headlessDefinition ?: throw IllegalStateException(
-                        "Missing payment method manager descriptor for $paymentMethodType",
-                    )
+                    requireNotNull(descriptor.headlessDefinition) {
+                        "Missing payment method manager descriptor for $paymentMethodType"
+                    }
 
                 PrimerHeadlessUniversalCheckoutPaymentMethod(
                     paymentMethodType = descriptor.config.type,

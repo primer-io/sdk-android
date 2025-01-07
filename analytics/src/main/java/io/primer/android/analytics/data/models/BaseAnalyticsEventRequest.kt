@@ -270,7 +270,7 @@ internal fun BaseAnalyticsProperties.toAnalyticsEvent(
             analyticsUrl,
         )
 
-    else -> throw IllegalStateException("Unsupported property params")
+    else -> error("Unsupported property params")
 }
 
 @Suppress("LongParameterList", "LongMethod")
@@ -375,7 +375,7 @@ internal fun BaseAnalyticsParams.toAnalyticsEvent(
             analyticsUrl,
         )
 
-    else -> throw IllegalStateException("Unsupported event params")
+    else -> error("Unsupported event params")
 }
 
 internal fun BaseContextParams.toAnalyticsContext() =

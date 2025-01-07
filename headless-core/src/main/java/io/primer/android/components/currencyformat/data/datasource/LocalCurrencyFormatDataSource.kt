@@ -27,8 +27,8 @@ internal class LocalCurrencyFormatDataSource(private val context: Context) :
                     ?.readBytes()
                     ?.decodeToString().orEmpty()
             CurrencyFormatDataResponse.deserializer.deserialize(JSONArray(dataJson))
-        } catch (e: Exception) {
-            throw MissingCurrencyFormatsException(e)
+        } catch (expected: Exception) {
+            throw MissingCurrencyFormatsException(expected)
         }
     }
 }

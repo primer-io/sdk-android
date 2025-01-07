@@ -17,8 +17,10 @@ import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import io.primer.android.PrimerSessionIntent
 import io.primer.android.R
@@ -64,6 +66,7 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import java.util.EnumMap
 import java.util.TreeMap
 
@@ -78,7 +81,7 @@ internal class CardFormFragment : BaseFragment() {
     private var cardInputFields: TreeMap<PrimerInputElementType, TextInputWidget> by autoCleaned()
     private var binding: FragmentCardFormBinding by autoCleaned()
 
-    private val cardViewModel: CardViewModel by viewModels()
+    internal val cardViewModel: CardViewModel by viewModels()
     private val assetsManager: AssetsManager by inject()
 
     private val localConfig: PrimerConfig by inject()
@@ -147,6 +150,7 @@ internal class CardFormFragment : BaseFragment() {
             .onEach { onCardNetworkStateChanged(it) }
             .launchIn(viewLifecycleOwner.lifecycleScope)
 
+        logValidationErrors()
         renderTitle()
         renderCardDetailsTitle()
         renderCancelButton()
@@ -649,28 +653,30 @@ internal class CardFormFragment : BaseFragment() {
         }
     }
 
-    // TODO log validation errors
-    private suspend fun logValidationErrors() {
-        var lastValidationErrors = emptySet<SyncValidationError>()
-        cardViewModel.cardValidationErrors
-            .combine(
-                cardViewModel.billingAddressValidationErrors,
-            ) { cardValidationErrors, billingAddressValidationErrors ->
-                val validationErrors = cardValidationErrors.plus(billingAddressValidationErrors)
-                val validationErrorsDiff = validationErrors.minus(lastValidationErrors)
-                lastValidationErrors = validationErrors.toSet()
-                validationErrorsDiff.forEach { validationError ->
-                    primerViewModel.addAnalyticsEvent(
-                        MessageAnalyticsParams(
-                            messageType = MessageType.VALIDATION_FAILED,
-                            message = validationError.inputElementType.name,
-                            severity = Severity.WARN,
-                            context = ErrorContextParams(errorId = validationError.errorId),
-                        ),
-                    )
-                }
-            }.collect()
-    }
+    private fun logValidationErrors() =
+        lifecycleScope.launch {
+            lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                var lastValidationErrors = emptySet<SyncValidationError>()
+                cardViewModel.cardValidationErrors
+                    .combine(
+                        cardViewModel.billingAddressValidationErrors,
+                    ) { cardValidationErrors, billingAddressValidationErrors ->
+                        val validationErrors = cardValidationErrors.plus(billingAddressValidationErrors)
+                        val validationErrorsDiff = validationErrors.minus(lastValidationErrors)
+                        lastValidationErrors = validationErrors.toSet()
+                        validationErrorsDiff.forEach { validationError ->
+                            primerViewModel.addAnalyticsEvent(
+                                MessageAnalyticsParams(
+                                    messageType = MessageType.VALIDATION_FAILED,
+                                    message = validationError.inputElementType.name,
+                                    severity = Severity.WARN,
+                                    context = ErrorContextParams(errorId = validationError.errorId),
+                                ),
+                            )
+                        }
+                    }.collect()
+            }
+        }
 
     private fun setValidationErrorState(
         input: TextInputWidget,

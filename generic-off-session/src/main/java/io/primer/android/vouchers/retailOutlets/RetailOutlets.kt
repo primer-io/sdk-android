@@ -71,8 +71,7 @@ internal class RetailOutlets(internal val paymentMethodType: String) : PaymentMe
                 }
             }
 
-            override fun registerErrorMappers(errorMapperRegistry: ErrorMapperRegistry) {
-            }
+            override fun registerErrorMappers(errorMapperRegistry: ErrorMapperRegistry) = Unit
 
             override fun registerBrandProvider(brandRegistry: BrandRegistry) {
                 brandRegistry.register(paymentMethodType = paymentMethodType, RetailOutletsBrand())

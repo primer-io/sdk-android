@@ -67,8 +67,7 @@ internal class SandboxProcessorPayPal(internal val paymentMethodType: String) : 
                 }
             }
 
-            override fun registerErrorMappers(errorMapperRegistry: ErrorMapperRegistry) {
-            }
+            override fun registerErrorMappers(errorMapperRegistry: ErrorMapperRegistry) = Unit
 
             override fun registerBrandProvider(brandRegistry: BrandRegistry) {
                 brandRegistry.register(paymentMethodType = paymentMethodType, SandboxProcessorPayPalBrand())

@@ -194,7 +194,7 @@ internal class BankSelectionAdapter(
                 imageLoader,
                 theme,
             )
-        else -> throw IllegalStateException("Invalid $viewType.")
+        else -> error("Invalid $viewType.")
     }
 }
 

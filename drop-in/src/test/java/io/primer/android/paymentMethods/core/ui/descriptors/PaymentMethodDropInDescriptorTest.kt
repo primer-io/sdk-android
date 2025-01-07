@@ -45,7 +45,7 @@ class PaymentMethodDropInDescriptorTest {
 
         val result = descriptor.createSuccessBehavior(viewStatus)
 
-        val resultFragment = result.factory.invoke() as SessionCompleteFragment
+        result.factory.invoke() as SessionCompleteFragment
         assertEquals(false, result.returnToPreviousOnBack)
         verify {
             SessionCompleteFragment.newInstance(3000, SessionCompleteViewType.Success(SuccessType.PAYMENT_SUCCESS))
