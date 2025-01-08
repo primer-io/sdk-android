@@ -46,25 +46,20 @@ internal class SharedContainer(
 
         registerSingleton(AnalyticsContainer.ANALYTICS_DATA_DI_KEY) {
             BaseDataProvider {
+                val configurationData =
+                    runCatching {
+                        sdk().resolve<BaseCacheDataSource<ConfigurationData, ConfigurationData>>(
+                            ConfigurationCoreContainer.CACHED_CONFIGURATION_DI_KEY,
+                        )
+                            .get()
+                    }.getOrNull()
                 AnalyticsData(
                     sdkIntegrationType = config.settings.sdkIntegrationType,
                     paymentHandling = config.settings.paymentHandling.name,
                     analyticsUrl = clientToken.analyticsUrlV2,
-                    clientSessionId =
-                        sdk().resolve<BaseCacheDataSource<ConfigurationData, ConfigurationData>>(
-                            ConfigurationCoreContainer.CACHED_CONFIGURATION_DI_KEY,
-                        )
-                            .get().clientSession.clientSessionId,
-                    orderId =
-                        sdk().resolve<BaseCacheDataSource<ConfigurationData, ConfigurationData>>(
-                            ConfigurationCoreContainer.CACHED_CONFIGURATION_DI_KEY,
-                        )
-                            .get().clientSession.order?.orderId,
-                    primerAccountId =
-                        sdk().resolve<BaseCacheDataSource<ConfigurationData, ConfigurationData>>(
-                            ConfigurationCoreContainer.CACHED_CONFIGURATION_DI_KEY,
-                        )
-                            .get().primerAccountId,
+                    clientSessionId = configurationData?.clientSession?.clientSessionId,
+                    orderId = configurationData?.clientSession?.order?.orderId,
+                    primerAccountId = configurationData?.primerAccountId,
                 )
             }
         }

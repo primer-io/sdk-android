@@ -81,6 +81,7 @@ internal class AnalyticsDataRepository(
 
     override fun addEvent(params: BaseAnalyticsParams) {
         val providerData = provider.provide()
+
         localAnalyticsDataSource.addEvent(
             params.toAnalyticsEvent(
                 batteryLevel = batteryLevelDataSource.get(),
