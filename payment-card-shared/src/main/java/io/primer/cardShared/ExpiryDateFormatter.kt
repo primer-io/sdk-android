@@ -7,8 +7,9 @@ private val INVALID_CHARACTER = Regex("[^0-9/]")
 private val ZERO_OR_ONE = Regex("^[01]$")
 private val BEGINS_WITH_ZERO_OR_ONE = Regex("^[01].*")
 private val TWO_THROUGH_NINE = Regex("^[2-9]$")
+private val THREE_OR_FOUR_DIGITS = Regex("^[0-9]{3,4}$")
 private val SEPARATOR_CHAR = Regex("[\\s/-]+")
-private val INVALID_MONTH = Regex("^1[3-9].*")
+private val INVALID_MONTH = Regex("^(1[3-9]|[2-9][0-9]).*")
 private const val MAXIMUM_YEAR_LENGTH = 4
 
 class ExpiryDateFormatter private constructor(
@@ -36,6 +37,8 @@ class ExpiryDateFormatter private constructor(
         if (month.length < 2) {
             return false
         }
+
+        if (month.matches(INVALID_MONTH)) return false
 
         if (year.length < 2) {
             return false
@@ -75,9 +78,7 @@ class ExpiryDateFormatter private constructor(
                 return exp
             }
 
-            if (tokens.isNotEmpty()) {
-                exp.month = parseMonth(tokens[0], autoInsert)
-            }
+            exp.month = parseMonth(tokens[0], autoInsert)
 
             if (tokens.size > 1) {
                 exp.year = parseYear(tokens[1])
@@ -114,6 +115,12 @@ class ExpiryDateFormatter private constructor(
             var tokens: List<String> =
                 when {
                     sanitized.isEmpty() -> emptyList()
+                    sanitized.matches(THREE_OR_FOUR_DIGITS) ->
+                        listOf(
+                            sanitized.substring(0, 2),
+                            sanitized.substring(2),
+                        )
+
                     else -> sanitized.split(SEPARATOR_CHAR)
                 }
 
@@ -146,7 +153,7 @@ class ExpiryDateFormatter private constructor(
             }
 
             if (sanitized.matches(INVALID_MONTH)) {
-                return sanitized.replaceRange(1, 2, "2")
+                return sanitized
             }
 
             if (sanitized == "00") {
