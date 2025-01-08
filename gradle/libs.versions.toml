@@ -20,7 +20,7 @@ primer-ipay88 = "1.0.3"
 primer-nol-pay = "1.0.2"
 primer-stripe = "1.1.2"
 
-junit5 = "5.11.0-M2"
+junit5 = "5.11.4"
 androidJunit5TestRunner = "1.3.0"
 mockk = "1.13.11"
 json = "20240303"
