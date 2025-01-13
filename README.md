@@ -34,9 +34,9 @@ Consider looking at the following resources:
 
 - [Documentation](https://primer.io/docs)
 - [Client session creation](https://primer.io/docs/accept-payments/manage-client-sessions/#create-a-client-session)
-- [API reference](https://apiref.primer.io/docs)
+- [API reference](https://apiref.primer.io/docs/getting-started)
 - [Changelogs](https://primer.io/docs/changelog/sdk-changelog/android)
-- [Detailed Android Documentation](https://www.notion.so/primerio/Android-SDK-3eb4caa37d2e4832944fb2d97cd9cd92)
+- [Detailed Android Documentation](https://primer.io/docs/payments/universal-checkout/drop-in/get-started/android)
 
 
 # 💡 Support
@@ -54,7 +54,6 @@ Take a look at our [Quick Start Guide](https://primer.io/docs/get-started/androi
 
 ## Prerequisites
 - android-studio
-- `nodejs` >= 12 + `yarn` (for local server)
 
 
 Add the following to your `app/build.gradle` file:
@@ -117,7 +116,7 @@ class CheckoutActivity : AppCompatActivity() {
 ```
 
 
-**Note:** Check the [SDK API Reference](https://www.notion.so/primerio/API-Reference-f62b4be8f24642989e63c25a8fb5f0ba_) for more options to customize your SDK.
+**Note:** Check the [SDK API Reference](https://primer.io/docs/sdk/android/2.x.x) for more options to customize your SDK.
 
 
 ## 🔍 &nbsp;Rendering the checkout
@@ -151,31 +150,8 @@ The payment’s data will be returned on `onCheckoutCompleted(checkoutData)`.
 
 To run the example, simply press the play button from Android Studio to launch on a virtual device.
 
-## Running Virtual device with your local server
-
-Android virtual devices proxy `10.0.2.2` to your machine's localhost. There's a proxy script in the `/proxy` to help adapt the URLs returned from the server to account for this:
-
-```bash
-# Copy the .env.example
-cp .env.example .env
-
-# Add your API key
-nano .env
-
-# set up and run the proxy
-cd proxy
-yarn install
-node server.js
-
-# All the requests from the virtual device should now go to your running server
-```
-
 ## Debugging
 Logcat has a habit of misbehaving, so you might need to attach the debugger and set breakpoints to find out what's really going on.
-
-# Releasing
-
-The releasing of the SDK is handled via a manually triggered github action, a full explanation of this process can be found on this [runbook](https://www.notion.so/primerio/Automating-Version-Bumping-and-Changelog-Creation-c13e32fea11447069dea76f966f4b0fb?pvs=4).
 
 # Contributing guidelines:
 
