@@ -1,4 +1,8 @@
-## 2.33.2 (2025-01-17)
+## 2.34.0 (2025-01-17)
+
+### Feat
+
+- co-badged cards support for drop-in (#802)
 
 ### Fix
 
