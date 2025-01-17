@@ -9,7 +9,6 @@ import io.primer.android.components.implementation.HeadlessUniversalCheckoutAnal
 import io.primer.android.components.implementation.errors.domain.model.HeadlessError
 import io.primer.android.components.implementation.presentation.DefaultHeadlessUniversalCheckoutDelegate
 import io.primer.android.core.di.DISdkComponent
-import io.primer.android.core.di.DISdkContext
 import io.primer.android.core.di.extensions.resolve
 import io.primer.android.data.settings.PrimerPaymentHandling
 import io.primer.android.data.settings.PrimerSettings
@@ -21,7 +20,6 @@ import io.primer.android.errors.domain.models.PrimerUnknownError
 class PrimerHeadlessUniversalCheckout private constructor() :
     PrimerHeadlessUniversalCheckoutInterface, DISdkComponent {
         private var config: PrimerConfig? = null
-        private val hybridCheckoutFlowManager by lazy { HybridCheckoutFlowManager() }
         private var headlessUniversalCheckoutDelegate: DefaultHeadlessUniversalCheckoutDelegate? = null
         internal var checkoutListener: PrimerHeadlessUniversalCheckoutListener? = null
         internal var uiListener: PrimerHeadlessUniversalCheckoutUiListener? = null
@@ -51,14 +49,8 @@ class PrimerHeadlessUniversalCheckout private constructor() :
             checkoutListener: PrimerHeadlessUniversalCheckoutListener?,
             uiListener: PrimerHeadlessUniversalCheckoutUiListener?,
         ) {
-            hybridCheckoutFlowManager.beforeStart()
             checkoutListener?.let { setCheckoutListener(it) }
-
-            if (hybridCheckoutFlowManager.isHybridCheckoutFlow) {
-                this.uiListener = null
-            } else {
-                uiListener?.let { setCheckoutUiListener(it) }
-            }
+            uiListener?.let { setCheckoutUiListener(it) }
 
             try {
                 initialize(context, clientToken, settings)
@@ -99,8 +91,8 @@ class PrimerHeadlessUniversalCheckout private constructor() :
             headlessUniversalCheckoutDelegate = null
             checkoutListener = null
             uiListener = null
-            hybridCheckoutFlowManager.afterCleanup()
             DISdkContextInitializer.clearHeadless()
+            DISdkContextInitializer.clearDropIn()
         }
 
         fun emitError(error: PrimerError) {
@@ -134,7 +126,6 @@ class PrimerHeadlessUniversalCheckout private constructor() :
             context: Context,
             config: PrimerConfig,
         ) {
-            hybridCheckoutFlowManager.beforeSetupDI()
             DISdkContextInitializer.initHeadless(config, context.applicationContext)
 
             // refresh the instances
@@ -151,61 +142,5 @@ class PrimerHeadlessUniversalCheckout private constructor() :
 
             @JvmStatic
             val current = instance as PrimerHeadlessUniversalCheckoutInterface
-        }
-
-        /**
-         * Manager for checkout flows that use headless in combination with drop-in via [Primer.showPaymentMethod].
-         */
-        private inner class HybridCheckoutFlowManager {
-            var isHybridCheckoutFlow: Boolean = false
-            private var previousConfig: PrimerConfig? = null
-            private var previousCheckoutListener: PrimerHeadlessUniversalCheckoutListener? = null
-            private var previousUiListener: PrimerHeadlessUniversalCheckoutUiListener? = null
-
-            fun beforeStart() {
-                isHybridCheckoutFlow = DISdkContext.headlessSdkContainer != null && DISdkContext.isDropIn
-                if (isHybridCheckoutFlow) {
-                    saveState()
-                }
-            }
-
-            fun beforeSetupDI() {
-                if (isHybridCheckoutFlow) {
-                    with(DISdkContextInitializer) {
-                        saveHeadless()
-                        unassignHeadless()
-                    }
-                } else {
-                    DISdkContextInitializer.clearHeadless()
-                }
-            }
-
-            fun afterCleanup() {
-                if (isHybridCheckoutFlow) {
-                    restorePreviousState()
-                }
-            }
-
-            // region Utils
-            private fun saveState() {
-                previousConfig = config
-                previousCheckoutListener = checkoutListener
-                previousUiListener = uiListener
-            }
-
-            private fun restorePreviousState() {
-                config = previousConfig
-                DISdkContextInitializer.restoreHeadless()
-                headlessUniversalCheckoutDelegate = resolve()
-                previousCheckoutListener?.let {
-                    setCheckoutListener(it)
-                    previousCheckoutListener = null
-                }
-                previousUiListener?.let {
-                    setCheckoutUiListener(it)
-                    previousUiListener = null
-                }
-            }
-            // endregion
         }
     }

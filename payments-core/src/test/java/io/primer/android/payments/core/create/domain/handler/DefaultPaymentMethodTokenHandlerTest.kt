@@ -19,6 +19,7 @@ import io.primer.android.payments.di.PaymentsContainer
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import java.util.concurrent.ConcurrentHashMap
 import kotlin.test.assertEquals
 
 class DefaultPaymentMethodTokenHandlerTest {
@@ -44,7 +45,8 @@ class DefaultPaymentMethodTokenHandlerTest {
                         container.registerFactory<PostTokenizationHandler> { postTokenizationHandler }
                     }
 
-                every { sdkContainer.containers }.returns(mutableMapOf(cont::class.simpleName.orEmpty() to cont))
+                every { sdkContainer.containers }
+                    .returns(ConcurrentHashMap(mutableMapOf(cont::class.simpleName.orEmpty() to cont)))
             }
 
         handler = DefaultPaymentMethodTokenHandler(config)

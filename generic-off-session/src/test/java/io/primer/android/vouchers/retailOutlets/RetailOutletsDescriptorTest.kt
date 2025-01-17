@@ -4,6 +4,7 @@ import io.mockk.mockk
 import io.primer.android.components.domain.core.models.PrimerPaymentMethodManagerCategory
 import io.primer.android.configuration.data.model.PaymentMethodConfigDataResponse
 import io.primer.android.data.settings.internal.PrimerConfig
+import io.primer.android.paymentmethods.SDKCapability
 import io.primer.android.paymentmethods.VaultCapability
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -26,6 +27,11 @@ internal class RetailOutletsDescriptorTest {
     @Test
     fun `vaultCapability should be SINGLE_USE_ONLY`() {
         assertEquals(VaultCapability.SINGLE_USE_ONLY, retailOutletsDescriptor.vaultCapability)
+    }
+
+    @Test
+    fun `sdkCapabilities should return only HEADLESS`() {
+        assertEquals(listOf(SDKCapability.HEADLESS), retailOutletsDescriptor.sdkCapabilities)
     }
 
     @Test

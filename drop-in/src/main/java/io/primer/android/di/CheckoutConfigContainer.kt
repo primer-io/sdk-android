@@ -14,6 +14,7 @@ import io.primer.android.payment.billing.BillingAddressValidator
 import io.primer.android.payment.billing.DefaultBillingAddressValidator
 import io.primer.android.paymentMethods.core.DefaultPaymentMethodMapping
 import io.primer.android.paymentMethods.core.PaymentMethodMapping
+import io.primer.android.paymentMethods.core.PrimerHeadlessSdkCleanupInteractor
 import io.primer.android.paymentMethods.core.PrimerHeadlessSdkInitInteractor
 import io.primer.android.paymentMethods.core.data.repository.DefaultPrimerHeadlessRepository
 import io.primer.android.paymentMethods.core.domain.PrimerEventsInteractor
@@ -70,6 +71,12 @@ internal class CheckoutConfigContainer(private val sdk: () -> SdkContainer) : De
         }
 
         registerFactory {
+            PrimerHeadlessSdkCleanupInteractor(
+                headlessRepository = resolve(),
+            )
+        }
+
+        registerFactory {
             PrimerEventsInteractor(
                 headlessRepository = resolve<PrimerHeadlessRepository>(),
                 exitHandler = resolve<CheckoutExitHandler>(),
@@ -115,6 +122,7 @@ internal class CheckoutConfigContainer(private val sdk: () -> SdkContainer) : De
                 paymentMethodsImplementationInteractor = sdk().resolve(),
                 analyticsInteractor = sdk().resolve(),
                 headlessSdkInitInteractor = resolve(),
+                headlessSdkCleanupInteractor = resolve(),
                 eventsInteractor = resolve(),
                 actionInteractor = sdk().resolve(dependencyName = ActionsContainer.ACTION_INTERACTOR_DI_KEY),
                 config = sdk().resolve(),

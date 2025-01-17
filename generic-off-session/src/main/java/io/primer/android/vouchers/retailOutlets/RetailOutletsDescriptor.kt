@@ -7,6 +7,7 @@ import io.primer.android.core.di.DISdkComponent
 import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.paymentmethods.HeadlessDefinition
 import io.primer.android.paymentmethods.PaymentMethodDescriptor
+import io.primer.android.paymentmethods.SDKCapability
 import io.primer.android.paymentmethods.VaultCapability
 
 internal class RetailOutletsDescriptor(
@@ -21,4 +22,7 @@ internal class RetailOutletsDescriptor(
                 paymentMethodManagerCategories = listOf(PrimerPaymentMethodManagerCategory.RAW_DATA),
                 rawDataDefinition = HeadlessDefinition.RawDataDefinition(PrimerRetailerData::class),
             )
+
+    override val sdkCapabilities: List<SDKCapability>
+        get() = listOf(SDKCapability.HEADLESS)
 }

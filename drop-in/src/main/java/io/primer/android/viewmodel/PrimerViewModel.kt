@@ -52,6 +52,7 @@ import io.primer.android.payment.config.toTextDisplayMetadata
 import io.primer.android.paymentMethods.PaymentMethodBehaviour
 import io.primer.android.paymentMethods.PaymentMethodUiType
 import io.primer.android.paymentMethods.core.PaymentMethodMapping
+import io.primer.android.paymentMethods.core.PrimerHeadlessSdkCleanupInteractor
 import io.primer.android.paymentMethods.core.PrimerHeadlessSdkInitInteractor
 import io.primer.android.paymentMethods.core.domain.PrimerEventsInteractor
 import io.primer.android.paymentMethods.core.domain.events.PrimerEvent
@@ -84,6 +85,7 @@ internal class PrimerViewModel(
     private val paymentMethodsImplementationInteractor: PaymentMethodsImplementationInteractor,
     private val analyticsInteractor: AnalyticsInteractor,
     private val headlessSdkInitInteractor: PrimerHeadlessSdkInitInteractor,
+    private val headlessSdkCleanupInteractor: PrimerHeadlessSdkCleanupInteractor,
     private val eventsInteractor: PrimerEventsInteractor,
     private val actionInteractor: ActionInteractor,
     private val amountToCurrencyInteractor: FormatAmountToCurrencyInteractor,
@@ -371,6 +373,10 @@ internal class PrimerViewModel(
                 )
             }
         }
+    }
+
+    fun cleanup() {
+        headlessSdkCleanupInteractor(None)
     }
 
     fun dispatchAction(

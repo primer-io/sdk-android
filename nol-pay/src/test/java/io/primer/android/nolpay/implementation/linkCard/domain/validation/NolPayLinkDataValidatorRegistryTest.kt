@@ -18,6 +18,7 @@ import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
+import java.util.concurrent.ConcurrentHashMap
 
 @ExtendWith(MockKExtension::class)
 internal class NolPayLinkDataValidatorRegistryTest {
@@ -32,7 +33,8 @@ internal class NolPayLinkDataValidatorRegistryTest {
                         container.registerFactory<PhoneMetadataRepository> { mockk(relaxed = true) }
                     }
 
-                every { sdkContainer.containers }.returns(mutableMapOf(cont::class.simpleName.orEmpty() to cont))
+                every { sdkContainer.containers }
+                    .returns(ConcurrentHashMap(mutableMapOf(cont::class.simpleName.orEmpty() to cont)))
             }
         registry = spyk(NolPayLinkDataValidatorRegistry())
     }

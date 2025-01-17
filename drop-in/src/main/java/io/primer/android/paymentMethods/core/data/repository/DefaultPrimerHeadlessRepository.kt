@@ -187,14 +187,16 @@ internal class DefaultPrimerHeadlessRepository(
                     },
                 )
 
-                awaitClose {
-                    headlessUniversalCheckout.cleanup()
-                }
+                awaitClose { }
             },
         )
 
     override fun start(clientToken: String) {
         headlessUniversalCheckout.start(context, clientToken)
+    }
+
+    override fun cleanup() {
+        headlessUniversalCheckout.cleanup()
     }
 
     override suspend fun handleManualFlowSuccess(additionalInfo: PrimerCheckoutAdditionalInfo?) {

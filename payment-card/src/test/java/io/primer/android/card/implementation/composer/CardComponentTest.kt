@@ -56,6 +56,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
+import java.util.concurrent.ConcurrentHashMap
 import kotlin.time.Duration.Companion.seconds
 
 @ExtendWith(InstantExecutorExtension::class, MockKExtension::class)
@@ -87,7 +88,8 @@ class CardComponentTest {
                             }
                         }
                     }
-                every { sdkContainer.containers }.returns(mutableMapOf(cont::class.simpleName.orEmpty() to cont))
+                every { sdkContainer.containers }
+                    .returns(ConcurrentHashMap(mutableMapOf(cont::class.simpleName.orEmpty() to cont)))
             }
         component =
             CardComponent(

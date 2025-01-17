@@ -30,6 +30,7 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
+import java.util.concurrent.ConcurrentHashMap
 
 @ExperimentalCoroutinesApi
 @ExtendWith(InstantExecutorExtension::class, MockKExtension::class)
@@ -53,7 +54,8 @@ class QrCodeComponentTest {
                             }
                         }
                     }
-                every { sdkContainer.containers }.returns(mutableMapOf(cont::class.simpleName.orEmpty() to cont))
+                every { sdkContainer.containers }
+                    .returns(ConcurrentHashMap(mutableMapOf(cont::class.simpleName.orEmpty() to cont)))
             }
         component = QrCodeComponent(tokenizationDelegate, pollingInteractor, paymentDelegate, pollingStartHandler)
         coEvery { pollingStartHandler.startPolling } returns MutableSharedFlow()

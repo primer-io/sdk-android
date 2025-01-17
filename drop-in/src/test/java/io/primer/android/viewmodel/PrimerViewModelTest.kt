@@ -15,6 +15,7 @@ import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.errors.domain.ErrorMapperRegistry
 import io.primer.android.payment.billing.BillingAddressValidator
 import io.primer.android.paymentMethods.core.PaymentMethodMapping
+import io.primer.android.paymentMethods.core.PrimerHeadlessSdkCleanupInteractor
 import io.primer.android.paymentMethods.core.PrimerHeadlessSdkInitInteractor
 import io.primer.android.paymentMethods.core.domain.PrimerEventsInteractor
 import io.primer.android.paymentMethods.core.ui.descriptors.PaymentMethodDropInDescriptor
@@ -45,6 +46,9 @@ internal class PrimerViewModelTest {
 
     @RelaxedMockK
     lateinit var headlessSdkInitInteractor: PrimerHeadlessSdkInitInteractor
+
+    @RelaxedMockK
+    lateinit var headlessSdkCleanupInteractor: PrimerHeadlessSdkCleanupInteractor
 
     @RelaxedMockK
     lateinit var eventsInteractor: PrimerEventsInteractor
@@ -93,6 +97,7 @@ internal class PrimerViewModelTest {
                 paymentMethodsImplementationInteractor = paymentMethodsImplementationInteractor,
                 analyticsInteractor = analyticsInteractor,
                 headlessSdkInitInteractor = headlessSdkInitInteractor,
+                headlessSdkCleanupInteractor = headlessSdkCleanupInteractor,
                 eventsInteractor = eventsInteractor,
                 actionInteractor = actionInteractor,
                 amountToCurrencyInteractor = amountToCurrencyInteractor,

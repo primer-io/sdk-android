@@ -13,6 +13,7 @@ import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.errors.domain.ErrorMapperRegistry
 import io.primer.android.payment.billing.BillingAddressValidator
 import io.primer.android.paymentMethods.core.PaymentMethodMapping
+import io.primer.android.paymentMethods.core.PrimerHeadlessSdkCleanupInteractor
 import io.primer.android.paymentMethods.core.PrimerHeadlessSdkInitInteractor
 import io.primer.android.paymentMethods.core.domain.PrimerEventsInteractor
 import io.primer.android.paymentMethods.core.ui.descriptors.PrimerDropInPaymentMethodDescriptorRegistry
@@ -28,6 +29,7 @@ internal class PrimerViewModelFactory(
     private val paymentMethodsImplementationInteractor: PaymentMethodsImplementationInteractor,
     private val analyticsInteractor: AnalyticsInteractor,
     private val headlessSdkInitInteractor: PrimerHeadlessSdkInitInteractor,
+    private val headlessSdkCleanupInteractor: PrimerHeadlessSdkCleanupInteractor,
     private val eventsInteractor: PrimerEventsInteractor,
     private val actionInteractor: ActionInteractor,
     private val amountToCurrencyInteractor: FormatAmountToCurrencyInteractor,
@@ -50,6 +52,7 @@ internal class PrimerViewModelFactory(
             paymentMethodsImplementationInteractor = paymentMethodsImplementationInteractor,
             analyticsInteractor = analyticsInteractor,
             headlessSdkInitInteractor = headlessSdkInitInteractor,
+            headlessSdkCleanupInteractor = headlessSdkCleanupInteractor,
             eventsInteractor = eventsInteractor,
             actionInteractor = actionInteractor,
             amountToCurrencyInteractor = amountToCurrencyInteractor,

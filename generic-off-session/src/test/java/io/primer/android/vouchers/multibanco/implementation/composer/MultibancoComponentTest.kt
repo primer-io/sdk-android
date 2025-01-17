@@ -26,6 +26,7 @@ import kotlinx.coroutines.test.setMain
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import java.util.concurrent.ConcurrentHashMap
 
 @ExperimentalCoroutinesApi
 class MultibancoComponentTest {
@@ -47,7 +48,8 @@ class MultibancoComponentTest {
                             }
                         }
                     }
-                every { sdkContainer.containers }.returns(mutableMapOf(cont::class.simpleName.orEmpty() to cont))
+                every { sdkContainer.containers }
+                    .returns(ConcurrentHashMap(mutableMapOf(cont::class.simpleName.orEmpty() to cont)))
             }
         Dispatchers.setMain(testDispatcher)
         multibancoComponent = MultibancoComponent(tokenizationDelegate, paymentDelegate)

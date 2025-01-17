@@ -3,6 +3,7 @@ package io.primer.android.core.di
 import android.util.Log
 import androidx.annotation.RestrictTo
 import io.primer.android.core.di.exception.SdkContainerUninitializedException
+import java.util.concurrent.ConcurrentHashMap
 
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 object DISdkContext {
@@ -27,7 +28,7 @@ object DISdkContext {
                 val additionalContainers =
                     merged.containers.filterKeys { key -> container.containers.contains(key).not() }.toMutableMap()
                 merged.apply {
-                    containers = (additionalContainers + container.containers).toMutableMap()
+                    containers = ConcurrentHashMap(additionalContainers + container.containers.toMutableMap())
                 }
             }?.takeUnless { container -> container.containers.isEmpty() }
                 ?: throw SdkContainerUninitializedException()

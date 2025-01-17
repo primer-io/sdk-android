@@ -1,5 +1,7 @@
 package io.primer.android.core.di
 
+import java.util.concurrent.ConcurrentHashMap
+
 operator fun SdkContainer?.plus(other: SdkContainer?): SdkContainer? {
     if (this == null && other == null) return null
 
@@ -16,7 +18,7 @@ operator fun SdkContainer?.plus(other: SdkContainer?): SdkContainer? {
 }
 
 class SdkContainer {
-    var containers = mutableMapOf<String, DependencyContainer>()
+    var containers = ConcurrentHashMap<String, DependencyContainer>()
 
     inline fun <reified T : DependencyContainer> registerContainer(container: T) {
         containers[T::class.java.name] = container.apply { registerInitialDependencies() }

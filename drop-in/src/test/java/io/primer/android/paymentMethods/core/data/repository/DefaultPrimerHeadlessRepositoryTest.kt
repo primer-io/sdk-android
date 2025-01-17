@@ -98,7 +98,6 @@ class DefaultPrimerHeadlessRepositoryTest {
             every { config.settings.uiOptions.isSuccessScreenEnabled } returns true
             val listenerSlot = slot<PrimerHeadlessUniversalCheckoutListener>()
             every { headlessUniversalCheckout.setCheckoutListener(capture(listenerSlot)) } just Runs
-            every { headlessUniversalCheckout.cleanup() } just Runs
 
             repository.handleManualFlowSuccess(checkoutAdditionalInfo)
             val event = repository.events.first()
@@ -112,7 +111,6 @@ class DefaultPrimerHeadlessRepositoryTest {
             verify {
                 config.settings
                 config.intent
-                headlessUniversalCheckout.cleanup()
             }
             verify(exactly = 0) {
                 primerCheckoutListener.onCheckoutCompleted(any())
@@ -130,7 +128,6 @@ class DefaultPrimerHeadlessRepositoryTest {
             every { config.settings.uiOptions.isSuccessScreenEnabled } returns false
             val listenerSlot = slot<PrimerHeadlessUniversalCheckoutListener>()
             every { headlessUniversalCheckout.setCheckoutListener(capture(listenerSlot)) } just Runs
-            every { headlessUniversalCheckout.cleanup() } just Runs
 
             repository.handleManualFlowSuccess(mockk())
             val event = repository.events.first()
@@ -138,7 +135,6 @@ class DefaultPrimerHeadlessRepositoryTest {
             assertIs<PrimerEvent.Dismiss>(event)
             verify {
                 config.settings
-                headlessUniversalCheckout.cleanup()
             }
             verify(exactly = 0) {
                 config.intent
@@ -154,7 +150,6 @@ class DefaultPrimerHeadlessRepositoryTest {
             every { headlessUniversalCheckout.setCheckoutListener(capture(listenerSlot)) } answers {
                 listenerSlot.captured.onAvailablePaymentMethodsLoaded(paymentMethods)
             }
-            every { headlessUniversalCheckout.cleanup() } just Runs
 
             val event = repository.events.first()
 
@@ -180,7 +175,6 @@ class DefaultPrimerHeadlessRepositoryTest {
                 listenerSlot.captured.onCheckoutCompleted(checkoutData)
             }
             every { primerCheckoutListener.onCheckoutCompleted(any()) } just Runs
-            every { headlessUniversalCheckout.cleanup() } just Runs
 
             val event = repository.events.first()
 
@@ -191,7 +185,6 @@ class DefaultPrimerHeadlessRepositoryTest {
                 config.settings
                 config.intent
                 primerCheckoutListener.onCheckoutCompleted(checkoutData)
-                headlessUniversalCheckout.cleanup()
             }
         }
 
@@ -210,7 +203,6 @@ class DefaultPrimerHeadlessRepositoryTest {
                 listenerSlot.captured.onCheckoutCompleted(checkoutData)
             }
             every { primerCheckoutListener.onCheckoutCompleted(any()) } just Runs
-            every { headlessUniversalCheckout.cleanup() } just Runs
 
             val event = repository.events.first()
 
@@ -218,7 +210,6 @@ class DefaultPrimerHeadlessRepositoryTest {
             verify {
                 config.settings
                 primerCheckoutListener.onCheckoutCompleted(checkoutData)
-                headlessUniversalCheckout.cleanup()
             }
             verify(exactly = 0) {
                 config.intent
@@ -244,7 +235,6 @@ class DefaultPrimerHeadlessRepositoryTest {
             every { primerCheckoutListener.onFailed(any(), any(), capture(handlerSlot)) } answers {
                 handlerSlot.captured.showErrorMessage("This is an error")
             }
-            every { headlessUniversalCheckout.cleanup() } just Runs
 
             val event = repository.events.first()
 
@@ -254,7 +244,6 @@ class DefaultPrimerHeadlessRepositoryTest {
             verify {
                 intent.paymentMethodIntent
                 primerCheckoutListener.onFailed(error, checkoutData, handlerSlot.captured)
-                headlessUniversalCheckout.cleanup()
             }
         }
 
@@ -277,7 +266,6 @@ class DefaultPrimerHeadlessRepositoryTest {
             every { primerCheckoutListener.onFailed(any(), any(), capture(handlerSlot)) } answers {
                 handlerSlot.captured.showErrorMessage("This is an error")
             }
-            every { headlessUniversalCheckout.cleanup() } just Runs
 
             val event = repository.events.first()
 
@@ -287,7 +275,6 @@ class DefaultPrimerHeadlessRepositoryTest {
             verify {
                 intent.paymentMethodIntent
                 primerCheckoutListener.onFailed(error, checkoutData, handlerSlot.captured)
-                headlessUniversalCheckout.cleanup()
             }
         }
 
@@ -310,7 +297,6 @@ class DefaultPrimerHeadlessRepositoryTest {
             every { primerCheckoutListener.onFailed(any(), any(), capture(handlerSlot)) } answers {
                 handlerSlot.captured.showErrorMessage("This is an error")
             }
-            every { headlessUniversalCheckout.cleanup() } just Runs
 
             val event = repository.events.first()
 
@@ -320,7 +306,6 @@ class DefaultPrimerHeadlessRepositoryTest {
             verify {
                 intent.paymentMethodIntent
                 primerCheckoutListener.onFailed(error, checkoutData, handlerSlot.captured)
-                headlessUniversalCheckout.cleanup()
             }
         }
 
@@ -338,14 +323,12 @@ class DefaultPrimerHeadlessRepositoryTest {
             every { primerCheckoutListener.onFailed(any(), any(), capture(handlerSlot)) } answers {
                 handlerSlot.captured.showErrorMessage("This is an error")
             }
-            every { headlessUniversalCheckout.cleanup() } just Runs
 
             val event = repository.events.first()
 
             assertIs<PrimerEvent.Dismiss>(event)
             verify {
                 primerCheckoutListener.onFailed(error, checkoutData, handlerSlot.captured)
-                headlessUniversalCheckout.cleanup()
             }
             verify(exactly = 0) {
                 config.intent.paymentMethodIntent
@@ -370,7 +353,6 @@ class DefaultPrimerHeadlessRepositoryTest {
             every { primerCheckoutListener.onFailed(any(), capture(handlerSlot)) } answers {
                 handlerSlot.captured.showErrorMessage("This is an error")
             }
-            every { headlessUniversalCheckout.cleanup() } just Runs
 
             val event = repository.events.first()
 
@@ -380,7 +362,6 @@ class DefaultPrimerHeadlessRepositoryTest {
             verify {
                 intent.paymentMethodIntent
                 primerCheckoutListener.onFailed(error, handlerSlot.captured)
-                headlessUniversalCheckout.cleanup()
             }
         }
 
@@ -402,7 +383,6 @@ class DefaultPrimerHeadlessRepositoryTest {
             every { primerCheckoutListener.onFailed(any(), capture(handlerSlot)) } answers {
                 handlerSlot.captured.showErrorMessage("This is an error")
             }
-            every { headlessUniversalCheckout.cleanup() } just Runs
 
             val event = repository.events.first()
 
@@ -412,7 +392,6 @@ class DefaultPrimerHeadlessRepositoryTest {
             verify {
                 intent.paymentMethodIntent
                 primerCheckoutListener.onFailed(error, handlerSlot.captured)
-                headlessUniversalCheckout.cleanup()
             }
         }
 
@@ -434,7 +413,6 @@ class DefaultPrimerHeadlessRepositoryTest {
             every { primerCheckoutListener.onFailed(any(), capture(handlerSlot)) } answers {
                 handlerSlot.captured.showErrorMessage("This is an error")
             }
-            every { headlessUniversalCheckout.cleanup() } just Runs
 
             val event = repository.events.first()
 
@@ -444,7 +422,6 @@ class DefaultPrimerHeadlessRepositoryTest {
             verify {
                 intent.paymentMethodIntent
                 primerCheckoutListener.onFailed(error, handlerSlot.captured)
-                headlessUniversalCheckout.cleanup()
             }
         }
 
@@ -461,14 +438,12 @@ class DefaultPrimerHeadlessRepositoryTest {
             every { primerCheckoutListener.onFailed(any(), capture(handlerSlot)) } answers {
                 handlerSlot.captured.showErrorMessage("This is an error")
             }
-            every { headlessUniversalCheckout.cleanup() } just Runs
 
             val event = repository.events.first()
 
             assertIs<PrimerEvent.Dismiss>(event)
             verify {
                 primerCheckoutListener.onFailed(error, handlerSlot.captured)
-                headlessUniversalCheckout.cleanup()
             }
             verify(exactly = 0) {
                 config.intent.paymentMethodIntent
@@ -488,7 +463,6 @@ class DefaultPrimerHeadlessRepositoryTest {
                 listenerSlot.captured.onTokenizeSuccess(paymentMethodTokenData, decisionHandler)
             }
             every { primerCheckoutListener.onTokenizeSuccess(any(), any()) } just Runs
-            every { headlessUniversalCheckout.cleanup() } just Runs
 
             runCatching {
                 withTimeout(1.seconds) {
@@ -499,7 +473,6 @@ class DefaultPrimerHeadlessRepositoryTest {
             val slot = slot<PrimerResumeDecisionHandler>()
             verify {
                 primerCheckoutListener.onTokenizeSuccess(paymentMethodTokenData, capture(slot))
-                headlessUniversalCheckout.cleanup()
             }
             slot.captured.continueWithNewClientToken("token")
             verify {
@@ -523,7 +496,6 @@ class DefaultPrimerHeadlessRepositoryTest {
                 listenerSlot.captured.onTokenizeSuccess(paymentMethodTokenData, decisionHandler)
             }
             every { primerCheckoutListener.onTokenizeSuccess(any(), any()) } just Runs
-            every { headlessUniversalCheckout.cleanup() } just Runs
 
             val events = mutableListOf<PrimerEvent>()
             val collectJob =
@@ -569,7 +541,6 @@ class DefaultPrimerHeadlessRepositoryTest {
                 listenerSlot.captured.onTokenizeSuccess(paymentMethodTokenData, decisionHandler)
             }
             every { primerCheckoutListener.onTokenizeSuccess(any(), any()) } just Runs
-            every { headlessUniversalCheckout.cleanup() } just Runs
 
             val events = mutableListOf<PrimerEvent>()
             val collectJob =
@@ -616,7 +587,6 @@ class DefaultPrimerHeadlessRepositoryTest {
                 listenerSlot.captured.onTokenizeSuccess(paymentMethodTokenData, decisionHandler)
             }
             every { primerCheckoutListener.onTokenizeSuccess(any(), any()) } just Runs
-            every { headlessUniversalCheckout.cleanup() } just Runs
 
             val events = mutableListOf<PrimerEvent>()
             val collectJob =
@@ -663,7 +633,6 @@ class DefaultPrimerHeadlessRepositoryTest {
                 listenerSlot.captured.onTokenizeSuccess(paymentMethodTokenData, decisionHandler)
             }
             every { primerCheckoutListener.onTokenizeSuccess(any(), any()) } just Runs
-            every { headlessUniversalCheckout.cleanup() } just Runs
 
             val events = mutableListOf<PrimerEvent>()
             val collectJob =
@@ -706,7 +675,6 @@ class DefaultPrimerHeadlessRepositoryTest {
                 listenerSlot.captured.onCheckoutResume(resumeToken, decisionHandler)
             }
             every { primerCheckoutListener.onResumeSuccess(any(), any()) } just Runs
-            every { headlessUniversalCheckout.cleanup() } just Runs
 
             runCatching {
                 withTimeout(1.seconds) {
@@ -717,7 +685,6 @@ class DefaultPrimerHeadlessRepositoryTest {
             val slot = slot<PrimerResumeDecisionHandler>()
             verify {
                 primerCheckoutListener.onResumeSuccess(resumeToken, capture(slot))
-                headlessUniversalCheckout.cleanup()
             }
             slot.captured.continueWithNewClientToken("token")
             verify {
@@ -741,7 +708,6 @@ class DefaultPrimerHeadlessRepositoryTest {
                 listenerSlot.captured.onCheckoutResume(resumeToken, decisionHandler)
             }
             every { primerCheckoutListener.onResumeSuccess(any(), any()) } just Runs
-            every { headlessUniversalCheckout.cleanup() } just Runs
 
             val events = mutableListOf<PrimerEvent>()
             val collectJob =
@@ -787,7 +753,6 @@ class DefaultPrimerHeadlessRepositoryTest {
                 listenerSlot.captured.onCheckoutResume(resumeToken, decisionHandler)
             }
             every { primerCheckoutListener.onResumeSuccess(any(), any()) } just Runs
-            every { headlessUniversalCheckout.cleanup() } just Runs
 
             val events = mutableListOf<PrimerEvent>()
             val collectJob =
@@ -834,7 +799,6 @@ class DefaultPrimerHeadlessRepositoryTest {
                 listenerSlot.captured.onCheckoutResume(resumeToken, decisionHandler)
             }
             every { primerCheckoutListener.onResumeSuccess(any(), any()) } just Runs
-            every { headlessUniversalCheckout.cleanup() } just Runs
 
             val events = mutableListOf<PrimerEvent>()
             val collectJob =
@@ -881,7 +845,6 @@ class DefaultPrimerHeadlessRepositoryTest {
                 listenerSlot.captured.onCheckoutResume(resumeToken, decisionHandler)
             }
             every { primerCheckoutListener.onResumeSuccess(any(), any()) } just Runs
-            every { headlessUniversalCheckout.cleanup() } just Runs
 
             val events = mutableListOf<PrimerEvent>()
             val collectJob =
@@ -921,7 +884,6 @@ class DefaultPrimerHeadlessRepositoryTest {
                 listenerSlot.captured.onBeforePaymentCreated(paymentMethodData, decisionHandler)
             }
             every { primerCheckoutListener.onBeforePaymentCreated(any(), any()) } just Runs
-            every { headlessUniversalCheckout.cleanup() } just Runs
 
             runCatching {
                 withTimeout(1.seconds) {
@@ -931,7 +893,6 @@ class DefaultPrimerHeadlessRepositoryTest {
 
             verify {
                 primerCheckoutListener.onBeforePaymentCreated(paymentMethodData, decisionHandler)
-                headlessUniversalCheckout.cleanup()
             }
         }
 
@@ -943,7 +904,6 @@ class DefaultPrimerHeadlessRepositoryTest {
                 listenerSlot.captured.onBeforeClientSessionUpdated()
             }
             every { primerCheckoutListener.onBeforeClientSessionUpdated() } just Runs
-            every { headlessUniversalCheckout.cleanup() } just Runs
 
             runCatching {
                 withTimeout(1.seconds) {
@@ -953,7 +913,6 @@ class DefaultPrimerHeadlessRepositoryTest {
 
             verify {
                 primerCheckoutListener.onBeforeClientSessionUpdated()
-                headlessUniversalCheckout.cleanup()
             }
         }
 
@@ -966,7 +925,6 @@ class DefaultPrimerHeadlessRepositoryTest {
                 listenerSlot.captured.onClientSessionUpdated(clientSession)
             }
             every { primerCheckoutListener.onClientSessionUpdated(any()) } just Runs
-            every { headlessUniversalCheckout.cleanup() } just Runs
 
             runCatching {
                 withTimeout(1.seconds) {
@@ -976,7 +934,6 @@ class DefaultPrimerHeadlessRepositoryTest {
 
             verify {
                 primerCheckoutListener.onClientSessionUpdated(clientSession)
-                headlessUniversalCheckout.cleanup()
             }
         }
 
@@ -989,7 +946,6 @@ class DefaultPrimerHeadlessRepositoryTest {
                 listenerSlot.captured.onResumePending(additionalInfo)
             }
             every { primerCheckoutListener.onResumePending(any()) } just Runs
-            every { headlessUniversalCheckout.cleanup() } just Runs
 
             runCatching {
                 withTimeout(1.seconds) {
@@ -999,7 +955,6 @@ class DefaultPrimerHeadlessRepositoryTest {
 
             verify {
                 primerCheckoutListener.onResumePending(additionalInfo)
-                headlessUniversalCheckout.cleanup()
             }
         }
 
@@ -1012,7 +967,6 @@ class DefaultPrimerHeadlessRepositoryTest {
                 listenerSlot.captured.onCheckoutAdditionalInfoReceived(additionalInfo)
             }
             every { primerCheckoutListener.onAdditionalInfoReceived(any()) } just Runs
-            every { headlessUniversalCheckout.cleanup() } just Runs
 
             runCatching {
                 withTimeout(1.seconds) {
@@ -1022,6 +976,17 @@ class DefaultPrimerHeadlessRepositoryTest {
 
             verify {
                 primerCheckoutListener.onAdditionalInfoReceived(additionalInfo)
+            }
+        }
+
+    @Test
+    fun `calling cleanup should cleanup PrimerHeadlessUniversalCheckout`() =
+        runTest {
+            every { headlessUniversalCheckout.cleanup() } just Runs
+
+            repository.cleanup()
+
+            verify {
                 headlessUniversalCheckout.cleanup()
             }
         }

@@ -23,6 +23,7 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
+import java.util.concurrent.ConcurrentHashMap
 
 @ExtendWith(MockKExtension::class)
 class DefaultPaymentResumeHandlerTest {
@@ -52,7 +53,8 @@ class DefaultPaymentResumeHandlerTest {
                         container.registerFactory<PostResumeHandler> { postResumeHandler }
                     }
 
-                every { sdkContainer.containers }.returns(mutableMapOf(cont::class.simpleName.orEmpty() to cont))
+                every { sdkContainer.containers }
+                    .returns(ConcurrentHashMap(mutableMapOf(cont::class.simpleName.orEmpty() to cont)))
             }
 
         defaultPaymentResumeHandler = DefaultPaymentResumeHandler(config)

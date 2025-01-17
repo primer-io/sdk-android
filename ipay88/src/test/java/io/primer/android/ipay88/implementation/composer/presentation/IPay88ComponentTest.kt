@@ -42,6 +42,7 @@ import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
+import java.util.concurrent.ConcurrentHashMap
 import kotlin.test.assertTrue
 import kotlin.time.Duration.Companion.seconds
 
@@ -67,7 +68,8 @@ class IPay88ComponentTest {
                             }
                         }
                     }
-                every { sdkContainer.containers }.returns(mutableMapOf(cont::class.simpleName.orEmpty() to cont))
+                every { sdkContainer.containers }
+                    .returns(ConcurrentHashMap(mutableMapOf(cont::class.simpleName.orEmpty() to cont)))
             }
         component = IPay88Component(tokenizationDelegate, pollingInteractor, paymentDelegate, mockConfigurationDelegate)
         coEvery { paymentDelegate.uiEvent } returns MutableSharedFlow()

@@ -1,6 +1,9 @@
 package io.primer.android.core.di
 
+import org.junit.jupiter.api.RepeatedTest
+import org.junit.jupiter.api.RepetitionInfo
 import org.junit.jupiter.api.Test
+import kotlin.concurrent.thread
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
@@ -66,6 +69,63 @@ internal class SdkContainerTest {
         } catch (e: Exception) {
             thenUnregisteredTypeErrorIsThrown(e, expectedMessage)
         }
+    }
+
+    @RepeatedTest(100)
+    fun `should handle concurrent register and resolve calls safely`(repetitionInfo: RepetitionInfo) {
+        val numberOfRepetitions = repetitionInfo.currentRepetition * 20
+        // Register initial dependencies
+        val mockContainer =
+            MockContainer().apply {
+                repeat(numberOfRepetitions) { i ->
+                    registerFactory("dependency$i") { MockDependency() }
+                }
+            }
+
+        // Create the container and register an initial dependency
+        whenMockContainerIsRegistered(mockContainer)
+
+        val threads = mutableListOf<Thread>()
+        val exceptionList = mutableListOf<Exception?>()
+        val resolvedDependencies = mutableListOf<MockDependency?>()
+
+        threads +=
+            thread {
+                repeat(numberOfRepetitions) { i ->
+                    try {
+                        sdkContainer.registerContainer(
+                            i.toString(),
+                            MockContainer().apply {
+                                registerFactory("dependency-1$i") { MockDependency() }
+                            },
+                        )
+                    } catch (e: Exception) {
+                        exceptionList.add(e)
+                    }
+                }
+            }
+
+        threads +=
+            thread {
+                repeat(numberOfRepetitions) { i ->
+                    try {
+                        // Resolve initial dependencies while other ones are registered
+                        val resolvedDependency = sdkContainer.resolve<MockDependency>("dependency$i")
+                        resolvedDependencies.add(resolvedDependency)
+                    } catch (e: Exception) {
+                        exceptionList.add(e)
+                    }
+                }
+            }
+
+        threads.forEach { it.join() }
+
+        // Assert no exceptions were thrown
+        assertTrue(exceptionList.isEmpty(), "Concurrent modification exceptions were thrown: $exceptionList")
+
+        // Assert that some dependencies were resolved successfully
+        assertTrue(resolvedDependencies.isNotEmpty(), "No dependencies were resolved successfully.")
+        assertTrue(resolvedDependencies.size == numberOfRepetitions, "Some resolved dependencies were null.")
     }
 
     private fun whenMockContainerIsRegistered(container: MockContainer) {

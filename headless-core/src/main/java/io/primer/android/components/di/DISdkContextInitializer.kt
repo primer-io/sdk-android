@@ -18,8 +18,6 @@ import io.primer.android.vault.di.VaultManagerContainer
 import io.primer.paymentMethodCoreUi.core.ui.mock.di.PaymentMethodsMockContainer
 
 object DISdkContextInitializer : DISdkComponent {
-    private var previousHeadlessSdkContainer: SdkContainer? = null
-
     fun initHeadless(
         config: PrimerConfig,
         context: Context,
@@ -43,20 +41,6 @@ object DISdkContextInitializer : DISdkComponent {
             DISdkContext.dropInSdkContainer?.clear()
             DISdkContext.dropInSdkContainer = container
         }
-    }
-
-    // region Utils
-    fun saveHeadless() {
-        previousHeadlessSdkContainer = DISdkContext.headlessSdkContainer
-    }
-
-    fun restoreHeadless() {
-        DISdkContext.headlessSdkContainer = previousHeadlessSdkContainer
-        previousHeadlessSdkContainer = null
-    }
-
-    fun unassignHeadless() {
-        DISdkContext.headlessSdkContainer = null
     }
 
     fun clearHeadless() {

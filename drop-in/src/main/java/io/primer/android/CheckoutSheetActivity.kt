@@ -309,7 +309,9 @@ internal class CheckoutSheetActivity : BaseCheckoutActivity(), AchMandateActionH
         if (!exited) {
             addTimerDurationEvent(TimerType.END)
             exited = true
-            checkoutExitHandler.handle()
+            val exitHandler = checkoutExitHandler
+            primerViewModel.cleanup()
+            exitHandler.handle()
             finish()
         }
     }

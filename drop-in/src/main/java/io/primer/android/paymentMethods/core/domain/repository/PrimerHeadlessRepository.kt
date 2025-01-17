@@ -9,5 +9,7 @@ internal interface PrimerHeadlessRepository {
 
     fun start(clientToken: String)
 
+    fun cleanup()
+
     suspend fun handleManualFlowSuccess(additionalInfo: PrimerCheckoutAdditionalInfo?)
 }

@@ -27,6 +27,7 @@ import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import java.util.concurrent.ConcurrentHashMap
 
 class PrimerHeadlessUniversalCheckoutComponentWithRedirectManagerTest {
     private lateinit var viewModelStoreOwner: ViewModelStoreOwner
@@ -51,7 +52,8 @@ class PrimerHeadlessUniversalCheckoutComponentWithRedirectManagerTest {
                         container.registerFactory<Context> { context }
                     }
 
-                every { sdkContainer.containers }.returns(mutableMapOf(cont::class.simpleName.orEmpty() to cont))
+                every { sdkContainer.containers }
+                    .returns(ConcurrentHashMap(mutableMapOf(cont::class.simpleName.orEmpty() to cont)))
             }
     }
 
