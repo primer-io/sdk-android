@@ -1,3 +1,18 @@
+## 2.34.0 (2025-01-17)
+
+### Feat
+
+- co-badged cards support for drop-in (#802)
+
+### Fix
+
+- fixed expiry date formatting and validation (#824)
+- improve expiry date validity check (#817)
+
+### Refactor
+
+- improve analytics data resolution (#826)
+
 ## 2.33.1 (2024-12-20)
 
 ### Fix
