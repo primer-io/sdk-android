@@ -3,7 +3,7 @@ package io.primer.android.ui.fragments.country
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import io.primer.android.configuration.data.model.CountryCode
-import io.primer.android.databinding.ItemCountrySelectBinding
+import io.primer.android.databinding.PrimerItemCountrySelectBinding
 import io.primer.android.ui.base.recyclerview.BaseAdapterItem
 import io.primer.android.ui.base.recyclerview.BaseRecyclerViewAdapter
 import io.primer.android.ui.base.recyclerview.BaseViewHolder
@@ -17,7 +17,7 @@ internal data class CountryCodeItem(
 }
 
 internal class CountryItemViewHolder(
-    private val binding: ItemCountrySelectBinding,
+    private val binding: PrimerItemCountrySelectBinding,
     private val theme: PrimerTheme,
     private val onItemSelect: (CountryCode) -> Unit,
 ) : BaseViewHolder<CountryCodeItem>(binding.root) {
@@ -42,7 +42,7 @@ internal class CountriesSelectionAdapter(
         viewType: Int,
     ): BaseViewHolder<CountryCodeItem> {
         val binding =
-            ItemCountrySelectBinding
+            PrimerItemCountrySelectBinding
                 .inflate(LayoutInflater.from(parent.context), parent, false)
         return CountryItemViewHolder(binding, theme, onItemSelect)
     }

@@ -16,13 +16,14 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import io.primer.android.R
 import io.primer.android.configuration.data.model.CountryCode
 import io.primer.android.core.di.extensions.viewModel
-import io.primer.android.databinding.FragmentSelectCountryBinding
+import io.primer.android.databinding.PrimerFragmentSelectCountryBinding
 import io.primer.android.ui.FieldFocuser
 import io.primer.android.ui.extensions.autoCleaned
 import io.primer.android.ui.fragments.base.BaseFragment
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 internal abstract class BaseCountryChooserFragment : BaseFragment() {
-    protected var binding: FragmentSelectCountryBinding by autoCleaned()
+    protected var binding: PrimerFragmentSelectCountryBinding by autoCleaned()
 
     protected val viewModel: SelectCountryViewModel
         by viewModel<SelectCountryViewModel, SelectCountryViewModelFactory>()
@@ -34,7 +35,7 @@ internal abstract class BaseCountryChooserFragment : BaseFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View {
-        binding = FragmentSelectCountryBinding.inflate(inflater, container, false)
+        binding = PrimerFragmentSelectCountryBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -66,7 +67,7 @@ internal abstract class BaseCountryChooserFragment : BaseFragment() {
                     theme.isDarkMode,
                 ),
             )
-        binding.ivBack.imageTintList = imageColorStates
+        getToolbar()?.showOnlyTitle(R.string.country_select)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             TextViewCompat.setCompoundDrawableTintList(
                 binding.searchCountry,
@@ -102,7 +103,9 @@ internal abstract class BaseCountryChooserFragment : BaseFragment() {
     }
 
     private fun setupListeners() {
-        binding.ivBack.setOnClickListener { parentFragmentManager.popBackStack() }
+        getToolbar()?.getBackButton()?.setOnClickListener {
+            parentFragmentManager.popBackStack()
+        }
         binding.searchCountry.setTextColor(
             theme.input.text.defaultColor.getColor(
                 requireContext(),
@@ -124,6 +127,7 @@ internal abstract class BaseCountryChooserFragment : BaseFragment() {
         }
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     private fun setupObservers() {
         viewModel.countriesData.observe(viewLifecycleOwner) { countries ->
             adapter.items = countries

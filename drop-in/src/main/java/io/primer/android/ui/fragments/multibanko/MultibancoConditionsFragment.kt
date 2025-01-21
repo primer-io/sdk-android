@@ -1,35 +1,25 @@
 package io.primer.android.ui.fragments.multibanko
 
-import android.content.res.ColorStateList
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
-import androidx.fragment.app.Fragment
 import io.primer.android.PrimerSessionIntent
 import io.primer.android.R
 import io.primer.android.components.manager.nativeUi.PrimerHeadlessUniversalCheckoutNativeUiManager
 import io.primer.android.core.di.DISdkComponent
-import io.primer.android.core.di.extensions.inject
 import io.primer.android.core.extensions.getSerializableExtraCompat
-import io.primer.android.databinding.FragmentMultibancoConditionsBinding
-import io.primer.android.di.extension.activityViewModel
+import io.primer.android.databinding.PrimerFragmentMultibancoConditionsBinding
 import io.primer.android.ui.extensions.autoCleaned
-import io.primer.android.ui.settings.PrimerTheme
-import io.primer.android.viewmodel.PrimerViewModel
-import io.primer.android.viewmodel.PrimerViewModelFactory
+import io.primer.android.ui.fragments.base.BaseFragment
 import io.primer.android.viewmodel.ViewStatus
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 @OptIn(ExperimentalCoroutinesApi::class)
-internal class MultibancoConditionsFragment : Fragment(), DISdkComponent {
-    private val theme: PrimerTheme by inject()
-    private val primerViewModel: PrimerViewModel
-        by activityViewModel<PrimerViewModel, PrimerViewModelFactory>()
-
-    private var binding: FragmentMultibancoConditionsBinding by autoCleaned()
+internal class MultibancoConditionsFragment : BaseFragment(), DISdkComponent {
+    private var binding: PrimerFragmentMultibancoConditionsBinding by autoCleaned()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -37,7 +27,7 @@ internal class MultibancoConditionsFragment : Fragment(), DISdkComponent {
         savedInstanceState: Bundle?,
     ): View {
         binding =
-            FragmentMultibancoConditionsBinding.inflate(
+            PrimerFragmentMultibancoConditionsBinding.inflate(
                 inflater,
                 container,
                 false,
@@ -70,21 +60,13 @@ internal class MultibancoConditionsFragment : Fragment(), DISdkComponent {
         binding.tvPoint2Description.setTextColor(subtitleTextColor)
         binding.tvPoint3.setTextColor(subtitleTextColor)
         binding.tvPoint3Description.setTextColor(subtitleTextColor)
-        binding.ivPaymentMethodIcon.setImageResource(
+        getToolbar()?.showOnlyLogo(
             if (theme.isDarkMode == true) {
                 R.drawable.ic_logo_multibanco_dark
             } else {
                 R.drawable.ic_logo_multibanco_light
             },
         )
-        val imageColorStates =
-            ColorStateList.valueOf(
-                theme.titleText.defaultColor.getColor(
-                    requireContext(),
-                    theme.isDarkMode,
-                ),
-            )
-        binding.ivBack.imageTintList = imageColorStates
     }
 
     private fun setupListeners() {
@@ -103,7 +85,7 @@ internal class MultibancoConditionsFragment : Fragment(), DISdkComponent {
                 .also { primerViewModel.addCloseable { it.cleanup() } }
                 .also { it.showPaymentMethod(requireContext(), sessionIntent = sessionIntent) }
         }
-        binding.ivBack.setOnClickListener {
+        getToolbar()?.getBackButton()?.setOnClickListener {
             goOnSelectedPaymentMethod()
         }
     }

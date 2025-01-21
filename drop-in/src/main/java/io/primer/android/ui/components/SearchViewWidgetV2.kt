@@ -50,7 +50,7 @@ internal class SearchViewWidgetV2(
             setCompoundDrawablesWithIntrinsicBoundsTinted(
                 R.drawable.ic_search_gray,
                 0,
-                if (it.isNullOrBlank()) 0 else R.drawable.ic_search_clear,
+                if (it.isNullOrBlank()) 0 else R.drawable.ic_clear,
                 0,
                 theme.searchInput.text.defaultColor.getColor(context, theme.isDarkMode),
                 tintColorLeft = NO_COLOR,

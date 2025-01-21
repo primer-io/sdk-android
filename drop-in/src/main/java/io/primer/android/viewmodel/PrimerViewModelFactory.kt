@@ -23,7 +23,7 @@ import io.primer.android.surcharge.domain.SurchargeInteractor
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 @OptIn(ExperimentalCoroutinesApi::class)
-@Suppress("LongParameterList")
+@Suppress("LongParameterList", "UNCHECKED_CAST")
 internal class PrimerViewModelFactory(
     private val configurationInteractor: ConfigurationInteractor,
     private val paymentMethodsImplementationInteractor: PaymentMethodsImplementationInteractor,

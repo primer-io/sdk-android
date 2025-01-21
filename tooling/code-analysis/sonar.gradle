@@ -36,7 +36,7 @@ subprojects { subproject ->
                     '**/analytics/**/*',
                     '**/widgets/**/*',
                     '**/views/**/*',
-                    '**/drop-in/**/ui/**/*',
+                    '**/io/primer/android/ui/**/*',
                     '**/implementation/configuration/domain/*',
                     '**/implementation/tokenization/data/repository/*',
                     '**/data/datasource/*',

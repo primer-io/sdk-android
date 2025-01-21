@@ -6,43 +6,15 @@
     android:layout_height="wrap_content"
     tools:context=".ui.fragments.processorTest.ProcessorTestResultSelectorFragment">
 
-    <ImageView
-        android:id="@+id/iv_dummy_result_back"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:contentDescription="@string/go_back_description"
-        android:paddingTop="@dimen/large_vertical_margin"
-        android:paddingEnd="@dimen/large_vertical_margin"
-        android:paddingBottom="@dimen/large_vertical_margin"
-        android:src="@drawable/icon_go_back"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <ImageView
-        android:id="@+id/iv_payment_method_icon"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="58dp"
-        android:layout_marginEnd="58dp"
-        android:contentDescription="@string/payment_method_icon"
-        android:maxHeight="58dp"
-        android:scaleType="fitCenter"
-        app:layout_constraintBottom_toBottomOf="@+id/iv_dummy_result_back"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/iv_dummy_result_back"
-        tools:src="@drawable/ic_paypal_card" />
-
     <TextView
         android:id="@+id/tv_dummy_info"
         style="@style/Primer.Text.Small.Body"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
         android:text="@string/primer_test_header_description"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/iv_dummy_result_back"
+        app:layout_constraintTop_toTopOf="parent"
         tools:ignore="TextContrastCheck" />
 
     <RadioGroup

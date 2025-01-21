@@ -10,27 +10,14 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <TextView
-            android:id="@+id/choose_payment_method_label"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/roboto_medium"
-            android:text="@string/choose_payment_method"
-            android:textColor="@android:color/black"
-            android:textSize="20sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
         <io.primer.android.ui.SelectPaymentMethodTitle
             android:id="@+id/primer_sheet_title_layout"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/large_vertical_margin"
             android:orientation="horizontal"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/choose_payment_method_label">
+            app:layout_constraintTop_toTopOf="parent">
 
             <TextView
                 android:id="@+id/primer_sheet_title"
@@ -84,7 +71,7 @@
 
                 <include
                     android:id="@+id/saved_payment_method"
-                    layout="@layout/payment_method_item"
+                    layout="@layout/primer_payment_method_item"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="8dp" />

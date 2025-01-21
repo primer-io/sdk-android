@@ -7,9 +7,9 @@ import android.widget.ImageView
 import android.widget.TextView
 import io.primer.android.R
 import io.primer.android.components.utils.ImageLoader
-import io.primer.android.databinding.ItemBankSelectBinding
-import io.primer.android.databinding.ItemBankSelectDisabledBinding
-import io.primer.android.databinding.ItemBankSelectLoadingBinding
+import io.primer.android.databinding.PrimerItemBankSelectBinding
+import io.primer.android.databinding.PrimerItemBankSelectDisabledBinding
+import io.primer.android.databinding.PrimerItemBankSelectLoadingBinding
 import io.primer.android.ui.base.recyclerview.BaseAdapterItem
 import io.primer.android.ui.base.recyclerview.BaseRecyclerViewAdapter
 import io.primer.android.ui.base.recyclerview.BaseViewHolder
@@ -66,11 +66,11 @@ internal class BaseBankBinding(
     val root: View,
 )
 
-internal fun ItemBankSelectBinding.toBaseBankBinding() = BaseBankBinding(name, icon, root)
+internal fun PrimerItemBankSelectBinding.toBaseBankBinding() = BaseBankBinding(name, icon, root)
 
-internal fun ItemBankSelectDisabledBinding.toBaseBankBinding() = BaseBankBinding(name, icon, root)
+internal fun PrimerItemBankSelectDisabledBinding.toBaseBankBinding() = BaseBankBinding(name, icon, root)
 
-internal fun ItemBankSelectLoadingBinding.toBaseBankBinding() = BaseBankBinding(name, icon, root)
+internal fun PrimerItemBankSelectLoadingBinding.toBaseBankBinding() = BaseBankBinding(name, icon, root)
 
 internal open class BaseBankViewHolder(
     private val binding: BaseBankBinding,
@@ -101,7 +101,7 @@ internal open class BaseBankViewHolder(
 }
 
 internal class BankViewHolder(
-    private val binding: ItemBankSelectBinding,
+    private val binding: PrimerItemBankSelectBinding,
     imageLoader: ImageLoader,
     theme: PrimerTheme,
     private val listener: BankSelectionAdapterListener,
@@ -122,7 +122,7 @@ internal class BankViewHolder(
 }
 
 internal class BankViewDisabledHolder(
-    private val binding: ItemBankSelectDisabledBinding,
+    private val binding: PrimerItemBankSelectDisabledBinding,
     imageLoader: ImageLoader,
     theme: PrimerTheme,
 ) : BaseBankViewHolder(binding.toBaseBankBinding(), imageLoader, theme) {
@@ -139,7 +139,7 @@ internal class BankViewDisabledHolder(
 }
 
 internal class BankViewLoadingHolder(
-    private val binding: ItemBankSelectLoadingBinding,
+    private val binding: PrimerItemBankSelectLoadingBinding,
     imageLoader: ImageLoader,
     theme: PrimerTheme,
 ) : BaseBankViewHolder(binding.toBaseBankBinding(), imageLoader, theme) {
@@ -165,7 +165,7 @@ internal class BankSelectionAdapter(
     ) = when (viewType) {
         BankItemType.BANK_ITEM_ENABLED.ordinal ->
             BankViewHolder(
-                ItemBankSelectBinding.inflate(
+                PrimerItemBankSelectBinding.inflate(
                     LayoutInflater.from(parent.context),
                     parent,
                     false,
@@ -176,7 +176,7 @@ internal class BankSelectionAdapter(
             )
         BankItemType.BANK_ITEM_DISABLED.ordinal ->
             BankViewDisabledHolder(
-                ItemBankSelectDisabledBinding.inflate(
+                PrimerItemBankSelectDisabledBinding.inflate(
                     LayoutInflater.from(parent.context),
                     parent,
                     false,
@@ -186,7 +186,7 @@ internal class BankSelectionAdapter(
             )
         BankItemType.BANK_ITEM_LOADING.ordinal ->
             BankViewLoadingHolder(
-                ItemBankSelectLoadingBinding.inflate(
+                PrimerItemBankSelectLoadingBinding.inflate(
                     LayoutInflater.from(parent.context),
                     parent,
                     false,

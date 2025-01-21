@@ -1,14 +1,11 @@
 package io.primer.android.ui.fragments
 
 import android.app.AlertDialog
-import android.content.res.ColorStateList
 import android.os.Bundle
-import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
-import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.DividerItemDecoration
 import io.primer.android.R
 import io.primer.android.analytics.data.models.AnalyticsAction
@@ -19,9 +16,7 @@ import io.primer.android.analytics.domain.models.PaymentInstrumentIdContextParam
 import io.primer.android.analytics.domain.models.UIAnalyticsParams
 import io.primer.android.configuration.data.model.CardNetwork
 import io.primer.android.core.di.DISdkComponent
-import io.primer.android.core.di.extensions.inject
-import io.primer.android.databinding.FragmentVaultedPaymentMethodsBinding
-import io.primer.android.di.extension.activityViewModel
+import io.primer.android.databinding.PrimerFragmentVaultedPaymentMethodsBinding
 import io.primer.android.domain.tokenization.models.PrimerVaultedPaymentMethod
 import io.primer.android.paymentmethods.common.data.model.PaymentMethodType
 import io.primer.android.ui.AlternativePaymentMethodData
@@ -32,9 +27,7 @@ import io.primer.android.ui.PaymentMethodItemData
 import io.primer.android.ui.VaultViewAction
 import io.primer.android.ui.VaultedPaymentMethodRecyclerAdapter
 import io.primer.android.ui.extensions.autoCleaned
-import io.primer.android.ui.settings.PrimerTheme
-import io.primer.android.viewmodel.PrimerViewModel
-import io.primer.android.viewmodel.PrimerViewModelFactory
+import io.primer.android.ui.fragments.base.BaseFragment
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 const val DEFAULT_LAST_FOUR: Int = 1234
@@ -42,14 +35,12 @@ const val DEFAULT_MONTH: Int = 1
 const val DEFAULT_YEAR: Int = 2021
 
 @ExperimentalCoroutinesApi
-class VaultedPaymentMethodsFragment : Fragment(), DISdkComponent {
-    private val theme: PrimerTheme by inject()
-    private var binding: FragmentVaultedPaymentMethodsBinding by autoCleaned()
-
-    private val viewModel: PrimerViewModel by
-        activityViewModel<PrimerViewModel, PrimerViewModelFactory>()
+internal class VaultedPaymentMethodsFragment : BaseFragment(), DISdkComponent {
+    private var binding: PrimerFragmentVaultedPaymentMethodsBinding by autoCleaned()
 
     private var paymentMethods: List<PrimerVaultedPaymentMethod> = listOf()
+
+    private var originalListener: View.OnClickListener? = null
 
     private var isEditing = false
         private set(value) {
@@ -58,15 +49,15 @@ class VaultedPaymentMethodsFragment : Fragment(), DISdkComponent {
             adapter.isEditing = isEditing
             adapter.notifyDataSetChanged()
 
-            binding.vaultTitleLabel.text =
+            getToolbar()?.showOnlyTitle(
                 if (isEditing) {
-                    getString(R.string.edit_saved_payment_methods)
+                    R.string.edit_saved_payment_methods
                 } else {
-                    getString(R.string.other_ways_to_pay)
-                }
+                    R.string.other_ways_to_pay
+                },
+            )
 
-            binding.editVaultedPaymentMethods.text =
-                if (isEditing) getString(R.string.cancel) else getString(R.string.edit)
+            getToolbar()?.getCloseButton()?.setImageResource(if (isEditing) R.drawable.ic_check else R.drawable.ic_edit)
         }
 
     private val adapter: VaultedPaymentMethodRecyclerAdapter by autoCleaned {
@@ -80,7 +71,7 @@ class VaultedPaymentMethodsFragment : Fragment(), DISdkComponent {
         }
         binding.vaultRecyclerView.addItemDecoration(itemDecorator)
         adapter.itemData = paymentMethods
-        adapter.selectedPaymentMethodId = viewModel.getSelectedPaymentMethodId()
+        adapter.selectedPaymentMethodId = primerViewModel.getSelectedPaymentMethodId()
         binding.vaultRecyclerView.adapter = adapter
     }
 
@@ -148,7 +139,7 @@ class VaultedPaymentMethodsFragment : Fragment(), DISdkComponent {
         container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View {
-        binding = FragmentVaultedPaymentMethodsBinding.inflate(inflater, container, false)
+        binding = PrimerFragmentVaultedPaymentMethodsBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -159,7 +150,7 @@ class VaultedPaymentMethodsFragment : Fragment(), DISdkComponent {
         when (action) {
             VaultViewAction.SELECT -> {
                 logSelectedPaymentMethodId(id)
-                viewModel.setSelectedPaymentMethodId(id)
+                primerViewModel.setSelectedPaymentMethodId(id)
             }
 
             VaultViewAction.DELETE -> {
@@ -183,7 +174,7 @@ class VaultedPaymentMethodsFragment : Fragment(), DISdkComponent {
                         dialog.dismiss()
                     } else {
                         logDeletePaymentMethodDialogAction(id, ObjectId.DELETE)
-                        viewModel.deletePaymentMethodToken(paymentMethod = methodToBeDeleted)
+                        primerViewModel.deletePaymentMethodToken(paymentMethod = methodToBeDeleted)
                     }
                 }
                 .setNegativeButton(getString(R.string.cancel)) { dialog, _ ->
@@ -198,20 +189,12 @@ class VaultedPaymentMethodsFragment : Fragment(), DISdkComponent {
         savedInstanceState: Bundle?,
     ) {
         super.onViewCreated(view, savedInstanceState)
-        binding.vaultTitleLabel.setTextColor(
-            theme.titleText.defaultColor.getColor(
-                requireContext(),
-                theme.isDarkMode,
-            ),
-        )
 
-        renderEditLabel()
-
-        viewModel.vaultedPaymentMethods.observe(viewLifecycleOwner) { data ->
+        primerViewModel.vaultedPaymentMethods.observe(viewLifecycleOwner) { data ->
 
             // return to checkout view if no saved payment methods
             if (data.isEmpty()) {
-                viewModel.goToSelectPaymentMethodsView()
+                primerViewModel.goToSelectPaymentMethodsView()
             }
 
             paymentMethods = data
@@ -219,34 +202,37 @@ class VaultedPaymentMethodsFragment : Fragment(), DISdkComponent {
             configureRecyclerView(generateItemDataFromPaymentMethods(paymentMethods))
         }
 
-        binding.vaultedPaymentMethodsGoBack.setOnClickListener {
-            viewModel.goToSelectPaymentMethodsView()
-        }
-        binding.vaultedPaymentMethodsGoBack.imageTintList =
-            ColorStateList.valueOf(
-                theme.titleText.defaultColor.getColor(requireContext(), theme.isDarkMode),
-            )
-        binding.editVaultedPaymentMethods.setOnClickListener {
-            isEditing = !isEditing
+        setupToolbar()
+    }
+
+    private fun setupToolbar() {
+        getToolbar()?.apply {
+            showOnlyTitle(R.string.other_ways_to_pay)
+            originalListener = getCloseButton().tag as? View.OnClickListener
+            getCloseButton().apply {
+                setImageResource(R.drawable.ic_edit)
+                setOnClickListener { isEditing = !isEditing }
+            }
+            getBackButton().setOnClickListener {
+                primerViewModel.goToSelectPaymentMethodsView()
+            }
         }
     }
 
-    private fun renderEditLabel() =
-        binding.editVaultedPaymentMethods.apply {
-            setTextColor(
-                theme.systemText.defaultColor.getColor(
-                    requireContext(),
-                    theme.isDarkMode,
-                ),
-            )
-            setTextSize(
-                TypedValue.COMPLEX_UNIT_PX,
-                theme.systemText.fontSize.getDimension(requireContext()),
-            )
+    override fun onDestroyView() {
+        super.onDestroyView()
+        getToolbar()?.getCloseButton()?.apply {
+            originalListener?.let {
+                setImageResource(R.drawable.ic_clear)
+                setOnClickListener(it)
+            } ?: run {
+                visibility = View.INVISIBLE
+            }
         }
+    }
 
     private fun logSelectedPaymentMethodId(id: String) =
-        viewModel.addAnalyticsEvent(
+        primerViewModel.addAnalyticsEvent(
             UIAnalyticsParams(
                 AnalyticsAction.CLICK,
                 ObjectType.LIST_ITEM,
@@ -259,7 +245,7 @@ class VaultedPaymentMethodsFragment : Fragment(), DISdkComponent {
     private fun logDeletePaymentMethodDialogAction(
         id: String,
         objectId: ObjectId,
-    ) = viewModel.addAnalyticsEvent(
+    ) = primerViewModel.addAnalyticsEvent(
         UIAnalyticsParams(
             AnalyticsAction.CLICK,
             ObjectType.ALERT,

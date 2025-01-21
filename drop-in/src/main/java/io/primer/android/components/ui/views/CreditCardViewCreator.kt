@@ -12,7 +12,7 @@ import androidx.core.text.TextUtilsCompat
 import io.primer.android.PrimerSessionIntent
 import io.primer.android.R
 import io.primer.android.data.settings.internal.PrimerConfig
-import io.primer.android.databinding.PaymentMethodButtonCardBinding
+import io.primer.android.databinding.PrimerPaymentMethodButtonCardBinding
 import io.primer.android.payment.utils.ButtonViewHelper
 import java.util.Locale
 
@@ -24,7 +24,7 @@ internal class CreditCardViewCreator(
         container: ViewGroup?,
     ): View {
         val binding =
-            PaymentMethodButtonCardBinding.inflate(
+            PrimerPaymentMethodButtonCardBinding.inflate(
                 LayoutInflater.from(context),
                 container,
                 false,

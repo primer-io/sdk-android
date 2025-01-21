@@ -25,7 +25,7 @@ internal class CountriesDataRepository(private val context: Context) :
     private suspend fun loadCountries(fromCache: Boolean = false) {
         if (!fromCache || countries.isEmpty()) {
             val dataJson =
-                context.resources?.openRawResource(R.raw.codes_countries)
+                context.resources?.openRawResource(R.raw.primer_codes_countries)
                     ?.readBytes()
                     ?.decodeToString().orEmpty()
             if (dataJson.isNotBlank()) {
@@ -70,7 +70,7 @@ internal class CountriesDataRepository(private val context: Context) :
     private fun loadPhoneCodes(fromCache: Boolean = false) {
         if (!fromCache || phoneCodes.isEmpty()) {
             val dataJson =
-                context.resources?.openRawResource(R.raw.phone_number_country_codes)
+                context.resources?.openRawResource(R.raw.primer_phone_number_country_codes)
                     ?.readBytes()
                     ?.decodeToString().orEmpty()
             if (dataJson.isNotBlank()) {

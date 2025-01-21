@@ -22,7 +22,7 @@ import io.primer.android.core.di.extensions.inject
 import io.primer.android.data.payments.forms.models.FormType
 import io.primer.android.data.payments.forms.models.helper.DialCodeCountryPrefix
 import io.primer.android.data.settings.internal.PrimerConfig
-import io.primer.android.databinding.FragmentDynamicFormBinding
+import io.primer.android.databinding.PrimerFragmentDynamicFormBinding
 import io.primer.android.domain.payments.forms.models.Form
 import io.primer.android.domain.payments.forms.models.FormInput
 import io.primer.android.otp.PrimerOtpData
@@ -40,7 +40,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 internal class DynamicFormFragment : BaseFormFragment(), PrimerHeadlessUniversalCheckoutRawDataManagerListener {
     private val localConfig: PrimerConfig by inject()
 
-    private var binding: FragmentDynamicFormBinding by autoCleaned()
+    private var binding: PrimerFragmentDynamicFormBinding by autoCleaned()
     private lateinit var rawDataManager: PrimerHeadlessUniversalCheckoutRawDataManagerInterface
     override val baseFormBinding: BaseFormBinding by autoCleaned { binding.toBaseFormBinding() }
 
@@ -52,7 +52,7 @@ internal class DynamicFormFragment : BaseFormFragment(), PrimerHeadlessUniversal
         container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View {
-        binding = FragmentDynamicFormBinding.inflate(inflater, container, false)
+        binding = PrimerFragmentDynamicFormBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -89,9 +89,8 @@ internal class DynamicFormFragment : BaseFormFragment(), PrimerHeadlessUniversal
             form.inputs?.map { formData ->
                 val childView =
                     LayoutInflater.from(requireContext())
-                        .inflate(R.layout.payment_method_dynamic_input, parentLayout, false)
+                        .inflate(R.layout.primer_payment_method_dynamic_input, parentLayout, false)
                         as TextInputWidget
-
                 handleFormInputPrefix(childView, formData)
 
                 childView

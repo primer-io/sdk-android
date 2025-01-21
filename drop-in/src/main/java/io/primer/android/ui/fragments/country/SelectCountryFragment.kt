@@ -3,12 +3,14 @@ package io.primer.android.ui.fragments.country
 import io.primer.android.R
 import io.primer.android.clientSessionActions.domain.models.PrimerCountry
 import io.primer.android.configuration.data.model.CountryCode
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 internal class SelectCountryFragment(
     private val onSelectCountry: ((PrimerCountry) -> Unit)? = null,
 ) : BaseCountryChooserFragment() {
     override val dataSourceType: CountryDataType = CountryDataType.NAME
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     override fun onSelectCountryCode(code: CountryCode) {
         viewModel.getCountryByCode(code) { country ->
             primerViewModel.setSelectedCountry(country)

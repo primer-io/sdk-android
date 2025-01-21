@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <ImageView
+        android:id="@+id/toolbar_back"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:contentDescription="@string/go_back_description"
+        android:paddingStart="@dimen/x_medium_vertical_margin"
+        android:paddingTop="@dimen/large_vertical_margin"
+        android:paddingEnd="@dimen/x_medium_vertical_margin"
+        android:paddingBottom="@dimen/large_vertical_margin"
+        android:src="@drawable/icon_go_back" />
+
+    <TextView
+        android:id="@+id/toolbar_title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_weight="1"
+        android:fontFamily="@font/roboto_regular"
+        android:lineSpacingExtra="2sp"
+        android:paddingStart="@dimen/x_medium_vertical_margin"
+        android:paddingTop="@dimen/large_vertical_margin"
+        android:paddingEnd="@dimen/x_medium_vertical_margin"
+        android:paddingBottom="@dimen/large_vertical_margin"
+        android:textColor="@color/primer_default_text"
+        android:textSize="@dimen/primer_text_size_md"
+        android:textStyle="bold" />
+
+    <ImageView
+        android:id="@+id/toolbar_logo"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_weight="1"
+        android:contentDescription="close"
+        android:maxHeight="@dimen/primer_bottom_sheet_header_height"
+        android:paddingStart="@dimen/x_medium_vertical_margin"
+        android:paddingTop="@dimen/large_vertical_margin"
+        android:paddingEnd="@dimen/x_medium_vertical_margin"
+        android:paddingBottom="@dimen/large_vertical_margin"
+        android:scaleType="fitCenter" />
+
+    <ImageView
+        android:id="@+id/toolbar_close"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:paddingStart="@dimen/x_medium_vertical_margin"
+        android:paddingTop="@dimen/large_vertical_margin"
+        android:paddingEnd="@dimen/x_medium_vertical_margin"
+        android:paddingBottom="@dimen/large_vertical_margin"
+        android:src="@drawable/ic_clear"
+        android:visibility="invisible" />
+
+</merge>

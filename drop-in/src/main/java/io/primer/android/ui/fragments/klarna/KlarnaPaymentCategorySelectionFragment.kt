@@ -11,11 +11,12 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import io.primer.android.R
 import io.primer.android.core.di.extensions.resolve
 import io.primer.android.core.extensions.getParcelableArrayListCompat
 import io.primer.android.core.extensions.getParcelableCompat
 import io.primer.android.data.settings.internal.PrimerConfig
-import io.primer.android.databinding.FragmentKlarnaPaymentCategorySelectionBinding
+import io.primer.android.databinding.PrimerFragmentKlarnaPaymentCategorySelectionBinding
 import io.primer.android.klarna.PrimerHeadlessUniversalCheckoutKlarnaManager
 import io.primer.android.klarna.api.component.KlarnaComponent
 import io.primer.android.klarna.api.composable.KlarnaPaymentCollectableData
@@ -24,7 +25,6 @@ import io.primer.android.ui.extensions.autoCleaned
 import io.primer.android.ui.extensions.getCollapsedSheetHeight
 import io.primer.android.ui.fragments.base.BaseFragment
 import io.primer.android.ui.fragments.klarna.model.KlarnaPaymentCategory
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -33,9 +33,8 @@ import io.primer.android.klarna.implementation.session.domain.models.KlarnaPayme
 
 private val VISIBILITY_UPDATE_DELAY = 1.seconds
 
-@OptIn(ExperimentalCoroutinesApi::class)
 internal class KlarnaPaymentCategorySelectionFragment : BaseFragment() {
-    private var binding: FragmentKlarnaPaymentCategorySelectionBinding by autoCleaned()
+    private var binding: PrimerFragmentKlarnaPaymentCategorySelectionBinding by autoCleaned()
 
     private val component: KlarnaComponent by lazy {
         PrimerHeadlessUniversalCheckoutKlarnaManager(
@@ -64,7 +63,7 @@ internal class KlarnaPaymentCategorySelectionFragment : BaseFragment() {
         categories = savedInstanceState?.getParcelableArrayListCompat(CATEGORIES_KEY)
         selectedCategory = savedInstanceState?.getParcelableCompat(SELECTED_CATEGORY_KEY)
         binding =
-            FragmentKlarnaPaymentCategorySelectionBinding.inflate(
+            PrimerFragmentKlarnaPaymentCategorySelectionBinding.inflate(
                 inflater,
                 container,
                 false,
@@ -97,9 +96,9 @@ internal class KlarnaPaymentCategorySelectionFragment : BaseFragment() {
             }
         }
 
-        binding.paymentMethodBack.setOnClickListener {
-            parentFragmentManager.popBackStack()
-        }
+        getToolbar()?.showOnlyLogo(R.drawable.ic_logo_klarna)
+
+        getToolbar()?.getBackButton()?.visibility = View.INVISIBLE
 
         binding.authorize.setOnClickListener {
             it.isEnabled = false
@@ -114,7 +113,7 @@ internal class KlarnaPaymentCategorySelectionFragment : BaseFragment() {
     }
 
     private fun updatePaymentMethodBackVisibility(isVisible: Boolean? = null) {
-        binding.paymentMethodBack.isVisible =
+        getToolbar()?.getBackButton()?.isVisible =
             isVisible ?: primerConfig.isStandalonePaymentMethod.not()
     }
 
@@ -156,6 +155,9 @@ internal class KlarnaPaymentCategorySelectionFragment : BaseFragment() {
                 }
 
                 is KlarnaPaymentStep.PaymentViewLoaded -> {
+                    getToolbar()?.getBackButton()?.setOnClickListener {
+                        parentFragmentManager.popBackStack()
+                    }
                     binding.paymentCategories.klarnaPaymentCategories =
                         categories.orEmpty().map { category ->
                             category.toKlarnaPaymentCategory(

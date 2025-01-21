@@ -13,14 +13,14 @@ import android.widget.LinearLayout
 import io.primer.android.R
 import io.primer.android.core.di.DISdkComponent
 import io.primer.android.core.di.extensions.inject
-import io.primer.android.databinding.LayoutButtonPrimaryBinding
+import io.primer.android.databinding.PrimerLayoutButtonPrimaryBinding
 import io.primer.android.ui.settings.PrimerTheme
 
 internal class ButtonPrimary(
     ctx: Context,
     attrs: AttributeSet,
 ) : LinearLayout(ctx, attrs), DISdkComponent {
-    private val binding = LayoutButtonPrimaryBinding.inflate(LayoutInflater.from(context), this)
+    private val binding = PrimerLayoutButtonPrimaryBinding.inflate(LayoutInflater.from(context), this)
     private val theme: PrimerTheme by inject()
 
     var text: CharSequence

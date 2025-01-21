@@ -12,7 +12,7 @@ import okhttp3.OkHttpClient
 import okhttp3.Response
 import java.io.IOException
 
-class PaymentInstrumentsRepository {
+class PaymentInstrumentsRepository(private val application: Application) {
 
     fun fetch(
         customerId: String,

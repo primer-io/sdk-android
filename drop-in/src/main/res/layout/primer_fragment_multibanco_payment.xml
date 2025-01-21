@@ -7,55 +7,15 @@
     android:layout_gravity="bottom"
     android:paddingBottom="@dimen/large_vertical_margin">
 
-    <ImageView
-        android:id="@+id/iv_back"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:contentDescription="@string/go_back_description"
-        android:paddingTop="@dimen/large_vertical_margin"
-        android:paddingEnd="@dimen/large_vertical_margin"
-        android:paddingBottom="@dimen/large_vertical_margin"
-        android:src="@drawable/icon_go_back"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <ImageView
-        android:id="@+id/iv_payment_method_icon"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="58dp"
-        android:layout_marginEnd="58dp"
-        android:contentDescription="@string/payment_method_icon"
-        android:maxHeight="58dp"
-        android:scaleType="fitCenter"
-        android:src="@drawable/ic_logo_multibanco_light"
-        app:layout_constraintBottom_toBottomOf="@+id/iv_back"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/iv_back" />
-
-    <ImageView
-        android:id="@+id/iv_share"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:paddingStart="@dimen/medium_padding"
-        android:paddingTop="@dimen/medium_padding"
-        android:paddingBottom="@dimen/medium_padding"
-        android:src="@drawable/ic_share"
-        app:layout_constraintBottom_toBottomOf="@+id/iv_back"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/iv_back" />
-
     <TextView
         android:id="@+id/tv_title_complete"
         style="@style/Primer.Text.Large"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/xxl_vertical_margin"
         android:text="@string/completeYourPayment"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/iv_payment_method_icon" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/tv_description"

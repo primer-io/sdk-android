@@ -3,9 +3,7 @@ package io.primer.android.ui.fragments.forms
 import android.os.Bundle
 import android.view.View
 import androidx.core.view.isVisible
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
-import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.commit
 import io.primer.android.analytics.data.models.AnalyticsAction
 import io.primer.android.analytics.data.models.ObjectId
@@ -14,23 +12,18 @@ import io.primer.android.analytics.data.models.Place
 import io.primer.android.analytics.domain.models.PaymentMethodContextParams
 import io.primer.android.analytics.domain.models.UIAnalyticsParams
 import io.primer.android.core.di.DISdkComponent
-import io.primer.android.core.di.extensions.inject
 import io.primer.android.core.di.extensions.viewModel
 import io.primer.android.domain.payments.forms.models.Form
 import io.primer.android.presentation.payment.forms.FormsViewModel
 import io.primer.android.presentation.payment.forms.FormsViewModelFactory
 import io.primer.android.ui.fragments.SelectPaymentMethodFragment
+import io.primer.android.ui.fragments.base.BaseFragment
 import io.primer.android.ui.fragments.forms.binding.BaseFormBinding
-import io.primer.android.ui.settings.PrimerTheme
-import io.primer.android.viewmodel.PrimerViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 @ExperimentalCoroutinesApi
-internal abstract class BaseFormFragment : Fragment(), DISdkComponent {
-    protected val theme: PrimerTheme by inject()
+internal abstract class BaseFormFragment : BaseFragment(), DISdkComponent {
     protected abstract val baseFormBinding: BaseFormBinding
-
-    protected val primerViewModel: PrimerViewModel by activityViewModels()
 
     protected val viewModel: FormsViewModel by viewModel<FormsViewModel, FormsViewModelFactory>()
 
@@ -50,28 +43,23 @@ internal abstract class BaseFormFragment : Fragment(), DISdkComponent {
     }
 
     protected open fun setupBackIcon() {
-        val backIcon = baseFormBinding.formBackIcon
-        backIcon.setColorFilter(
-            theme.titleText.defaultColor.getColor(
-                requireContext(),
-                theme.isDarkMode,
-            ),
-        )
-        backIcon.setOnClickListener {
-            logAnalyticsBackPressed()
-            popBackStack()
+        getToolbar()?.getBackButton()?.apply {
+            setOnClickListener {
+                logAnalyticsBackPressed()
+                popBackStack()
+            }
+            isVisible =
+                primerViewModel.selectedPaymentMethod.value?.uiOptions
+                    ?.isStandalonePaymentMethod?.not()
+                    ?: false
         }
-        backIcon.isVisible =
-            primerViewModel.selectedPaymentMethod.value?.uiOptions
-                ?.isStandalonePaymentMethod?.not()
-                ?: false
     }
 
     protected open fun setupForm(form: Form) {
         setupBackIcon()
         setupTitle(form.title)
         setupDescription(form.description)
-        setupLogo(form.logo)
+        getToolbar()?.showOnlyLogo(form.logo)
     }
 
     private fun setupTitle(title: Int?) {
@@ -92,11 +80,6 @@ internal abstract class BaseFormFragment : Fragment(), DISdkComponent {
         } ?: run {
             formDescription.isVisible = false
         }
-    }
-
-    private fun setupLogo(logo: Int) {
-        val formIcon = baseFormBinding.formIcon
-        formIcon.setImageResource(logo)
     }
 
     private fun logAnalyticsViewed() =

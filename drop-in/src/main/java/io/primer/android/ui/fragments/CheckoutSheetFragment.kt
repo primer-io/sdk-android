@@ -19,7 +19,10 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import io.primer.android.R
 import io.primer.android.core.di.DISdkComponent
 import io.primer.android.core.di.extensions.inject
+import io.primer.android.data.settings.DismissalMechanism
+import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.di.extension.activityViewModel
+import io.primer.android.ui.components.PrimerToolbar
 import io.primer.android.ui.settings.PrimerTheme
 import io.primer.android.viewmodel.PrimerViewModel
 import io.primer.android.viewmodel.PrimerViewModelFactory
@@ -35,7 +38,7 @@ internal class CheckoutSheetFragment :
         fun newInstance() = CheckoutSheetFragment()
     }
 
-    private val theme: PrimerTheme by inject()
+    private val config: PrimerConfig by inject()
     private val viewModel: PrimerViewModel by
         activityViewModel<PrimerViewModel, PrimerViewModelFactory>()
 
@@ -68,7 +71,7 @@ internal class CheckoutSheetFragment :
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?,
-    ): View = inflater.inflate(R.layout.fragment_bottom_sheet, container, false)
+    ): View = inflater.inflate(R.layout.primer_fragment_bottom_sheet, container, false)
 
     override fun onViewCreated(
         view: View,
@@ -85,8 +88,16 @@ internal class CheckoutSheetFragment :
 
     override fun onStart() {
         super.onStart()
-        if (theme.windowMode == PrimerTheme.WindowMode.FULL_HEIGHT) {
+        if (config.settings.uiOptions.theme.windowMode == PrimerTheme.WindowMode.FULL_HEIGHT) {
             setFullHeight()
+        }
+
+        if (isCloseButtonEnabled()) {
+            showCloseButton()
+        }
+
+        if (!isGestureEnabled()) {
+            disableGestures()
         }
     }
 
@@ -119,6 +130,16 @@ internal class CheckoutSheetFragment :
         }
     }
 
+    private fun showCloseButton() {
+        dialog?.findViewById<PrimerToolbar>(R.id.toolbar)?.apply {
+            View.OnClickListener { dismiss() }
+                .run {
+                    getCloseButton().tag = this
+                    getCloseButton().setOnClickListener(this)
+                }
+        }
+    }
+
     private val disableBackPressedCallback =
         object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
@@ -138,9 +159,23 @@ internal class CheckoutSheetFragment :
             }
         }
 
-        dialog?.apply {
-            setCancelable(!disabled)
-            setCanceledOnTouchOutside(!disabled)
+        if (isGestureEnabled()) {
+            dialog?.apply {
+                setCancelable(!disabled)
+                setCanceledOnTouchOutside(!disabled)
+            }
         }
     }
+
+    private fun disableGestures() {
+        dialog?.apply {
+            setCancelable(false)
+            setCanceledOnTouchOutside(false)
+        }
+    }
+
+    private fun isGestureEnabled() = config.settings.uiOptions.dismissalMechanism.contains(DismissalMechanism.GESTURES)
+
+    private fun isCloseButtonEnabled() =
+        config.settings.uiOptions.dismissalMechanism.contains(DismissalMechanism.CLOSE_BUTTON)
 }

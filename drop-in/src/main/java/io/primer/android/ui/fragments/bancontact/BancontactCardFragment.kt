@@ -1,6 +1,5 @@
 package io.primer.android.ui.fragments.bancontact
 
-import android.content.res.ColorStateList
 import android.os.Bundle
 import android.text.Editable
 import android.util.TypedValue
@@ -19,7 +18,7 @@ import io.primer.android.components.manager.raw.PrimerHeadlessUniversalCheckoutR
 import io.primer.android.components.manager.raw.PrimerHeadlessUniversalCheckoutRawDataManagerListener
 import io.primer.android.configuration.data.model.CardNetwork
 import io.primer.android.core.extensions.getSerializableExtraCompat
-import io.primer.android.databinding.FragmentFormBancontactCardBinding
+import io.primer.android.databinding.PrimerFragmentFormBancontactCardBinding
 import io.primer.android.displayMetadata.domain.model.ImageColor
 import io.primer.android.paymentMethods.core.ui.descriptors.PaymentMethodDropInDescriptor
 import io.primer.android.ui.TextInputMask
@@ -38,7 +37,7 @@ private const val UPDATED_ELEMENT_TYPE_KEY = "updated_element_type"
 @ExperimentalCoroutinesApi
 internal class BancontactCardFragment : BaseFragment(), PrimerHeadlessUniversalCheckoutRawDataManagerListener {
     private lateinit var rawDataManager: PrimerHeadlessUniversalCheckoutRawDataManagerInterface
-    private var binding: FragmentFormBancontactCardBinding by autoCleaned()
+    private var binding: PrimerFragmentFormBancontactCardBinding by autoCleaned()
 
     private val inputViews: MutableList<TextInputWidget> = mutableListOf()
     private val descriptor: PaymentMethodDropInDescriptor
@@ -51,7 +50,7 @@ internal class BancontactCardFragment : BaseFragment(), PrimerHeadlessUniversalC
         container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View {
-        binding = FragmentFormBancontactCardBinding.inflate(inflater, container, false)
+        binding = PrimerFragmentFormBancontactCardBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -86,15 +85,8 @@ internal class BancontactCardFragment : BaseFragment(), PrimerHeadlessUniversalC
     }
 
     private fun setupTheme() {
-        val imageColorStates =
-            ColorStateList.valueOf(
-                theme.titleText.defaultColor.getColor(
-                    requireContext(),
-                    theme.isDarkMode,
-                ),
-            )
-        binding.ivBack.imageTintList = imageColorStates
-        binding.ivBack.isVisible =
+        getToolbar()?.showOnlyLogo(R.drawable.ic_logo_bancontact)
+        getToolbar()?.getBackButton()?.isVisible =
             primerViewModel.selectedPaymentMethod.value?.uiOptions
                 ?.isStandalonePaymentMethod?.not()
                 ?: false
@@ -134,7 +126,9 @@ internal class BancontactCardFragment : BaseFragment(), PrimerHeadlessUniversalC
     }
 
     private fun setupListeners() {
-        binding.ivBack.setOnClickListener { parentFragmentManager.popBackStack() }
+        getToolbar()?.getBackButton()?.setOnClickListener {
+            parentFragmentManager.popBackStack()
+        }
 
         binding.btnPay.setOnClickListener {
             it.hideKeyboard()

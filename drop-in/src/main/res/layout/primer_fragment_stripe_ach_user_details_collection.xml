@@ -10,50 +10,17 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <ImageView
-            android:id="@+id/payment_method_back"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:contentDescription="@string/go_back_description"
-            android:src="@drawable/icon_go_back"
-            app:layout_constraintBottom_toTopOf="@id/header_guideline"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/header_guideline"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:orientation="horizontal"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintGuide_begin="@dimen/primer_bottom_sheet_header_height"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/title"
-            style="@style/Primer.Text.NewTitle"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:paddingHorizontal="12dp"
-            android:text="@string/pay_with_ach"
-            app:layout_constraintBottom_toBottomOf="@+id/payment_method_back"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/payment_method_back"
-            app:layout_constraintTop_toTopOf="@+id/payment_method_back" />
-
         <TextView
             android:id="@+id/subtitle"
             style="@style/Primer.Text"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:paddingTop="@dimen/xxl_vertical_margin"
             android:text="@string/stripe_ach_user_details_collection_subtitle_label"
             android:textIsSelectable="false"
             android:textSize="16sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/title" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <io.primer.android.ui.components.TextInputWidget
             android:id="@+id/first_name"
@@ -169,18 +136,18 @@
             android:id="@+id/input_group"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:constraint_referenced_ids="payment_method_back, title, subtitle, first_name, last_name, email_address, data_usage, submit" />
+            app:constraint_referenced_ids="subtitle, first_name, last_name, email_address, data_usage, submit" />
 
         <com.google.android.material.progressindicator.CircularProgressIndicator
             android:id="@+id/progress_bar"
             android:layout_width="@dimen/primer_progress_indicator_size"
             android:layout_height="@dimen/primer_progress_indicator_size"
-            android:layout_marginTop="52dp"
+            android:paddingTop="@dimen/xxl_vertical_margin"
             android:indeterminate="true"
             app:indicatorColor="@color/button_primary_color"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/header_guideline" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/progress_text"

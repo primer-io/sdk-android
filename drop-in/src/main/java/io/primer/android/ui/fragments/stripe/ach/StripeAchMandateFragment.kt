@@ -1,6 +1,5 @@
 package io.primer.android.ui.fragments.stripe.ach
 
-import android.content.res.ColorStateList
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -8,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.activity.ComponentDialog
 import androidx.activity.addCallback
+import androidx.core.view.isVisible
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.commitNow
 import androidx.lifecycle.lifecycleScope
@@ -15,7 +15,7 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import io.primer.android.AchMandateActionHandler
 import io.primer.android.R
 import io.primer.android.core.di.extensions.inject
-import io.primer.android.databinding.FragmentStripeAchMandateBinding
+import io.primer.android.databinding.PrimerFragmentStripeAchMandateBinding
 import io.primer.android.errors.data.exception.PaymentMethodCancelledException
 import io.primer.android.errors.domain.ErrorMapperRegistry
 import io.primer.android.paymentmethods.common.data.model.PaymentMethodType
@@ -28,7 +28,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.yield
 
 internal class StripeAchMandateFragment : BaseFragment() {
-    private var binding: FragmentStripeAchMandateBinding by autoCleaned()
+    private var binding: PrimerFragmentStripeAchMandateBinding by autoCleaned()
 
     private val primerTheme: PrimerTheme by inject()
     private val errorMapperRegistry: ErrorMapperRegistry by inject()
@@ -41,7 +41,7 @@ internal class StripeAchMandateFragment : BaseFragment() {
         savedInstanceState: Bundle?,
     ): View {
         binding =
-            FragmentStripeAchMandateBinding.inflate(
+            PrimerFragmentStripeAchMandateBinding.inflate(
                 inflater,
                 container,
                 false,
@@ -55,7 +55,6 @@ internal class StripeAchMandateFragment : BaseFragment() {
     ) {
         super.onViewCreated(view, savedInstanceState)
 
-        applyStyle()
         getParentDialogOrNull()?.onBackPressedDispatcher?.addCallback(viewLifecycleOwner) {
             lifecycleScope.launch {
                 popBackStack()
@@ -67,6 +66,11 @@ internal class StripeAchMandateFragment : BaseFragment() {
                     payment = null,
                 )
             }
+        }
+
+        getToolbar()?.apply {
+            getBackButton().isVisible = false
+            showOnlyTitle(R.string.pay_with_ach)
         }
 
         getStripeMandateDelegate()
@@ -84,17 +88,6 @@ internal class StripeAchMandateFragment : BaseFragment() {
         }
 
         adjustBottomSheetState(BottomSheetBehavior.STATE_EXPANDED)
-    }
-
-    private fun applyStyle() {
-        binding.title.setTextColor(
-            ColorStateList.valueOf(
-                theme.titleText.defaultColor.getColor(
-                    context = requireContext(),
-                    isDarkMode = theme.isDarkMode,
-                ),
-            ),
-        )
     }
 
     private fun submit(isAccepted: Boolean) {

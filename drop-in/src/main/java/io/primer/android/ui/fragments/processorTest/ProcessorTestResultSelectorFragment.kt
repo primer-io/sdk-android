@@ -5,8 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.RadioButton
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import io.primer.android.PrimerSessionIntent
@@ -18,9 +16,7 @@ import io.primer.android.analytics.domain.models.ProcessorTestDecisionParams
 import io.primer.android.analytics.domain.models.UIAnalyticsParams
 import io.primer.android.core.di.DISdkComponent
 import io.primer.android.core.di.DISdkContext
-import io.primer.android.core.di.extensions.inject
-import io.primer.android.core.di.extensions.viewModel
-import io.primer.android.databinding.FragmentProcessorTestResultSelectorBinding
+import io.primer.android.databinding.PrimerFragmentProcessorTestResultSelectorBinding
 import io.primer.android.di.ProcessorTestContainer
 import io.primer.android.paymentMethods.core.ui.descriptors.TestDropInPaymentMethodDescriptor
 import io.primer.android.sandboxProcessor.SandboxProcessorDecisionType
@@ -28,8 +24,7 @@ import io.primer.android.sandboxProcessor.implementation.components.ProcessorTes
 import io.primer.android.sandboxProcessor.implementation.components.ProcessorTestComponent
 import io.primer.android.sandboxProcessor.implementation.components.ProcessorTestStep
 import io.primer.android.ui.extensions.autoCleaned
-import io.primer.android.ui.settings.PrimerTheme
-import io.primer.android.viewmodel.PrimerViewModel
+import io.primer.android.ui.fragments.base.BaseFragment
 import io.primer.android.viewmodel.ViewStatus
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collectLatest
@@ -37,17 +32,10 @@ import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.launch
 
 @ExperimentalCoroutinesApi
-internal class ProcessorTestResultSelectorFragment : Fragment(), DISdkComponent {
-    private val theme: PrimerTheme by inject()
-
+internal class ProcessorTestResultSelectorFragment : BaseFragment(), DISdkComponent {
     private lateinit var processorTestComponent: ProcessorTestComponent
 
-    private val primerViewModel: PrimerViewModel by activityViewModels()
-
-    private val viewModel: ProcessorTestResultSelectorViewModel
-        by viewModel<ProcessorTestResultSelectorViewModel, ProcessorTestResultSelectorViewModelFactory>()
-
-    private var binding: FragmentProcessorTestResultSelectorBinding by autoCleaned()
+    private var binding: PrimerFragmentProcessorTestResultSelectorBinding by autoCleaned()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -59,7 +47,7 @@ internal class ProcessorTestResultSelectorFragment : Fragment(), DISdkComponent 
         }
         processorTestComponent = ProcessorTestComponent.provideInstance()
         binding =
-            FragmentProcessorTestResultSelectorBinding.inflate(
+            PrimerFragmentProcessorTestResultSelectorBinding.inflate(
                 inflater,
                 container,
                 false,
@@ -91,7 +79,7 @@ internal class ProcessorTestResultSelectorFragment : Fragment(), DISdkComponent 
 
     private fun setupCurrentPaymentMethod() {
         val descriptor = primerViewModel.selectedPaymentMethod.value as? TestDropInPaymentMethodDescriptor ?: return
-        binding.ivPaymentMethodIcon.setImageResource(
+        getToolbar()?.showOnlyLogo(
             if (theme.isDarkMode == true) {
                 descriptor.brand.iconDarkResId
             } else {
@@ -103,12 +91,6 @@ internal class ProcessorTestResultSelectorFragment : Fragment(), DISdkComponent 
     private fun setupTheme() {
         binding.tvDummyInfo.setTextColor(
             theme.subtitleText.defaultColor.getColor(
-                requireContext(),
-                theme.isDarkMode,
-            ),
-        )
-        binding.ivDummyResultBack.setColorFilter(
-            theme.titleText.defaultColor.getColor(
                 requireContext(),
                 theme.isDarkMode,
             ),
@@ -164,7 +146,7 @@ internal class ProcessorTestResultSelectorFragment : Fragment(), DISdkComponent 
                 )
             }
         }
-        binding.ivDummyResultBack.setOnClickListener {
+        getToolbar()?.getBackButton()?.setOnClickListener {
             logAnalyticsBackPressed()
             goOnSelectedPaymentMethod()
         }
@@ -183,7 +165,7 @@ internal class ProcessorTestResultSelectorFragment : Fragment(), DISdkComponent 
     }
 
     private fun logAnalyticsBackPressed() =
-        viewModel.addAnalyticsEvent(
+        primerViewModel.addAnalyticsEvent(
             UIAnalyticsParams(
                 action = AnalyticsAction.CLICK,
                 objectType = ObjectType.BUTTON,

@@ -8,8 +8,8 @@ import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.Space
 import io.primer.android.R
-import io.primer.android.databinding.ItemKlarnaSelectedPaymentCategoryBinding
-import io.primer.android.databinding.ItemKlarnaUnselectedPaymentCategoryBinding
+import io.primer.android.databinding.PrimerItemKlarnaSelectedPaymentCategoryBinding
+import io.primer.android.databinding.PrimerItemKlarnaUnselectedPaymentCategoryBinding
 import io.primer.android.ui.fragments.klarna.model.KlarnaPaymentCategory
 import java.util.Timer
 import java.util.TimerTask
@@ -19,14 +19,12 @@ private const val TIMER_DELAY = 300L
 internal class KlarnaPaymentCategoryLayout(context: Context, attrs: AttributeSet?) :
     LinearLayout(context, attrs) {
     init {
-        orientation = LinearLayout.VERTICAL
+        orientation = VERTICAL
     }
 
     private val layoutInflater by lazy { LayoutInflater.from(context) }
 
     private var onItemClickListener: (Int) -> Unit = {}
-
-    var dummyKlarnaPaymentViewContainer: FrameLayout? = null
 
     var klarnaPaymentCategories: List<KlarnaPaymentCategory> = emptyList()
         set(value) {
@@ -34,6 +32,8 @@ internal class KlarnaPaymentCategoryLayout(context: Context, attrs: AttributeSet
             removeAllViews()
             addKlarnaPaymentCategories()
         }
+
+    var dummyKlarnaPaymentViewContainer: FrameLayout? = null
 
     fun setOnItemClickListener(listener: (Int) -> Unit) {
         onItemClickListener = listener
@@ -45,14 +45,14 @@ internal class KlarnaPaymentCategoryLayout(context: Context, attrs: AttributeSet
                 when (klarnaPaymentCategory) {
                     is KlarnaPaymentCategory.UnselectedKlarnaPaymentCategory -> {
                         val binding =
-                            ItemKlarnaUnselectedPaymentCategoryBinding.inflate(layoutInflater)
+                            PrimerItemKlarnaUnselectedPaymentCategoryBinding.inflate(layoutInflater)
                         binding.bind(klarnaPaymentCategory)
                         binding.root
                     }
 
                     is KlarnaPaymentCategory.SelectedKlarnaPaymentCategory -> {
                         val binding =
-                            ItemKlarnaSelectedPaymentCategoryBinding.inflate(layoutInflater)
+                            PrimerItemKlarnaSelectedPaymentCategoryBinding.inflate(layoutInflater)
                         binding.bind(klarnaPaymentCategory)
                         binding.root
                     }
@@ -75,13 +75,13 @@ internal class KlarnaPaymentCategoryLayout(context: Context, attrs: AttributeSet
         }
     }
 
-    private fun ItemKlarnaUnselectedPaymentCategoryBinding.bind(
+    private fun PrimerItemKlarnaUnselectedPaymentCategoryBinding.bind(
         category: KlarnaPaymentCategory.UnselectedKlarnaPaymentCategory,
     ) {
         paymentCategory.paymentCategoryName.text = category.name
     }
 
-    private fun ItemKlarnaSelectedPaymentCategoryBinding.bind(
+    private fun PrimerItemKlarnaSelectedPaymentCategoryBinding.bind(
         category: KlarnaPaymentCategory.SelectedKlarnaPaymentCategory,
     ) {
         paymentCategory.paymentCategoryName.text = category.name

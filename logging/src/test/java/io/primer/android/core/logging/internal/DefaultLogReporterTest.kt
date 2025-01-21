@@ -1,4 +1,4 @@
-package io.primer.logging.internal
+package io.primer.android.core.logging.internal
 
 import io.mockk.every
 import io.mockk.impl.annotations.RelaxedMockK
@@ -7,7 +7,6 @@ import io.mockk.verify
 import io.primer.android.core.logging.PrimerLogLevel
 import io.primer.android.core.logging.PrimerLogger
 import io.primer.android.core.logging.PrimerLogging
-import io.primer.android.core.logging.internal.DefaultLogReporter
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test

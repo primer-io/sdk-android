@@ -14,18 +14,6 @@
         android:minHeight="300dp"
         android:paddingHorizontal="@dimen/large_padding">
 
-        <TextView
-            android:id="@+id/payment_method_title"
-            style="@style/Primer.Text.NewTitle"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:paddingBottom="@dimen/x_medium_vertical_margin"
-            android:textIsSelectable="false"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:text="Payment method title" />
-
         <ImageView
             android:id="@+id/session_complete_icon"
             android:layout_width="wrap_content"
@@ -34,7 +22,7 @@
             android:importantForAccessibility="no"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/payment_method_title"
+            app:layout_constraintTop_toTopOf="parent"
             tools:src="@drawable/ic_check_success" />
 
         <TextView

@@ -13,34 +13,12 @@
         android:clipChildren="false"
         android:orientation="vertical">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <ImageView
-                android:id="@+id/ivBack"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:padding="15dp"
-                android:src="@drawable/icon_go_back" />
-
-            <TextView
-                android:id="@+id/tvTitle"
-                style="@style/Primer.Text.Title.Small"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:text="@string/country_select" />
-        </LinearLayout>
-
         <io.primer.android.ui.components.SearchViewWidgetV2
             android:id="@+id/searchCountry"
             style="@style/Primer.Text.Small"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/medium_vertical_margin"
-            android:layout_marginTop="@dimen/medium_large_padding"
             android:background="@android:color/transparent"
             android:drawablePadding="@dimen/medium_vertical_margin2"
             android:hint="@string/search_placeholder"

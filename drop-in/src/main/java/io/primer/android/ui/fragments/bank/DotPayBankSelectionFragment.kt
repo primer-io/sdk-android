@@ -33,9 +33,9 @@ internal class DotPayBankSelectionFragment : BaseBankSelectionFragment() {
         binding.searchBar.isEnabled = false
     }
 
-    override fun setupViews() {
-        super.setupViews()
-        binding.paymentMethodIcon.setImageResource(
+    override fun setupToolbar() {
+        super.setupToolbar()
+        getToolbar()?.showOnlyLogo(
             if (theme.isDarkMode == true) {
                 R.drawable.ic_logo_dotpay_dark
             } else {

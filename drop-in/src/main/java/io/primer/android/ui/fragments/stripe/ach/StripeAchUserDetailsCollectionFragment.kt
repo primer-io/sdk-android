@@ -20,7 +20,7 @@ import io.primer.android.components.ach.PrimerHeadlessUniversalCheckoutAchManage
 import io.primer.android.components.manager.core.composable.PrimerValidationStatus
 import io.primer.android.core.di.extensions.inject
 import io.primer.android.data.settings.internal.PrimerConfig
-import io.primer.android.databinding.FragmentStripeAchUserDetailsCollectionBinding
+import io.primer.android.databinding.PrimerFragmentStripeAchUserDetailsCollectionBinding
 import io.primer.android.paymentmethods.common.data.model.PaymentMethodType
 import io.primer.android.paymentmethods.manager.composable.PrimerCollectableData
 import io.primer.android.payments.core.helpers.CheckoutAdditionalInfoHandler
@@ -39,7 +39,7 @@ import kotlinx.coroutines.launch
 @Suppress("TooManyFunctions")
 internal class StripeAchUserDetailsCollectionFragment : BaseFragment() {
     private var isComponentStarted = false
-    private var binding: FragmentStripeAchUserDetailsCollectionBinding by autoCleaned()
+    private var binding: PrimerFragmentStripeAchUserDetailsCollectionBinding by autoCleaned()
 
     private val primerConfig: PrimerConfig by inject()
     private val isStandalonePaymentMethod get() = primerConfig.isStandalonePaymentMethod
@@ -55,7 +55,7 @@ internal class StripeAchUserDetailsCollectionFragment : BaseFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View =
-        FragmentStripeAchUserDetailsCollectionBinding.inflate(inflater, container, false).apply {
+        PrimerFragmentStripeAchUserDetailsCollectionBinding.inflate(inflater, container, false).apply {
             progressGroup.isVisible = true
             inputGroup.isVisible = false
             binding = this
@@ -90,7 +90,9 @@ internal class StripeAchUserDetailsCollectionFragment : BaseFragment() {
             }
         }
 
-        binding.paymentMethodBack.setOnClickListener {
+        getToolbar()?.showOnlyTitle(R.string.pay_with_ach)
+
+        getToolbar()?.getBackButton()?.setOnClickListener {
             parentFragment?.childFragmentManager?.popBackStack()
         }
 
@@ -103,13 +105,6 @@ internal class StripeAchUserDetailsCollectionFragment : BaseFragment() {
     }
 
     private fun applyStyle() {
-        val titleColor =
-            theme.titleText.defaultColor.getColor(
-                context = requireContext(),
-                isDarkMode = theme.isDarkMode,
-            )
-        binding.paymentMethodBack.setColorFilter(titleColor)
-        binding.title.setTextColor(ColorStateList.valueOf(titleColor))
         val textColorList =
             ColorStateList.valueOf(
                 theme.defaultText.defaultColor.getColor(
@@ -180,6 +175,7 @@ internal class StripeAchUserDetailsCollectionFragment : BaseFragment() {
                 }
 
                 is AchUserDetailsStep.UserDetailsCollected -> {
+                    getToolbar()?.isVisible = false
                     binding.inputGroup.isVisible = false
                     binding.progressGroup.isVisible = true
                 }
@@ -289,7 +285,7 @@ internal class StripeAchUserDetailsCollectionFragment : BaseFragment() {
             binding.emailAddress.error != null
 
     private fun updatePaymentMethodBackVisibility(isVisible: Boolean? = null) {
-        binding.paymentMethodBack.isVisible = isVisible ?: !isStandalonePaymentMethod
+        getToolbar()?.getBackButton()?.isVisible = isVisible ?: !isStandalonePaymentMethod
     }
 
     companion object {

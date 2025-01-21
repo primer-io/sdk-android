@@ -5,18 +5,26 @@ import android.os.Parcelable
 import io.primer.android.core.data.serialization.json.JSONObjectSerializable
 import io.primer.android.core.data.serialization.json.JSONObjectSerializer
 import io.primer.android.core.extensions.readParcelable
+import io.primer.android.data.settings.DismissalMechanism
 import org.json.JSONObject
 
 data class PrimerUIOptions(
     var isInitScreenEnabled: Boolean = true,
     var isSuccessScreenEnabled: Boolean = true,
     var isErrorScreenEnabled: Boolean = true,
+    var dismissalMechanism: List<DismissalMechanism> = listOf(DismissalMechanism.GESTURES),
     var theme: PrimerTheme = PrimerTheme.build(),
 ) : Parcelable, JSONObjectSerializable {
     constructor(parcel: Parcel) : this(
         isInitScreenEnabled = parcel.readByte() != 0.toByte(),
         isSuccessScreenEnabled = parcel.readByte() != 0.toByte(),
         isErrorScreenEnabled = parcel.readByte() != 0.toByte(),
+        dismissalMechanism =
+            mutableListOf<DismissalMechanism>().apply {
+                val stringList = mutableListOf<String>()
+                parcel.readStringList(stringList)
+                stringList.forEach { add(DismissalMechanism.valueOf(it)) }
+            },
         theme = parcel.readParcelable<PrimerTheme>() ?: PrimerTheme.build(),
     )
 
@@ -27,6 +35,7 @@ data class PrimerUIOptions(
         parcel.writeByte(if (isInitScreenEnabled) 1 else 0)
         parcel.writeByte(if (isSuccessScreenEnabled) 1 else 0)
         parcel.writeByte(if (isErrorScreenEnabled) 1 else 0)
+        parcel.writeStringList(dismissalMechanism.map { it.name })
         parcel.writeParcelable(theme, flags)
     }
 
@@ -47,6 +56,7 @@ data class PrimerUIOptions(
         private const val SUCCESS_SCREEN_ENABLED_FIELD = "isSuccessScreenEnabled"
         private const val ERROR_SCREEN_ENABLED_FIELD = "isErrorScreenEnabled"
         private const val THEME_FIELD = "theme"
+        private const val DISMISSAL_MECHANISMS_FIELD = "dismissalMechanism"
 
         @JvmField
         val serializer =
@@ -55,6 +65,7 @@ data class PrimerUIOptions(
                     put(INIT_SCREEN_ENABLED_FIELD, t.isInitScreenEnabled)
                     put(SUCCESS_SCREEN_ENABLED_FIELD, t.isSuccessScreenEnabled)
                     put(ERROR_SCREEN_ENABLED_FIELD, t.isErrorScreenEnabled)
+                    put(DISMISSAL_MECHANISMS_FIELD, t.dismissalMechanism.map { it.name })
                     put(THEME_FIELD, PrimerTheme.serializer.serialize(t.theme))
                 }
             }

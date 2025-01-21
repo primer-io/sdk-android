@@ -12,31 +12,11 @@
         android:visibility="gone"
         tools:visibility="visible">
 
-        <ImageView
-            android:id="@+id/payment_method_back"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignTop="@id/payment_method_icon"
-            android:layout_alignBottom="@id/payment_method_icon"
-            android:src="@drawable/icon_go_back" />
-
-        <ImageView
-            android:id="@+id/payment_method_icon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_gravity="center"
-            android:contentDescription="@string/go_back_description"
-            app:tint="@color/primer_icon_tint"
-            tools:layout_height="50dp" />
-
         <TextView
             android:id="@+id/choose_bank_title"
             style="@style/Primer.Text.Title.Small"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/payment_method_icon"
-            android:layout_marginTop="@dimen/xxl_vertical_margin"
             android:text="@string/bank_selection_title" />
 
         <io.primer.android.ui.components.SearchViewWidget
@@ -90,7 +70,7 @@
 
     <include
         android:id="@+id/error_layout"
-        layout="@layout/error_loading_layout"
+        layout="@layout/primer_error_loading_layout"
         android:visibility="gone" />
 
     <ProgressBar

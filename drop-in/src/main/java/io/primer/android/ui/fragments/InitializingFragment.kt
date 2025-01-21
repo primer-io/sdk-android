@@ -4,25 +4,18 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
 import io.primer.android.analytics.data.models.AnalyticsAction
 import io.primer.android.analytics.data.models.ObjectType
 import io.primer.android.analytics.data.models.Place
 import io.primer.android.analytics.domain.models.UIAnalyticsParams
 import io.primer.android.core.di.DISdkComponent
-import io.primer.android.core.di.extensions.inject
-import io.primer.android.core.di.extensions.viewModel
-import io.primer.android.databinding.FragmentInitializingBinding
-import io.primer.android.presentation.base.BaseViewModel
-import io.primer.android.presentation.base.BaseViewModelFactory
+import io.primer.android.databinding.PrimerFragmentInitializingBinding
 import io.primer.android.ui.extensions.autoCleaned
-import io.primer.android.ui.settings.PrimerTheme
+import io.primer.android.ui.fragments.base.BaseFragment
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 
-internal class InitializingFragment : Fragment(), DISdkComponent {
-    private val theme: PrimerTheme by inject()
-    private var binding: FragmentInitializingBinding by autoCleaned()
-
-    private val viewModel: BaseViewModel by viewModel<BaseViewModel, BaseViewModelFactory>()
+internal class InitializingFragment : BaseFragment(), DISdkComponent {
+    private var binding: PrimerFragmentInitializingBinding by autoCleaned()
 
     companion object {
         @JvmStatic
@@ -34,10 +27,11 @@ internal class InitializingFragment : Fragment(), DISdkComponent {
         container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View {
-        binding = FragmentInitializingBinding.inflate(inflater, container, false)
+        binding = PrimerFragmentInitializingBinding.inflate(inflater, container, false)
         return binding.root
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     override fun onViewCreated(
         view: View,
         savedInstanceState: Bundle?,
@@ -49,7 +43,7 @@ internal class InitializingFragment : Fragment(), DISdkComponent {
                 theme.isDarkMode,
             ),
         )
-        viewModel.addAnalyticsEvent(
+        primerViewModel.addAnalyticsEvent(
             UIAnalyticsParams(
                 AnalyticsAction.VIEW,
                 ObjectType.LOADER,

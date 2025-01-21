@@ -1,8 +1,7 @@
-package io.primer.logging.internal.dsl
+package io.primer.android.core.logging.internal.dsl
 
 import io.mockk.junit5.MockKExtension
 import io.primer.android.core.logging.internal.WhitelistedKey
-import io.primer.android.core.logging.internal.dsl.whitelistedKeys
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test

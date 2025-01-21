@@ -4,38 +4,18 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <ImageView
-        android:id="@+id/form_back_icon"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/icon_go_back"
-        app:layout_constraintBottom_toBottomOf="@id/form_icon"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/form_icon" />
-
-    <ImageView
-        android:id="@+id/form_icon"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
     <io.primer.android.ui.components.PrimerTextViewWidget
         android:id="@+id/form_title"
         style="@style/Primer.Text.Title.Small"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/xxl_vertical_margin"
-        app:layout_constraintTop_toBottomOf="@id/form_icon" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <LinearLayout
         android:id="@+id/main_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/xxl_vertical_margin"
         android:orientation="vertical"
-        android:layout_marginBottom="@dimen/xxl_vertical_margin"
         app:layout_constraintBottom_toTopOf="@id/form_description"
         app:layout_constraintTop_toBottomOf="@id/form_title" />
 

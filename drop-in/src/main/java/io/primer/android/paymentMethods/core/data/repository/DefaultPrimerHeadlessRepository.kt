@@ -113,6 +113,7 @@ internal class DefaultPrimerHeadlessRepository(
                             paymentMethodData: PrimerPaymentMethodData,
                             createPaymentHandler: PrimerPaymentCreationDecisionHandler,
                         ) {
+                            externalEvents.tryEmit(PrimerEvent.DisableDismiss)
                             Primer.current.listener?.onBeforePaymentCreated(paymentMethodData, createPaymentHandler)
                         }
 

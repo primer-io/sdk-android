@@ -9,7 +9,7 @@
 
     <include
         android:id="@+id/payment_category"
-        layout="@layout/klarna_payment_category"
+        layout="@layout/primer_klarna_payment_category"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toStartOf="@id/check_icon"

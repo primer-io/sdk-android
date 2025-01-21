@@ -7,7 +7,6 @@ import android.view.ViewGroup
 import androidx.activity.addCallback
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import io.primer.android.analytics.data.models.AnalyticsAction
 import io.primer.android.analytics.data.models.ObjectType
@@ -16,34 +15,28 @@ import io.primer.android.analytics.domain.models.PaymentMethodContextParams
 import io.primer.android.analytics.domain.models.UIAnalyticsParams
 import io.primer.android.core.di.DISdkComponent
 import io.primer.android.core.di.extensions.inject
-import io.primer.android.databinding.FragmentPaymentMethodLoadingBinding
-import io.primer.android.di.extension.activityViewModel
+import io.primer.android.databinding.PrimerFragmentPaymentMethodLoadingBinding
 import io.primer.android.displayMetadata.domain.model.ImageColor
 import io.primer.android.paymentMethods.core.ui.assets.AssetsManager
 import io.primer.android.paymentMethods.core.ui.descriptors.PaymentMethodDropInDescriptor
 import io.primer.android.ui.extensions.autoCleaned
 import io.primer.android.ui.extensions.getParentDialogOrNull
 import io.primer.android.ui.extensions.popBackStackToRoot
-import io.primer.android.ui.settings.PrimerTheme
-import io.primer.android.viewmodel.PrimerViewModel
-import io.primer.android.viewmodel.PrimerViewModelFactory
+import io.primer.android.ui.fragments.base.BaseFragment
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 @ExperimentalCoroutinesApi
-internal open class PaymentMethodLoadingFragment : Fragment(), DISdkComponent {
-    private val viewModel: PrimerViewModel by
-        activityViewModel<PrimerViewModel, PrimerViewModelFactory>()
-    private val theme: PrimerTheme by inject()
+internal open class PaymentMethodLoadingFragment : BaseFragment(), DISdkComponent {
     private val assetsManager: AssetsManager by inject()
 
-    private var binding: FragmentPaymentMethodLoadingBinding by autoCleaned()
+    private var binding: PrimerFragmentPaymentMethodLoadingBinding by autoCleaned()
 
     private val selectedPaymentMethodObserver =
         Observer<PaymentMethodDropInDescriptor?> { descriptor ->
             descriptor?.loadingState?.let { loadingState ->
                 logAnalytics(descriptor.paymentMethodType)
                 binding.apply {
-                    if (loadingState != null && loadingState.imageResIs > 0) {
+                    if (loadingState.imageResIs > 0) {
                         selectedPaymentLogo.setImageResource(loadingState.imageResIs)
                     } else {
                         selectedPaymentLogo.setImageDrawable(
@@ -76,7 +69,7 @@ internal open class PaymentMethodLoadingFragment : Fragment(), DISdkComponent {
         container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View {
-        binding = FragmentPaymentMethodLoadingBinding.inflate(inflater, container, false)
+        binding = PrimerFragmentPaymentMethodLoadingBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -86,22 +79,25 @@ internal open class PaymentMethodLoadingFragment : Fragment(), DISdkComponent {
     ) {
         super.onViewCreated(view, savedInstanceState)
 
+        getToolbar()?.isVisible = false
+
         if (arguments?.getBoolean(POP_BACK_STACK_TO_ROOT_KEY, false) == true) {
             addOnBackPressedCallback()
         }
-        viewModel.selectedPaymentMethod.observe(viewLifecycleOwner, selectedPaymentMethodObserver)
+
+        primerViewModel.selectedPaymentMethod.observe(viewLifecycleOwner, selectedPaymentMethodObserver)
     }
 
     //region Utils
     private fun addOnBackPressedCallback() {
         getParentDialogOrNull()?.onBackPressedDispatcher?.addCallback(this) {
             (parentFragment as? CheckoutSheetFragment)?.popBackStackToRoot()
-            viewModel.selectedPaymentMethod.value?.cancelBehaviour?.invoke(viewModel)
+            primerViewModel.selectedPaymentMethod.value?.cancelBehaviour?.invoke(primerViewModel)
         }
     }
 
     private fun logAnalytics(type: String) =
-        viewModel.addAnalyticsEvent(
+        primerViewModel.addAnalyticsEvent(
             UIAnalyticsParams(
                 AnalyticsAction.VIEW,
                 ObjectType.LOADER,

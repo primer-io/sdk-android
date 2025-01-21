@@ -41,7 +41,7 @@ import io.primer.android.configuration.data.model.CardNetwork
 import io.primer.android.configuration.extension.sanitizedCardNumber
 import io.primer.android.core.di.extensions.inject
 import io.primer.android.data.settings.internal.PrimerConfig
-import io.primer.android.databinding.FragmentCardFormBinding
+import io.primer.android.databinding.PrimerFragmentCardFormBinding
 import io.primer.android.model.SyncValidationError
 import io.primer.android.payment.NewFragmentBehaviour
 import io.primer.android.paymentMethods.core.ui.assets.AssetsManager
@@ -79,7 +79,7 @@ import java.util.TreeMap
 @Suppress("TooManyFunctions")
 internal class CardFormFragment : BaseFragment() {
     private var cardInputFields: TreeMap<PrimerInputElementType, TextInputWidget> by autoCleaned()
-    private var binding: FragmentCardFormBinding by autoCleaned()
+    private var binding: PrimerFragmentCardFormBinding by autoCleaned()
 
     internal val cardViewModel: CardViewModel by viewModels()
     private val assetsManager: AssetsManager by inject()
@@ -103,7 +103,7 @@ internal class CardFormFragment : BaseFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View {
-        binding = FragmentCardFormBinding.inflate(inflater, container, false)
+        binding = PrimerFragmentCardFormBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -199,8 +199,7 @@ internal class CardFormFragment : BaseFragment() {
     }
 
     private fun renderTitle() {
-        val textColor = theme.titleText.defaultColor.getColor(requireContext(), theme.isDarkMode)
-        binding.tvTitle.setTextColor(textColor)
+        getToolbar()?.showOnlyTitle(R.string.pay_with_card)
     }
 
     private fun renderCardDetailsTitle() {
@@ -210,17 +209,8 @@ internal class CardFormFragment : BaseFragment() {
     }
 
     private fun renderCancelButton() {
-        binding.ivBack.apply {
+        getToolbar()?.getBackButton()?.apply {
             isVisible = localConfig.isStandalonePaymentMethod.not()
-
-            imageTintList =
-                ColorStateList.valueOf(
-                    theme.titleText.defaultColor.getColor(
-                        requireContext(),
-                        theme.isDarkMode,
-                    ),
-                )
-
             setOnClickListener {
                 primerViewModel.addAnalyticsEvent(
                     UIAnalyticsParams(

@@ -8,7 +8,7 @@ import android.view.LayoutInflater
 import android.widget.FrameLayout
 import androidx.core.view.isVisible
 import io.primer.android.R
-import io.primer.android.databinding.PayButtonBinding
+import io.primer.android.databinding.PrimerPayButtonBinding
 import io.primer.android.ui.settings.PrimerTheme
 
 internal class PayButton
@@ -18,7 +18,7 @@ internal class PayButton
         attrs: AttributeSet? = null,
         defStyleAttr: Int = 0,
     ) : FrameLayout(context, attrs, defStyleAttr) {
-        private val binding = PayButtonBinding.inflate(LayoutInflater.from(context), this, true)
+        private val binding = PrimerPayButtonBinding.inflate(LayoutInflater.from(context), this, true)
 
         var text: CharSequence?
             get() = binding.button.text

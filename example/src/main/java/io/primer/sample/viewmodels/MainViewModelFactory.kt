@@ -9,6 +9,7 @@ import io.primer.sample.datasources.ApiKeyDataSource
 import io.primer.sample.repositories.CountryRepository
 import java.lang.ref.WeakReference
 
+@Suppress("UNCHECKED_CAST")
 class MainViewModelFactory(
     private val contextRef: WeakReference<Context>,
     private val countryRepository: CountryRepository,

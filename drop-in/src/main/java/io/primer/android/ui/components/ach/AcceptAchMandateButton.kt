@@ -6,7 +6,7 @@ import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.widget.FrameLayout
 import androidx.core.view.isVisible
-import io.primer.android.databinding.AcceptAchMandateButtonBinding
+import io.primer.android.databinding.PrimerAcceptAchMandateButtonBinding
 import io.primer.android.ui.components.BUTTON_PROGRESS_ALPHA
 import io.primer.android.ui.components.FADE_IN_DURATION_MS
 import io.primer.android.ui.extensions.setTheme
@@ -19,7 +19,7 @@ internal class AcceptAchMandateButton
         attrs: AttributeSet? = null,
         defStyleAttr: Int = 0,
     ) : FrameLayout(context, attrs, defStyleAttr) {
-        private val binding = AcceptAchMandateButtonBinding.inflate(LayoutInflater.from(context), this, true)
+        private val binding = PrimerAcceptAchMandateButtonBinding.inflate(LayoutInflater.from(context), this, true)
 
         var text: CharSequence?
             get() = binding.button.text

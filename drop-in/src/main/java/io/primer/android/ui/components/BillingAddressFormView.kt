@@ -18,7 +18,7 @@ import io.primer.android.components.domain.inputs.models.PrimerInputElementType
 import io.primer.android.configuration.data.model.emojiFlag
 import io.primer.android.core.di.DISdkComponent
 import io.primer.android.core.di.extensions.inject
-import io.primer.android.databinding.LayoutBillingAddressFormBinding
+import io.primer.android.databinding.PrimerLayoutBillingAddressFormBinding
 import io.primer.android.ui.FieldFocuser
 import io.primer.android.ui.settings.PrimerTheme
 import io.primer.android.utils.hideKeyboard
@@ -38,7 +38,7 @@ internal class BillingAddressFormView
             }
 
         private val binding =
-            LayoutBillingAddressFormBinding.inflate(
+            PrimerLayoutBillingAddressFormBinding.inflate(
                 LayoutInflater.from(context),
                 this,
                 false,

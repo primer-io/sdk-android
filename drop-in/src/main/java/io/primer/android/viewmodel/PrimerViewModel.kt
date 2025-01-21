@@ -3,7 +3,6 @@ package io.primer.android.viewmodel
 import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.asFlow
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
@@ -25,7 +24,6 @@ import io.primer.android.clientSessionActions.domain.models.ActionUpdateSelectPa
 import io.primer.android.clientSessionActions.domain.models.BaseActionUpdateParams
 import io.primer.android.clientSessionActions.domain.models.MultipleActionUpdateParams
 import io.primer.android.clientSessionActions.domain.models.PrimerCountry
-import io.primer.android.clientSessionActions.domain.models.PrimerPhoneCode
 import io.primer.android.components.assets.displayMetadata.PaymentMethodsImplementationInteractor
 import io.primer.android.components.currencyformat.domain.models.FormatCurrencyParams
 import io.primer.android.components.domain.inputs.models.PrimerInputElementType
@@ -98,7 +96,6 @@ internal class PrimerViewModel(
     private val errorMapperRegistry: ErrorMapperRegistry,
     private val checkoutErrorHandler: CheckoutErrorHandler,
     private val pollingStartHandler: PollingStartHandler,
-    private val savedStateHandle: SavedStateHandle = SavedStateHandle(),
 ) : BaseViewModel(analyticsInteractor), DISdkComponent {
     private val vaultManager: PrimerHeadlessUniversalCheckoutVaultManagerInterface by lazy {
         PrimerHeadlessUniversalCheckoutVaultManager.newInstance()
@@ -109,9 +106,6 @@ internal class PrimerViewModel(
     private val _selectedCountryCode = MutableLiveData<PrimerCountry?>()
     val selectedCountryCode: LiveData<PrimerCountry?>
         get() = _selectedCountryCode
-
-    private val _selectedPhoneCode = MutableLiveData<PrimerPhoneCode?>()
-    val selectedPhoneCode: LiveData<PrimerPhoneCode?> = _selectedPhoneCode
 
     private val _keyboardVisible = MutableLiveData(false)
     val keyboardVisible: LiveData<Boolean> = _keyboardVisible
@@ -559,10 +553,6 @@ internal class PrimerViewModel(
 
     fun clearSelectedCountry() {
         _selectedCountryCode.value = null
-    }
-
-    fun setSelectedPhoneCode(phoneCode: PrimerPhoneCode) {
-        _selectedPhoneCode.postValue(phoneCode)
     }
 
     fun validateBillingAddress(): List<SyncValidationError> =

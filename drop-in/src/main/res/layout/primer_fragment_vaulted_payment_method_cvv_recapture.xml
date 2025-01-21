@@ -5,41 +5,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <ImageButton
-        android:id="@+id/vaultedPaymentMethodCvvGoBack"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical|start"
-        android:background="@drawable/icon_button"
-        android:contentDescription="@string/go_back_description"
-        android:scaleType="fitCenter"
-        android:src="@drawable/icon_go_back"
-        app:layout_constraintBottom_toBottomOf="@id/vaultedPaymentMethodCvvTitleLabel"
-        app:layout_constraintEnd_toStartOf="@id/vaultedPaymentMethodCvvTitleLabel"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/vaultedPaymentMethodCvvTitleLabel" />
-
-    <TextView
-        android:id="@+id/vaultedPaymentMethodCvvTitleLabel"
-        style="@style/Primer.Text.NewTitle"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_gravity="start"
-        android:layout_marginStart="16dp"
-        android:layout_weight="1"
-        android:text="@string/primer_cvv_recapture_title"
-        app:layout_constraintStart_toEndOf="@id/vaultedPaymentMethodCvvGoBack"
-        app:layout_constraintTop_toTopOf="parent" />
-
     <TextView
         android:id="@+id/vaultedPaymentMethodCvvDescLabel"
         style="@style/Primer.Text.Small.Muted"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/xl_vertical_margin"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/vaultedPaymentMethodCvvTitleLabel" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <LinearLayout
         android:id="@+id/vaultedPaymentMethodCvvCardDetailsContainer"

@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 import io.primer.android.R
 import io.primer.android.components.ui.assets.PrimerHeadlessUniversalCheckoutAssetsManager
 import io.primer.android.configuration.data.model.CardNetwork
-import io.primer.android.databinding.PaymentMethodItemVaultBinding
+import io.primer.android.databinding.PrimerPaymentMethodItemVaultBinding
 import io.primer.android.ui.settings.PrimerTheme
 
 internal enum class PaymentItemStatus {
@@ -29,7 +29,7 @@ internal enum class AlternativePaymentMethodType {
 
 internal sealed class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
     internal fun configureCheckIcon(
-        binding: PaymentMethodItemVaultBinding,
+        binding: PrimerPaymentMethodItemVaultBinding,
         status: PaymentItemStatus,
         theme: PrimerTheme,
     ) {
@@ -62,7 +62,7 @@ internal sealed class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
     }
 
     class AlternativePaymentMethod(
-        private val binding: PaymentMethodItemVaultBinding,
+        private val binding: PrimerPaymentMethodItemVaultBinding,
         private val theme: PrimerTheme,
     ) : ViewHolder(binding.root) {
         private fun setPaymentMethodIcon(type: AlternativePaymentMethodType) {
@@ -103,7 +103,7 @@ internal sealed class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         }
     }
 
-    class Card(private val binding: PaymentMethodItemVaultBinding, val theme: PrimerTheme) :
+    class Card(private val binding: PrimerPaymentMethodItemVaultBinding, val theme: PrimerTheme) :
         ViewHolder(binding.root) {
         private fun setCardIcon(network: CardNetwork.Type) {
             val iconView = binding.paymentMethodIcon
@@ -150,7 +150,7 @@ internal sealed class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         }
     }
 
-    class Bank(private val binding: PaymentMethodItemVaultBinding, val theme: PrimerTheme) :
+    class Bank(private val binding: PrimerPaymentMethodItemVaultBinding, val theme: PrimerTheme) :
         ViewHolder(binding.root) {
         private fun setBankIcon() {
             binding.paymentMethodIcon.setImageResource(R.drawable.ic_bank_56)
@@ -275,7 +275,7 @@ internal class VaultedPaymentMethodRecyclerAdapter(
     private fun createBinding(
         inflater: LayoutInflater,
         parent: ViewGroup,
-    ) = PaymentMethodItemVaultBinding.inflate(
+    ) = PrimerPaymentMethodItemVaultBinding.inflate(
         inflater,
         parent,
         false,

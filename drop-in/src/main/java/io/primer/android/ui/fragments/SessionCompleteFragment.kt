@@ -12,7 +12,6 @@ import android.view.ViewGroup
 import androidx.activity.addCallback
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.commitNow
 import androidx.lifecycle.lifecycleScope
@@ -22,18 +21,14 @@ import io.primer.android.analytics.data.models.ObjectType
 import io.primer.android.analytics.data.models.Place
 import io.primer.android.analytics.domain.models.UIAnalyticsParams
 import io.primer.android.core.di.DISdkComponent
-import io.primer.android.core.di.extensions.inject
 import io.primer.android.core.extensions.getSerializableExtraCompat
-import io.primer.android.databinding.FragmentSessionCompleteBinding
-import io.primer.android.di.extension.activityViewModel
+import io.primer.android.databinding.PrimerFragmentSessionCompleteBinding
 import io.primer.android.paymentmethods.common.data.model.PaymentMethodType
 import io.primer.android.ui.extensions.autoCleaned
 import io.primer.android.ui.extensions.getParentDialogOrNull
 import io.primer.android.ui.extensions.setTheme
-import io.primer.android.ui.settings.PrimerTheme
+import io.primer.android.ui.fragments.base.BaseFragment
 import io.primer.android.ui.utils.toPx
-import io.primer.android.viewmodel.PrimerViewModel
-import io.primer.android.viewmodel.PrimerViewModelFactory
 import io.primer.android.viewmodel.ViewStatus
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
@@ -64,20 +59,17 @@ sealed class SessionCompleteViewType : Serializable {
 
 private const val VIEW_HEIGHT_DP = 300
 
-class SessionCompleteFragment : Fragment(), DISdkComponent {
-    private val theme: PrimerTheme by inject()
+internal class SessionCompleteFragment : BaseFragment(), DISdkComponent {
+    private val isVaultedPaymentFlow get() = primerViewModel.selectedPaymentMethod.value == null
 
-    private val viewModel: PrimerViewModel by
-        activityViewModel<PrimerViewModel, PrimerViewModelFactory>()
-    private val isVaultedPaymentFlow get() = viewModel.selectedPaymentMethod.value == null
     private val isStandalonePaymentMethod
         get() =
-            viewModel.selectedPaymentMethod.value?.uiOptions?.isStandalonePaymentMethod == true
-    private var binding: FragmentSessionCompleteBinding by autoCleaned()
+            primerViewModel.selectedPaymentMethod.value?.uiOptions?.isStandalonePaymentMethod == true
+    private var binding: PrimerFragmentSessionCompleteBinding by autoCleaned()
 
     private val selectedPaymentMethodType by lazy {
-        viewModel.selectedPaymentMethod.value?.paymentMethodType
-            ?: viewModel.selectedSavedPaymentMethod?.paymentMethodType
+        primerViewModel.selectedPaymentMethod.value?.paymentMethodType
+            ?: primerViewModel.selectedSavedPaymentMethod?.paymentMethodType
     }
     private val isStripeAchPaymentMethod by lazy {
         selectedPaymentMethodType == PaymentMethodType.STRIPE_ACH.name
@@ -88,7 +80,7 @@ class SessionCompleteFragment : Fragment(), DISdkComponent {
         container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View {
-        binding = FragmentSessionCompleteBinding.inflate(inflater, container, false)
+        binding = PrimerFragmentSessionCompleteBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -108,7 +100,7 @@ class SessionCompleteFragment : Fragment(), DISdkComponent {
             viewType is SessionCompleteViewType.Error &&
                 viewType.errorType == ErrorType.PAYMENT_CANCELLED
 
-        viewModel.addAnalyticsEvent(
+        primerViewModel.addAnalyticsEvent(
             UIAnalyticsParams(
                 action = AnalyticsAction.VIEW,
                 objectType = ObjectType.VIEW,
@@ -117,7 +109,10 @@ class SessionCompleteFragment : Fragment(), DISdkComponent {
         )
 
         if (isStripeAchPaymentMethod) {
-            binding.paymentMethodTitle.text = resources.getString(R.string.pay_with_ach)
+            getToolbar()?.apply {
+                showOnlyTitle(R.string.pay_with_ach)
+                getBackButton().isVisible = false
+            }
             binding.sessionCompleteMessage.text =
                 getString(
                     if (isError) {
@@ -156,7 +151,6 @@ class SessionCompleteFragment : Fragment(), DISdkComponent {
                 binding.secondaryButton.isVisible = false
             }
         } else {
-            binding.paymentMethodTitle.isVisible = false
             binding.sessionCompleteDescription.isVisible = false
             binding.sessionCompleteMessage.text = viewType.getCompletedMessageOrNull()
             binding.primaryButton.isVisible = false
@@ -173,7 +167,7 @@ class SessionCompleteFragment : Fragment(), DISdkComponent {
 
         if (!binding.primaryButton.isVisible && !binding.secondaryButton.isVisible) {
             Handler(Looper.getMainLooper()).postDelayed(
-                { viewModel.setViewStatus(ViewStatus.Dismiss) },
+                { primerViewModel.setViewStatus(ViewStatus.Dismiss) },
                 arguments?.getLong(SESSION_COMPLETE_DISMISS_DELAY_KEY, SESSION_COMPLETE_DISMISS_DELAY_DEFAULT)
                     ?: SESSION_COMPLETE_DISMISS_DELAY_DEFAULT,
             )
@@ -188,7 +182,6 @@ class SessionCompleteFragment : Fragment(), DISdkComponent {
                     isDarkMode = theme.isDarkMode,
                 ),
             )
-        binding.paymentMethodTitle.setTextColor(color)
         binding.sessionCompleteMessage.setTextColor(color)
         binding.primaryButton.setTheme(theme)
     }
@@ -196,15 +189,15 @@ class SessionCompleteFragment : Fragment(), DISdkComponent {
     private fun addOnBackPressedCallback() {
         getParentDialogOrNull()?.onBackPressedDispatcher?.addCallback(this) {
             viewLifecycleOwner.lifecycleScope.launch {
-                viewModel.setViewStatus(ViewStatus.Dismiss)
+                primerViewModel.setViewStatus(ViewStatus.Dismiss)
             }
         }
     }
 
     private fun restart() {
-        viewModel.selectedPaymentMethod.value?.let { paymentMethod ->
+        primerViewModel.selectedPaymentMethod.value?.let { paymentMethod ->
             popBackStack()
-            viewModel.selectPaymentMethod(paymentMethod)
+            primerViewModel.selectPaymentMethod(paymentMethod)
         }
     }
 
@@ -223,7 +216,7 @@ class SessionCompleteFragment : Fragment(), DISdkComponent {
                 remove(this@SessionCompleteFragment)
             }
         }
-        viewModel.goToSelectPaymentMethodsView()
+        primerViewModel.goToSelectPaymentMethodsView()
     }
 
     private fun updateRootHeight() {

@@ -1,38 +1,29 @@
 package io.primer.android.ui.fragments.forms.binding
 
-import android.widget.ImageView
 import android.widget.TextView
-import io.primer.android.databinding.FragmentDynamicFormBinding
-import io.primer.android.databinding.FragmentMultibancoPaymentBinding
-import io.primer.android.databinding.FragmentQrCodeBinding
+import io.primer.android.databinding.PrimerFragmentDynamicFormBinding
+import io.primer.android.databinding.PrimerFragmentMultibancoPaymentBinding
+import io.primer.android.databinding.PrimerFragmentQrCodeBinding
 
 internal class BaseFormBinding(
-    val formBackIcon: ImageView,
-    val formIcon: ImageView,
     val formTitle: TextView,
     val formDescription: TextView,
 )
 
-internal fun FragmentDynamicFormBinding.toBaseFormBinding() =
+internal fun PrimerFragmentDynamicFormBinding.toBaseFormBinding() =
     BaseFormBinding(
-        formBackIcon,
-        formIcon,
         formTitle,
         formDescription,
     )
 
-internal fun FragmentQrCodeBinding.toBaseFormBinding() =
+internal fun PrimerFragmentQrCodeBinding.toBaseFormBinding() =
     BaseFormBinding(
-        ivBack,
-        ivPaymentMethodIcon,
         tvTitleComplete,
         tvDescription,
     )
 
-internal fun FragmentMultibancoPaymentBinding.toBaseFormBinding() =
+internal fun PrimerFragmentMultibancoPaymentBinding.toBaseFormBinding() =
     BaseFormBinding(
-        ivBack,
-        ivPaymentMethodIcon,
         tvTitleComplete,
         tvDescription,
     )

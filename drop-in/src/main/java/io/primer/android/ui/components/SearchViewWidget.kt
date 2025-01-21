@@ -33,7 +33,7 @@ internal class SearchViewWidget(
             val drawableResId =
                 when (it.isNullOrBlank()) {
                     true -> R.drawable.ic_search
-                    else -> R.drawable.ic_search_clear
+                    else -> R.drawable.ic_clear
                 }
             setCompoundDrawablesWithIntrinsicBoundsTinted(
                 0,

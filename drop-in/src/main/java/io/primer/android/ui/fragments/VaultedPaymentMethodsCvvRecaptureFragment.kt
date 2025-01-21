@@ -18,24 +18,18 @@ import io.primer.android.analytics.domain.models.UIAnalyticsParams
 import io.primer.android.components.assets.ui.getCardImageAsset
 import io.primer.android.components.domain.payments.vault.model.card.PrimerVaultedCardAdditionalData
 import io.primer.android.configuration.data.model.CardNetwork
-import io.primer.android.databinding.FragmentVaultedPaymentMethodCvvRecaptureBinding
-import io.primer.android.di.extension.activityViewModel
+import io.primer.android.databinding.PrimerFragmentVaultedPaymentMethodCvvRecaptureBinding
 import io.primer.android.displayMetadata.domain.model.ImageColor
 import io.primer.android.ui.FieldFocuser
 import io.primer.android.ui.extensions.autoCleaned
 import io.primer.android.ui.fragments.base.BaseFragment
 import io.primer.android.ui.settings.PrimerTheme
 import io.primer.android.utils.hideKeyboard
-import io.primer.android.viewmodel.PrimerViewModel
-import io.primer.android.viewmodel.PrimerViewModelFactory
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 @OptIn(ExperimentalCoroutinesApi::class)
 internal class VaultedPaymentMethodsCvvRecaptureFragment : BaseFragment() {
-    private var binding: FragmentVaultedPaymentMethodCvvRecaptureBinding by autoCleaned()
-
-    private val viewModel: PrimerViewModel by
-        activityViewModel<PrimerViewModel, PrimerViewModelFactory>()
+    private var binding: PrimerFragmentVaultedPaymentMethodCvvRecaptureBinding by autoCleaned()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -43,7 +37,7 @@ internal class VaultedPaymentMethodsCvvRecaptureFragment : BaseFragment() {
         savedInstanceState: Bundle?,
     ): View {
         binding =
-            FragmentVaultedPaymentMethodCvvRecaptureBinding.inflate(inflater, container, false)
+            PrimerFragmentVaultedPaymentMethodCvvRecaptureBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -69,10 +63,10 @@ internal class VaultedPaymentMethodsCvvRecaptureFragment : BaseFragment() {
     }
 
     private fun setBackButtonOnClick() {
-        binding.vaultedPaymentMethodCvvGoBack.setOnClickListener { view ->
+        getToolbar()?.getBackButton()?.setOnClickListener { view ->
             view.hideKeyboard()
             logAnalyticsBackPressed()
-            viewModel.goToSelectPaymentMethodsView()
+            primerViewModel.goToSelectPaymentMethodsView()
         }
     }
 
@@ -97,15 +91,15 @@ internal class VaultedPaymentMethodsCvvRecaptureFragment : BaseFragment() {
                 logAnalyticsSubmitPressed()
                 toggleLoading(true)
 
-                val paymentMethod = viewModel.selectedSavedPaymentMethod ?: return@setOnClickListener
+                val paymentMethod = primerViewModel.selectedSavedPaymentMethod ?: return@setOnClickListener
                 val cvv = binding.vaultedPaymentMethodCvvCardCvvInput.text.toString().trim()
-                viewModel.exchangePaymentMethodToken(paymentMethod, PrimerVaultedCardAdditionalData(cvv = cvv))
+                primerViewModel.exchangePaymentMethodToken(paymentMethod, PrimerVaultedCardAdditionalData(cvv = cvv))
             }
         }
     }
 
     private fun setCardDetails() {
-        val paymentMethod = viewModel.selectedSavedPaymentMethod ?: return
+        val paymentMethod = primerViewModel.selectedSavedPaymentMethod ?: return
         val data = paymentMethod.paymentInstrumentData
         val last4: Int = requireNotNull(data.last4Digits) { "card data is invalid!" }
         binding.vaultedPaymentMethodCvvLastFourLabel.text = getString(R.string.last_four, last4)
@@ -140,12 +134,7 @@ internal class VaultedPaymentMethodsCvvRecaptureFragment : BaseFragment() {
     }
 
     private fun setTitleTheme() {
-        val context = requireContext()
-        val titleView = binding.vaultedPaymentMethodCvvTitleLabel
-        val textColor = theme.titleText.defaultColor.getColor(context, theme.isDarkMode)
-        val fontSize = theme.titleText.fontSize.getDimension(context)
-        titleView.setTextColor(textColor)
-        titleView.setTextSize(TypedValue.COMPLEX_UNIT_PX, fontSize)
+        getToolbar()?.showOnlyTitle(R.string.primer_cvv_recapture_title)
     }
 
     private fun setCvvInputTheme() {
@@ -174,7 +163,7 @@ internal class VaultedPaymentMethodsCvvRecaptureFragment : BaseFragment() {
 
     private fun validateCvvInput() {
         binding.vaultedPaymentMethodCvvCardCvvInput.doAfterTextChanged { editable ->
-            viewModel.selectedSavedPaymentMethod?.let { token ->
+            primerViewModel.selectedSavedPaymentMethod?.let { token ->
                 val data = token.paymentInstrumentData
                 val network = requireNotNull(data.binData?.network) { "card data is invalid!" }
                 val expectedLength = CardNetwork.lookupByCardNetwork(network).cvvLength

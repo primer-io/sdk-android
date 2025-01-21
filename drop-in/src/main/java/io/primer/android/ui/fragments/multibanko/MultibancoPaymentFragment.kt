@@ -13,7 +13,7 @@ import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import io.primer.android.R
 import io.primer.android.core.di.DISdkComponent
-import io.primer.android.databinding.FragmentMultibancoPaymentBinding
+import io.primer.android.databinding.PrimerFragmentMultibancoPaymentBinding
 import io.primer.android.domain.payments.forms.models.Form
 import io.primer.android.ui.extensions.autoCleaned
 import io.primer.android.ui.extensions.copyTextToClipboard
@@ -24,7 +24,7 @@ import io.primer.android.viewmodel.ViewStatus
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 internal class MultibancoPaymentFragment : BaseFormFragment(), DISdkComponent {
-    private var binding: FragmentMultibancoPaymentBinding by autoCleaned()
+    private var binding: PrimerFragmentMultibancoPaymentBinding by autoCleaned()
 
     override val baseFormBinding: BaseFormBinding by autoCleaned { binding.toBaseFormBinding() }
 
@@ -33,7 +33,7 @@ internal class MultibancoPaymentFragment : BaseFormFragment(), DISdkComponent {
         container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View {
-        binding = FragmentMultibancoPaymentBinding.inflate(inflater, container, false)
+        binding = PrimerFragmentMultibancoPaymentBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -48,6 +48,7 @@ internal class MultibancoPaymentFragment : BaseFormFragment(), DISdkComponent {
 
     private fun setupTheme() {
         val titleTextColor = theme.titleText.defaultColor.getColor(requireContext(), theme.isDarkMode)
+        val imageColorStates = ColorStateList.valueOf(titleTextColor)
         binding.tvTitleComplete.setTextColor(titleTextColor)
         binding.tvDescription.setTextColor(
             theme.subtitleText.defaultColor.getColor(requireContext(), theme.isDarkMode),
@@ -56,8 +57,12 @@ internal class MultibancoPaymentFragment : BaseFormFragment(), DISdkComponent {
         binding.tvValueAmount.setTextColor(titleTextColor)
         binding.tvValueReference.setTextColor(titleTextColor)
         binding.tvValueEntity.setTextColor(titleTextColor)
-        val imageColorStates = ColorStateList.valueOf(titleTextColor)
-        binding.ivShare.imageTintList = imageColorStates
+
+        getToolbar()?.apply {
+            getBackButton().setImageResource(R.drawable.ic_share)
+            getBackButton().imageTintList = imageColorStates
+            showOnlyLogo(R.drawable.ic_logo_multibanco_light)
+        }
     }
 
     private fun setupAmount() {
@@ -79,7 +84,7 @@ internal class MultibancoPaymentFragment : BaseFormFragment(), DISdkComponent {
         reference: String,
         expiresAt: String,
     ) {
-        binding.ivShare.setOnClickListener {
+        getToolbar()?.getBackButton()?.setOnClickListener {
             shareContent(
                 buildString {
                     append(getString(R.string.multibancoEntity))
@@ -125,8 +130,7 @@ internal class MultibancoPaymentFragment : BaseFormFragment(), DISdkComponent {
 
     override fun setupBackIcon() {
         super.setupBackIcon()
-        val backIcon = baseFormBinding.formBackIcon
-        backIcon.setOnClickListener {
+        getToolbar()?.getBackButton()?.setOnClickListener {
             primerViewModel.setViewStatus(ViewStatus.SelectPaymentMethod)
         }
     }

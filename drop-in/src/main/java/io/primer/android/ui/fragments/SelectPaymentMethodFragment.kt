@@ -14,7 +14,6 @@ import androidx.core.view.children
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.fragment.app.DialogFragment
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
 import androidx.lifecycle.lifecycleScope
 import io.primer.android.PrimerSessionIntent
@@ -26,8 +25,7 @@ import io.primer.android.configuration.data.model.CardNetwork
 import io.primer.android.core.di.DISdkComponent
 import io.primer.android.core.di.extensions.inject
 import io.primer.android.data.settings.internal.PrimerConfig
-import io.primer.android.databinding.FragmentSelectPaymentMethodBinding
-import io.primer.android.di.extension.activityViewModel
+import io.primer.android.databinding.PrimerFragmentSelectPaymentMethodBinding
 import io.primer.android.displayMetadata.domain.model.ImageColor
 import io.primer.android.payment.config.BaseDisplayMetadata
 import io.primer.android.payment.utils.ButtonViewHelper.generateButtonContent
@@ -35,16 +33,14 @@ import io.primer.android.paymentMethods.PaymentMethodUiType
 import io.primer.android.paymentMethods.core.ui.descriptors.PaymentMethodDropInDescriptor
 import io.primer.android.paymentmethods.common.data.model.PaymentMethodType
 import io.primer.android.ui.extensions.autoCleaned
-import io.primer.android.ui.settings.PrimerTheme
-import io.primer.android.viewmodel.PrimerViewModel
-import io.primer.android.viewmodel.PrimerViewModelFactory
+import io.primer.android.ui.fragments.base.BaseFragment
 import io.primer.android.viewmodel.ViewStatus
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
 
 @ExperimentalCoroutinesApi
 @Suppress("TooManyFunctions")
-internal class SelectPaymentMethodFragment : Fragment(), DISdkComponent {
+internal class SelectPaymentMethodFragment : BaseFragment(), DISdkComponent {
     companion object {
         val TAG = SelectPaymentMethodFragment::class.simpleName
 
@@ -53,20 +49,16 @@ internal class SelectPaymentMethodFragment : Fragment(), DISdkComponent {
     }
 
     private val localConfig: PrimerConfig by inject()
-    private val theme: PrimerTheme by inject()
     private val methodViewFactory: PrimerPaymentMethodViewFactory by inject()
 
-    private val primerViewModel: PrimerViewModel by
-        activityViewModel<PrimerViewModel, PrimerViewModelFactory>()
-
-    private var binding: FragmentSelectPaymentMethodBinding by autoCleaned()
+    private var binding: PrimerFragmentSelectPaymentMethodBinding by autoCleaned()
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View {
-        binding = FragmentSelectPaymentMethodBinding.inflate(inflater, container, false)
+        binding = PrimerFragmentSelectPaymentMethodBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -111,11 +103,8 @@ internal class SelectPaymentMethodFragment : Fragment(), DISdkComponent {
      * title
      * */
     private fun renderTitle() {
-        val context = requireContext()
-        val textColor = theme.titleText.defaultColor.getColor(context, theme.isDarkMode)
-        binding.choosePaymentMethodLabel.setTextColor(textColor)
-        val fontSize = theme.titleText.fontSize.getDimension(context)
-        binding.choosePaymentMethodLabel.setTextSize(TypedValue.COMPLEX_UNIT_PX, fontSize)
+        getToolbar()?.getBackButton()?.isVisible = false
+        getToolbar()?.showOnlyTitle(R.string.choose_payment_method)
     }
 
     // show title label that displays total amount minus any applies surcharges
@@ -245,6 +234,7 @@ internal class SelectPaymentMethodFragment : Fragment(), DISdkComponent {
     }
 
     private fun setBusy(isBusy: Boolean) {
+        getToolbar()?.isVisible = isBusy.not()
         binding.primerSelectPaymentMethodLayout.children.iterator()
             .forEach { it.isVisible = !isBusy }
         if (localConfig.paymentMethodIntent.isNotVault) {
@@ -273,8 +263,7 @@ internal class SelectPaymentMethodFragment : Fragment(), DISdkComponent {
             PrimerSessionIntent.VAULT -> {
                 binding.primerSheetTitle.isVisible = false
                 binding.payAllButton.isVisible = false
-                binding.choosePaymentMethodLabel.text =
-                    context?.getString(R.string.add_new_payment_method)
+                getToolbar()?.showOnlyTitle(R.string.add_new_payment_method)
             }
         }
 

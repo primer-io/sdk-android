@@ -93,8 +93,8 @@ internal abstract class BaseBankSelectionFragment : BaseFragment(), BankSelectio
     ) {
         super.onViewCreated(view, savedInstanceState)
         logAnalyticsViewed()
-        setupViews()
         setupListeners()
+        setupViews()
 
         setupObservers()
         loadData()
@@ -113,18 +113,6 @@ internal abstract class BaseBankSelectionFragment : BaseFragment(), BankSelectio
 
     protected open fun setupViews() {
         baseBinding.chooseBankTitle.setTextColor(
-            theme.titleText.defaultColor.getColor(
-                requireContext(),
-                theme.isDarkMode,
-            ),
-        )
-
-        baseBinding.paymentMethodBack.isVisible =
-            primerViewModel.selectedPaymentMethod.value?.uiOptions
-                ?.isStandalonePaymentMethod?.not()
-                ?: false
-
-        baseBinding.paymentMethodBack.setColorFilter(
             theme.titleText.defaultColor.getColor(
                 requireContext(),
                 theme.isDarkMode,
@@ -178,6 +166,16 @@ internal abstract class BaseBankSelectionFragment : BaseFragment(), BankSelectio
         adjustBottomSheetState(BottomSheetBehavior.STATE_COLLAPSED)
     }
 
+    protected open fun setupToolbar() {
+        getToolbar()?.getBackButton()?.apply {
+            setOnClickListener { popBackStack() }
+            isVisible =
+                primerViewModel.selectedPaymentMethod.value?.uiOptions
+                    ?.isStandalonePaymentMethod?.not()
+                    ?: false
+        }
+    }
+
     protected open fun setupObservers() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -203,10 +201,12 @@ internal abstract class BaseBankSelectionFragment : BaseFragment(), BankSelectio
             when (bankStep) {
                 is BanksStep.Loading -> {
                     banks = null
+                    setupToolbar()
                     onLoading(true)
                 }
 
                 is BanksStep.BanksRetrieved -> {
+                    setupToolbar()
                     onLoading(false)
                     adapter.items =
                         bankStep.banks.map { issuingBank ->
@@ -224,6 +224,7 @@ internal abstract class BaseBankSelectionFragment : BaseFragment(), BankSelectio
 
     private suspend fun collectComponentErrors() {
         component.componentError.collect {
+            setupToolbar()
             onLoading(false)
             onLoadingError()
         }
@@ -257,9 +258,6 @@ internal abstract class BaseBankSelectionFragment : BaseFragment(), BankSelectio
     }
 
     private fun setupListeners() {
-        baseBinding.paymentMethodBack.setOnClickListener {
-            popBackStack()
-        }
         baseBinding.errorLayout.tryAgain.setOnClickListener {
             loadData()
         }

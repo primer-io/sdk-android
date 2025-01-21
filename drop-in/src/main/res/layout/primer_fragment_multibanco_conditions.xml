@@ -6,41 +6,13 @@
     android:layout_height="wrap_content"
     tools:context=".ui.fragments.multibanko.MultibancoConditionsFragment">
 
-    <ImageView
-        android:id="@+id/iv_back"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:contentDescription="@string/go_back_description"
-        android:paddingTop="@dimen/large_vertical_margin"
-        android:paddingEnd="@dimen/large_vertical_margin"
-        android:paddingBottom="@dimen/large_vertical_margin"
-        android:src="@drawable/icon_go_back"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <ImageView
-        android:id="@+id/iv_payment_method_icon"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="58dp"
-        android:layout_marginEnd="58dp"
-        android:contentDescription="@string/payment_method_icon"
-        android:maxHeight="58dp"
-        android:scaleType="fitCenter"
-        android:src="@drawable/ic_logo_multibanco_light"
-        app:layout_constraintBottom_toBottomOf="@+id/iv_back"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/iv_back" />
-
     <TextView
         android:id="@+id/tvTitle"
         style="@style/Primer.Text.Title.Small"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/xl_vertical_margin"
         android:text="@string/multibancoTitleConditions"
-        app:layout_constraintTop_toBottomOf="@+id/iv_back" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <LinearLayout
         android:id="@+id/ll_conditions_group"

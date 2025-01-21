@@ -7,5 +7,5 @@
 
     <include
         android:id="@+id/payment_category"
-        layout="@layout/klarna_payment_category" />
+        layout="@layout/primer_klarna_payment_category" />
 </FrameLayout>

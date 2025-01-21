@@ -11,19 +11,10 @@
         android:orientation="vertical">
 
         <TextView
-            android:id="@+id/title"
-            style="@style/Primer.Text.NewTitle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingBottom="@dimen/x_medium_vertical_margin"
-            android:text="@string/pay_with_ach" />
-
-        <TextView
             android:id="@+id/mandate"
             style="@style/Primer.Text.Small.Body"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/large_vertical_margin"
             android:textIsSelectable="false"
             tools:text="@string/stripe_ach_mandate_template_android" />
 

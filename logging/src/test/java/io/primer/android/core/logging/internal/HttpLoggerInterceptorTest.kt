@@ -1,4 +1,4 @@
-package io.primer.logging.internal
+package io.primer.android.core.logging.internal
 
 import io.mockk.every
 import io.mockk.impl.annotations.RelaxedMockK
@@ -10,9 +10,6 @@ import io.primer.android.core.logging.PrimerLog
 import io.primer.android.core.logging.PrimerLogLevel
 import io.primer.android.core.logging.PrimerLogger
 import io.primer.android.core.logging.PrimerLogging
-import io.primer.android.core.logging.internal.HttpLoggerInterceptor
-import io.primer.android.core.logging.internal.LogReporter
-import io.primer.android.core.logging.internal.WhitelistedKey
 import io.primer.android.core.logging.internal.dsl.whitelistedKeys
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import okhttp3.Headers.Companion.toHeaders

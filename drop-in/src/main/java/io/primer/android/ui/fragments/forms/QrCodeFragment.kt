@@ -17,7 +17,7 @@ import io.primer.android.R
 import io.primer.android.components.utils.ImageLoader
 import io.primer.android.core.di.DISdkComponent
 import io.primer.android.core.di.extensions.inject
-import io.primer.android.databinding.FragmentQrCodeBinding
+import io.primer.android.databinding.PrimerFragmentQrCodeBinding
 import io.primer.android.domain.payments.forms.models.Form
 import io.primer.android.ui.extensions.autoCleaned
 import io.primer.android.ui.extensions.getParentDialogOrNull
@@ -31,7 +31,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 internal class QrCodeFragment : BaseFormFragment(), DISdkComponent {
-    private var binding: FragmentQrCodeBinding by autoCleaned()
+    private var binding: PrimerFragmentQrCodeBinding by autoCleaned()
 
     override val baseFormBinding: BaseFormBinding by autoCleaned { binding.toBaseFormBinding() }
 
@@ -51,7 +51,7 @@ internal class QrCodeFragment : BaseFormFragment(), DISdkComponent {
         container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View {
-        binding = FragmentQrCodeBinding.inflate(inflater, container, false)
+        binding = PrimerFragmentQrCodeBinding.inflate(inflater, container, false)
         with(binding.tvAmount) {
             isGone = false
             text = primerViewModel.getTotalAmountFormatted()
@@ -70,7 +70,7 @@ internal class QrCodeFragment : BaseFormFragment(), DISdkComponent {
 
     override fun setupBackIcon() {
         super.setupBackIcon()
-        binding.ivBack.setOnClickListener {
+        getToolbar()?.getBackButton()?.setOnClickListener {
             logAnalyticsBackPressed()
             popBackStackAndCleanupManager()
         }
