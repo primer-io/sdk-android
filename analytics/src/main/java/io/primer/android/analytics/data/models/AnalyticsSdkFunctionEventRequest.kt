@@ -4,7 +4,7 @@ import io.primer.android.core.data.serialization.json.JSONObjectDeserializer
 import io.primer.android.core.data.serialization.json.JSONObjectSerializer
 import io.primer.android.core.data.serialization.json.JSONSerializationUtils
 import io.primer.android.core.data.serialization.json.extensions.optNullableString
-import io.primer.android.core.data.serialization.json.extensions.toStringMap
+import io.primer.android.core.data.serialization.json.extensions.toMap
 import org.json.JSONObject
 
 internal data class AnalyticsSdkFunctionEventRequest(
@@ -74,7 +74,7 @@ internal data class AnalyticsSdkFunctionEventRequest(
 
 internal data class FunctionProperties(
     val name: String,
-    val params: Map<String, Any>,
+    val params: Map<String, Any?>,
 ) : BaseAnalyticsProperties() {
     companion object {
         private const val NAME_FIELD = "name"
@@ -91,10 +91,10 @@ internal data class FunctionProperties(
 
         @JvmField
         val deserializer =
-            JSONObjectDeserializer<FunctionProperties> { t ->
+            JSONObjectDeserializer { t ->
                 FunctionProperties(
                     t.getString(NAME_FIELD),
-                    t.getJSONObject(PARAMS_FIELD).toStringMap(),
+                    t.getJSONObject(PARAMS_FIELD).toMap(),
                 )
             }
     }

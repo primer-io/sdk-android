@@ -6,6 +6,7 @@ import io.primer.android.core.data.serialization.json.JSONObjectSerializable
 import io.primer.android.core.data.serialization.json.JSONObjectSerializer
 import io.primer.android.core.extensions.readParcelable
 import io.primer.android.data.settings.DismissalMechanism
+import org.json.JSONArray
 import org.json.JSONObject
 
 data class PrimerUIOptions(
@@ -55,7 +56,6 @@ data class PrimerUIOptions(
         private const val INIT_SCREEN_ENABLED_FIELD = "isInitScreenEnabled"
         private const val SUCCESS_SCREEN_ENABLED_FIELD = "isSuccessScreenEnabled"
         private const val ERROR_SCREEN_ENABLED_FIELD = "isErrorScreenEnabled"
-        private const val THEME_FIELD = "theme"
         private const val DISMISSAL_MECHANISMS_FIELD = "dismissalMechanism"
 
         @JvmField
@@ -65,8 +65,7 @@ data class PrimerUIOptions(
                     put(INIT_SCREEN_ENABLED_FIELD, t.isInitScreenEnabled)
                     put(SUCCESS_SCREEN_ENABLED_FIELD, t.isSuccessScreenEnabled)
                     put(ERROR_SCREEN_ENABLED_FIELD, t.isErrorScreenEnabled)
-                    put(DISMISSAL_MECHANISMS_FIELD, t.dismissalMechanism.map { it.name })
-                    put(THEME_FIELD, PrimerTheme.serializer.serialize(t.theme))
+                    put(DISMISSAL_MECHANISMS_FIELD, JSONArray(t.dismissalMechanism.map { it.name }))
                 }
             }
     }

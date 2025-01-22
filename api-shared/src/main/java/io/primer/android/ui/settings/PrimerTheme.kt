@@ -6,15 +6,12 @@ import androidx.annotation.ColorRes
 import androidx.annotation.DimenRes
 import androidx.annotation.RestrictTo
 import io.primer.android.apiShared.R
-import io.primer.android.core.data.serialization.json.JSONObjectSerializable
-import io.primer.android.core.data.serialization.json.JSONObjectSerializer
 import io.primer.android.core.extensions.readParcelable
 import io.primer.android.data.settings.ColorData
 import io.primer.android.data.settings.DimensionData
 import io.primer.android.data.settings.DynamicColor
 import io.primer.android.data.settings.ResourceColor
 import io.primer.android.data.settings.ResourceDimension
-import org.json.JSONObject
 
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 data class PrimerTheme internal constructor(
@@ -37,7 +34,7 @@ data class PrimerTheme internal constructor(
     val searchInput: SearchInputTheme,
     val windowMode: WindowMode,
     val inputMode: InputMode,
-) : Parcelable, JSONObjectSerializable {
+) : Parcelable {
     constructor(parcel: Parcel) : this(
         isDarkMode = parcel.readValue(Boolean::class.java.classLoader) as? Boolean,
         primaryColor = parcel.readParcelable<ColorData>() ?: ResourceColor.valueOf(R.color.primer_primary),
@@ -173,58 +170,6 @@ data class PrimerTheme internal constructor(
         override fun newArray(size: Int): Array<PrimerTheme?> {
             return arrayOfNulls(size)
         }
-
-        private const val IS_DARK_MODE_FIELD = "isDarkMode"
-        private const val PRIMARY_COLOR_FIELD = "primaryColor"
-        private const val BACKGROUND_COLOR_FIELD = "backgroundColor"
-        private const val SPLASH_COLOR_FIELD = "splashColor"
-        private const val DEFAULT_CORNER_RADIUS_FIELD = "defaultCornerRadius"
-        private const val BOTTOM_SHEET_CORNER_RADIUS_FIELD = "bottomSheetCornerRadius"
-        private const val TITLE_TEXT_FIELD = "titleText"
-        private const val AMOUNT_LABEL_TEXT_FIELD = "amountLabelText"
-        private const val SUBTITLE_TEXT_FIELD = "subtitleText"
-        private const val PAYMENT_METHOD_BUTTON_FIELD = "paymentMethodButton"
-        private const val MAIN_BUTTON_FIELD = "mainButton"
-        private const val SYSTEM_TEXT_FIELD = "systemText"
-        private const val DEFAULT_TEXT_FIELD = "defaultText"
-        private const val ERROR_TEXT_FIELD = "errorText"
-        private const val INPUT_FIELD = "input"
-        private const val DIVIDER_FIELD = "divider"
-        private const val SEARCH_INPUT_FIELD = "searchInput"
-        private const val WINDOW_MODE_FIELD = "windowMode"
-        private const val INPUT_MODE_FIELD = "inputMode"
-
-        @JvmField
-        val serializer =
-            JSONObjectSerializer<PrimerTheme> { primerTheme ->
-                JSONObject().apply {
-                    put(IS_DARK_MODE_FIELD, primerTheme.isDarkMode)
-                    put(PRIMARY_COLOR_FIELD, ColorData.serializer.serialize(primerTheme.primaryColor))
-                    put(BACKGROUND_COLOR_FIELD, ColorData.serializer.serialize(primerTheme.backgroundColor))
-                    put(SPLASH_COLOR_FIELD, ColorData.serializer.serialize(primerTheme.splashColor))
-                    put(
-                        DEFAULT_CORNER_RADIUS_FIELD,
-                        DimensionData.serializer.serialize(primerTheme.defaultCornerRadius),
-                    )
-                    put(
-                        BOTTOM_SHEET_CORNER_RADIUS_FIELD,
-                        DimensionData.serializer.serialize(primerTheme.bottomSheetCornerRadius),
-                    )
-                    put(TITLE_TEXT_FIELD, TextTheme.serializer.serialize(primerTheme.titleText))
-                    put(AMOUNT_LABEL_TEXT_FIELD, TextTheme.serializer.serialize(primerTheme.amountLabelText))
-                    put(SUBTITLE_TEXT_FIELD, TextTheme.serializer.serialize(primerTheme.subtitleText))
-                    put(PAYMENT_METHOD_BUTTON_FIELD, ButtonTheme.serializer.serialize(primerTheme.paymentMethodButton))
-                    put(MAIN_BUTTON_FIELD, ButtonTheme.serializer.serialize(primerTheme.mainButton))
-                    put(SYSTEM_TEXT_FIELD, TextTheme.serializer.serialize(primerTheme.systemText))
-                    put(DEFAULT_TEXT_FIELD, TextTheme.serializer.serialize(primerTheme.defaultText))
-                    put(ERROR_TEXT_FIELD, TextTheme.serializer.serialize(primerTheme.errorText))
-                    put(INPUT_FIELD, InputTheme.serializer.serialize(primerTheme.input))
-                    put(DIVIDER_FIELD, DividerTheme.serializer.serialize(primerTheme.divider))
-                    put(SEARCH_INPUT_FIELD, SearchInputTheme.serializer.serialize(primerTheme.searchInput))
-                    put(WINDOW_MODE_FIELD, primerTheme.windowMode.name)
-                    put(INPUT_MODE_FIELD, primerTheme.inputMode.name)
-                }
-            }
 
         /**
          * Style the Primer SDK using Android XML resources
@@ -1011,7 +956,7 @@ data class ButtonTheme(
     val text: TextTheme,
     val border: BorderTheme,
     val cornerRadius: DimensionData,
-) : Parcelable, JSONObjectSerializable {
+) : Parcelable {
     constructor(parcel: Parcel) : this(
         defaultColor = parcel.readParcelable<ColorData>()!!,
         disabledColor = parcel.readParcelable<ColorData>()!!,
@@ -1045,33 +990,13 @@ data class ButtonTheme(
         override fun newArray(size: Int): Array<ButtonTheme?> {
             return arrayOfNulls(size)
         }
-
-        private const val DEFAULT_COLOR_FIELD = "defaultColor"
-        private const val DISABLED_COLOR_FIELD = "disabledColor"
-        private const val ERROR_COLOR_FIELD = "errorColor"
-        private const val TEXT_FIELD = "text"
-        private const val BORDER_FIELD = "border"
-        private const val CORNER_RADIUS_FIELD = "cornerRadius"
-
-        @JvmField
-        val serializer =
-            JSONObjectSerializer<ButtonTheme> { buttonTheme ->
-                JSONObject().apply {
-                    put(DEFAULT_COLOR_FIELD, ColorData.serializer.serialize(buttonTheme.defaultColor))
-                    put(DISABLED_COLOR_FIELD, ColorData.serializer.serialize(buttonTheme.disabledColor))
-                    put(ERROR_COLOR_FIELD, ColorData.serializer.serialize(buttonTheme.errorColor))
-                    put(TEXT_FIELD, TextTheme.serializer.serialize(buttonTheme.text))
-                    put(BORDER_FIELD, BorderTheme.serializer.serialize(buttonTheme.border))
-                    put(CORNER_RADIUS_FIELD, DimensionData.serializer.serialize(buttonTheme.cornerRadius))
-                }
-            }
     }
 }
 
 data class TextTheme(
     val defaultColor: ColorData,
     val fontSize: DimensionData,
-) : Parcelable, JSONObjectSerializable {
+) : Parcelable {
     constructor(parcel: Parcel) : this(
         defaultColor = parcel.readParcelable<ColorData>()!!,
         fontSize = parcel.readParcelable<DimensionData>()!!,
@@ -1097,18 +1022,6 @@ data class TextTheme(
         override fun newArray(size: Int): Array<TextTheme?> {
             return arrayOfNulls(size)
         }
-
-        private const val DEFAULT_COLOR_FIELD = "defaultColor"
-        private const val FONT_SIZE_FIELD = "fontSize"
-
-        @JvmField
-        val serializer =
-            JSONObjectSerializer<TextTheme> { t ->
-                JSONObject().apply {
-                    put(DEFAULT_COLOR_FIELD, ColorData.serializer.serialize(t.defaultColor))
-                    put(FONT_SIZE_FIELD, DimensionData.serializer.serialize(t.fontSize))
-                }
-            }
     }
 }
 
@@ -1117,7 +1030,7 @@ data class BorderTheme(
     val selectedColor: ColorData,
     val errorColor: ColorData,
     val width: DimensionData,
-) : Parcelable, JSONObjectSerializable {
+) : Parcelable {
     constructor(parcel: Parcel) : this(
         defaultColor = parcel.readParcelable<ColorData>()!!,
         selectedColor = parcel.readParcelable<ColorData>()!!,
@@ -1147,22 +1060,6 @@ data class BorderTheme(
         override fun newArray(size: Int): Array<BorderTheme?> {
             return arrayOfNulls(size)
         }
-
-        private const val DEFAULT_COLOR_FIELD = "defaultColor"
-        private const val SELECTED_COLOR_FIELD = "selectedColor"
-        private const val ERROR_COLOR_FIELD = "errorColor"
-        private const val WIDTH_FIELD = "width"
-
-        @JvmField
-        val serializer =
-            JSONObjectSerializer<BorderTheme> { borderTheme ->
-                JSONObject().apply {
-                    put(DEFAULT_COLOR_FIELD, ColorData.serializer.serialize(borderTheme.defaultColor))
-                    put(SELECTED_COLOR_FIELD, ColorData.serializer.serialize(borderTheme.selectedColor))
-                    put(ERROR_COLOR_FIELD, ColorData.serializer.serialize(borderTheme.errorColor))
-                    put(WIDTH_FIELD, DimensionData.serializer.serialize(borderTheme.width))
-                }
-            }
     }
 }
 
@@ -1173,7 +1070,7 @@ data class InputTheme(
     val text: TextTheme,
     val hintText: TextTheme,
     val border: BorderTheme,
-) : Parcelable, JSONObjectSerializable {
+) : Parcelable {
     constructor(parcel: Parcel) : this(
         backgroundColor = parcel.readParcelable<ColorData>()!!,
         cursorColor = parcel.readParcelable<ColorData>()!!,
@@ -1207,26 +1104,6 @@ data class InputTheme(
         override fun newArray(size: Int): Array<InputTheme?> {
             return arrayOfNulls(size)
         }
-
-        private const val BACKGROUND_COLOR_FIELD = "backgroundColor"
-        private const val CURSOR_COLOR_FIELD = "cursorColor"
-        private const val CORNER_RADIUS_FIELD = "cornerRadius"
-        private const val TEXT_FIELD = "text"
-        private const val HINT_TEXT_FIELD = "hintText"
-        private const val BORDER_FIELD = "border"
-
-        @JvmField
-        val serializer =
-            JSONObjectSerializer<InputTheme> { inputTheme ->
-                JSONObject().apply {
-                    put(BACKGROUND_COLOR_FIELD, ColorData.serializer.serialize(inputTheme.backgroundColor))
-                    put(CURSOR_COLOR_FIELD, ColorData.serializer.serialize(inputTheme.cursorColor))
-                    put(CORNER_RADIUS_FIELD, DimensionData.serializer.serialize(inputTheme.cornerRadius))
-                    put(TEXT_FIELD, TextTheme.serializer.serialize(inputTheme.text))
-                    put(HINT_TEXT_FIELD, TextTheme.serializer.serialize(inputTheme.hintText))
-                    put(BORDER_FIELD, BorderTheme.serializer.serialize(inputTheme.border))
-                }
-            }
     }
 }
 
@@ -1236,7 +1113,7 @@ data class SearchInputTheme(
     val cornerRadius: DimensionData,
     val text: TextTheme,
     val hintText: TextTheme,
-) : Parcelable, JSONObjectSerializable {
+) : Parcelable {
     constructor(parcel: Parcel) : this(
         backgroundColor = parcel.readParcelable<ColorData>()!!,
         borderColor = parcel.readParcelable<ColorData>()!!,
@@ -1268,31 +1145,13 @@ data class SearchInputTheme(
         override fun newArray(size: Int): Array<SearchInputTheme?> {
             return arrayOfNulls(size)
         }
-
-        private const val BACKGROUND_COLOR_FIELD = "backgroundColor"
-        private const val BORDER_COLOR_FIELD = "borderColor"
-        private const val CORNER_RADIUS_FIELD = "cornerRadius"
-        private const val TEXT_FIELD = "text"
-        private const val HINT_TEXT_FIELD = "hintText"
-
-        @JvmField
-        val serializer =
-            JSONObjectSerializer<SearchInputTheme> { searchInputTheme ->
-                JSONObject().apply {
-                    put(BACKGROUND_COLOR_FIELD, ColorData.serializer.serialize(searchInputTheme.backgroundColor))
-                    put(BORDER_COLOR_FIELD, ColorData.serializer.serialize(searchInputTheme.borderColor))
-                    put(CORNER_RADIUS_FIELD, DimensionData.serializer.serialize(searchInputTheme.cornerRadius))
-                    put(TEXT_FIELD, TextTheme.serializer.serialize(searchInputTheme.text))
-                    put(HINT_TEXT_FIELD, TextTheme.serializer.serialize(searchInputTheme.hintText))
-                }
-            }
     }
 }
 
 data class DividerTheme(
     val backgroundColor: ColorData,
     val height: DimensionData,
-) : Parcelable, JSONObjectSerializable {
+) : Parcelable {
     constructor(parcel: Parcel) : this(
         backgroundColor = parcel.readParcelable<ColorData>()!!,
         height = parcel.readParcelable<DimensionData>()!!,
@@ -1318,17 +1177,5 @@ data class DividerTheme(
         override fun newArray(size: Int): Array<DividerTheme?> {
             return arrayOfNulls(size)
         }
-
-        private const val BACKGROUND_COLOR_FIELD = "backgroundColor"
-        private const val HEIGHT_FIELD = "height"
-
-        @JvmField
-        val serializer =
-            JSONObjectSerializer<DividerTheme> { dividerTheme ->
-                JSONObject().apply {
-                    put(BACKGROUND_COLOR_FIELD, ColorData.serializer.serialize(dividerTheme.backgroundColor))
-                    put(HEIGHT_FIELD, DimensionData.serializer.serialize(dividerTheme.height))
-                }
-            }
     }
 }

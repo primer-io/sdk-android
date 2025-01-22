@@ -81,7 +81,7 @@ fun JSONObject.toStringMap(): Map<String, String> {
     }
 }
 
-fun JSONObject.toMap(): Map<String, *> {
+fun JSONObject.toMap(): Map<String, Any?> {
     return keys().asSequence().associateWith {
         when (val value = this[it]) {
             is JSONArray -> {
