@@ -36,6 +36,9 @@ import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.Response
 import okio.IOException
+import java.util.concurrent.ConcurrentHashMap
+import kotlin.time.Duration
+import kotlin.time.toJavaDuration
 
 const val CONTENT_TYPE_APPLICATION_JSON = "application/json"
 
@@ -44,6 +47,22 @@ class PrimerHttpClient(
     val logProvider: EventFlowProvider<MessageLog>,
     val messagePropertiesEventProvider: EventFlowProvider<MessagePropertiesHelper>,
 ) {
+    fun withTimeout(duration: Duration?): PrimerHttpClient {
+        if (duration == null) return this
+
+        return customTimeoutInstances.getOrPut(duration) {
+            PrimerHttpClient(
+                okHttpClient =
+                    okHttpClient.newBuilder()
+                        .readTimeout(duration.toJavaDuration())
+                        .writeTimeout(duration.toJavaDuration())
+                        .build(),
+                logProvider = logProvider,
+                messagePropertiesEventProvider = messagePropertiesEventProvider,
+            )
+        }
+    }
+
     inline fun <reified R : JSONDeserializable> get(
         url: String,
         headers: Map<String, String> = hashMapOf(),
@@ -298,5 +317,11 @@ class PrimerHttpClient(
         } catch (expected: Exception) {
             throw JsonEncodingException(expected)
         }
+    }
+
+    companion object {
+        private val customTimeoutInstances = ConcurrentHashMap<Duration, PrimerHttpClient>()
+
+        fun clearCustomTimeoutInstances() = customTimeoutInstances.clear()
     }
 }

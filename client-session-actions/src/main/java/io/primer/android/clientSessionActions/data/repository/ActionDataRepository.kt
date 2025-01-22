@@ -31,8 +31,8 @@ internal class ActionDataRepository(
                 .let {
                     remoteActionDataSource.execute(
                         BaseRemoteHostRequest(
-                            it.pciUrl,
-                            ClientSessionActionsDataRequest(params.flatMap { it.toActionData() }),
+                            host = it.pciUrl,
+                            data = ClientSessionActionsDataRequest(params.flatMap { it.toActionData() }),
                         ),
                     )
                 }.let { configuration ->

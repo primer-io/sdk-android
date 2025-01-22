@@ -20,8 +20,10 @@ import io.primer.android.bancontact.implementation.tokenization.presentation.Ady
 import io.primer.android.bancontact.implementation.validation.domain.AdyenBancontactInputDataValidator
 import io.primer.android.components.domain.core.models.PrimerPaymentMethodManagerCategory
 import io.primer.android.configuration.di.ConfigurationCoreContainer
+import io.primer.android.core.data.datasource.PrimerApiVersion
 import io.primer.android.core.di.DependencyContainer
 import io.primer.android.core.di.SdkContainer
+import io.primer.android.core.utils.BaseDataProvider
 import io.primer.android.paymentmethods.PaymentInputDataValidator
 import io.primer.android.paymentmethods.analytics.delegate.PaymentMethodSdkAnalyticsEventLoggingDelegate
 import io.primer.android.paymentmethods.common.utils.Constants
@@ -36,8 +38,7 @@ import io.primer.android.webRedirectShared.implementation.deeplink.domain.reposi
 internal class AdyenBancontactContainer(
     private val sdk: () -> SdkContainer,
     private val paymentMethodType: String,
-) :
-    DependencyContainer() {
+) : DependencyContainer() {
     override fun registerInitialDependencies() {
         registerFactory<AdyenBancontactConfigurationInteractor>(name = paymentMethodType) {
             DefaultAydenBancontactConfigurationInteractor(configurationRepository = resolve(name = paymentMethodType))
@@ -71,7 +72,10 @@ internal class AdyenBancontactContainer(
         registerFactory<BaseRemoteTokenizationDataSource<AdyenBancontactPaymentInstrumentDataRequest>>(
             name = paymentMethodType,
         ) {
-            AdyenBancontactRemoteTokenizationDataSource(primerHttpClient = sdk().resolve())
+            AdyenBancontactRemoteTokenizationDataSource(
+                primerHttpClient = sdk().resolve(),
+                apiVersion = sdk().resolve<BaseDataProvider<PrimerApiVersion>>()::provide,
+            )
         }
 
         registerFactory<RedirectDeeplinkRepository> {

@@ -17,7 +17,9 @@ import io.primer.android.vouchers.retailOutlets.di.RetailOutletsContainer
 import io.primer.android.vouchers.retailOutlets.implementation.composer.presentation.provider.RetailOutletsComposerProviderFactory
 import io.primer.android.vouchers.retailOutlets.implementation.composer.ui.assets.RetailOutletsBrand
 
-internal class RetailOutlets(internal val paymentMethodType: String) : PaymentMethod, DISdkComponent {
+internal class RetailOutlets(
+    internal val paymentMethodType: String,
+) : PaymentMethod, DISdkComponent {
     override val type = paymentMethodType
 
     override val canBeVaulted: Boolean = false
@@ -67,7 +69,12 @@ internal class RetailOutlets(internal val paymentMethodType: String) : PaymentMe
 
             override fun registerDependencyContainer(sdkContainers: List<SdkContainer>) {
                 sdkContainers.forEach { sdkContainer ->
-                    sdkContainer.registerContainer(RetailOutletsContainer({ getSdkContainer() }, paymentMethodType))
+                    sdkContainer.registerContainer(
+                        RetailOutletsContainer(
+                            sdk = { getSdkContainer() },
+                            paymentMethodType = paymentMethodType,
+                        ),
+                    )
                 }
             }
 

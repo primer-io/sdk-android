@@ -17,7 +17,9 @@ import io.primer.android.paymentmethods.core.composer.provider.PaymentMethodProv
 import io.primer.android.paymentmethods.core.composer.provider.VaultedPaymentMethodProviderFactoryRegistry
 import io.primer.android.paymentmethods.core.ui.navigation.PaymentMethodNavigationFactoryRegistry
 
-internal class Otp(internal val paymentMethodType: String) : PaymentMethod, DISdkComponent {
+internal class Otp(
+    internal val paymentMethodType: String,
+) : PaymentMethod, DISdkComponent {
     override val type = paymentMethodType
 
     override val canBeVaulted: Boolean = false

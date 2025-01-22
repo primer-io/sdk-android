@@ -3,9 +3,11 @@ package io.primer.android.klarna.di
 import io.primer.android.clientSessionActions.di.ActionsContainer
 import io.primer.android.components.domain.core.models.PrimerPaymentMethodManagerCategory
 import io.primer.android.configuration.di.ConfigurationCoreContainer
+import io.primer.android.core.data.datasource.PrimerApiVersion
 import io.primer.android.core.di.DependencyContainer
 import io.primer.android.core.di.SdkContainer
 import io.primer.android.core.logging.WhitelistedHttpBodyKeyProviderRegistry
+import io.primer.android.core.utils.BaseDataProvider
 import io.primer.android.klarna.implementation.payment.presentation.KlarnaPaymentDelegate
 import io.primer.android.klarna.implementation.session.data.datasource.RemoteFinalizeKlarnaSessionDataSource
 import io.primer.android.klarna.implementation.session.data.datasource.RemoteKlarnaCheckoutPaymentSessionDataSource
@@ -39,7 +41,9 @@ import io.primer.android.paymentmethods.analytics.delegate.SdkAnalyticsValidatio
 import io.primer.android.paymentmethods.common.data.model.PaymentMethodType
 import io.primer.android.payments.core.tokenization.data.datasource.BaseRemoteTokenizationDataSource
 
-internal class KlarnaContainer(private val sdk: () -> SdkContainer) : DependencyContainer() {
+internal class KlarnaContainer(
+    private val sdk: () -> SdkContainer,
+) : DependencyContainer() {
     override fun registerInitialDependencies() {
         sdk().resolve<WhitelistedHttpBodyKeyProviderRegistry>().apply {
             listOf(
@@ -146,7 +150,10 @@ internal class KlarnaContainer(private val sdk: () -> SdkContainer) : Dependency
         registerFactory<BaseRemoteTokenizationDataSource<KlarnaPaymentInstrumentDataRequest>>(
             name = PaymentMethodType.KLARNA.name,
         ) {
-            KlarnaPayRemoteTokenizationDataSource(primerHttpClient = sdk().resolve())
+            KlarnaPayRemoteTokenizationDataSource(
+                primerHttpClient = sdk().resolve(),
+                apiVersion = sdk().resolve<BaseDataProvider<PrimerApiVersion>>()::provide,
+            )
         }
 
         registerFactory {

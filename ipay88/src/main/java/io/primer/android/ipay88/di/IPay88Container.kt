@@ -1,8 +1,10 @@
 package io.primer.android.ipay88.di
 
 import io.primer.android.configuration.di.ConfigurationCoreContainer
+import io.primer.android.core.data.datasource.PrimerApiVersion
 import io.primer.android.core.di.DependencyContainer
 import io.primer.android.core.di.SdkContainer
+import io.primer.android.core.utils.BaseDataProvider
 import io.primer.android.ipay88.implementation.configuration.data.repository.IPay88ConfigurationDataRepository
 import io.primer.android.ipay88.implementation.configuration.domain.DefaultIPay88ConfigurationInteractor
 import io.primer.android.ipay88.implementation.configuration.domain.IPay88ConfigurationInteractor
@@ -33,8 +35,10 @@ import io.primer.android.paymentmethods.core.configuration.domain.repository.Pay
 import io.primer.android.payments.core.tokenization.data.datasource.BaseRemoteTokenizationDataSource
 import io.primer.android.payments.core.tokenization.domain.repository.TokenizationRepository
 
-internal class IPay88Container(private val sdk: () -> SdkContainer, private val paymentMethodType: String) :
-    DependencyContainer() {
+internal class IPay88Container(
+    private val sdk: () -> SdkContainer,
+    private val paymentMethodType: String,
+) : DependencyContainer() {
     override fun registerInitialDependencies() {
         registerFactory { ValidClientSessionAmountRule() }
 
@@ -89,7 +93,10 @@ internal class IPay88Container(private val sdk: () -> SdkContainer, private val 
         registerFactory<BaseRemoteTokenizationDataSource<IPay88PaymentInstrumentDataRequest>>(
             name = paymentMethodType,
         ) {
-            IPay88RemoteTokenizationDataSource(primerHttpClient = sdk().resolve())
+            IPay88RemoteTokenizationDataSource(
+                primerHttpClient = sdk().resolve(),
+                apiVersion = sdk().resolve<BaseDataProvider<PrimerApiVersion>>()::provide,
+            )
         }
 
         registerFactory<TokenizationRepository<IPay88PaymentInstrumentParams>>(name = paymentMethodType) {

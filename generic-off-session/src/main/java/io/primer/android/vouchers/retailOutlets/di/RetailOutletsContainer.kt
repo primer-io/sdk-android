@@ -3,8 +3,10 @@ package io.primer.android.vouchers.retailOutlets.di
 import io.primer.android.PrimerRetailerData
 import io.primer.android.components.domain.core.models.PrimerPaymentMethodManagerCategory
 import io.primer.android.configuration.di.ConfigurationCoreContainer
+import io.primer.android.core.data.datasource.PrimerApiVersion
 import io.primer.android.core.di.DependencyContainer
 import io.primer.android.core.di.SdkContainer
+import io.primer.android.core.utils.BaseDataProvider
 import io.primer.android.paymentmethods.PaymentInputDataValidator
 import io.primer.android.paymentmethods.analytics.delegate.PaymentMethodSdkAnalyticsEventLoggingDelegate
 import io.primer.android.paymentmethods.core.configuration.domain.repository.PaymentMethodConfigurationRepository
@@ -30,8 +32,10 @@ import io.primer.android.vouchers.retailOutlets.implementation.tokenization.doma
 import io.primer.android.vouchers.retailOutlets.implementation.tokenization.presentation.RetailOutletsTokenizationDelegate
 import io.primer.android.vouchers.retailOutlets.implementation.validation.domain.RetailerOutletInputValidator
 
-internal class RetailOutletsContainer(private val sdk: () -> SdkContainer, private val paymentMethodType: String) :
-    DependencyContainer() {
+internal class RetailOutletsContainer(
+    private val sdk: () -> SdkContainer,
+    private val paymentMethodType: String,
+) : DependencyContainer() {
     override fun registerInitialDependencies() {
         registerSingleton { LocalRetailOutletDataSource() }
 
@@ -84,7 +88,10 @@ internal class RetailOutletsContainer(private val sdk: () -> SdkContainer, priva
         registerFactory<BaseRemoteTokenizationDataSource<RetailOutletsPaymentInstrumentDataRequest>>(
             name = paymentMethodType,
         ) {
-            RetailOutletsRemoteTokenizationDataSource(primerHttpClient = sdk().resolve())
+            RetailOutletsRemoteTokenizationDataSource(
+                primerHttpClient = sdk().resolve(),
+                apiVersion = sdk().resolve<BaseDataProvider<PrimerApiVersion>>()::provide,
+            )
         }
 
         registerFactory { RetailOutletsTokenizationParamsMapper() }

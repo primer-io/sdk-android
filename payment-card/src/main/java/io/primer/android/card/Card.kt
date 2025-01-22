@@ -20,7 +20,7 @@ import io.primer.android.paymentmethods.core.composer.provider.PaymentMethodProv
 import io.primer.android.paymentmethods.core.composer.provider.VaultedPaymentMethodProviderFactoryRegistry
 import io.primer.android.paymentmethods.core.ui.navigation.PaymentMethodNavigationFactoryRegistry
 
-internal class Card : PaymentMethod, DISdkComponent {
+internal class Card() : PaymentMethod, DISdkComponent {
     override val type = PaymentMethodType.PAYMENT_CARD.name
 
     override val canBeVaulted: Boolean = true
@@ -75,14 +75,15 @@ internal class Card : PaymentMethod, DISdkComponent {
                 sdkContainers.forEach { sdkContainer ->
                     sdkContainer.registerContainer(
                         CardContainer(
-                            { getSdkContainer() },
-                            PaymentMethodType.PAYMENT_CARD.name,
+                            sdk = { getSdkContainer() },
+                            paymentMethodType = PaymentMethodType.PAYMENT_CARD.name,
                         ),
                     )
                 }
             }
 
-            override fun registerErrorMappers(errorMapperRegistry: ErrorMapperRegistry) = Unit
+            override fun registerErrorMappers(errorMapperRegistry: ErrorMapperRegistry) {
+            }
 
             override fun registerBrandProvider(brandRegistry: BrandRegistry) {
                 brandRegistry.register(paymentMethodType = PaymentMethodType.PAYMENT_CARD.name, CardBrand())

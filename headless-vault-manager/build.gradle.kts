@@ -18,4 +18,5 @@ dependencies {
     implementation(project(":configuration"))
     implementation(project(":payment-methods-core"))
     implementation(project(":payment-methods-core-ui"))
+    testImplementation(libs.mockwebserver)
 }

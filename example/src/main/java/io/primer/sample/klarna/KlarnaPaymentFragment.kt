@@ -25,7 +25,6 @@ import io.primer.android.klarna.implementation.session.domain.models.KlarnaPayme
 import io.primer.sample.R
 import io.primer.sample.databinding.FragmentKlarnaBinding
 import io.primer.sample.repositories.AppApiKeyRepository
-import io.primer.sample.utils.requireApplication
 import io.primer.sample.viewmodels.HeadlessManagerViewModel
 import io.primer.sample.viewmodels.HeadlessManagerViewModelFactory
 import io.primer.sample.viewmodels.UiState
@@ -36,7 +35,7 @@ class KlarnaPaymentFragment : Fragment() {
     private val headlessManagerViewModel by lazy {
         ViewModelProvider(
             requireActivity(),
-            HeadlessManagerViewModelFactory(AppApiKeyRepository(), requireApplication())
+            HeadlessManagerViewModelFactory(AppApiKeyRepository())
         )[HeadlessManagerViewModel::class.java]
     }
 

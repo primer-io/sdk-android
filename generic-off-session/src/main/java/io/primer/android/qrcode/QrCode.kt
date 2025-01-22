@@ -17,7 +17,9 @@ import io.primer.android.qrcode.di.QrCodeContainer
 import io.primer.android.qrcode.implementation.composer.presentation.provider.QrCodeComposerProviderFactory
 import io.primer.android.qrcode.implementation.composer.ui.assets.PromptPayBrand
 
-internal class QrCode(internal val paymentMethodType: String) : PaymentMethod, DISdkComponent {
+internal class QrCode(
+    internal val paymentMethodType: String,
+) : PaymentMethod, DISdkComponent {
     override val type = paymentMethodType
 
     override val canBeVaulted: Boolean = false
@@ -67,7 +69,9 @@ internal class QrCode(internal val paymentMethodType: String) : PaymentMethod, D
 
             override fun registerDependencyContainer(sdkContainers: List<SdkContainer>) {
                 sdkContainers.forEach { sdkContainer ->
-                    sdkContainer.registerContainer(QrCodeContainer({ getSdkContainer() }, paymentMethodType))
+                    sdkContainer.registerContainer(
+                        QrCodeContainer({ getSdkContainer() }, paymentMethodType),
+                    )
                 }
             }
 

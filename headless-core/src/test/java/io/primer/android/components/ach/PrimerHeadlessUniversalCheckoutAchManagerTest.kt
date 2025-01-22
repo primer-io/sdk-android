@@ -4,13 +4,11 @@ import android.content.Context
 import androidx.lifecycle.ViewModelStoreOwner
 import io.mockk.Runs
 import io.mockk.every
-import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
 import io.mockk.just
 import io.mockk.mockk
 import io.mockk.mockkObject
-import io.mockk.spyk
 import io.mockk.unmockkObject
 import io.mockk.verify
 import io.primer.android.PrimerSessionIntent
@@ -41,24 +39,23 @@ class PrimerHeadlessUniversalCheckoutAchManagerTest {
     private lateinit var primerSettings: PrimerSettings
 
     @MockK
-    private lateinit var viewModelStoreOwner: ViewModelStoreOwner
-
-    @MockK
     private lateinit var paymentMethodInitializer: PaymentMethodManagerDelegate
 
     @MockK
     private lateinit var stripeInitValidationRulesResolver: StripeInitValidationRulesResolver
 
-    @InjectMockKs
     private lateinit var manager: PrimerHeadlessUniversalCheckoutAchManager
+
+    private lateinit var viewModelStoreOwner: ViewModelStoreOwner
 
     @BeforeEach
     fun setUp() {
+        viewModelStoreOwner = mockk(relaxed = true)
         DISdkContext.headlessSdkContainer =
             SdkContainer().apply {
                 registerContainer(MockContainer())
             }
-        manager = spyk(manager)
+        manager = PrimerHeadlessUniversalCheckoutAchManager(viewModelStoreOwner)
     }
 
     internal inner class MockContainer : DependencyContainer() {

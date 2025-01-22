@@ -20,7 +20,9 @@ import io.primer.android.phoneNumber.implementation.composer.presentation.provid
 import io.primer.android.phoneNumber.implementation.composer.ui.assets.MbWayBrand
 import io.primer.android.phoneNumber.implementation.composer.ui.assets.XenditOvoBrand
 
-internal class PhoneNumber(internal val paymentMethodType: String) : PaymentMethod, DISdkComponent {
+internal class PhoneNumber(
+    internal val paymentMethodType: String,
+) : PaymentMethod, DISdkComponent {
     override val type = paymentMethodType
 
     override val canBeVaulted: Boolean = false
@@ -70,7 +72,12 @@ internal class PhoneNumber(internal val paymentMethodType: String) : PaymentMeth
 
             override fun registerDependencyContainer(sdkContainers: List<SdkContainer>) {
                 sdkContainers.forEach { sdkContainer ->
-                    sdkContainer.registerContainer(PhoneNumberContainer({ getSdkContainer() }, paymentMethodType))
+                    sdkContainer.registerContainer(
+                        PhoneNumberContainer(
+                            sdk = { getSdkContainer() },
+                            paymentMethodType = paymentMethodType,
+                        ),
+                    )
                     sdkContainer.registerContainer(PhoneMetadataContainer { getSdkContainer() })
                 }
             }
@@ -82,6 +89,7 @@ internal class PhoneNumber(internal val paymentMethodType: String) : PaymentMeth
                     PaymentMethodType.ADYEN_MBWAY.name -> {
                         brandRegistry.register(paymentMethodType = paymentMethodType, MbWayBrand())
                     }
+
                     PaymentMethodType.XENDIT_OVO.name -> {
                         brandRegistry.register(paymentMethodType = paymentMethodType, XenditOvoBrand())
                     }

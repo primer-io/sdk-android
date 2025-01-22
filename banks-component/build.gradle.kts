@@ -22,4 +22,5 @@ dependencies {
     implementation(project(":payment-methods-core-ui"))
     implementation(project(":client-token-core"))
     implementation(project(":web-redirect-shared"))
+    testImplementation(libs.mockwebserver)
 }

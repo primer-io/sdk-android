@@ -2,8 +2,10 @@ package io.primer.android.phoneNumber.di
 
 import io.primer.android.components.domain.core.models.PrimerPaymentMethodManagerCategory
 import io.primer.android.configuration.di.ConfigurationCoreContainer
+import io.primer.android.core.data.datasource.PrimerApiVersion
 import io.primer.android.core.di.DependencyContainer
 import io.primer.android.core.di.SdkContainer
+import io.primer.android.core.utils.BaseDataProvider
 import io.primer.android.paymentmethods.CollectableDataValidator
 import io.primer.android.paymentmethods.analytics.delegate.PaymentMethodSdkAnalyticsEventLoggingDelegate
 import io.primer.android.paymentmethods.core.configuration.domain.repository.PaymentMethodConfigurationRepository
@@ -24,8 +26,10 @@ import io.primer.android.phoneNumber.implementation.tokenization.domain.DefaultP
 import io.primer.android.phoneNumber.implementation.tokenization.domain.PhoneNumberTokenizationInteractor
 import io.primer.android.phoneNumber.implementation.validation.validator.PhoneNumberValidator
 
-internal class PhoneNumberContainer(private val sdk: () -> SdkContainer, private val paymentMethodType: String) :
-    DependencyContainer() {
+internal class PhoneNumberContainer(
+    private val sdk: () -> SdkContainer,
+    private val paymentMethodType: String,
+) : DependencyContainer() {
     override fun registerInitialDependencies() {
         registerFactory(name = paymentMethodType) {
             PaymentMethodSdkAnalyticsEventLoggingDelegate(
@@ -51,7 +55,10 @@ internal class PhoneNumberContainer(private val sdk: () -> SdkContainer, private
         registerFactory<BaseRemoteTokenizationDataSource<PhoneNumberPaymentInstrumentDataRequest>>(
             name = paymentMethodType,
         ) {
-            PhoneNumberRemoteTokenizationDataSource(primerHttpClient = sdk().resolve())
+            PhoneNumberRemoteTokenizationDataSource(
+                primerHttpClient = sdk().resolve(),
+                apiVersion = sdk().resolve<BaseDataProvider<PrimerApiVersion>>()::provide,
+            )
         }
 
         registerFactory<CollectableDataValidator<PrimerPhoneNumberData>> {

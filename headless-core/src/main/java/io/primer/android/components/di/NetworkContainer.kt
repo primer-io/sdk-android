@@ -13,6 +13,7 @@ import io.primer.android.configuration.data.model.ConfigurationDataResponse
 import io.primer.android.configuration.di.ConfigurationCoreContainer
 import io.primer.android.core.BuildConfig
 import io.primer.android.core.data.network.PrimerHttpClient
+import io.primer.android.core.data.network.utils.PrimerTimeouts.PRIMER_60S_TIMEOUT
 import io.primer.android.core.di.DependencyContainer
 import io.primer.android.core.di.SdkContainer
 import io.primer.android.core.logging.BlacklistedHttpHeaderProviderRegistry
@@ -23,7 +24,7 @@ import okhttp3.Cache
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import java.io.File
-import java.util.concurrent.TimeUnit
+import kotlin.time.toJavaDuration
 
 internal class NetworkContainer(private val sdk: () -> SdkContainer) : DependencyContainer() {
     override fun registerInitialDependencies() {
@@ -64,9 +65,11 @@ internal class NetworkContainer(private val sdk: () -> SdkContainer) : Dependenc
 
         registerSingleton {
             buildOkhttpClient(
-                sdk().resolve(AnalyticsContainer.CHECKOUT_SESSION_ID_PROVIDER_DI_KEY),
-                sdk().resolve(ClientTokenCoreContainer.CACHE_CLIENT_TOKEN_DATA_SOURCE_DI_KEY),
-                resolve(),
+                checkoutSessionIdProvider =
+                    sdk().resolve(AnalyticsContainer.CHECKOUT_SESSION_ID_PROVIDER_DI_KEY),
+                localClientTokenDataSource =
+                    sdk().resolve(ClientTokenCoreContainer.CACHE_CLIENT_TOKEN_DATA_SOURCE_DI_KEY),
+                cache = resolve(),
             )
         }
 
@@ -77,6 +80,11 @@ internal class NetworkContainer(private val sdk: () -> SdkContainer) : Dependenc
                 messagePropertiesEventProvider = sdk().resolve(MESSAGE_PROPERTIES_PROVIDER_DI_KEY),
             )
         }
+    }
+
+    override fun clearUnregisteredDependencies() {
+        super.clearUnregisteredDependencies()
+        PrimerHttpClient.clearCustomTimeoutInstances()
     }
 
     private fun buildOkhttpClient(
@@ -105,8 +113,8 @@ internal class NetworkContainer(private val sdk: () -> SdkContainer) : Dependenc
                 }
         builder.addInterceptor(sdk().resolve(AnalyticsContainer.HTTP_INTERCEPTOR_DI_KEY) as Interceptor)
         builder.addInterceptor(resolve<HttpLoggerInterceptor>())
-        builder.readTimeout(READ_TIMEOUT, TimeUnit.SECONDS)
-        builder.writeTimeout(WRITE_TIMEOUT, TimeUnit.SECONDS)
+        builder.readTimeout(PRIMER_60S_TIMEOUT.toJavaDuration())
+        builder.writeTimeout(PRIMER_60S_TIMEOUT.toJavaDuration())
         return builder.build()
     }
 
@@ -119,7 +127,5 @@ internal class NetworkContainer(private val sdk: () -> SdkContainer) : Dependenc
         private const val PRIMER_SDK_CHECKOUT_SESSION_ID_HEADER = "Primer-SDK-Checkout-Session-ID"
         private const val MAX_CACHE_SIZE_MB = 5 * 1024 * 1024L
         private const val CACHE_DIRECTORY = "primer_sdk_cache"
-        private const val READ_TIMEOUT = 60L
-        private const val WRITE_TIMEOUT = 60L
     }
 }

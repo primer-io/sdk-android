@@ -207,7 +207,6 @@ internal class ComponentsContainer(private val sdk: () -> SdkContainer) : Depend
             PaymentInputTypesInteractor(
                 sdk().resolve(),
                 sdk().resolve(),
-                sdk().resolve(),
             )
         }
 

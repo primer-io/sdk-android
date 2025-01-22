@@ -9,17 +9,26 @@ import io.primer.android.clientToken.core.validation.data.datasource.ValidationT
 import io.primer.android.clientToken.core.validation.data.repository.ValidateClientTokenDataRepository
 import io.primer.android.clientToken.core.validation.domain.repository.ValidateClientTokenRepository
 import io.primer.android.configuration.di.ConfigurationCoreContainer
+import io.primer.android.core.data.datasource.PrimerApiVersion
 import io.primer.android.core.di.DependencyContainer
 import io.primer.android.core.di.SdkContainer
+import io.primer.android.core.utils.BaseDataProvider
 import io.primer.android.errors.domain.ErrorMapperRegistry
 
-class ClientTokenCoreContainer(private val sdk: () -> SdkContainer) : DependencyContainer() {
+class ClientTokenCoreContainer(
+    private val sdk: () -> SdkContainer,
+) : DependencyContainer() {
     override fun registerInitialDependencies() {
         registerSingleton<CacheClientTokenDataSource>(name = CACHE_CLIENT_TOKEN_DATA_SOURCE_DI_KEY) {
             LocalClientTokenDataSource()
         }
 
-        registerSingleton { ValidationTokenDataSource(primerHttpClient = sdk().resolve()) }
+        registerSingleton {
+            ValidationTokenDataSource(
+                primerHttpClient = sdk().resolve(),
+                apiVersion = sdk().resolve<BaseDataProvider<PrimerApiVersion>>()::provide,
+            )
+        }
 
         registerSingleton<ValidateClientTokenRepository> {
             ValidateClientTokenDataRepository(

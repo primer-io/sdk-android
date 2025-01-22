@@ -23,7 +23,9 @@ import io.primer.android.paymentmethods.core.composer.provider.PaymentMethodProv
 import io.primer.android.paymentmethods.core.composer.provider.VaultedPaymentMethodProviderFactoryRegistry
 import io.primer.android.paymentmethods.core.ui.navigation.PaymentMethodNavigationFactoryRegistry
 
-internal class IPay88PaymentMethod(private val paymentMethodType: String) :
+internal class IPay88PaymentMethod(
+    private val paymentMethodType: String,
+) :
     PaymentMethod, DISdkComponent {
     override val type = paymentMethodType
     override val canBeVaulted = false

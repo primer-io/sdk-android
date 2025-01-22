@@ -21,4 +21,5 @@ dependencies {
     api(project(":api-shared"))
     implementation(project(":configuration"))
     implementation(project(":errors-core"))
+    testImplementation(libs.mockwebserver)
 }

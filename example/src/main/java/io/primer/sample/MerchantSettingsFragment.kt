@@ -19,7 +19,6 @@ import io.primer.sample.datamodels.PrimerEnv
 import io.primer.sample.repositories.AppApiKeyRepository
 import io.primer.sample.utils.HideKeyboardFocusChangeListener
 import io.primer.sample.utils.MoneyTextWatcher
-import io.primer.sample.utils.requireApplication
 import io.primer.sample.viewmodels.HeadlessManagerViewModel
 import io.primer.sample.viewmodels.HeadlessManagerViewModelFactory
 import io.primer.sample.viewmodels.MainViewModel
@@ -39,7 +38,7 @@ class MerchantSettingsFragment : Fragment() {
 
         headlessManagerViewModel = ViewModelProvider(
             requireActivity(),
-            HeadlessManagerViewModelFactory(AppApiKeyRepository(), requireApplication()),
+            HeadlessManagerViewModelFactory(AppApiKeyRepository()),
         )[HeadlessManagerViewModel::class.java]
     }
 

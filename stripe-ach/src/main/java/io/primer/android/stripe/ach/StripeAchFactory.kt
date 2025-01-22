@@ -7,7 +7,9 @@ import io.primer.android.paymentmethods.PaymentMethod
 import io.primer.android.paymentmethods.PaymentMethodFactory
 import io.primer.android.stripe.ach.implementation.helpers.StripeSdkClassValidator
 
-class StripeAchFactory(private val type: String) : PaymentMethodFactory {
+class StripeAchFactory(
+    private val type: String,
+) : PaymentMethodFactory {
     override fun build(): Either<PaymentMethod, Exception> {
         val stripeAch = StripeAch(type = type)
 

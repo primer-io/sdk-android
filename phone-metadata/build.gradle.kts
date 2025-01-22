@@ -13,4 +13,5 @@ android {
 dependencies {
     implementation(project(":arch-core"))
     implementation(project(":configuration"))
+    testImplementation(libs.mockwebserver)
 }

@@ -1,8 +1,10 @@
 package io.primer.android.webredirect.di
 
 import io.primer.android.configuration.di.ConfigurationCoreContainer
+import io.primer.android.core.data.datasource.PrimerApiVersion
 import io.primer.android.core.di.DependencyContainer
 import io.primer.android.core.di.SdkContainer
+import io.primer.android.core.utils.BaseDataProvider
 import io.primer.android.paymentmethods.common.utils.Constants
 import io.primer.android.paymentmethods.core.configuration.domain.repository.PaymentMethodConfigurationRepository
 import io.primer.android.payments.core.tokenization.data.datasource.BaseRemoteTokenizationDataSource
@@ -27,8 +29,10 @@ import io.primer.android.webredirect.implementation.tokenization.domain.WebRedir
 import io.primer.android.webredirect.implementation.tokenization.domain.model.WebRedirectPaymentInstrumentParams
 import io.primer.android.webredirect.implementation.tokenization.domain.platform.PlatformResolver
 
-internal class WebRedirectContainer(private val sdk: () -> SdkContainer, private val paymentMethodType: String) :
-    DependencyContainer() {
+internal class WebRedirectContainer(
+    private val sdk: () -> SdkContainer,
+    private val paymentMethodType: String,
+) : DependencyContainer() {
     override fun registerInitialDependencies() {
         registerFactory<RedirectDeeplinkRepository> {
             RedirectDeeplinkDataRepository(
@@ -60,7 +64,10 @@ internal class WebRedirectContainer(private val sdk: () -> SdkContainer, private
         registerFactory<BaseRemoteTokenizationDataSource<WebRedirectPaymentInstrumentDataRequest>>(
             name = paymentMethodType,
         ) {
-            WebRedirectRemoteTokenizationDataSource(primerHttpClient = sdk().resolve())
+            WebRedirectRemoteTokenizationDataSource(
+                primerHttpClient = sdk().resolve(),
+                apiVersion = sdk().resolve<BaseDataProvider<PrimerApiVersion>>()::provide,
+            )
         }
 
         registerFactory<TokenizationRepository<WebRedirectPaymentInstrumentParams>>(name = paymentMethodType) {

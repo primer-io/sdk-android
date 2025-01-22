@@ -23,7 +23,6 @@ import io.primer.android.components.manager.core.composable.PrimerValidationStat
 import io.primer.sample.databinding.FragmentAdyenBankSelectionBinding
 import io.primer.sample.repositories.AppApiKeyRepository
 import io.primer.sample.utils.ImageLoader
-import io.primer.sample.utils.requireApplication
 import io.primer.sample.viewmodels.HeadlessManagerViewModel
 import io.primer.sample.viewmodels.HeadlessManagerViewModelFactory
 import io.primer.sample.viewmodels.UiState
@@ -34,7 +33,7 @@ import kotlinx.coroutines.launch
 class AdyenBankSelectionFragment : Fragment() {
 
     private val headlessManagerViewModel by activityViewModels<HeadlessManagerViewModel> {
-        HeadlessManagerViewModelFactory(AppApiKeyRepository(), requireApplication())
+        HeadlessManagerViewModelFactory(AppApiKeyRepository())
     }
 
     private val imageLoader by lazy { ImageLoader() }

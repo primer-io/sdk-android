@@ -102,7 +102,6 @@ interface ClientSession : ExampleAppRequestBody {
                         nationalDocumentId = "9011211234567",
                     ),
                     paymentMethod = PaymentMethod(
-                        paymentType = PaymentMethodPayload.PaymentType.FIRST_PAYMENT,
                         options = PaymentMethodOptionGroup(
                             PAYPAL = PaymentMethodOption(
                                 surcharge = SurchargeOption(
@@ -246,7 +245,7 @@ interface ClientSession : ExampleAppRequestBody {
         val options: PaymentMethodOptionGroup,
         val descriptor: String,
         val orderedAllowedCardNetworks: List<String>,
-        val paymentType: PaymentMethodPayload.PaymentType
+        val paymentType: PaymentMethodPayload.PaymentType? = null
     )
 
     @Keep

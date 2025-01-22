@@ -3,13 +3,11 @@ package io.primer.android.components
 import io.primer.android.checkoutModules.domain.repository.CheckoutModuleRepository
 import io.primer.android.components.domain.inputs.models.PrimerInputElementType
 import io.primer.android.core.logging.internal.LogReporter
-import io.primer.android.errors.domain.BaseErrorResolver
 import io.primer.android.paymentmethods.common.data.model.PaymentMethodType
 import io.primer.cardShared.extension.isCardHolderNameEnabled
 
 internal class PaymentInputTypesInteractor(
     private val checkoutModuleRepository: CheckoutModuleRepository,
-    private val errorEventResolver: BaseErrorResolver,
     private val logReporter: LogReporter,
 ) {
     // MOVE TO FACTORY

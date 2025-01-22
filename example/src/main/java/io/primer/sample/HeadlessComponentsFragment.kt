@@ -85,7 +85,7 @@ class HeadlessComponentsFragment : Fragment() {
     private fun initViewModel() {
         headlessManagerViewModel = ViewModelProvider(
             requireActivity(),
-            HeadlessManagerViewModelFactory(AppApiKeyRepository(), requireApplication()),
+            HeadlessManagerViewModelFactory(AppApiKeyRepository()),
         )[HeadlessManagerViewModel::class.java]
     }
 

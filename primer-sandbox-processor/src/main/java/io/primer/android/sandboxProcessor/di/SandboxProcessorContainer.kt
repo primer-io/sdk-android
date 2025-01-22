@@ -2,8 +2,10 @@ package io.primer.android.sandboxProcessor.di
 
 import io.primer.android.components.domain.core.models.PrimerPaymentMethodManagerCategory
 import io.primer.android.configuration.di.ConfigurationCoreContainer
+import io.primer.android.core.data.datasource.PrimerApiVersion
 import io.primer.android.core.di.DependencyContainer
 import io.primer.android.core.di.SdkContainer
+import io.primer.android.core.utils.BaseDataProvider
 import io.primer.android.paymentmethods.analytics.delegate.PaymentMethodSdkAnalyticsEventLoggingDelegate
 import io.primer.android.paymentmethods.core.configuration.domain.repository.PaymentMethodConfigurationRepository
 import io.primer.android.payments.core.tokenization.data.datasource.BaseRemoteTokenizationDataSource
@@ -21,8 +23,10 @@ import io.primer.android.sandboxProcessor.implementation.tokenization.domain.Def
 import io.primer.android.sandboxProcessor.implementation.tokenization.domain.ProcessorTestTokenizationInteractor
 import io.primer.android.sandboxProcessor.implementation.tokenization.presentation.SandboxProcessorTokenizationDelegate
 
-internal class SandboxProcessorContainer(private val sdk: () -> SdkContainer, private val paymentMethodType: String) :
-    DependencyContainer() {
+internal class SandboxProcessorContainer(
+    private val sdk: () -> SdkContainer,
+    private val paymentMethodType: String,
+) : DependencyContainer() {
     override fun registerInitialDependencies() {
         registerFactory(name = paymentMethodType) {
             PaymentMethodSdkAnalyticsEventLoggingDelegate(
@@ -48,7 +52,10 @@ internal class SandboxProcessorContainer(private val sdk: () -> SdkContainer, pr
         registerFactory<BaseRemoteTokenizationDataSource<SandboxProcessorPaymentInstrumentDataRequest>>(
             name = paymentMethodType,
         ) {
-            SandboxProcessorRemoteTokenizationDataSource(primerHttpClient = sdk().resolve())
+            SandboxProcessorRemoteTokenizationDataSource(
+                primerHttpClient = sdk().resolve(),
+                apiVersion = sdk().resolve<BaseDataProvider<PrimerApiVersion>>()::provide,
+            )
         }
 
         registerFactory { SandboxProcessorTokenizationParamsMapper() }

@@ -22,9 +22,11 @@ import io.primer.android.banks.implementation.tokenization.presentation.BankIssu
 import io.primer.android.clientSessionActions.di.ActionsContainer
 import io.primer.android.components.domain.core.models.PrimerPaymentMethodManagerCategory
 import io.primer.android.configuration.di.ConfigurationCoreContainer
+import io.primer.android.core.data.datasource.PrimerApiVersion
 import io.primer.android.core.di.DependencyContainer
 import io.primer.android.core.di.SdkContainer
 import io.primer.android.core.logging.WhitelistedHttpBodyKeyProviderRegistry
+import io.primer.android.core.utils.BaseDataProvider
 import io.primer.android.paymentmethods.analytics.delegate.PaymentMethodSdkAnalyticsEventLoggingDelegate
 import io.primer.android.paymentmethods.analytics.delegate.SdkAnalyticsErrorLoggingDelegate
 import io.primer.android.paymentmethods.analytics.delegate.SdkAnalyticsValidationErrorLoggingDelegate
@@ -38,8 +40,10 @@ import io.primer.android.webRedirectShared.implementation.deeplink.domain.Defaul
 import io.primer.android.webRedirectShared.implementation.deeplink.domain.RedirectDeeplinkInteractor
 import io.primer.android.webRedirectShared.implementation.deeplink.domain.repository.RedirectDeeplinkRepository
 
-internal class BankIssuerContainer(private val sdk: () -> SdkContainer, private val paymentMethodType: String) :
-    DependencyContainer() {
+internal class BankIssuerContainer(
+    private val sdk: () -> SdkContainer,
+    private val paymentMethodType: String,
+) : DependencyContainer() {
     override fun registerInitialDependencies() {
         sdk().resolve<WhitelistedHttpBodyKeyProviderRegistry>().apply {
             listOf(
@@ -92,7 +96,10 @@ internal class BankIssuerContainer(private val sdk: () -> SdkContainer, private 
         registerFactory<BaseRemoteTokenizationDataSource<BankIssuerPaymentInstrumentDataRequest>>(
             name = paymentMethodType,
         ) {
-            BankIssuerRemoteTokenizationDataSource(primerHttpClient = sdk().resolve())
+            BankIssuerRemoteTokenizationDataSource(
+                primerHttpClient = sdk().resolve(),
+                apiVersion = sdk().resolve<BaseDataProvider<PrimerApiVersion>>()::provide,
+            )
         }
 
         registerFactory<TokenizationRepository<BankIssuerPaymentInstrumentParams>>(name = paymentMethodType) {

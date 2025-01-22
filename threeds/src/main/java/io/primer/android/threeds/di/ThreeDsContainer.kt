@@ -1,8 +1,10 @@
 package io.primer.android.threeds.di
 
 import io.primer.android.configuration.di.ConfigurationCoreContainer
+import io.primer.android.core.data.datasource.PrimerApiVersion
 import io.primer.android.core.di.DependencyContainer
 import io.primer.android.core.di.SdkContainer
+import io.primer.android.core.utils.BaseDataProvider
 import io.primer.android.errors.domain.ErrorMapperRegistry
 import io.primer.android.threeds.data.datasource.Remote3DSAuthDataSource
 import io.primer.android.threeds.data.error.ThreeDsErrorMapper
@@ -22,13 +24,20 @@ import io.primer.android.threeds.presentation.ThreeDsViewModelFactory
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 @OptIn(ExperimentalCoroutinesApi::class)
-internal class ThreeDsContainer(private val sdk: SdkContainer) : DependencyContainer() {
+internal class ThreeDsContainer(
+    private val sdk: SdkContainer,
+) : DependencyContainer() {
     override fun registerInitialDependencies() {
         registerSingleton { ThreeDsSdkClassValidator() }
 
         registerSingleton { ThreeDsLibraryVersionValidator(configurationRepository = sdk.resolve()) }
 
-        registerSingleton { Remote3DSAuthDataSource(httpClient = sdk.resolve()) }
+        registerSingleton {
+            Remote3DSAuthDataSource(
+                httpClient = sdk.resolve(),
+                apiVersion = sdk.resolve<BaseDataProvider<PrimerApiVersion>>()::provide,
+            )
+        }
 
         registerSingleton<ThreeDsRepository> {
             ThreeDsDataRepository(

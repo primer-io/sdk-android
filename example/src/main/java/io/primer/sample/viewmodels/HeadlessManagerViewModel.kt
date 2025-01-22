@@ -1,6 +1,5 @@
 package io.primer.sample.viewmodels
 
-import android.app.Application
 import android.content.Context
 import android.util.Log
 import androidx.lifecycle.LiveData
@@ -14,6 +13,7 @@ import io.primer.android.components.PrimerHeadlessUniversalCheckoutInterface
 import io.primer.android.components.PrimerHeadlessUniversalCheckoutListener
 import io.primer.android.components.PrimerHeadlessUniversalCheckoutUiListener
 import io.primer.android.components.domain.core.models.PrimerHeadlessUniversalCheckoutPaymentMethod
+import io.primer.android.core.data.network.utils.PrimerTimeouts.PRIMER_15S_TIMEOUT
 import io.primer.android.data.settings.PrimerSettings
 import io.primer.android.domain.PrimerCheckoutData
 import io.primer.android.domain.action.models.PrimerClientSession
@@ -34,11 +34,11 @@ import io.primer.sample.repositories.PaymentsRepository
 import io.primer.sample.repositories.ResumeRepository
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
+import kotlin.time.toJavaDuration
 
 class HeadlessManagerViewModel(
     apiKeyDataSource: ApiKeyDataSource,
     private val savedStateHandle: SavedStateHandle,
-    private val application: Application
 ) : ViewModel(),
     PrimerHeadlessUniversalCheckoutListener,
     PrimerHeadlessUniversalCheckoutUiListener {
@@ -49,6 +49,8 @@ class HeadlessManagerViewModel(
         PrimerHeadlessUniversalCheckout.current
 
     private val client: OkHttpClient = OkHttpClient.Builder()
+        .readTimeout(PRIMER_15S_TIMEOUT.toJavaDuration())
+        .writeTimeout(PRIMER_15S_TIMEOUT.toJavaDuration())
         .addInterceptor(HttpLoggingInterceptor().apply {
             level = HttpLoggingInterceptor.Level.BODY
         }).build()

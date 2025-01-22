@@ -19,7 +19,6 @@ import io.primer.nolpay.api.models.PrimerNolPaymentCard
 import io.primer.sample.R
 import io.primer.sample.databinding.FragmentNolPayPaymentBinding
 import io.primer.sample.repositories.AppApiKeyRepository
-import io.primer.sample.utils.requireApplication
 import io.primer.sample.viewmodels.HeadlessManagerViewModel
 import io.primer.sample.viewmodels.HeadlessManagerViewModelFactory
 import io.primer.sample.viewmodels.UiState
@@ -45,7 +44,7 @@ class NolPayPaymentFragment : Fragment() {
 
         headlessManagerViewModel = ViewModelProvider(
             requireActivity(),
-            HeadlessManagerViewModelFactory(AppApiKeyRepository(), requireApplication()),
+            HeadlessManagerViewModelFactory(AppApiKeyRepository()),
         )[HeadlessManagerViewModel::class.java]
 
         viewLifecycleOwner.lifecycleScope.launchWhenCreated {

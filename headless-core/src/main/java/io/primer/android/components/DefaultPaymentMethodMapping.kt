@@ -46,6 +46,7 @@ internal class DefaultPaymentMethodMapping(
                 when (PaymentMethodType.safeValueOf(type)) {
                     PaymentMethodType.PAYMENT_CARD -> CardFactory().build()
                     PaymentMethodType.PRIMER_TEST_KLARNA -> SandboxProcessorKlarnaFactory(type).build()
+
                     PaymentMethodType.KLARNA -> KlarnaFactory(type).build()
 
                     PaymentMethodType.STRIPE_ACH -> StripeAchFactory(type).build()
@@ -67,16 +68,30 @@ internal class DefaultPaymentMethodMapping(
                     PaymentMethodType.ADYEN_BANCONTACT_CARD -> AdyenBancontactFactory().build()
                     PaymentMethodType.ADYEN_MBWAY,
                     PaymentMethodType.XENDIT_OVO,
-                    -> PhoneNumberFactory(paymentMethodType = type).build()
+                    ->
+                        PhoneNumberFactory(
+                            paymentMethodType = type,
+                        ).build()
 
                     PaymentMethodType.XFERS_PAYNOW,
                     // PaymentMethodType.RAPYD_FAST, // TODO TWS: perhaps use a new factory
                     PaymentMethodType.RAPYD_PROMPTPAY,
                     PaymentMethodType.OMISE_PROMPTPAY,
-                    -> QrCodeFactory(paymentMethodType = type).build()
+                    ->
+                        QrCodeFactory(
+                            paymentMethodType = type,
+                        ).build()
 
-                    PaymentMethodType.ADYEN_MULTIBANCO -> MultibancoFactory(paymentMethodType = type).build()
-                    PaymentMethodType.XENDIT_RETAIL_OUTLETS -> RetailOutletsFactory(paymentMethodType = type).build()
+                    PaymentMethodType.ADYEN_MULTIBANCO ->
+                        MultibancoFactory(
+                            paymentMethodType = type,
+                        ).build()
+
+                    PaymentMethodType.XENDIT_RETAIL_OUTLETS ->
+                        RetailOutletsFactory(
+                            paymentMethodType = type,
+                        ).build()
+
                     PaymentMethodType.NOL_PAY -> NolPayFactory().build()
                     PaymentMethodType.UNKNOWN ->
                         Failure(
@@ -91,7 +106,10 @@ internal class DefaultPaymentMethodMapping(
                 WebRedirectFactory(type).build()
 
             PaymentMethodImplementationType.IPAY88_SDK ->
-                IPay88PaymentMethodFactory(type, configurationDataSource).build()
+                IPay88PaymentMethodFactory(
+                    type = type,
+                    configurationDataSource = configurationDataSource,
+                ).build()
 
             PaymentMethodImplementationType.UNKNOWN ->
                 Failure(

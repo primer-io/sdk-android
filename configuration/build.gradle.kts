@@ -15,4 +15,5 @@ dependencies {
     api(project(":arch-core"))
     api(project(":logging"))
     api(project(":analytics"))
+    testImplementation(libs.mockwebserver)
 }

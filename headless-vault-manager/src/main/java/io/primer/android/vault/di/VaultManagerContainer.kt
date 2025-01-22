@@ -1,8 +1,10 @@
 package io.primer.android.vault.di
 
 import io.primer.android.configuration.di.ConfigurationCoreContainer
+import io.primer.android.core.data.datasource.PrimerApiVersion
 import io.primer.android.core.di.DependencyContainer
 import io.primer.android.core.di.SdkContainer
+import io.primer.android.core.utils.BaseDataProvider
 import io.primer.android.errors.domain.ErrorMapperRegistry
 import io.primer.android.payments.core.helpers.PaymentMethodPaymentDelegate
 import io.primer.android.vault.implementation.errors.data.mapper.VaultErrorMapper
@@ -27,7 +29,9 @@ import io.primer.android.vault.implementation.vaultedMethods.presentation.delega
 import io.primer.android.vault.implementation.vaultedMethods.presentation.delegate.VaultManagerComposerDelegate
 import io.primer.android.vault.implementation.vaultedMethods.presentation.delegate.VaultManagerDelegate
 
-class VaultManagerContainer(private val sdk: () -> SdkContainer) : DependencyContainer() {
+class VaultManagerContainer(
+    private val sdk: () -> SdkContainer,
+) : DependencyContainer() {
     override fun registerInitialDependencies() {
         registerFactory { SdkInitializedRule(configurationRepository = sdk().resolve()) }
 
@@ -40,13 +44,28 @@ class VaultManagerContainer(private val sdk: () -> SdkContainer) : DependencyCon
             )
         }
 
-        registerSingleton { RemoteVaultedPaymentMethodsDataSource(primerHttpClient = sdk().resolve()) }
+        registerSingleton {
+            RemoteVaultedPaymentMethodsDataSource(
+                primerHttpClient = sdk().resolve(),
+                apiVersion = sdk().resolve<BaseDataProvider<PrimerApiVersion>>()::provide,
+            )
+        }
 
         registerFactory { LocalVaultedPaymentMethodsDataSource() }
 
-        registerSingleton { RemoteVaultedPaymentMethodDeleteDataSource(primerHttpClient = sdk().resolve()) }
+        registerSingleton {
+            RemoteVaultedPaymentMethodDeleteDataSource(
+                primerHttpClient = sdk().resolve(),
+                apiVersion = sdk().resolve<BaseDataProvider<PrimerApiVersion>>()::provide,
+            )
+        }
 
-        registerSingleton { VaultedPaymentMethodExchangeDataSourceRegistry(httpClient = sdk().resolve()) }
+        registerSingleton {
+            VaultedPaymentMethodExchangeDataSourceRegistry(
+                primerHttpClient = sdk().resolve(),
+                apiVersion = sdk().resolve<BaseDataProvider<PrimerApiVersion>>()::provide,
+            )
+        }
 
         registerFactory {
             FetchVaultedPaymentMethodsInteractor(

@@ -17,7 +17,9 @@ import io.primer.android.vouchers.multibanco.di.MultibancoContainer
 import io.primer.android.vouchers.multibanco.implementation.composer.presentation.provider.MultibancoComposerProviderFactory
 import io.primer.android.vouchers.multibanco.implementation.composer.ui.assets.MultibancoBrand
 
-internal class Multibanco(internal val paymentMethodType: String) : PaymentMethod, DISdkComponent {
+internal class Multibanco(
+    internal val paymentMethodType: String,
+) : PaymentMethod, DISdkComponent {
     override val type = paymentMethodType
 
     override val canBeVaulted: Boolean = false
@@ -67,7 +69,12 @@ internal class Multibanco(internal val paymentMethodType: String) : PaymentMetho
 
             override fun registerDependencyContainer(sdkContainers: List<SdkContainer>) {
                 sdkContainers.forEach { sdkContainer ->
-                    sdkContainer.registerContainer(MultibancoContainer({ getSdkContainer() }, paymentMethodType))
+                    sdkContainer.registerContainer(
+                        MultibancoContainer(
+                            sdk = { getSdkContainer() },
+                            paymentMethodType = paymentMethodType,
+                        ),
+                    )
                 }
             }
 

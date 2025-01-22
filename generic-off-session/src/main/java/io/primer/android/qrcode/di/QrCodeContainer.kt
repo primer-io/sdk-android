@@ -2,8 +2,10 @@ package io.primer.android.qrcode.di
 
 import io.primer.android.components.domain.core.models.PrimerPaymentMethodManagerCategory
 import io.primer.android.configuration.di.ConfigurationCoreContainer
+import io.primer.android.core.data.datasource.PrimerApiVersion
 import io.primer.android.core.di.DependencyContainer
 import io.primer.android.core.di.SdkContainer
+import io.primer.android.core.utils.BaseDataProvider
 import io.primer.android.paymentmethods.analytics.delegate.PaymentMethodSdkAnalyticsEventLoggingDelegate
 import io.primer.android.paymentmethods.core.configuration.domain.repository.PaymentMethodConfigurationRepository
 import io.primer.android.payments.core.tokenization.data.datasource.BaseRemoteTokenizationDataSource
@@ -22,8 +24,10 @@ import io.primer.android.qrcode.implementation.tokenization.domain.DefaultQrCode
 import io.primer.android.qrcode.implementation.tokenization.domain.QrCodeTokenizationInteractor
 import io.primer.android.qrcode.implementation.tokenization.presentation.QrCodeTokenizationDelegate
 
-internal class QrCodeContainer(private val sdk: () -> SdkContainer, private val paymentMethodType: String) :
-    DependencyContainer() {
+internal class QrCodeContainer(
+    private val sdk: () -> SdkContainer,
+    private val paymentMethodType: String,
+) : DependencyContainer() {
     override fun registerInitialDependencies() {
         registerFactory(name = paymentMethodType) {
             PaymentMethodSdkAnalyticsEventLoggingDelegate(
@@ -49,7 +53,10 @@ internal class QrCodeContainer(private val sdk: () -> SdkContainer, private val 
         registerFactory<BaseRemoteTokenizationDataSource<QrCodePaymentInstrumentDataRequest>>(
             name = paymentMethodType,
         ) {
-            QrCodeRemoteTokenizationDataSource(primerHttpClient = sdk().resolve())
+            QrCodeRemoteTokenizationDataSource(
+                primerHttpClient = sdk().resolve(),
+                apiVersion = sdk().resolve<BaseDataProvider<PrimerApiVersion>>()::provide,
+            )
         }
 
         registerFactory { QrCodeTokenizationParamsMapper() }

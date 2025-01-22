@@ -1,8 +1,10 @@
 package io.primer.android.payments.di
 
 import io.primer.android.configuration.di.ConfigurationCoreContainer
+import io.primer.android.core.data.datasource.PrimerApiVersion
 import io.primer.android.core.di.DependencyContainer
 import io.primer.android.core.di.SdkContainer
+import io.primer.android.core.utils.BaseDataProvider
 import io.primer.android.errors.domain.ErrorMapperRegistry
 import io.primer.android.payments.core.create.data.datasource.CreatePaymentDataSource
 import io.primer.android.payments.core.create.data.datasource.LocalPaymentDataSource
@@ -32,7 +34,9 @@ import io.primer.android.payments.core.status.domain.repository.AsyncPaymentMeth
 import io.primer.android.payments.core.tokenization.data.repository.TokenizedPaymentMethodDataRepository
 import io.primer.android.payments.core.tokenization.domain.repository.TokenizedPaymentMethodRepository
 
-class PaymentsContainer(private val sdk: () -> SdkContainer) : DependencyContainer() {
+class PaymentsContainer(
+    private val sdk: () -> SdkContainer,
+) : DependencyContainer() {
     override fun registerInitialDependencies() {
         registerSingleton<TokenizedPaymentMethodRepository> { TokenizedPaymentMethodDataRepository() }
 
@@ -55,9 +59,19 @@ class PaymentsContainer(private val sdk: () -> SdkContainer) : DependencyContain
             )
         }
 
-        registerSingleton { CreatePaymentDataSource(primerHttpClient = sdk().resolve()) }
+        registerSingleton {
+            CreatePaymentDataSource(
+                primerHttpClient = sdk().resolve(),
+                apiVersion = sdk().resolve<BaseDataProvider<PrimerApiVersion>>()::provide,
+            )
+        }
 
-        registerSingleton { ResumePaymentDataSource(primerHttpClient = sdk().resolve()) }
+        registerSingleton {
+            ResumePaymentDataSource(
+                primerHttpClient = sdk().resolve(),
+                apiVersion = sdk().resolve<BaseDataProvider<PrimerApiVersion>>()::provide,
+            )
+        }
 
         registerSingleton<CreatePaymentRepository> {
             CreatePaymentDataRepository(

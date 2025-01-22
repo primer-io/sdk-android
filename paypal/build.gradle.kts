@@ -21,4 +21,5 @@ dependencies {
     implementation(project(":payment-methods-core-ui"))
     implementation(project(":payments-core"))
     implementation(project(":custom-tabs"))
+    testImplementation(libs.mockwebserver)
 }

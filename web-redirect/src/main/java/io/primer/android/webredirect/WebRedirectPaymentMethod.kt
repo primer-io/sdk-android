@@ -45,7 +45,9 @@ import io.primer.android.webredirect.implementation.composer.ui.assets.TwoC2PBra
 import io.primer.android.webredirect.implementation.composer.ui.assets.VippsBrand
 import io.primer.android.webRedirectShared.di.WebRedirectContainer as SharedWebRedirectContainer
 
-internal class WebRedirectPaymentMethod(private val paymentMethodType: String) :
+internal class WebRedirectPaymentMethod(
+    private val paymentMethodType: String,
+) :
     PaymentMethod, DISdkComponent {
     override val type = paymentMethodType
     override val canBeVaulted = false

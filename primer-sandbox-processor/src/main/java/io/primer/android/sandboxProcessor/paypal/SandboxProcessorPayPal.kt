@@ -16,7 +16,9 @@ import io.primer.android.paymentmethods.core.ui.navigation.PaymentMethodNavigati
 import io.primer.android.sandboxProcessor.di.SandboxProcessorContainer
 import io.primer.android.sandboxProcessor.implementation.components.ui.assets.SandboxProcessorPayPalBrand
 
-internal class SandboxProcessorPayPal(internal val paymentMethodType: String) : PaymentMethod, DISdkComponent {
+internal class SandboxProcessorPayPal(
+    internal val paymentMethodType: String,
+) : PaymentMethod, DISdkComponent {
     override val type = paymentMethodType
 
     override val canBeVaulted: Boolean = false
@@ -63,11 +65,17 @@ internal class SandboxProcessorPayPal(internal val paymentMethodType: String) : 
 
             override fun registerDependencyContainer(sdkContainers: List<SdkContainer>) {
                 sdkContainers.forEach { sdkContainer ->
-                    sdkContainer.registerContainer(SandboxProcessorContainer({ getSdkContainer() }, paymentMethodType))
+                    sdkContainer.registerContainer(
+                        SandboxProcessorContainer(
+                            sdk = { getSdkContainer() },
+                            paymentMethodType = paymentMethodType,
+                        ),
+                    )
                 }
             }
 
-            override fun registerErrorMappers(errorMapperRegistry: ErrorMapperRegistry) = Unit
+            override fun registerErrorMappers(errorMapperRegistry: ErrorMapperRegistry) {
+            }
 
             override fun registerBrandProvider(brandRegistry: BrandRegistry) {
                 brandRegistry.register(paymentMethodType = paymentMethodType, SandboxProcessorPayPalBrand())

@@ -19,8 +19,7 @@ import io.primer.android.paymentmethods.core.composer.registry.PaymentMethodComp
 import io.primer.android.paymentmethods.core.composer.registry.VaultedPaymentMethodComposerRegistry
 import io.primer.android.paymentmethods.core.ui.navigation.PaymentMethodNavigationFactoryRegistry
 
-internal class PaymentMethodDescriptorContainer(private val sdk: SdkContainer) :
-    DependencyContainer() {
+internal class PaymentMethodDescriptorContainer(private val sdk: SdkContainer) : DependencyContainer() {
     override fun registerInitialDependencies() {
         registerSingleton<PaymentMethodCheckerRegistry> { PrimerPaymentMethodCheckerRegistry }
 

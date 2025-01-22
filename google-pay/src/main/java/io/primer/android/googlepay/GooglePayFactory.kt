@@ -44,8 +44,7 @@ class GooglePayFactory(
                 buttonStyle = settings.paymentMethodOptions.googlePayOptions.buttonStyle,
                 billingAddressRequired = settings.paymentMethodOptions.googlePayOptions.captureBillingAddress,
                 existingPaymentMethodRequired =
-                    settings.paymentMethodOptions
-                        .googlePayOptions.existingPaymentMethodRequired,
+                    settings.paymentMethodOptions.googlePayOptions.existingPaymentMethodRequired,
             )
 
         return Success(googlePay)

@@ -7,12 +7,21 @@ import io.primer.android.clientSessionActions.domain.DefaultActionInteractor
 import io.primer.android.clientSessionActions.domain.repository.ActionRepository
 import io.primer.android.clientSessionActions.domain.validator.ActionUpdateFilter
 import io.primer.android.configuration.di.ConfigurationCoreContainer
+import io.primer.android.core.data.datasource.PrimerApiVersion
 import io.primer.android.core.di.DependencyContainer
 import io.primer.android.core.di.SdkContainer
+import io.primer.android.core.utils.BaseDataProvider
 
-class ActionsContainer(private val sdk: () -> SdkContainer) : DependencyContainer() {
+class ActionsContainer(
+    private val sdk: () -> SdkContainer,
+) : DependencyContainer() {
     override fun registerInitialDependencies() {
-        registerSingleton { RemoteActionDataSource(httpClient = sdk().resolve()) }
+        registerSingleton {
+            RemoteActionDataSource(
+                httpClient = sdk().resolve(),
+                apiVersion = sdk().resolve<BaseDataProvider<PrimerApiVersion>>()::provide,
+            )
+        }
 
         registerSingleton<ActionRepository> {
             ActionDataRepository(

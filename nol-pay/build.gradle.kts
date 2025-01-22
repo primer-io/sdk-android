@@ -36,4 +36,5 @@ dependencies {
     implementation(project(":api-shared"))
     implementation(project(":payments-core"))
     implementation(project(":client-token-core"))
+    testImplementation(libs.mockwebserver)
 }

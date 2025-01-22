@@ -4,6 +4,7 @@ import io.mockk.MockKAnnotations
 import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.mockk
 import io.primer.android.components.domain.payments.vault.model.card.PrimerVaultedCardAdditionalData
+import io.primer.android.core.data.datasource.PrimerApiVersion
 import io.primer.android.core.data.network.PrimerHttpClient
 import io.primer.android.vault.implementation.vaultedMethods.domain.PrimerVaultedPaymentMethodAdditionalData
 import kotlinx.coroutines.test.runTest
@@ -21,7 +22,7 @@ internal class VaultedPaymentMethodExchangeDataSourceRegistryTest {
     @BeforeEach
     fun setUp() {
         MockKAnnotations.init(this, relaxed = true)
-        registry = VaultedPaymentMethodExchangeDataSourceRegistry(httpClient)
+        registry = VaultedPaymentMethodExchangeDataSourceRegistry(httpClient) { PrimerApiVersion.LATEST }
     }
 
     @Test

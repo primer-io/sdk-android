@@ -10,6 +10,7 @@ import io.primer.android.core.di.DISdkComponent
 import io.primer.android.core.di.DISdkContext
 import io.primer.android.core.di.SdkContainer
 import io.primer.android.core.di.plus
+import io.primer.android.data.settings.PrimerSettings
 import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.errors.di.ErrorResolverContainer
 import io.primer.android.payments.core.helpers.ManualFlowSuccessHandler
@@ -62,9 +63,11 @@ object DISdkContextInitializer : DISdkComponent {
         apply {
             val container = { requireNotNull(getSdkContainer() + this) }
 
+            val apiVersion = { container().resolve<PrimerSettings>().apiVersion }
+
             registerContainer(ErrorResolverContainer { container() })
 
-            registerContainer(ClientTokenCoreContainer { container() })
+            registerContainer(ClientTokenCoreContainer(sdk = { container() }))
 
             registerContainer(
                 SharedContainer(
@@ -74,7 +77,11 @@ object DISdkContextInitializer : DISdkComponent {
                 ) { container() },
             )
 
-            registerContainer(ConfigurationCoreContainer { container() })
+            registerContainer(
+                ConfigurationCoreContainer(
+                    sdk = { container() },
+                ),
+            )
 
             registerContainer(MockContainer { container() })
 
@@ -90,13 +97,13 @@ object DISdkContextInitializer : DISdkComponent {
 
             registerContainer(PaymentMethodsContainer { container() })
 
-            registerContainer(PaymentsContainer { container() })
+            registerContainer(PaymentsContainer(sdk = { container() }))
 
             registerContainer(CurrencyFormatContainer { container() })
 
-            registerContainer(ActionsContainer { container() })
+            registerContainer(ActionsContainer(sdk = { container() }))
 
-            registerContainer(VaultManagerContainer { container() })
+            registerContainer(VaultManagerContainer(sdk = { container() }))
 
             registerContainer(PaymentMethodsMockContainer { container() })
         }

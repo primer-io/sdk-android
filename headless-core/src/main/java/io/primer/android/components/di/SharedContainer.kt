@@ -10,9 +10,11 @@ import io.primer.android.configuration.data.datasource.CacheConfigurationDataSou
 import io.primer.android.configuration.data.model.ConfigurationData
 import io.primer.android.configuration.di.ConfigurationCoreContainer
 import io.primer.android.core.data.datasource.BaseCacheDataSource
+import io.primer.android.core.data.datasource.PrimerApiVersion
 import io.primer.android.core.di.DependencyContainer
 import io.primer.android.core.di.SdkContainer
 import io.primer.android.core.utils.BaseDataProvider
+import io.primer.android.data.settings.PrimerSettings
 import io.primer.android.data.settings.internal.PrimerConfig
 
 internal class SharedContainer(
@@ -61,6 +63,12 @@ internal class SharedContainer(
                     orderId = configurationData?.clientSession?.order?.orderId,
                     primerAccountId = configurationData?.primerAccountId,
                 )
+            }
+        }
+
+        registerSingleton<BaseDataProvider<PrimerApiVersion>> {
+            BaseDataProvider {
+                sdk().resolve<PrimerSettings>().apiVersion
             }
         }
 

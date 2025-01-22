@@ -24,7 +24,9 @@ import io.primer.android.paymentmethods.core.composer.provider.VaultedPaymentMet
 import io.primer.android.paymentmethods.core.ui.navigation.PaymentMethodNavigationFactoryRegistry
 import io.primer.android.webRedirectShared.implementation.composer.ui.navigation.provider.WebRedirectNavigatorProviderFactory
 
-internal class BankIssuerPaymentMethod(internal val paymentMethodType: String) :
+internal class BankIssuerPaymentMethod(
+    internal val paymentMethodType: String,
+) :
     PaymentMethod, DISdkComponent {
     override val type = paymentMethodType
     override val canBeVaulted = false

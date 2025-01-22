@@ -1,8 +1,10 @@
 package io.primer.android.googlepay.di
 
 import io.primer.android.configuration.di.ConfigurationCoreContainer
+import io.primer.android.core.data.datasource.PrimerApiVersion
 import io.primer.android.core.di.DependencyContainer
 import io.primer.android.core.di.SdkContainer
+import io.primer.android.core.utils.BaseDataProvider
 import io.primer.android.googlepay.DefaultGooglePayFacadeFactory
 import io.primer.android.googlepay.GooglePayFacadeFactory
 import io.primer.android.googlepay.implementation.configuration.data.repository.GooglePayConfigurationDataRepository
@@ -25,8 +27,10 @@ import io.primer.android.googlepay.implementation.validation.GooglePayValidation
 import io.primer.android.paymentmethods.core.configuration.domain.PaymentMethodConfigurationInteractor
 import io.primer.android.payments.core.tokenization.data.datasource.BaseRemoteTokenizationDataSource
 
-internal class GooglePayContainer(private val sdk: () -> SdkContainer, private val paymentMethodType: String) :
-    DependencyContainer() {
+internal class GooglePayContainer(
+    private val sdk: () -> SdkContainer,
+    private val paymentMethodType: String,
+) : DependencyContainer() {
     override fun registerInitialDependencies() {
         registerFactory<GooglePayConfigurationRepository>(
             name = paymentMethodType,
@@ -60,7 +64,10 @@ internal class GooglePayContainer(private val sdk: () -> SdkContainer, private v
         registerFactory<BaseRemoteTokenizationDataSource<GooglePayPaymentInstrumentDataRequest>>(
             name = paymentMethodType,
         ) {
-            GooglePayRemoteTokenizationDataSource(primerHttpClient = sdk().resolve())
+            GooglePayRemoteTokenizationDataSource(
+                primerHttpClient = sdk().resolve(),
+                apiVersion = sdk().resolve<BaseDataProvider<PrimerApiVersion>>()::provide,
+            )
         }
 
         registerFactory { GooglePayTokenizationParamsMapper() }

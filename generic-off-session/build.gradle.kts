@@ -21,4 +21,5 @@ dependencies {
     implementation(project(":errors-core"))
     implementation(project(":client-token-core"))
     implementation(project(":phone-metadata"))
+    testImplementation(libs.mockwebserver)
 }

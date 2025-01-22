@@ -14,9 +14,11 @@ import io.primer.android.card.implementation.validation.domain.CardInputDataVali
 import io.primer.android.components.domain.core.models.PrimerPaymentMethodManagerCategory
 import io.primer.android.components.domain.core.models.card.PrimerCardData
 import io.primer.android.configuration.di.ConfigurationCoreContainer
+import io.primer.android.core.data.datasource.PrimerApiVersion
 import io.primer.android.core.di.DependencyContainer
 import io.primer.android.core.di.SdkContainer
 import io.primer.android.core.logging.WhitelistedHttpBodyKeyProviderRegistry
+import io.primer.android.core.utils.BaseDataProvider
 import io.primer.android.paymentmethods.PaymentInputDataValidator
 import io.primer.android.paymentmethods.analytics.delegate.PaymentMethodSdkAnalyticsEventLoggingDelegate
 import io.primer.android.payments.core.helpers.PaymentMethodPaymentDelegate
@@ -32,8 +34,10 @@ import io.primer.cardShared.binData.domain.CardMetadataStateRetriever
 import io.primer.cardShared.networks.data.repository.OrderedAllowedCardNetworksDataRepository
 import io.primer.cardShared.networks.domain.repository.OrderedAllowedCardNetworksRepository
 
-internal class CardContainer(private val sdk: () -> SdkContainer, private val paymentMethodType: String) :
-    DependencyContainer() {
+internal class CardContainer(
+    private val sdk: () -> SdkContainer,
+    private val paymentMethodType: String,
+) : DependencyContainer() {
     override fun registerInitialDependencies() {
         sdk().resolve<WhitelistedHttpBodyKeyProviderRegistry>().apply {
             listOf(
@@ -52,7 +56,10 @@ internal class CardContainer(private val sdk: () -> SdkContainer, private val pa
         }
 
         registerSingleton {
-            RemoteCardBinMetadataDataSource(sdk().resolve())
+            RemoteCardBinMetadataDataSource(
+                sdk().resolve(),
+                apiVersion = sdk().resolve<BaseDataProvider<PrimerApiVersion>>()::provide,
+            )
         }
 
         registerFactory<CardBinMetadataRepository> {
@@ -94,7 +101,10 @@ internal class CardContainer(private val sdk: () -> SdkContainer, private val pa
         registerFactory<BaseRemoteTokenizationDataSource<CardPaymentInstrumentDataRequest>>(
             name = paymentMethodType,
         ) {
-            CardRemoteTokenizationDataSource(primerHttpClient = sdk().resolve())
+            CardRemoteTokenizationDataSource(
+                primerHttpClient = sdk().resolve(),
+                apiVersion = sdk().resolve<BaseDataProvider<PrimerApiVersion>>()::provide,
+            )
         }
 
         registerFactory { CardTokenizationParamsMapper() }

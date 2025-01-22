@@ -4,8 +4,10 @@ import android.content.Context
 import io.primer.android.clientSessionActions.di.ActionsContainer
 import io.primer.android.components.domain.core.models.PrimerPaymentMethodManagerCategory
 import io.primer.android.configuration.di.ConfigurationCoreContainer
+import io.primer.android.core.data.datasource.PrimerApiVersion
 import io.primer.android.core.di.DependencyContainer
 import io.primer.android.core.di.SdkContainer
+import io.primer.android.core.utils.BaseDataProvider
 import io.primer.android.paymentmethods.analytics.delegate.PaymentMethodSdkAnalyticsEventLoggingDelegate
 import io.primer.android.paymentmethods.analytics.delegate.SdkAnalyticsErrorLoggingDelegate
 import io.primer.android.paymentmethods.analytics.delegate.SdkAnalyticsValidationErrorLoggingDelegate
@@ -48,7 +50,9 @@ import io.primer.android.stripe.ach.implementation.validation.resolvers.StripeIn
 import io.primer.android.stripe.ach.implementation.validation.rules.ValidStripeMandateDataRule
 import io.primer.android.stripe.ach.implementation.validation.rules.ValidStripePublishableKeyRule
 
-internal class StripeContainer(private val sdk: () -> SdkContainer) : DependencyContainer() {
+internal class StripeContainer(
+    private val sdk: () -> SdkContainer,
+) : DependencyContainer() {
     override fun registerInitialDependencies() {
         val paymentMethodType = PaymentMethodType.STRIPE_ACH.name
 
@@ -87,7 +91,10 @@ internal class StripeContainer(private val sdk: () -> SdkContainer) : Dependency
         }
 
         registerSingleton<BaseRemoteTokenizationDataSource<StripeAchPaymentInstrumentDataRequest>> {
-            StripeAchRemoteTokenizationDataSource(primerHttpClient = sdk().resolve())
+            StripeAchRemoteTokenizationDataSource(
+                primerHttpClient = sdk().resolve(),
+                apiVersion = sdk().resolve<BaseDataProvider<PrimerApiVersion>>()::provide,
+            )
         }
 
         registerSingleton<

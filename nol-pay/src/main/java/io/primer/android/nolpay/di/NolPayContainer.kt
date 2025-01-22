@@ -2,9 +2,11 @@ package io.primer.android.nolpay.di
 
 import io.primer.android.components.domain.core.models.PrimerPaymentMethodManagerCategory
 import io.primer.android.configuration.di.ConfigurationCoreContainer
+import io.primer.android.core.data.datasource.PrimerApiVersion
 import io.primer.android.core.di.DependencyContainer
 import io.primer.android.core.di.SdkContainer
 import io.primer.android.core.logging.WhitelistedHttpBodyKeyProviderRegistry
+import io.primer.android.core.utils.BaseDataProvider
 import io.primer.android.nolpay.implementation.common.data.datasource.RemoteNolPaySecretDataSource
 import io.primer.android.nolpay.implementation.common.data.model.NolPaySecretDataRequest
 import io.primer.android.nolpay.implementation.common.data.repository.NolPayAppSecretDataRepository
@@ -54,7 +56,9 @@ import io.primer.android.payments.di.PaymentsContainer
 import io.primer.android.phoneMetadata.domain.PhoneMetadataInteractor
 import io.primer.nolpay.api.PrimerNolPay
 
-internal class NolPayContainer(private val sdk: () -> SdkContainer) : DependencyContainer() {
+internal class NolPayContainer(
+    private val sdk: () -> SdkContainer,
+) : DependencyContainer() {
     @Suppress("LongMethod")
     override fun registerInitialDependencies() {
         val paymentMethodType = PaymentMethodType.NOL_PAY.name
@@ -167,7 +171,10 @@ internal class NolPayContainer(private val sdk: () -> SdkContainer) : Dependency
         registerFactory<BaseRemoteTokenizationDataSource<NolPayPaymentInstrumentDataRequest>>(
             name = paymentMethodType,
         ) {
-            NolPayRemoteTokenizationDataSource(primerHttpClient = sdk().resolve())
+            NolPayRemoteTokenizationDataSource(
+                primerHttpClient = sdk().resolve(),
+                apiVersion = sdk().resolve<BaseDataProvider<PrimerApiVersion>>()::provide,
+            )
         }
 
         registerFactory { NolPayTokenizationParamsMapper() }

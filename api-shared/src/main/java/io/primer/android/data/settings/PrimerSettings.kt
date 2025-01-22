@@ -3,6 +3,7 @@ package io.primer.android.data.settings
 import android.os.Parcel
 import android.os.Parcelable
 import io.primer.android.analytics.data.models.SdkIntegrationType
+import io.primer.android.core.data.datasource.PrimerApiVersion
 import io.primer.android.core.data.serialization.json.JSONObjectSerializable
 import io.primer.android.core.data.serialization.json.JSONObjectSerializer
 import io.primer.android.core.extensions.readParcelable
@@ -29,6 +30,7 @@ data class PrimerSettings
          * @property clientSessionCachingEnabled Boolean flag to enable or disable client session caching.
          */
         var clientSessionCachingEnabled: Boolean = false,
+        var apiVersion: PrimerApiVersion = PrimerApiVersion.V2_3,
     ) : Parcelable, JSONObjectSerializable {
         var fromHUC: Boolean = false
 
@@ -48,6 +50,7 @@ data class PrimerSettings
             clientSessionCachingEnabled = parcel.readByte() != 0.toByte(),
         ) {
             fromHUC = parcel.readByte() != 0.toByte()
+            apiVersion = parcel.readString()?.let { PrimerApiVersion.valueOf(it) } ?: PrimerApiVersion.V2_3
         }
 
         override fun writeToParcel(
@@ -61,6 +64,7 @@ data class PrimerSettings
             parcel.writeParcelable(debugOptions, flags)
             parcel.writeByte(if (clientSessionCachingEnabled) 1 else 0)
             parcel.writeByte(if (fromHUC) 1 else 0)
+            parcel.writeString(apiVersion.name)
         }
 
         override fun describeContents(): Int {
@@ -86,6 +90,7 @@ data class PrimerSettings
             private const val UI_OPTIONS_FIELD = "uiOptions"
             private const val DEBUG_OPTIONS_FIELD = "debugOptions"
             private const val CLIENT_SESSION_CACHING_ENABLED_FIELD = "clientSessionCachingEnabled"
+            private const val API_VERSION_FIELD = "apiVersion"
 
             @JvmField
             val serializer =
@@ -100,6 +105,7 @@ data class PrimerSettings
                         put(UI_OPTIONS_FIELD, PrimerUIOptions.serializer.serialize(primerSettings.uiOptions))
                         put(DEBUG_OPTIONS_FIELD, PrimerDebugOptions.serializer.serialize(primerSettings.debugOptions))
                         put(CLIENT_SESSION_CACHING_ENABLED_FIELD, primerSettings.clientSessionCachingEnabled)
+                        put(API_VERSION_FIELD, primerSettings.apiVersion.name)
                     }
                 }
         }

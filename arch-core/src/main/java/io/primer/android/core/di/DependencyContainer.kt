@@ -40,7 +40,12 @@ abstract class DependencyContainer {
     }
 
     fun unregisterAll() {
+        clearUnregisteredDependencies()
         dependencies.clear()
+    }
+
+    protected open fun clearUnregisteredDependencies() {
+        // no-op
     }
 
     inline fun <reified T : Any> resolve(): T {

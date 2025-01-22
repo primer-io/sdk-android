@@ -27,7 +27,9 @@ class ThreeDsActivity : BaseCheckoutActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_primer_progress)
         runIfNotFinishing {
-            registerContainer(containerProvider = { ThreeDsContainer(it) })
+            registerContainer(containerProvider = {
+                ThreeDsContainer(sdk = it)
+            })
             setupViews()
             setupObservers()
             if (savedInstanceState == null) {

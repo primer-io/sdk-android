@@ -31,4 +31,5 @@ dependencies {
     implementation(project(":api-shared"))
     implementation(project(":client-session-actions"))
     implementation(project(":payments-core"))
+    testImplementation(libs.mockwebserver)
 }

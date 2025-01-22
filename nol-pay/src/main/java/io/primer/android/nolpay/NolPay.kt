@@ -18,7 +18,9 @@ import io.primer.android.paymentmethods.core.composer.provider.VaultedPaymentMet
 import io.primer.android.paymentmethods.core.ui.navigation.PaymentMethodNavigationFactoryRegistry
 import io.primer.android.phoneMetadata.di.PhoneMetadataContainer
 
-internal class NolPay(override val type: String = PaymentMethodType.NOL_PAY.name) : PaymentMethod, DISdkComponent {
+internal class NolPay(
+    override val type: String = PaymentMethodType.NOL_PAY.name,
+) : PaymentMethod, DISdkComponent {
     override val canBeVaulted: Boolean = false
     override val module: PaymentMethodModule =
         object : PaymentMethodModule {

@@ -30,4 +30,5 @@ dependencies {
     implementation(project(":payments-core"))
     implementation(project(":client-token-core"))
     implementation(libs.androidx.activity.ktx)
+    testImplementation(libs.mockwebserver)
 }

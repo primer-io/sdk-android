@@ -1,9 +1,11 @@
 package io.primer.android.paypal.di
 
 import io.primer.android.configuration.di.ConfigurationCoreContainer
+import io.primer.android.core.data.datasource.PrimerApiVersion
 import io.primer.android.core.di.DependencyContainer
 import io.primer.android.core.di.SdkContainer
 import io.primer.android.core.logging.WhitelistedHttpBodyKeyProviderRegistry
+import io.primer.android.core.utils.BaseDataProvider
 import io.primer.android.paymentmethods.common.utils.Constants
 import io.primer.android.paymentmethods.core.configuration.domain.repository.PaymentMethodConfigurationRepository
 import io.primer.android.payments.core.tokenization.data.datasource.BaseRemoteTokenizationDataSource
@@ -49,8 +51,10 @@ import io.primer.android.paypal.implementation.validation.resolvers.PaypalValidO
 import io.primer.android.paypal.implementation.validation.resolvers.PaypalValidOrderTokenRule
 import io.primer.android.paypal.implementation.validation.resolvers.PaypalVaultValidationRulesResolver
 
-internal class PaypalContainer(private val sdk: () -> SdkContainer, private val paymentMethodType: String) :
-    DependencyContainer() {
+internal class PaypalContainer(
+    private val sdk: () -> SdkContainer,
+    private val paymentMethodType: String,
+) : DependencyContainer() {
     override fun registerInitialDependencies() {
         sdk().resolve<WhitelistedHttpBodyKeyProviderRegistry>().apply {
             listOf(
@@ -163,7 +167,10 @@ internal class PaypalContainer(private val sdk: () -> SdkContainer, private val 
         registerFactory<BaseRemoteTokenizationDataSource<PaypalPaymentInstrumentDataRequest>>(
             name = paymentMethodType,
         ) {
-            PaypalRemoteTokenizationDataSource(primerHttpClient = sdk().resolve())
+            PaypalRemoteTokenizationDataSource(
+                primerHttpClient = sdk().resolve(),
+                apiVersion = sdk().resolve<BaseDataProvider<PrimerApiVersion>>()::provide,
+            )
         }
 
         registerFactory<TokenizationRepository<PaypalPaymentInstrumentParams>>(name = paymentMethodType) {

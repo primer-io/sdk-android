@@ -19,7 +19,9 @@ import io.primer.android.paypal.implementation.composer.presentation.provider.Pa
 import io.primer.android.paypal.implementation.composer.ui.assets.PaypalBrand
 import io.primer.android.paypal.implementation.composer.ui.navigation.provider.PaypalNavigatorProviderFactory
 
-internal class PayPal(override val type: String = PaymentMethodType.PAYPAL.name) :
+internal class PayPal(
+    override val type: String = PaymentMethodType.PAYPAL.name,
+) :
     PaymentMethod, DISdkComponent {
     override val canBeVaulted: Boolean = true
 

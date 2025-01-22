@@ -2,8 +2,10 @@ package io.primer.android.otp.di
 
 import io.primer.android.components.domain.core.models.PrimerPaymentMethodManagerCategory
 import io.primer.android.configuration.di.ConfigurationCoreContainer
+import io.primer.android.core.data.datasource.PrimerApiVersion
 import io.primer.android.core.di.DependencyContainer
 import io.primer.android.core.di.SdkContainer
+import io.primer.android.core.utils.BaseDataProvider
 import io.primer.android.otp.PrimerOtpData
 import io.primer.android.otp.implementation.configuration.data.repository.OtpConfigurationDataRepository
 import io.primer.android.otp.implementation.configuration.domain.DefaultOtpConfigurationInteractor
@@ -24,8 +26,10 @@ import io.primer.android.paymentmethods.analytics.delegate.PaymentMethodSdkAnaly
 import io.primer.android.paymentmethods.core.configuration.domain.repository.PaymentMethodConfigurationRepository
 import io.primer.android.payments.core.tokenization.data.datasource.BaseRemoteTokenizationDataSource
 
-internal class OtpContainer(private val sdk: () -> SdkContainer, private val paymentMethodType: String) :
-    DependencyContainer() {
+internal class OtpContainer(
+    private val sdk: () -> SdkContainer,
+    private val paymentMethodType: String,
+) : DependencyContainer() {
     override fun registerInitialDependencies() {
         registerFactory(name = paymentMethodType) {
             PaymentMethodSdkAnalyticsEventLoggingDelegate(
@@ -51,7 +55,10 @@ internal class OtpContainer(private val sdk: () -> SdkContainer, private val pay
         registerFactory<BaseRemoteTokenizationDataSource<OtpPaymentInstrumentDataRequest>>(
             name = paymentMethodType,
         ) {
-            OtpRemoteTokenizationDataSource(primerHttpClient = sdk().resolve())
+            OtpRemoteTokenizationDataSource(
+                primerHttpClient = sdk().resolve(),
+                apiVersion = sdk().resolve<BaseDataProvider<PrimerApiVersion>>()::provide,
+            )
         }
 
         registerFactory<CollectableDataValidator<PrimerOtpData>> {

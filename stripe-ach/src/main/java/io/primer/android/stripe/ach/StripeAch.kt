@@ -65,7 +65,10 @@ internal data class StripeAch(
 
             override fun registerDependencyContainer(sdkContainers: List<SdkContainer>) {
                 sdkContainers.forEach { sdkContainer ->
-                    sdkContainer.registerContainer(container = StripeContainer { getSdkContainer() })
+                    sdkContainer.registerContainer(
+                        container =
+                            StripeContainer(sdk = { getSdkContainer() }),
+                    )
                 }
             }
 

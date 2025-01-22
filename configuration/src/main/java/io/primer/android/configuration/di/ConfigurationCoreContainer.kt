@@ -16,12 +16,16 @@ import io.primer.android.configuration.domain.ConfigurationInteractor
 import io.primer.android.configuration.domain.DefaultConfigurationInteractor
 import io.primer.android.configuration.domain.repository.ConfigurationRepository
 import io.primer.android.core.data.datasource.BaseCacheDataSource
+import io.primer.android.core.data.datasource.PrimerApiVersion
 import io.primer.android.core.data.infrastructure.FileProvider
 import io.primer.android.core.di.DependencyContainer
 import io.primer.android.core.di.SdkContainer
+import io.primer.android.core.utils.BaseDataProvider
 import io.primer.android.displayMetadata.infrastructure.files.ImagesFileProvider
 
-class ConfigurationCoreContainer(private val sdk: () -> SdkContainer) : DependencyContainer() {
+class ConfigurationCoreContainer(
+    private val sdk: () -> SdkContainer,
+) : DependencyContainer() {
     override fun registerInitialDependencies() {
         registerSingleton<BaseCacheDataSource<ConfigurationData, ConfigurationData>>(
             CACHED_CONFIGURATION_DI_KEY,
@@ -34,7 +38,10 @@ class ConfigurationCoreContainer(private val sdk: () -> SdkContainer) : Dependen
         }
 
         registerSingleton {
-            RemoteConfigurationDataSource(httpClient = sdk().resolve())
+            RemoteConfigurationDataSource(
+                httpClient = sdk().resolve(),
+                apiVersion = sdk().resolve<BaseDataProvider<PrimerApiVersion>>()::provide,
+            )
         }
 
         registerSingleton<FileProvider> {

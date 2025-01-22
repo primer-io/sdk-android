@@ -15,4 +15,5 @@ dependencies {
     implementation(project(":errors-core"))
     implementation(project(":configuration"))
     implementation(project(":api-shared"))
+    testImplementation(libs.mockwebserver)
 }
