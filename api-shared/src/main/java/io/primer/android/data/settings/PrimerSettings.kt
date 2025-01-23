@@ -3,6 +3,7 @@ package io.primer.android.data.settings
 import android.os.Parcel
 import android.os.Parcelable
 import io.primer.android.analytics.data.models.SdkIntegrationType
+import io.primer.android.core.ExperimentalPrimerApi
 import io.primer.android.core.data.datasource.PrimerApiVersion
 import io.primer.android.core.data.serialization.json.JSONObjectSerializable
 import io.primer.android.core.data.serialization.json.JSONObjectSerializer
@@ -30,7 +31,7 @@ data class PrimerSettings
          * @property clientSessionCachingEnabled Boolean flag to enable or disable client session caching.
          */
         var clientSessionCachingEnabled: Boolean = false,
-        var apiVersion: PrimerApiVersion = PrimerApiVersion.V2_3,
+        @ExperimentalPrimerApi var apiVersion: PrimerApiVersion = PrimerApiVersion.V2_3,
     ) : Parcelable, JSONObjectSerializable {
         var fromHUC: Boolean = false
 

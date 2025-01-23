@@ -4,6 +4,7 @@ package io.primer.android.core
 @Target(
     AnnotationTarget.CLASS,
     AnnotationTarget.FUNCTION,
+    AnnotationTarget.PROPERTY,
 )
 @RequiresOptIn(
     level = RequiresOptIn.Level.WARNING,
