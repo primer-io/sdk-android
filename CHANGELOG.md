@@ -1,3 +1,14 @@
+## 2.35.0 (2025-01-23)
+
+### Feat
+
+- API version and timeout updates (#815)
+- enhance dismiss mechanism (#766)
+
+### Fix
+
+- **analytics**: fixed serialization and deserialization of analytics evens, removed serialization of PrimerTheme (#845)
+
 ## 2.34.0 (2025-01-17)
 
 ### Feat
