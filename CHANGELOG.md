@@ -1,3 +1,18 @@
+## 2.35.0 (2025-01-23)
+
+### Feat
+
+- API version and timeout updates (#815)
+- enhance dismiss mechanism (#766)
+
+### Fix
+
+- **analytics**: fixed serialization and deserialization of analytics evens, removed serialization of PrimerTheme (#845)
+
+### Experimental
+
+- With this version it is possible to opt-in to test API v2.4(Beta). For more information see our [Api Reference](https://primer.io/docs/api/v2.4/introduction/getting-started) and [Migration Guides](https://www.primer.io/docs/changelog/migration-guides/API-2.3-to-2.4)
+
 ## 2.34.0 (2025-01-17)
 
 ### Feat
