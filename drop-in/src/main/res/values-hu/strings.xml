@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
+    <string name="accept_button">Accept</string>
+    <string name="add_bank_account">Bankszámla hozzáadása</string>
+    <string name="add_card">Kártya hozzáadása</string>
+    <string name="add_new_payment_method">Fizetési mód hozzáadása</string>
+    <string name="additional_fees_may_apply">További díjak adódhatnak</string>
+    <string name="addressLine1">Címsor 1</string>
+    <!-- State, Region or County is required - Form Validation -->
+    <string name="addressLine1ErrorRequired">Az 1. címsor kötelező</string>
+    <string name="addressLine2">Címsor 2</string>
+    <string name="available_payment_methods">Rendelkezésre álló fizetési módok</string>
+    <string name="bank_account">Bankszámla</string>
+    <string name="bank_selection_error_message">Nem sikerült betölteni a bankot. Ellenőrizze kapcsolatát, majd próbálja újra.</string>
+    <string name="bank_selection_hint">Bankok keresése</string>
+    <string name="bank_selection_title">Válassza ki bankját</string>
+    <string name="bank_selection_try_again">Próbálja újra</string>
+    <string name="billingAddressLabel">Számlázási cím</string>
+    <!-- Navigation -->
+    <string name="cancel">Mégsem</string>
+    <string name="cancel_payment_button">Cancel payment</string>
+    <string name="card_cvv">CVV</string>
+    <string name="card_details">Kártya adatai</string>
+    <string name="card_expiry">Lejárati dátum</string>
+    <string name="card_expiry_formatted">Lejárat (HH/ÉÉ)</string>
+    <!-- Form things -->
+    <string name="card_holder_name">Kártyatulajdonos neve</string>
+    <string name="card_name_on_card">Kártyán szereplő név</string>
+    <string name="card_network_fallback">Kártya</string>
+    <string name="card_number">Kártyaszám</string>
+    <string name="card_zip">Irányítószám (ZIP)</string>
+    <string name="check_icon">ellenőrzés ikon</string>
+    <string name="choose_other_payment_method_button">Choose other payment method</string>
+    <string name="choose_payment_method">Válasszon fizetési módot</string>
+    <!-- City is required - Form Validation -->
+    <string name="cityErrorRequired">Város megadása kötelező</string>
+    <!-- The billing address city container view label -->
+    <string name="cityLabel">Város</string>
+    <!-- Complete your payment - Account info payment title label -->
+    <string name="completeYourPayment">Fizetés teljesítése</string>
+    <string name="completeYourPaymentInTheApp">Fizetés teljesítése itt: %s</string>
+    <string name="confirm">Megerősítés</string>
+    <string name="confirm_dd_mandate">Megbízás megerősítése</string>
+    <string name="confirmToPayButtonTitle">Megerősítés a fizetéshez</string>
+    <string name="continue_button">Folytatás</string>
+    <string name="country_search_hint">Ország keresése</string>
+    <string name="country_select">Ország választása</string>
+    <!-- Country is required - Form Validation -->
+    <string name="countryCodeErrorRequired">Az ország megadása kötelező</string>
+    <string name="countryLabel">Ország</string>
+    <string name="credit_debit_card">Hitel/betéti kártya</string>
+    <string name="data_will_be_lost">Az adatai törlésre kerülnek</string>
+    <string name="dd_cancel_message">Szeretné visszavonni a bankszámla hozzáadását?</string>
+    <string name="dd_mandate_error">Kérjük, ellenőrizze az információk helyességét</string>
+    <!-- Legal -->
+    <string name="dd_mandate_legal">"
+        E megbízási űrlap aláírásával Ön felhatalmazza (A) %1$s-t hogy utasításokat küldjön bankjának az Ön számlájának megterhelésére, valamint (B) a bankját, hogy
+         %1$s utasításainak megfelelően megterhelje számláját.
+    "</string>
+    <string name="delete">Törlés</string>
+    <string name="done">Kész</string>
+    <!-- The prefix copy we put before the expiration date -->
+    <string name="dueAt">Esedékesség:</string>
+    <string name="edit">Módosítás</string>
+    <string name="edit_saved_payment_methods">Mentett kártyák szerkesztése</string>
+    <string name="email">E-mail cím</string>
+    <string name="email_address">Email address</string>
+    <string name="enter_address">Adja meg a címét</string>
+    <string name="enter_card_details">Kártyaadatok megadása</string>
+    <string name="enter_email">Adja meg az e-mailjét</string>
+    <string name="enter_name">Adja meg a nevét</string>
+    <string name="error_default">Hiba!</string>
+    <string name="expires_12_21">Lejár ekkor: 12/21</string>
+    <string name="expiry_date">%1$s / %2$s</string>
+    <string name="fast_bank_transfer">GYORS banki átutalás</string>
+    <string name="first_last_name">Kereszt-és vezetéknév</string>
+    <!-- First name is required - Form Validation -->
+    <string name="firstNameErrorRequired">Keresztnév kötelező</string>
+    <!-- The billing address First name container view label -->
+    <string name="firstNameLabel">Keresztnév</string>
+    <string name="form_error_card_holder_name_length">A névnek 2 és 45 karakter között kell lenni</string>
+    <string name="form_error_card_type_not_supported">Nem támogatott kártyatípus</string>
+    <string name="form_error_invalid">%1$s érvénytelen</string>
+    <string name="form_error_required">%1$s kötelező</string>
+    <!-- Accessibility -->
+    <string name="go_back_description">vissza</string>
+    <string name="iban">IBAN</string>
+    <string name="icon_showing_state">állapotot mutató ikon</string>
+    <!-- Get the code from your banking app - Blik descriptor -->
+    <string name="input_description_otp">A kód a banki alkalmazásból érhető el.</string>
+    <!-- 6 digit code - Text field top placeholder -->
+    <string name="input_hint_form_blik_otp">6 számjegyű kód</string>
+    <string name="input_hint_form_phone_number">Telefonszám</string>
+    <string name="input_title_bank_details">Adja meg a banki adatait</string>
+    <string name="input_title_phone_number">Adja meg a telefonszámát</string>
+    <string name="john_doe">Ismeretlen</string>
+    <string name="label_authorized">Jogosult</string>
+    <string name="label_declined">Elutasítva</string>
+    <string name="label_failed">Sikertelen</string>
+    <string name="last_four">•••• %d</string>
+    <string name="last_four_with_dots">•••• 1234</string>
+    <!-- Last name is required - Form Validation -->
+    <string name="lastNameErrorRequired">Vezetéknév kötelező</string>
+    <!-- The billing address Last name container view label -->
+    <string name="lastNameLabel">Vezetéknév</string>
+    <string name="loading_text">Betöltés</string>
+    <string name="manage">Kezelés</string>
+    <string name="mastercard">Mastercard</string>
+    <string name="mbway">Mb Way</string>
+    <string name="mock_klarna_view">Próba Klarna nézet</string>
+    <string name="multibancoAmount">Összeg</string>
+    <string name="multibancoCompleteDescription">Kérjük, hogy ATM segítségével, vagy online bank használatával fizess.</string>
+    <string name="multibancoEntity">Entitás</string>
+    <string name="multibancoPayment1Step">Kérjük, hogy ATM segítségével, vagy online bank használatával fizess.</string>
+    <string name="multibancoPayment2Step">Menj egy Multibanco ATM-hez, válaszd ki a Multibanco fizetési módot, és add meg a fizetési részleteket</string>
+    <string name="multibancoPayment3Step">Jelentkezz be az online bankodba, hogy banki átutalással fizess a fizetési adatok segítségével</string>
+    <string name="multibancoReference">Referencia</string>
+    <string name="multibancoTitleConditions">Fizetés teljesítése</string>
+    <string name="name">Név</string>
+    <string name="next">Következő</string>
+    <!-- No additional fee - Universal Checkout section text -->
+    <string name="no_additional_fee">Nincs további díj</string>
+    <string name="no_results">Nincs eredmény</string>
+    <string name="no_results_for_query">Sajnáljuk, de nem található olyan eredmény\n, amely megfelel a következőnek: “%s”</string>
+    <string name="other_ways_of_paying">Egyéb fizetési módok</string>
+    <string name="other_ways_to_pay">Más fizetési módok</string>
+    <string name="pay">Fizetés</string>
+    <string name="pay_by_card">Fizetés kártyával</string>
+    <string name="pay_specific_amount">Fizetés %s</string>
+    <string name="pay_with">Fizessen így:</string>
+    <string name="pay_with_ach">Pay with ACH</string>
+    <string name="pay_with_card">Fizetés kártyával</string>
+    <string name="pay_with_crypto">Fizessen kriptoval</string>
+    <string name="payByImmediateTransfer">Pay by Immediate transfer</string>
+    <string name="payBySmartTransfer">Pay by Bank transfer</string>
+    <string name="payment_method_added_message">"
+        Az Ön fizetési módja
+
+         sikeresen hozzáadva!
+    "</string>
+    <!-- Enter your one time password - Text field placeholder -->
+    <string name="payment_method_blik_loading_placeholder">Fejezze be a fizetést a Blik alkalmazásban</string>
+    <string name="payment_method_deletion_message">Biztosan törli ezt a fizetési módot?</string>
+    <string name="payment_method_error">Válassz másik fizetési módot</string>
+    <string name="payment_method_icon">fizetési mód ikon</string>
+    <string name="payment_method_not_added_message">"
+        Nem sikerült hozzáadni a fizetési módot.
+    "</string>
+    <string name="payment_method_xfers_description">Töltse fel a képernyőképet a banki alkalmazásban.</string>
+    <string name="payment_method_xfers_title">Fizetéshez szkennelje be vagy készítsen képernyőképet</string>
+    <string name="payment_request_completed_successfully">Befizetése sikeresen megtörtént!</string>
+    <string name="payment_request_unsuccessful">Fizetése sikertelen volt.</string>
+    <string name="phone_code_search_hint">Kód keresése</string>
+    <!-- The message copy that tells the user how to transfer funds given a displayed account code -->
+    <string name="pleaseTransferFunds">Kérjük, utalj át pénzt a megadott DBS bankszámlára a szingapúri székhelyű bankszámláddal FAST (preferált), MEPS vagy GIRO által.</string>
+    <!-- Postal code is required - Form Validation -->
+    <string name="postalCodeErrorRequired">Irányítószám megadása kötelező</string>
+    <!-- The billing address postal code container view label -->
+    <string name="postalCodeLabel">Irányítószám</string>
+    <!-- CVV- CVV recapture explanation label -->
+    <string name="primer_cvv_recapture_explanation">Adja meg kártyáján lévő %d számjegyű biztonsági kódot a biztonságos fizetés érdekében.</string>
+    <!-- CVV - CVV recapture screen title -->
+    <string name="primer_cvv_recapture_title">Adja meg a CVV-t</string>
+    <string name="primer_payment_method_button_content_description">Fizetés %s által</string>
+    <string name="primer_test_header_description">Ez egy teszt továbbítás a sandbox felé. Válassza ki a tesztelni kívánt eredményt az alábbi listából.</string>
+    <string name="retry_button">Retry</string>
+    <string name="save_this_card">Mentsd el ezt a kártyát</string>
+    <string name="saved_payment_methods">MENTETT FIZETÉSI MÓD</string>
+    <!-- Scan to pay or take a screenshot - QR code screen title label -->
+    <string name="scanToPay">Fizetéshez szkennelje be vagy készítsen képernyőképet</string>
+    <string name="search_placeholder">Keresés</string>
+    <string name="search_result">Keresési eredmények</string>
+    <string name="sepa">SEPA</string>
+    <string name="sepa_core_description">SEPA Core közvetlen terhelési megbízás.</string>
+    <string name="session_complete_payment_cancellation_title">Payment cancelled</string>
+    <string name="session_complete_payment_failure_title">Payment failed</string>
+    <string name="session_complete_payment_success_title">Payment authorized</string>
+    <!-- State, Region or County is required - Form Validation -->
+    <string name="stateErrorRequired">Állam, Régió, Megye kötelező</string>
+    <!-- The billing address state container view label -->
+    <string name="stateLabel">Állam / Régió / Megye</string>
+    <string name="stripe_ach_mandate_accept_button">Accept</string>
+    <string name="stripe_ach_mandate_cancel_payment_button">Cancel payment</string>
+    <string name="stripe_ach_mandate_subtitle_label">Your personal details</string>
+    <string name="stripe_ach_mandate_template_android">By clicking Accept, you authorize %1$s to debit the selected bank account for any amount owed for charges arising from your use of %1$s\'s services and/or purchase of products from %1$s, pursuant to %1$s\'s website and terms, until this authorization is revoked. You may amend or cancel this authorization at any time by providing notice to %1$s with 30 (thirty) days notice.\n\nIf you use %1$s\'s services or purchase additional products periodically pursuant to %1$s\'s terms, you authorize %1$s to debit your bank account periodically. Payments that fall outside the regular debits authorized above will only be debited after your authorization is obtained.</string>
+    <string name="stripe_ach_mandate_title_label">Pay with ACH</string>
+    <string name="stripe_ach_payment_request_cancelled">Please try again or select another bank</string>
+    <string name="stripe_ach_payment_request_completed_successfully">You have now authorized your bank account to be debited. You will be notified via email once the payment has been collected successfully.</string>
+    <string name="stripe_ach_user_details_collection_continue_button">Continue</string>
+    <string name="stripe_ach_user_details_collection_data_usage_label">We\'ll only use this to keep you updated about your payment</string>
+    <string name="stripe_ach_user_details_collection_email_address_label">Email address</string>
+    <string name="stripe_ach_user_details_collection_first_name_label">First name</string>
+    <string name="stripe_ach_user_details_collection_invalid_email_address">The email address you entered doesn\'t look like a real email address. Please make sure it includes an \'@\' and a domain (like \'@example.com\').</string>
+    <string name="stripe_ach_user_details_collection_invalid_first_name">Please enter a valid first name. Avoid using numbers or special characters.</string>
+    <string name="stripe_ach_user_details_collection_invalid_last_name">Please enter a valid last name. Avoid using numbers or special characters.</string>
+    <string name="stripe_ach_user_details_collection_last_name_label">Last name</string>
+    <string name="stripe_ach_user_details_collection_subtitle_label">Your personal details</string>
+    <string name="success_icon_description">siker</string>
+    <string name="success_text">Sikerült!</string>
+    <string name="test_mail_com">test@mail.com</string>
+    <string name="twoc_2p_button">Fizessen részletekben</string>
+    <!-- Upload the screenshot in your banking app. - QR code screen subtitle label -->
+    <string name="uploadScreenshot">Töltse fel a képernyőképet a banki alkalmazásban.</string>
+</resources>

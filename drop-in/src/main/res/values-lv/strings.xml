@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
+    <string name="accept_button">Accept</string>
+    <string name="add_bank_account">Pievieno bankas kontu</string>
+    <string name="add_card">Pievienot karti</string>
+    <string name="add_new_payment_method">Pievieno maksāšanas veidu</string>
+    <string name="additional_fees_may_apply">Var tikt piemērotas papildmaksas</string>
+    <string name="addressLine1">Adreses 1. rindiņa</string>
+    <!-- State, Region or County is required - Form Validation -->
+    <string name="addressLine1ErrorRequired">Adreses 1. rinda ir obligāta</string>
+    <string name="addressLine2">Adreses 2. rindiņa</string>
+    <string name="available_payment_methods">Pieejamie maksāšanas veidi</string>
+    <string name="bank_account">Bankas Konts</string>
+    <string name="bank_selection_error_message">Neizdevās ielādēt banku. Pārbaudi savienojumu un mēģini vēlreiz.</string>
+    <string name="bank_selection_hint">Meklēt bankas</string>
+    <string name="bank_selection_title">Izvēlies savu banku</string>
+    <string name="bank_selection_try_again">Mēģināt vēlreiz</string>
+    <string name="billingAddressLabel">Rēķina adrese</string>
+    <!-- Navigation -->
+    <string name="cancel">Atcelt</string>
+    <string name="cancel_payment_button">Cancel payment</string>
+    <string name="card_cvv">CVV</string>
+    <string name="card_details">Informācija par maksājumu karti</string>
+    <string name="card_expiry">Derīguma termiņš</string>
+    <string name="card_expiry_formatted">Derīguma termiņš (MM/GG)</string>
+    <!-- Form things -->
+    <string name="card_holder_name">Kartes īpašnieka vārds</string>
+    <string name="card_name_on_card">Vārds un uzvārds uz kartes</string>
+    <string name="card_network_fallback">Maksājumu karte</string>
+    <string name="card_number">Kartes numurs</string>
+    <string name="card_zip">Pasta indekss</string>
+    <string name="check_icon">pārbaudes ikona</string>
+    <string name="choose_other_payment_method_button">Choose other payment method</string>
+    <string name="choose_payment_method">Izvēlēties maksāšanas veidu</string>
+    <!-- City is required - Form Validation -->
+    <string name="cityErrorRequired">Jānorāda pilsēta</string>
+    <!-- The billing address city container view label -->
+    <string name="cityLabel">Pilsēta</string>
+    <!-- Complete your payment - Account info payment title label -->
+    <string name="completeYourPayment">Pabeidz maksājumu</string>
+    <string name="completeYourPaymentInTheApp">Pabeidz maksājumu %s</string>
+    <string name="confirm">Apstiprināt</string>
+    <string name="confirm_dd_mandate">Apstiprini pilnvarojumu</string>
+    <string name="confirmToPayButtonTitle">Apstiprini, lai veiktu maksājumu</string>
+    <string name="continue_button">Turpini</string>
+    <string name="country_search_hint">Atrodi valsti</string>
+    <string name="country_select">Izvēlies valsti</string>
+    <!-- Country is required - Form Validation -->
+    <string name="countryCodeErrorRequired">Valsts ir obligāta</string>
+    <string name="countryLabel">Valsts</string>
+    <string name="credit_debit_card">Kredītkarte/debetkarte</string>
+    <string name="data_will_be_lost">Jūsu dati tiks dzēsti</string>
+    <string name="dd_cancel_message">Vai vēlies atcelt bankas konta pievienošanu?</string>
+    <string name="dd_mandate_error">Lūdzu, pārbaudi, vai visa Jūsu informācija ir pareiza</string>
+    <!-- Legal -->
+    <string name="dd_mandate_legal">"
+        Parakstot šo pilnvarojuma veidlapu, Tu pilnvaro (A) %1$s nosūtīt norādījumus Jūsu bankai, lai debetētu Jūsu kontu un (B) Jūsu banka
+ debetē Jūsu kontu saskaņā ar %1$s norādījumiem.
+    "</string>
+    <string name="delete">Dzēst</string>
+    <string name="done">Gatavs</string>
+    <!-- The prefix copy we put before the expiration date -->
+    <string name="dueAt">Derīguma termiņš:</string>
+    <string name="edit">Rediģēt</string>
+    <string name="edit_saved_payment_methods">Rediģē saglabātās maksājumu kartes</string>
+    <string name="email">E-pasts</string>
+    <string name="email_address">Email address</string>
+    <string name="enter_address">Ievadi savu adresi</string>
+    <string name="enter_card_details">Ievadi kartes informāciju</string>
+    <string name="enter_email">Ievadi savu e-pastu</string>
+    <string name="enter_name">Ievadi savu vārdu</string>
+    <string name="error_default">Kļūda!</string>
+    <string name="expires_12_21">Derīguma termiņš 12 / 21</string>
+    <string name="expiry_date">%1$s / %2$s</string>
+    <string name="fast_bank_transfer">FAST Bankas Pārskaitījums</string>
+    <string name="first_last_name">Vārds un uzvārds</string>
+    <!-- First name is required - Form Validation -->
+    <string name="firstNameErrorRequired">Jānorāda vārds</string>
+    <!-- The billing address First name container view label -->
+    <string name="firstNameLabel">Vārds</string>
+    <string name="form_error_card_holder_name_length">Nosaukumam ir jābūt no 2 līdz 45 rakstzīmēm</string>
+    <string name="form_error_card_type_not_supported">Neatbalstīts kartes veids</string>
+    <string name="form_error_invalid">%1$s nav derīgs</string>
+    <string name="form_error_required">Nepieciešams %1$s</string>
+    <!-- Accessibility -->
+    <string name="go_back_description">atgriezies</string>
+    <string name="iban">IBAN</string>
+    <string name="icon_showing_state">statusa ikona</string>
+    <!-- Get the code from your banking app - Blik descriptor -->
+    <string name="input_description_otp">Iegūstiet kodu no savas bankas lietotnes.</string>
+    <!-- 6 digit code - Text field top placeholder -->
+    <string name="input_hint_form_blik_otp">6 ciparu kods</string>
+    <string name="input_hint_form_phone_number">Telefona numurs</string>
+    <string name="input_title_bank_details">Norādiet bankas rekvizītus</string>
+    <string name="input_title_phone_number">Ierakstiet savu tālruņa numuru</string>
+    <string name="john_doe">John Doe</string>
+    <string name="label_authorized">Apstiprināts</string>
+    <string name="label_declined">Noraidīts</string>
+    <string name="label_failed">Neizdevās</string>
+    <string name="last_four">•••• %d</string>
+    <string name="last_four_with_dots">•••• 1234</string>
+    <!-- Last name is required - Form Validation -->
+    <string name="lastNameErrorRequired">Jānorāda uzvārds</string>
+    <!-- The billing address Last name container view label -->
+    <string name="lastNameLabel">Uzvārds</string>
+    <string name="loading_text">Notiek ielāde</string>
+    <string name="manage">Pārvaldi</string>
+    <string name="mastercard">Mastercard</string>
+    <string name="mbway">Mb Way</string>
+    <string name="mock_klarna_view">Klarna parauga skats</string>
+    <string name="multibancoAmount">Summa</string>
+    <string name="multibancoCompleteDescription">Lūdzu, veic maksājumu bankomātā vai izmantojot internetbanku.</string>
+    <string name="multibancoEntity">Pakalpojuma sniedzējs</string>
+    <string name="multibancoPayment1Step">Lūdzu, veic maksājumu bankomātā vai izmantojot internetbanku.</string>
+    <string name="multibancoPayment2Step">Dodies uz Multibanco bankomātu, izvēlies Multibanco maksāšanas veidu un ievadi maksājumam nepieciešamo informāciju</string>
+    <string name="multibancoPayment3Step">Pieslēdzies savai internetbankai, lai norēķinātos ar bankas pārskaitījumu, izmantojot informāciju no maksājuma</string>
+    <string name="multibancoReference">Atsauce</string>
+    <string name="multibancoTitleConditions">Pabeidz maksājumu</string>
+    <string name="name">Vārds</string>
+    <string name="next">Nākamais</string>
+    <!-- No additional fee - Universal Checkout section text -->
+    <string name="no_additional_fee">Bez papildmaksas</string>
+    <string name="no_results">Nav rezultātu</string>
+    <string name="no_results_for_query">Atvainojiet, nav atrasts neviens rezultāts, kas atbilstu meklēšanas pieprasījumam par “%s”</string>
+    <string name="other_ways_of_paying">Citi maksāšanas veidi</string>
+    <string name="other_ways_to_pay">Citi maksāšanas veidi</string>
+    <string name="pay">Maksāt</string>
+    <string name="pay_by_card">Maksāt ar karti</string>
+    <string name="pay_specific_amount">Maksā %s</string>
+    <string name="pay_with">Maksājiet ar</string>
+    <string name="pay_with_ach">Pay with ACH</string>
+    <string name="pay_with_card">Maksā ar maksājumu karti</string>
+    <string name="pay_with_crypto">Maksājiet ar kriptovalūtu</string>
+    <string name="payByImmediateTransfer">Pay by Immediate transfer</string>
+    <string name="payBySmartTransfer">Pay by Bank transfer</string>
+    <string name="payment_method_added_message">"
+        Jūsu izvēlētais maksāšanas veids
+
+ tika veiksmīgi pievienots!
+    "</string>
+    <!-- Enter your one time password - Text field placeholder -->
+    <string name="payment_method_blik_loading_placeholder">Pabeidziet maksājumu lietotnē Blik</string>
+    <string name="payment_method_deletion_message">Vai tiešām vēlies dzēst šo maksāšanas veidu?</string>
+    <string name="payment_method_error">Izvēlieties citu maksājuma veidu</string>
+    <string name="payment_method_icon">maksāšanas veida ikona</string>
+    <string name="payment_method_not_added_message">"
+        Jūsu izvēlēto maksāšanas veidu nav iespējams pievienot.
+    "</string>
+    <string name="payment_method_xfers_description">Augšupielādējiet ekrānuzņēmumu savā bankas lietotnē.</string>
+    <string name="payment_method_xfers_title">Skenē, lai samaksātu, vai uzņem ekrānuzņēmumu</string>
+    <string name="payment_request_completed_successfully">Jūsu maksājums ir veiksmīgi pabeigts!</string>
+    <string name="payment_request_unsuccessful">Jūsu maksājums bija neveiksmīgs.</string>
+    <string name="phone_code_search_hint">Atrodi kodu</string>
+    <!-- The message copy that tells the user how to transfer funds given a displayed account code -->
+    <string name="pleaseTransferFunds">Lūdzu, pārskaiti līdzekļus uz norādīto DBS bankas kontu, izmantojot savu Singapūras bankas kontu, izmantojot FAST (vēlams), MEPS vai GIRO pārskaitījumu platformas.</string>
+    <!-- Postal code is required - Form Validation -->
+    <string name="postalCodeErrorRequired">Jānorāda pasta indekss</string>
+    <!-- The billing address postal code container view label -->
+    <string name="postalCodeLabel">Pasta indekss</string>
+    <!-- CVV- CVV recapture explanation label -->
+    <string name="primer_cvv_recapture_explanation">Lai veiktu drošu maksājumu, ievadi drošības kodu %d no savas kartes.</string>
+    <!-- CVV - CVV recapture screen title -->
+    <string name="primer_cvv_recapture_title">Ievadīt CVV kodu</string>
+    <string name="primer_payment_method_button_content_description">Maksā ar %s</string>
+    <string name="primer_test_header_description">Šis ir izmēģinājuma vietnes paraugs. Zemāk esošajā sarakstā izvēlies rezultātu, kuru vēlies pārbaudīt.</string>
+    <string name="retry_button">Retry</string>
+    <string name="save_this_card">Saglabā šo maksājumu karti</string>
+    <string name="saved_payment_methods">SAGLABĀTAIS MAKSĀŠANAS VEIDS</string>
+    <!-- Scan to pay or take a screenshot - QR code screen title label -->
+    <string name="scanToPay">Skenē, lai samaksātu, vai uzņem ekrānuzņēmumu</string>
+    <string name="search_placeholder">Meklē</string>
+    <string name="search_result">Meklēšanas rezultāti</string>
+    <string name="sepa">SEPA</string>
+    <string name="sepa_core_description">SEPA tiešā debeta pilnvarojums.</string>
+    <string name="session_complete_payment_cancellation_title">Payment cancelled</string>
+    <string name="session_complete_payment_failure_title">Payment failed</string>
+    <string name="session_complete_payment_success_title">Payment authorized</string>
+    <!-- State, Region or County is required - Form Validation -->
+    <string name="stateErrorRequired">Jānorāda valsts, reģions vai apgabals</string>
+    <!-- The billing address state container view label -->
+    <string name="stateLabel">Valsts / reģions / apgabals</string>
+    <string name="stripe_ach_mandate_accept_button">Accept</string>
+    <string name="stripe_ach_mandate_cancel_payment_button">Cancel payment</string>
+    <string name="stripe_ach_mandate_subtitle_label">Your personal details</string>
+    <string name="stripe_ach_mandate_template_android">By clicking Accept, you authorize %1$s to debit the selected bank account for any amount owed for charges arising from your use of %1$s\'s services and/or purchase of products from %1$s, pursuant to %1$s\'s website and terms, until this authorization is revoked. You may amend or cancel this authorization at any time by providing notice to %1$s with 30 (thirty) days notice.\n\nIf you use %1$s\'s services or purchase additional products periodically pursuant to %1$s\'s terms, you authorize %1$s to debit your bank account periodically. Payments that fall outside the regular debits authorized above will only be debited after your authorization is obtained.</string>
+    <string name="stripe_ach_mandate_title_label">Pay with ACH</string>
+    <string name="stripe_ach_payment_request_cancelled">Please try again or select another bank</string>
+    <string name="stripe_ach_payment_request_completed_successfully">You have now authorized your bank account to be debited. You will be notified via email once the payment has been collected successfully.</string>
+    <string name="stripe_ach_user_details_collection_continue_button">Continue</string>
+    <string name="stripe_ach_user_details_collection_data_usage_label">We\'ll only use this to keep you updated about your payment</string>
+    <string name="stripe_ach_user_details_collection_email_address_label">Email address</string>
+    <string name="stripe_ach_user_details_collection_first_name_label">First name</string>
+    <string name="stripe_ach_user_details_collection_invalid_email_address">The email address you entered doesn\'t look like a real email address. Please make sure it includes an \'@\' and a domain (like \'@example.com\').</string>
+    <string name="stripe_ach_user_details_collection_invalid_first_name">Please enter a valid first name. Avoid using numbers or special characters.</string>
+    <string name="stripe_ach_user_details_collection_invalid_last_name">Please enter a valid last name. Avoid using numbers or special characters.</string>
+    <string name="stripe_ach_user_details_collection_last_name_label">Last name</string>
+    <string name="stripe_ach_user_details_collection_subtitle_label">Your personal details</string>
+    <string name="success_icon_description">veiksmīgi</string>
+    <string name="success_text">Veiksmīgi!</string>
+    <string name="test_mail_com">test@mail.com</string>
+    <string name="twoc_2p_button">Maksā pa daļām</string>
+    <!-- Upload the screenshot in your banking app. - QR code screen subtitle label -->
+    <string name="uploadScreenshot">Augšupielādē ekrānuzņēmumu savas bankas lietotnē</string>
+</resources>

@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
+    <string name="accept_button">Accept</string>
+    <string name="add_bank_account">Добавяне на банкова сметка</string>
+    <string name="add_card">Добавяне на карта</string>
+    <string name="add_new_payment_method">Добавяне на метод на плащане</string>
+    <string name="additional_fees_may_apply">Може да се прилагат допълнителни такси</string>
+    <string name="addressLine1">Адрес ред 1</string>
+    <!-- State, Region or County is required - Form Validation -->
+    <string name="addressLine1ErrorRequired">Ред 1 на адреса е задължителен</string>
+    <string name="addressLine2">Ред 2 на адреса</string>
+    <string name="available_payment_methods">Налични методи на плащане</string>
+    <string name="bank_account">Банкова сметка</string>
+    <string name="bank_selection_error_message">Зареждането на банката не беше успешно. Проверете връзката си и опитайте отново.</string>
+    <string name="bank_selection_hint">Търсете банки</string>
+    <string name="bank_selection_title">Изберете банката си</string>
+    <string name="bank_selection_try_again">Опитайте отново</string>
+    <string name="billingAddressLabel">Адрес на плащане</string>
+    <!-- Navigation -->
+    <string name="cancel">Отказ</string>
+    <string name="cancel_payment_button">Cancel payment</string>
+    <string name="card_cvv">CVV код</string>
+    <string name="card_details">Данни за картата</string>
+    <string name="card_expiry">Срок на валидност</string>
+    <string name="card_expiry_formatted">Валидност до (ММ/ГГ)</string>
+    <!-- Form things -->
+    <string name="card_holder_name">Име на картодържателя</string>
+    <string name="card_name_on_card">Име на картата</string>
+    <string name="card_network_fallback">Карта</string>
+    <string name="card_number">Номер на карта</string>
+    <string name="card_zip">Пощенски код</string>
+    <string name="check_icon">икона за отметка</string>
+    <string name="choose_other_payment_method_button">Choose other payment method</string>
+    <string name="choose_payment_method">Изберете начин на плащане</string>
+    <!-- City is required - Form Validation -->
+    <string name="cityErrorRequired">Градът е задължителен</string>
+    <!-- The billing address city container view label -->
+    <string name="cityLabel">Града</string>
+    <!-- Complete your payment - Account info payment title label -->
+    <string name="completeYourPayment">Завършете плащането си</string>
+    <string name="completeYourPaymentInTheApp">Завършете плащането си в %s</string>
+    <string name="confirm">Потвърждение</string>
+    <string name="confirm_dd_mandate">Потвърждение на предоставени права</string>
+    <string name="confirmToPayButtonTitle">Потвърдете, за да платите</string>
+    <string name="continue_button">Напред</string>
+    <string name="country_search_hint">Намерете държава</string>
+    <string name="country_select">Изберете държава</string>
+    <!-- Country is required - Form Validation -->
+    <string name="countryCodeErrorRequired">Изисква се държава</string>
+    <string name="countryLabel">Държава</string>
+    <string name="credit_debit_card">Кредитна/дебитна карта</string>
+    <string name="data_will_be_lost">Данните ще бъдат изтрити</string>
+    <string name="dd_cancel_message">Искате ли да прекратите добавянето на банкова сметка?</string>
+    <string name="dd_mandate_error">Моля, проверете дали цялата въведена информация е вярна</string>
+    <!-- Legal -->
+    <string name="dd_mandate_legal">"
+        Подписвайки формуляра за предоставяне на права оторизирате (A) %1$s да изпраща инструкции до вашата банка за дебитиране на сметката ви и (B) вашата банка да 
+дебитира сметката ви в съответствие с дадените инструкции от %1$s.
+    "</string>
+    <string name="delete">Изтриване</string>
+    <string name="done">Готово</string>
+    <!-- The prefix copy we put before the expiration date -->
+    <string name="dueAt">Дължимо на</string>
+    <string name="edit">Редакция</string>
+    <string name="edit_saved_payment_methods">Редакция на запазени карти</string>
+    <string name="email">Имейл</string>
+    <string name="email_address">Email address</string>
+    <string name="enter_address">Въведете адрес</string>
+    <string name="enter_card_details">Въвеждане на картови данни</string>
+    <string name="enter_email">Въведете имейл</string>
+    <string name="enter_name">Въведете име</string>
+    <string name="error_default">Грешка!</string>
+    <string name="expires_12_21">Изтича на 12 / 21</string>
+    <string name="expiry_date">%1$s / %2$s</string>
+    <string name="fast_bank_transfer">Банков превод FAST</string>
+    <string name="first_last_name">Име и фамилия</string>
+    <!-- First name is required - Form Validation -->
+    <string name="firstNameErrorRequired">Изисква се собствено име</string>
+    <!-- The billing address First name container view label -->
+    <string name="firstNameLabel">Собствено име</string>
+    <string name="form_error_card_holder_name_length">Името трябва да съдържа между 2 и 45 символа</string>
+    <string name="form_error_card_type_not_supported">Неподдържан тип карта</string>
+    <string name="form_error_invalid">%1$s е невалиден</string>
+    <string name="form_error_required">%1$s се изисква</string>
+    <!-- Accessibility -->
+    <string name="go_back_description">връщане назад</string>
+    <string name="iban">IBAN</string>
+    <string name="icon_showing_state">икона, показваща състоянието</string>
+    <!-- Get the code from your banking app - Blik descriptor -->
+    <string name="input_description_otp">Вземете кода от банковото си приложение.</string>
+    <!-- 6 digit code - Text field top placeholder -->
+    <string name="input_hint_form_blik_otp">6-цифрен код</string>
+    <string name="input_hint_form_phone_number">Телефонен номер</string>
+    <string name="input_title_bank_details">Предоставете банкови данни</string>
+    <string name="input_title_phone_number">Въведете телефонния си номер</string>
+    <string name="john_doe">Джон Доу</string>
+    <string name="label_authorized">Авторизирано</string>
+    <string name="label_declined">Отказано</string>
+    <string name="label_failed">Неуспешно</string>
+    <string name="last_four">•••• %d</string>
+    <string name="last_four_with_dots">•••• 1234</string>
+    <!-- Last name is required - Form Validation -->
+    <string name="lastNameErrorRequired">Изисква се фамилия</string>
+    <!-- The billing address Last name container view label -->
+    <string name="lastNameLabel">Фамилия</string>
+    <string name="loading_text">Зарежда се</string>
+    <string name="manage">Управление</string>
+    <string name="mastercard">Mastercard</string>
+    <string name="mbway">Mb Way</string>
+    <string name="mock_klarna_view">Макетен изглед на Klarna</string>
+    <string name="multibancoAmount">Сума</string>
+    <string name="multibancoCompleteDescription">Моля, ивършете плащането на банкомат или чрез онлайн банкиране.</string>
+    <string name="multibancoEntity">Получател</string>
+    <string name="multibancoPayment1Step">Моля, ивършете плащането на банкомат или чрез онлайн банкиране.</string>
+    <string name="multibancoPayment2Step">Отидете до банкомат на Multibanco, изберете метода на плащане на Multibanco и въведете данните за плащане</string>
+    <string name="multibancoPayment3Step">Влезте във Вашето онлайн банкиране, за да платите с банков превод, като използвате данните за плащане</string>
+    <string name="multibancoReference">Основание</string>
+    <string name="multibancoTitleConditions">Завършете плащането си</string>
+    <string name="name">Име</string>
+    <string name="next">Следващ</string>
+    <!-- No additional fee - Universal Checkout section text -->
+    <string name="no_additional_fee">Без допълнителна такса</string>
+    <string name="no_results">Няма резултати</string>
+    <string name="no_results_for_query">Съжаляваме, няма намерени\nрезултати, които да съответстват на „%s“</string>
+    <string name="other_ways_of_paying">Други начини на плащане</string>
+    <string name="other_ways_to_pay">Други начини за плащане</string>
+    <string name="pay">Плати</string>
+    <string name="pay_by_card">Плащане с карта</string>
+    <string name="pay_specific_amount">Плати %s</string>
+    <string name="pay_with">Плащане с</string>
+    <string name="pay_with_ach">Pay with ACH</string>
+    <string name="pay_with_card">Плащане с карта</string>
+    <string name="pay_with_crypto">Плащане с криптовалута</string>
+    <string name="payByImmediateTransfer">Pay by Immediate transfer</string>
+    <string name="payBySmartTransfer">Pay by Bank transfer</string>
+    <string name="payment_method_added_message">"
+        Вашият начин на плащане
+
+         беше успешно добавен!
+    "</string>
+    <!-- Enter your one time password - Text field placeholder -->
+    <string name="payment_method_blik_loading_placeholder">Завършете плащането си в приложението Blik</string>
+    <string name="payment_method_deletion_message">Наистина ли искате да изтриете този начин на плащане?</string>
+    <string name="payment_method_error">Изберете друг метод на плащане</string>
+    <string name="payment_method_icon">икона на начин на плащане</string>
+    <string name="payment_method_not_added_message">"
+        Вашият начин на плащане не можа да бъде добавен.
+    "</string>
+    <string name="payment_method_xfers_description">Качете екранната снимка в банковото си приложение.</string>
+    <string name="payment_method_xfers_title">Сканирайте, за да платите или направете екранна снимка</string>
+    <string name="payment_request_completed_successfully">Вашето плащане беше финализирано успешно!</string>
+    <string name="payment_request_unsuccessful">Плащането Ви беше неуспешно.</string>
+    <string name="phone_code_search_hint">Намерете код</string>
+    <!-- The message copy that tells the user how to transfer funds given a displayed account code -->
+    <string name="pleaseTransferFunds">Моля, прехвърлете средства към предоставената банкова сметка в DBS, като използвате Вашата базирана в Сингапур банкова сметка чрез FAST (за предпочитане), MEPS или GIRO.</string>
+    <!-- Postal code is required - Form Validation -->
+    <string name="postalCodeErrorRequired">Изисква се пощенски код</string>
+    <!-- The billing address postal code container view label -->
+    <string name="postalCodeLabel">Пощенски код</string>
+    <!-- CVV- CVV recapture explanation label -->
+    <string name="primer_cvv_recapture_explanation">За сигурно плащане, въведи %d-цифровия код за сигурност от твоята карта.</string>
+    <!-- CVV - CVV recapture screen title -->
+    <string name="primer_cvv_recapture_title">Въведи кода CVV</string>
+    <string name="primer_payment_method_button_content_description">Плати с %s</string>
+    <string name="primer_test_header_description">Това е вътрешен дебит в тестова среда. Изберете резултата, който искате да тествате, от списъка по - долу.</string>
+    <string name="retry_button">Retry</string>
+    <string name="save_this_card">Запазете тази карта</string>
+    <string name="saved_payment_methods">ЗАПАЗЕН НАЧИН НА ПЛАЩАНЕ</string>
+    <!-- Scan to pay or take a screenshot - QR code screen title label -->
+    <string name="scanToPay">Сканирайте, за да платите или направете екранна снимка</string>
+    <string name="search_placeholder">Търсене</string>
+    <string name="search_result">Резултати от търсенето</string>
+    <string name="sepa">SEPA</string>
+    <string name="sepa_core_description">SEPA Предоставяне на права за директен дебит.</string>
+    <string name="session_complete_payment_cancellation_title">Payment cancelled</string>
+    <string name="session_complete_payment_failure_title">Payment failed</string>
+    <string name="session_complete_payment_success_title">Payment authorized</string>
+    <!-- State, Region or County is required - Form Validation -->
+    <string name="stateErrorRequired">Изисква се щат/ регион/ държава</string>
+    <!-- The billing address state container view label -->
+    <string name="stateLabel">Щат/ Регион/ Държава</string>
+    <string name="stripe_ach_mandate_accept_button">Accept</string>
+    <string name="stripe_ach_mandate_cancel_payment_button">Cancel payment</string>
+    <string name="stripe_ach_mandate_subtitle_label">Your personal details</string>
+    <string name="stripe_ach_mandate_template_android">By clicking Accept, you authorize %1$s to debit the selected bank account for any amount owed for charges arising from your use of %1$s\'s services and/or purchase of products from %1$s, pursuant to %1$s\'s website and terms, until this authorization is revoked. You may amend or cancel this authorization at any time by providing notice to %1$s with 30 (thirty) days notice.\n\nIf you use %1$s\'s services or purchase additional products periodically pursuant to %1$s\'s terms, you authorize %1$s to debit your bank account periodically. Payments that fall outside the regular debits authorized above will only be debited after your authorization is obtained.</string>
+    <string name="stripe_ach_mandate_title_label">Pay with ACH</string>
+    <string name="stripe_ach_payment_request_cancelled">Please try again or select another bank</string>
+    <string name="stripe_ach_payment_request_completed_successfully">You have now authorized your bank account to be debited. You will be notified via email once the payment has been collected successfully.</string>
+    <string name="stripe_ach_user_details_collection_continue_button">Continue</string>
+    <string name="stripe_ach_user_details_collection_data_usage_label">We\'ll only use this to keep you updated about your payment</string>
+    <string name="stripe_ach_user_details_collection_email_address_label">Email address</string>
+    <string name="stripe_ach_user_details_collection_first_name_label">First name</string>
+    <string name="stripe_ach_user_details_collection_invalid_email_address">The email address you entered doesn\'t look like a real email address. Please make sure it includes an \'@\' and a domain (like \'@example.com\').</string>
+    <string name="stripe_ach_user_details_collection_invalid_first_name">Please enter a valid first name. Avoid using numbers or special characters.</string>
+    <string name="stripe_ach_user_details_collection_invalid_last_name">Please enter a valid last name. Avoid using numbers or special characters.</string>
+    <string name="stripe_ach_user_details_collection_last_name_label">Last name</string>
+    <string name="stripe_ach_user_details_collection_subtitle_label">Your personal details</string>
+    <string name="success_icon_description">успех</string>
+    <string name="success_text">Успех!</string>
+    <string name="test_mail_com">test@mail.com</string>
+    <string name="twoc_2p_button">Плащане на вноски</string>
+    <!-- Upload the screenshot in your banking app. - QR code screen subtitle label -->
+    <string name="uploadScreenshot">Качете екранната снимка в банковото си приложение</string>
+</resources>

@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
+    <string name="accept_button">Accept</string>
+    <string name="add_bank_account">Agregar cuenta bancaria</string>
+    <string name="add_card">Agregar tarjeta</string>
+    <string name="add_new_payment_method">Agregar un método de pago</string>
+    <string name="additional_fees_may_apply">Pueden aplicarse tarifas adicionales</string>
+    <string name="addressLine1">Dirección (línea 1)</string>
+    <!-- State, Region or County is required - Form Validation -->
+    <string name="addressLine1ErrorRequired">La línea de dirección 1 es obligatoria</string>
+    <string name="addressLine2">Dirección (línea 2)</string>
+    <string name="available_payment_methods">Añadir métodos de pago</string>
+    <string name="bank_account">Cuenta bancaria</string>
+    <string name="bank_selection_error_message">No se pudo cargar el banco. Revise su conexión y vuelva a intentar.</string>
+    <string name="bank_selection_hint">Buscar bancos</string>
+    <string name="bank_selection_title">Elige tu banco</string>
+    <string name="bank_selection_try_again">Intentar nuevamente</string>
+    <string name="billingAddressLabel">Dirección de facturación</string>
+    <!-- Navigation -->
+    <string name="cancel">Cancelar</string>
+    <string name="cancel_payment_button">Cancel payment</string>
+    <string name="card_cvv">CVV</string>
+    <string name="card_details">Datos de la tarjeta</string>
+    <string name="card_expiry">Fecha de expiración</string>
+    <string name="card_expiry_formatted">Vencimiento (MM/AA)</string>
+    <!-- Form things -->
+    <string name="card_holder_name">Nombre del titular de la tarjeta</string>
+    <string name="card_name_on_card">Titular de la tarjeta</string>
+    <string name="card_network_fallback">Tarjeta</string>
+    <string name="card_number">Número de tarjeta</string>
+    <string name="card_zip">Código postal</string>
+    <string name="check_icon">icono check</string>
+    <string name="choose_other_payment_method_button">Choose other payment method</string>
+    <string name="choose_payment_method">Elegir método de pago</string>
+    <!-- City is required - Form Validation -->
+    <string name="cityErrorRequired">La ciudad es obligatoria</string>
+    <!-- The billing address city container view label -->
+    <string name="cityLabel">Ciudad</string>
+    <!-- Complete your payment - Account info payment title label -->
+    <string name="completeYourPayment">Completar el pago</string>
+    <string name="completeYourPaymentInTheApp">Complete su pago en %s</string>
+    <string name="confirm">Confirmar</string>
+    <string name="confirm_dd_mandate">Confirmar orden</string>
+    <string name="confirmToPayButtonTitle">Confirmar el pago</string>
+    <string name="continue_button">Continuar</string>
+    <string name="country_search_hint">Buscar país</string>
+    <string name="country_select">Seleccione un país</string>
+    <!-- Country is required - Form Validation -->
+    <string name="countryCodeErrorRequired">El país es obligatorio</string>
+    <string name="countryLabel">País</string>
+    <string name="credit_debit_card">Tarjeta de crédito/débito</string>
+    <string name="data_will_be_lost">Sus datos se eliminarán</string>
+    <string name="dd_cancel_message">¿Quiere cancelar el proceso de agregar una cuenta bancaria?</string>
+    <string name="dd_mandate_error">Revise si todos sus datos son correctos</string>
+    <!-- Legal -->
+    <string name="dd_mandate_legal">"
+        Al firmar este formulario de orden, autoriza (A) a %1$s a enviarle instrucciones a su banco para efectuar cargos en su cuenta y (B) a su banco
+        a que efectúe cargos en su cuenta, de acuerdo con las instrucciones de %1$s.
+    "</string>
+    <string name="delete">Eliminar</string>
+    <string name="done">Finalizar</string>
+    <!-- The prefix copy we put before the expiration date -->
+    <string name="dueAt">Caduca el</string>
+    <string name="edit">Editar</string>
+    <string name="edit_saved_payment_methods">Editar tarjetas guardadas</string>
+    <string name="email">Correo electrónico</string>
+    <string name="email_address">Email address</string>
+    <string name="enter_address">Ingrese su dirección</string>
+    <string name="enter_card_details">Ingresar datos de la tarjeta</string>
+    <string name="enter_email">Ingrese su correo electrónico</string>
+    <string name="enter_name">Ingrese su nombre</string>
+    <string name="error_default">¡Error!</string>
+    <string name="expires_12_21">Caduca 12 / 21</string>
+    <string name="expiry_date">%1$s / %2$s</string>
+    <string name="fast_bank_transfer">Transferencia bancaria FAST</string>
+    <string name="first_last_name">Nombre y apellido</string>
+    <!-- First name is required - Form Validation -->
+    <string name="firstNameErrorRequired">El nombre es obligatorio</string>
+    <!-- The billing address First name container view label -->
+    <string name="firstNameLabel">Nombre</string>
+    <string name="form_error_card_holder_name_length">El nombre debe tener entre 2 y 45 caracteres</string>
+    <string name="form_error_card_type_not_supported">Tipo de tarjeta no admitida</string>
+    <string name="form_error_invalid">%1$s no es válido</string>
+    <string name="form_error_required">%1$s es obligatorio</string>
+    <!-- Accessibility -->
+    <string name="go_back_description">regresar</string>
+    <string name="iban">IBAN</string>
+    <string name="icon_showing_state">icono de estado</string>
+    <!-- Get the code from your banking app - Blik descriptor -->
+    <string name="input_description_otp">Obtén el código desde tu aplicación bancaria.</string>
+    <!-- 6 digit code - Text field top placeholder -->
+    <string name="input_hint_form_blik_otp">Código de 6 dígitos</string>
+    <string name="input_hint_form_phone_number">Número de teléfono</string>
+    <string name="input_title_bank_details">Proporciona tus datos bancarios</string>
+    <string name="input_title_phone_number">Escribe tu número de teléfono</string>
+    <string name="john_doe">Juan García</string>
+    <string name="label_authorized">Autorizado</string>
+    <string name="label_declined">Rechazado</string>
+    <string name="label_failed">Fallido</string>
+    <string name="last_four">•••• %d</string>
+    <string name="last_four_with_dots">•••• 1234</string>
+    <!-- Last name is required - Form Validation -->
+    <string name="lastNameErrorRequired">El apellido es obligatorio</string>
+    <!-- The billing address Last name container view label -->
+    <string name="lastNameLabel">Apellido</string>
+    <string name="loading_text">Cargando</string>
+    <string name="manage">Gestionar</string>
+    <string name="mastercard">Mastercard</string>
+    <string name="mbway">Mb Way</string>
+    <string name="mock_klarna_view">Vista simulada en Klarna</string>
+    <string name="multibancoAmount">Cantidad</string>
+    <string name="multibancoCompleteDescription">Realice el pago en un cajero automático o a través de la banca en línea.</string>
+    <string name="multibancoEntity">Entidad</string>
+    <string name="multibancoPayment1Step">Realice el pago en un cajero automático o a través de la banca en línea.</string>
+    <string name="multibancoPayment2Step">Vaya a un cajero Multibanco, seleccione el método de pago Multibanco e ingrese los datos de pago</string>
+    <string name="multibancoPayment3Step">Acceda a su banco en línea para pagar por transferencia bancaria utilizando los datos de pago</string>
+    <string name="multibancoReference">Referencia</string>
+    <string name="multibancoTitleConditions">Completar el pago</string>
+    <string name="name">Nombre</string>
+    <string name="next">Siguiente</string>
+    <!-- No additional fee - Universal Checkout section text -->
+    <string name="no_additional_fee">Sin tarifa adicional</string>
+    <string name="no_results">No hay resultados</string>
+    <string name="no_results_for_query">Lo sentimos, no se han encontrado resultados\nque coincidan con \"%s\"</string>
+    <string name="other_ways_of_paying">Otros modos de pago</string>
+    <string name="other_ways_to_pay">Otras formas de pagar</string>
+    <string name="pay">Pagar</string>
+    <string name="pay_by_card">Pagar con tarjeta</string>
+    <string name="pay_specific_amount">Pagar %s</string>
+    <string name="pay_with">Pagar con</string>
+    <string name="pay_with_ach">Pay with ACH</string>
+    <string name="pay_with_card">Pagar con tarjeta</string>
+    <string name="pay_with_crypto">Pagar con criptomonedas</string>
+    <string name="payByImmediateTransfer">Pay by Immediate transfer</string>
+    <string name="payBySmartTransfer">Pay by Bank transfer</string>
+    <string name="payment_method_added_message">"
+        ¡Su método de pago 
+
+        se ha añadido correctamente!
+    "</string>
+    <!-- Enter your one time password - Text field placeholder -->
+    <string name="payment_method_blik_loading_placeholder">Completa tu pago en la aplicación Blik</string>
+    <string name="payment_method_deletion_message">¿Está seguro de que desea eliminar este método de pago?</string>
+    <string name="payment_method_error">Elige otro método de pago</string>
+    <string name="payment_method_icon">icono de método de pago</string>
+    <string name="payment_method_not_added_message">"
+        No se ha podido añadir su método de pago.
+    "</string>
+    <string name="payment_method_xfers_description">Sube la captura de pantalla a tu aplicación bancaria.</string>
+    <string name="payment_method_xfers_title">Escanear para pagar o tomar una captura de pantalla</string>
+    <string name="payment_request_completed_successfully">¡Su pago se ha realizado correctamente!</string>
+    <string name="payment_request_unsuccessful">Su pago no se ha podido realizar correctamente.</string>
+    <string name="phone_code_search_hint">Buscar código</string>
+    <!-- The message copy that tells the user how to transfer funds given a displayed account code -->
+    <string name="pleaseTransferFunds">Transfiera fondos a la cuenta bancaria DBS facilitada utilizando su cuenta bancaria en Singapur a través de FAST (preferentemente), MEPS o GIRO.</string>
+    <!-- Postal code is required - Form Validation -->
+    <string name="postalCodeErrorRequired">El código postal es obligatorio</string>
+    <!-- The billing address postal code container view label -->
+    <string name="postalCodeLabel">Código postal</string>
+    <!-- CVV- CVV recapture explanation label -->
+    <string name="primer_cvv_recapture_explanation">Ingresa el código de seguridad de %d dígitos de tu tarjeta para un pago seguro.</string>
+    <!-- CVV - CVV recapture screen title -->
+    <string name="primer_cvv_recapture_title">Ingresa el CVV</string>
+    <string name="primer_payment_method_button_content_description">Pagar con %s</string>
+    <string name="primer_test_header_description">Este es un flujo simulado para el entorno de pruebas. Elija el resultado que desee probar de la siguiente lista.</string>
+    <string name="retry_button">Retry</string>
+    <string name="save_this_card">Guardar esta tarjeta</string>
+    <string name="saved_payment_methods">MÉTODO DE PAGO GUARDADO</string>
+    <!-- Scan to pay or take a screenshot - QR code screen title label -->
+    <string name="scanToPay">Escanear para pagar o tomar una captura de pantalla</string>
+    <string name="search_placeholder">Buscar</string>
+    <string name="search_result">Resultados de búsqueda</string>
+    <string name="sepa">SEPA</string>
+    <string name="sepa_core_description">Orden de domiciliación de adeudo directo SEPA.</string>
+    <string name="session_complete_payment_cancellation_title">Payment cancelled</string>
+    <string name="session_complete_payment_failure_title">Payment failed</string>
+    <string name="session_complete_payment_success_title">Payment authorized</string>
+    <!-- State, Region or County is required - Form Validation -->
+    <string name="stateErrorRequired">Es obligatorio indicar el estado, la región o el condado</string>
+    <!-- The billing address state container view label -->
+    <string name="stateLabel">Estado / Región / Condado</string>
+    <string name="stripe_ach_mandate_accept_button">Accept</string>
+    <string name="stripe_ach_mandate_cancel_payment_button">Cancel payment</string>
+    <string name="stripe_ach_mandate_subtitle_label">Your personal details</string>
+    <string name="stripe_ach_mandate_template_android">By clicking Accept, you authorize %1$s to debit the selected bank account for any amount owed for charges arising from your use of %1$s\'s services and/or purchase of products from %1$s, pursuant to %1$s\'s website and terms, until this authorization is revoked. You may amend or cancel this authorization at any time by providing notice to %1$s with 30 (thirty) days notice.\n\nIf you use %1$s\'s services or purchase additional products periodically pursuant to %1$s\'s terms, you authorize %1$s to debit your bank account periodically. Payments that fall outside the regular debits authorized above will only be debited after your authorization is obtained.</string>
+    <string name="stripe_ach_mandate_title_label">Pay with ACH</string>
+    <string name="stripe_ach_payment_request_cancelled">Please try again or select another bank</string>
+    <string name="stripe_ach_payment_request_completed_successfully">You have now authorized your bank account to be debited. You will be notified via email once the payment has been collected successfully.</string>
+    <string name="stripe_ach_user_details_collection_continue_button">Continue</string>
+    <string name="stripe_ach_user_details_collection_data_usage_label">We\'ll only use this to keep you updated about your payment</string>
+    <string name="stripe_ach_user_details_collection_email_address_label">Email address</string>
+    <string name="stripe_ach_user_details_collection_first_name_label">First name</string>
+    <string name="stripe_ach_user_details_collection_invalid_email_address">The email address you entered doesn\'t look like a real email address. Please make sure it includes an \'@\' and a domain (like \'@example.com\').</string>
+    <string name="stripe_ach_user_details_collection_invalid_first_name">Please enter a valid first name. Avoid using numbers or special characters.</string>
+    <string name="stripe_ach_user_details_collection_invalid_last_name">Please enter a valid last name. Avoid using numbers or special characters.</string>
+    <string name="stripe_ach_user_details_collection_last_name_label">Last name</string>
+    <string name="stripe_ach_user_details_collection_subtitle_label">Your personal details</string>
+    <string name="success_icon_description">bien</string>
+    <string name="success_text">¡Bien!</string>
+    <string name="test_mail_com">test@mail.com</string>
+    <string name="twoc_2p_button">Pagar a plazos</string>
+    <!-- Upload the screenshot in your banking app. - QR code screen subtitle label -->
+    <string name="uploadScreenshot">Cargue la captura de pantalla en su aplicación bancaria</string>
+</resources>

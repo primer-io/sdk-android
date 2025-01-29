@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
+    <string name="accept_button">Accept</string>
+    <string name="add_bank_account">銀行口座を追加</string>
+    <string name="add_card">カードを追加</string>
+    <string name="add_new_payment_method">支払い方法を追加</string>
+    <string name="additional_fees_may_apply">追加手数料が適用される場合があります</string>
+    <string name="addressLine1">住所行1</string>
+    <!-- State, Region or County is required - Form Validation -->
+    <string name="addressLine1ErrorRequired">住所行1は必須です</string>
+    <string name="addressLine2">住所行2</string>
+    <string name="available_payment_methods">利用可能な支払方法</string>
+    <string name="bank_account">銀行口座</string>
+    <string name="bank_selection_error_message">銀行の読み込みに失敗しました。接続を確認して再試行してください。</string>
+    <string name="bank_selection_hint">銀行を選択</string>
+    <string name="bank_selection_title">銀行を選択</string>
+    <string name="bank_selection_try_again">再試行</string>
+    <string name="billingAddressLabel">請求先住所</string>
+    <!-- Navigation -->
+    <string name="cancel">キャンセル</string>
+    <string name="cancel_payment_button">Cancel payment</string>
+    <string name="card_cvv">セキュリティコード</string>
+    <string name="card_details">カード詳細</string>
+    <string name="card_expiry">有効期限</string>
+    <string name="card_expiry_formatted">有効期限（月/年）</string>
+    <!-- Form things -->
+    <string name="card_holder_name">カード名義人名</string>
+    <string name="card_name_on_card">カード名義人</string>
+    <string name="card_network_fallback">カード</string>
+    <string name="card_number">カード番号</string>
+    <string name="card_zip">郵便番号</string>
+    <string name="check_icon">チェックアイコン</string>
+    <string name="choose_other_payment_method_button">Choose other payment method</string>
+    <string name="choose_payment_method">お支払い方法を選択する</string>
+    <!-- City is required - Form Validation -->
+    <string name="cityErrorRequired">都市の入力は必須です</string>
+    <!-- The billing address city container view label -->
+    <string name="cityLabel">都市</string>
+    <!-- Complete your payment - Account info payment title label -->
+    <string name="completeYourPayment">支払いを完了する</string>
+    <string name="completeYourPaymentInTheApp">%sで支払いを完了する</string>
+    <string name="confirm">確認</string>
+    <string name="confirm_dd_mandate">委任を確認</string>
+    <string name="confirmToPayButtonTitle">支払いを確認する</string>
+    <string name="continue_button">続行する</string>
+    <string name="country_search_hint">国を探す</string>
+    <string name="country_select">国を選択する</string>
+    <!-- Country is required - Form Validation -->
+    <string name="countryCodeErrorRequired">国の入力は必須です</string>
+    <string name="countryLabel">国</string>
+    <string name="credit_debit_card">クレジット/デビットカード</string>
+    <string name="data_will_be_lost">データは削除されます</string>
+    <string name="dd_cancel_message">銀行口座の追加をキャンセルしますか。</string>
+    <string name="dd_mandate_error">全ての情報が正しいことを確認してください</string>
+    <!-- Legal -->
+    <string name="dd_mandate_legal">"
+        お客様は、この委任フォームに署名することで、（A）%1$sがお客様の銀行にお客様の口座から引き落としを行うよう指示を送ること、および（B）お客様の銀行が
+        %1$sからの指示に従ってお客様の口座から引き落としを行うことを許可したものとみなされます。
+    "</string>
+    <string name="delete">削除</string>
+    <string name="done">完了</string>
+    <!-- The prefix copy we put before the expiration date -->
+    <string name="dueAt">期限</string>
+    <string name="edit">編集</string>
+    <string name="edit_saved_payment_methods">保存済みカードを編集</string>
+    <string name="email">メールアドレス</string>
+    <string name="email_address">Email address</string>
+    <string name="enter_address">住所を入力</string>
+    <string name="enter_card_details">カード情報を入力</string>
+    <string name="enter_email">メールアドレスを入力</string>
+    <string name="enter_name">氏名を入力</string>
+    <string name="error_default">エラー！</string>
+    <string name="expires_12_21">有効期限 12 / 21</string>
+    <string name="expiry_date">%1$s / %2$s</string>
+    <string name="fast_bank_transfer">FAST銀行振込</string>
+    <string name="first_last_name">姓名</string>
+    <!-- First name is required - Form Validation -->
+    <string name="firstNameErrorRequired">名の入力は必須です</string>
+    <!-- The billing address First name container view label -->
+    <string name="firstNameLabel">名</string>
+    <string name="form_error_card_holder_name_length">名前は2〜45文字にする必要があります</string>
+    <string name="form_error_card_type_not_supported">サポートされていないカードタイプ</string>
+    <string name="form_error_invalid">%1$sが無効です</string>
+    <string name="form_error_required">%1$sが必要です</string>
+    <!-- Accessibility -->
+    <string name="go_back_description">戻る</string>
+    <string name="iban">IBAN</string>
+    <string name="icon_showing_state">状態を示すアイコン</string>
+    <!-- Get the code from your banking app - Blik descriptor -->
+    <string name="input_description_otp">銀行アプリからコードを取得します。</string>
+    <!-- 6 digit code - Text field top placeholder -->
+    <string name="input_hint_form_blik_otp">6桁のコード</string>
+    <string name="input_hint_form_phone_number">電話番号</string>
+    <string name="input_title_bank_details">銀行の詳細を入力</string>
+    <string name="input_title_phone_number">電話番号を入力</string>
+    <string name="john_doe">ジョン・ドウ</string>
+    <string name="label_authorized">承認されました</string>
+    <string name="label_declined">拒否されました</string>
+    <string name="label_failed">失敗しました</string>
+    <string name="last_four">•••• %d</string>
+    <string name="last_four_with_dots">•••• 1234</string>
+    <!-- Last name is required - Form Validation -->
+    <string name="lastNameErrorRequired">姓の入力は必須です</string>
+    <!-- The billing address Last name container view label -->
+    <string name="lastNameLabel">姓</string>
+    <string name="loading_text">読み込み中</string>
+    <string name="manage">管理する</string>
+    <string name="mastercard">Mastercard</string>
+    <string name="mbway">Mb Way</string>
+    <string name="mock_klarna_view">Klarnaビューを模倣する</string>
+    <string name="multibancoAmount">金額</string>
+    <string name="multibancoCompleteDescription">ATMまたはオンラインバンキングでお支払いください。</string>
+    <string name="multibancoEntity">法人</string>
+    <string name="multibancoPayment1Step">ATMまたはオンラインバンキングでお支払いください。</string>
+    <string name="multibancoPayment2Step">MultibancoのATMからMultibancoのお支払い方法を選択し、お支払い情報を入力してください</string>
+    <string name="multibancoPayment3Step">オンラインバンキングにログインし、お支払い情報を使用して銀行振込でお支払いください</string>
+    <string name="multibancoReference">参照</string>
+    <string name="multibancoTitleConditions">支払いを完了する</string>
+    <string name="name">名前</string>
+    <string name="next">次へ</string>
+    <!-- No additional fee - Universal Checkout section text -->
+    <string name="no_additional_fee">追加手数料なし</string>
+    <string name="no_results">結果はありません</string>
+    <string name="no_results_for_query">申し訳ございません。「%s」に一致する\n結果は見つかりませんでした</string>
+    <string name="other_ways_of_paying">その他のお支払い方法</string>
+    <string name="other_ways_to_pay">他の支払方法</string>
+    <string name="pay">支払い</string>
+    <string name="pay_by_card">カードで支払い</string>
+    <string name="pay_specific_amount">%sを支払い</string>
+    <string name="pay_with">支払い方法：</string>
+    <string name="pay_with_ach">Pay with ACH</string>
+    <string name="pay_with_card">カードで支払う</string>
+    <string name="pay_with_crypto">暗号通貨で支払い</string>
+    <string name="payByImmediateTransfer">Pay by Immediate transfer</string>
+    <string name="payBySmartTransfer">Pay by Bank transfer</string>
+    <string name="payment_method_added_message">"
+        お支払い方法が 
+
+        正常に追加されました！
+    "</string>
+    <!-- Enter your one time password - Text field placeholder -->
+    <string name="payment_method_blik_loading_placeholder">Blik アプリで支払いを完了</string>
+    <string name="payment_method_deletion_message">このお支払い方法を削除してもよろしいですか？</string>
+    <string name="payment_method_error">別の支払い方法を選択</string>
+    <string name="payment_method_icon">お支払い方法のアイコン</string>
+    <string name="payment_method_not_added_message">"
+        お支払い方法を追加できませんでした。
+    "</string>
+    <string name="payment_method_xfers_description">銀行アプリでスクリーンショットをアップロードします。</string>
+    <string name="payment_method_xfers_title">スキャンして支払うかスクリーンショットを撮影</string>
+    <string name="payment_request_completed_successfully">お支払いが正常に完了しました！</string>
+    <string name="payment_request_unsuccessful">お支払いに失敗しました。</string>
+    <string name="phone_code_search_hint">コードを探す</string>
+    <!-- The message copy that tells the user how to transfer funds given a displayed account code -->
+    <string name="pleaseTransferFunds">シンガポールに拠点を置く銀行の口座を使用し、FAST（推奨）、MEPS、またはGIRO経由で、提供されたDBS銀行の口座に資金を送金してください。</string>
+    <!-- Postal code is required - Form Validation -->
+    <string name="postalCodeErrorRequired">郵便番号の入力は必須です</string>
+    <!-- The billing address postal code container view label -->
+    <string name="postalCodeLabel">郵便番号</string>
+    <!-- CVV- CVV recapture explanation label -->
+    <string name="primer_cvv_recapture_explanation">安全にお支払いいただくために、カードに記載された%d桁のセキュリティコードを入力してください。</string>
+    <!-- CVV - CVV recapture screen title -->
+    <string name="primer_cvv_recapture_title">CVVを入力</string>
+    <string name="primer_payment_method_button_content_description">%sで支払う</string>
+    <string name="primer_test_header_description">これはサンドボックス用のフローのモックアップです。以下の一覧からテストしたい結果を選んでください。</string>
+    <string name="retry_button">Retry</string>
+    <string name="save_this_card">このカードを保存する</string>
+    <string name="saved_payment_methods">保存したお支払い方法</string>
+    <!-- Scan to pay or take a screenshot - QR code screen title label -->
+    <string name="scanToPay">スキャンして支払うかスクリーンショットを撮影</string>
+    <string name="search_placeholder">検索</string>
+    <string name="search_result">検索結果</string>
+    <string name="sepa">SEPA</string>
+    <string name="sepa_core_description">コアSDD委任。</string>
+    <string name="session_complete_payment_cancellation_title">Payment cancelled</string>
+    <string name="session_complete_payment_failure_title">Payment failed</string>
+    <string name="session_complete_payment_success_title">Payment authorized</string>
+    <!-- State, Region or County is required - Form Validation -->
+    <string name="stateErrorRequired">州 / 地方 / 郡は必須です</string>
+    <!-- The billing address state container view label -->
+    <string name="stateLabel">州 / 地方 / 郡</string>
+    <string name="stripe_ach_mandate_accept_button">Accept</string>
+    <string name="stripe_ach_mandate_cancel_payment_button">Cancel payment</string>
+    <string name="stripe_ach_mandate_subtitle_label">Your personal details</string>
+    <string name="stripe_ach_mandate_template_android">By clicking Accept, you authorize %1$s to debit the selected bank account for any amount owed for charges arising from your use of %1$s\'s services and/or purchase of products from %1$s, pursuant to %1$s\'s website and terms, until this authorization is revoked. You may amend or cancel this authorization at any time by providing notice to %1$s with 30 (thirty) days notice.\n\nIf you use %1$s\'s services or purchase additional products periodically pursuant to %1$s\'s terms, you authorize %1$s to debit your bank account periodically. Payments that fall outside the regular debits authorized above will only be debited after your authorization is obtained.</string>
+    <string name="stripe_ach_mandate_title_label">Pay with ACH</string>
+    <string name="stripe_ach_payment_request_cancelled">Please try again or select another bank</string>
+    <string name="stripe_ach_payment_request_completed_successfully">You have now authorized your bank account to be debited. You will be notified via email once the payment has been collected successfully.</string>
+    <string name="stripe_ach_user_details_collection_continue_button">Continue</string>
+    <string name="stripe_ach_user_details_collection_data_usage_label">We\'ll only use this to keep you updated about your payment</string>
+    <string name="stripe_ach_user_details_collection_email_address_label">Email address</string>
+    <string name="stripe_ach_user_details_collection_first_name_label">First name</string>
+    <string name="stripe_ach_user_details_collection_invalid_email_address">The email address you entered doesn\'t look like a real email address. Please make sure it includes an \'@\' and a domain (like \'@example.com\').</string>
+    <string name="stripe_ach_user_details_collection_invalid_first_name">Please enter a valid first name. Avoid using numbers or special characters.</string>
+    <string name="stripe_ach_user_details_collection_invalid_last_name">Please enter a valid last name. Avoid using numbers or special characters.</string>
+    <string name="stripe_ach_user_details_collection_last_name_label">Last name</string>
+    <string name="stripe_ach_user_details_collection_subtitle_label">Your personal details</string>
+    <string name="success_icon_description">成功</string>
+    <string name="success_text">成功！</string>
+    <string name="test_mail_com">test@mail.com</string>
+    <string name="twoc_2p_button">分割払い</string>
+    <!-- Upload the screenshot in your banking app. - QR code screen subtitle label -->
+    <string name="uploadScreenshot">銀行アプリでスクリーンショットをアップロード</string>
+</resources>

@@ -1,5 +1,0 @@
-<resources>
-  <string name="googlepay_button_content_description">Google Pay</string>
-  <string name="googlepay_buy_with_button_content_description">Buy with Google Pay</string>
-  <string name="googlepay_donate_with_button_content_description">Donate with Google Pay</string>
-</resources>

@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
+    <string name="accept_button">Accept</string>
+    <string name="add_bank_account">إضافة حساب مصرفي</string>
+    <string name="add_card">أضف البطاقة</string>
+    <string name="add_new_payment_method">إضافة طريقة دفع</string>
+    <string name="additional_fees_may_apply">قد تُفرض رسوم إضافية</string>
+    <string name="addressLine1">السطر 1 من العنوان</string>
+    <!-- State, Region or County is required - Form Validation -->
+    <string name="addressLine1ErrorRequired">يجب إكمال سطر العنوان 1</string>
+    <string name="addressLine2">السطر 2 من العنوان</string>
+    <string name="available_payment_methods">طرق الدفع المتاحة</string>
+    <string name="bank_account">حساب بنكي</string>
+    <string name="bank_selection_error_message">فشل تحميل البنك. تحقق من الاتصال وأعد المحاولة.</string>
+    <string name="bank_selection_hint">ابحث عن البنوك</string>
+    <string name="bank_selection_title">اختر بنكك</string>
+    <string name="bank_selection_try_again">أعد المحاولة</string>
+    <string name="billingAddressLabel">عنوان إرسال الفواتير</string>
+    <!-- Navigation -->
+    <string name="cancel">إلغاء</string>
+    <string name="cancel_payment_button">Cancel payment</string>
+    <string name="card_cvv">رقم CVV</string>
+    <string name="card_details">تفاصيل البطاقة</string>
+    <string name="card_expiry">تاريخ انتهاء الصلاحية</string>
+    <string name="card_expiry_formatted">تاريخ انتهاء الصلاحية (شهر/سنة)</string>
+    <!-- Form things -->
+    <string name="card_holder_name">اسم حامل البطاقة</string>
+    <string name="card_name_on_card">الاسم كما هو مذكور على البطاقة</string>
+    <string name="card_network_fallback">بطاقة</string>
+    <string name="card_number">رقم البطاقة</string>
+    <string name="card_zip">الرمز البريدي</string>
+    <string name="check_icon">رمز الفحص</string>
+    <string name="choose_other_payment_method_button">Choose other payment method</string>
+    <string name="choose_payment_method">اختيار وسيلة الدفع</string>
+    <!-- City is required - Form Validation -->
+    <string name="cityErrorRequired">يجب كتابة المدينة</string>
+    <!-- The billing address city container view label -->
+    <string name="cityLabel">المدينة</string>
+    <!-- Complete your payment - Account info payment title label -->
+    <string name="completeYourPayment">أكمل عملية الدفع</string>
+    <string name="completeYourPaymentInTheApp">أكمل عملية الدفع في %s</string>
+    <string name="confirm">تأكيد</string>
+    <string name="confirm_dd_mandate">تأكيد التفويض</string>
+    <string name="confirmToPayButtonTitle">تأكيد الدفع</string>
+    <string name="continue_button">متابعة</string>
+    <string name="country_search_hint">ابحث عن بلد</string>
+    <string name="country_select">حدد البلد</string>
+    <!-- Country is required - Form Validation -->
+    <string name="countryCodeErrorRequired">يجب إدخال الدولة</string>
+    <string name="countryLabel">الدولة</string>
+    <string name="credit_debit_card">بطاقة ائتمان/خصم</string>
+    <string name="data_will_be_lost">سيتم محو بياناتك</string>
+    <string name="dd_cancel_message">هل تريد إلغاء إضافة حساب بنكي؟</string>
+    <string name="dd_mandate_error">يُرجى التحقّق من صحّة جميع بياناتك</string>
+    <!-- Legal -->
+    <string name="dd_mandate_legal">"
+        بتوقيع نموذج التفويض هذا، تمنح (أ) %1$s صلاحية إرسال تعليمات للبنك الخاص بك بالخصم من حسابك، و (ب) البنك الخاص بك بـ
+   الخصم من حسابك طبقاً للتعليمات الصادرة من قِبل %1$s.
+    "</string>
+    <string name="delete">حذف</string>
+    <string name="done">تم</string>
+    <!-- The prefix copy we put before the expiration date -->
+    <string name="dueAt">مستحق في</string>
+    <string name="edit">تعديل</string>
+    <string name="edit_saved_payment_methods">تحرير البطاقات المحفوظة</string>
+    <string name="email">البريد الإلكتروني</string>
+    <string name="email_address">Email address</string>
+    <string name="enter_address">أدخل عنوانك</string>
+    <string name="enter_card_details">أدخل بيانات البطاقة</string>
+    <string name="enter_email">أدخل عنوان بريدك الإلكتروني</string>
+    <string name="enter_name">أدخل اسمك</string>
+    <string name="error_default">خطأ!</string>
+    <string name="expires_12_21">تاريخ الانتهاء 12 / 21</string>
+    <string name="expiry_date">%2$s / %1$s</string>
+    <string name="fast_bank_transfer">تحويل بنكي عبر FAST</string>
+    <string name="first_last_name">الاسم الأول والاسم الأخير</string>
+    <!-- First name is required - Form Validation -->
+    <string name="firstNameErrorRequired">يجب إدخال الاسم الأول</string>
+    <!-- The billing address First name container view label -->
+    <string name="firstNameLabel">الاسم الأول</string>
+    <string name="form_error_card_holder_name_length">يلزم أن يكون الاسم بين حرفين و 45 حرف</string>
+    <string name="form_error_card_type_not_supported">نوع بطاقة غير مدعوم</string>
+    <string name="form_error_invalid">%1$s غير صحيح</string>
+    <string name="form_error_required">%1$s مطلوب</string>
+    <!-- Accessibility -->
+    <string name="go_back_description">الرجوع</string>
+    <string name="iban">رقم الحساب بصيغة IBAN</string>
+    <string name="icon_showing_state">رمز يوضح الحالة</string>
+    <!-- Get the code from your banking app - Blik descriptor -->
+    <string name="input_description_otp">احصل على الرمز من تطبيقك المصرفي.</string>
+    <!-- 6 digit code - Text field top placeholder -->
+    <string name="input_hint_form_blik_otp">رمز من 6 خانات</string>
+    <string name="input_hint_form_phone_number">رقم الهاتف</string>
+    <string name="input_title_bank_details">يرجى كتابة التفاصيل المصرفية</string>
+    <string name="input_title_phone_number">اكتب رقم هاتفك</string>
+    <string name="john_doe">جون دو</string>
+    <string name="label_authorized">مرخص</string>
+    <string name="label_declined">مرفوض</string>
+    <string name="label_failed">فشل</string>
+    <string name="last_four">•••• %d</string>
+    <string name="last_four_with_dots">•••• 1234</string>
+    <!-- Last name is required - Form Validation -->
+    <string name="lastNameErrorRequired">يجب إدخال اسم العائلة</string>
+    <!-- The billing address Last name container view label -->
+    <string name="lastNameLabel">اسم العائلة</string>
+    <string name="loading_text">جار التحميل</string>
+    <string name="manage">إدارة</string>
+    <string name="mastercard">Mastercard</string>
+    <string name="mbway">Mb Way</string>
+    <string name="mock_klarna_view">عرض تمثيلي لكلارنا</string>
+    <string name="multibancoAmount">المبلغ</string>
+    <string name="multibancoCompleteDescription">يُرجى إجراء الدفع عبر ماكينة صراف آلي، أو باستخدام الخدمات المصرفية عبر الإنترنت.</string>
+    <string name="multibancoEntity">الجهة</string>
+    <string name="multibancoPayment1Step">يُرجى إجراء الدفع عبر ماكينة صراف آلي، أو باستخدام الخدمات المصرفية عبر الإنترنت.</string>
+    <string name="multibancoPayment2Step">توجه إلى ماكينة صراف آلي تابعة لـ Multibanco، واختر طريقة الدفع Multibanco وأدخل تفاصيل الدفع</string>
+    <string name="multibancoPayment3Step">سجّل الدخول إلى الخدمات البنكية عبر الإنترنت لتدفع عن طريق تحويل بنكي باستخدام تفاصيل الدفع</string>
+    <string name="multibancoReference">المرجع</string>
+    <string name="multibancoTitleConditions">أكمل عملية الدفع</string>
+    <string name="name">الاسم</string>
+    <string name="next">التالي</string>
+    <!-- No additional fee - Universal Checkout section text -->
+    <string name="no_additional_fee">بدون رسوم إضافية</string>
+    <string name="no_results">لا توجد نتائج</string>
+    <string name="no_results_for_query">عذراً، لم نعثر على نتائج\n تطابق \" %s \"</string>
+    <string name="other_ways_of_paying">طرق الدفع الأخرى</string>
+    <string name="other_ways_to_pay">طرق أخرى للدفع</string>
+    <string name="pay">دفع</string>
+    <string name="pay_by_card">ادفع عن طريق البطاقة</string>
+    <string name="pay_specific_amount">دفع %s</string>
+    <string name="pay_with">ادفع باستخدام</string>
+    <string name="pay_with_ach">Pay with ACH</string>
+    <string name="pay_with_card">الدفع بالبطاقة</string>
+    <string name="pay_with_crypto">ادفع باستخدام العملات المشفرة</string>
+    <string name="payByImmediateTransfer">Pay by Immediate transfer</string>
+    <string name="payBySmartTransfer">Pay by Bank transfer</string>
+    <string name="payment_method_added_message">"
+        تمت إضافة وسيلة الدفع 
+
+        الخاصة بك بنجاح!
+    "</string>
+    <!-- Enter your one time password - Text field placeholder -->
+    <string name="payment_method_blik_loading_placeholder">أكمل عملية الدفع في تطبيق Blik</string>
+    <string name="payment_method_deletion_message">هل تريد بالتأكيد حذف وسيلة الدفع هذه؟</string>
+    <string name="payment_method_error">اختر طريقة دفع أخرى</string>
+    <string name="payment_method_icon">رمز وسيلة الدفع</string>
+    <string name="payment_method_not_added_message">"
+        تعذرت إضافة وسيلة الدفع الخاصة بك.
+    "</string>
+    <string name="payment_method_xfers_description">قم بتحميل لقطة الشاشة في تطبيقك المصرفي.</string>
+    <string name="payment_method_xfers_title">امسح للدفع أو التقط لقطة شاشة</string>
+    <string name="payment_request_completed_successfully">اكتملت عملية الدفع بنجاح!</string>
+    <string name="payment_request_unsuccessful">عملية الدفع غير ناجحة.</string>
+    <string name="phone_code_search_hint">ابحث عن الرمز</string>
+    <!-- The message copy that tells the user how to transfer funds given a displayed account code -->
+    <string name="pleaseTransferFunds">يُرجى تحويل الأموال إلى حساب بنك DBS المذكور باستخدام حسابك المصرفي في سنغافورة عبر FAST (مفضّل) أو MEPS أو GIRO.</string>
+    <!-- Postal code is required - Form Validation -->
+    <string name="postalCodeErrorRequired">يجب كتابة الرمز البريدي</string>
+    <!-- The billing address postal code container view label -->
+    <string name="postalCodeLabel">الرمز البريدي</string>
+    <!-- CVV- CVV recapture explanation label -->
+    <string name="primer_cvv_recapture_explanation">يُرجى إدخال رمز الأمان المكوّن من %d أرقام والموجود على بطاقتك لإجراء عملية دفع آمنة.</string>
+    <!-- CVV - CVV recapture screen title -->
+    <string name="primer_cvv_recapture_title">أدخل رقم CVV</string>
+    <string name="primer_payment_method_button_content_description">ادفع بـ %s</string>
+    <string name="primer_test_header_description">ما نقدمه هنا عبارة عن تسلسل صوري لغرض التجربة. اختر النتيجة التي تود اختبارها من القائمة أدناه.</string>
+    <string name="retry_button">Retry</string>
+    <string name="save_this_card">احفظ هذه البطاقة</string>
+    <string name="saved_payment_methods">وسيلة الدفع المحفوظة</string>
+    <!-- Scan to pay or take a screenshot - QR code screen title label -->
+    <string name="scanToPay">امسح للدفع أو التقط لقطة شاشة</string>
+    <string name="search_placeholder">بحث</string>
+    <string name="search_result">نتائج البحث</string>
+    <string name="sepa">SEPA</string>
+    <string name="sepa_core_description">تفويض منطقة المدفوعات الأوروبية الموحدة المركزي بالخصم المباشر.</string>
+    <string name="session_complete_payment_cancellation_title">Payment cancelled</string>
+    <string name="session_complete_payment_failure_title">Payment failed</string>
+    <string name="session_complete_payment_success_title">Payment authorized</string>
+    <!-- State, Region or County is required - Form Validation -->
+    <string name="stateErrorRequired">يجب إدخال ولاية أو منطقة أو مقاطعة</string>
+    <!-- The billing address state container view label -->
+    <string name="stateLabel">الولاية / المنطقة / المقاطعة</string>
+    <string name="stripe_ach_mandate_accept_button">Accept</string>
+    <string name="stripe_ach_mandate_cancel_payment_button">Cancel payment</string>
+    <string name="stripe_ach_mandate_subtitle_label">Your personal details</string>
+    <string name="stripe_ach_mandate_template_android">By clicking Accept, you authorize %1$s to debit the selected bank account for any amount owed for charges arising from your use of %1$s\'s services and/or purchase of products from %1$s, pursuant to %1$s\'s website and terms, until this authorization is revoked. You may amend or cancel this authorization at any time by providing notice to %1$s with 30 (thirty) days notice.\n\nIf you use %1$s\'s services or purchase additional products periodically pursuant to %1$s\'s terms, you authorize %1$s to debit your bank account periodically. Payments that fall outside the regular debits authorized above will only be debited after your authorization is obtained.</string>
+    <string name="stripe_ach_mandate_title_label">Pay with ACH</string>
+    <string name="stripe_ach_payment_request_cancelled">Please try again or select another bank</string>
+    <string name="stripe_ach_payment_request_completed_successfully">You have now authorized your bank account to be debited. You will be notified via email once the payment has been collected successfully.</string>
+    <string name="stripe_ach_user_details_collection_continue_button">Continue</string>
+    <string name="stripe_ach_user_details_collection_data_usage_label">We\'ll only use this to keep you updated about your payment</string>
+    <string name="stripe_ach_user_details_collection_email_address_label">Email address</string>
+    <string name="stripe_ach_user_details_collection_first_name_label">First name</string>
+    <string name="stripe_ach_user_details_collection_invalid_email_address">The email address you entered doesn\'t look like a real email address. Please make sure it includes an \'@\' and a domain (like \'@example.com\').</string>
+    <string name="stripe_ach_user_details_collection_invalid_first_name">Please enter a valid first name. Avoid using numbers or special characters.</string>
+    <string name="stripe_ach_user_details_collection_invalid_last_name">Please enter a valid last name. Avoid using numbers or special characters.</string>
+    <string name="stripe_ach_user_details_collection_last_name_label">Last name</string>
+    <string name="stripe_ach_user_details_collection_subtitle_label">Your personal details</string>
+    <string name="success_icon_description">تم بنجاح</string>
+    <string name="success_text">نجح!</string>
+    <string name="test_mail_com">test@mail.com</string>
+    <string name="twoc_2p_button">ادفع على أقساط</string>
+    <!-- Upload the screenshot in your banking app. - QR code screen subtitle label -->
+    <string name="uploadScreenshot">قم بتحميل لقطة الشاشة في تطبيقك المصرفي</string>
+</resources>

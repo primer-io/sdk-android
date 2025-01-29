@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
+    <string name="accept_button">Accept</string>
+    <string name="add_bank_account">Adăugare cont bancar</string>
+    <string name="add_card">Adăugare card</string>
+    <string name="add_new_payment_method">Adaugă o metodă de plată</string>
+    <string name="additional_fees_may_apply">Se pot aplica taxe suplimentare</string>
+    <string name="addressLine1">Adresa - partea întâi</string>
+    <!-- State, Region or County is required - Form Validation -->
+    <string name="addressLine1ErrorRequired">Linia 1 a adresei este obligatorie</string>
+    <string name="addressLine2">Adresa - partea a doua</string>
+    <string name="available_payment_methods">Modalităţi de plată disponibile</string>
+    <string name="bank_account">Cont bancar</string>
+    <string name="bank_selection_error_message">Nu s-a reușit încărcarea băncii. Verificați conexiunea dumneavoastră și încercați din nou.</string>
+    <string name="bank_selection_hint">Căutați bănci</string>
+    <string name="bank_selection_title">Alege banca</string>
+    <string name="bank_selection_try_again">Încercați din nou</string>
+    <string name="billingAddressLabel">Adresa de facturare</string>
+    <!-- Navigation -->
+    <string name="cancel">Anulează</string>
+    <string name="cancel_payment_button">Cancel payment</string>
+    <string name="card_cvv">CVV</string>
+    <string name="card_details">Detaliile cardului</string>
+    <string name="card_expiry">Data expirării</string>
+    <string name="card_expiry_formatted">Data expirării (LL/AA)</string>
+    <!-- Form things -->
+    <string name="card_holder_name">Numele titularului cardului</string>
+    <string name="card_name_on_card">Numele de pe card</string>
+    <string name="card_network_fallback">Card</string>
+    <string name="card_number">Numărul cardului</string>
+    <string name="card_zip">Cod poștal</string>
+    <string name="check_icon">pictogramă bifă</string>
+    <string name="choose_other_payment_method_button">Choose other payment method</string>
+    <string name="choose_payment_method">Alegeți metoda de plată</string>
+    <!-- City is required - Form Validation -->
+    <string name="cityErrorRequired">Orașul este obligatoriu</string>
+    <!-- The billing address city container view label -->
+    <string name="cityLabel">Oraşul</string>
+    <!-- Complete your payment - Account info payment title label -->
+    <string name="completeYourPayment">Finalizează plata</string>
+    <string name="completeYourPaymentInTheApp">Finalizează plata în %s</string>
+    <string name="confirm">Confirmaţi</string>
+    <string name="confirm_dd_mandate">Confirmă mandatul</string>
+    <string name="confirmToPayButtonTitle">Confirmă pentru a plăti</string>
+    <string name="continue_button">Continuă</string>
+    <string name="country_search_hint">Găsește țara</string>
+    <string name="country_select">Selectează țara</string>
+    <!-- Country is required - Form Validation -->
+    <string name="countryCodeErrorRequired">Țara este obligatorie</string>
+    <string name="countryLabel">Țara</string>
+    <string name="credit_debit_card">Card de credit/debit</string>
+    <string name="data_will_be_lost">Datele tale vor fi șterse</string>
+    <string name="dd_cancel_message">Dorești să anulezi adăugarea unui cont bancar?</string>
+    <string name="dd_mandate_error">Te rugăm să verifici dacă toate informațiile tale sunt corecte</string>
+    <!-- Legal -->
+    <string name="dd_mandate_legal">"
+        Prin semnarea acestui formular de mandat, autorizați (A) %1$s să trimită instrucțiuni băncii dvs., în scopul debitării contului, și (B) banca dvs.
+        să vă debiteze contul în conformitate cu instrucțiunile din %1$s.
+    "</string>
+    <string name="delete">Șterge</string>
+    <string name="done">Gata</string>
+    <!-- The prefix copy we put before the expiration date -->
+    <string name="dueAt">Cu scadența la</string>
+    <string name="edit">Editaţi</string>
+    <string name="edit_saved_payment_methods">Modifică datele cardurilor salvate</string>
+    <string name="email">Email</string>
+    <string name="email_address">Email address</string>
+    <string name="enter_address">Introdu adresa ta</string>
+    <string name="enter_card_details">Introdu datele cardului</string>
+    <string name="enter_email">Introdu e-mailul tău</string>
+    <string name="enter_name">Introdu numele tău</string>
+    <string name="error_default">Eroare!</string>
+    <string name="expires_12_21">Expiră în 12 / 21</string>
+    <string name="expiry_date">%1$s / %2$s</string>
+    <string name="fast_bank_transfer">Transfer bancar FAST</string>
+    <string name="first_last_name">Prenumele și numele de familie</string>
+    <!-- First name is required - Form Validation -->
+    <string name="firstNameErrorRequired">Prenumele este obligatoriu</string>
+    <!-- The billing address First name container view label -->
+    <string name="firstNameLabel">Prenumele</string>
+    <string name="form_error_card_holder_name_length">Numele trebuie să aibă între 2 și 45 de caractere</string>
+    <string name="form_error_card_type_not_supported">Tipul de card nu este acceptat</string>
+    <string name="form_error_invalid">%1$s nu este valabil</string>
+    <string name="form_error_required">%1$s este necesar</string>
+    <!-- Accessibility -->
+    <string name="go_back_description">înapoi</string>
+    <string name="iban">IBAN</string>
+    <string name="icon_showing_state">pictogramă afișare stadiu</string>
+    <!-- Get the code from your banking app - Blik descriptor -->
+    <string name="input_description_otp">Ia codul din aplicația ta de banking.</string>
+    <!-- 6 digit code - Text field top placeholder -->
+    <string name="input_hint_form_blik_otp">Cod din 6 cifre</string>
+    <string name="input_hint_form_phone_number">Număr de telefon</string>
+    <string name="input_title_bank_details">Furnizează informațiile bancare</string>
+    <string name="input_title_phone_number">Introdu numărul de telefon</string>
+    <string name="john_doe">Ion Popescu</string>
+    <string name="label_authorized">Autorizată</string>
+    <string name="label_declined">Refuzată</string>
+    <string name="label_failed">Eșuată</string>
+    <string name="last_four">•••• %d</string>
+    <string name="last_four_with_dots">•••• 1234</string>
+    <!-- Last name is required - Form Validation -->
+    <string name="lastNameErrorRequired">Numele de familie este obligatoriu</string>
+    <!-- The billing address Last name container view label -->
+    <string name="lastNameLabel">Numele de familie</string>
+    <string name="loading_text">Se încarcă</string>
+    <string name="manage">Administrare</string>
+    <string name="mastercard">Mastercard</string>
+    <string name="mbway">Mb Way</string>
+    <string name="mock_klarna_view">Vizualizare de probă Klarna</string>
+    <string name="multibancoAmount">Suma</string>
+    <string name="multibancoCompleteDescription">Te rugăm să efectuezi plata la un bancomat sau utilizând serviciile bancare online.</string>
+    <string name="multibancoEntity">Entitatea</string>
+    <string name="multibancoPayment1Step">Te rugăm să efectuezi plata la un bancomat sau utilizând serviciile bancare online.</string>
+    <string name="multibancoPayment2Step">Mergi la un ATM Multibanco, selectează metoda de plată Multibanco și introdu detaliile plății</string>
+    <string name="multibancoPayment3Step">Conectează-te la serviciile bancare online pentru a plăti prin transfer bancar utilizând detaliile de plată</string>
+    <string name="multibancoReference">Referință</string>
+    <string name="multibancoTitleConditions">Finalizează plata</string>
+    <string name="name">Numele</string>
+    <string name="next">Mai departe</string>
+    <!-- No additional fee - Universal Checkout section text -->
+    <string name="no_additional_fee">Fără taxe suplimentare</string>
+    <string name="no_results">Niciun rezultat</string>
+    <string name="no_results_for_query">Ne pare rău, nu există rezultate\n care să corespundă „%s”</string>
+    <string name="other_ways_of_paying">Alte modalități de plată</string>
+    <string name="other_ways_to_pay">Alte moduri de a plăti</string>
+    <string name="pay">Plătiţi</string>
+    <string name="pay_by_card">Plată cu cardul</string>
+    <string name="pay_specific_amount">Plătește %s</string>
+    <string name="pay_with">Plătelte cu</string>
+    <string name="pay_with_ach">Pay with ACH</string>
+    <string name="pay_with_card">Plătește cu cardul</string>
+    <string name="pay_with_crypto">Plătește cu cripto</string>
+    <string name="payByImmediateTransfer">Pay by Immediate transfer</string>
+    <string name="payBySmartTransfer">Pay by Bank transfer</string>
+    <string name="payment_method_added_message">"
+        Metoda de plată 
+
+        a fost adăugată cu succes!
+    "</string>
+    <!-- Enter your one time password - Text field placeholder -->
+    <string name="payment_method_blik_loading_placeholder">Finalizează plata în aplicația Blik</string>
+    <string name="payment_method_deletion_message">Sigur doriți să ștergeți această metodă de plată?</string>
+    <string name="payment_method_error">Alegeţi o altă modalitate de plată</string>
+    <string name="payment_method_icon">pictogramă metodă de plată</string>
+    <string name="payment_method_not_added_message">"
+        Metoda de plată nu a putut fi adăugată.
+    "</string>
+    <string name="payment_method_xfers_description">Încarcă captura de ecran în aplicația de banking.</string>
+    <string name="payment_method_xfers_title">Scanează pentru a plăti sau fă o captură de ecran</string>
+    <string name="payment_request_completed_successfully">Plata a fost finalizată cu succes!</string>
+    <string name="payment_request_unsuccessful">Plata nu a fost efectuată.</string>
+    <string name="phone_code_search_hint">Găsește codul</string>
+    <!-- The message copy that tells the user how to transfer funds given a displayed account code -->
+    <string name="pleaseTransferFunds">Te rugăm să transferi fonduri în contul bancar DBS furnizat folosind contul tău bancar din Singapore prin FAST (preferabil), MEPS sau GIRO.</string>
+    <!-- Postal code is required - Form Validation -->
+    <string name="postalCodeErrorRequired">Codul poștal este obligatoriu</string>
+    <!-- The billing address postal code container view label -->
+    <string name="postalCodeLabel">Cod poștal</string>
+    <!-- CVV- CVV recapture explanation label -->
+    <string name="primer_cvv_recapture_explanation">Introdu codul de securitate de %d cifre de pe cardul tău pentru o plată sigură.</string>
+    <!-- CVV - CVV recapture screen title -->
+    <string name="primer_cvv_recapture_title">Introdu CVV</string>
+    <string name="primer_payment_method_button_content_description">Plătește cu %s</string>
+    <string name="primer_test_header_description">Acesta este un flux exemplificativ pentru testare. Alege rezultatul pe care dorești să-l testezi din lista de mai jos.</string>
+    <string name="retry_button">Retry</string>
+    <string name="save_this_card">Salvează acest card</string>
+    <string name="saved_payment_methods">METODA DE PLATĂ SALVATĂ</string>
+    <!-- Scan to pay or take a screenshot - QR code screen title label -->
+    <string name="scanToPay">Scanează pentru a plăti sau fă o captură de ecran</string>
+    <string name="search_placeholder">Caută</string>
+    <string name="search_result">Rezultatele căutării</string>
+    <string name="sepa">SEPA</string>
+    <string name="sepa_core_description">Mandat de debitare directă SEPA (Core).</string>
+    <string name="session_complete_payment_cancellation_title">Payment cancelled</string>
+    <string name="session_complete_payment_failure_title">Payment failed</string>
+    <string name="session_complete_payment_success_title">Payment authorized</string>
+    <!-- State, Region or County is required - Form Validation -->
+    <string name="stateErrorRequired">Este obligatoriu să specificaţi Statul, Regiunea sau Judeţul</string>
+    <!-- The billing address state container view label -->
+    <string name="stateLabel">Statul / Regiunea / Judeţul</string>
+    <string name="stripe_ach_mandate_accept_button">Accept</string>
+    <string name="stripe_ach_mandate_cancel_payment_button">Cancel payment</string>
+    <string name="stripe_ach_mandate_subtitle_label">Your personal details</string>
+    <string name="stripe_ach_mandate_template_android">By clicking Accept, you authorize %1$s to debit the selected bank account for any amount owed for charges arising from your use of %1$s\'s services and/or purchase of products from %1$s, pursuant to %1$s\'s website and terms, until this authorization is revoked. You may amend or cancel this authorization at any time by providing notice to %1$s with 30 (thirty) days notice.\n\nIf you use %1$s\'s services or purchase additional products periodically pursuant to %1$s\'s terms, you authorize %1$s to debit your bank account periodically. Payments that fall outside the regular debits authorized above will only be debited after your authorization is obtained.</string>
+    <string name="stripe_ach_mandate_title_label">Pay with ACH</string>
+    <string name="stripe_ach_payment_request_cancelled">Please try again or select another bank</string>
+    <string name="stripe_ach_payment_request_completed_successfully">You have now authorized your bank account to be debited. You will be notified via email once the payment has been collected successfully.</string>
+    <string name="stripe_ach_user_details_collection_continue_button">Continue</string>
+    <string name="stripe_ach_user_details_collection_data_usage_label">We\'ll only use this to keep you updated about your payment</string>
+    <string name="stripe_ach_user_details_collection_email_address_label">Email address</string>
+    <string name="stripe_ach_user_details_collection_first_name_label">First name</string>
+    <string name="stripe_ach_user_details_collection_invalid_email_address">The email address you entered doesn\'t look like a real email address. Please make sure it includes an \'@\' and a domain (like \'@example.com\').</string>
+    <string name="stripe_ach_user_details_collection_invalid_first_name">Please enter a valid first name. Avoid using numbers or special characters.</string>
+    <string name="stripe_ach_user_details_collection_invalid_last_name">Please enter a valid last name. Avoid using numbers or special characters.</string>
+    <string name="stripe_ach_user_details_collection_last_name_label">Last name</string>
+    <string name="stripe_ach_user_details_collection_subtitle_label">Your personal details</string>
+    <string name="success_icon_description">succes</string>
+    <string name="success_text">Succes!</string>
+    <string name="test_mail_com">test@mail.com</string>
+    <string name="twoc_2p_button">Plătește în rate</string>
+    <!-- Upload the screenshot in your banking app. - QR code screen subtitle label -->
+    <string name="uploadScreenshot">Încarcă captura de ecran în aplicația de banking</string>
+</resources>

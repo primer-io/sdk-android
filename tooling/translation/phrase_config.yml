@@ -243,3 +243,119 @@
           encoding: UTF-8
           include_empty_translations: true
           fallback_locale_id: en
+      - file: ./drop-in/src/main/res/values-ar/strings.xml
+        params:
+          locale_id: Arabic
+          file_format: xml
+          tags: android-sdk
+          encoding: UTF-8
+          include_empty_translations: true
+          fallback_locale_id: en
+
+      - file: ./drop-in/src/main/res/values-bg/strings.xml
+        params:
+          locale_id: Bulgarian
+          file_format: xml
+          tags: android-sdk
+          encoding: UTF-8
+          include_empty_translations: true
+          fallback_locale_id: en
+
+      - file: ./drop-in/src/main/res/values-cs/strings.xml
+        params:
+          locale_id: Czech
+          file_format: xml
+          tags: android-sdk
+          encoding: UTF-8
+          include_empty_translations: true
+          fallback_locale_id: en
+
+      - file: ./drop-in/src/main/res/values-es-rAR/strings.xml
+        params:
+          locale_id: Spanish-Argentina
+          file_format: xml
+          tags: android-sdk
+          encoding: UTF-8
+          include_empty_translations: true
+          fallback_locale_id: en
+
+      - file: ./drop-in/src/main/res/values-es-rMX/strings.xml
+        params:
+          locale_id: Mexican-Spanish
+          file_format: xml
+          tags: android-sdk
+          encoding: UTF-8
+          include_empty_translations: true
+          fallback_locale_id: en
+
+      - file: ./drop-in/src/main/res/values-et/strings.xml
+        params:
+          locale_id: Estonian
+          file_format: xml
+          tags: android-sdk
+          encoding: UTF-8
+          include_empty_translations: true
+          fallback_locale_id: en
+
+      - file: ./drop-in/src/main/res/values-hr/strings.xml
+        params:
+          locale_id: Croatian
+          file_format: xml
+          tags: android-sdk
+          encoding: UTF-8
+          include_empty_translations: true
+          fallback_locale_id: en
+
+      - file: ./drop-in/src/main/res/values-hu/strings.xml
+        params:
+          locale_id: Hungarian
+          file_format: xml
+          tags: android-sdk
+          encoding: UTF-8
+          include_empty_translations: true
+          fallback_locale_id: en
+
+      - file: ./drop-in/src/main/res/values-ja/strings.xml
+        params:
+          locale_id: Japanese
+          file_format: xml
+          tags: android-sdk
+          encoding: UTF-8
+          include_empty_translations: true
+          fallback_locale_id: en
+
+      - file: ./drop-in/src/main/res/values-lv/strings.xml
+        params:
+          locale_id: Latvian
+          file_format: xml
+          tags: android-sdk
+          encoding: UTF-8
+          include_empty_translations: true
+          fallback_locale_id: en
+
+      - file: ./drop-in/src/main/res/values-pt-rBR/strings.xml
+        params:
+          locale_id: Brazilian-Portuguese
+          file_format: xml
+          tags: android-sdk
+          encoding: UTF-8
+          include_empty_translations: true
+          fallback_locale_id: en
+
+      - file: ./drop-in/src/main/res/values-ro/strings.xml
+        params:
+          locale_id: Romanian
+          file_format: xml
+          tags: android-sdk
+          encoding: UTF-8
+          include_empty_translations: true
+          fallback_locale_id: en
+
+      - file: ./drop-in/src/main/res/values-vi/strings.xml
+        params:
+          locale_id: Vietnamese
+          file_format: xml
+          tags: android-sdk
+          encoding: UTF-8
+          include_empty_translations: true
+          fallback_locale_id: en

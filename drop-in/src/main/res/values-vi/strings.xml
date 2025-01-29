@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
+    <string name="accept_button">Accept</string>
+    <string name="add_bank_account">Thêm tài khoản ngân hàng</string>
+    <string name="add_card">Thêm thẻ</string>
+    <string name="add_new_payment_method">Thêm phương thức thanh toán</string>
+    <string name="additional_fees_may_apply">Các loại phí bổ sung có thể sẽ được áp dụng</string>
+    <string name="addressLine1">Dòng địa chỉ 1</string>
+    <!-- State, Region or County is required - Form Validation -->
+    <string name="addressLine1ErrorRequired">Vui lòng nhập dòng địa chỉ 1</string>
+    <string name="addressLine2">Dòng địa chỉ 2</string>
+    <string name="available_payment_methods">Các phương thức thanh toán khả dụng</string>
+    <string name="bank_account">Tài khoản ngân hàng</string>
+    <string name="bank_selection_error_message">Tải ngân hàng thất bại. Hãy kiểm tra kết nối của bạn và thử lại.</string>
+    <string name="bank_selection_hint">Tìm kiếm ngân hàng</string>
+    <string name="bank_selection_title">Chọn ngân hàng của bạn</string>
+    <string name="bank_selection_try_again">Thử lại</string>
+    <string name="billingAddressLabel">Địa chỉ thanh toán</string>
+    <!-- Navigation -->
+    <string name="cancel">Hủy</string>
+    <string name="cancel_payment_button">Cancel payment</string>
+    <string name="card_cvv">CVV</string>
+    <string name="card_details">Thông tin thẻ</string>
+    <string name="card_expiry">Ngày hết hạn</string>
+    <string name="card_expiry_formatted">Hết hạn (MM/YY)</string>
+    <!-- Form things -->
+    <string name="card_holder_name">Tên chủ thẻ</string>
+    <string name="card_name_on_card">Tên trên thẻ</string>
+    <string name="card_network_fallback">Thẻ</string>
+    <string name="card_number">Số thẻ</string>
+    <string name="card_zip">Mã zip</string>
+    <string name="check_icon">biểu tượng kiểm tra</string>
+    <string name="choose_other_payment_method_button">Choose other payment method</string>
+    <string name="choose_payment_method">Chọn phương thức thanh toán</string>
+    <!-- City is required - Form Validation -->
+    <string name="cityErrorRequired">Thành phố là bắt buộc</string>
+    <!-- The billing address city container view label -->
+    <string name="cityLabel">Thành phố</string>
+    <!-- Complete your payment - Account info payment title label -->
+    <string name="completeYourPayment">Hoàn tất giao dịch thanh toán của bạn</string>
+    <string name="completeYourPaymentInTheApp">Hoàn tất giao dịch thanh toán của bạn trong %s</string>
+    <string name="confirm">Xác nhận</string>
+    <string name="confirm_dd_mandate">Xác nhận ủy nhiệm</string>
+    <string name="confirmToPayButtonTitle">Xác nhận thanh toán</string>
+    <string name="continue_button">Tiếp tục</string>
+    <string name="country_search_hint">Tìm quốc gia</string>
+    <string name="country_select">Chọn quốc gia</string>
+    <!-- Country is required - Form Validation -->
+    <string name="countryCodeErrorRequired">Quốc gia là bắt buộc</string>
+    <string name="countryLabel">Quốc gia</string>
+    <string name="credit_debit_card">Thẻ tín dụng/thẻ ghi nợ</string>
+    <string name="data_will_be_lost">Dữ liệu của bạn sẽ bị xóa</string>
+    <string name="dd_cancel_message">Bạn có muốn hủy việc thêm tài khoản ngân hàng không?</string>
+    <string name="dd_mandate_error">Vui lòng kiểm tra xem tất cả thông tin của bạn có chính xác không</string>
+    <!-- Legal -->
+    <string name="dd_mandate_legal">"
+        Bằng cách ký vào biểu mẫu ủy nhiệm này, bạn ủy quyền cho (A) %1$s gửi chỉ dẫn đến ngân hàng của bạn để ghi nợ tài khoản của bạn và (B) ngân hàng của bạn
+         ghi nợ tài khoản của bạn theo chỉ dẫn từ %1$s.
+    "</string>
+    <string name="delete">Xóa</string>
+    <string name="done">Xong</string>
+    <!-- The prefix copy we put before the expiration date -->
+    <string name="dueAt">Hết hạn lúc</string>
+    <string name="edit">Sửa</string>
+    <string name="edit_saved_payment_methods">Chỉnh sửa thẻ đã lưu</string>
+    <string name="email">Địa chỉ email</string>
+    <string name="email_address">Email address</string>
+    <string name="enter_address">Nhập địa chỉ của bạn</string>
+    <string name="enter_card_details">Nhập chi tiết thẻ</string>
+    <string name="enter_email">Nhập email của bạn</string>
+    <string name="enter_name">Nhập tên của bạn</string>
+    <string name="error_default">Lỗi!</string>
+    <string name="expires_12_21">Hết hạn 12 / 21</string>
+    <string name="expiry_date">%1$s / %2$s</string>
+    <string name="fast_bank_transfer">Chuyển khoản Ngân hàng FAST</string>
+    <string name="first_last_name">Họ và tên</string>
+    <!-- First name is required - Form Validation -->
+    <string name="firstNameErrorRequired">Tên là bắt buộc</string>
+    <!-- The billing address First name container view label -->
+    <string name="firstNameLabel">Tên</string>
+    <string name="form_error_card_holder_name_length">Tên phải từ 2 đến 45 ký tự</string>
+    <string name="form_error_card_type_not_supported">Loại thẻ không được hỗ trợ</string>
+    <string name="form_error_invalid">%1$s không hợp lệ</string>
+    <string name="form_error_required">%1$s là cần thiết</string>
+    <!-- Accessibility -->
+    <string name="go_back_description">trở lại</string>
+    <string name="iban">IBAN</string>
+    <string name="icon_showing_state">biểu tượng cho thấy trạng thái</string>
+    <!-- Get the code from your banking app - Blik descriptor -->
+    <string name="input_description_otp">Nhận mã từ ứng dụng ngân hàng của bạn.</string>
+    <!-- 6 digit code - Text field top placeholder -->
+    <string name="input_hint_form_blik_otp">Mã có 6 chữ số</string>
+    <string name="input_hint_form_phone_number">Số điện thoại</string>
+    <string name="input_title_bank_details">Cung cấp thông tin về ngân hàng</string>
+    <string name="input_title_phone_number">Nhập số điện thoại của bạn</string>
+    <string name="john_doe">John Doe</string>
+    <string name="label_authorized">Được cho phép</string>
+    <string name="label_declined">Bị từ chối</string>
+    <string name="label_failed">Không thành công</string>
+    <string name="last_four">•••• %d</string>
+    <string name="last_four_with_dots">•••• 1234</string>
+    <!-- Last name is required - Form Validation -->
+    <string name="lastNameErrorRequired">Họ là bắt buộc</string>
+    <!-- The billing address Last name container view label -->
+    <string name="lastNameLabel">Họ</string>
+    <string name="loading_text">Đang tải</string>
+    <string name="manage">Quản lý</string>
+    <string name="mastercard">Mastercard</string>
+    <string name="mbway">Mb Way</string>
+    <string name="mock_klarna_view">Chế độ xem Klarna Giả lập</string>
+    <string name="multibancoAmount">Số tiền</string>
+    <string name="multibancoCompleteDescription">Vui lòng thực hiện thanh toán tại máy ATM hoặc bằng cách sử dụng ngân hàng trực tuyến.</string>
+    <string name="multibancoEntity">Thực thể</string>
+    <string name="multibancoPayment1Step">Vui lòng thực hiện thanh toán tại máy ATM hoặc bằng cách sử dụng ngân hàng trực tuyến.</string>
+    <string name="multibancoPayment2Step">Đi đến ATM Multibanco, chọn phương thức thanh toán Multibanco rồi nhập thông tin thanh toán</string>
+    <string name="multibancoPayment3Step">Đăng nhập vào ngân hàng trực tuyến của bạn để thanh toán bằng chuyển khoản ngân hàng với thông tin thanh toán</string>
+    <string name="multibancoReference">Số tham chiếu</string>
+    <string name="multibancoTitleConditions">Hoàn tất giao dịch thanh toán của bạn</string>
+    <string name="name">Tên</string>
+    <string name="next">Tiếp theo</string>
+    <!-- No additional fee - Universal Checkout section text -->
+    <string name="no_additional_fee">Không có phí bổ sung</string>
+    <string name="no_results">Không có kết quả</string>
+    <string name="no_results_for_query">Rất tiếc, không tìm thấy\nkết quả nào phù hợp với “%s”</string>
+    <string name="other_ways_of_paying">Các cách thanh toán khác</string>
+    <string name="other_ways_to_pay">Các cách thanh toán khác</string>
+    <string name="pay">Thanh toán</string>
+    <string name="pay_by_card">Thanh toán bằng thẻ</string>
+    <string name="pay_specific_amount">Thanh toán %s</string>
+    <string name="pay_with">Thanh toán bằng</string>
+    <string name="pay_with_ach">Pay with ACH</string>
+    <string name="pay_with_card">Thanh toán bằng thẻ</string>
+    <string name="pay_with_crypto">Thanh toán bằng tiền điện tử</string>
+    <string name="payByImmediateTransfer">Pay by Immediate transfer</string>
+    <string name="payBySmartTransfer">Pay by Bank transfer</string>
+    <string name="payment_method_added_message">"
+        Phương thức thanh toán của bạn
+
+         đã được thêm thành công!
+    "</string>
+    <!-- Enter your one time password - Text field placeholder -->
+    <string name="payment_method_blik_loading_placeholder">Hoàn tất giao dịch thanh toán của bạn trong ứng dụng Blik</string>
+    <string name="payment_method_deletion_message">Bạn có chắc chắn muốn xóa phương thức thanh toán này không?</string>
+    <string name="payment_method_error">Chọn phương thức thanh toán khác</string>
+    <string name="payment_method_icon">biểu tượng phương thức thanh toán</string>
+    <string name="payment_method_not_added_message">"
+        Không thể thêm phương thức thanh toán của bạn.
+    "</string>
+    <string name="payment_method_xfers_description">Tải lên ảnh chụp màn hình trong ứng dụng ngân hàng của bạn.</string>
+    <string name="payment_method_xfers_title">Quét để thanh toán hoặc chụp ảnh màn hình</string>
+    <string name="payment_request_completed_successfully">Việc thanh toán của bạn đã hoàn tất thành công!</string>
+    <string name="payment_request_unsuccessful">Việc thanh toán của bạn không thành công.</string>
+    <string name="phone_code_search_hint">Tìm mã</string>
+    <!-- The message copy that tells the user how to transfer funds given a displayed account code -->
+    <string name="pleaseTransferFunds">Vui lòng Chuyển tiền vào tài khoản ngân hàng DBS được cung cấp bằng tài khoản ngân hàng ở Singapore của bạn thông qua FAST (ưu tiên), MEPS hoặc GIRO.</string>
+    <!-- Postal code is required - Form Validation -->
+    <string name="postalCodeErrorRequired">Mã bưu điện là bắt buộc</string>
+    <!-- The billing address postal code container view label -->
+    <string name="postalCodeLabel">Mã bưu điện</string>
+    <!-- CVV- CVV recapture explanation label -->
+    <string name="primer_cvv_recapture_explanation">Nhập mã bảo mật có %d chữ số trên thẻ của bạn để thanh toán an toàn.</string>
+    <!-- CVV - CVV recapture screen title -->
+    <string name="primer_cvv_recapture_title">Nhập CVV</string>
+    <string name="primer_payment_method_button_content_description">Thanh toán bằng %s</string>
+    <string name="primer_test_header_description">Đây là một quy trình giả lập cho sandbox (môi trường thử nghiệm cô lập). Chọn kết quả bạn muốn kiểm tra từ danh sách bên dưới.</string>
+    <string name="retry_button">Retry</string>
+    <string name="save_this_card">Lưu thẻ này</string>
+    <string name="saved_payment_methods">ĐÃ LƯU PHƯƠNG THỨC THANH TOÁN</string>
+    <!-- Scan to pay or take a screenshot - QR code screen title label -->
+    <string name="scanToPay">Quét để thanh toán hoặc chụp ảnh màn hình</string>
+    <string name="search_placeholder">Tìm kiếm</string>
+    <string name="search_result">Kết quả tìm kiếm</string>
+    <string name="sepa">SEPA</string>
+    <string name="sepa_core_description">Ủy nhiệm ghi nợ trực tiếp bằng SEPA Core.</string>
+    <string name="session_complete_payment_cancellation_title">Payment cancelled</string>
+    <string name="session_complete_payment_failure_title">Payment failed</string>
+    <string name="session_complete_payment_success_title">Payment authorized</string>
+    <!-- State, Region or County is required - Form Validation -->
+    <string name="stateErrorRequired">Tiểu bang, Vùng hoặc Quận là bắt buộc</string>
+    <!-- The billing address state container view label -->
+    <string name="stateLabel">Tiểu bang / Vùng / Hạt</string>
+    <string name="stripe_ach_mandate_accept_button">Accept</string>
+    <string name="stripe_ach_mandate_cancel_payment_button">Cancel payment</string>
+    <string name="stripe_ach_mandate_subtitle_label">Your personal details</string>
+    <string name="stripe_ach_mandate_template_android">By clicking Accept, you authorize %1$s to debit the selected bank account for any amount owed for charges arising from your use of %1$s\'s services and/or purchase of products from %1$s, pursuant to %1$s\'s website and terms, until this authorization is revoked. You may amend or cancel this authorization at any time by providing notice to %1$s with 30 (thirty) days notice.\n\nIf you use %1$s\'s services or purchase additional products periodically pursuant to %1$s\'s terms, you authorize %1$s to debit your bank account periodically. Payments that fall outside the regular debits authorized above will only be debited after your authorization is obtained.</string>
+    <string name="stripe_ach_mandate_title_label">Pay with ACH</string>
+    <string name="stripe_ach_payment_request_cancelled">Please try again or select another bank</string>
+    <string name="stripe_ach_payment_request_completed_successfully">You have now authorized your bank account to be debited. You will be notified via email once the payment has been collected successfully.</string>
+    <string name="stripe_ach_user_details_collection_continue_button">Continue</string>
+    <string name="stripe_ach_user_details_collection_data_usage_label">We\'ll only use this to keep you updated about your payment</string>
+    <string name="stripe_ach_user_details_collection_email_address_label">Email address</string>
+    <string name="stripe_ach_user_details_collection_first_name_label">First name</string>
+    <string name="stripe_ach_user_details_collection_invalid_email_address">The email address you entered doesn\'t look like a real email address. Please make sure it includes an \'@\' and a domain (like \'@example.com\').</string>
+    <string name="stripe_ach_user_details_collection_invalid_first_name">Please enter a valid first name. Avoid using numbers or special characters.</string>
+    <string name="stripe_ach_user_details_collection_invalid_last_name">Please enter a valid last name. Avoid using numbers or special characters.</string>
+    <string name="stripe_ach_user_details_collection_last_name_label">Last name</string>
+    <string name="stripe_ach_user_details_collection_subtitle_label">Your personal details</string>
+    <string name="success_icon_description">thành công</string>
+    <string name="success_text">Thành công!</string>
+    <string name="test_mail_com">test@mail.com</string>
+    <string name="twoc_2p_button">Thanh toán bằng trả góp</string>
+    <!-- Upload the screenshot in your banking app. - QR code screen subtitle label -->
+    <string name="uploadScreenshot">Tải lên ảnh chụp màn hình trong ứng dụng ngân hàng của bạn</string>
+</resources>
