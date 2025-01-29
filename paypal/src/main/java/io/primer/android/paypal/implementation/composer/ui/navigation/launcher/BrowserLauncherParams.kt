@@ -9,6 +9,6 @@ internal data class BrowserLauncherParams(
     override val paymentMethodType: String,
     override val sessionIntent: PrimerSessionIntent,
 ) : PaymentMethodRedirectLauncherParams(
-        paymentMethodType,
-        sessionIntent,
-    )
+    paymentMethodType,
+    sessionIntent,
+)

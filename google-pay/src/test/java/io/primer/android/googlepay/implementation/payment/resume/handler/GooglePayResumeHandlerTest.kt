@@ -68,10 +68,10 @@ class GooglePayResumeHandlerTest {
             GooglePayClientToken.GooglePayProcessor3DSClientToken(
                 clientTokenIntent = ClientTokenIntent.`3DS_AUTHENTICATION`.name,
                 processor3DS =
-                    Processor3DS(
-                        redirectUrl = "https://www.example/redirect",
-                        statusUrl = "https://www.example/status",
-                    ),
+                Processor3DS(
+                    redirectUrl = "https://www.example/redirect",
+                    statusUrl = "https://www.example/status",
+                ),
             )
         every { clientTokenParser.parseClientToken(any()) } returns clientToken
 

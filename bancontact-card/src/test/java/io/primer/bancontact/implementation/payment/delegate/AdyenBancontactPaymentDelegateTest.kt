@@ -79,13 +79,13 @@ internal class AdyenBancontactPaymentDelegateTest {
                             paymentMethodType = PaymentMethodType.ADYEN_BANCONTACT_CARD.name,
                             sessionIntent = PrimerSessionIntent.CHECKOUT,
                             initialLauncherParams =
-                                WebRedirectLauncherParams(
-                                    decision.title,
-                                    decision.paymentMethodType,
-                                    decision.redirectUrl,
-                                    decision.statusUrl,
-                                    decision.deeplinkUrl,
-                                ),
+                            WebRedirectLauncherParams(
+                                decision.title,
+                                decision.paymentMethodType,
+                                decision.redirectUrl,
+                                decision.statusUrl,
+                                decision.deeplinkUrl,
+                            ),
                         ),
                     )
                 assertEquals(expectedEvent, event)

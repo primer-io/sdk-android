@@ -35,10 +35,10 @@ class WebRedirectTokenizationParamsMapperTest {
                 paymentMethodType = paymentMethodType,
                 paymentMethodConfigId = "testPaymentMethodConfigId",
                 sessionInfo =
-                    WebRedirectSessionInfoDataRequest(
-                        redirectionUrl = "testRedirectionUrl",
-                        locale = "testLocale",
-                    ),
+                WebRedirectSessionInfoDataRequest(
+                    redirectionUrl = "testRedirectionUrl",
+                    locale = "testLocale",
+                ),
                 type = PaymentInstrumentType.OFF_SESSION_PAYMENT,
             )
 

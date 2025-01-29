@@ -60,7 +60,7 @@ internal class AdyenBancontactContainer(
         registerFactory(name = paymentMethodType) {
             PaymentMethodSdkAnalyticsEventLoggingDelegate(
                 primerPaymentMethodManagerCategory =
-                    PrimerPaymentMethodManagerCategory.RAW_DATA.name,
+                PrimerPaymentMethodManagerCategory.RAW_DATA.name,
                 analyticsInteractor = sdk().resolve(),
             )
         }
@@ -93,11 +93,11 @@ internal class AdyenBancontactContainer(
         registerFactory<AdyenBancontactTokenizationInteractor>(name = paymentMethodType) {
             DefaultAdyenBancontactTokenizationInteractor(
                 tokenizationRepository =
-                    AdyenBancontactCardTokenizationDataRepository(
-                        remoteTokenizationDataSource = sdk().resolve(paymentMethodType),
-                        configurationDataSource = sdk().resolve(ConfigurationCoreContainer.CACHED_CONFIGURATION_DI_KEY),
-                        tokenizationParamsMapper = resolve(),
-                    ),
+                AdyenBancontactCardTokenizationDataRepository(
+                    remoteTokenizationDataSource = sdk().resolve(paymentMethodType),
+                    configurationDataSource = sdk().resolve(ConfigurationCoreContainer.CACHED_CONFIGURATION_DI_KEY),
+                    tokenizationParamsMapper = resolve(),
+                ),
                 tokenizedPaymentMethodRepository = sdk().resolve(),
                 preTokenizationHandler = sdk().resolve(),
                 logReporter = sdk().resolve(),

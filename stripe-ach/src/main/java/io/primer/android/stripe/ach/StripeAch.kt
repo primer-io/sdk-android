@@ -67,7 +67,7 @@ internal data class StripeAch(
                 sdkContainers.forEach { sdkContainer ->
                     sdkContainer.registerContainer(
                         container =
-                            StripeContainer(sdk = { getSdkContainer() }),
+                        StripeContainer(sdk = { getSdkContainer() }),
                     )
                 }
             }

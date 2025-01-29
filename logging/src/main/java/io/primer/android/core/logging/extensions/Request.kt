@@ -63,12 +63,15 @@ internal fun Request.logBody(
                 headers.bodyHasUnknownEncoding() -> {
                     stringBuilder.append("(encoded body omitted)")
                 }
+
                 requestBody.isDuplex() -> {
                     stringBuilder.append("(duplex request body omitted)")
                 }
+
                 requestBody.isOneShot() -> {
                     stringBuilder.append("(one-shot body omitted)")
                 }
+
                 else -> {
                     appendKnownEncodingBody(
                         stringBuilder = stringBuilder,

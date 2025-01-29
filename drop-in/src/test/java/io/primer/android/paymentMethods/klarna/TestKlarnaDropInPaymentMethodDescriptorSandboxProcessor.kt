@@ -106,11 +106,11 @@ class TestKlarnaDropInPaymentMethodDescriptorSandboxProcessor {
     ) = TestKlarnaDropInPaymentMethodDescriptor(
         paymentMethodType = paymentMethodType,
         uiOptions =
-            UiOptions(
-                isStandalonePaymentMethod = isStandalonePaymentMethod,
-                isInitScreenEnabled = isInitScreenEnabled,
-                isDarkMode = null,
-            ),
+        UiOptions(
+            isStandalonePaymentMethod = isStandalonePaymentMethod,
+            isInitScreenEnabled = isInitScreenEnabled,
+            isDarkMode = null,
+        ),
         brand = brand,
     )
 }

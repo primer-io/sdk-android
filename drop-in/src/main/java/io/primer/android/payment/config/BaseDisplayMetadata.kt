@@ -4,6 +4,7 @@ import io.primer.android.components.assets.displayMetadata.models.PaymentMethodI
 import io.primer.android.displayMetadata.domain.model.IconDisplayMetadata
 import io.primer.android.displayMetadata.domain.model.ImageColor
 
+@Suppress("LongParameterList")
 abstract class BaseDisplayMetadata(
     open val type: DisplayMetadataType,
     open val name: String?,

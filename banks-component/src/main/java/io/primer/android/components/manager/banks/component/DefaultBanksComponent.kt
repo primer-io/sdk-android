@@ -110,11 +110,11 @@ internal class DefaultBanksComponent(
             }.flatMap { bankId ->
                 redirectComposer.startPaymentFlow(
                     inputable =
-                        BankIssuerTokenizationInputable(
-                            paymentMethodType = paymentMethodType,
-                            primerSessionIntent = PrimerSessionIntent.CHECKOUT,
-                            bankIssuer = bankId,
-                        ),
+                    BankIssuerTokenizationInputable(
+                        paymentMethodType = paymentMethodType,
+                        primerSessionIntent = PrimerSessionIntent.CHECKOUT,
+                        bankIssuer = bankId,
+                    ),
                 )
             }
                 .onSuccess { onFinished() }

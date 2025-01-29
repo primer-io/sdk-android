@@ -20,19 +20,19 @@ internal data class ThreeDsCheckoutParams(
     override val sdkEphemPubKey: String,
     override val sdkReferenceNumber: String,
 ) : BaseThreeDsParams(
-        maxProtocolVersion = maxProtocolVersion,
-        sdkAppId = sdkAppId,
-        sdkTransactionId = sdkTransactionId,
-        sdkEncData = sdkEncData,
-        sdkEphemPubKey = sdkEphemPubKey,
-        sdkReferenceNumber = sdkReferenceNumber,
-    ) {
+    maxProtocolVersion = maxProtocolVersion,
+    sdkAppId = sdkAppId,
+    sdkTransactionId = sdkTransactionId,
+    sdkEncData = sdkEncData,
+    sdkEphemPubKey = sdkEphemPubKey,
+    sdkReferenceNumber = sdkReferenceNumber,
+) {
     constructor(
         authenticationRequestParameters: AuthenticationRequestParameters,
     ) : this(
         maxProtocolVersion =
-            ProtocolVersion.entries
-                .first { authenticationRequestParameters.messageVersion == it.versionNumber },
+        ProtocolVersion.entries
+            .first { authenticationRequestParameters.messageVersion == it.versionNumber },
         sdkAppId = authenticationRequestParameters.sdkAppID.orEmpty(),
         sdkTransactionId = authenticationRequestParameters.sdkTransactionID.orEmpty(),
         sdkEncData = authenticationRequestParameters.deviceData.orEmpty(),

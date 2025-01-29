@@ -78,14 +78,14 @@ internal fun BaseThreeDsParams.toBeginAuthRequest(): BeginAuthDataRequest {
             BeginAuthDataRequest(
                 maxProtocolVersion = maxProtocolVersion.versionNumber,
                 device =
-                    SDKAuthDataRequest(
-                        sdkAppId = sdkAppId,
-                        sdkTransactionId = sdkTransactionId,
-                        sdkTimeout = SDK_TIMEOUT_IN_SECONDS,
-                        sdkEncData = sdkEncData,
-                        sdkEphemPubKey = sdkEphemPubKey,
-                        sdkReferenceNumber = sdkReferenceNumber,
-                    ),
+                SDKAuthDataRequest(
+                    sdkAppId = sdkAppId,
+                    sdkTransactionId = sdkTransactionId,
+                    sdkTimeout = SDK_TIMEOUT_IN_SECONDS,
+                    sdkEncData = sdkEncData,
+                    sdkEphemPubKey = sdkEphemPubKey,
+                    sdkReferenceNumber = sdkReferenceNumber,
+                ),
             )
     }
 }

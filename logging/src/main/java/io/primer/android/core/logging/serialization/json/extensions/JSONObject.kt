@@ -20,9 +20,11 @@ internal fun JSONObject.update(
             element is JSONArray -> {
                 element.update(whitelistedKeys.mapToChildren(currentKey), newValue)
             }
+
             element is JSONObject -> {
                 element.update(whitelistedKeys.mapToChildren(currentKey), newValue)
             }
+
             currentKey !in primitiveKeys &&
                 !isNull(currentKey) -> {
                 keysToObfuscate += currentKey

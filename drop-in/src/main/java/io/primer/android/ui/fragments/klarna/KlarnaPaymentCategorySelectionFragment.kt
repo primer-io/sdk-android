@@ -33,6 +33,7 @@ import io.primer.android.klarna.implementation.session.domain.models.KlarnaPayme
 
 private val VISIBILITY_UPDATE_DELAY = 1.seconds
 
+@Suppress("TooManyFunctions")
 internal class KlarnaPaymentCategorySelectionFragment : BaseFragment() {
     private var binding: PrimerFragmentKlarnaPaymentCategorySelectionBinding by autoCleaned()
 

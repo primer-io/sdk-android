@@ -73,10 +73,10 @@ internal class WebRedirectLoggingDelegateTest {
                         severity = Severity.ERROR,
                         diagnosticsId = "diagnosticsId",
                         context =
-                            ErrorContextParams(
-                                errorId = "errorId",
-                                paymentMethodType = paymentMethodType,
-                            ),
+                        ErrorContextParams(
+                            errorId = "errorId",
+                            paymentMethodType = paymentMethodType,
+                        ),
                     ),
                 )
                 logReporter.error("description")

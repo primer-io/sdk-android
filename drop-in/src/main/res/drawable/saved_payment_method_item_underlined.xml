@@ -4,15 +4,11 @@
     <item>
         <layer-list>
             <item>
-                <shape
-                    android:shape="rectangle">
-                </shape>
+                <shape android:shape="rectangle"></shape>
             </item>
 
             <item android:bottom="1dp">
-                <shape
-                    android:shape="rectangle">
-                </shape>
+                <shape android:shape="rectangle"></shape>
             </item>
 
         </layer-list>

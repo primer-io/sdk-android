@@ -52,12 +52,12 @@ class PaypalTokenizationParamsMapperTest {
             PaypalPaymentInstrumentDataRequest.PaypalCheckoutPaymentInstrumentDataRequest(
                 paypalOrderId = paypalOrderId,
                 externalPayerInfo =
-                    ExternalPayerInfoRequest(
-                        email = email,
-                        externalPayerId = externalPayerId,
-                        firstName = firstName,
-                        lastName = lastName,
-                    ),
+                ExternalPayerInfoRequest(
+                    email = email,
+                    externalPayerId = externalPayerId,
+                    firstName = firstName,
+                    lastName = lastName,
+                ),
             )
         val expectedTokenizationRequest =
             TokenizationCheckoutRequestV2<PaypalPaymentInstrumentDataRequest>(

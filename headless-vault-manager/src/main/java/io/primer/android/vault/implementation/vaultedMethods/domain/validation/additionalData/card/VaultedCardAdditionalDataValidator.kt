@@ -23,6 +23,7 @@ internal class VaultedCardAdditionalDataValidator :
                         "The length of the CVV does not match the required length.",
                     ),
                 )
+
             DIGITS_ONLY_REGEX.matches(additionalData.cvv).not() ->
                 listOf(
                     PrimerValidationError(
@@ -30,6 +31,7 @@ internal class VaultedCardAdditionalDataValidator :
                         "Ensure that the CVV field consists exclusively of numerical digits.",
                     ),
                 )
+
             else -> emptyList()
         }
     }

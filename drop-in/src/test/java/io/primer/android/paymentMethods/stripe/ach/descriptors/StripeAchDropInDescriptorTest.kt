@@ -47,10 +47,10 @@ class StripeAchDropInDescriptorTest {
         StripeAchDropInDescriptor(
             paymentMethodType = paymentMethodType,
             uiOptions =
-                UiOptions(
-                    isStandalonePaymentMethod = isStandalonePaymentMethod,
-                    isInitScreenEnabled = false,
-                    isDarkMode = null,
-                ),
+            UiOptions(
+                isStandalonePaymentMethod = isStandalonePaymentMethod,
+                isInitScreenEnabled = false,
+                isDarkMode = null,
+            ),
         )
 }

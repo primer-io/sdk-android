@@ -40,17 +40,17 @@ class FormInputDataResponseKtTest {
                 buttonType = ButtonType.CONFIRM,
                 description = 789,
                 inputs =
-                    listOf(
-                        FormInputDataResponse(
-                            type = FormType.TEXT,
-                            id = "input1",
-                            hint = 111,
-                            inputCharacters = "abc",
-                            maxInputLength = 10,
-                            validation = "regex",
-                            inputPrefix = mockk<DialCodeCountryPrefix>(),
-                        ),
+                listOf(
+                    FormInputDataResponse(
+                        type = FormType.TEXT,
+                        id = "input1",
+                        hint = 111,
+                        inputCharacters = "abc",
+                        maxInputLength = 10,
+                        validation = "regex",
+                        inputPrefix = mockk<DialCodeCountryPrefix>(),
                     ),
+                ),
                 accountNumber = "123456",
                 expiration = "12/34",
                 inputPrefix = mockk<DialCodeCountryPrefix>(),

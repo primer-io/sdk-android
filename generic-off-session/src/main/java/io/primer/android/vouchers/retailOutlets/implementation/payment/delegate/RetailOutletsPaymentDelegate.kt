@@ -17,12 +17,12 @@ internal class RetailOutletsPaymentDelegate(
     baseErrorResolver: BaseErrorResolver,
     private val resumeHandler: RetailOutletsResumeHandler,
 ) : PaymentMethodPaymentDelegate(
-        paymentMethodTokenHandler,
-        resumePaymentHandler,
-        successHandler,
-        errorHandler,
-        baseErrorResolver,
-    ) {
+    paymentMethodTokenHandler,
+    resumePaymentHandler,
+    successHandler,
+    errorHandler,
+    baseErrorResolver,
+) {
     override suspend fun handleNewClientToken(
         clientToken: String,
         payment: Payment?,

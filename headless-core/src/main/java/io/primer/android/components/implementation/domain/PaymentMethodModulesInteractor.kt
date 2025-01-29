@@ -20,6 +20,7 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
+@Suppress("LongParameterList")
 @ExperimentalCoroutinesApi
 internal class PaymentMethodModulesInteractor(
     private val paymentMethodDescriptorsRepository: PaymentMethodDescriptorsRepository,
@@ -30,9 +31,9 @@ internal class PaymentMethodModulesInteractor(
     private val logReporter: LogReporter,
     override val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : BaseSuspendInteractor<
-        PaymentMethodModulesInteractor.PaymentDescriptorsHolder,
-        None,
-        >() {
+    PaymentMethodModulesInteractor.PaymentDescriptorsHolder,
+    None,
+    >() {
     override suspend fun performAction(params: None): Result<PaymentDescriptorsHolder> {
         return paymentMethodDescriptorsRepository.resolvePaymentMethodDescriptors()
             .zipWith(
@@ -96,10 +97,10 @@ internal class PaymentMethodModulesInteractor(
         (
             descriptor.vaultCapability == VaultCapability.VAULT_ONLY &&
                 config.paymentMethodIntent.isVault
-        ) || (
+            ) || (
             descriptor.vaultCapability == VaultCapability.SINGLE_USE_ONLY &&
                 config.paymentMethodIntent.isCheckout
-        ) ||
+            ) ||
             descriptor.vaultCapability == VaultCapability.SINGLE_USE_AND_VAULT
 
     private fun isSdkFlowSupportedPaymentDescriptor(descriptor: PaymentMethodDescriptor) =

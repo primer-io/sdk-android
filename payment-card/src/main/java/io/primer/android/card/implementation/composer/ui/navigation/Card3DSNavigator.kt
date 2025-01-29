@@ -14,9 +14,9 @@ internal data class CardNative3DSActivityLauncherParams(
     override val paymentMethodType: String,
     val supportedThreeDsVersions: List<String>,
 ) : PaymentMethodRedirectLauncherParams(
-        paymentMethodType,
-        PrimerSessionIntent.CHECKOUT,
-    )
+    paymentMethodType,
+    PrimerSessionIntent.CHECKOUT,
+)
 
 internal data class Card3DSNavigator(
     private val context: Activity,
@@ -27,9 +27,9 @@ internal data class Card3DSNavigator(
             ThreeDsActivity.getLaunchIntent(
                 context = context,
                 params =
-                    ThreeDsActivityLauncherParams(
-                        supportedThreeDsProtocolVersions = params.supportedThreeDsVersions,
-                    ),
+                ThreeDsActivityLauncherParams(
+                    supportedThreeDsProtocolVersions = params.supportedThreeDsVersions,
+                ),
             ),
         )
     }

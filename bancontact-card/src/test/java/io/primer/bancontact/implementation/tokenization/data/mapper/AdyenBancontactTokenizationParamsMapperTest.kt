@@ -41,11 +41,11 @@ class AdyenBancontactTokenizationParamsMapperTest {
                 paymentMethodType = paymentMethodType,
                 paymentMethodConfigId = "testPaymentMethodConfigId",
                 sessionInfo =
-                    AdyenBancontactSessionInfoDataRequest(
-                        redirectionUrl = "testRedirectionUrl",
-                        locale = "testLocale",
-                        userAgent = "testUserAgent",
-                    ),
+                AdyenBancontactSessionInfoDataRequest(
+                    redirectionUrl = "testRedirectionUrl",
+                    locale = "testLocale",
+                    userAgent = "testUserAgent",
+                ),
                 type = PaymentInstrumentType.CARD_OFF_SESSION_PAYMENT,
                 number = "testNumber",
                 expirationMonth = "testExpirationMonth",

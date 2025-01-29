@@ -32,7 +32,6 @@ internal class WebRedirectComponent(
     override val scope: CoroutineScope
         get() = composerScope
 
-    @Suppress("ktlint:standard:property-naming")
     override val _uiEvent: MutableSharedFlow<ComposerUiEvent> = MutableSharedFlow()
     override val uiEvent: SharedFlow<ComposerUiEvent> = _uiEvent
 

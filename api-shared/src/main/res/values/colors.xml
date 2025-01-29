@@ -79,7 +79,8 @@
     <color name="primer_input_cursor">@color/primer_primary</color>
 
     <color name="primer_bank_selection_search_background">#08242A2F</color>
-    <color name="primer_search_input_background">@color/primer_bank_selection_search_background</color>
+    <color name="primer_search_input_background">@color/primer_bank_selection_search_background
+    </color>
     <color name="primer_search_input_text">@color/primer_secondary</color>
     <color name="primer_search_input_cursor">@color/primer_primary</color>
 

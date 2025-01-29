@@ -46,10 +46,10 @@ class StripeAchCompletePaymentDataRepositoryTest {
                     BaseRemoteUrlRequest(
                         url = "completeUrl",
                         data =
-                            StripeAchCompletePaymentDataRequest(
-                                mandateTimestamp = "mandateTimestamp",
-                                paymentMethodId = "paymentMethodId",
-                            ),
+                        StripeAchCompletePaymentDataRequest(
+                            mandateTimestamp = "mandateTimestamp",
+                            paymentMethodId = "paymentMethodId",
+                        ),
                     ),
                 )
             }
@@ -77,10 +77,10 @@ class StripeAchCompletePaymentDataRepositoryTest {
                     BaseRemoteUrlRequest(
                         url = "completeUrl",
                         data =
-                            StripeAchCompletePaymentDataRequest(
-                                mandateTimestamp = "mandateTimestamp",
-                                paymentMethodId = null,
-                            ),
+                        StripeAchCompletePaymentDataRequest(
+                            mandateTimestamp = "mandateTimestamp",
+                            paymentMethodId = null,
+                        ),
                     ),
                 )
             }
@@ -105,10 +105,10 @@ class StripeAchCompletePaymentDataRepositoryTest {
                     BaseRemoteUrlRequest(
                         url = "completeUrl",
                         data =
-                            StripeAchCompletePaymentDataRequest(
-                                mandateTimestamp = "mandateTimestamp",
-                                paymentMethodId = "paymentMethodId",
-                            ),
+                        StripeAchCompletePaymentDataRequest(
+                            mandateTimestamp = "mandateTimestamp",
+                            paymentMethodId = "paymentMethodId",
+                        ),
                     ),
                 )
             }

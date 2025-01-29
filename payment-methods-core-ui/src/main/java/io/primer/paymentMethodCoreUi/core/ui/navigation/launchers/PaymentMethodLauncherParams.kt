@@ -8,6 +8,6 @@ data class PaymentMethodLauncherParams(
     override val sessionIntent: PrimerSessionIntent,
     val initialLauncherParams: InitialLauncherParams? = null,
 ) : ActivityLauncherParams(
-        paymentMethodType,
-        sessionIntent,
-    )
+    paymentMethodType,
+    sessionIntent,
+)

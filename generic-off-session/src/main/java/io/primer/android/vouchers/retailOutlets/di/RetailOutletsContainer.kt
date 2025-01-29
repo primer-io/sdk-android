@@ -67,7 +67,7 @@ internal class RetailOutletsContainer(
         registerFactory(name = paymentMethodType) {
             PaymentMethodSdkAnalyticsEventLoggingDelegate(
                 primerPaymentMethodManagerCategory =
-                    PrimerPaymentMethodManagerCategory.RAW_DATA.name,
+                PrimerPaymentMethodManagerCategory.RAW_DATA.name,
                 analyticsInteractor = sdk().resolve(),
             )
         }
@@ -99,11 +99,11 @@ internal class RetailOutletsContainer(
         registerFactory<RetailOutletsTokenizationInteractor>(name = paymentMethodType) {
             DefaultRetailOutletsTokenizationInteractor(
                 tokenizationRepository =
-                    RetailerOutletsTokenizationDataRepository(
-                        remoteTokenizationDataSource = sdk().resolve(paymentMethodType),
-                        configurationDataSource = sdk().resolve(ConfigurationCoreContainer.CACHED_CONFIGURATION_DI_KEY),
-                        tokenizationParamsMapper = resolve(),
-                    ),
+                RetailerOutletsTokenizationDataRepository(
+                    remoteTokenizationDataSource = sdk().resolve(paymentMethodType),
+                    configurationDataSource = sdk().resolve(ConfigurationCoreContainer.CACHED_CONFIGURATION_DI_KEY),
+                    tokenizationParamsMapper = resolve(),
+                ),
                 tokenizedPaymentMethodRepository = sdk().resolve(),
                 preTokenizationHandler = sdk().resolve(),
                 logReporter = sdk().resolve(),

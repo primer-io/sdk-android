@@ -94,10 +94,10 @@ internal class IPay88PaymentMethod(
                     sdkContainer.registerContainer(
                         name = paymentMethodType,
                         container =
-                            IPay88Container(
-                                sdk = { getSdkContainer() },
-                                paymentMethodType = paymentMethodType,
-                            ),
+                        IPay88Container(
+                            sdk = { getSdkContainer() },
+                            paymentMethodType = paymentMethodType,
+                        ),
                     )
                 }
             }

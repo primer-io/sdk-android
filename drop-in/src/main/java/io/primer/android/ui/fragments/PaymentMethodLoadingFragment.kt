@@ -44,10 +44,10 @@ internal open class PaymentMethodLoadingFragment : BaseFragment(), DISdkComponen
                                 context = requireContext(),
                                 paymentMethodType = descriptor.paymentMethodType,
                                 imageColor =
-                                    when (theme.isDarkMode == true) {
-                                        true -> ImageColor.DARK
-                                        false -> ImageColor.LIGHT
-                                    },
+                                when (theme.isDarkMode == true) {
+                                    true -> ImageColor.DARK
+                                    false -> ImageColor.LIGHT
+                                },
                             ),
                         )
                     }

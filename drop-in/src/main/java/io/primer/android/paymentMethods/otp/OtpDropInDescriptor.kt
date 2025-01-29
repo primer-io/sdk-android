@@ -23,10 +23,10 @@ internal class OtpDropInDescriptor(
         get() =
             NewFragmentBehaviour(
                 factory =
-                    when (paymentMethodType) {
-                        PaymentMethodType.ADYEN_BLIK.name -> DynamicFormFragment::newInstance
-                        else -> error("Unsupported payment method type '$paymentMethodType'")
-                    },
+                when (paymentMethodType) {
+                    PaymentMethodType.ADYEN_BLIK.name -> DynamicFormFragment::newInstance
+                    else -> error("Unsupported payment method type '$paymentMethodType'")
+                },
                 returnToPreviousOnBack = uiOptions.isStandalonePaymentMethod.not(),
             )
 

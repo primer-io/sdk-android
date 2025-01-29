@@ -11,5 +11,5 @@ internal typealias PaypalConfigurationInteractor =
 internal class DefaultPaypalConfigurationInteractor(
     configurationRepository: PaymentMethodConfigurationRepository<PaypalConfig, PaypalConfigParams>,
 ) : PaymentMethodConfigurationInteractor<PaypalConfig, PaypalConfigParams>(
-        configurationRepository,
-    )
+    configurationRepository,
+)

@@ -110,10 +110,10 @@ internal class GooglePayModule(
         brandRegistry.register(
             paymentMethodType = PaymentMethodType.GOOGLE_PAY.name,
             brand =
-                GooglePayBrand(
-                    resolve<PrimerSettings>(),
-                    resolve<GooglePayConfigurationRepository>(name = PaymentMethodType.GOOGLE_PAY.name),
-                ),
+            GooglePayBrand(
+                resolve<PrimerSettings>(),
+                resolve<GooglePayConfigurationRepository>(name = PaymentMethodType.GOOGLE_PAY.name),
+            ),
         )
     }
 }

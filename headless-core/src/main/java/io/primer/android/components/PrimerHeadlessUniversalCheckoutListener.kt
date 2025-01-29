@@ -10,6 +10,7 @@ import io.primer.android.domain.tokenization.models.PrimerPaymentMethodData
 import io.primer.android.domain.tokenization.models.PrimerPaymentMethodTokenData
 import io.primer.android.payments.core.additionalInfo.PrimerCheckoutAdditionalInfo
 
+@Suppress("TooManyFunctions")
 @JvmDefaultWithCompatibility
 interface PrimerHeadlessUniversalCheckoutListener {
     /**

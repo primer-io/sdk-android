@@ -21,8 +21,8 @@ internal class StripeAchTokenizationDelegate(
     tokenizationInteractor: StripeAchTokenizationInteractor,
     private val actionInteractor: ActionInteractor,
 ) : PaymentMethodTokenizationDelegate<StripeAchTokenizationInputable, StripeAchPaymentInstrumentParams>(
-        tokenizationInteractor,
-    ),
+    tokenizationInteractor,
+),
     TokenizationCollectedDataMapper<StripeAchTokenizationInputable, StripeAchPaymentInstrumentParams> {
     override suspend fun mapTokenizationData(input: StripeAchTokenizationInputable) =
         if (primerSettings.sdkIntegrationType == SdkIntegrationType.HEADLESS) {
@@ -35,10 +35,10 @@ internal class StripeAchTokenizationDelegate(
             }.map { configuration ->
                 TokenizationParams(
                     paymentInstrumentParams =
-                        StripeAchPaymentInstrumentParams(
-                            paymentMethodConfigId = configuration.paymentMethodConfigId,
-                            locale = configuration.locale.toLanguageTag(),
-                        ),
+                    StripeAchPaymentInstrumentParams(
+                        paymentMethodConfigId = configuration.paymentMethodConfigId,
+                        locale = configuration.locale.toLanguageTag(),
+                    ),
                     sessionIntent = input.primerSessionIntent,
                 )
             }

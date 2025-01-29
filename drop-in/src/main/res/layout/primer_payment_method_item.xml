@@ -64,7 +64,6 @@
         tools:background="@drawable/ic_visa_card_colored" />
 
     <TextView
-        app:layout_constraintVertical_chainStyle="spread"
         android:id="@+id/bank_name_label"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -77,6 +76,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/payment_method_icon"
         app:layout_constraintTop_toTopOf="@id/payment_method_icon"
+        app:layout_constraintVertical_chainStyle="spread"
         tools:text="Square"
         tools:textColor="@android:color/black"
         tools:visibility="visible" />

@@ -31,10 +31,12 @@ internal fun BaseActionUpdateParams.toActionData(): List<ClientSessionActionsDat
                     add(ClientSessionActionsDataRequest.SetEmailAddress(it))
                 }
             }
+
         is ActionUpdateSelectPaymentMethodParams ->
             listOf(
                 ClientSessionActionsDataRequest.SetPaymentMethod(paymentMethodType, cardNetwork?.let { BinData(it) }),
             )
+
         is ActionUpdateUnselectPaymentMethodParams -> listOf(ClientSessionActionsDataRequest.UnsetPaymentMethod)
         is ActionUpdateBillingAddressParams ->
             listOf(
@@ -51,6 +53,7 @@ internal fun BaseActionUpdateParams.toActionData(): List<ClientSessionActionsDat
                     ),
                 ),
             )
+
         is ActionUpdateMobileNumberParams -> listOf(ClientSessionActionsDataRequest.SetMobileNumber(mobileNumber))
         is ActionUpdateShippingOptionIdParams -> listOf(ClientSessionActionsDataRequest.SetShippingMethodId(id))
         is ActionUpdateShippingAddressParams ->
@@ -67,5 +70,6 @@ internal fun BaseActionUpdateParams.toActionData(): List<ClientSessionActionsDat
                     ),
                 ),
             )
+
         is ActionUpdateEmailAddressParams -> listOf(ClientSessionActionsDataRequest.SetEmailAddress(email))
     }

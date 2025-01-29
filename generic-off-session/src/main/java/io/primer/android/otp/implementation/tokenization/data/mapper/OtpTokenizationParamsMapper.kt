@@ -21,14 +21,15 @@ internal class OtpTokenizationParamsMapper :
                 paymentMethodType = paymentInstrumentParams.paymentMethodType,
                 paymentMethodConfigId = paymentInstrumentParams.paymentMethodConfigId,
                 sessionInfo =
-                    when (params.paymentInstrumentParams.paymentMethodType) {
-                        PaymentMethodType.ADYEN_BLIK.name ->
-                            AdyenBlikSessionInfoDataRequest(
-                                locale = paymentInstrumentParams.locale,
-                                blikCode = paymentInstrumentParams.otp,
-                            )
-                        else -> error("Unsupported payment method type '${paymentInstrumentParams.paymentMethodType}'")
-                    },
+                when (params.paymentInstrumentParams.paymentMethodType) {
+                    PaymentMethodType.ADYEN_BLIK.name ->
+                        AdyenBlikSessionInfoDataRequest(
+                            locale = paymentInstrumentParams.locale,
+                            blikCode = paymentInstrumentParams.otp,
+                        )
+
+                    else -> error("Unsupported payment method type '${paymentInstrumentParams.paymentMethodType}'")
+                },
                 type = PaymentInstrumentType.OFF_SESSION_PAYMENT,
             )
         return instrumentDataRequest.toTokenizationRequest(params.sessionIntent)

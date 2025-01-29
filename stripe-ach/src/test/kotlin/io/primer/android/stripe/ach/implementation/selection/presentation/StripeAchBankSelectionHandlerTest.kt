@@ -180,12 +180,12 @@ class StripeAchBankSelectionHandlerTest {
                 StripeBankAccountCollectorActivity.getLaunchIntent(
                     context = context,
                     params =
-                        StripeBankAccountCollectorActivity.Params(
-                            fullName = "John Doe",
-                            emailAddress = "john@doe.com",
-                            publishableKey = "pk",
-                            clientSecret = clientSecret,
-                        ),
+                    StripeBankAccountCollectorActivity.Params(
+                        fullName = "John Doe",
+                        emailAddress = "john@doe.com",
+                        publishableKey = "pk",
+                        clientSecret = clientSecret,
+                    ),
                 )
                 activityResultLauncher.launch(intent)
                 activityResult.resultCode
@@ -272,12 +272,12 @@ class StripeAchBankSelectionHandlerTest {
                 StripeBankAccountCollectorActivity.getLaunchIntent(
                     context = context,
                     params =
-                        StripeBankAccountCollectorActivity.Params(
-                            fullName = "John Doe",
-                            emailAddress = "john@doe.com",
-                            publishableKey = "pk",
-                            clientSecret = clientSecret,
-                        ),
+                    StripeBankAccountCollectorActivity.Params(
+                        fullName = "John Doe",
+                        emailAddress = "john@doe.com",
+                        publishableKey = "pk",
+                        clientSecret = clientSecret,
+                    ),
                 )
                 activityResultLauncher.launch(intent)
                 activityResult.resultCode
@@ -359,12 +359,12 @@ class StripeAchBankSelectionHandlerTest {
                 StripeBankAccountCollectorActivity.getLaunchIntent(
                     context = context,
                     params =
-                        StripeBankAccountCollectorActivity.Params(
-                            fullName = "John Doe",
-                            emailAddress = "john@doe.com",
-                            publishableKey = "pk",
-                            clientSecret = clientSecret,
-                        ),
+                    StripeBankAccountCollectorActivity.Params(
+                        fullName = "John Doe",
+                        emailAddress = "john@doe.com",
+                        publishableKey = "pk",
+                        clientSecret = clientSecret,
+                    ),
                 )
                 activityResultLauncher.launch(intent)
                 activityResult.resultCode
@@ -447,12 +447,12 @@ class StripeAchBankSelectionHandlerTest {
                 StripeBankAccountCollectorActivity.getLaunchIntent(
                     context = context,
                     params =
-                        StripeBankAccountCollectorActivity.Params(
-                            fullName = "John Doe",
-                            emailAddress = "john@doe.com",
-                            publishableKey = "pk",
-                            clientSecret = clientSecret,
-                        ),
+                    StripeBankAccountCollectorActivity.Params(
+                        fullName = "John Doe",
+                        emailAddress = "john@doe.com",
+                        publishableKey = "pk",
+                        clientSecret = clientSecret,
+                    ),
                 )
                 activityResultLauncher.launch(intent)
                 activityResult.resultCode
@@ -534,12 +534,12 @@ class StripeAchBankSelectionHandlerTest {
                 StripeBankAccountCollectorActivity.getLaunchIntent(
                     context = context,
                     params =
-                        StripeBankAccountCollectorActivity.Params(
-                            fullName = "John Doe",
-                            emailAddress = "john@doe.com",
-                            publishableKey = "pk",
-                            clientSecret = clientSecret,
-                        ),
+                    StripeBankAccountCollectorActivity.Params(
+                        fullName = "John Doe",
+                        emailAddress = "john@doe.com",
+                        publishableKey = "pk",
+                        clientSecret = clientSecret,
+                    ),
                 )
                 activityResultLauncher.launch(intent)
                 activityResult.resultCode

@@ -225,6 +225,7 @@ class HeadlessRawFragment : Fragment(), PrimerHeadlessUniversalCheckoutRawDataMa
             }
         }
     }
+
     private fun initViewModel() {
         headlessManagerViewModel = ViewModelProvider(
             requireActivity(),

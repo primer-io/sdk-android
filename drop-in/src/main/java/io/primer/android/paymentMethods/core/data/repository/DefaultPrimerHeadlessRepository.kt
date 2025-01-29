@@ -43,6 +43,7 @@ internal class DefaultPrimerHeadlessRepository(
             externalEvents,
             callbackFlow {
                 headlessUniversalCheckout.setCheckoutListener(
+                    @Suppress("TooManyFunctions")
                     object : PrimerHeadlessUniversalCheckoutListener {
                         override fun onAvailablePaymentMethodsLoaded(
                             paymentMethods: List<PrimerHeadlessUniversalCheckoutPaymentMethod>,
@@ -69,14 +70,14 @@ internal class DefaultPrimerHeadlessRepository(
                                 error = error,
                                 checkoutData = checkoutData,
                                 errorHandler =
-                                    object : PrimerErrorDecisionHandler {
-                                        override fun showErrorMessage(errorMessage: String?) {
-                                            handleFailureImpl(
-                                                message = errorMessage,
-                                                isCancellation = error is PaymentMethodCancelledError,
-                                            )
-                                        }
-                                    },
+                                object : PrimerErrorDecisionHandler {
+                                    override fun showErrorMessage(errorMessage: String?) {
+                                        handleFailureImpl(
+                                            message = errorMessage,
+                                            isCancellation = error is PaymentMethodCancelledError,
+                                        )
+                                    }
+                                },
                             )
                         }
 
@@ -84,14 +85,14 @@ internal class DefaultPrimerHeadlessRepository(
                             Primer.current.listener?.onFailed(
                                 error = error,
                                 errorHandler =
-                                    object : PrimerErrorDecisionHandler {
-                                        override fun showErrorMessage(errorMessage: String?) {
-                                            handleFailureImpl(
-                                                message = errorMessage,
-                                                isCancellation = error is PaymentMethodCancelledError,
-                                            )
-                                        }
-                                    },
+                                object : PrimerErrorDecisionHandler {
+                                    override fun showErrorMessage(errorMessage: String?) {
+                                        handleFailureImpl(
+                                            message = errorMessage,
+                                            isCancellation = error is PaymentMethodCancelledError,
+                                        )
+                                    }
+                                },
                             )
                         }
 
@@ -203,10 +204,10 @@ internal class DefaultPrimerHeadlessRepository(
     override suspend fun handleManualFlowSuccess(additionalInfo: PrimerCheckoutAdditionalInfo?) {
         handleSuccessImpl(
             checkoutData =
-                PrimerCheckoutData(
-                    payment = Payment.undefined,
-                    additionalInfo = additionalInfo,
-                ),
+            PrimerCheckoutData(
+                payment = Payment.undefined,
+                additionalInfo = additionalInfo,
+            ),
         )
     }
 

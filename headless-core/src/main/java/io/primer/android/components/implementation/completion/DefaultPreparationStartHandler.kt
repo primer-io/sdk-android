@@ -14,7 +14,6 @@ internal class DefaultPreparationStartHandler(
     private val analyticsRepository: AnalyticsRepository,
     private val coroutineDispatcher: MainCoroutineDispatcher = Dispatchers.Main,
 ) : PreparationStartHandler {
-    @Suppress("ktlint:standard:property-naming")
     private val _startPreparation = MutableSharedFlow<String>()
     override val preparationStarted: Flow<String> = _startPreparation
 

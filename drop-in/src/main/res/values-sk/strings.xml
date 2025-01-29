@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
+    <string name="accept_button">Accept</string>
+    <string name="add_bank_account">Pridať bankový účet</string>
+    <string name="add_card">Pridať kartu</string>
+    <string name="add_new_payment_method">Pridajte spôsob platby</string>
+    <string name="additional_fees_may_apply">Môžu sa účtovať dodatočné poplatky</string>
+    <string name="addressLine1">1. riadok adresy</string>
+    <!-- State, Region or County is required - Form Validation -->
+    <string name="addressLine1ErrorRequired">Vyžaduje sa 1. riadok adresy</string>
+    <string name="addressLine2">2. riadok adresy</string>
+    <string name="available_payment_methods">Dostupné spôsoby platby</string>
+    <string name="bank_account">Bankový účet</string>
+    <string name="bank_selection_error_message">Banku sa nepodarilo načítať. Skontrolujte pripojenie a skúste to znova.</string>
+    <string name="bank_selection_hint">Vyhľadať banky</string>
+    <string name="bank_selection_title">Vyberte si svoju banku</string>
+    <string name="bank_selection_try_again">Skúsiť znovu</string>
+    <string name="billingAddressLabel">Fakturačná adresa</string>
+    <!-- Navigation -->
+    <string name="cancel">Zrušiť</string>
+    <string name="cancel_payment_button">Cancel payment</string>
+    <string name="card_cvv">CVV</string>
+    <string name="card_details">Podrobnosti o karte</string>
+    <string name="card_expiry">Dátum vypršania platnosti</string>
+    <string name="card_expiry_formatted">Expirácia (MM/RR)</string>
+    <!-- Form things -->
+    <string name="card_holder_name">Meno držiteľa karty</string>
+    <string name="card_name_on_card">Meno na karte</string>
+    <string name="card_network_fallback">Karta</string>
+    <string name="card_number">Číslo karty</string>
+    <string name="card_zip">PSČ</string>
+    <string name="check_icon">ikona kontroly</string>
+    <string name="choose_other_payment_method_button">Choose other payment method</string>
+    <string name="choose_payment_method">Vyberte si spôsob platby</string>
+    <!-- City is required - Form Validation -->
+    <string name="cityErrorRequired">Vyžaduje sa mesto</string>
+    <!-- The billing address city container view label -->
+    <string name="cityLabel">Mesto</string>
+    <!-- Complete your payment - Account info payment title label -->
+    <string name="completeYourPayment">Dokončiť platbu</string>
+    <string name="completeYourPaymentInTheApp">Dokončiť platbu o %s</string>
+    <string name="confirm">Potvrdiť</string>
+    <string name="confirm_dd_mandate">Potvrdiť poverenie</string>
+    <string name="confirmToPayButtonTitle">Potvrdiť platbu</string>
+    <string name="continue_button">Pokračovať</string>
+    <string name="country_search_hint">Nájsť krajinu</string>
+    <string name="country_select">Vybrať krajinu</string>
+    <!-- Country is required - Form Validation -->
+    <string name="countryCodeErrorRequired">Vyžaduje sa krajina</string>
+    <string name="countryLabel">Krajina</string>
+    <string name="credit_debit_card">Kreditná/debetná karta</string>
+    <string name="data_will_be_lost">Vaše údaje budú vymazané</string>
+    <string name="dd_cancel_message">Chcete zrušiť pridanie bankového účtu?</string>
+    <string name="dd_mandate_error">Skontrolujte, či sú všetky vaše informácie správne</string>
+    <!-- Legal -->
+    <string name="dd_mandate_legal">"
+        Podpísaním tohto formulára splnomocnenia oprávňujete (A) %1$s posielať vašej banke pokyny na zaťaženie vášho účtu a (B) vašu banku,
+      aby zaťažila váš účet v súlade s pokynmi od %1$s.
+    "</string>
+    <string name="delete">Vymazať</string>
+    <string name="done">Hotovo</string>
+    <!-- The prefix copy we put before the expiration date -->
+    <string name="dueAt">Splatné dňa</string>
+    <string name="edit">Upraviť</string>
+    <string name="edit_saved_payment_methods">Upraviť uložené karty</string>
+    <string name="email">Email</string>
+    <string name="email_address">Email address</string>
+    <string name="enter_address">Zadajte svoju adresu</string>
+    <string name="enter_card_details">Zadajte podrobnosti o karte</string>
+    <string name="enter_email">Zadajte svoj e-mail</string>
+    <string name="enter_name">Zadajte svoje meno</string>
+    <string name="error_default">Chyba!</string>
+    <string name="expires_12_21">Platnosť vyprší 12/21</string>
+    <string name="expiry_date">%1$s / %2$s</string>
+    <string name="fast_bank_transfer">Bankový prevod FAST</string>
+    <string name="first_last_name">Krstné meno a priezvisko</string>
+    <!-- First name is required - Form Validation -->
+    <string name="firstNameErrorRequired">Vyžaduje sa meno</string>
+    <!-- The billing address First name container view label -->
+    <string name="firstNameLabel">Meno</string>
+    <string name="form_error_card_holder_name_length">Názov musí mať 2 až 45 znakov</string>
+    <string name="form_error_card_type_not_supported">Nepodporovaný typ karty</string>
+    <string name="form_error_invalid">%1$s je neplatné</string>
+    <string name="form_error_required">Vyžaduje sa %1$s</string>
+    <!-- Accessibility -->
+    <string name="go_back_description">vrátiť sa späť</string>
+    <string name="iban">IBAN</string>
+    <string name="icon_showing_state">ikona zobrazujúca stav</string>
+    <!-- Get the code from your banking app - Blik descriptor -->
+    <string name="input_description_otp">Získajte kód zo svojej bankovej aplikácie.</string>
+    <!-- 6 digit code - Text field top placeholder -->
+    <string name="input_hint_form_blik_otp">6-miestny kód</string>
+    <string name="input_hint_form_phone_number">Telefónne číslo</string>
+    <string name="input_title_bank_details">Poskytnite bankové údaje</string>
+    <string name="input_title_phone_number">Zadajte svoje telefónne číslo</string>
+    <string name="john_doe">John Doe</string>
+    <string name="label_authorized">Autorizované</string>
+    <string name="label_declined">Odmietnuté</string>
+    <string name="label_failed">Zlyhané</string>
+    <string name="last_four">•••• %d</string>
+    <string name="last_four_with_dots">•••• 1234</string>
+    <!-- Last name is required - Form Validation -->
+    <string name="lastNameErrorRequired">Vyžaduje sa priezvisko</string>
+    <!-- The billing address Last name container view label -->
+    <string name="lastNameLabel">Priezvisko</string>
+    <string name="loading_text">Načítavanie</string>
+    <string name="manage">Spravovať</string>
+    <string name="mastercard">Mastercard</string>
+    <string name="mbway">Mb Way</string>
+    <string name="mock_klarna_view">Náhľad Mock Klarna</string>
+    <string name="multibancoAmount">Suma</string>
+    <string name="multibancoCompleteDescription">Platbu vykonajte v bankomate alebo prostredníctvom online bankovníctva.</string>
+    <string name="multibancoEntity">Entita</string>
+    <string name="multibancoPayment1Step">Platbu vykonajte v bankomate alebo prostredníctvom online bankovníctva.</string>
+    <string name="multibancoPayment2Step">Prejdite do bankomatu Multibanco, vyberte spôsob platby Multibanco a zadajte platobné údaje</string>
+    <string name="multibancoPayment3Step">Prihláste sa do svojho online bankovníctva a zaplaťte bankovým prevodom pomocou platobných údajov</string>
+    <string name="multibancoReference">Referencia</string>
+    <string name="multibancoTitleConditions">Dokončiť platbu</string>
+    <string name="name">Meno</string>
+    <string name="next">Ďalej</string>
+    <!-- No additional fee - Universal Checkout section text -->
+    <string name="no_additional_fee">Žiadny dodatočný poplatok</string>
+    <string name="no_results">Žiadne výsledky</string>
+    <string name="no_results_for_query">Ľutujeme, nenašli sa\nžiadne výsledky zodpovedajúce výrazu „%s“</string>
+    <string name="other_ways_of_paying">Iné spôsoby platby</string>
+    <string name="other_ways_to_pay">Iné spôsoby platby</string>
+    <string name="pay">Zaplatiť</string>
+    <string name="pay_by_card">Zaplatiť kartou</string>
+    <string name="pay_specific_amount">Zaplatiť %s</string>
+    <string name="pay_with">Zaplatiť s</string>
+    <string name="pay_with_ach">Pay with ACH</string>
+    <string name="pay_with_card">Zaplatiť kartou</string>
+    <string name="pay_with_crypto">Zaplatiť kryptom</string>
+    <string name="payByImmediateTransfer">Pay by Immediate transfer</string>
+    <string name="payBySmartTransfer">Pay by Bank transfer</string>
+    <string name="payment_method_added_message">"
+        Váš spôsob platby
+
+         bol úspešne pridaný!
+    "</string>
+    <!-- Enter your one time password - Text field placeholder -->
+    <string name="payment_method_blik_loading_placeholder">Dokončite platbu v aplikácii Blik</string>
+    <string name="payment_method_deletion_message">Naozaj chcete odstrániť tento spôsob platby?</string>
+    <string name="payment_method_error">Vyberte iný spôsob platby</string>
+    <string name="payment_method_icon">ikona spôsobu platby</string>
+    <string name="payment_method_not_added_message">"
+        Váš spôsob platby sa nepodarilo pridať.
+    "</string>
+    <string name="payment_method_xfers_description">Nahrajte snímku obrazovky do svojej bankovej aplikácie.</string>
+    <string name="payment_method_xfers_title">Zaplaťte skenovaním alebo urobte snímku obrazovky</string>
+    <string name="payment_request_completed_successfully">Vaša platba bola úspešne dokončená!</string>
+    <string name="payment_request_unsuccessful">Vaša platba bola neúspešná.</string>
+    <string name="phone_code_search_hint">Nájsť kód</string>
+    <!-- The message copy that tells the user how to transfer funds given a displayed account code -->
+    <string name="pleaseTransferFunds">Preveďte prostriedky na poskytnutý bankový účet DBS pomocou svojho bankového účtu so sídlom v Singapure prostredníctvom FAST (preferované), MEPS alebo GIRO.</string>
+    <!-- Postal code is required - Form Validation -->
+    <string name="postalCodeErrorRequired">Vyžaduje sa PSČ</string>
+    <!-- The billing address postal code container view label -->
+    <string name="postalCodeLabel">PSČ</string>
+    <!-- CVV- CVV recapture explanation label -->
+    <string name="primer_cvv_recapture_explanation">Pre bezpečnú platbu zadajte %d číselný bezpečnostný kód na vašej karte</string>
+    <!-- CVV - CVV recapture screen title -->
+    <string name="primer_cvv_recapture_title">Zadajte číslo CVV</string>
+    <string name="primer_payment_method_button_content_description">Zalpatiť pprostredníctvom %s</string>
+    <string name="primer_test_header_description">Toto je zosmiešňovaný tok pre pieskovisko. Zo zoznamu nižšie vyberte výsledok, ktorý chcete otestovať.</string>
+    <string name="retry_button">Retry</string>
+    <string name="save_this_card">Uložiť túto kartu</string>
+    <string name="saved_payment_methods">ULOŽENÝ SPÔSOB PLATBY</string>
+    <!-- Scan to pay or take a screenshot - QR code screen title label -->
+    <string name="scanToPay">Zaplaťte skenovaním alebo urobte snímku obrazovky</string>
+    <string name="search_placeholder">Vyhľadať</string>
+    <string name="search_result">Vyhľadať výsledky</string>
+    <string name="sepa">SEPA</string>
+    <string name="sepa_core_description">Mandát na hlavné inkaso SEPA.</string>
+    <string name="session_complete_payment_cancellation_title">Payment cancelled</string>
+    <string name="session_complete_payment_failure_title">Payment failed</string>
+    <string name="session_complete_payment_success_title">Payment authorized</string>
+    <!-- State, Region or County is required - Form Validation -->
+    <string name="stateErrorRequired">Vyžaduje sa štát/región/kraj</string>
+    <!-- The billing address state container view label -->
+    <string name="stateLabel">Štát/región/kraj</string>
+    <string name="stripe_ach_mandate_accept_button">Accept</string>
+    <string name="stripe_ach_mandate_cancel_payment_button">Cancel payment</string>
+    <string name="stripe_ach_mandate_subtitle_label">Your personal details</string>
+    <string name="stripe_ach_mandate_template_android">By clicking Accept, you authorize %1$s to debit the selected bank account for any amount owed for charges arising from your use of %1$s\'s services and/or purchase of products from %1$s, pursuant to %1$s\'s website and terms, until this authorization is revoked. You may amend or cancel this authorization at any time by providing notice to %1$s with 30 (thirty) days notice.\n\nIf you use %1$s\'s services or purchase additional products periodically pursuant to %1$s\'s terms, you authorize %1$s to debit your bank account periodically. Payments that fall outside the regular debits authorized above will only be debited after your authorization is obtained.</string>
+    <string name="stripe_ach_mandate_title_label">Pay with ACH</string>
+    <string name="stripe_ach_payment_request_cancelled">Please try again or select another bank</string>
+    <string name="stripe_ach_payment_request_completed_successfully">You have now authorized your bank account to be debited. You will be notified via email once the payment has been collected successfully.</string>
+    <string name="stripe_ach_user_details_collection_continue_button">Continue</string>
+    <string name="stripe_ach_user_details_collection_data_usage_label">We\'ll only use this to keep you updated about your payment</string>
+    <string name="stripe_ach_user_details_collection_email_address_label">Email address</string>
+    <string name="stripe_ach_user_details_collection_first_name_label">First name</string>
+    <string name="stripe_ach_user_details_collection_invalid_email_address">The email address you entered doesn\'t look like a real email address. Please make sure it includes an \'@\' and a domain (like \'@example.com\').</string>
+    <string name="stripe_ach_user_details_collection_invalid_first_name">Please enter a valid first name. Avoid using numbers or special characters.</string>
+    <string name="stripe_ach_user_details_collection_invalid_last_name">Please enter a valid last name. Avoid using numbers or special characters.</string>
+    <string name="stripe_ach_user_details_collection_last_name_label">Last name</string>
+    <string name="stripe_ach_user_details_collection_subtitle_label">Your personal details</string>
+    <string name="success_icon_description">úspech</string>
+    <string name="success_text">Úspech!</string>
+    <string name="test_mail_com">test@mail.com</string>
+    <string name="twoc_2p_button">Zaplatiť na splátky</string>
+    <!-- Upload the screenshot in your banking app. - QR code screen subtitle label -->
+    <string name="uploadScreenshot">Nahrajte snímku obrazovky do svojej bankovej aplikácie</string>
+</resources>

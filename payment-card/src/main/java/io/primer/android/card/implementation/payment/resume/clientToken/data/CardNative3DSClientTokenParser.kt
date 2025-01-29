@@ -25,10 +25,10 @@ internal class CardNative3DSClientTokenParser :
                     Card3DSClientToken.CardProcessor3DSClientToken(
                         clientTokenIntent = clientTokenData.intent,
                         processor3DS =
-                            Processor3DS(
-                                statusUrl = clientTokenData.statusUrl,
-                                redirectUrl = clientTokenData.redirectUrl,
-                            ),
+                        Processor3DS(
+                            statusUrl = clientTokenData.statusUrl,
+                            redirectUrl = clientTokenData.redirectUrl,
+                        ),
                     )
                 }
 

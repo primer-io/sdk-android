@@ -183,7 +183,7 @@
     <string name="session_complete_payment_failure_title">Payment failed</string>
     <string name="session_complete_payment_cancellation_title">Payment cancelled</string>
 
-    <string translatable="false" name="mock_klarna_view">Mock Klarna view</string>
+    <string name="mock_klarna_view" translatable="false">Mock Klarna view</string>
 
     <string name="payByImmediateTransfer">Pay by Immediate transfer</string>
     <string name="payBySmartTransfer">Pay by Bank transfer</string>

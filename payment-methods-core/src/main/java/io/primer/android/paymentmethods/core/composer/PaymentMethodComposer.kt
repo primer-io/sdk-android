@@ -85,7 +85,7 @@ abstract class InternalNativeUiPaymentMethodComponent :
     protected var primerSessionIntent by Delegates.notNull<PrimerSessionIntent>()
     protected var paymentMethodType by Delegates.notNull<String>()
 
-    @Suppress("ktlint:standard:property-naming", "EnumNaming")
+    @Suppress("EnumNaming")
     protected open val _uiEvent = MutableSharedFlow<ComposerUiEvent>()
     override val uiEvent: SharedFlow<ComposerUiEvent> = _uiEvent
 

@@ -60,9 +60,9 @@ internal class StripeAchMandateFragment : BaseFragment() {
                 popBackStack()
                 errorHandler.handle(
                     error =
-                        errorMapperRegistry.getPrimerError(
-                            PaymentMethodCancelledException(PaymentMethodType.STRIPE_ACH.name),
-                        ),
+                    errorMapperRegistry.getPrimerError(
+                        PaymentMethodCancelledException(PaymentMethodType.STRIPE_ACH.name),
+                    ),
                     payment = null,
                 )
             }

@@ -122,11 +122,11 @@ class AdyenMultibancoDropInDescriptorTest {
                 ViewStatus.ShowSuccess(
                     successType = SuccessType.PAYMENT_SUCCESS,
                     checkoutAdditionalInfo =
-                        MultibancoCheckoutAdditionalInfo(
-                            expiresAt = expiresAt,
-                            reference = reference,
-                            entity = entity,
-                        ),
+                    MultibancoCheckoutAdditionalInfo(
+                        expiresAt = expiresAt,
+                        reference = reference,
+                        entity = entity,
+                    ),
                 ),
             )
 
@@ -196,11 +196,11 @@ class AdyenMultibancoDropInDescriptorTest {
         sessionIntent: PrimerSessionIntent = PrimerSessionIntent.CHECKOUT,
     ) = AdyenMultibancoDropInDescriptor(
         uiOptions =
-            UiOptions(
-                isDarkMode = isDarkMode,
-                isInitScreenEnabled = false,
-                isStandalonePaymentMethod = isStandalonePaymentMethod,
-            ),
+        UiOptions(
+            isDarkMode = isDarkMode,
+            isInitScreenEnabled = false,
+            isStandalonePaymentMethod = isStandalonePaymentMethod,
+        ),
         brandRegistry = brandRegistry,
         sessionIntent = sessionIntent,
     )

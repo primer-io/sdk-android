@@ -21,11 +21,11 @@ data class PrimerUIOptions(
         isSuccessScreenEnabled = parcel.readByte() != 0.toByte(),
         isErrorScreenEnabled = parcel.readByte() != 0.toByte(),
         dismissalMechanism =
-            mutableListOf<DismissalMechanism>().apply {
-                val stringList = mutableListOf<String>()
-                parcel.readStringList(stringList)
-                stringList.forEach { add(DismissalMechanism.valueOf(it)) }
-            },
+        mutableListOf<DismissalMechanism>().apply {
+            val stringList = mutableListOf<String>()
+            parcel.readStringList(stringList)
+            stringList.forEach { add(DismissalMechanism.valueOf(it)) }
+        },
         theme = parcel.readParcelable<PrimerTheme>() ?: PrimerTheme.build(),
     )
 

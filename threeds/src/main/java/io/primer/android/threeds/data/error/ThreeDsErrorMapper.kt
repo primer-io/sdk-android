@@ -16,6 +16,7 @@ import io.primer.android.threeds.errors.domain.exception.ThreeDsLibraryVersionMi
 import io.primer.android.threeds.errors.domain.model.ThreeDsError
 
 internal class ThreeDsErrorMapper : ErrorMapper {
+    @Suppress("LongMethod")
     override fun getPrimerError(throwable: Throwable): PrimerError {
         return when (throwable) {
             is ThreeDsLibraryNotFoundException -> ThreeDsError.ThreeDsLibraryMissingError

@@ -62,32 +62,32 @@ internal fun PaymentMethodVaultTokenInternal.toVaultedPaymentMethod() =
         paymentInstrumentType = paymentInstrumentType,
         paymentMethodType = paymentMethodType,
         paymentInstrumentData =
-            requireNotNull(paymentInstrumentData).let { paymentInstrumentData ->
-                PaymentInstrumentData(
-                    network = paymentInstrumentData.network,
-                    cardholderName = paymentInstrumentData.cardholderName,
-                    first6Digits = paymentInstrumentData.first6Digits,
-                    last4Digits = paymentInstrumentData.last4Digits,
-                    accountNumberLast4Digits = paymentInstrumentData.accountNumberLast4Digits,
-                    expirationMonth = paymentInstrumentData.expirationMonth,
-                    expirationYear = paymentInstrumentData.expirationYear,
-                    externalPayerInfo = paymentInstrumentData.externalPayerInfo,
-                    klarnaCustomerToken = paymentInstrumentData.klarnaCustomerToken,
-                    sessionData = paymentInstrumentData.sessionData,
-                    paymentMethodType = paymentInstrumentData.paymentMethodType,
-                    sessionInfo = paymentInstrumentData.sessionInfo,
-                    binData = paymentInstrumentData.binData,
-                    bankName = paymentInstrumentData.bankName,
-                )
-            },
+        requireNotNull(paymentInstrumentData).let { paymentInstrumentData ->
+            PaymentInstrumentData(
+                network = paymentInstrumentData.network,
+                cardholderName = paymentInstrumentData.cardholderName,
+                first6Digits = paymentInstrumentData.first6Digits,
+                last4Digits = paymentInstrumentData.last4Digits,
+                accountNumberLast4Digits = paymentInstrumentData.accountNumberLast4Digits,
+                expirationMonth = paymentInstrumentData.expirationMonth,
+                expirationYear = paymentInstrumentData.expirationYear,
+                externalPayerInfo = paymentInstrumentData.externalPayerInfo,
+                klarnaCustomerToken = paymentInstrumentData.klarnaCustomerToken,
+                sessionData = paymentInstrumentData.sessionData,
+                paymentMethodType = paymentInstrumentData.paymentMethodType,
+                sessionInfo = paymentInstrumentData.sessionInfo,
+                binData = paymentInstrumentData.binData,
+                bankName = paymentInstrumentData.bankName,
+            )
+        },
         threeDSecureAuthentication =
-            threeDSecureAuthentication?.let {
-                PrimerVaultedPaymentMethod.AuthenticationDetails(
-                    it.responseCode,
-                    it.reasonCode,
-                    it.reasonText,
-                    it.protocolVersion,
-                    it.challengeIssued,
-                )
-            },
+        threeDSecureAuthentication?.let {
+            PrimerVaultedPaymentMethod.AuthenticationDetails(
+                it.responseCode,
+                it.reasonCode,
+                it.reasonText,
+                it.protocolVersion,
+                it.challengeIssued,
+            )
+        },
     )

@@ -20,9 +20,9 @@ internal class QrCodeTokenizationParamsMapper :
                 paymentMethodType = paymentInstrumentParams.paymentMethodType,
                 paymentMethodConfigId = paymentInstrumentParams.paymentMethodConfigId,
                 sessionInfo =
-                    QrCodeSessionInfoDataRequest(
-                        locale = paymentInstrumentParams.locale,
-                    ),
+                QrCodeSessionInfoDataRequest(
+                    locale = paymentInstrumentParams.locale,
+                ),
                 type = PaymentInstrumentType.OFF_SESSION_PAYMENT,
             )
         return instrumentDataRequest.toTokenizationRequest(params.sessionIntent)

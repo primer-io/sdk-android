@@ -55,10 +55,10 @@ class PaymentMethodSdkAnalyticsEventLoggingDelegateTest {
                     SdkFunctionParams(
                         name = methodName,
                         params =
-                            mapOf(
-                                "paymentMethodType" to paymentMethodType,
-                                "category" to "categoryName",
-                            ) + context,
+                        mapOf(
+                            "paymentMethodType" to paymentMethodType,
+                            "category" to "categoryName",
+                        ) + context,
                     ),
                 )
             }

@@ -14,9 +14,9 @@ internal data class GooglePayNative3DSActivityLauncherParams(
     override val paymentMethodType: String,
     val supportedThreeDsVersions: List<String>,
 ) : PaymentMethodRedirectLauncherParams(
-        paymentMethodType,
-        PrimerSessionIntent.CHECKOUT,
-    )
+    paymentMethodType,
+    PrimerSessionIntent.CHECKOUT,
+)
 
 internal data class GooglePayProcessor3DSActivityLauncherParams(
     override val paymentMethodType: String,
@@ -24,9 +24,9 @@ internal data class GooglePayProcessor3DSActivityLauncherParams(
     val statusUrl: String,
     val title: String,
 ) : PaymentMethodRedirectLauncherParams(
-        paymentMethodType,
-        PrimerSessionIntent.CHECKOUT,
-    )
+    paymentMethodType,
+    PrimerSessionIntent.CHECKOUT,
+)
 
 internal data class GooglePay3DSNavigator(
     private val context: Activity,
@@ -37,9 +37,9 @@ internal data class GooglePay3DSNavigator(
             ThreeDsActivity.getLaunchIntent(
                 context = context,
                 params =
-                    ThreeDsActivityLauncherParams(
-                        supportedThreeDsProtocolVersions = params.supportedThreeDsVersions,
-                    ),
+                ThreeDsActivityLauncherParams(
+                    supportedThreeDsProtocolVersions = params.supportedThreeDsVersions,
+                ),
             ),
         )
     }

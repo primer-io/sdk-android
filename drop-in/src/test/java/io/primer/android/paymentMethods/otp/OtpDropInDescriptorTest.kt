@@ -131,10 +131,10 @@ class OtpDropInDescriptorTest {
     ) = OtpDropInDescriptor(
         paymentMethodType = paymentMethodType.name,
         uiOptions =
-            UiOptions(
-                isDarkMode = isDarkMode,
-                isInitScreenEnabled = false,
-                isStandalonePaymentMethod = isStandalonePaymentMethod,
-            ),
+        UiOptions(
+            isDarkMode = isDarkMode,
+            isInitScreenEnabled = false,
+            isStandalonePaymentMethod = isStandalonePaymentMethod,
+        ),
     )
 }

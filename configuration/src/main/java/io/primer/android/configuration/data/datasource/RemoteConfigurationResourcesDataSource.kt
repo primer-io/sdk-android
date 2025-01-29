@@ -26,9 +26,9 @@ class RemoteConfigurationResourcesDataSource(
     private val imagesFileProvider: FileProvider,
     private val timerEventProvider: EventFlowProvider<TimerProperties>,
 ) : BaseSuspendDataSource<
-        List<Map<String, List<IconDisplayMetadata>>>,
-        List<PaymentMethodConfigDataResponse>,
-        > {
+    List<Map<String, List<IconDisplayMetadata>>>,
+    List<PaymentMethodConfigDataResponse>,
+    > {
     override suspend fun execute(input: List<PaymentMethodConfigDataResponse>) =
         coroutineScope {
             logAnalyticsAllImageDurationTimerEvent(TimerType.START)
@@ -137,10 +137,10 @@ class RemoteConfigurationResourcesDataSource(
             id = TimerId.PM_IMAGE_LOADING_DURATION,
             timerType = timerType,
             analyticsContext =
-                UrlAnalyticsContext(
-                    paymentMethodType = paymentMethodType,
-                    url = iconUrl,
-                ),
+            UrlAnalyticsContext(
+                paymentMethodType = paymentMethodType,
+                url = iconUrl,
+            ),
         ),
     )
 

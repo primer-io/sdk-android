@@ -9,7 +9,7 @@ package io.primer.android.core
 @RequiresOptIn(
     level = RequiresOptIn.Level.WARNING,
     message =
-        "This is a beta API and can be changed in a " +
-            "backwards-incompatible manner with a best-effort migration.",
+    "This is a beta API and can be changed in a " +
+        "backwards-incompatible manner with a best-effort migration.",
 )
 annotation class ExperimentalPrimerApi

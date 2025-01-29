@@ -34,7 +34,7 @@ internal class OtpContainer(
         registerFactory(name = paymentMethodType) {
             PaymentMethodSdkAnalyticsEventLoggingDelegate(
                 primerPaymentMethodManagerCategory =
-                    PrimerPaymentMethodManagerCategory.RAW_DATA.name,
+                PrimerPaymentMethodManagerCategory.RAW_DATA.name,
                 analyticsInteractor = sdk().resolve(),
             )
         }
@@ -70,11 +70,11 @@ internal class OtpContainer(
         registerFactory<OtpTokenizationInteractor>(name = paymentMethodType) {
             DefaultOtpTokenizationInteractor(
                 tokenizationRepository =
-                    OtpTokenizationDataRepository(
-                        remoteTokenizationDataSource = sdk().resolve(paymentMethodType),
-                        configurationDataSource = sdk().resolve(ConfigurationCoreContainer.CACHED_CONFIGURATION_DI_KEY),
-                        tokenizationParamsMapper = resolve(),
-                    ),
+                OtpTokenizationDataRepository(
+                    remoteTokenizationDataSource = sdk().resolve(paymentMethodType),
+                    configurationDataSource = sdk().resolve(ConfigurationCoreContainer.CACHED_CONFIGURATION_DI_KEY),
+                    tokenizationParamsMapper = resolve(),
+                ),
                 tokenizedPaymentMethodRepository = sdk().resolve(),
                 preTokenizationHandler = sdk().resolve(),
                 logReporter = sdk().resolve(),

@@ -13,8 +13,8 @@ internal class PhoneNumberTokenizationDelegate(
     private val configurationInteractor: PhoneNumberConfigurationInteractor,
     tokenizationInteractor: PhoneNumberTokenizationInteractor,
 ) : PaymentMethodTokenizationDelegate<PhoneNumberTokenizationInputable, PhoneNumberPaymentInstrumentParams>(
-        tokenizationInteractor,
-    ),
+    tokenizationInteractor,
+),
     TokenizationCollectedDataMapper<PhoneNumberTokenizationInputable, PhoneNumberPaymentInstrumentParams> {
     override suspend fun mapTokenizationData(
         input: PhoneNumberTokenizationInputable,
@@ -24,12 +24,12 @@ internal class PhoneNumberTokenizationDelegate(
         ).map { configuration ->
             TokenizationParams(
                 paymentInstrumentParams =
-                    PhoneNumberPaymentInstrumentParams(
-                        paymentMethodType = input.paymentMethodType,
-                        paymentMethodConfigId = configuration.paymentMethodConfigId,
-                        locale = configuration.locale,
-                        phoneNumber = input.phoneNumberData.phoneNumber,
-                    ),
+                PhoneNumberPaymentInstrumentParams(
+                    paymentMethodType = input.paymentMethodType,
+                    paymentMethodConfigId = configuration.paymentMethodConfigId,
+                    locale = configuration.locale,
+                    phoneNumber = input.phoneNumberData.phoneNumber,
+                ),
                 sessionIntent = input.primerSessionIntent,
             )
         }

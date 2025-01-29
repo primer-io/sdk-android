@@ -675,9 +675,9 @@ class KlarnaComponentTest {
             val collectableData =
                 KlarnaPaymentCollectableData.PaymentOptions(
                     context =
-                        mockk {
-                            every { getText(any()) } returns "text"
-                        },
+                    mockk {
+                        every { getText(any()) } returns "text"
+                    },
                     returnIntentUrl = returnIntentUrl,
                     paymentCategory = paymentCategory,
                 )

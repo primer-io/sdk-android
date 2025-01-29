@@ -19,6 +19,7 @@ import io.primer.android.paymentmethods.core.composer.provider.PaymentMethodProv
 import io.primer.android.paymentmethods.core.composer.provider.VaultedPaymentMethodProviderFactoryRegistry
 import io.primer.android.paymentmethods.core.ui.navigation.PaymentMethodNavigationFactoryRegistry
 
+@Suppress("LongParameterList")
 internal class PaymentMethodDescriptorsDataRepository(
     private val context: Context,
     private val configurationDataSource: CacheConfigurationDataSource,
@@ -65,6 +66,7 @@ internal class PaymentMethodDescriptorsDataRepository(
         return paymentMethods
     }
 
+    @Suppress("ComplexCondition")
     private fun initializeAndRegisterModules(
         context: Context,
         paymentMethod: PaymentMethod,
@@ -93,10 +95,10 @@ internal class PaymentMethodDescriptorsDataRepository(
 
             paymentMethod.module.registerDependencyContainer(
                 sdkContainers =
-                    listOfNotNull(
-                        DISdkContext.headlessSdkContainer,
-                        DISdkContext.dropInSdkContainer,
-                    ),
+                listOfNotNull(
+                    DISdkContext.headlessSdkContainer,
+                    DISdkContext.dropInSdkContainer,
+                ),
             )
 
             paymentMethod.module.registerErrorMappers(errorMapperRegistry)

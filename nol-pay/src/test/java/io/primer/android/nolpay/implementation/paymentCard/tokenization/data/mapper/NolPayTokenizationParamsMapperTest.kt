@@ -50,13 +50,13 @@ internal class NolPayTokenizationParamsMapperTest {
                 paymentMethodType = "NOL_PAY",
                 paymentMethodConfigId = "configId",
                 sessionInfo =
-                    NolPaySessionInfoDataRequest(
-                        mobileCountryCode = "US",
-                        mobileNumber = "1234567890",
-                        nolPayCardNumber = "1234567812345678",
-                        deviceVendor = manufacturer,
-                        deviceModel = model,
-                    ),
+                NolPaySessionInfoDataRequest(
+                    mobileCountryCode = "US",
+                    mobileNumber = "1234567890",
+                    nolPayCardNumber = "1234567812345678",
+                    deviceVendor = manufacturer,
+                    deviceModel = model,
+                ),
                 type = PaymentInstrumentType.OFF_SESSION_PAYMENT,
             ).toTokenizationRequest(PrimerSessionIntent.CHECKOUT)
 

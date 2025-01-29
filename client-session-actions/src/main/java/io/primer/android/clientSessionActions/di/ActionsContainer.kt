@@ -26,9 +26,9 @@ class ActionsContainer(
         registerSingleton<ActionRepository> {
             ActionDataRepository(
                 configurationDataSource =
-                    sdk().resolve(
-                        ConfigurationCoreContainer.CACHED_CONFIGURATION_DI_KEY,
-                    ),
+                sdk().resolve(
+                    ConfigurationCoreContainer.CACHED_CONFIGURATION_DI_KEY,
+                ),
                 remoteActionDataSource = resolve(),
                 globalCacheDataSource = sdk().resolve(ConfigurationCoreContainer.GLOBAL_CACHED_CONFIGURATION_DI_KEY),
                 clientTokenProvider = sdk().resolve(ConfigurationCoreContainer.CLIENT_TOKEN_PROVIDER_DI_KEY),

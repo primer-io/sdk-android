@@ -63,7 +63,7 @@ internal class VaultManagerComposerDelegate(
                     (
                         paymentMethodNavigationFactoryRegistry.create(paymentMethodType) as?
                             PaymentMethodContextNavigationHandler
-                    )
+                        )
                         ?.getSupportedNavigators(context)
                         ?.firstOrNull { it.canHandle(event.params) }?.navigate(event.params)
                         ?: println("Navigation handler for ${event.params} not found.")

@@ -88,12 +88,12 @@ class KlarnaSessionCreationDelegateTest {
                 actionInteractor.invoke(
                     MultipleActionUpdateParams(
                         params =
-                            listOf(
-                                ActionUpdateSelectPaymentMethodParams(
-                                    paymentMethodType = PaymentMethodType.KLARNA.name,
-                                    cardNetwork = null,
-                                ),
+                        listOf(
+                            ActionUpdateSelectPaymentMethodParams(
+                                paymentMethodType = PaymentMethodType.KLARNA.name,
+                                cardNetwork = null,
                             ),
+                        ),
                     ),
                 )
                 klarnaSessionInteractor.invoke(KlarnaSessionParams(140, primerSessionIntent))
@@ -148,12 +148,12 @@ class KlarnaSessionCreationDelegateTest {
                 actionInteractor.invoke(
                     MultipleActionUpdateParams(
                         params =
-                            listOf(
-                                ActionUpdateSelectPaymentMethodParams(
-                                    paymentMethodType = PaymentMethodType.KLARNA.name,
-                                    cardNetwork = null,
-                                ),
+                        listOf(
+                            ActionUpdateSelectPaymentMethodParams(
+                                paymentMethodType = PaymentMethodType.KLARNA.name,
+                                cardNetwork = null,
                             ),
+                        ),
                     ),
                 )
                 klarnaSessionInteractor.invoke(KlarnaSessionParams(null, primerSessionIntent))
@@ -205,12 +205,12 @@ class KlarnaSessionCreationDelegateTest {
                 actionInteractor.invoke(
                     MultipleActionUpdateParams(
                         params =
-                            listOf(
-                                ActionUpdateSelectPaymentMethodParams(
-                                    paymentMethodType = PaymentMethodType.KLARNA.name,
-                                    cardNetwork = null,
-                                ),
+                        listOf(
+                            ActionUpdateSelectPaymentMethodParams(
+                                paymentMethodType = PaymentMethodType.KLARNA.name,
+                                cardNetwork = null,
                             ),
+                        ),
                     ),
                 )
                 klarnaSessionInteractor.invoke(any())
@@ -254,12 +254,12 @@ class KlarnaSessionCreationDelegateTest {
                 actionInteractor.invoke(
                     MultipleActionUpdateParams(
                         params =
-                            listOf(
-                                ActionUpdateSelectPaymentMethodParams(
-                                    paymentMethodType = PaymentMethodType.KLARNA.name,
-                                    cardNetwork = null,
-                                ),
+                        listOf(
+                            ActionUpdateSelectPaymentMethodParams(
+                                paymentMethodType = PaymentMethodType.KLARNA.name,
+                                cardNetwork = null,
                             ),
+                        ),
                     ),
                 )
             }

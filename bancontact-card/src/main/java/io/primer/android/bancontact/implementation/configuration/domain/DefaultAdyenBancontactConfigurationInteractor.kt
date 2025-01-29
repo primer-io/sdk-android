@@ -11,5 +11,5 @@ internal typealias AdyenBancontactConfigurationInteractor =
 internal class DefaultAydenBancontactConfigurationInteractor(
     configurationRepository: PaymentMethodConfigurationRepository<AdyenBancontactConfig, AdyenBancontactConfigParams>,
 ) : PaymentMethodConfigurationInteractor<AdyenBancontactConfig, AdyenBancontactConfigParams>(
-        configurationRepository,
-    )
+    configurationRepository,
+)

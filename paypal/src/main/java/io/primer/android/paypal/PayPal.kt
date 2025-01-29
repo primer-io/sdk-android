@@ -76,10 +76,10 @@ internal class PayPal(
                     sdkContainer.registerContainer(
                         name = type,
                         container =
-                            PaypalContainer(
-                                sdk = { getSdkContainer() },
-                                paymentMethodType = type,
-                            ),
+                        PaypalContainer(
+                            sdk = { getSdkContainer() },
+                            paymentMethodType = type,
+                        ),
                     )
                 }
             }

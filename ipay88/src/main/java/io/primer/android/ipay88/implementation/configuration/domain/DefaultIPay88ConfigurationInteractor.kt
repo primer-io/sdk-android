@@ -11,5 +11,5 @@ internal typealias IPay88ConfigurationInteractor =
 internal class DefaultIPay88ConfigurationInteractor(
     configurationRepository: PaymentMethodConfigurationRepository<IPay88Config, IPay88ConfigParams>,
 ) : PaymentMethodConfigurationInteractor<IPay88Config, IPay88ConfigParams>(
-        configurationRepository,
-    )
+    configurationRepository,
+)

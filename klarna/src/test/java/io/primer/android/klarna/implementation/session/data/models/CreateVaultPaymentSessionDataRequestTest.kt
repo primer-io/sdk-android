@@ -15,11 +15,11 @@ internal class CreateVaultPaymentSessionDataRequestTest {
                 sessionType = KlarnaSessionType.ONE_OFF_PAYMENT,
                 description = "description",
                 localeData =
-                    LocaleDataRequest(
-                        countryCode = CountryCode.US,
-                        currencyCode = "USD",
-                        localeCode = "en_US",
-                    ),
+                LocaleDataRequest(
+                    countryCode = CountryCode.US,
+                    currencyCode = "USD",
+                    localeCode = "en_US",
+                ),
             )
 
         val localeDataJson =

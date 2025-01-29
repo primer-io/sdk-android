@@ -31,6 +31,7 @@ internal sealed class IPay88Error : PrimerError() {
                     failed with error: $errorDescription 
                     diagnosticsId: $diagnosticsId)  
                     """.trimIndent()
+
                 is IPaySdkConnectionError ->
                     "IPay SDK connection error occurred: (diagnosticsId: $diagnosticsId)"
             }

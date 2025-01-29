@@ -71,9 +71,9 @@ internal class CardPaymentDelegateTest {
                             paymentMethodType = PaymentMethodType.PAYMENT_CARD.name,
                             sessionIntent = PrimerSessionIntent.CHECKOUT,
                             initialLauncherParams =
-                                ThreeDsInitialLauncherParams(
-                                    supportedThreeDsProtocolVersions = decision.supportedThreeDsProtocolVersions,
-                                ),
+                            ThreeDsInitialLauncherParams(
+                                supportedThreeDsProtocolVersions = decision.supportedThreeDsProtocolVersions,
+                            ),
                         ),
                     )
                 assertEquals(expectedEvent, event)
@@ -89,11 +89,11 @@ internal class CardPaymentDelegateTest {
             val decision =
                 CardResumeDecision.CardProcessor3dsResumeDecision(
                     processor3DS =
-                        Processor3DS(
-                            redirectUrl = "https://www.example/redirect",
-                            statusUrl = "https://www.status/redirect",
-                            title = "title",
-                        ),
+                    Processor3DS(
+                        redirectUrl = "https://www.example/redirect",
+                        statusUrl = "https://www.status/redirect",
+                        title = "title",
+                    ),
                 )
             coEvery { resumeHandler.continueWithNewClientToken(clientToken) } returns Result.success(decision)
 
@@ -108,9 +108,9 @@ internal class CardPaymentDelegateTest {
                             paymentMethodType = PaymentMethodType.PAYMENT_CARD.name,
                             sessionIntent = PrimerSessionIntent.CHECKOUT,
                             initialLauncherParams =
-                                ProcessorThreeDsInitialLauncherParams(
-                                    processor3DS = decision.processor3DS,
-                                ),
+                            ProcessorThreeDsInitialLauncherParams(
+                                processor3DS = decision.processor3DS,
+                            ),
                         ),
                     )
                 assertEquals(expectedEvent, event)

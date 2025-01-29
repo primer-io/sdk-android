@@ -44,13 +44,22 @@
     "CF": "Republik Afrika Tengah",
     "TD": "Chad",
     "CL": "Chili",
-    "CN": ["Republik Rakyat Tiongkok", "Tiongkok"],
+    "CN": [
+      "Republik Rakyat Tiongkok",
+      "Tiongkok"
+    ],
     "CX": "Pulau Natal",
     "CC": "Kepulauan Cocos (Keeling) ",
     "CO": "Kolombia",
     "KM": "Komoro",
-    "CG": ["Republik Kongo", "Kongo"],
-    "CD": ["Republik Demokratik Kongo", "Kongo"],
+    "CG": [
+      "Republik Kongo",
+      "Kongo"
+    ],
+    "CD": [
+      "Republik Demokratik Kongo",
+      "Kongo"
+    ],
     "CK": "Kepulauan Cook ",
     "CR": "Kosta Rika",
     "CI": "Pantai Gading",
@@ -78,7 +87,11 @@
     "PF": "Polinesia Prancis",
     "TF": "Wilayah Selatan Prancis",
     "GA": "Gabon",
-    "GM": ["Republik Gambia", "Gambia", "Gambia"],
+    "GM": [
+      "Republik Gambia",
+      "Gambia",
+      "Gambia"
+    ],
     "GE": "Georgia",
     "DE": "Jerman",
     "GH": "Ghana",
@@ -101,7 +114,10 @@
     "IS": "Islandia",
     "IN": "India",
     "ID": "india",
-    "IR": ["Republik Islam Iran", "Iran"],
+    "IR": [
+      "Republik Islam Iran",
+      "Iran"
+    ],
     "IQ": "Irak",
     "IE": "Irlandia",
     "IL": "Israel",
@@ -157,13 +173,19 @@
     "NG": "Nigeria",
     "NU": "Niue ",
     "NF": "Kepulauan Norfolk",
-    "MK": ["Republik Makedonia Utara", "Makedonia Utara"],
+    "MK": [
+      "Republik Makedonia Utara",
+      "Makedonia Utara"
+    ],
     "MP": "Kepulauan Mariana Utara",
     "NO": "Norwegia",
     "OM": "Oman",
     "PK": "Pakistan",
     "PW": "Palau",
-    "PS": ["Negara Palestina", "Palestina"],
+    "PS": [
+      "Negara Palestina",
+      "Palestina"
+    ],
     "PA": "Panama",
     "PG": "Papua Nugini",
     "PY": "Paraguay",
@@ -176,7 +198,10 @@
     "QA": "Qatar",
     "RE": "Reuni",
     "RO": "Rumania",
-    "RU": ["Federasi Rusia", "Rusia"],
+    "RU": [
+      "Federasi Rusia",
+      "Rusia"
+    ],
     "RW": "Rwanda",
     "SH": "Saint Helena",
     "KN": "Saint Kitts dan Nevis",
@@ -206,9 +231,15 @@
     "SE": "Swedia",
     "CH": "Swiss",
     "SY": "Republik Arab Suriah",
-    "TW": ["Taiwan, Provinsi Tiongkok", "Taiwan"],
+    "TW": [
+      "Taiwan, Provinsi Tiongkok",
+      "Taiwan"
+    ],
     "TJ": "Tajikistan",
-    "TZ": ["Republik Bersatu Tanzania", "Tanzania"],
+    "TZ": [
+      "Republik Bersatu Tanzania",
+      "Tanzania"
+    ],
     "TH": "Thailand",
     "TL": "Timor-Leste",
     "TG": "Togo",
@@ -223,8 +254,16 @@
     "UG": "Uganda",
     "UA": "Ukraina",
     "AE": "Uni Emirat Arab",
-    "GB": ["Britania Raya", "Inggris Raya", "Britania Raya"],
-    "US": ["Amerika Serikat", "Amerika Serikat", "AS"],
+    "GB": [
+      "Britania Raya",
+      "Inggris Raya",
+      "Britania Raya"
+    ],
+    "US": [
+      "Amerika Serikat",
+      "Amerika Serikat",
+      "AS"
+    ],
     "UM": "Kepulauan Terluar Kecil Amerika Serikat",
     "UY": "Uruguay",
     "UZ": "Uzbekistan",

@@ -35,12 +35,12 @@ internal class StripeAchBankFlowDelegate(
                 val completableDeferred = CompletableDeferred<StripeAchBankFlowResult>()
                 checkoutAdditionalInfoHandler.handle(
                     checkoutAdditionalInfo =
-                        createDisplayMandateAdditionalInfo(
-                            paymentMethodId = paymentMethodId,
-                            paymentIntentId = paymentIntentId,
-                            sdkCompleteUrl = sdkCompleteUrl,
-                            completableDeferred = completableDeferred,
-                        ),
+                    createDisplayMandateAdditionalInfo(
+                        paymentMethodId = paymentMethodId,
+                        paymentIntentId = paymentIntentId,
+                        sdkCompleteUrl = sdkCompleteUrl,
+                        completableDeferred = completableDeferred,
+                    ),
                 )
                 completableDeferred.await()
             }

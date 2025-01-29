@@ -13,8 +13,8 @@ internal class QrCodeTokenizationDelegate(
     private val configurationInteractor: QrCodeConfigurationInteractor,
     tokenizationInteractor: QrCodeTokenizationInteractor,
 ) : PaymentMethodTokenizationDelegate<QrCodeTokenizationInputable, QrCodePaymentInstrumentParams>(
-        tokenizationInteractor,
-    ),
+    tokenizationInteractor,
+),
     TokenizationCollectedDataMapper<QrCodeTokenizationInputable, QrCodePaymentInstrumentParams> {
     override suspend fun mapTokenizationData(
         input: QrCodeTokenizationInputable,
@@ -24,11 +24,11 @@ internal class QrCodeTokenizationDelegate(
         ).map { configuration ->
             TokenizationParams(
                 paymentInstrumentParams =
-                    QrCodePaymentInstrumentParams(
-                        paymentMethodType = input.paymentMethodType,
-                        paymentMethodConfigId = configuration.paymentMethodConfigId,
-                        locale = configuration.locale,
-                    ),
+                QrCodePaymentInstrumentParams(
+                    paymentMethodType = input.paymentMethodType,
+                    paymentMethodConfigId = configuration.paymentMethodConfigId,
+                    locale = configuration.locale,
+                ),
                 sessionIntent = input.primerSessionIntent,
             )
         }

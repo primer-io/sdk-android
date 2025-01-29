@@ -153,8 +153,10 @@ internal sealed class ThreeDsError : PrimerError() {
             when (this) {
                 is ThreeDsLibraryMissingError ->
                     "Follow the integration guide and include 3DS dependency."
+
                 is ThreeDsLibraryVersionError ->
                     "Update to io.primer:3ds-android:$validSdkVersion"
+
                 is ThreeDsInitError ->
                     """
                     If this application is not installed from a trusted source
@@ -162,6 +164,7 @@ internal sealed class ThreeDsError : PrimerError() {
                     'PrimerDebugOptions.is3DSSanityCheckEnabled' to false.
                     Contact Primer and provide us with diagnostics id $diagnosticsId
                     """.trimIndent()
+
                 is ThreeDsUnknownProtocolError -> "Update to the newest io.primer:3ds-android version."
                 is ThreeDsConfigurationError,
                 is ThreeDsChallengeCancelledError,

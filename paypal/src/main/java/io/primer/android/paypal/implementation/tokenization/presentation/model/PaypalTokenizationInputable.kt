@@ -13,9 +13,9 @@ internal sealed class PaypalTokenizationInputable(
         override val paymentMethodType: String,
         override val primerSessionIntent: PrimerSessionIntent,
     ) : PaypalTokenizationInputable(
-            paymentMethodType = paymentMethodType,
-            primerSessionIntent = primerSessionIntent,
-        )
+        paymentMethodType = paymentMethodType,
+        primerSessionIntent = primerSessionIntent,
+    )
 
     data class PaypalVaultTokenizationInputable(
         val tokenId: String?,
@@ -23,7 +23,7 @@ internal sealed class PaypalTokenizationInputable(
         override val paymentMethodType: String,
         override val primerSessionIntent: PrimerSessionIntent,
     ) : PaypalTokenizationInputable(
-            paymentMethodType = paymentMethodType,
-            primerSessionIntent = primerSessionIntent,
-        )
+        paymentMethodType = paymentMethodType,
+        primerSessionIntent = primerSessionIntent,
+    )
 }

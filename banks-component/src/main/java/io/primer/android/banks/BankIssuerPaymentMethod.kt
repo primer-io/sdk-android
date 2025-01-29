@@ -95,10 +95,10 @@ internal class BankIssuerPaymentMethod(
                     sdkContainer.registerContainer(
                         name = paymentMethodType,
                         container =
-                            BankIssuerContainer(
-                                sdk = { getSdkContainer() },
-                                paymentMethodType = paymentMethodType,
-                            ),
+                        BankIssuerContainer(
+                            sdk = { getSdkContainer() },
+                            paymentMethodType = paymentMethodType,
+                        ),
                     )
                 }
             }

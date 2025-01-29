@@ -115,7 +115,7 @@ class StripeAchUserDetailsComponent internal constructor(
 
             eventLoggingDelegate.logSdkAnalyticsEvent(
                 methodName =
-                    StripeAchUserDetailsAnalyticsConstants.STRIPE_ACH_USER_DETAIL_START_METHOD,
+                StripeAchUserDetailsAnalyticsConstants.STRIPE_ACH_USER_DETAIL_START_METHOD,
                 paymentMethodType = PaymentMethodType.STRIPE_ACH.name,
             )
         }
@@ -162,7 +162,7 @@ class StripeAchUserDetailsComponent internal constructor(
 
         eventLoggingDelegate.logSdkAnalyticsEvent(
             methodName =
-                StripeAchUserDetailsAnalyticsConstants.STRIPE_ACH_USER_DETAIL_COLLECTED_DATA_METHOD,
+            StripeAchUserDetailsAnalyticsConstants.STRIPE_ACH_USER_DETAIL_COLLECTED_DATA_METHOD,
             paymentMethodType = PaymentMethodType.STRIPE_ACH.name,
         )
         return validationError == null
@@ -172,7 +172,7 @@ class StripeAchUserDetailsComponent internal constructor(
         viewModelScope.launch {
             eventLoggingDelegate.logSdkAnalyticsEvent(
                 methodName =
-                    StripeAchUserDetailsAnalyticsConstants.STRIPE_ACH_USER_DETAIL_SUBMIT_DATA_METHOD,
+                StripeAchUserDetailsAnalyticsConstants.STRIPE_ACH_USER_DETAIL_SUBMIT_DATA_METHOD,
                 paymentMethodType = PaymentMethodType.STRIPE_ACH.name,
             )
 
@@ -292,9 +292,9 @@ class StripeAchUserDetailsComponent internal constructor(
     private fun handleError(throwable: Throwable) =
         viewModelScope.launch {
             val isCheckoutFailureException = throwable is CheckoutFailureException
-        /*
-        exclude CheckoutFailureException when in Drop-in because the inner exception is always dispatched.
-         */
+            /*
+            exclude CheckoutFailureException when in Drop-in because the inner exception is always dispatched.
+             */
             if (primerSettings.sdkIntegrationType == SdkIntegrationType.DROP_IN && !isCheckoutFailureException) {
                 stripeAchPaymentDelegate.handleError(throwable)
             }

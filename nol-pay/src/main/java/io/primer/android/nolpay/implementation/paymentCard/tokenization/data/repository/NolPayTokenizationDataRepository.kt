@@ -13,7 +13,7 @@ internal class NolPayTokenizationDataRepository(
     configurationDataSource: BaseCacheDataSource<ConfigurationData, ConfigurationData>,
     tokenizationParamsMapper: NolPayTokenizationParamsMapper,
 ) : TokenizationDataRepository<NolPayPaymentInstrumentParams, NolPayPaymentInstrumentDataRequest>(
-        remoteTokenizationDataSource,
-        configurationDataSource,
-        tokenizationParamsMapper,
-    )
+    remoteTokenizationDataSource,
+    configurationDataSource,
+    tokenizationParamsMapper,
+)

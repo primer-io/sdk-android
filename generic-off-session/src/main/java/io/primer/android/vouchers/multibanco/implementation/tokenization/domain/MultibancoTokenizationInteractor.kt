@@ -15,8 +15,8 @@ internal class DefaultMultibancoTokenizationInteractor(
     preTokenizationHandler: PreTokenizationHandler,
     logReporter: LogReporter,
 ) : TokenizationInteractor<MultibancoPaymentInstrumentParams>(
-        tokenizationRepository = tokenizationRepository,
-        tokenizedPaymentMethodRepository = tokenizedPaymentMethodRepository,
-        preTokenizationHandler = preTokenizationHandler,
-        logReporter = logReporter,
-    )
+    tokenizationRepository = tokenizationRepository,
+    tokenizedPaymentMethodRepository = tokenizedPaymentMethodRepository,
+    preTokenizationHandler = preTokenizationHandler,
+    logReporter = logReporter,
+)

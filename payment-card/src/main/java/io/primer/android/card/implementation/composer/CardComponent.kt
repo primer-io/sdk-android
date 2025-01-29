@@ -96,11 +96,11 @@ internal class CardComponent(
             methodName = RawDataManagerAnalyticsConstants.SET_RAW_DATA_METHOD,
             paymentMethodType = paymentMethodType,
             context =
-                mapOf(
-                    RawDataManagerAnalyticsConstants.PAYMENT_METHOD_TYPE_PARAM to paymentMethodType,
-                    RawDataManagerAnalyticsConstants.PREFERRED_NETWORK_PARAM to
-                        collectedData.cardNetwork?.name.orEmpty(),
-                ).filterValues { it.isNotBlank() },
+            mapOf(
+                RawDataManagerAnalyticsConstants.PAYMENT_METHOD_TYPE_PARAM to paymentMethodType,
+                RawDataManagerAnalyticsConstants.PREFERRED_NETWORK_PARAM to
+                    collectedData.cardNetwork?.name.orEmpty(),
+            ).filterValues { it.isNotBlank() },
         )
         composerScope.launch {
             this@CardComponent.collectedData.emit(collectedData)
@@ -192,6 +192,7 @@ internal class CardComponent(
                         },
                     )
                 }
+
                 is ProcessorThreeDsInitialLauncherParams ->
                     _uiEvent.emit(
                         ComposerUiEvent.Navigate(

@@ -32,12 +32,12 @@ class PaypalOrderInfoResponseTest {
             PaypalOrderInfoResponse(
                 orderId = "order123",
                 externalPayerInfo =
-                    PaypalExternalPayerInfo(
-                        externalPayerId = "payer123",
-                        email = "email@example.com",
-                        firstName = "John",
-                        lastName = "Doe",
-                    ),
+                PaypalExternalPayerInfo(
+                    externalPayerId = "payer123",
+                    email = "email@example.com",
+                    firstName = "John",
+                    lastName = "Doe",
+                ),
             )
         assertEquals(expectedResponse, response)
     }
@@ -99,12 +99,12 @@ class PaypalOrderInfoResponseTest {
             PaypalOrderInfoResponse(
                 orderId = "order123",
                 externalPayerInfo =
-                    PaypalExternalPayerInfo(
-                        externalPayerId = "payer123",
-                        email = "email@example.com",
-                        firstName = "John",
-                        lastName = "Doe",
-                    ),
+                PaypalExternalPayerInfo(
+                    externalPayerId = "payer123",
+                    email = "email@example.com",
+                    firstName = "John",
+                    lastName = "Doe",
+                ),
             )
 
         // Act

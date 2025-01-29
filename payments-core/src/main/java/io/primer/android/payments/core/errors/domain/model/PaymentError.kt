@@ -37,6 +37,7 @@ internal sealed class PaymentError : PrimerError() {
             when (this) {
                 is PaymentFailedError ->
                     "The payment with id $paymentId was created but ended up in a $paymentStatus status."
+
                 is PaymentCreateFailedError -> serverDescription
                 is PaymentResumeFailedError -> serverDescription
             }

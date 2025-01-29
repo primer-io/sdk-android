@@ -64,8 +64,8 @@ internal class IPayErrorMapperTest {
             }
         assertEquals(
             expected =
-                "Unsupported mapping for $exception in " +
-                    "io.primer.android.ipay88.implementation.errors.data.mapper.IPayErrorMapper",
+            "Unsupported mapping for $exception in " +
+                "io.primer.android.ipay88.implementation.errors.data.mapper.IPayErrorMapper",
             actual = error.message,
         )
     }

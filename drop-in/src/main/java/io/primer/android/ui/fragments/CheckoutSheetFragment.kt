@@ -29,6 +29,7 @@ import io.primer.android.viewmodel.PrimerViewModelFactory
 import io.primer.android.viewmodel.ViewStatus
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
+@Suppress("NestedBlockDepth")
 @ExperimentalCoroutinesApi
 internal class CheckoutSheetFragment :
     BottomSheetDialogFragment(),
@@ -40,7 +41,7 @@ internal class CheckoutSheetFragment :
 
     private val config: PrimerConfig by inject()
     private val viewModel: PrimerViewModel by
-        activityViewModel<PrimerViewModel, PrimerViewModelFactory>()
+    activityViewModel<PrimerViewModel, PrimerViewModelFactory>()
 
     @SuppressLint("RestrictedApi")
     override fun setupDialog(

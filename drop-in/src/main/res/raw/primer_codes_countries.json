@@ -44,13 +44,22 @@
     "CF": "Central African Republic",
     "TD": "Chad",
     "CL": "Chile",
-    "CN": ["People's Republic of China", "China"],
+    "CN": [
+      "People's Republic of China",
+      "China"
+    ],
     "CX": "Christmas Island",
     "CC": "Cocos (Keeling) Islands",
     "CO": "Colombia",
     "KM": "Comoros",
-    "CG": ["Republic of the Congo", "Congo"],
-    "CD": ["Democratic Republic of the Congo", "Congo"],
+    "CG": [
+      "Republic of the Congo",
+      "Congo"
+    ],
+    "CD": [
+      "Democratic Republic of the Congo",
+      "Congo"
+    ],
     "CK": "Cook Islands",
     "CR": "Costa Rica",
     "CI": "Cote D'Ivoire",
@@ -78,7 +87,11 @@
     "PF": "French Polynesia",
     "TF": "French Southern Territories",
     "GA": "Gabon",
-    "GM": ["Republic of The Gambia", "The Gambia", "Gambia"],
+    "GM": [
+      "Republic of The Gambia",
+      "The Gambia",
+      "Gambia"
+    ],
     "GE": "Georgia",
     "DE": "Germany",
     "GH": "Ghana",
@@ -101,7 +114,10 @@
     "IS": "Iceland",
     "IN": "India",
     "ID": "Indonesia",
-    "IR": ["Islamic Republic of Iran", "Iran"],
+    "IR": [
+      "Islamic Republic of Iran",
+      "Iran"
+    ],
     "IQ": "Iraq",
     "IE": "Ireland",
     "IL": "Israel",
@@ -157,13 +173,19 @@
     "NG": "Nigeria",
     "NU": "Niue",
     "NF": "Norfolk Island",
-    "MK": ["The Republic of North Macedonia", "North Macedonia"],
+    "MK": [
+      "The Republic of North Macedonia",
+      "North Macedonia"
+    ],
     "MP": "Northern Mariana Islands",
     "NO": "Norway",
     "OM": "Oman",
     "PK": "Pakistan",
     "PW": "Palau",
-    "PS": ["State of Palestine", "Palestine"],
+    "PS": [
+      "State of Palestine",
+      "Palestine"
+    ],
     "PA": "Panama",
     "PG": "Papua New Guinea",
     "PY": "Paraguay",
@@ -176,7 +198,10 @@
     "QA": "Qatar",
     "RE": "Reunion",
     "RO": "Romania",
-    "RU": ["Russian Federation", "Russia"],
+    "RU": [
+      "Russian Federation",
+      "Russia"
+    ],
     "RW": "Rwanda",
     "SH": "Saint Helena",
     "KN": "Saint Kitts and Nevis",
@@ -206,9 +231,15 @@
     "SE": "Sweden",
     "CH": "Switzerland",
     "SY": "Syrian Arab Republic",
-    "TW": ["Taiwan, Province of China", "Taiwan"],
+    "TW": [
+      "Taiwan, Province of China",
+      "Taiwan"
+    ],
     "TJ": "Tajikistan",
-    "TZ": ["United Republic of Tanzania", "Tanzania"],
+    "TZ": [
+      "United Republic of Tanzania",
+      "Tanzania"
+    ],
     "TH": "Thailand",
     "TL": "Timor-Leste",
     "TG": "Togo",
@@ -223,8 +254,16 @@
     "UG": "Uganda",
     "UA": "Ukraine",
     "AE": "United Arab Emirates",
-    "GB": ["United Kingdom", "UK", "Great Britain"],
-    "US": ["United States of America", "United States", "USA"],
+    "GB": [
+      "United Kingdom",
+      "UK",
+      "Great Britain"
+    ],
+    "US": [
+      "United States of America",
+      "United States",
+      "USA"
+    ],
     "UM": "United States Minor Outlying Islands",
     "UY": "Uruguay",
     "UZ": "Uzbekistan",

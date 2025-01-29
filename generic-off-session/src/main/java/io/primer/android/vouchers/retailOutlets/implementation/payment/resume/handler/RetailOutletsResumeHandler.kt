@@ -31,11 +31,11 @@ internal class RetailOutletsResumeHandler(
     private val tokenizedPaymentMethodRepository: TokenizedPaymentMethodRepository,
     checkoutAdditionalInfoHandler: CheckoutAdditionalInfoHandler,
 ) : PrimerResumeDecisionHandlerV2<RetailOutletsDecision, RetailOutletsClientToken>(
-        clientTokenRepository = clientTokenRepository,
-        validateClientTokenRepository = validateClientTokenRepository,
-        clientTokenParser = clientTokenParser,
-        checkoutAdditionalInfoHandler = checkoutAdditionalInfoHandler,
-    ) {
+    clientTokenRepository = clientTokenRepository,
+    validateClientTokenRepository = validateClientTokenRepository,
+    clientTokenParser = clientTokenParser,
+    checkoutAdditionalInfoHandler = checkoutAdditionalInfoHandler,
+) {
     private val dateFormatISO = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
     private val expiresDateFormat =
         DateFormat.getDateTimeInstance(
@@ -50,19 +50,19 @@ internal class RetailOutletsResumeHandler(
     override suspend fun getResumeDecision(clientToken: RetailOutletsClientToken): RetailOutletsDecision {
         return RetailOutletsDecision(
             expiresAt =
-                clientToken.expiresAt.let {
-                    dateFormatISO.parse(it).let { expiresAt ->
-                        expiresDateFormat.format(expiresAt)
-                    }
-                },
+            clientToken.expiresAt.let {
+                dateFormatISO.parse(it).let { expiresAt ->
+                    expiresDateFormat.format(expiresAt)
+                }
+            },
             reference = clientToken.reference,
             entity = clientToken.entity,
             retailerName =
-                retailOutletRepository.getCachedRetailOutlets().first { retailOutlet ->
-                    retailOutlet.id ==
-                        tokenizedPaymentMethodRepository.getPaymentMethod()
-                            .paymentInstrumentData?.sessionInfo?.retailOutlet
-                }.name,
+            retailOutletRepository.getCachedRetailOutlets().first { retailOutlet ->
+                retailOutlet.id ==
+                    tokenizedPaymentMethodRepository.getPaymentMethod()
+                        .paymentInstrumentData?.sessionInfo?.retailOutlet
+            }.name,
         ).also { decision ->
             checkoutAdditionalInfo =
                 XenditCheckoutVoucherAdditionalInfo(

@@ -15,8 +15,8 @@ internal class DefaultPaypalTokenizationInteractor(
     preTokenizationHandler: PreTokenizationHandler,
     logReporter: LogReporter,
 ) : TokenizationInteractor<PaypalPaymentInstrumentParams>(
-        tokenizationRepository = tokenizationRepository,
-        tokenizedPaymentMethodRepository = tokenizedPaymentMethodRepository,
-        preTokenizationHandler = preTokenizationHandler,
-        logReporter = logReporter,
-    )
+    tokenizationRepository = tokenizationRepository,
+    tokenizedPaymentMethodRepository = tokenizedPaymentMethodRepository,
+    preTokenizationHandler = preTokenizationHandler,
+    logReporter = logReporter,
+)

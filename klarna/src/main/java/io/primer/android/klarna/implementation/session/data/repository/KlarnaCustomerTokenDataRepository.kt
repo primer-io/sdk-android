@@ -32,23 +32,23 @@ internal class KlarnaCustomerTokenDataRepository(
                 BaseRemoteHostRequest(
                     host = configurationDataSource.get().coreUrl,
                     data =
-                        CreateCustomerTokenDataRequest(
-                            paymentMethodConfigId =
-                                requireNotNullCheck(
-                                    configurationDataSource.get().paymentMethods
-                                        .first { it.type == PaymentMethodType.KLARNA.name }.id,
-                                    KlarnaIllegalValueKey.PAYMENT_METHOD_CONFIG_ID,
-                                ),
-                            sessionId = params.sessionId,
-                            authorizationToken = params.authorizationToken,
-                            description = recurringPaymentDescription,
-                            localeData =
-                                LocaleDataRequest(
-                                    order.countryCode,
-                                    order.currencyCode.orEmpty(),
-                                    config.settings.locale.toLanguageTag(),
-                                ),
+                    CreateCustomerTokenDataRequest(
+                        paymentMethodConfigId =
+                        requireNotNullCheck(
+                            configurationDataSource.get().paymentMethods
+                                .first { it.type == PaymentMethodType.KLARNA.name }.id,
+                            KlarnaIllegalValueKey.PAYMENT_METHOD_CONFIG_ID,
                         ),
+                        sessionId = params.sessionId,
+                        authorizationToken = params.authorizationToken,
+                        description = recurringPaymentDescription,
+                        localeData =
+                        LocaleDataRequest(
+                            order.countryCode,
+                            order.currencyCode.orEmpty(),
+                            config.settings.locale.toLanguageTag(),
+                        ),
+                    ),
                 ),
             )
         }.recoverCatching {

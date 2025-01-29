@@ -11,6 +11,7 @@ import io.primer.android.domain.tokenization.models.PrimerPaymentMethodTokenData
 import io.primer.android.payments.core.additionalInfo.PrimerCheckoutAdditionalInfo
 import io.primer.android.stripe.ach.implementation.errors.domain.model.StripeError
 
+@Suppress("TooManyFunctions")
 @JvmDefaultWithCompatibility
 interface PrimerCheckoutListener {
     fun onTokenizeSuccess(

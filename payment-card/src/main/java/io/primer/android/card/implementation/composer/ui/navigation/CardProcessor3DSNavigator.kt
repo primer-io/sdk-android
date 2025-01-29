@@ -15,9 +15,9 @@ internal data class CardProcessor3DSActivityLauncherParams(
     val statusUrl: String,
     val title: String,
 ) : PaymentMethodRedirectLauncherParams(
-        paymentMethodType,
-        PrimerSessionIntent.CHECKOUT,
-    )
+    paymentMethodType,
+    PrimerSessionIntent.CHECKOUT,
+)
 
 internal data class CardProcessor3DSNavigator(
     private val context: Activity,

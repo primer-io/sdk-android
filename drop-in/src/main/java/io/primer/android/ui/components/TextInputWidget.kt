@@ -22,11 +22,11 @@ internal class TextInputWidget(ctx: Context, attrs: AttributeSet? = null) :
     internal var onValueChanged: (CharSequence?) -> Unit = {}
 
     private val theme: PrimerTheme by
-        if (isInEditMode) {
-            lazy { PrimerTheme.build() }
-        } else {
-            inject()
-        }
+    if (isInEditMode) {
+        lazy { PrimerTheme.build() }
+    } else {
+        inject()
+    }
 
     init {
         val colors =
@@ -73,6 +73,7 @@ internal class TextInputWidget(ctx: Context, attrs: AttributeSet? = null) :
                 PrimerTheme.InputMode.OUTLINED -> {
                     BOX_BACKGROUND_OUTLINE
                 }
+
                 PrimerTheme.InputMode.UNDERLINED -> {
                     boxBackgroundColor = theme.input.backgroundColor.getColor(context, theme.isDarkMode)
                     BOX_BACKGROUND_FILLED

@@ -16,20 +16,20 @@ internal class IPay88ComposerProviderFactory : PaymentMethodComposerProvider.Fac
     ): PaymentMethodComposer {
         return IPay88Component(
             tokenizationDelegate =
-                IPay88TokenizationDelegate(
-                    configurationInteractor = resolve(name = paymentMethodType),
-                    tokenizationInteractor = resolve(name = paymentMethodType),
-                ),
+            IPay88TokenizationDelegate(
+                configurationInteractor = resolve(name = paymentMethodType),
+                tokenizationInteractor = resolve(name = paymentMethodType),
+            ),
             pollingInteractor = resolve(PaymentsContainer.POLLING_INTERACTOR_DI_KEY),
             paymentDelegate =
-                IPay88PaymentDelegate(
-                    paymentMethodTokenHandler = resolve(),
-                    resumePaymentHandler = resolve(),
-                    successHandler = resolve(),
-                    errorHandler = resolve(),
-                    baseErrorResolver = resolve(),
-                    resumeHandler = resolve(),
-                ),
+            IPay88PaymentDelegate(
+                paymentMethodTokenHandler = resolve(),
+                resumePaymentHandler = resolve(),
+                successHandler = resolve(),
+                errorHandler = resolve(),
+                baseErrorResolver = resolve(),
+                resumeHandler = resolve(),
+            ),
             mockConfigurationDelegate = resolve(),
         )
     }

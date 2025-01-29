@@ -85,17 +85,17 @@ internal class RetailOutletsResumeHandlerTest {
         val expectedDecision =
             RetailOutletsDecision(
                 expiresAt =
-                    expiresDateFormat.format(
-                        SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault()).parse(clientToken.expiresAt),
-                    ),
+                expiresDateFormat.format(
+                    SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault()).parse(clientToken.expiresAt),
+                ),
                 reference = clientToken.reference,
                 entity = clientToken.entity,
                 retailerName =
-                    retailOutletRepository.getCachedRetailOutlets().first { retailOutlet ->
-                        retailOutlet.id ==
-                            tokenizedPaymentMethodRepository.getPaymentMethod()
-                                .paymentInstrumentData?.sessionInfo?.retailOutlet
-                    }.name,
+                retailOutletRepository.getCachedRetailOutlets().first { retailOutlet ->
+                    retailOutlet.id ==
+                        tokenizedPaymentMethodRepository.getPaymentMethod()
+                            .paymentInstrumentData?.sessionInfo?.retailOutlet
+                }.name,
             )
 
         runTest {

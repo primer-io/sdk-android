@@ -27,6 +27,7 @@ import io.primer.android.ui.settings.PrimerTheme
 import io.primer.android.utils.hideKeyboard
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
+@Suppress("TooManyFunctions")
 @OptIn(ExperimentalCoroutinesApi::class)
 internal class VaultedPaymentMethodsCvvRecaptureFragment : BaseFragment() {
     private var binding: PrimerFragmentVaultedPaymentMethodCvvRecaptureBinding by autoCleaned()
@@ -186,9 +187,9 @@ internal class VaultedPaymentMethodsCvvRecaptureFragment : BaseFragment() {
                 objectType = ObjectType.VIEW,
                 place = Place.CVV_RECAPTURE_VIEW,
                 context =
-                    primerViewModel.selectedSavedPaymentMethod?.paymentMethodType?.let {
-                        PaymentMethodContextParams(it)
-                    },
+                primerViewModel.selectedSavedPaymentMethod?.paymentMethodType?.let {
+                    PaymentMethodContextParams(it)
+                },
             ),
         )
 
@@ -200,9 +201,9 @@ internal class VaultedPaymentMethodsCvvRecaptureFragment : BaseFragment() {
                 place = Place.CVV_RECAPTURE_VIEW,
                 objectId = ObjectId.BACK,
                 context =
-                    primerViewModel.selectedSavedPaymentMethod?.paymentMethodType?.let {
-                        PaymentMethodContextParams(it)
-                    },
+                primerViewModel.selectedSavedPaymentMethod?.paymentMethodType?.let {
+                    PaymentMethodContextParams(it)
+                },
             ),
         )
 
@@ -214,9 +215,9 @@ internal class VaultedPaymentMethodsCvvRecaptureFragment : BaseFragment() {
                 place = Place.CVV_RECAPTURE_VIEW,
                 objectId = ObjectId.SUBMIT,
                 context =
-                    primerViewModel.selectedSavedPaymentMethod?.paymentMethodType?.let {
-                        PaymentMethodContextParams(it)
-                    },
+                primerViewModel.selectedSavedPaymentMethod?.paymentMethodType?.let {
+                    PaymentMethodContextParams(it)
+                },
             ),
         )
 
@@ -227,9 +228,9 @@ internal class VaultedPaymentMethodsCvvRecaptureFragment : BaseFragment() {
                 objectType = ObjectType.VIEW,
                 place = Place.CVV_RECAPTURE_VIEW,
                 context =
-                    primerViewModel.selectedSavedPaymentMethod?.paymentMethodType?.let {
-                        PaymentMethodContextParams(it)
-                    },
+                primerViewModel.selectedSavedPaymentMethod?.paymentMethodType?.let {
+                    PaymentMethodContextParams(it)
+                },
             ),
         )
 

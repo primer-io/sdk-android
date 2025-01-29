@@ -73,7 +73,7 @@ class NolPayUnlinkPhoneInputFragment : Fragment() {
                                 validationStatus.validationErrors.firstOrNull()?.description
                         }
 
-                       is PrimerValidationStatus.Validating -> {
+                        is PrimerValidationStatus.Validating -> {
                             binding.nextButton.isEnabled = false
                             binding.progressBar.isVisible = true
                         }

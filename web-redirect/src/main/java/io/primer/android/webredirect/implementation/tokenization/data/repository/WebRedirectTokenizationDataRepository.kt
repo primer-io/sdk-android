@@ -13,7 +13,7 @@ internal class WebRedirectTokenizationDataRepository(
     cacheDataSource: BaseCacheDataSource<ConfigurationData, ConfigurationData>,
     tokenizationParamsMapper: WebRedirectTokenizationParamsMapper,
 ) : TokenizationDataRepository<WebRedirectPaymentInstrumentParams, WebRedirectPaymentInstrumentDataRequest>(
-        remoteTokenizationDataSource = remoteTokenizationDataSource,
-        cacheDataSource = cacheDataSource,
-        tokenizationParamsMapper = tokenizationParamsMapper,
-    )
+    remoteTokenizationDataSource = remoteTokenizationDataSource,
+    cacheDataSource = cacheDataSource,
+    tokenizationParamsMapper = tokenizationParamsMapper,
+)

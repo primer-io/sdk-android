@@ -12,7 +12,6 @@ internal class AutoClearedValue<T : Any>(
     fragment: Fragment,
     private val initializer: (() -> T)?,
 ) : ReadWriteProperty<Fragment, T> {
-    @Suppress("ktlint:standard:property-naming")
     private var _value: T? = null
 
     init {
@@ -45,10 +44,12 @@ internal class AutoClearedValue<T : Any>(
                             fragment.viewLifecycleOwnerLiveData.observeForever(
                                 viewLifecycleOwnerObserver,
                             )
+
                         Lifecycle.Event.ON_DESTROY ->
                             fragment.viewLifecycleOwnerLiveData.removeObserver(
                                 viewLifecycleOwnerObserver,
                             )
+
                         else -> Unit
                     }
                 }

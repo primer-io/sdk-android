@@ -31,4 +31,8 @@ detekt {
     }
 }
 
+dependencies {
+    detektPlugins(libs.detekt.formatting)
+}
+
 tasks.detekt.jvmTarget = projectJvmTarget

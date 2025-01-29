@@ -342,10 +342,10 @@ class CardComponentTest {
         val threeDsInitialLauncherParams =
             ProcessorThreeDsInitialLauncherParams(
                 processor3DS =
-                    Processor3DS(
-                        redirectUrl = "https://www.example.com/redirect",
-                        statusUrl = "https://www.example.com/status",
-                    ),
+                Processor3DS(
+                    redirectUrl = "https://www.example.com/redirect",
+                    statusUrl = "https://www.example.com/status",
+                ),
             )
         val params =
             PaymentMethodLauncherParams(
@@ -375,10 +375,10 @@ class CardComponentTest {
         val threeDsInitialLauncherParams =
             ProcessorThreeDsInitialLauncherParams(
                 processor3DS =
-                    Processor3DS(
-                        redirectUrl = "https://www.example.com/redirect",
-                        statusUrl = "https://www.example.com/status",
-                    ),
+                Processor3DS(
+                    redirectUrl = "https://www.example.com/redirect",
+                    statusUrl = "https://www.example.com/status",
+                ),
             )
         val params =
             PaymentMethodLauncherParams(

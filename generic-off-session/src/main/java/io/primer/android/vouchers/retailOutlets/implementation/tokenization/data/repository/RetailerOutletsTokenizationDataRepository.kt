@@ -13,7 +13,7 @@ internal class RetailerOutletsTokenizationDataRepository(
     configurationDataSource: BaseCacheDataSource<ConfigurationData, ConfigurationData>,
     tokenizationParamsMapper: RetailOutletsTokenizationParamsMapper,
 ) : TokenizationDataRepository<RetailOutletsPaymentInstrumentParams, RetailOutletsPaymentInstrumentDataRequest>(
-        remoteTokenizationDataSource,
-        configurationDataSource,
-        tokenizationParamsMapper,
-    )
+    remoteTokenizationDataSource,
+    configurationDataSource,
+    tokenizationParamsMapper,
+)

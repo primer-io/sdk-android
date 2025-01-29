@@ -29,12 +29,12 @@ internal class PaymentDecisionResolver(
             paymentResult.paymentStatus == PaymentStatus.FAILED -> {
                 PaymentDecision.Error(
                     error =
-                        PaymentError.PaymentFailedError(
-                            paymentId = paymentResult.payment.id,
-                            paymentStatus = paymentResult.paymentStatus,
-                            paymentMethodType =
-                                tokenizedPaymentMethodRepository.getPaymentMethod().paymentMethodType.orEmpty(),
-                        ),
+                    PaymentError.PaymentFailedError(
+                        paymentId = paymentResult.payment.id,
+                        paymentStatus = paymentResult.paymentStatus,
+                        paymentMethodType =
+                        tokenizedPaymentMethodRepository.getPaymentMethod().paymentMethodType.orEmpty(),
+                    ),
                     payment = paymentResult.payment,
                 )
             }

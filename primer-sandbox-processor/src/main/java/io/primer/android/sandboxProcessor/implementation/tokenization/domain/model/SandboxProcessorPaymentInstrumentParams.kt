@@ -9,8 +9,8 @@ internal data class SandboxProcessorPaymentInstrumentParams(
     override val locale: String,
     val flowDecision: String,
 ) : BaseAsyncPaymentInstrumentParams(
-        paymentMethodType,
-        paymentMethodConfigId,
-        locale,
-        PaymentInstrumentType.OFF_SESSION_PAYMENT,
-    )
+    paymentMethodType,
+    paymentMethodConfigId,
+    locale,
+    PaymentInstrumentType.OFF_SESSION_PAYMENT,
+)

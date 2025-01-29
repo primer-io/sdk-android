@@ -17,8 +17,8 @@ internal class NolPayTokenizationDelegate(
     private val configurationInteractor: NolPayConfigurationInteractor,
     tokenizationInteractor: NolPayTokenizationInteractor,
 ) : PaymentMethodTokenizationDelegate<NolPayTokenizationInputable, NolPayPaymentInstrumentParams>(
-        tokenizationInteractor,
-    ),
+    tokenizationInteractor,
+),
     TokenizationCollectedDataMapper<NolPayTokenizationInputable, NolPayPaymentInstrumentParams> {
     override suspend fun mapTokenizationData(
         input: NolPayTokenizationInputable,

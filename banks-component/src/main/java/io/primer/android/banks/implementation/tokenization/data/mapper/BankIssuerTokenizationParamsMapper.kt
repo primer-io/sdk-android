@@ -18,11 +18,11 @@ internal class BankIssuerTokenizationParamsMapper :
                 paymentMethodType = params.paymentInstrumentParams.paymentMethodType,
                 paymentMethodConfigId = params.paymentInstrumentParams.paymentMethodConfigId,
                 sessionInfo =
-                    BankIssuerSessionInfoDataRequest(
-                        redirectionUrl = params.paymentInstrumentParams.redirectionUrl,
-                        locale = params.paymentInstrumentParams.locale,
-                        issuer = params.paymentInstrumentParams.bankIssuer,
-                    ),
+                BankIssuerSessionInfoDataRequest(
+                    redirectionUrl = params.paymentInstrumentParams.redirectionUrl,
+                    locale = params.paymentInstrumentParams.locale,
+                    issuer = params.paymentInstrumentParams.bankIssuer,
+                ),
                 type = params.paymentInstrumentParams.type,
             )
         return instrumentDataRequest.toTokenizationRequest(params.sessionIntent)

@@ -45,21 +45,21 @@ internal data class AnalyticsSdkFunctionEventRequest(
             JSONObjectDeserializer { t ->
                 AnalyticsSdkFunctionEventRequest(
                     device =
-                        t.optJSONObject(DEVICE_FIELD)?.let {
-                            JSONSerializationUtils.getJsonObjectDeserializer<DeviceData>().deserialize(
-                                it,
-                            )
-                        },
+                    t.optJSONObject(DEVICE_FIELD)?.let {
+                        JSONSerializationUtils.getJsonObjectDeserializer<DeviceData>().deserialize(
+                            it,
+                        )
+                    },
                     properties =
-                        JSONSerializationUtils
-                            .getJsonObjectDeserializer<FunctionProperties>().deserialize(
-                                t.getJSONObject(PROPERTIES_FIELD),
-                            ),
+                    JSONSerializationUtils
+                        .getJsonObjectDeserializer<FunctionProperties>().deserialize(
+                            t.getJSONObject(PROPERTIES_FIELD),
+                        ),
                     appIdentifier = t.optNullableString(APP_IDENTIFIER_FIELD),
                     sdkSessionId = t.getString(SDK_SESSION_ID_FIELD),
                     sdkIntegrationType =
-                        t.optNullableString(SDK_INTEGRATION_TYPE_FIELD)
-                            ?.let { SdkIntegrationType.valueOf(it) },
+                    t.optNullableString(SDK_INTEGRATION_TYPE_FIELD)
+                        ?.let { SdkIntegrationType.valueOf(it) },
                     sdkPaymentHandling = t.optNullableString(SDK_PAYMENT_HANDLING_FIELD),
                     checkoutSessionId = t.optNullableString(CHECKOUT_SESSION_ID_FIELD),
                     clientSessionId = t.optNullableString(CLIENT_SESSION_ID_FIELD),

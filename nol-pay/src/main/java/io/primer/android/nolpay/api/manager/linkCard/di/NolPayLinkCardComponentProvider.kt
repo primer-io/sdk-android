@@ -35,9 +35,9 @@ internal class NolPayLinkCardComponentProvider : DISdkComponent {
             },
         ).get(
             key =
-                runCatching {
-                    resolve<PrimerConfig>().clientTokenBase64.orEmpty()
-                }.getOrNull() ?: NolPayLinkCardComponent::class.java.canonicalName,
+            runCatching {
+                resolve<PrimerConfig>().clientTokenBase64.orEmpty()
+            }.getOrNull() ?: NolPayLinkCardComponent::class.java.canonicalName,
             modelClass = NolPayLinkCardComponent::class.java,
         )
     }

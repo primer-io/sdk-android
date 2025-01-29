@@ -37,10 +37,10 @@
         app:constraint_referenced_ids="payment_category, check_icon" />
 
     <FrameLayout
-        android:padding="4dp"
         android:id="@+id/klarna_payment_view_container"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:padding="4dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

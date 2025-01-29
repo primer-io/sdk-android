@@ -12,7 +12,9 @@ class CountryRepository(
 
     fun getCurrency(): String = datasource.getCountry().currencyCode.name
 
-    fun setCountry(value: AppCountryCode) { datasource.setCountry(value) }
+    fun setCountry(value: AppCountryCode) {
+        datasource.setCountry(value)
+    }
 
     fun getCountries(): List<AppCountryCode> = datasource.getCountries()
 }

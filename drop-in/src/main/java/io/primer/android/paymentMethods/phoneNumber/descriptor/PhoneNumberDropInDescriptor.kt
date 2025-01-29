@@ -52,10 +52,10 @@ internal data class PhoneNumberDropInDescriptor(
 
             LoadingState(
                 imageResIs =
-                    when (uiOptions.isDarkMode) {
-                        true -> brand.iconDarkResId
-                        else -> brand.iconResId
-                    },
+                when (uiOptions.isDarkMode) {
+                    true -> brand.iconDarkResId
+                    else -> brand.iconResId
+                },
                 textResId = R.string.completeYourPaymentInTheApp,
                 args = paymentMethodName.orEmpty(),
             )

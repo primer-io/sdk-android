@@ -36,11 +36,11 @@ class AdyenBancontactTokenizationDelegateTest {
             paymentMethodType = "AdyenBancontact",
             primerSessionIntent = PrimerSessionIntent.CHECKOUT,
             cardData =
-                PrimerBancontactCardData(
-                    cardNumber = "4111111111111111",
-                    expiryDate = "12/25",
-                    cardHolderName = "John Doe",
-                ),
+            PrimerBancontactCardData(
+                cardNumber = "4111111111111111",
+                expiryDate = "12/25",
+                cardHolderName = "John Doe",
+            ),
         )
     private val adyenBancontactConfigParams = AdyenBancontactConfigParams(paymentMethodType = input.paymentMethodType)
     private val adyenBancontactConfig =

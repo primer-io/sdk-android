@@ -13,7 +13,7 @@ internal class MultibancoTokenizationDataRepository(
     configurationDataSource: BaseCacheDataSource<ConfigurationData, ConfigurationData>,
     tokenizationParamsMapper: MultibancoTokenizationParamsMapper,
 ) : TokenizationDataRepository<MultibancoPaymentInstrumentParams, MultibancoPaymentInstrumentDataRequest>(
-        remoteTokenizationDataSource,
-        configurationDataSource,
-        tokenizationParamsMapper,
-    )
+    remoteTokenizationDataSource,
+    configurationDataSource,
+    tokenizationParamsMapper,
+)

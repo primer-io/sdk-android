@@ -546,21 +546,21 @@ internal class CardFormFragment : BaseFragment() {
                 cardViewModel.onCardDataChanged(
                     PrimerCardData(
                         cardNumber =
-                            cardInputFields[PrimerInputElementType.CARD_NUMBER]?.editText?.text.toString()
-                                .sanitizedCardNumber(),
+                        cardInputFields[PrimerInputElementType.CARD_NUMBER]?.editText?.text.toString()
+                            .sanitizedCardNumber(),
                         cvv = cardInputFields[PrimerInputElementType.CVV]?.editText?.text.toString(),
                         expiryDate =
-                            cardInputFields[PrimerInputElementType.EXPIRY_DATE]?.editText?.text.toString()
-                                .let {
-                                    val parts = it.split("/")
-                                    if (parts.size != 2) {
-                                        it
-                                    } else {
-                                        "${parts[0]}/20${parts[1]}"
-                                    }
-                                },
+                        cardInputFields[PrimerInputElementType.EXPIRY_DATE]?.editText?.text.toString()
+                            .let {
+                                val parts = it.split("/")
+                                if (parts.size != 2) {
+                                    it
+                                } else {
+                                    "${parts[0]}/20${parts[1]}"
+                                }
+                            },
                         cardHolderName =
-                            cardInputFields[PrimerInputElementType.CARDHOLDER_NAME]?.editText?.text.toString(),
+                        cardInputFields[PrimerInputElementType.CARDHOLDER_NAME]?.editText?.text.toString(),
                     ),
                 )
                 validateAndShowErrorFields()

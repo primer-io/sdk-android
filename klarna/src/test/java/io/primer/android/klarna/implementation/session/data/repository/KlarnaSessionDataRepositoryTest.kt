@@ -113,17 +113,17 @@ class KlarnaSessionDataRepositoryTest {
                     BaseRemoteHostRequest(
                         host = coreUrl,
                         data =
-                            CreateVaultPaymentSessionDataRequest(
-                                paymentMethodConfigId = paymentMethodId,
-                                sessionType = KlarnaSessionType.RECURRING_PAYMENT,
-                                description = "description",
-                                localeData =
-                                    LocaleDataRequest(
-                                        countryCode = countryCode,
-                                        currencyCode = currency,
-                                        localeCode = languageTag,
-                                    ),
+                        CreateVaultPaymentSessionDataRequest(
+                            paymentMethodConfigId = paymentMethodId,
+                            sessionType = KlarnaSessionType.RECURRING_PAYMENT,
+                            description = "description",
+                            localeData =
+                            LocaleDataRequest(
+                                countryCode = countryCode,
+                                currencyCode = currency,
+                                localeCode = languageTag,
                             ),
+                        ),
                     ),
                 )
             }
@@ -192,17 +192,17 @@ class KlarnaSessionDataRepositoryTest {
                     BaseRemoteHostRequest(
                         host = coreUrl,
                         data =
-                            CreateVaultPaymentSessionDataRequest(
-                                paymentMethodConfigId = paymentMethodId,
-                                sessionType = KlarnaSessionType.RECURRING_PAYMENT,
-                                description = "description",
-                                localeData =
-                                    LocaleDataRequest(
-                                        countryCode = countryCode,
-                                        currencyCode = currency,
-                                        localeCode = languageTag,
-                                    ),
+                        CreateVaultPaymentSessionDataRequest(
+                            paymentMethodConfigId = paymentMethodId,
+                            sessionType = KlarnaSessionType.RECURRING_PAYMENT,
+                            description = "description",
+                            localeData =
+                            LocaleDataRequest(
+                                countryCode = countryCode,
+                                currencyCode = currency,
+                                localeCode = languageTag,
                             ),
+                        ),
                     ),
                 )
             }
@@ -265,17 +265,17 @@ class KlarnaSessionDataRepositoryTest {
                     BaseRemoteHostRequest(
                         host = coreUrl,
                         data =
-                            CreateVaultPaymentSessionDataRequest(
-                                paymentMethodConfigId = paymentMethodId,
-                                sessionType = KlarnaSessionType.RECURRING_PAYMENT,
-                                description = "description",
-                                localeData =
-                                    LocaleDataRequest(
-                                        countryCode = countryCode,
-                                        currencyCode = currency,
-                                        localeCode = languageTag,
-                                    ),
+                        CreateVaultPaymentSessionDataRequest(
+                            paymentMethodConfigId = paymentMethodId,
+                            sessionType = KlarnaSessionType.RECURRING_PAYMENT,
+                            description = "description",
+                            localeData =
+                            LocaleDataRequest(
+                                countryCode = countryCode,
+                                currencyCode = currency,
+                                localeCode = languageTag,
                             ),
+                        ),
                     ),
                 )
             }
@@ -356,31 +356,31 @@ class KlarnaSessionDataRepositoryTest {
                     BaseRemoteHostRequest(
                         host = coreUrl,
                         data =
-                            CreateCheckoutPaymentSessionDataRequest(
-                                paymentMethodConfigId = paymentMethodId,
-                                sessionType = KlarnaSessionType.ONE_OFF_PAYMENT,
-                                totalAmount = totalOrderAmount,
-                                localeData =
-                                    LocaleDataRequest(
-                                        countryCode = countryCode,
-                                        currencyCode = currency,
-                                        localeCode = languageTag,
-                                    ),
-                                orderItems =
-                                    listOf(
-                                        CreateCheckoutPaymentSessionDataRequest.OrderItem(
-                                            name = lineItemDescription,
-                                            unitAmount = lineItemUnitAmount,
-                                            reference = lineItemId,
-                                            quantity = lineItemQuantity,
-                                            discountAmount = lineItemDiscountAmount,
-                                            productType = lineItemProductType,
-                                            taxAmount = lineItemTaxAmount,
-                                        ),
-                                    ),
-                                billingAddress = null,
-                                shippingAddress = null,
+                        CreateCheckoutPaymentSessionDataRequest(
+                            paymentMethodConfigId = paymentMethodId,
+                            sessionType = KlarnaSessionType.ONE_OFF_PAYMENT,
+                            totalAmount = totalOrderAmount,
+                            localeData =
+                            LocaleDataRequest(
+                                countryCode = countryCode,
+                                currencyCode = currency,
+                                localeCode = languageTag,
                             ),
+                            orderItems =
+                            listOf(
+                                CreateCheckoutPaymentSessionDataRequest.OrderItem(
+                                    name = lineItemDescription,
+                                    unitAmount = lineItemUnitAmount,
+                                    reference = lineItemId,
+                                    quantity = lineItemQuantity,
+                                    discountAmount = lineItemDiscountAmount,
+                                    productType = lineItemProductType,
+                                    taxAmount = lineItemTaxAmount,
+                                ),
+                            ),
+                            billingAddress = null,
+                            shippingAddress = null,
+                        ),
                     ),
                 )
             }
@@ -467,40 +467,40 @@ class KlarnaSessionDataRepositoryTest {
                     BaseRemoteHostRequest(
                         host = coreUrl,
                         data =
-                            CreateCheckoutPaymentSessionDataRequest(
-                                paymentMethodConfigId = paymentMethodId,
-                                sessionType = KlarnaSessionType.ONE_OFF_PAYMENT,
-                                totalAmount = totalOrderAmount,
-                                localeData =
-                                    LocaleDataRequest(
-                                        countryCode = countryCode,
-                                        currencyCode = currency,
-                                        localeCode = languageTag,
-                                    ),
-                                orderItems =
-                                    listOf(
-                                        CreateCheckoutPaymentSessionDataRequest.OrderItem(
-                                            name = lineItemDescription,
-                                            unitAmount = lineItemUnitAmount,
-                                            reference = lineItemId,
-                                            quantity = lineItemQuantity,
-                                            discountAmount = lineItemDiscountAmount,
-                                            productType = lineItemProductType,
-                                            taxAmount = lineItemTaxAmount,
-                                        ),
-                                        CreateCheckoutPaymentSessionDataRequest.OrderItem(
-                                            name = "surcharge",
-                                            unitAmount = 140,
-                                            reference = null,
-                                            quantity = 1,
-                                            discountAmount = null,
-                                            productType = "surcharge",
-                                            taxAmount = null,
-                                        ),
-                                    ),
-                                billingAddress = null,
-                                shippingAddress = null,
+                        CreateCheckoutPaymentSessionDataRequest(
+                            paymentMethodConfigId = paymentMethodId,
+                            sessionType = KlarnaSessionType.ONE_OFF_PAYMENT,
+                            totalAmount = totalOrderAmount,
+                            localeData =
+                            LocaleDataRequest(
+                                countryCode = countryCode,
+                                currencyCode = currency,
+                                localeCode = languageTag,
                             ),
+                            orderItems =
+                            listOf(
+                                CreateCheckoutPaymentSessionDataRequest.OrderItem(
+                                    name = lineItemDescription,
+                                    unitAmount = lineItemUnitAmount,
+                                    reference = lineItemId,
+                                    quantity = lineItemQuantity,
+                                    discountAmount = lineItemDiscountAmount,
+                                    productType = lineItemProductType,
+                                    taxAmount = lineItemTaxAmount,
+                                ),
+                                CreateCheckoutPaymentSessionDataRequest.OrderItem(
+                                    name = "surcharge",
+                                    unitAmount = 140,
+                                    reference = null,
+                                    quantity = 1,
+                                    discountAmount = null,
+                                    productType = "surcharge",
+                                    taxAmount = null,
+                                ),
+                            ),
+                            billingAddress = null,
+                            shippingAddress = null,
+                        ),
                     ),
                 )
             }
@@ -589,31 +589,31 @@ class KlarnaSessionDataRepositoryTest {
                     BaseRemoteHostRequest(
                         host = coreUrl,
                         data =
-                            CreateCheckoutPaymentSessionDataRequest(
-                                paymentMethodConfigId = paymentMethodId,
-                                sessionType = KlarnaSessionType.ONE_OFF_PAYMENT,
-                                totalAmount = totalOrderAmount,
-                                localeData =
-                                    LocaleDataRequest(
-                                        countryCode = countryCode,
-                                        currencyCode = currency,
-                                        localeCode = languageTag,
-                                    ),
-                                orderItems =
-                                    listOf(
-                                        CreateCheckoutPaymentSessionDataRequest.OrderItem(
-                                            name = lineItemDescription,
-                                            unitAmount = lineItemUnitAmount,
-                                            reference = lineItemId,
-                                            quantity = lineItemQuantity,
-                                            discountAmount = lineItemDiscountAmount,
-                                            productType = lineItemProductType,
-                                            taxAmount = lineItemTaxAmount,
-                                        ),
-                                    ),
-                                billingAddress = null,
-                                shippingAddress = null,
+                        CreateCheckoutPaymentSessionDataRequest(
+                            paymentMethodConfigId = paymentMethodId,
+                            sessionType = KlarnaSessionType.ONE_OFF_PAYMENT,
+                            totalAmount = totalOrderAmount,
+                            localeData =
+                            LocaleDataRequest(
+                                countryCode = countryCode,
+                                currencyCode = currency,
+                                localeCode = languageTag,
                             ),
+                            orderItems =
+                            listOf(
+                                CreateCheckoutPaymentSessionDataRequest.OrderItem(
+                                    name = lineItemDescription,
+                                    unitAmount = lineItemUnitAmount,
+                                    reference = lineItemId,
+                                    quantity = lineItemQuantity,
+                                    discountAmount = lineItemDiscountAmount,
+                                    productType = lineItemProductType,
+                                    taxAmount = lineItemTaxAmount,
+                                ),
+                            ),
+                            billingAddress = null,
+                            shippingAddress = null,
+                        ),
                     ),
                 )
             }
@@ -696,31 +696,31 @@ class KlarnaSessionDataRepositoryTest {
                     BaseRemoteHostRequest(
                         host = coreUrl,
                         data =
-                            CreateCheckoutPaymentSessionDataRequest(
-                                paymentMethodConfigId = paymentMethodId,
-                                sessionType = KlarnaSessionType.ONE_OFF_PAYMENT,
-                                totalAmount = totalOrderAmount,
-                                localeData =
-                                    LocaleDataRequest(
-                                        countryCode = countryCode,
-                                        currencyCode = currency,
-                                        localeCode = languageTag,
-                                    ),
-                                orderItems =
-                                    listOf(
-                                        CreateCheckoutPaymentSessionDataRequest.OrderItem(
-                                            name = lineItemDescription,
-                                            unitAmount = lineItemUnitAmount,
-                                            reference = lineItemId,
-                                            quantity = lineItemQuantity,
-                                            discountAmount = lineItemDiscountAmount,
-                                            productType = lineItemProductType,
-                                            taxAmount = lineItemTaxAmount,
-                                        ),
-                                    ),
-                                billingAddress = null,
-                                shippingAddress = null,
+                        CreateCheckoutPaymentSessionDataRequest(
+                            paymentMethodConfigId = paymentMethodId,
+                            sessionType = KlarnaSessionType.ONE_OFF_PAYMENT,
+                            totalAmount = totalOrderAmount,
+                            localeData =
+                            LocaleDataRequest(
+                                countryCode = countryCode,
+                                currencyCode = currency,
+                                localeCode = languageTag,
                             ),
+                            orderItems =
+                            listOf(
+                                CreateCheckoutPaymentSessionDataRequest.OrderItem(
+                                    name = lineItemDescription,
+                                    unitAmount = lineItemUnitAmount,
+                                    reference = lineItemId,
+                                    quantity = lineItemQuantity,
+                                    discountAmount = lineItemDiscountAmount,
+                                    productType = lineItemProductType,
+                                    taxAmount = lineItemTaxAmount,
+                                ),
+                            ),
+                            billingAddress = null,
+                            shippingAddress = null,
+                        ),
                     ),
                 )
             }

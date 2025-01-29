@@ -33,9 +33,9 @@ internal class QrCodeTokenizationParamsMapperTest {
                 paymentMethodType = paymentMethodType,
                 paymentMethodConfigId = "testPaymentMethodConfigId",
                 sessionInfo =
-                    QrCodeSessionInfoDataRequest(
-                        locale = "testLocale",
-                    ),
+                QrCodeSessionInfoDataRequest(
+                    locale = "testLocale",
+                ),
                 type = PaymentInstrumentType.OFF_SESSION_PAYMENT,
             )
 

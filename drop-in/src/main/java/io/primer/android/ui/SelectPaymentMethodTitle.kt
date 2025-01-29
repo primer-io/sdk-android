@@ -36,6 +36,7 @@ internal class SelectPaymentMethodTitle(
                     PrimerSessionIntent.CHECKOUT -> {
                         amount
                     }
+
                     PrimerSessionIntent.VAULT ->
                         "" // this is for displaying amount, title sits above
                     else -> ""

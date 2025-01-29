@@ -38,11 +38,11 @@ internal class MultibancoTokenizationDelegateTest {
             val expected =
                 TokenizationParams(
                     paymentInstrumentParams =
-                        MultibancoPaymentInstrumentParams(
-                            paymentMethodType = input.paymentMethodType,
-                            paymentMethodConfigId = config.paymentMethodConfigId,
-                            locale = config.locale,
-                        ),
+                    MultibancoPaymentInstrumentParams(
+                        paymentMethodType = input.paymentMethodType,
+                        paymentMethodConfigId = config.paymentMethodConfigId,
+                        locale = config.locale,
+                    ),
                     sessionIntent = input.primerSessionIntent,
                 )
 

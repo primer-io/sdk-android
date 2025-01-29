@@ -44,18 +44,18 @@ internal data class AnalyticsUIEventRequest(
             JSONObjectDeserializer { t ->
                 AnalyticsUIEventRequest(
                     device =
-                        JSONSerializationUtils.getJsonObjectDeserializer<DeviceData>().deserialize(
-                            t.getJSONObject(DEVICE_FIELD),
-                        ),
+                    JSONSerializationUtils.getJsonObjectDeserializer<DeviceData>().deserialize(
+                        t.getJSONObject(DEVICE_FIELD),
+                    ),
                     properties =
-                        JSONSerializationUtils.getJsonObjectDeserializer<UIProperties>().deserialize(
-                            t.getJSONObject(PROPERTIES_FIELD),
-                        ),
+                    JSONSerializationUtils.getJsonObjectDeserializer<UIProperties>().deserialize(
+                        t.getJSONObject(PROPERTIES_FIELD),
+                    ),
                     appIdentifier = t.getString(APP_IDENTIFIER_FIELD),
                     sdkSessionId = t.getString(SDK_SESSION_ID_FIELD),
                     sdkIntegrationType =
-                        t.optNullableString(SDK_INTEGRATION_TYPE_FIELD)
-                            ?.let { SdkIntegrationType.valueOf(it) },
+                    t.optNullableString(SDK_INTEGRATION_TYPE_FIELD)
+                        ?.let { SdkIntegrationType.valueOf(it) },
                     sdkPaymentHandling = t.optNullableString(SDK_PAYMENT_HANDLING_FIELD),
                     checkoutSessionId = t.getString(CHECKOUT_SESSION_ID_FIELD),
                     clientSessionId = t.optNullableString(CLIENT_SESSION_ID_FIELD),
@@ -127,7 +127,7 @@ enum class AnalyticsAction {
     DISMISS,
 }
 
-@Suppress("EnumEntryName")
+@Suppress("EnumEntryName", "EnumNaming")
 enum class ObjectType {
     BUTTON,
     LABEL,
@@ -161,7 +161,7 @@ enum class ObjectId {
     EXPIRY,
 }
 
-@Suppress("EnumEntryName")
+@Suppress("EnumEntryName", "EnumNaming")
 enum class Place {
     PAYMENT_METHODS_LIST, // The vaulted payment methods
     UNIVERSAL_CHECKOUT,

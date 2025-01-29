@@ -2,6 +2,7 @@ package io.primer.android.core.di
 
 import kotlin.reflect.KClass
 
+@Suppress("TooManyFunctions")
 abstract class DependencyContainer {
     data class Key(val name: String, val type: KClass<*>)
 

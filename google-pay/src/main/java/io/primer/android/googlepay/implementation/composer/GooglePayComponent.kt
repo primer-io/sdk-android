@@ -44,6 +44,7 @@ import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.launch
 import kotlin.coroutines.cancellation.CancellationException
 
+@Suppress("LongParameterList")
 internal class GooglePayComponent(
     private val tokenizationCollectorDelegate: GooglePayTokenizationCollectorDelegate,
     private val tokenizationDelegate: GooglePayTokenizationDelegate,

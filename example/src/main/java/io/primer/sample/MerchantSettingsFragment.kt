@@ -115,6 +115,7 @@ class MerchantSettingsFragment : Fragment() {
                             viewModel.setVaultOnSuccess(false)
                             viewModel.setVaultOnAgreement(false)
                         }
+
                         CHECKOUT_VAULT_ON_AGREEMENT -> viewModel.setVaultOnAgreement(true)
                         CHECKOUT_VAULT_ON_SUCCESS -> viewModel.setVaultOnSuccess(true)
                     }

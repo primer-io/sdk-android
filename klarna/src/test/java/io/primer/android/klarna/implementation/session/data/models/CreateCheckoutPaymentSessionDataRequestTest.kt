@@ -69,22 +69,22 @@ internal class CreateCheckoutPaymentSessionDataRequestTest {
                 sessionType = KlarnaSessionType.ONE_OFF_PAYMENT,
                 totalAmount = 200,
                 localeData =
-                    LocaleDataRequest(
-                        countryCode = CountryCode.US,
-                        currencyCode = "USD",
-                        localeCode = "en_US",
-                    ),
+                LocaleDataRequest(
+                    countryCode = CountryCode.US,
+                    currencyCode = "USD",
+                    localeCode = "en_US",
+                ),
                 orderItems = items,
                 billingAddress =
-                    AddressData(
-                        firstName = "firstName",
-                        lastName = "lastName",
-                    ),
+                AddressData(
+                    firstName = "firstName",
+                    lastName = "lastName",
+                ),
                 shippingAddress =
-                    AddressData(
-                        firstName = "firstName",
-                        lastName = "lastName",
-                    ),
+                AddressData(
+                    firstName = "firstName",
+                    lastName = "lastName",
+                ),
             )
 
         val localeDataJson =

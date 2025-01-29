@@ -26,12 +26,12 @@ internal class MultibancoPaymentDelegate(
     baseErrorResolver: BaseErrorResolver,
     private val resumeHandler: MultibancoResumeHandler,
 ) : PaymentMethodPaymentDelegate(
-        paymentMethodTokenHandler,
-        resumePaymentHandler,
-        successHandler,
-        errorHandler,
-        baseErrorResolver,
-    ) {
+    paymentMethodTokenHandler,
+    resumePaymentHandler,
+    successHandler,
+    errorHandler,
+    baseErrorResolver,
+) {
     override suspend fun handleNewClientToken(
         clientToken: String,
         payment: Payment?,
@@ -49,6 +49,7 @@ internal class MultibancoPaymentDelegate(
                     pendingResumeHandler.handle(additionalInfo = additionalInfo)
                     manualFlowSuccessHandler.handle(additionalInfo = additionalInfo)
                 }
+
                 PrimerPaymentHandling.AUTO ->
                     successHandler.handle(
                         payment = requireNotNull(payment),

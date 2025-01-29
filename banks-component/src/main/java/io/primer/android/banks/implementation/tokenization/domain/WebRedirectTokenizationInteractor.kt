@@ -15,8 +15,8 @@ internal class DefaultBankIssuerTokenizationInteractor(
     preTokenizationHandler: PreTokenizationHandler,
     logReporter: LogReporter,
 ) : TokenizationInteractor<BankIssuerPaymentInstrumentParams>(
-        tokenizationRepository = tokenizationRepository,
-        tokenizedPaymentMethodRepository = tokenizedPaymentMethodRepository,
-        preTokenizationHandler = preTokenizationHandler,
-        logReporter = logReporter,
-    )
+    tokenizationRepository = tokenizationRepository,
+    tokenizedPaymentMethodRepository = tokenizedPaymentMethodRepository,
+    preTokenizationHandler = preTokenizationHandler,
+    logReporter = logReporter,
+)

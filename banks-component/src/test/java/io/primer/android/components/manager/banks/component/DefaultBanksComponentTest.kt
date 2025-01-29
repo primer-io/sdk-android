@@ -410,11 +410,11 @@ class DefaultBanksComponentTest {
                 )
                 redirectComposer.startPaymentFlow(
                     inputable =
-                        BankIssuerTokenizationInputable(
-                            paymentMethodType = paymentMethodType,
-                            primerSessionIntent = PrimerSessionIntent.CHECKOUT,
-                            bankIssuer = bankId,
-                        ),
+                    BankIssuerTokenizationInputable(
+                        paymentMethodType = paymentMethodType,
+                        primerSessionIntent = PrimerSessionIntent.CHECKOUT,
+                        bankIssuer = bankId,
+                    ),
                 )
                 onFinished()
             }

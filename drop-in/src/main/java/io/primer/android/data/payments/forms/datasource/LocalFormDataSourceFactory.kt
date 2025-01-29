@@ -19,18 +19,22 @@ internal class LocalFormDataSourceFactory(
                     countriesRepository = countriesRepository,
                     paymentMethodType = paymentMethodType,
                 )
+
             PaymentMethodType.XFERS_PAYNOW -> XfersLocalFormDataSource()
             PaymentMethodType.RAPYD_FAST ->
                 FastBankTransferLocalFormDataSource(primerTheme)
+
             PaymentMethodType.OMISE_PROMPTPAY,
             PaymentMethodType.RAPYD_PROMPTPAY,
             ->
                 PromptPayLocalFormDataSource(primerTheme)
+
             PaymentMethodType.ADYEN_MULTIBANCO -> MultibancoLocalFormDataSource(primerTheme)
             PaymentMethodType.ADYEN_BANCONTACT_CARD ->
                 BancontactCardLocalFormDataSource(
                     primerTheme,
                 )
+
             else -> error("Invalid paymentMethodType $paymentMethodType")
         }
 }

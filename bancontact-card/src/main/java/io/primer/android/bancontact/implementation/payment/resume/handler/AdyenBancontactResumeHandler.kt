@@ -28,11 +28,11 @@ internal class AydenBancontactResumeHandler(
     clientTokenRepository: ClientTokenRepository,
     checkoutAdditionalInfoHandler: CheckoutAdditionalInfoHandler,
 ) : PrimerResumeDecisionHandlerV2<AydenBancontactDecision, AdyenBancontactClientToken>(
-        clientTokenRepository = clientTokenRepository,
-        validateClientTokenRepository = validateClientTokenRepository,
-        clientTokenParser = clientTokenParser,
-        checkoutAdditionalInfoHandler = checkoutAdditionalInfoHandler,
-    ) {
+    clientTokenRepository = clientTokenRepository,
+    validateClientTokenRepository = validateClientTokenRepository,
+    clientTokenParser = clientTokenParser,
+    checkoutAdditionalInfoHandler = checkoutAdditionalInfoHandler,
+) {
     override val supportedClientTokenIntents: () -> List<String> = {
         listOf(tokenizedPaymentMethodRepository.getPaymentMethod().paymentMethodType.orEmpty())
             .map { paymentMethodType -> "${paymentMethodType}_REDIRECTION" }
@@ -41,13 +41,13 @@ internal class AydenBancontactResumeHandler(
     override suspend fun getResumeDecision(clientToken: AdyenBancontactClientToken): AydenBancontactDecision {
         return AydenBancontactDecision(
             title =
-                configurationRepository.getConfiguration().paymentMethods.find { config ->
-                    config.type == tokenizedPaymentMethodRepository.getPaymentMethod().paymentMethodType
-                }?.name.orEmpty(),
+            configurationRepository.getConfiguration().paymentMethods.find { config ->
+                config.type == tokenizedPaymentMethodRepository.getPaymentMethod().paymentMethodType
+            }?.name.orEmpty(),
             paymentMethodType =
-                requireNotNull(
-                    tokenizedPaymentMethodRepository.getPaymentMethod().paymentMethodType,
-                ),
+            requireNotNull(
+                tokenizedPaymentMethodRepository.getPaymentMethod().paymentMethodType,
+            ),
             redirectUrl = clientToken.redirectUrl,
             statusUrl = clientToken.statusUrl,
             deeplinkUrl = deeplinkRepository.getDeeplinkUrl(),

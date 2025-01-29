@@ -33,17 +33,17 @@ internal class ActionInteractorTest {
     private val clientSessionData =
         ClientSessionData(
             clientSession =
-                PrimerClientSession(
-                    customerId = "123",
-                    orderId = "order123",
-                    currencyCode = "USD",
-                    totalAmount = 1000,
-                    lineItems = null,
-                    orderDetails = null,
-                    customer = null,
-                    paymentMethod = null,
-                    fees = null,
-                ),
+            PrimerClientSession(
+                customerId = "123",
+                orderId = "order123",
+                currencyCode = "USD",
+                totalAmount = 1000,
+                lineItems = null,
+                orderDetails = null,
+                customer = null,
+                paymentMethod = null,
+                fees = null,
+            ),
         )
 
     private lateinit var actionRepository: ActionRepository

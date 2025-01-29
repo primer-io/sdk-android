@@ -77,6 +77,7 @@ internal class CardViewModel(
                             handleFetchedMetadata(metadataState.cardNumberEntryMetadata)
                             isMetadataUpdating = false
                         }
+
                         is PrimerCardMetadataState.Fetching -> {
                             isMetadataUpdating = true
                         }
@@ -101,9 +102,9 @@ internal class CardViewModel(
                 networks = resolvedNetworks.mapNotNull { it },
                 preferredNetwork = metadata.selectableCardNetworks?.preferred?.network,
                 selectedNetwork =
-                    cachedCardData?.cardNetwork
-                        ?: metadata.selectableCardNetworks?.preferred?.network
-                        ?: resolvedNetworks.first()?.network,
+                cachedCardData?.cardNetwork
+                    ?: metadata.selectableCardNetworks?.preferred?.network
+                    ?: resolvedNetworks.first()?.network,
             )
         _cardNetworksState.update { state }
     }
@@ -144,7 +145,7 @@ internal class CardViewModel(
         return (
             tokenizationStatus == TokenizationStatus.NONE ||
                 tokenizationStatus == TokenizationStatus.ERROR
-        ) && !isMetadataUpdating
+            ) && !isMetadataUpdating
     }
 
     @VisibleForTesting

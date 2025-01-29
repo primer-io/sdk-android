@@ -13,7 +13,7 @@ internal class QrCodeTokenizationDataRepository(
     configurationDataSource: BaseCacheDataSource<ConfigurationData, ConfigurationData>,
     tokenizationParamsMapper: QrCodeTokenizationParamsMapper,
 ) : TokenizationDataRepository<QrCodePaymentInstrumentParams, QrCodePaymentInstrumentDataRequest>(
-        remoteTokenizationDataSource,
-        configurationDataSource,
-        tokenizationParamsMapper,
-    )
+    remoteTokenizationDataSource,
+    configurationDataSource,
+    tokenizationParamsMapper,
+)

@@ -35,11 +35,11 @@ class BankIssuerTokenizationParamsMapperTest {
                 paymentMethodType = paymentMethodType,
                 paymentMethodConfigId = "testPaymentMethodConfigId",
                 sessionInfo =
-                    BankIssuerSessionInfoDataRequest(
-                        redirectionUrl = "testRedirectionUrl",
-                        locale = "testLocale",
-                        issuer = "testBankIssuer",
-                    ),
+                BankIssuerSessionInfoDataRequest(
+                    redirectionUrl = "testRedirectionUrl",
+                    locale = "testLocale",
+                    issuer = "testBankIssuer",
+                ),
                 type = PaymentInstrumentType.OFF_SESSION_PAYMENT,
             )
 

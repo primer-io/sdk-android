@@ -25,6 +25,7 @@ sealed class StripeError : PrimerError() {
             when (this) {
                 is StripeInvalidPublishableKeyError ->
                     "Publishable key is invalid"
+
                 is StripeSdkError ->
                     "Multiple errors occurred: $message"
             }
@@ -40,6 +41,7 @@ sealed class StripeError : PrimerError() {
     override val recoverySuggestion: String?
         get() = null
 
-    override val context: BaseContextParams get() =
-        ErrorContextParams(errorId, PaymentMethodType.STRIPE_ACH.name)
+    override val context: BaseContextParams
+        get() =
+            ErrorContextParams(errorId, PaymentMethodType.STRIPE_ACH.name)
 }

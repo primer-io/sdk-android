@@ -16,19 +16,19 @@ internal class PaypalComposerProviderFactory : PaymentMethodComposerProvider.Fac
         return PaypalComponent(
             tokenizationCollectorDelegate = resolve(name = paymentMethodType),
             tokenizationDelegate =
-                PaypalTokenizationDelegate(
-                    tokenizationInteractor = resolve(name = paymentMethodType),
-                    paypalCreateOrderInteractor = resolve(),
-                    confirmBillingAgreementInteractor = resolve(),
-                ),
+            PaypalTokenizationDelegate(
+                tokenizationInteractor = resolve(name = paymentMethodType),
+                paypalCreateOrderInteractor = resolve(),
+                confirmBillingAgreementInteractor = resolve(),
+            ),
             paymentDelegate =
-                PaypalPaymentDelegate(
-                    paymentMethodTokenHandler = resolve(),
-                    resumePaymentHandler = resolve(),
-                    successHandler = resolve(),
-                    errorHandler = resolve(),
-                    baseErrorResolver = resolve(),
-                ),
+            PaypalPaymentDelegate(
+                paymentMethodTokenHandler = resolve(),
+                resumePaymentHandler = resolve(),
+                successHandler = resolve(),
+                errorHandler = resolve(),
+                baseErrorResolver = resolve(),
+            ),
         )
     }
 }

@@ -42,9 +42,9 @@ class RemoteKlarnaCheckoutPaymentSessionDataSourceTest {
                             sessionType = KlarnaSessionType.ONE_OFF_PAYMENT,
                             totalAmount = 1,
                             localeData =
-                                LocaleDataRequest(
-                                    countryCode = null, currencyCode = "USD", localeCode = "en_US",
-                                ),
+                            LocaleDataRequest(
+                                countryCode = null, currencyCode = "USD", localeCode = "en_US",
+                            ),
                             orderItems = emptyList(),
                             billingAddress = null,
                             shippingAddress = null,
@@ -84,9 +84,9 @@ class RemoteKlarnaCheckoutPaymentSessionDataSourceTest {
                             sessionType = KlarnaSessionType.ONE_OFF_PAYMENT,
                             totalAmount = 1,
                             localeData =
-                                LocaleDataRequest(
-                                    countryCode = null, currencyCode = "USD", localeCode = "en_US",
-                                ),
+                            LocaleDataRequest(
+                                countryCode = null, currencyCode = "USD", localeCode = "en_US",
+                            ),
                             orderItems = emptyList(),
                             billingAddress = null,
                             shippingAddress = null,

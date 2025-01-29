@@ -19,12 +19,12 @@ internal class PaypalTokenizationParamsMapper :
                     PaypalPaymentInstrumentDataRequest.PaypalCheckoutPaymentInstrumentDataRequest(
                         paypalOrderId = paymentInstrumentParams.paypalOrderId,
                         externalPayerInfo =
-                            ExternalPayerInfoRequest(
-                                email = paymentInstrumentParams.externalPayerInfoEmail,
-                                externalPayerId = paymentInstrumentParams.externalPayerId,
-                                firstName = paymentInstrumentParams.externalPayerFirstName,
-                                lastName = paymentInstrumentParams.externalPayerLastName,
-                            ),
+                        ExternalPayerInfoRequest(
+                            email = paymentInstrumentParams.externalPayerInfoEmail,
+                            externalPayerId = paymentInstrumentParams.externalPayerId,
+                            firstName = paymentInstrumentParams.externalPayerFirstName,
+                            lastName = paymentInstrumentParams.externalPayerLastName,
+                        ),
                     )
 
                 is PaypalPaymentInstrumentParams.PaypalVaultPaymentInstrumentParams ->

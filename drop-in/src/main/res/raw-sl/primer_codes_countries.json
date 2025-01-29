@@ -44,13 +44,22 @@
     "CF": "Srednjeafriška republika",
     "TD": "Čad",
     "CL": "Čile",
-    "CN": ["Ljudska republika Kitajska", "Kitajska"],
+    "CN": [
+      "Ljudska republika Kitajska",
+      "Kitajska"
+    ],
     "CX": "Božični otok",
     "CC": "Kokosovi (Keelingovi) otoki",
     "CO": "Kolumbija",
     "KM": "Komori",
-    "CG": ["Republika Kongo", "Kongo"],
-    "CD": ["Demokratična republika Kongo", "Kongo"],
+    "CG": [
+      "Republika Kongo",
+      "Kongo"
+    ],
+    "CD": [
+      "Demokratična republika Kongo",
+      "Kongo"
+    ],
     "CK": "Cookovi otoki",
     "CR": "Kostarika",
     "CI": "Slonokoščena obala",
@@ -78,7 +87,11 @@
     "PF": "Francoska Polinezija",
     "TF": "Francoska južna ozemlja",
     "GA": "Gabon",
-    "GM": ["Republika Gambija", "Gambija", "Gambija"],
+    "GM": [
+      "Republika Gambija",
+      "Gambija",
+      "Gambija"
+    ],
     "GE": "Gruzija",
     "DE": "Nemčija",
     "GH": "Gana",
@@ -101,7 +114,10 @@
     "IS": "Islandija",
     "IN": "Indija",
     "ID": "Indonezija",
-    "IR": ["Islamska republika Iran", "Iran"],
+    "IR": [
+      "Islamska republika Iran",
+      "Iran"
+    ],
     "IQ": "Irak",
     "IE": "Irska",
     "IL": "Izrael",
@@ -157,13 +173,19 @@
     "NG": "Nigerija",
     "NU": "Niue",
     "NF": "Otok Norfolk",
-    "MK": ["Republika Severna Makedonija", "Severna Makedonija"],
+    "MK": [
+      "Republika Severna Makedonija",
+      "Severna Makedonija"
+    ],
     "MP": "Severni Marianski otoki",
     "NO": "Norveška",
     "OM": "Oman",
     "PK": "Pakistan",
     "PW": "Palau",
-    "PS": ["država Palestina", "Palestina"],
+    "PS": [
+      "država Palestina",
+      "Palestina"
+    ],
     "PA": "Panama",
     "PG": "Papua Nova Gvineja",
     "PY": "Paragvaj",
@@ -176,7 +198,10 @@
     "QA": "Katar",
     "RE": "ponovna združitev",
     "RO": "Romunija",
-    "RU": ["Ruska federacija", "Rusija"],
+    "RU": [
+      "Ruska federacija",
+      "Rusija"
+    ],
     "RW": "Ruanda",
     "SH": "Sveta Helena",
     "KN": "Saint Kitts in Nevis",
@@ -206,9 +231,15 @@
     "SE": "Švedska",
     "CH": "Švica",
     "SY": "Sirska arabska republika",
-    "TW": ["Tajvan, provinca Kitajske", "Tajvan"],
+    "TW": [
+      "Tajvan, provinca Kitajske",
+      "Tajvan"
+    ],
     "TJ": "Tadžikistan",
-    "TZ": ["Združena republika Tanzanija", "Tanzanija"],
+    "TZ": [
+      "Združena republika Tanzanija",
+      "Tanzanija"
+    ],
     "TH": "Tajska",
     "TL": "Vzhodni Timor",
     "TG": "Togo",
@@ -223,8 +254,16 @@
     "UG": "Uganda",
     "UA": "Ukrajina",
     "AE": "Združeni arabski emirati",
-    "GB": ["Združeno kraljestvo", "UK", "Velika Britanija"],
-    "US": ["Združene države Amerike", "Združene države", "ZDA"],
+    "GB": [
+      "Združeno kraljestvo",
+      "UK",
+      "Velika Britanija"
+    ],
+    "US": [
+      "Združene države Amerike",
+      "Združene države",
+      "ZDA"
+    ],
     "UM": "Manjši oddaljeni otoki Združenih držav",
     "UY": "Urugvaj",
     "UZ": "Uzbekistan",

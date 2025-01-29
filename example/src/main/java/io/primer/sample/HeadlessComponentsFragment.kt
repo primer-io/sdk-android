@@ -33,7 +33,6 @@ import io.primer.sample.datamodels.TransactionState
 import io.primer.sample.datamodels.toMappedError
 import io.primer.sample.klarna.KlarnaPaymentFragment.Companion.PRIMER_SESSION_INTENT_ARG
 import io.primer.sample.repositories.AppApiKeyRepository
-import io.primer.sample.utils.requireApplication
 import io.primer.sample.utils.showMandateDialog
 import io.primer.sample.viewmodels.HeadlessManagerViewModel
 import io.primer.sample.viewmodels.HeadlessManagerViewModelFactory

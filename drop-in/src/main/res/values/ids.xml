@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- Explicit view IDs appium testing -->
-    <item name="co_badge_popup" type="id"/>
+    <item name="co_badge_popup" type="id" />
 </resources>

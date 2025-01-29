@@ -13,7 +13,7 @@ internal class AdyenBancontactCardTokenizationDataRepository(
     configurationDataSource: BaseCacheDataSource<ConfigurationData, ConfigurationData>,
     tokenizationParamsMapper: AdyenBancontactTokenizationParamsMapper,
 ) : TokenizationDataRepository<AdyenBancontactPaymentInstrumentParams, AdyenBancontactPaymentInstrumentDataRequest>(
-        remoteTokenizationDataSource,
-        configurationDataSource,
-        tokenizationParamsMapper,
-    )
+    remoteTokenizationDataSource,
+    configurationDataSource,
+    tokenizationParamsMapper,
+)

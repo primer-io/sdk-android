@@ -18,6 +18,7 @@ internal class PaymentMethodButtonGroupFactory(
     private var surcharges: Map<String, Int>,
     private val formatter: SurchargeFormatter,
 ) {
+    @Suppress("LongMethod", "CyclomaticComplexMethod", "NestedBlockDepth")
     fun build(
         context: Context,
         viewFactory: PrimerPaymentMethodViewFactory,

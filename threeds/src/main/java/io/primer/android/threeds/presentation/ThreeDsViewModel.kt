@@ -22,10 +22,10 @@ import io.primer.android.threeds.domain.models.ChallengeStatusData
 import io.primer.android.threeds.domain.models.ThreeDsCheckoutParams
 import io.primer.android.threeds.domain.models.ThreeDsInitParams
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.launch
 
+@Suppress("TooManyFunctions")
 internal class ThreeDsViewModel(
     private val threeDsInteractor: ThreeDsInteractor,
     private val analyticsInteractor: AnalyticsInteractor,

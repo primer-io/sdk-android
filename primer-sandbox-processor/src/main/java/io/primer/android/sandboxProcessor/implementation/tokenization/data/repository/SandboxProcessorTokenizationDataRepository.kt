@@ -13,7 +13,7 @@ internal class SandboxProcessorTokenizationDataRepository(
     configurationDataSource: BaseCacheDataSource<ConfigurationData, ConfigurationData>,
     tokenizationParamsMapper: SandboxProcessorTokenizationParamsMapper,
 ) : TokenizationDataRepository<SandboxProcessorPaymentInstrumentParams, SandboxProcessorPaymentInstrumentDataRequest>(
-        remoteTokenizationDataSource,
-        configurationDataSource,
-        tokenizationParamsMapper,
-    )
+    remoteTokenizationDataSource,
+    configurationDataSource,
+    tokenizationParamsMapper,
+)

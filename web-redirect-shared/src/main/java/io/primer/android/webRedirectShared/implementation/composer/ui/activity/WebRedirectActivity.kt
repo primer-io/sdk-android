@@ -66,11 +66,11 @@ class WebRedirectActivity : WebViewActivity() {
                 ObjectType.WEB_PAGE,
                 Place.PAYMENT_METHOD_POPUP,
                 context =
-                    UrlContextParams(
-                        Uri.parse(
-                            intent.extras?.getString(PAYMENT_URL_KEY).orEmpty(),
-                        ).host.orEmpty(),
-                    ),
+                UrlContextParams(
+                    Uri.parse(
+                        intent.extras?.getString(PAYMENT_URL_KEY).orEmpty(),
+                    ).host.orEmpty(),
+                ),
             ),
         )
 

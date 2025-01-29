@@ -73,10 +73,10 @@ class FinalizeKlarnaSessionDataRepositoryTest {
                     BaseRemoteHostRequest(
                         host = coreUrl,
                         data =
-                            FinalizeKlarnaSessionDataRequest(
-                                paymentMethodConfigId = paymentMethodId,
-                                sessionId = sessionId,
-                            ),
+                        FinalizeKlarnaSessionDataRequest(
+                            paymentMethodConfigId = paymentMethodId,
+                            sessionId = sessionId,
+                        ),
                     ),
                 )
             }
@@ -122,10 +122,10 @@ class FinalizeKlarnaSessionDataRepositoryTest {
                     BaseRemoteHostRequest(
                         host = coreUrl,
                         data =
-                            FinalizeKlarnaSessionDataRequest(
-                                paymentMethodConfigId = paymentMethodId,
-                                sessionId = sessionId,
-                            ),
+                        FinalizeKlarnaSessionDataRequest(
+                            paymentMethodConfigId = paymentMethodId,
+                            sessionId = sessionId,
+                        ),
                     ),
                 )
             }
@@ -170,10 +170,10 @@ class FinalizeKlarnaSessionDataRepositoryTest {
                     BaseRemoteHostRequest(
                         host = coreUrl,
                         data =
-                            FinalizeKlarnaSessionDataRequest(
-                                paymentMethodConfigId = paymentMethodId,
-                                sessionId = sessionId,
-                            ),
+                        FinalizeKlarnaSessionDataRequest(
+                            paymentMethodConfigId = paymentMethodId,
+                            sessionId = sessionId,
+                        ),
                     ),
                 )
             }

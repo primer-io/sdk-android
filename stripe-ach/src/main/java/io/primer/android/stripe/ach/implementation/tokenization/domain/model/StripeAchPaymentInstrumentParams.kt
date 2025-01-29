@@ -8,10 +8,10 @@ internal data class StripeAchPaymentInstrumentParams(
     override val paymentMethodConfigId: String,
     override val locale: String,
 ) : BaseAsyncPaymentInstrumentParams(
-        paymentMethodType = PaymentMethodType.STRIPE_ACH.name,
-        paymentMethodConfigId = paymentMethodConfigId,
-        locale = locale,
-        type = PaymentInstrumentType.AUTOMATED_CLEARING_HOUSE,
-    ) {
+    paymentMethodType = PaymentMethodType.STRIPE_ACH.name,
+    paymentMethodConfigId = paymentMethodConfigId,
+    locale = locale,
+    type = PaymentInstrumentType.AUTOMATED_CLEARING_HOUSE,
+) {
     val authenticationProvider = "STRIPE"
 }

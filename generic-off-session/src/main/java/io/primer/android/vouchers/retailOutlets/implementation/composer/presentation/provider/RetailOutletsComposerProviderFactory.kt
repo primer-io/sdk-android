@@ -15,14 +15,14 @@ internal class RetailOutletsComposerProviderFactory : PaymentMethodComposerProvi
         return RetailOutletsComponent(
             tokenizationDelegate = resolve(),
             paymentDelegate =
-                RetailOutletsPaymentDelegate(
-                    paymentMethodTokenHandler = resolve(),
-                    resumePaymentHandler = resolve(),
-                    successHandler = resolve(),
-                    errorHandler = resolve(),
-                    baseErrorResolver = resolve(),
-                    resumeHandler = resolve(),
-                ),
+            RetailOutletsPaymentDelegate(
+                paymentMethodTokenHandler = resolve(),
+                resumePaymentHandler = resolve(),
+                successHandler = resolve(),
+                errorHandler = resolve(),
+                baseErrorResolver = resolve(),
+                resumeHandler = resolve(),
+            ),
             retailOutletsDataValidator = resolve(name = paymentMethodType),
             retailOutletInteractor = resolve(name = paymentMethodType),
             errorMapperRegistry = resolve(),

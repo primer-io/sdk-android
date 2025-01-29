@@ -41,6 +41,7 @@ internal sealed class GeneralError : PrimerError() {
                 is InvalidValueError -> "Invalid value for '${illegalValueKey.key}'. Message $message."
                 is InvalidClientSessionValueError ->
                     "Invalid client session value for '${illegalValueKey.key}' with value '$value'"
+
                 is UnhandledPaymentPendingStateError -> "$message."
             }
 
@@ -65,6 +66,7 @@ internal sealed class GeneralError : PrimerError() {
                             "for ${illegalValueKey.key} in your client session",
                         allowedValue?.let { "Allowed values are [$allowedValue]" },
                     ).joinToString()
+
                 is UnhandledPaymentPendingStateError -> "Implementation error."
             }
 }

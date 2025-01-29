@@ -31,6 +31,7 @@ internal class GooglePayContainer(
     private val sdk: () -> SdkContainer,
     private val paymentMethodType: String,
 ) : DependencyContainer() {
+    @Suppress("LongMethod")
     override fun registerInitialDependencies() {
         registerFactory<GooglePayConfigurationRepository>(
             name = paymentMethodType,
@@ -75,11 +76,11 @@ internal class GooglePayContainer(
         registerFactory<GooglePayTokenizationInteractor>(name = paymentMethodType) {
             DefaultGooglePayTokenizationInteractor(
                 tokenizationRepository =
-                    GooglePayTokenizationDataRepository(
-                        remoteTokenizationDataSource = sdk().resolve(paymentMethodType),
-                        configurationDataSource = sdk().resolve(ConfigurationCoreContainer.CACHED_CONFIGURATION_DI_KEY),
-                        tokenizationParamsMapper = resolve(),
-                    ),
+                GooglePayTokenizationDataRepository(
+                    remoteTokenizationDataSource = sdk().resolve(paymentMethodType),
+                    configurationDataSource = sdk().resolve(ConfigurationCoreContainer.CACHED_CONFIGURATION_DI_KEY),
+                    tokenizationParamsMapper = resolve(),
+                ),
                 tokenizedPaymentMethodRepository = sdk().resolve(),
                 preTokenizationHandler = sdk().resolve(),
                 logReporter = sdk().resolve(),
@@ -89,22 +90,22 @@ internal class GooglePayContainer(
         registerFactory(name = paymentMethodType) {
             GooglePayTokenizationCollectorDelegate(
                 configurationInteractor =
-                    resolve(
-                        name = paymentMethodType,
-                    ),
+                resolve(
+                    name = paymentMethodType,
+                ),
             )
         }
 
         registerFactory(name = paymentMethodType) {
             GooglePayTokenizationDelegate(
                 configurationInteractor =
-                    resolve(
-                        name = paymentMethodType,
-                    ),
+                resolve(
+                    name = paymentMethodType,
+                ),
                 tokenizationInteractor =
-                    resolve(
-                        name = paymentMethodType,
-                    ),
+                resolve(
+                    name = paymentMethodType,
+                ),
             )
         }
 

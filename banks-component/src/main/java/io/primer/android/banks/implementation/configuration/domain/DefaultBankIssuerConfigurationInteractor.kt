@@ -11,5 +11,5 @@ internal typealias BankIssuerConfigurationInteractor =
 internal class DefaultBankIssuerConfigurationInteractor(
     configurationRepository: PaymentMethodConfigurationRepository<BankIssuerConfig, BankIssuerConfigParams>,
 ) : PaymentMethodConfigurationInteractor<BankIssuerConfig, BankIssuerConfigParams>(
-        configurationRepository,
-    )
+    configurationRepository,
+)

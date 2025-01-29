@@ -17,6 +17,7 @@ class CardExpiryDateValidator : PaymentInputTypeValidator<String> {
                     PrimerInputElementType.EXPIRY_DATE,
                 )
             }
+
             VALID_EXPIRY_DATE_PATTERN.matches(paddedInput).not() -> {
                 PrimerInputValidationError(
                     EXPIRY_DATE_INVALID_ERROR_ID,
@@ -31,6 +32,7 @@ class CardExpiryDateValidator : PaymentInputTypeValidator<String> {
                     "Card expiry date is not valid. ",
                     PrimerInputElementType.EXPIRY_DATE,
                 )
+
             else -> null
         }
     }

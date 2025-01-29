@@ -18,9 +18,9 @@ internal class AdyenBancontactComposerProviderFactory : PaymentMethodComposerPro
             tokenizationDelegate = resolve(),
             pollingInteractor = resolve(PaymentsContainer.POLLING_INTERACTOR_DI_KEY),
             paymentDelegate =
-                resolve<PaymentMethodPaymentDelegate>(
-                    name = paymentMethodType,
-                ) as AdyenBancontactPaymentDelegate,
+            resolve<PaymentMethodPaymentDelegate>(
+                name = paymentMethodType,
+            ) as AdyenBancontactPaymentDelegate,
             cardInputDataValidator = resolve(name = paymentMethodType),
             metadataRetriever = resolve(),
             sdkAnalyticsEventLoggingDelegate = resolve(name = paymentMethodType),

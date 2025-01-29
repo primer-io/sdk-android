@@ -22,7 +22,6 @@ interface BaseWebRedirectComposer :
     UiEventable {
     val scope: CoroutineScope
 
-    @Suppress("ktlint:standard:property-naming")
     val _uiEvent: MutableSharedFlow<ComposerUiEvent>
     override val uiEvent: SharedFlow<ComposerUiEvent>
         get() = _uiEvent

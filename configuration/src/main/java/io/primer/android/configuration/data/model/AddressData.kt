@@ -79,8 +79,8 @@ data class AddressData(
                     city = t.optNullableString(CITY_FIELD),
                     state = t.optNullableString(STATE_FIELD),
                     countryCode =
-                        t.optNullableString(COUNTRY_CODE_FIELD)
-                            ?.let { CountryCode.valueOf(it) },
+                    t.optNullableString(COUNTRY_CODE_FIELD)
+                        ?.let { CountryCode.valueOf(it) },
                 )
             }
     }

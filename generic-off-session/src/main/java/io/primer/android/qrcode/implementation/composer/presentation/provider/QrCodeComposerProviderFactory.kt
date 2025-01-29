@@ -17,17 +17,17 @@ internal class QrCodeComposerProviderFactory : PaymentMethodComposerProvider.Fac
             tokenizationDelegate = resolve(),
             pollingInteractor = resolve(PaymentsContainer.POLLING_INTERACTOR_DI_KEY),
             paymentDelegate =
-                QrCodePaymentDelegate(
-                    paymentMethodTokenHandler = resolve(),
-                    resumePaymentHandler = resolve(),
-                    successHandler = resolve(),
-                    pollingStartHandler = resolve(),
-                    additionalInfoHandler = resolve(),
-                    errorHandler = resolve(),
-                    baseErrorResolver = resolve(),
-                    resumeHandler = resolve(),
-                    tokenizedPaymentMethodRepository = resolve(),
-                ),
+            QrCodePaymentDelegate(
+                paymentMethodTokenHandler = resolve(),
+                resumePaymentHandler = resolve(),
+                successHandler = resolve(),
+                pollingStartHandler = resolve(),
+                additionalInfoHandler = resolve(),
+                errorHandler = resolve(),
+                baseErrorResolver = resolve(),
+                resumeHandler = resolve(),
+                tokenizedPaymentMethodRepository = resolve(),
+            ),
             pollingStartHandler = resolve(),
         )
     }

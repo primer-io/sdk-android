@@ -15,6 +15,7 @@ import io.primer.android.data.settings.PrimerSettings
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 
+@Suppress("LongParameterList")
 internal class PaymentsTypesInteractor(
     private val configurationInteractor: ConfigurationInteractor,
     private val paymentMethodModulesInteractor: PaymentMethodModulesInteractor,

@@ -15,7 +15,7 @@ internal class RemoteRetailOutletDataSource(
             .withTimeout(PRIMER_60S_TIMEOUT)
             .suspendGet<RetailOutletResultDataResponse>(
                 url =
-                    "${input.host}/payment-method-options/" +
-                        "${input.data.paymentMethodConfigId}/retail-outlets",
+                "${input.host}/payment-method-options/" +
+                    "${input.data.paymentMethodConfigId}/retail-outlets",
             ).body
 }

@@ -39,42 +39,42 @@ internal class PaypalConfigurationDataRepository(
 
                     PaypalConfig.PaypalCheckoutConfiguration(
                         paymentMethodConfigId =
-                            requireNotNullCheck(
-                                paymentMethodConfig.id,
-                                PaypalIllegalValueKey.PAYMENT_METHOD_CONFIG_ID,
-                            ),
+                        requireNotNullCheck(
+                            paymentMethodConfig.id,
+                            PaypalIllegalValueKey.PAYMENT_METHOD_CONFIG_ID,
+                        ),
                         amount = order?.currentAmount,
                         currencyCode = order?.currencyCode,
                         successUrl =
-                            baseUri
-                                .appendPath(SUCCESS_PATH_SEGMENT)
-                                .build()
-                                .toString(),
+                        baseUri
+                            .appendPath(SUCCESS_PATH_SEGMENT)
+                            .build()
+                            .toString(),
                         cancelUrl =
-                            baseUri
-                                .appendPath(CANCEL_PATH_SEGMENT)
-                                .build()
-                                .toString(),
+                        baseUri
+                            .appendPath(CANCEL_PATH_SEGMENT)
+                            .build()
+                            .toString(),
                     )
                 }
 
                 PrimerSessionIntent.VAULT -> {
                     PaypalConfig.PaypalVaultConfiguration(
                         paymentMethodConfigId =
-                            requireNotNullCheck(
-                                paymentMethodConfig.id,
-                                PaypalIllegalValueKey.PAYMENT_METHOD_CONFIG_ID,
-                            ),
+                        requireNotNullCheck(
+                            paymentMethodConfig.id,
+                            PaypalIllegalValueKey.PAYMENT_METHOD_CONFIG_ID,
+                        ),
                         successUrl =
-                            baseUri
-                                .appendPath(SUCCESS_PATH_SEGMENT)
-                                .build()
-                                .toString(),
+                        baseUri
+                            .appendPath(SUCCESS_PATH_SEGMENT)
+                            .build()
+                            .toString(),
                         cancelUrl =
-                            baseUri
-                                .appendPath(CANCEL_PATH_SEGMENT)
-                                .build()
-                                .toString(),
+                        baseUri
+                            .appendPath(CANCEL_PATH_SEGMENT)
+                            .build()
+                            .toString(),
                     )
                 }
             }

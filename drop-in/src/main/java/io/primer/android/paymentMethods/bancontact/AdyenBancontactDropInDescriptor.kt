@@ -36,10 +36,10 @@ internal class AdyenBancontactDropInDescriptor(
 
             LoadingState(
                 imageResIs =
-                    when (uiOptions.isDarkMode) {
-                        true -> brand.iconDarkResId
-                        else -> brand.iconResId
-                    },
+                when (uiOptions.isDarkMode) {
+                    true -> brand.iconDarkResId
+                    else -> brand.iconResId
+                },
             )
         }
 

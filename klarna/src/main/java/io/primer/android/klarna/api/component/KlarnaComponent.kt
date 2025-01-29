@@ -198,9 +198,9 @@ class KlarnaComponent internal constructor(
                     _componentStep.emit(
                         KlarnaPaymentStep.PaymentViewLoaded(
                             paymentView =
-                                PrimerKlarnaPaymentView(context = view.context).apply {
-                                    addView(view)
-                                },
+                            PrimerKlarnaPaymentView(context = view.context).apply {
+                                addView(view)
+                            },
                         ),
                     )
                 }
@@ -309,9 +309,9 @@ class KlarnaComponent internal constructor(
     private fun handleError(throwable: Throwable) =
         viewModelScope.launch {
             val isCheckoutFailureException = throwable is CheckoutFailureException
-        /*
-        exclude CheckoutFailureException when in Drop-in because the inner exception is always dispatched.
-         */
+            /*
+            exclude CheckoutFailureException when in Drop-in because the inner exception is always dispatched.
+             */
             if (primerSettings.sdkIntegrationType == SdkIntegrationType.DROP_IN && !isCheckoutFailureException) {
                 paymentDelegate.handleError(throwable)
             }

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="@dimen/loading_height"
-    xmlns:tools="http://schemas.android.com/tools">
+    android:layout_height="@dimen/loading_height">
 
     <ImageView
         android:id="@+id/selected_payment_logo"
@@ -19,14 +19,14 @@
 
     <io.primer.android.ui.components.PrimerTextViewWidget
         android:id="@+id/selected_payment_loading_text"
-        tools:text="Loading"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/xxl_vertical_margin"
         android:gravity="center"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/guideline" />
+        app:layout_constraintTop_toBottomOf="@id/guideline"
+        tools:text="Loading" />
 
     <ProgressBar
         android:id="@+id/progress_bar"

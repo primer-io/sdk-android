@@ -16,22 +16,22 @@ internal class WebRedirectComposerProviderFactory : PaymentMethodComposerProvide
     ): PaymentMethodComposer {
         return WebRedirectComponent(
             tokenizationDelegate =
-                WebRedirectTokenizationDelegate(
-                    configurationInteractor = resolve(name = paymentMethodType),
-                    tokenizationInteractor = resolve(name = paymentMethodType),
-                    deeplinkInteractor = resolve(name = paymentMethodType),
-                    platformResolver = resolve(name = paymentMethodType),
-                ),
+            WebRedirectTokenizationDelegate(
+                configurationInteractor = resolve(name = paymentMethodType),
+                tokenizationInteractor = resolve(name = paymentMethodType),
+                deeplinkInteractor = resolve(name = paymentMethodType),
+                platformResolver = resolve(name = paymentMethodType),
+            ),
             pollingInteractor = resolve(PaymentsContainer.POLLING_INTERACTOR_DI_KEY),
             paymentDelegate =
-                WebRedirectPaymentDelegate(
-                    paymentMethodTokenHandler = resolve(),
-                    resumePaymentHandler = resolve(),
-                    successHandler = resolve(),
-                    errorHandler = resolve(),
-                    baseErrorResolver = resolve(),
-                    webRedirectResumeHandler = resolve(),
-                ),
+            WebRedirectPaymentDelegate(
+                paymentMethodTokenHandler = resolve(),
+                resumePaymentHandler = resolve(),
+                successHandler = resolve(),
+                errorHandler = resolve(),
+                baseErrorResolver = resolve(),
+                webRedirectResumeHandler = resolve(),
+            ),
         )
     }
 }

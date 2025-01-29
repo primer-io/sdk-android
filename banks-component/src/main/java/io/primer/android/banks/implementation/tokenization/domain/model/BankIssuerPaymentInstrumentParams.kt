@@ -10,8 +10,8 @@ internal data class BankIssuerPaymentInstrumentParams(
     val redirectionUrl: String,
     val bankIssuer: String,
 ) : BaseAsyncPaymentInstrumentParams(
-        paymentMethodType,
-        paymentMethodConfigId,
-        locale,
-        PaymentInstrumentType.OFF_SESSION_PAYMENT,
-    )
+    paymentMethodType,
+    paymentMethodConfigId,
+    locale,
+    PaymentInstrumentType.OFF_SESSION_PAYMENT,
+)

@@ -13,8 +13,8 @@ internal class OtpTokenizationDelegate(
     private val configurationInteractor: OtpConfigurationInteractor,
     tokenizationInteractor: OtpTokenizationInteractor,
 ) : PaymentMethodTokenizationDelegate<OtpTokenizationInputable, OtpPaymentInstrumentParams>(
-        tokenizationInteractor,
-    ),
+    tokenizationInteractor,
+),
     TokenizationCollectedDataMapper<OtpTokenizationInputable, OtpPaymentInstrumentParams> {
     override suspend fun mapTokenizationData(
         input: OtpTokenizationInputable,
@@ -24,12 +24,12 @@ internal class OtpTokenizationDelegate(
         ).map { configuration ->
             TokenizationParams(
                 paymentInstrumentParams =
-                    OtpPaymentInstrumentParams(
-                        paymentMethodType = input.paymentMethodType,
-                        paymentMethodConfigId = configuration.paymentMethodConfigId,
-                        locale = configuration.locale,
-                        otp = input.otpData.otp,
-                    ),
+                OtpPaymentInstrumentParams(
+                    paymentMethodType = input.paymentMethodType,
+                    paymentMethodConfigId = configuration.paymentMethodConfigId,
+                    locale = configuration.locale,
+                    otp = input.otpData.otp,
+                ),
                 sessionIntent = input.primerSessionIntent,
             )
         }

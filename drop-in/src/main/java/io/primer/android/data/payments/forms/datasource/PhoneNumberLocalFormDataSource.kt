@@ -42,23 +42,23 @@ internal class PhoneNumberLocalFormDataSource(
                     buttonType = ButtonType.PAY,
                     description = null,
                     inputs =
-                        listOf(
-                            FormInputDataResponse(
-                                type = FormType.PHONE,
-                                id = FORM_ID,
-                                hint = R.string.input_hint_form_phone_number,
-                                level = null,
-                                mask = null,
-                                inputCharacters = null,
-                                maxInputLength = FORM_PHONE_MAX_LENGTH,
-                                // Validation is handled in the component
-                                validation = null,
-                                inputPrefix =
-                                    DialCodeCountryPrefix(
-                                        countriesRepository.getPhoneCodeByCountryCode(getCountryCode()),
-                                    ),
+                    listOf(
+                        FormInputDataResponse(
+                            type = FormType.PHONE,
+                            id = FORM_ID,
+                            hint = R.string.input_hint_form_phone_number,
+                            level = null,
+                            mask = null,
+                            inputCharacters = null,
+                            maxInputLength = FORM_PHONE_MAX_LENGTH,
+                            // Validation is handled in the component
+                            validation = null,
+                            inputPrefix =
+                            DialCodeCountryPrefix(
+                                countriesRepository.getPhoneCodeByCountryCode(getCountryCode()),
                             ),
                         ),
+                    ),
                 ),
             )
         }

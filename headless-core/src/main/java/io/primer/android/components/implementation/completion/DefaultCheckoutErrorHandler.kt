@@ -46,11 +46,11 @@ class DefaultCheckoutErrorHandler(
                     checkoutListener?.onFailed(
                         error = error,
                         checkoutData =
-                            payment?.let {
-                                PrimerCheckoutData(
-                                    payment,
-                                )
-                            },
+                        payment?.let {
+                            PrimerCheckoutData(
+                                payment,
+                            )
+                        },
                     )
 
                 PrimerPaymentHandling.MANUAL ->

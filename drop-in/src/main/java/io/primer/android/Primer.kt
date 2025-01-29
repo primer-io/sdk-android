@@ -20,6 +20,7 @@ import io.primer.android.payments.core.helpers.CheckoutExitHandler
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
+@Suppress("TooManyFunctions")
 class Primer private constructor() : PrimerInterface, DISdkComponent {
     internal var listener: PrimerCheckoutListener? = null
     private var config: PrimerConfig = PrimerConfig()

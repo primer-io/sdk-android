@@ -67,7 +67,8 @@
     <dimen name="primer_system_text_fontsize">@dimen/primer_subtitle_fontsize</dimen>
 
     <!--  custom dimens for payment method buttons in universal checkout -->
-    <dimen name="primer_payment_method_button_corner_radius">@dimen/primer_default_corner_radius</dimen>
+    <dimen name="primer_payment_method_button_corner_radius">@dimen/primer_default_corner_radius
+    </dimen>
     <dimen name="primer_payment_method_button_fontsize">@dimen/primer_subtitle_fontsize</dimen>
     <dimen name="primer_payment_method_button_border_width">1dp</dimen>
 

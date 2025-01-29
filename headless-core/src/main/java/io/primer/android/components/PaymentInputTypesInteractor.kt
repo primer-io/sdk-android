@@ -64,6 +64,7 @@ internal class PaymentInputTypesInteractor(
                         .plus(billingAddressesFields)
                         .filterNotNull()
                 }
+
                 PaymentMethodType.ADYEN_BANCONTACT_CARD.name -> {
                     listOf(
                         PrimerInputElementType.CARD_NUMBER,
@@ -71,9 +72,11 @@ internal class PaymentInputTypesInteractor(
                         PrimerInputElementType.CARDHOLDER_NAME,
                     )
                 }
+
                 PaymentMethodType.ADYEN_MBWAY.name,
                 PaymentMethodType.XENDIT_OVO.name,
                 -> listOf(PrimerInputElementType.PHONE_NUMBER)
+
                 PaymentMethodType.ADYEN_BLIK.name -> listOf(PrimerInputElementType.OTP_CODE)
                 else -> emptyList()
             }

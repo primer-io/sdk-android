@@ -38,12 +38,12 @@ internal class NolPayPaymentDelegate(
     baseErrorResolver: BaseErrorResolver,
     private val resumeHandler: NolPayResumeHandler,
 ) : PaymentMethodPaymentDelegate(
-        paymentMethodTokenHandler,
-        resumePaymentHandler,
-        successHandler,
-        errorHandler,
-        baseErrorResolver,
-    ),
+    paymentMethodTokenHandler,
+    resumePaymentHandler,
+    successHandler,
+    errorHandler,
+    baseErrorResolver,
+),
     PrimerHeadlessSteppable<NolPayPaymentStep> {
     private lateinit var resumeDecision: NolPayResumeDecision
 

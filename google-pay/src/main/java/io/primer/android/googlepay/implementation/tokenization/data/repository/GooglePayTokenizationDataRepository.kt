@@ -13,7 +13,7 @@ internal class GooglePayTokenizationDataRepository(
     configurationDataSource: BaseCacheDataSource<ConfigurationData, ConfigurationData>,
     tokenizationParamsMapper: GooglePayTokenizationParamsMapper,
 ) : TokenizationDataRepository<GooglePayPaymentInstrumentParams, GooglePayPaymentInstrumentDataRequest>(
-        remoteTokenizationDataSource,
-        configurationDataSource,
-        tokenizationParamsMapper,
-    )
+    remoteTokenizationDataSource,
+    configurationDataSource,
+    tokenizationParamsMapper,
+)

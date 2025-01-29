@@ -12,8 +12,8 @@ import io.primer.android.threeds.errors.domain.model.ThreeDsError
 internal sealed class BaseFailureContinueAuthDataRequest(
     open val error: BaseContinueAuthErrorDataRequest,
 ) : BaseContinueAuthDataRequest(
-        ThreeDsAuthStatus.FAILURE,
-    ) {
+    ThreeDsAuthStatus.FAILURE,
+) {
     companion object {
         private const val ERROR_FIELD = "error"
 
@@ -31,6 +31,7 @@ internal sealed class BaseFailureContinueAuthDataRequest(
     }
 }
 
+@Suppress("LongMethod")
 internal fun FailureThreeDsContinueAuthParams.toContinueAuthDataRequest() =
     when (error) {
         is ThreeDsError.ThreeDsLibraryMissingError ->

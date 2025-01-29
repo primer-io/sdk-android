@@ -22,11 +22,11 @@ internal class CardResumeHandler(
     clientTokenRepository: ClientTokenRepository,
     checkoutAdditionalInfoHandler: CheckoutAdditionalInfoHandler,
 ) : PrimerResumeDecisionHandlerV2<CardResumeDecision, Card3DSClientToken>(
-        clientTokenRepository = clientTokenRepository,
-        validateClientTokenRepository = validateClientTokenRepository,
-        clientTokenParser = clientTokenParser,
-        checkoutAdditionalInfoHandler = checkoutAdditionalInfoHandler,
-    ) {
+    clientTokenRepository = clientTokenRepository,
+    validateClientTokenRepository = validateClientTokenRepository,
+    clientTokenParser = clientTokenParser,
+    checkoutAdditionalInfoHandler = checkoutAdditionalInfoHandler,
+) {
     override val supportedClientTokenIntents: () -> List<String> =
         { listOf(ClientTokenIntent.`3DS_AUTHENTICATION`.name, ClientTokenIntent.PROCESSOR_3DS.name) }
 

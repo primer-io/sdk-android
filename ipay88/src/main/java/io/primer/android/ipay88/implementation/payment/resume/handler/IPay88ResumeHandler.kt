@@ -50,11 +50,11 @@ internal class IPay88ResumeHandler(
     clientTokenRepository: ClientTokenRepository,
     checkoutAdditionalInfoHandler: CheckoutAdditionalInfoHandler,
 ) : PrimerResumeDecisionHandlerV2<IPay88Decision, IPay88ClientToken>(
-        clientTokenRepository = clientTokenRepository,
-        validateClientTokenRepository = validateClientTokenRepository,
-        clientTokenParser = clientTokenParser,
-        checkoutAdditionalInfoHandler = checkoutAdditionalInfoHandler,
-    ) {
+    clientTokenRepository = clientTokenRepository,
+    validateClientTokenRepository = validateClientTokenRepository,
+    clientTokenParser = clientTokenParser,
+    checkoutAdditionalInfoHandler = checkoutAdditionalInfoHandler,
+) {
     override val supportedClientTokenIntents: () -> List<String> = {
         listOf(tokenizedPaymentMethodRepository.getPaymentMethod().paymentMethodType.orEmpty())
             .map { paymentMethodType -> "${paymentMethodType}_REDIRECTION" }
@@ -66,8 +66,8 @@ internal class IPay88ResumeHandler(
             it.validate(
                 IPay88ValidationData(
                     clientSession =
-                        configurationRepository.getConfiguration().clientSession
-                            .clientSessionDataResponse.toClientSessionData(),
+                    configurationRepository.getConfiguration().clientSession
+                        .clientSessionDataResponse.toClientSessionData(),
                     clientToken = clientToken,
                 ),
             )

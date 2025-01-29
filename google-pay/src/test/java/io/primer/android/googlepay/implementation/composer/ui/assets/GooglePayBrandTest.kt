@@ -19,12 +19,12 @@ internal class GooglePayBrandTest {
             GooglePayBrand(
                 PrimerSettings(
                     paymentMethodOptions =
-                        PrimerPaymentMethodOptions(
-                            googlePayOptions =
-                                PrimerGooglePayOptions(
-                                    buttonStyle = GooglePayButtonStyle.BLACK,
-                                ),
+                    PrimerPaymentMethodOptions(
+                        googlePayOptions =
+                        PrimerGooglePayOptions(
+                            buttonStyle = GooglePayButtonStyle.BLACK,
                         ),
+                    ),
                 ),
                 mockk<GooglePayConfigurationRepository>(),
             )
@@ -43,12 +43,12 @@ internal class GooglePayBrandTest {
             GooglePayBrand(
                 PrimerSettings(
                     paymentMethodOptions =
-                        PrimerPaymentMethodOptions(
-                            googlePayOptions =
-                                PrimerGooglePayOptions(
-                                    buttonStyle = GooglePayButtonStyle.BLACK,
-                                ),
+                    PrimerPaymentMethodOptions(
+                        googlePayOptions =
+                        PrimerGooglePayOptions(
+                            buttonStyle = GooglePayButtonStyle.BLACK,
                         ),
+                    ),
                 ),
                 mockk<GooglePayConfigurationRepository>(),
             )
@@ -67,12 +67,12 @@ internal class GooglePayBrandTest {
             GooglePayBrand(
                 PrimerSettings(
                     paymentMethodOptions =
-                        PrimerPaymentMethodOptions(
-                            googlePayOptions =
-                                PrimerGooglePayOptions(
-                                    buttonStyle = GooglePayButtonStyle.WHITE,
-                                ),
+                    PrimerPaymentMethodOptions(
+                        googlePayOptions =
+                        PrimerGooglePayOptions(
+                            buttonStyle = GooglePayButtonStyle.WHITE,
                         ),
+                    ),
                 ),
                 mockk<GooglePayConfigurationRepository>(),
             )
@@ -91,12 +91,12 @@ internal class GooglePayBrandTest {
             GooglePayBrand(
                 PrimerSettings(
                     paymentMethodOptions =
-                        PrimerPaymentMethodOptions(
-                            googlePayOptions =
-                                PrimerGooglePayOptions(
-                                    buttonStyle = GooglePayButtonStyle.BLACK,
-                                ),
+                    PrimerPaymentMethodOptions(
+                        googlePayOptions =
+                        PrimerGooglePayOptions(
+                            buttonStyle = GooglePayButtonStyle.BLACK,
                         ),
+                    ),
                 ),
                 mockk<GooglePayConfigurationRepository>(),
             )
@@ -115,12 +115,12 @@ internal class GooglePayBrandTest {
             GooglePayBrand(
                 PrimerSettings(
                     paymentMethodOptions =
-                        PrimerPaymentMethodOptions(
-                            googlePayOptions =
-                                PrimerGooglePayOptions(
-                                    buttonStyle = GooglePayButtonStyle.BLACK,
-                                ),
+                    PrimerPaymentMethodOptions(
+                        googlePayOptions =
+                        PrimerGooglePayOptions(
+                            buttonStyle = GooglePayButtonStyle.BLACK,
                         ),
+                    ),
                 ),
                 mockk<GooglePayConfigurationRepository>(),
             )

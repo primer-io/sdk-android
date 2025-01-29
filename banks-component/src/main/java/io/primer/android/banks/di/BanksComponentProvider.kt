@@ -42,7 +42,6 @@ internal class BankWebRedirectComposer(
 ) : BaseWebRedirectComposer {
     override val scope: CoroutineScope = CoroutineScope(Dispatchers.Main)
 
-    @Suppress("ktlint:standard:property-naming")
     override val _uiEvent: MutableSharedFlow<ComposerUiEvent> = MutableSharedFlow()
 
     override fun cancel() {
@@ -65,11 +64,11 @@ internal class BankWebRedirectComposer(
         try {
             tokenizationDelegate.tokenize(
                 input =
-                    BankIssuerTokenizationInputable(
-                        paymentMethodType = inputable.paymentMethodType,
-                        primerSessionIntent = inputable.primerSessionIntent,
-                        bankIssuer = inputable.bankIssuer,
-                    ),
+                BankIssuerTokenizationInputable(
+                    paymentMethodType = inputable.paymentMethodType,
+                    primerSessionIntent = inputable.primerSessionIntent,
+                    bankIssuer = inputable.bankIssuer,
+                ),
             ).flatMap { paymentMethodTokenData ->
                 paymentDelegate.handlePaymentMethodToken(
                     paymentMethodTokenData = paymentMethodTokenData,
@@ -121,30 +120,30 @@ object BanksComponentProvider : DISdkComponent {
             ViewModelProvider(
                 owner = owner,
                 factory =
-                    object : ViewModelProvider.Factory {
-                        @Suppress("UNCHECKED_CAST")
-                        override fun <T : ViewModel> create(
-                            modelClass: Class<T>,
-                            extras: CreationExtras,
-                        ): T =
-                            DefaultBanksComponent(
-                                paymentMethodType = paymentMethodType,
-                                redirectComposer = resolve(name = paymentMethodType),
-                                getBanksDelegate = resolve(),
-                                eventLoggingDelegate =
-                                    resolve(
-                                        name = paymentMethodType,
-                                    ),
-                                errorLoggingDelegate = resolve(name = paymentMethodType),
-                                validationErrorLoggingDelegate = resolve(PaymentMethodType.ADYEN_IDEAL.name),
-                                errorMapperRegistry = resolve(),
-                                savedStateHandle =
-                                    runCatching {
-                                        extras.createSavedStateHandle()
-                                    }.getOrDefault(SavedStateHandle()),
-                                onFinished = onFinished,
-                            ) as T
-                    },
+                object : ViewModelProvider.Factory {
+                    @Suppress("UNCHECKED_CAST")
+                    override fun <T : ViewModel> create(
+                        modelClass: Class<T>,
+                        extras: CreationExtras,
+                    ): T =
+                        DefaultBanksComponent(
+                            paymentMethodType = paymentMethodType,
+                            redirectComposer = resolve(name = paymentMethodType),
+                            getBanksDelegate = resolve(),
+                            eventLoggingDelegate =
+                            resolve(
+                                name = paymentMethodType,
+                            ),
+                            errorLoggingDelegate = resolve(name = paymentMethodType),
+                            validationErrorLoggingDelegate = resolve(PaymentMethodType.ADYEN_IDEAL.name),
+                            errorMapperRegistry = resolve(),
+                            savedStateHandle =
+                            runCatching {
+                                extras.createSavedStateHandle()
+                            }.getOrDefault(SavedStateHandle()),
+                            onFinished = onFinished,
+                        ) as T
+                },
             )[DefaultBanksComponent::class.java]
 
         viewModel.addCloseable {

@@ -16,8 +16,8 @@ internal class AdyenBancontactTokenizationDelegate(
     private val deeplinkInteractor: RedirectDeeplinkInteractor,
     tokenizationInteractor: AdyenBancontactTokenizationInteractor,
 ) : PaymentMethodTokenizationDelegate<AdyenBancontactTokenizationInputable, AdyenBancontactPaymentInstrumentParams>(
-        tokenizationInteractor,
-    ),
+    tokenizationInteractor,
+),
     TokenizationCollectedDataMapper<AdyenBancontactTokenizationInputable, AdyenBancontactPaymentInstrumentParams> {
     override suspend fun mapTokenizationData(input: AdyenBancontactTokenizationInputable) =
         configurationInteractor(AdyenBancontactConfigParams(paymentMethodType = input.paymentMethodType))
@@ -27,10 +27,10 @@ internal class AdyenBancontactTokenizationDelegate(
                         paymentMethodType = input.paymentMethodType,
                         number = input.cardData.cardNumber,
                         expirationMonth =
-                            input.cardData.expiryDate.split("/").first().padStart(
-                                EXPIRATION_MONTH_PAD_START_LENGTH,
-                                EXPIRATION_MONTH_PAD_START_CHAR,
-                            ),
+                        input.cardData.expiryDate.split("/").first().padStart(
+                            EXPIRATION_MONTH_PAD_START_LENGTH,
+                            EXPIRATION_MONTH_PAD_START_CHAR,
+                        ),
                         expirationYear = input.cardData.expiryDate.split("/")[1],
                         cardholderName = input.cardData.cardHolderName,
                         paymentMethodConfigId = configuration.paymentMethodConfigId,

@@ -35,12 +35,12 @@ class NolPayPaymentComponent internal constructor(
     validatorRegistry: NolPayPaymentDataValidatorRegistry,
     errorMapperRegistry: ErrorMapperRegistry,
 ) : BaseNolPayComponent<NolPayPaymentCollectableData, NolPayPaymentStep>(
-        errorLoggingDelegate = errorLoggingDelegate,
-        validatorRegistry = validatorRegistry,
-        eventLoggingDelegate = eventLoggingDelegate,
-        validationErrorLoggingDelegate = validationErrorLoggingDelegate,
-        errorMapperRegistry = errorMapperRegistry,
-    ) {
+    errorLoggingDelegate = errorLoggingDelegate,
+    validatorRegistry = validatorRegistry,
+    eventLoggingDelegate = eventLoggingDelegate,
+    validationErrorLoggingDelegate = validationErrorLoggingDelegate,
+    errorMapperRegistry = errorMapperRegistry,
+) {
     private val collectedData: MutableSharedFlow<NolPayPaymentCollectableData> =
         MutableSharedFlow(replay = 1)
 

@@ -12,10 +12,10 @@
         tools:layout="@layout/fragment_klarna">
         <action
             android:id="@+id/action_KlarnaFragment_to_HeadlessFragment"
-            app:popUpTo="@id/HeadlessComponentsFragment"
+            app:destination="@id/HeadlessComponentsFragment"
             app:launchSingleTop="true"
-            app:popUpToInclusive="false"
-            app:destination="@id/HeadlessComponentsFragment" />
+            app:popUpTo="@id/HeadlessComponentsFragment"
+            app:popUpToInclusive="false" />
         <argument
             android:name="primerSessionIntent"
             app:argType="io.primer.android.PrimerSessionIntent" />
@@ -269,9 +269,9 @@
         tools:layout="@layout/fragment_stripe_ach">
         <action
             android:id="@+id/action_StripeAchFragment_to_HeadlessFragment"
-            app:popUpTo="@id/HeadlessComponentsFragment"
+            app:destination="@id/HeadlessComponentsFragment"
             app:launchSingleTop="true"
-            app:popUpToInclusive="false"
-            app:destination="@id/HeadlessComponentsFragment" />
+            app:popUpTo="@id/HeadlessComponentsFragment"
+            app:popUpToInclusive="false" />
     </fragment>
 </navigation>

@@ -28,17 +28,17 @@ class WhitelistedKeyBuilderTest {
                 WhitelistedKey.NonPrimitiveWhitelistedKey(
                     value = "sessionData",
                     children =
-                        listOf(
-                            WhitelistedKey.PrimitiveWhitelistedKey(value = "description"),
-                            WhitelistedKey.NonPrimitiveWhitelistedKey(
-                                value = "orderLines",
-                                children =
-                                    listOf(
-                                        WhitelistedKey.PrimitiveWhitelistedKey(value = "type"),
-                                        WhitelistedKey.PrimitiveWhitelistedKey(value = "name"),
-                                    ),
+                    listOf(
+                        WhitelistedKey.PrimitiveWhitelistedKey(value = "description"),
+                        WhitelistedKey.NonPrimitiveWhitelistedKey(
+                            value = "orderLines",
+                            children =
+                            listOf(
+                                WhitelistedKey.PrimitiveWhitelistedKey(value = "type"),
+                                WhitelistedKey.PrimitiveWhitelistedKey(value = "name"),
                             ),
                         ),
+                    ),
                 ),
             ),
             result,

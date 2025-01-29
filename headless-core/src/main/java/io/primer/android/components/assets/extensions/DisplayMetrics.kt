@@ -19,6 +19,7 @@ internal fun DisplayMetrics.toResourcesScale() =
         DisplayMetrics.DENSITY_420, DisplayMetrics.DENSITY_440, DisplayMetrics.DENSITY_450,
         ->
             XXHDPI_SCALE
+
         DisplayMetrics.DENSITY_XXXHIGH, DisplayMetrics.DENSITY_560 -> XXXHDPI_SCALE
         else -> density
     }

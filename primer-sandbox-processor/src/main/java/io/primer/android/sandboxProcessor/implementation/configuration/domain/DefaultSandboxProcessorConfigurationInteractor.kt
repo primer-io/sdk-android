@@ -11,5 +11,5 @@ internal typealias ProcessorTestConfigurationInteractor =
 internal class DefaultSandboxProcessorConfigurationInteractor(
     configurationRepository: PaymentMethodConfigurationRepository<SandboxProcessorConfig, SandboxProcessorConfigParams>,
 ) : PaymentMethodConfigurationInteractor<SandboxProcessorConfig, SandboxProcessorConfigParams>(
-        configurationRepository,
-    )
+    configurationRepository,
+)

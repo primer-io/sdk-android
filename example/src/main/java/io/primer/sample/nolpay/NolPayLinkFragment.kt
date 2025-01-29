@@ -41,7 +41,7 @@ class NolPayLinkFragment : Fragment() {
 
         linkCardComponent =
             PrimerHeadlessUniversalCheckoutNolPayManager().provideNolPayLinkCardComponent(
-               this
+                this
             )
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {

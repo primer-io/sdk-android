@@ -80,13 +80,13 @@ class StripeAchClientSessionPatchDelegateTest {
                 actionInteractor.invoke(
                     MultipleActionUpdateParams(
                         params =
-                            listOf(
-                                ActionUpdateCustomerDetailsParams(
-                                    firstName = "johnny",
-                                    lastName = null,
-                                    emailAddress = null,
-                                ),
+                        listOf(
+                            ActionUpdateCustomerDetailsParams(
+                                firstName = "johnny",
+                                lastName = null,
+                                emailAddress = null,
                             ),
+                        ),
                     ),
                 )
             }
@@ -113,13 +113,13 @@ class StripeAchClientSessionPatchDelegateTest {
                 actionInteractor.invoke(
                     MultipleActionUpdateParams(
                         params =
-                            listOf(
-                                ActionUpdateCustomerDetailsParams(
-                                    firstName = null,
-                                    lastName = "doee",
-                                    emailAddress = null,
-                                ),
+                        listOf(
+                            ActionUpdateCustomerDetailsParams(
+                                firstName = null,
+                                lastName = "doee",
+                                emailAddress = null,
                             ),
+                        ),
                     ),
                 )
             }
@@ -146,13 +146,13 @@ class StripeAchClientSessionPatchDelegateTest {
                 actionInteractor.invoke(
                     MultipleActionUpdateParams(
                         params =
-                            listOf(
-                                ActionUpdateCustomerDetailsParams(
-                                    firstName = null,
-                                    lastName = null,
-                                    emailAddress = "john.doe@example.org",
-                                ),
+                        listOf(
+                            ActionUpdateCustomerDetailsParams(
+                                firstName = null,
+                                lastName = null,
+                                emailAddress = "john.doe@example.org",
                             ),
+                        ),
                     ),
                 )
             }
@@ -200,13 +200,13 @@ class StripeAchClientSessionPatchDelegateTest {
                 actionInteractor.invoke(
                     MultipleActionUpdateParams(
                         params =
-                            listOf(
-                                ActionUpdateCustomerDetailsParams(
-                                    firstName = null,
-                                    lastName = null,
-                                    emailAddress = "john.doe@example.org",
-                                ),
+                        listOf(
+                            ActionUpdateCustomerDetailsParams(
+                                firstName = null,
+                                lastName = null,
+                                emailAddress = "john.doe@example.org",
                             ),
+                        ),
                     ),
                 )
             }

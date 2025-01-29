@@ -78,12 +78,15 @@ internal fun Response.logBody(
                     stringBuilder.appendLine("Network Error Response: $errorBody")
                         .append("<-- END HTTP")
                 }
+
                 !promisesBody() -> {
                     stringBuilder.append("<-- END HTTP")
                 }
+
                 headers.bodyHasUnknownEncoding() -> {
                     stringBuilder.append("<-- END HTTP (encoded body omitted)")
                 }
+
                 else -> {
                     appendKnownEncodingBody(
                         stringBuilder = stringBuilder,

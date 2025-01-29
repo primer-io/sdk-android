@@ -12,7 +12,7 @@ internal class KlarnaTokenizationDataRepository(
     localConfigurationDataSource: CacheConfigurationDataSource,
     tokenizationParamsMapper: KlarnaTokenizationParamsMapper,
 ) : TokenizationDataRepository<KlarnaPaymentInstrumentParams, KlarnaPaymentInstrumentDataRequest>(
-        remoteTokenizationDataSource,
-        localConfigurationDataSource,
-        tokenizationParamsMapper,
-    )
+    remoteTokenizationDataSource,
+    localConfigurationDataSource,
+    tokenizationParamsMapper,
+)

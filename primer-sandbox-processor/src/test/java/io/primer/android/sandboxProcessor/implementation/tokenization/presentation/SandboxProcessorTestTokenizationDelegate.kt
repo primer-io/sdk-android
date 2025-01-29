@@ -41,12 +41,12 @@ class SandboxProcessorTestTokenizationDelegate {
             val expected =
                 TokenizationParams(
                     paymentInstrumentParams =
-                        SandboxProcessorPaymentInstrumentParams(
-                            paymentMethodType = input.paymentMethodType,
-                            paymentMethodConfigId = config.paymentMethodConfigId,
-                            locale = config.locale,
-                            flowDecision = SandboxProcessorDecisionType.SUCCESS.name,
-                        ),
+                    SandboxProcessorPaymentInstrumentParams(
+                        paymentMethodType = input.paymentMethodType,
+                        paymentMethodConfigId = config.paymentMethodConfigId,
+                        locale = config.locale,
+                        flowDecision = SandboxProcessorDecisionType.SUCCESS.name,
+                    ),
                     sessionIntent = input.primerSessionIntent,
                 )
 

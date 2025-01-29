@@ -93,7 +93,7 @@ internal class CardContainer(
         registerFactory(name = paymentMethodType) {
             PaymentMethodSdkAnalyticsEventLoggingDelegate(
                 primerPaymentMethodManagerCategory =
-                    PrimerPaymentMethodManagerCategory.RAW_DATA.name,
+                PrimerPaymentMethodManagerCategory.RAW_DATA.name,
                 analyticsInteractor = sdk().resolve(),
             )
         }
@@ -112,11 +112,11 @@ internal class CardContainer(
         registerFactory<CardTokenizationInteractor>(name = paymentMethodType) {
             DefaultCardTokenizationInteractor(
                 tokenizationRepository =
-                    CardTokenizationDataRepository(
-                        remoteTokenizationDataSource = sdk().resolve(paymentMethodType),
-                        configurationDataSource = sdk().resolve(ConfigurationCoreContainer.CACHED_CONFIGURATION_DI_KEY),
-                        tokenizationParamsMapper = resolve(),
-                    ),
+                CardTokenizationDataRepository(
+                    remoteTokenizationDataSource = sdk().resolve(paymentMethodType),
+                    configurationDataSource = sdk().resolve(ConfigurationCoreContainer.CACHED_CONFIGURATION_DI_KEY),
+                    tokenizationParamsMapper = resolve(),
+                ),
                 tokenizedPaymentMethodRepository = sdk().resolve(),
                 preTokenizationHandler = sdk().resolve(),
                 logReporter = sdk().resolve(),
@@ -126,9 +126,9 @@ internal class CardContainer(
         registerFactory {
             CardTokenizationDelegate(
                 tokenizationInteractor =
-                    resolve(
-                        name = paymentMethodType,
-                    ),
+                resolve(
+                    name = paymentMethodType,
+                ),
             )
         }
 

@@ -33,9 +33,9 @@ internal class IPay88TokenizationParamsMapperTest {
                 paymentMethodType = paymentMethodType,
                 paymentMethodConfigId = "testPaymentMethodConfigId",
                 sessionInfo =
-                    IPay88SessionInfoDataRequest(
-                        locale = "testLocale",
-                    ),
+                IPay88SessionInfoDataRequest(
+                    locale = "testLocale",
+                ),
                 type = PaymentInstrumentType.OFF_SESSION_PAYMENT,
             )
 

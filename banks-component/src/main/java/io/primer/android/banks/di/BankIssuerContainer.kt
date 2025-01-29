@@ -55,7 +55,7 @@ internal class BankIssuerContainer(
         registerFactory(name = paymentMethodType) {
             PaymentMethodSdkAnalyticsEventLoggingDelegate(
                 primerPaymentMethodManagerCategory =
-                    PrimerPaymentMethodManagerCategory.COMPONENT_WITH_REDIRECT.name,
+                PrimerPaymentMethodManagerCategory.COMPONENT_WITH_REDIRECT.name,
                 analyticsInteractor = sdk().resolve(),
             )
         }

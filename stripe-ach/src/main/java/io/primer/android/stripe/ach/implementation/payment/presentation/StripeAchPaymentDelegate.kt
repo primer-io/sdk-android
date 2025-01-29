@@ -18,12 +18,12 @@ internal class StripeAchPaymentDelegate(
     baseErrorResolver: BaseErrorResolver,
     private val resumeDecisionHandler: StripeAchResumeDecisionHandler,
 ) : PaymentMethodPaymentDelegate(
-        paymentMethodTokenHandler,
-        resumePaymentHandler,
-        successHandler,
-        errorHandler,
-        baseErrorResolver,
-    ) {
+    paymentMethodTokenHandler,
+    resumePaymentHandler,
+    successHandler,
+    errorHandler,
+    baseErrorResolver,
+) {
     var lastDecision: StripeAchDecision? = null
         private set
 

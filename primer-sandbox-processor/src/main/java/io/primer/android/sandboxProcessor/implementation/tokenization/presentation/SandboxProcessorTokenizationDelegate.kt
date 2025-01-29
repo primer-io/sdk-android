@@ -13,8 +13,8 @@ internal class SandboxProcessorTokenizationDelegate(
     private val configurationInteractor: ProcessorTestConfigurationInteractor,
     tokenizationInteractor: ProcessorTestTokenizationInteractor,
 ) : PaymentMethodTokenizationDelegate<SandboxProcessorTokenizationInputable, SandboxProcessorPaymentInstrumentParams>(
-        tokenizationInteractor,
-    ),
+    tokenizationInteractor,
+),
     TokenizationCollectedDataMapper<SandboxProcessorTokenizationInputable, SandboxProcessorPaymentInstrumentParams> {
     override suspend fun mapTokenizationData(
         input: SandboxProcessorTokenizationInputable,
@@ -24,12 +24,12 @@ internal class SandboxProcessorTokenizationDelegate(
         ).map { configuration ->
             TokenizationParams(
                 paymentInstrumentParams =
-                    SandboxProcessorPaymentInstrumentParams(
-                        paymentMethodType = input.paymentMethodType,
-                        paymentMethodConfigId = configuration.paymentMethodConfigId,
-                        locale = configuration.locale,
-                        flowDecision = input.decisionType.name,
-                    ),
+                SandboxProcessorPaymentInstrumentParams(
+                    paymentMethodType = input.paymentMethodType,
+                    paymentMethodConfigId = configuration.paymentMethodConfigId,
+                    locale = configuration.locale,
+                    flowDecision = input.decisionType.name,
+                ),
                 sessionIntent = input.primerSessionIntent,
             )
         }

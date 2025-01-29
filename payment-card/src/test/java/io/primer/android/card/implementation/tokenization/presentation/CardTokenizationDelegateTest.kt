@@ -33,28 +33,28 @@ internal class CardTokenizationDelegateTest {
                 CardTokenizationInputable(
                     paymentMethodType = "credit_card",
                     cardData =
-                        PrimerCardData(
-                            cardNumber = "4111111111111111",
-                            expiryDate = "12/25",
-                            cvv = "123",
-                            cardHolderName = "John Doe",
-                            cardNetwork = CardNetwork.Type.VISA,
-                        ),
+                    PrimerCardData(
+                        cardNumber = "4111111111111111",
+                        expiryDate = "12/25",
+                        cvv = "123",
+                        cardHolderName = "John Doe",
+                        cardNetwork = CardNetwork.Type.VISA,
+                    ),
                     primerSessionIntent = PrimerSessionIntent.CHECKOUT,
                 )
 
             val expectedParams =
                 TokenizationParams(
                     paymentInstrumentParams =
-                        CardPaymentInstrumentParams(
-                            paymentMethodType = "credit_card",
-                            number = "4111111111111111",
-                            expirationMonth = "12",
-                            expirationYear = "25",
-                            cvv = "123",
-                            cardholderName = "John Doe",
-                            preferredNetwork = CardNetwork.Type.VISA,
-                        ),
+                    CardPaymentInstrumentParams(
+                        paymentMethodType = "credit_card",
+                        number = "4111111111111111",
+                        expirationMonth = "12",
+                        expirationYear = "25",
+                        cvv = "123",
+                        cardholderName = "John Doe",
+                        preferredNetwork = CardNetwork.Type.VISA,
+                    ),
                     sessionIntent = PrimerSessionIntent.CHECKOUT,
                 )
 
@@ -70,28 +70,28 @@ internal class CardTokenizationDelegateTest {
                 CardTokenizationInputable(
                     paymentMethodType = "credit_card",
                     cardData =
-                        PrimerCardData(
-                            cardNumber = "4111111111111111",
-                            expiryDate = "5/25",
-                            cvv = "123",
-                            cardHolderName = "John Doe",
-                            cardNetwork = CardNetwork.Type.VISA,
-                        ),
+                    PrimerCardData(
+                        cardNumber = "4111111111111111",
+                        expiryDate = "5/25",
+                        cvv = "123",
+                        cardHolderName = "John Doe",
+                        cardNetwork = CardNetwork.Type.VISA,
+                    ),
                     primerSessionIntent = PrimerSessionIntent.CHECKOUT,
                 )
 
             val expectedParams =
                 TokenizationParams(
                     paymentInstrumentParams =
-                        CardPaymentInstrumentParams(
-                            paymentMethodType = "credit_card",
-                            number = "4111111111111111",
-                            expirationMonth = "05",
-                            expirationYear = "25",
-                            cvv = "123",
-                            cardholderName = "John Doe",
-                            preferredNetwork = CardNetwork.Type.VISA,
-                        ),
+                    CardPaymentInstrumentParams(
+                        paymentMethodType = "credit_card",
+                        number = "4111111111111111",
+                        expirationMonth = "05",
+                        expirationYear = "25",
+                        cvv = "123",
+                        cardholderName = "John Doe",
+                        preferredNetwork = CardNetwork.Type.VISA,
+                    ),
                     sessionIntent = PrimerSessionIntent.CHECKOUT,
                 )
 

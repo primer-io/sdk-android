@@ -42,23 +42,23 @@ internal class GooglePayConfigurationDataRepository(
             GooglePayConfiguration(
                 environment = getGooglePayEnvironment(configurationDataSource.get().environment),
                 gatewayMerchantId =
-                    requireNotNullCheck(
-                        paymentMethodConfig.options?.merchantId,
-                        GooglePayIllegalValueKey.MERCHANT_ID,
-                    ),
+                requireNotNullCheck(
+                    paymentMethodConfig.options?.merchantId,
+                    GooglePayIllegalValueKey.MERCHANT_ID,
+                ),
                 merchantName = googlePayOptions.merchantName,
                 totalPrice =
-                    PaymentUtils.minorToAmount(
-                        order.currentAmount,
-                        Currency.getInstance(order.currencyCode),
-                    ).toString(),
+                PaymentUtils.minorToAmount(
+                    order.currentAmount,
+                    Currency.getInstance(order.currencyCode),
+                ).toString(),
                 countryCode = order.countryCode.toString(),
                 currencyCode = order.currencyCode.orEmpty(),
                 allowedCardNetworks = allowedCardNetworks,
                 allowedCardAuthMethods = allowedCardAuthMethods,
                 billingAddressRequired = googlePayOptions.captureBillingAddress,
                 existingPaymentMethodRequired =
-                    googlePayOptions.existingPaymentMethodRequired,
+                googlePayOptions.existingPaymentMethodRequired,
                 shippingOptions = shippingOptions,
                 shippingAddressParameters = googlePayOptions.shippingAddressParameters,
                 requireShippingMethod = googlePayOptions.requireShippingMethod,

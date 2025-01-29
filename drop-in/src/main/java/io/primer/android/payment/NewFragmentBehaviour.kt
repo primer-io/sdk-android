@@ -22,6 +22,7 @@ internal open class NewFragmentBehaviour(
         openFragment(parent, fragment, returnToPreviousOnBack)
     }
 
+    @Suppress("NestedBlockDepth")
     private fun openFragment(
         parent: Fragment,
         newFragment: Fragment,

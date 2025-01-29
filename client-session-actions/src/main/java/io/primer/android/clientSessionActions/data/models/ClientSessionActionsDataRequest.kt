@@ -96,22 +96,22 @@ internal data class ClientSessionActionsDataRequest(
         val paymentMethodType: String,
         val binData: BinData? = null,
     ) : Action(
-            type = "SELECT_PAYMENT_METHOD",
-            params =
-                object : ActionParams {
-                    private val PAYMENT_METHOD_TYPE_FIELD = "paymentMethodType"
-                    private val BIN_DATA_FIELD = "binData"
+        type = "SELECT_PAYMENT_METHOD",
+        params =
+        object : ActionParams {
+            private val PAYMENT_METHOD_TYPE_FIELD = "paymentMethodType"
+            private val BIN_DATA_FIELD = "binData"
 
-                    override fun toJSONObject() =
-                        JSONObject().apply {
-                            put(PAYMENT_METHOD_TYPE_FIELD, paymentMethodType)
-                            putOpt(
-                                BIN_DATA_FIELD,
-                                binData?.serialize(),
-                            )
-                        }
-                },
-        ) {
+            override fun toJSONObject() =
+                JSONObject().apply {
+                    put(PAYMENT_METHOD_TYPE_FIELD, paymentMethodType)
+                    putOpt(
+                        BIN_DATA_FIELD,
+                        binData?.serialize(),
+                    )
+                }
+        },
+    ) {
         companion object {
             @JvmField
             val serializer = JSONObjectSerializer<SetPaymentMethod> { it.toJSONObject() }

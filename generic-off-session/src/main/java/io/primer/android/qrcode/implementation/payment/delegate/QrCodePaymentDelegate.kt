@@ -25,12 +25,12 @@ internal class QrCodePaymentDelegate(
     private val resumeHandler: QrCodeResumeHandler,
     private val tokenizedPaymentMethodRepository: TokenizedPaymentMethodRepository,
 ) : PaymentMethodPaymentDelegate(
-        paymentMethodTokenHandler,
-        resumePaymentHandler,
-        successHandler,
-        errorHandler,
-        baseErrorResolver,
-    ) {
+    paymentMethodTokenHandler,
+    resumePaymentHandler,
+    successHandler,
+    errorHandler,
+    baseErrorResolver,
+) {
     override suspend fun handleNewClientToken(
         clientToken: String,
         payment: Payment?,

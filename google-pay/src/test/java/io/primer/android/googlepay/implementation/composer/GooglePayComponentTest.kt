@@ -302,10 +302,10 @@ internal class GooglePayComponentTest {
         val threeDsInitialLauncherParams =
             ProcessorThreeDsInitialLauncherParams(
                 processor3DS =
-                    Processor3DS(
-                        redirectUrl = "https://www.example.com/redirect",
-                        statusUrl = "https://www.example.com/status",
-                    ),
+                Processor3DS(
+                    redirectUrl = "https://www.example.com/redirect",
+                    statusUrl = "https://www.example.com/status",
+                ),
             )
         val params =
             PaymentMethodLauncherParams(
@@ -336,10 +336,10 @@ internal class GooglePayComponentTest {
         val threeDsInitialLauncherParams =
             ProcessorThreeDsInitialLauncherParams(
                 processor3DS =
-                    Processor3DS(
-                        redirectUrl = "https://www.example.com/redirect",
-                        statusUrl = "https://www.example.com/status",
-                    ),
+                Processor3DS(
+                    redirectUrl = "https://www.example.com/redirect",
+                    statusUrl = "https://www.example.com/status",
+                ),
             )
         val params =
             PaymentMethodLauncherParams(
@@ -419,10 +419,10 @@ internal class GooglePayComponentTest {
 
             component.handleActivityResultIntent(
                 params =
-                    PaymentMethodLauncherParams(
-                        paymentMethodType = "GOOGLE_PAY",
-                        sessionIntent = PrimerSessionIntent.CHECKOUT,
-                    ),
+                PaymentMethodLauncherParams(
+                    paymentMethodType = "GOOGLE_PAY",
+                    sessionIntent = PrimerSessionIntent.CHECKOUT,
+                ),
                 resultCode = Activity.RESULT_OK,
                 intent = Intent(),
             )
@@ -473,10 +473,10 @@ internal class GooglePayComponentTest {
 
             component.handleActivityResultIntent(
                 params =
-                    PaymentMethodLauncherParams(
-                        paymentMethodType = "GOOGLE_PAY",
-                        sessionIntent = PrimerSessionIntent.CHECKOUT,
-                    ),
+                PaymentMethodLauncherParams(
+                    paymentMethodType = "GOOGLE_PAY",
+                    sessionIntent = PrimerSessionIntent.CHECKOUT,
+                ),
                 resultCode = Activity.RESULT_OK,
                 intent = Intent(),
             )
@@ -525,10 +525,10 @@ internal class GooglePayComponentTest {
 
             component.handleActivityResultIntent(
                 params =
-                    PaymentMethodLauncherParams(
-                        paymentMethodType = "GOOGLE_PAY",
-                        sessionIntent = PrimerSessionIntent.CHECKOUT,
-                    ),
+                PaymentMethodLauncherParams(
+                    paymentMethodType = "GOOGLE_PAY",
+                    sessionIntent = PrimerSessionIntent.CHECKOUT,
+                ),
                 resultCode = Activity.RESULT_OK,
                 intent = Intent(),
             )
@@ -580,10 +580,10 @@ internal class GooglePayComponentTest {
 
             component.handleActivityResultIntent(
                 params =
-                    PaymentMethodLauncherParams(
-                        paymentMethodType = "GOOGLE_PAY",
-                        sessionIntent = PrimerSessionIntent.CHECKOUT,
-                    ),
+                PaymentMethodLauncherParams(
+                    paymentMethodType = "GOOGLE_PAY",
+                    sessionIntent = PrimerSessionIntent.CHECKOUT,
+                ),
                 resultCode = Activity.RESULT_OK,
                 intent = Intent(),
             )

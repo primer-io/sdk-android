@@ -14,14 +14,14 @@ class PaymentMethodSdkAnalyticsEventLoggingDelegate(
     ) {
         analyticsInteractor(
             params =
-                SdkFunctionParams(
-                    name = methodName,
-                    params =
-                        mapOf(
-                            "paymentMethodType" to paymentMethodType,
-                            "category" to primerPaymentMethodManagerCategory,
-                        ) + context,
-                ),
+            SdkFunctionParams(
+                name = methodName,
+                params =
+                mapOf(
+                    "paymentMethodType" to paymentMethodType,
+                    "category" to primerPaymentMethodManagerCategory,
+                ) + context,
+            ),
         )
     }
 }

@@ -12,6 +12,7 @@ import io.primer.android.clientSessionActions.domain.models.BaseActionUpdatePara
 import io.primer.android.configuration.domain.repository.ConfigurationRepository
 import io.primer.android.data.settings.internal.PrimerConfig
 
+@Suppress("ForbiddenComment")
 internal class ActionUpdateFilter(
     private val configurationRepository: ConfigurationRepository,
     private val config: PrimerConfig,
@@ -26,8 +27,7 @@ internal class ActionUpdateFilter(
                         it.clientSession.clientSessionDataResponse
                             .paymentMethod
                             ?.surcharges.orEmpty()
-                            .all {
-                                    item ->
+                            .all { item ->
                                 item.value == 0
                             } // TODO: only consider currently available payment methods as an optimization
                 }

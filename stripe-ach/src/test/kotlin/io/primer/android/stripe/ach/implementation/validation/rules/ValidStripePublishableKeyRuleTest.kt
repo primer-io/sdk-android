@@ -32,8 +32,8 @@ class ValidStripePublishableKeyRuleTest {
                 IllegalValueException(
                     key = StripeIllegalValueKey.STRIPE_PUBLISHABLE_KEY,
                     message =
-                        "Required value for " +
-                            "${StripeIllegalValueKey.STRIPE_PUBLISHABLE_KEY.key} was null or blank.",
+                    "Required value for " +
+                        "${StripeIllegalValueKey.STRIPE_PUBLISHABLE_KEY.key} was null or blank.",
                 ),
             ),
             result,
@@ -49,8 +49,8 @@ class ValidStripePublishableKeyRuleTest {
                 IllegalValueException(
                     key = StripeIllegalValueKey.STRIPE_PUBLISHABLE_KEY,
                     message =
-                        "Required value for " +
-                            "${StripeIllegalValueKey.STRIPE_PUBLISHABLE_KEY.key} was null or blank.",
+                    "Required value for " +
+                        "${StripeIllegalValueKey.STRIPE_PUBLISHABLE_KEY.key} was null or blank.",
                 ),
             ),
             result,

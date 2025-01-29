@@ -174,6 +174,7 @@ internal class BankSelectionAdapter(
                 theme,
                 listener,
             )
+
         BankItemType.BANK_ITEM_DISABLED.ordinal ->
             BankViewDisabledHolder(
                 PrimerItemBankSelectDisabledBinding.inflate(
@@ -184,6 +185,7 @@ internal class BankSelectionAdapter(
                 imageLoader,
                 theme,
             )
+
         BankItemType.BANK_ITEM_LOADING.ordinal ->
             BankViewLoadingHolder(
                 PrimerItemBankSelectLoadingBinding.inflate(
@@ -194,6 +196,7 @@ internal class BankSelectionAdapter(
                 imageLoader,
                 theme,
             )
+
         else -> error("Invalid $viewType.")
     }
 }

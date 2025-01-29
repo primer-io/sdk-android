@@ -30,7 +30,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 
-@Suppress("LongParameterList", "ktlint:standard:parameter-list-spacing")
+@Suppress("LongParameterList")
 internal class VaultManagerDelegate(
     private val initValidationRulesResolver: VaultManagerInitValidationRulesResolver,
     private val vaultedPaymentMethodsInteractor: FetchVaultedPaymentMethodsInteractor,
@@ -40,7 +40,7 @@ internal class VaultManagerDelegate(
     private val analyticsInteractor: AnalyticsInteractor,
     private val errorMapperRegistry: ErrorMapperRegistry,
     private val vaultedPaymentMethodAdditionalDataValidatorRegistry:
-        VaultedPaymentMethodAdditionalDataValidatorRegistry,
+    VaultedPaymentMethodAdditionalDataValidatorRegistry,
 ) : DISdkComponent {
     private val scope = CoroutineScope(SupervisorJob())
 

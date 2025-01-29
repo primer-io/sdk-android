@@ -34,10 +34,10 @@ internal class WebRedirectLoggingDelegate(
                             severity = Severity.ERROR,
                             diagnosticsId = error.diagnosticsId,
                             context =
-                                ErrorContextParams(
-                                    errorId = error.errorId,
-                                    paymentMethodType = paymentMethodType,
-                                ),
+                            ErrorContextParams(
+                                errorId = error.errorId,
+                                paymentMethodType = paymentMethodType,
+                            ),
                         ),
                     )
                 }
@@ -59,6 +59,7 @@ internal class WebRedirectLoggingDelegate(
                         WebRedirectStep.Loaded -> "Web redirect has loaded for '$paymentMethodType'"
                         WebRedirectStep.Dismissed ->
                             "Payment for '$paymentMethodType' was dismissed by user"
+
                         WebRedirectStep.Success -> "Payment for '$paymentMethodType' was successful"
                     }
                 launch {

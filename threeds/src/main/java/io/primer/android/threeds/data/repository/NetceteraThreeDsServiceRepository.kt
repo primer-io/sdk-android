@@ -64,6 +64,7 @@ internal class NetceteraThreeDsServiceRepository(
                 null
             }
 
+    @Suppress("LongMethod")
     override suspend fun initializeProvider(
         is3DSSanityCheckEnabled: Boolean,
         locale: Locale,

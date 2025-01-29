@@ -26,10 +26,10 @@ internal class NolPayStartPaymentComponentProvider : DISdkComponent {
                     val paymentMethodType = PaymentMethodType.NOL_PAY.name
                     return NolPayPaymentComponent(
                         baseNolPayDelegate =
-                            object : BaseNolPayDelegate {
-                                override val sdkInitInteractor: NolPaySdkInitInteractor
-                                    get() = resolve()
-                            },
+                        object : BaseNolPayDelegate {
+                            override val sdkInitInteractor: NolPaySdkInitInteractor
+                                get() = resolve()
+                        },
                         tokenizationDelegate = resolve(),
                         paymentDelegate = resolve(),
                         eventLoggingDelegate = resolve(name = paymentMethodType),
@@ -42,9 +42,9 @@ internal class NolPayStartPaymentComponentProvider : DISdkComponent {
             },
         ).get(
             key =
-                runCatching {
-                    resolve<PrimerConfig>().clientTokenBase64.orEmpty()
-                }.getOrNull() ?: NolPayPaymentComponent::class.java.canonicalName,
+            runCatching {
+                resolve<PrimerConfig>().clientTokenBase64.orEmpty()
+            }.getOrNull() ?: NolPayPaymentComponent::class.java.canonicalName,
             modelClass = NolPayPaymentComponent::class.java,
         )
     }

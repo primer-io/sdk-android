@@ -33,9 +33,9 @@ internal data class CardNative3DSClientTokenData(
                 CardNative3DSClientTokenData(
                     intent = t.getString(INTENT_FIELD),
                     supportedThreeDsProtocolVersions =
-                        t.getJSONArray(SUPPORTED_THREE_DS_PROTOCOL_VERSIONS_FIELD)
-                            .sequence<String>()
-                            .toList(),
+                    t.getJSONArray(SUPPORTED_THREE_DS_PROTOCOL_VERSIONS_FIELD)
+                        .sequence<String>()
+                        .toList(),
                 )
             }
     }

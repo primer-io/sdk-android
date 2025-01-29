@@ -10,9 +10,9 @@ import io.primer.android.paypal.implementation.tokenization.data.model.PaypalCre
 internal class RemotePaypalCreateBillingAgreementDataSource(
     private val primerHttpClient: PrimerHttpClient,
 ) : BaseSuspendDataSource<
-        PaypalCreateBillingAgreementDataResponse,
-        BaseRemoteHostRequest<PaypalCreateBillingAgreementDataRequest>,
-        > {
+    PaypalCreateBillingAgreementDataResponse,
+    BaseRemoteHostRequest<PaypalCreateBillingAgreementDataRequest>,
+    > {
     override suspend fun execute(
         input: BaseRemoteHostRequest<PaypalCreateBillingAgreementDataRequest>,
     ): PaypalCreateBillingAgreementDataResponse {

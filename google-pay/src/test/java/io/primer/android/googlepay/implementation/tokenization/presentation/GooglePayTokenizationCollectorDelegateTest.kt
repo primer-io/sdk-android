@@ -47,13 +47,13 @@ class GooglePayTokenizationCollectorDelegateTest {
                     billingAddressRequired = true,
                     existingPaymentMethodRequired = false,
                     shippingOptions =
-                        CheckoutModule.Shipping(
-                            selectedMethod = "STANDARD_SHIPPING",
-                            shippingMethods =
-                                listOf(
-                                    ShippingMethod("STANDARD_SHIPPING", "Standard Shipping", 1, "1"),
-                                ),
+                    CheckoutModule.Shipping(
+                        selectedMethod = "STANDARD_SHIPPING",
+                        shippingMethods =
+                        listOf(
+                            ShippingMethod("STANDARD_SHIPPING", "Standard Shipping", 1, "1"),
                         ),
+                    ),
                     shippingAddressParameters = PrimerGoogleShippingAddressParameters(phoneNumberRequired = true),
                     requireShippingMethod = true,
                     emailAddressRequired = true,

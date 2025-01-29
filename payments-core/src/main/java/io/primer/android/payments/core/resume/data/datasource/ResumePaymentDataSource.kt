@@ -13,9 +13,9 @@ internal class ResumePaymentDataSource(
     private val primerHttpClient: PrimerHttpClient,
     private val apiVersion: () -> PrimerApiVersion,
 ) : BaseSuspendDataSource<
-        PaymentDataResponse,
-        BaseRemoteHostRequest<Pair<String, ResumePaymentDataRequest>>,
-        > {
+    PaymentDataResponse,
+    BaseRemoteHostRequest<Pair<String, ResumePaymentDataRequest>>,
+    > {
     override suspend fun execute(
         input: BaseRemoteHostRequest<Pair<String, ResumePaymentDataRequest>>,
     ): PaymentDataResponse {

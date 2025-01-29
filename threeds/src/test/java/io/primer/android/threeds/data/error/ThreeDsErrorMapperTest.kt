@@ -185,8 +185,8 @@ internal class ThreeDsErrorMapperTest {
             val throwable = Exception()
             assertThrows<IllegalStateException>(
                 message =
-                    "Unsupported mapping for $throwable in " +
-                        "io.primer.android.threeds.data.error.ThreeDsErrorMapper",
+                "Unsupported mapping for $throwable in " +
+                    "io.primer.android.threeds.data.error.ThreeDsErrorMapper",
             ) {
                 mapper.getPrimerError(throwable)
             }

@@ -18,9 +18,9 @@ internal class IPay88TokenizationParamsMapper :
                 paymentMethodType = params.paymentInstrumentParams.paymentMethodType,
                 paymentMethodConfigId = params.paymentInstrumentParams.paymentMethodConfigId,
                 sessionInfo =
-                    IPay88SessionInfoDataRequest(
-                        params.paymentInstrumentParams.locale,
-                    ),
+                IPay88SessionInfoDataRequest(
+                    params.paymentInstrumentParams.locale,
+                ),
                 type = params.paymentInstrumentParams.type,
             )
         return instrumentDataRequest.toTokenizationRequest(params.sessionIntent)

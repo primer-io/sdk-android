@@ -13,7 +13,7 @@ internal class PaypalTokenizationDataRepository(
     cacheDataSource: BaseCacheDataSource<ConfigurationData, ConfigurationData>,
     tokenizationParamsMapper: PaypalTokenizationParamsMapper,
 ) : TokenizationDataRepository<PaypalPaymentInstrumentParams, PaypalPaymentInstrumentDataRequest>(
-        remoteTokenizationDataSource = remoteTokenizationDataSource,
-        cacheDataSource = cacheDataSource,
-        tokenizationParamsMapper = tokenizationParamsMapper,
-    )
+    remoteTokenizationDataSource = remoteTokenizationDataSource,
+    cacheDataSource = cacheDataSource,
+    tokenizationParamsMapper = tokenizationParamsMapper,
+)

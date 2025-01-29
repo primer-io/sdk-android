@@ -56,26 +56,26 @@ data class PaymentInstrumentData(
                     expirationMonth = t.optNullableInt(EXPIRATION_MONTH_FIELD),
                     expirationYear = t.optNullableInt(EXPIRATION_YEAR_FIELD),
                     externalPayerInfo =
-                        t.optJSONObject(EXTERNAL_PAYER_INFO_FIELD)?.let {
-                            JSONSerializationUtils.getJsonObjectDeserializer<ExternalPayerInfo>()
-                                .deserialize(it)
-                        },
+                    t.optJSONObject(EXTERNAL_PAYER_INFO_FIELD)?.let {
+                        JSONSerializationUtils.getJsonObjectDeserializer<ExternalPayerInfo>()
+                            .deserialize(it)
+                    },
                     klarnaCustomerToken = t.optNullableString(KLARNA_CUSTOMER_TOKEN_FIELD),
                     sessionData =
-                        t.optJSONObject(SESSION_DATA_FIELD)?.let {
-                            JSONSerializationUtils.getJsonObjectDeserializer<SessionData>()
-                                .deserialize(it)
-                        },
+                    t.optJSONObject(SESSION_DATA_FIELD)?.let {
+                        JSONSerializationUtils.getJsonObjectDeserializer<SessionData>()
+                            .deserialize(it)
+                    },
                     paymentMethodType = t.optNullableString(PAYMENT_METHOD_TYPE_FIELD),
                     t.optJSONObject(SESSION_INFO_FIELD)?.let {
                         JSONSerializationUtils.getJsonObjectDeserializer<SessionInfo>()
                             .deserialize(it)
                     },
                     binData =
-                        t.optJSONObject(BIN_DATA_FIELD)?.let {
-                            JSONSerializationUtils.getJsonObjectDeserializer<BinData>()
-                                .deserialize(it)
-                        },
+                    t.optJSONObject(BIN_DATA_FIELD)?.let {
+                        JSONSerializationUtils.getJsonObjectDeserializer<BinData>()
+                            .deserialize(it)
+                    },
                     bankName = t.optNullableString(BANK_NAME_FIELD),
                 )
             }

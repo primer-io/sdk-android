@@ -42,6 +42,7 @@ import kotlin.time.toJavaDuration
 
 const val CONTENT_TYPE_APPLICATION_JSON = "application/json"
 
+@Suppress("TooManyFunctions")
 class PrimerHttpClient(
     val okHttpClient: OkHttpClient,
     val logProvider: EventFlowProvider<MessageLog>,
@@ -53,10 +54,10 @@ class PrimerHttpClient(
         return customTimeoutInstances.getOrPut(duration) {
             PrimerHttpClient(
                 okHttpClient =
-                    okHttpClient.newBuilder()
-                        .readTimeout(duration.toJavaDuration())
-                        .writeTimeout(duration.toJavaDuration())
-                        .build(),
+                okHttpClient.newBuilder()
+                    .readTimeout(duration.toJavaDuration())
+                    .writeTimeout(duration.toJavaDuration())
+                    .build(),
                 logProvider = logProvider,
                 messagePropertiesEventProvider = messagePropertiesEventProvider,
             )
@@ -210,7 +211,7 @@ class PrimerHttpClient(
         )
     }
 
-    @Suppress("ComplexMethod")
+    @Suppress("ComplexMethod", "ThrowsCount", "LongMethod")
     suspend inline fun <reified R : JSONDeserializable> executeRequest(
         request: Request,
         retryConfig: RetryConfig = RetryConfig(false),

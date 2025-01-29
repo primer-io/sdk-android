@@ -51,6 +51,7 @@ enum class ErrorType {
     PAYMENT_CANCELLED,
 }
 
+@Suppress("SerialVersionUIDInSerializableClass")
 sealed class SessionCompleteViewType : Serializable {
     data class Success(val successType: SuccessType) : SessionCompleteViewType()
 
@@ -84,6 +85,7 @@ internal class SessionCompleteFragment : BaseFragment(), DISdkComponent {
         return binding.root
     }
 
+    @Suppress("LongMethod", "CyclomaticComplexMethod")
     override fun onViewCreated(
         view: View,
         savedInstanceState: Bundle?,

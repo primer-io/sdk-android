@@ -44,13 +44,22 @@
     "CF": "Keski-Afrikan tasavalta",
     "TD": "Tšad",
     "CL": "Chile",
-    "CN": ["Kiinan kansantasavalta", "Kiina"],
+    "CN": [
+      "Kiinan kansantasavalta",
+      "Kiina"
+    ],
     "CX": "Joulusaari",
     "CC": "Kookossaaret (Keeling)",
     "CO": "Kolumbia",
     "KM": "Komorit",
-    "CG": ["Kongon tasavalta", "Kongo"],
-    "CD": ["Kongon demokraattinen tasavalta", "Kongo"],
+    "CG": [
+      "Kongon tasavalta",
+      "Kongo"
+    ],
+    "CD": [
+      "Kongon demokraattinen tasavalta",
+      "Kongo"
+    ],
     "CK": "Cookinsaaret",
     "CR": "Costa Rica",
     "CI": "Norsunluurannikko",
@@ -78,7 +87,11 @@
     "PF": "Ranskan Polynesia",
     "TF": "Ranskan eteläiset alueet",
     "GA": "Gabon",
-    "GM": ["Gambian tasavalta", "Gambia", "Gambia"],
+    "GM": [
+      "Gambian tasavalta",
+      "Gambia",
+      "Gambia"
+    ],
     "GE": "Georgia",
     "DE": "Saksa",
     "GH": "Ghana",
@@ -101,7 +114,10 @@
     "IS": "Islanti",
     "IN": "Intia",
     "ID": "Indonesia",
-    "IR": ["Iranin islamilainen tasavalta", "Iran"],
+    "IR": [
+      "Iranin islamilainen tasavalta",
+      "Iran"
+    ],
     "IQ": "Irak",
     "IE": "Irlanti",
     "IL": "Israel",
@@ -157,13 +173,19 @@
     "NG": "Nigeria",
     "NU": "Niue",
     "NF": "Norfolkin saari",
-    "MK": ["Pohjois-Makedonian tasavalta", "Pohjois-Makedonia"],
+    "MK": [
+      "Pohjois-Makedonian tasavalta",
+      "Pohjois-Makedonia"
+    ],
     "MP": "Pohjoiset Mariaanisaaret",
     "NO": "Norja",
     "OM": "Oman",
     "PK": "Pakistan",
     "PW": "Palau",
-    "PS": ["Palestiina", "Palestiina"],
+    "PS": [
+      "Palestiina",
+      "Palestiina"
+    ],
     "PA": "Panama",
     "PG": "Papua-Uusi-Guinea",
     "PY": "Paraguay",
@@ -176,7 +198,10 @@
     "QA": "Qatar",
     "RE": "Reunion",
     "RO": "Romania",
-    "RU": ["Venäjän federaatio", "Venäjä"],
+    "RU": [
+      "Venäjän federaatio",
+      "Venäjä"
+    ],
     "RW": "Ruanda",
     "SH": "Saint Helena",
     "KN": "Saint Kitts ja Nevis",
@@ -206,9 +231,15 @@
     "SE": "Ruotsi",
     "CH": "Sveitsi",
     "SY": "Syyrian arabitasavalta",
-    "TW": ["Taiwan, Kiinan maakunta", "Taiwan"],
+    "TW": [
+      "Taiwan, Kiinan maakunta",
+      "Taiwan"
+    ],
     "TJ": "Tadžikistan",
-    "TZ": ["Tansanian yhdistynyt tasavalta", "Tansania"],
+    "TZ": [
+      "Tansanian yhdistynyt tasavalta",
+      "Tansania"
+    ],
     "TH": "Thaimaa",
     "TL": "Itä-Timor",
     "TG": "Togo",
@@ -223,8 +254,16 @@
     "UG": "Uganda",
     "UA": "Ukraina",
     "AE": "Yhdistyneet arabiemiirikunnat",
-    "GB": ["Yhdistynyt kuningaskunta", "UK", "Iso-Britannia"],
-    "US": ["Yhdysvallat", "Yhdysvallat", "USA"],
+    "GB": [
+      "Yhdistynyt kuningaskunta",
+      "UK",
+      "Iso-Britannia"
+    ],
+    "US": [
+      "Yhdysvallat",
+      "Yhdysvallat",
+      "USA"
+    ],
     "UM": "Yhdysvaltojen pienet syrjäiset saaret",
     "UY": "Uruguay",
     "UZ": "Uzbekistan",

@@ -22,11 +22,11 @@ internal class NolPayResumeHandler(
     checkoutAdditionalInfoHandler: CheckoutAdditionalInfoHandler,
     private val tokenizedPaymentMethodRepository: TokenizedPaymentMethodRepository,
 ) : PrimerResumeDecisionHandlerV2<NolPayResumeDecision, NolPayClientToken>(
-        clientTokenRepository = clientTokenRepository,
-        validateClientTokenRepository = validateClientTokenRepository,
-        clientTokenParser = clientTokenParser,
-        checkoutAdditionalInfoHandler = checkoutAdditionalInfoHandler,
-    ) {
+    clientTokenRepository = clientTokenRepository,
+    validateClientTokenRepository = validateClientTokenRepository,
+    clientTokenParser = clientTokenParser,
+    checkoutAdditionalInfoHandler = checkoutAdditionalInfoHandler,
+) {
     override val supportedClientTokenIntents: () -> List<String> = {
         listOf(tokenizedPaymentMethodRepository.getPaymentMethod().paymentMethodType.orEmpty())
             .map { paymentMethodType -> "${paymentMethodType}_REDIRECTION" }

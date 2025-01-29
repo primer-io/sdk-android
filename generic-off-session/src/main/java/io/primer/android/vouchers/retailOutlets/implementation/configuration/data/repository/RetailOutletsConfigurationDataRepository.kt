@@ -18,11 +18,11 @@ internal class RetailOutletsConfigurationDataRepository(
         runSuspendCatching {
             RetailOutletsConfig(
                 paymentMethodConfigId =
-                    requireNotNullCheck(
-                        configurationDataSource.get()
-                            .paymentMethods.firstOrNull { it.type == params.paymentMethodType }?.id,
-                        AsyncIllegalValueKey.PAYMENT_METHOD_CONFIG_ID,
-                    ),
+                requireNotNullCheck(
+                    configurationDataSource.get()
+                        .paymentMethods.firstOrNull { it.type == params.paymentMethodType }?.id,
+                    AsyncIllegalValueKey.PAYMENT_METHOD_CONFIG_ID,
+                ),
                 locale = settings.locale.toLanguageTag(),
             )
         }

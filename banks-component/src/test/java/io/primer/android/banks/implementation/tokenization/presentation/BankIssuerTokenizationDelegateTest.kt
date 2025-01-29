@@ -110,25 +110,25 @@ class BankIssuerTokenizationDelegateTest {
                 actionInteractor(
                     MultipleActionUpdateParams(
                         params =
-                            listOf(
-                                ActionUpdateSelectPaymentMethodParams(
-                                    paymentMethodType = PaymentMethodType.ADYEN_IDEAL.name,
-                                    cardNetwork = null,
-                                ),
+                        listOf(
+                            ActionUpdateSelectPaymentMethodParams(
+                                paymentMethodType = PaymentMethodType.ADYEN_IDEAL.name,
+                                cardNetwork = null,
                             ),
+                        ),
                     ),
                 )
                 configurationInteractor.invoke(BankIssuerConfigParams(PaymentMethodType.ADYEN_IDEAL.name))
                 tokenizationInteractor(
                     TokenizationParams(
                         paymentInstrumentParams =
-                            BankIssuerPaymentInstrumentParams(
-                                paymentMethodType = PaymentMethodType.ADYEN_IDEAL.name,
-                                paymentMethodConfigId = "config_id",
-                                locale = "language_tag",
-                                redirectionUrl = "https://example.com",
-                                bankIssuer = "bank_issuer",
-                            ),
+                        BankIssuerPaymentInstrumentParams(
+                            paymentMethodType = PaymentMethodType.ADYEN_IDEAL.name,
+                            paymentMethodConfigId = "config_id",
+                            locale = "language_tag",
+                            redirectionUrl = "https://example.com",
+                            bankIssuer = "bank_issuer",
+                        ),
                         sessionIntent = PrimerSessionIntent.CHECKOUT,
                     ),
                 )
@@ -173,13 +173,13 @@ class BankIssuerTokenizationDelegateTest {
                 tokenizationInteractor(
                     TokenizationParams(
                         paymentInstrumentParams =
-                            BankIssuerPaymentInstrumentParams(
-                                paymentMethodType = PaymentMethodType.ADYEN_IDEAL.name,
-                                paymentMethodConfigId = "config_id",
-                                locale = "language_tag",
-                                redirectionUrl = "https://example.com",
-                                bankIssuer = "bank_issuer",
-                            ),
+                        BankIssuerPaymentInstrumentParams(
+                            paymentMethodType = PaymentMethodType.ADYEN_IDEAL.name,
+                            paymentMethodConfigId = "config_id",
+                            locale = "language_tag",
+                            redirectionUrl = "https://example.com",
+                            bankIssuer = "bank_issuer",
+                        ),
                         sessionIntent = PrimerSessionIntent.CHECKOUT,
                     ),
                 )

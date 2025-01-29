@@ -24,10 +24,10 @@
             android:text="Primary.Button.Text" />
 
         <Button
-            android:enabled="false"
             style="@style/Primer.Button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:enabled="false"
             android:text="Primary.Button.Text" />
 
         <Button
@@ -37,10 +37,10 @@
             android:text="NewButton.Primary" />
 
         <Button
-            android:enabled="false"
             style="@style/Primer.NewButton.Primary"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:enabled="false"
             android:text="NewButton.Primary disabled" />
 
         <io.primer.android.ui.components.PayButton

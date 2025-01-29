@@ -20,13 +20,13 @@ internal class NolPayTokenizationParamsMapper :
                 paymentMethodType = paymentInstrumentParams.paymentMethodType,
                 paymentMethodConfigId = paymentInstrumentParams.paymentMethodConfigId,
                 sessionInfo =
-                    NolPaySessionInfoDataRequest(
-                        mobileCountryCode = paymentInstrumentParams.mobileCountryCode,
-                        mobileNumber = paymentInstrumentParams.mobileNumber,
-                        nolPayCardNumber = paymentInstrumentParams.nolPayCardNumber,
-                        deviceVendor = Build.MANUFACTURER,
-                        deviceModel = Build.MODEL,
-                    ),
+                NolPaySessionInfoDataRequest(
+                    mobileCountryCode = paymentInstrumentParams.mobileCountryCode,
+                    mobileNumber = paymentInstrumentParams.mobileNumber,
+                    nolPayCardNumber = paymentInstrumentParams.nolPayCardNumber,
+                    deviceVendor = Build.MANUFACTURER,
+                    deviceModel = Build.MODEL,
+                ),
                 type = params.paymentInstrumentParams.type,
             )
         return instrumentDataRequest.toTokenizationRequest(params.sessionIntent)

@@ -13,7 +13,7 @@ internal class BankIssuerTokenizationDataRepository(
     cacheDataSource: BaseCacheDataSource<ConfigurationData, ConfigurationData>,
     tokenizationParamsMapper: BankIssuerTokenizationParamsMapper,
 ) : TokenizationDataRepository<BankIssuerPaymentInstrumentParams, BankIssuerPaymentInstrumentDataRequest>(
-        remoteTokenizationDataSource = remoteTokenizationDataSource,
-        cacheDataSource = cacheDataSource,
-        tokenizationParamsMapper = tokenizationParamsMapper,
-    )
+    remoteTokenizationDataSource = remoteTokenizationDataSource,
+    cacheDataSource = cacheDataSource,
+    tokenizationParamsMapper = tokenizationParamsMapper,
+)

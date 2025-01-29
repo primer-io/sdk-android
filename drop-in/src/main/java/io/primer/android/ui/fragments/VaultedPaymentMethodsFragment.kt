@@ -75,6 +75,7 @@ internal class VaultedPaymentMethodsFragment : BaseFragment(), DISdkComponent {
         binding.vaultRecyclerView.adapter = adapter
     }
 
+    @Suppress("CyclomaticComplexMethod")
     private fun generateItemDataFromPaymentMethods(
         paymentMethods: List<PrimerVaultedPaymentMethod>,
     ): List<PaymentMethodItemData> =
@@ -159,6 +160,7 @@ internal class VaultedPaymentMethodsFragment : BaseFragment(), DISdkComponent {
         }
     }
 
+    @Suppress("ForbiddenCommend")
     private fun onDeleteSelectedWith(id: String) {
         val dialog =
             AlertDialog.Builder(view?.context, R.style.Primer_AlertDialog)

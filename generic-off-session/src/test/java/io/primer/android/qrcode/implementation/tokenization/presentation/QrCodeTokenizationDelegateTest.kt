@@ -38,11 +38,11 @@ internal class QrCodeTokenizationDelegateTest {
             val expected =
                 TokenizationParams(
                     paymentInstrumentParams =
-                        QrCodePaymentInstrumentParams(
-                            paymentMethodType = input.paymentMethodType,
-                            paymentMethodConfigId = config.paymentMethodConfigId,
-                            locale = config.locale,
-                        ),
+                    QrCodePaymentInstrumentParams(
+                        paymentMethodType = input.paymentMethodType,
+                        paymentMethodConfigId = config.paymentMethodConfigId,
+                        locale = config.locale,
+                    ),
                     sessionIntent = input.primerSessionIntent,
                 )
 

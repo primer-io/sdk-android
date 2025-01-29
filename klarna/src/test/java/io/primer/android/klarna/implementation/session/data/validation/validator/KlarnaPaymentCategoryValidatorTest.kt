@@ -31,8 +31,8 @@ class KlarnaPaymentCategoryValidatorTest {
             PrimerValidationError(
                 errorId = KlarnaValidations.SESSION_NOT_CREATED_ERROR_ID,
                 description =
-                    "Session needs to be created before payment category can " +
-                        "be collected.",
+                "Session needs to be created before payment category can " +
+                    "be collected.",
                 diagnosticsId = "uuid",
             ),
             result,

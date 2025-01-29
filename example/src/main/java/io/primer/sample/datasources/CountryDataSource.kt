@@ -8,7 +8,9 @@ class CountryDataSource(
 
     fun getCountry() = country
 
-    fun setCountry(value: AppCountryCode) { country = value }
+    fun setCountry(value: AppCountryCode) {
+        country = value
+    }
 
     fun getCountries(): List<AppCountryCode> = AppCountryCode.entries.toList()
 }

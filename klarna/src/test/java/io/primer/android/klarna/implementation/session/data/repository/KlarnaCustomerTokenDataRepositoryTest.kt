@@ -95,18 +95,18 @@ class KlarnaCustomerTokenDataRepositoryTest {
                     BaseRemoteHostRequest(
                         host = coreUrl,
                         data =
-                            CreateCustomerTokenDataRequest(
-                                paymentMethodConfigId = paymentMethodId,
-                                sessionId = sessionId,
-                                authorizationToken = authorizationToken,
-                                description = recurringPaymentDescription,
-                                localeData =
-                                    LocaleDataRequest(
-                                        countryCode = countryCode,
-                                        currencyCode = currency,
-                                        localeCode = languageTag,
-                                    ),
+                        CreateCustomerTokenDataRequest(
+                            paymentMethodConfigId = paymentMethodId,
+                            sessionId = sessionId,
+                            authorizationToken = authorizationToken,
+                            description = recurringPaymentDescription,
+                            localeData =
+                            LocaleDataRequest(
+                                countryCode = countryCode,
+                                currencyCode = currency,
+                                localeCode = languageTag,
                             ),
+                        ),
                     ),
                 )
             }
@@ -170,18 +170,18 @@ class KlarnaCustomerTokenDataRepositoryTest {
                     BaseRemoteHostRequest(
                         host = coreUrl,
                         data =
-                            CreateCustomerTokenDataRequest(
-                                paymentMethodConfigId = paymentMethodId,
-                                sessionId = sessionId,
-                                authorizationToken = authorizationToken,
-                                description = recurringPaymentDescription,
-                                localeData =
-                                    LocaleDataRequest(
-                                        countryCode = countryCode,
-                                        currencyCode = currency,
-                                        localeCode = languageTag,
-                                    ),
+                        CreateCustomerTokenDataRequest(
+                            paymentMethodConfigId = paymentMethodId,
+                            sessionId = sessionId,
+                            authorizationToken = authorizationToken,
+                            description = recurringPaymentDescription,
+                            localeData =
+                            LocaleDataRequest(
+                                countryCode = countryCode,
+                                currencyCode = currency,
+                                localeCode = languageTag,
                             ),
+                        ),
                     ),
                 )
             }
@@ -244,18 +244,18 @@ class KlarnaCustomerTokenDataRepositoryTest {
                     BaseRemoteHostRequest(
                         host = coreUrl,
                         data =
-                            CreateCustomerTokenDataRequest(
-                                paymentMethodConfigId = paymentMethodId,
-                                sessionId = sessionId,
-                                authorizationToken = authorizationToken,
-                                description = recurringPaymentDescription,
-                                localeData =
-                                    LocaleDataRequest(
-                                        countryCode = countryCode,
-                                        currencyCode = currency,
-                                        localeCode = languageTag,
-                                    ),
+                        CreateCustomerTokenDataRequest(
+                            paymentMethodConfigId = paymentMethodId,
+                            sessionId = sessionId,
+                            authorizationToken = authorizationToken,
+                            description = recurringPaymentDescription,
+                            localeData =
+                            LocaleDataRequest(
+                                countryCode = countryCode,
+                                currencyCode = currency,
+                                localeCode = languageTag,
                             ),
+                        ),
                     ),
                 )
             }

@@ -786,23 +786,23 @@ internal class HttpLoggerInterceptorTest {
                 logReporter = logReporter,
                 level = HttpLoggerInterceptor.Level.BODY,
                 blacklistedHttpHeaderProviderRegistry =
-                    mockk {
-                        every { getAll() } returns
-                            listOf(
-                                mockk {
-                                    every { values } returns blacklistedHeaders
-                                },
-                            )
-                    },
+                mockk {
+                    every { getAll() } returns
+                        listOf(
+                            mockk {
+                                every { values } returns blacklistedHeaders
+                            },
+                        )
+                },
                 whitelistedHttpBodyKeyProviderRegistry =
-                    mockk {
-                        every { getAll() } returns
-                            listOf(
-                                mockk {
-                                    every { values } returns whitelistedBodyKeys
-                                },
-                            )
-                    },
+                mockk {
+                    every { getAll() } returns
+                        listOf(
+                            mockk {
+                                every { values } returns whitelistedBodyKeys
+                            },
+                        )
+                },
                 pciUrlProvider = pciUrlProvider,
                 getCurrentTimeMillis = { 0L },
                 isDebugBuild = isDebugBuild,

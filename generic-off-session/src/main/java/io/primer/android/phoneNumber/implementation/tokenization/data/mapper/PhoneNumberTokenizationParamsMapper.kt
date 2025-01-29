@@ -20,10 +20,10 @@ internal class PhoneNumberTokenizationParamsMapper :
                 paymentMethodType = paymentInstrumentParams.paymentMethodType,
                 paymentMethodConfigId = paymentInstrumentParams.paymentMethodConfigId,
                 sessionInfo =
-                    PhoneNumberSessionInfoDataRequest(
-                        locale = paymentInstrumentParams.locale,
-                        phoneNumber = paymentInstrumentParams.phoneNumber,
-                    ),
+                PhoneNumberSessionInfoDataRequest(
+                    locale = paymentInstrumentParams.locale,
+                    phoneNumber = paymentInstrumentParams.phoneNumber,
+                ),
                 type = PaymentInstrumentType.OFF_SESSION_PAYMENT,
             )
         return instrumentDataRequest.toTokenizationRequest(params.sessionIntent)

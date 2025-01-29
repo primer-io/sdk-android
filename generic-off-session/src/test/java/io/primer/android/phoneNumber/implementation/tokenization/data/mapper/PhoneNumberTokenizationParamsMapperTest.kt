@@ -34,10 +34,10 @@ internal class PhoneNumberTokenizationParamsMapperTest {
                 paymentMethodType = paymentMethodType,
                 paymentMethodConfigId = "testPaymentMethodConfigId",
                 sessionInfo =
-                    PhoneNumberSessionInfoDataRequest(
-                        locale = "testLocale",
-                        phoneNumber = "testPhoneNumber",
-                    ),
+                PhoneNumberSessionInfoDataRequest(
+                    locale = "testLocale",
+                    phoneNumber = "testPhoneNumber",
+                ),
                 type = PaymentInstrumentType.OFF_SESSION_PAYMENT,
             )
 

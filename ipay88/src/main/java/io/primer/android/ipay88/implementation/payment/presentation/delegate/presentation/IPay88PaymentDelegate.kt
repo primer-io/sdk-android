@@ -24,12 +24,12 @@ internal class IPay88PaymentDelegate(
     baseErrorResolver: BaseErrorResolver,
     private val resumeHandler: IPay88ResumeHandler,
 ) : PaymentMethodPaymentDelegate(
-        paymentMethodTokenHandler,
-        resumePaymentHandler,
-        successHandler,
-        errorHandler,
-        baseErrorResolver,
-    ),
+    paymentMethodTokenHandler,
+    resumePaymentHandler,
+    successHandler,
+    errorHandler,
+    baseErrorResolver,
+),
     UiEventable {
     private val _uiEvent = MutableSharedFlow<ComposerUiEvent>()
     override val uiEvent: SharedFlow<ComposerUiEvent> = _uiEvent

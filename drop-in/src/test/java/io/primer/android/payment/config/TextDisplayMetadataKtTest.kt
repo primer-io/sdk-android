@@ -24,31 +24,31 @@ internal class TextDisplayMetadataKtTest {
             PaymentMethodImplementation.ButtonMetadata(
                 iconDisplayMetadata = emptyList(),
                 backgroundColor =
-                    PaymentMethodImplementation.ButtonMetadata.ColorMetadata(
-                        colored = "#123456",
-                        light = "#FFFFFF",
-                        dark = "#000000",
-                    ),
+                PaymentMethodImplementation.ButtonMetadata.ColorMetadata(
+                    colored = "#123456",
+                    light = "#FFFFFF",
+                    dark = "#000000",
+                ),
                 borderColor =
-                    PaymentMethodImplementation.ButtonMetadata.ColorMetadata(
-                        colored = "#654321",
-                        light = "#FFFFFF",
-                        dark = "#111111",
-                    ),
+                PaymentMethodImplementation.ButtonMetadata.ColorMetadata(
+                    colored = "#654321",
+                    light = "#FFFFFF",
+                    dark = "#111111",
+                ),
                 borderWidth =
-                    PaymentMethodImplementation.ButtonMetadata.BorderWidthMetadata(
-                        colored = 1.5f,
-                        light = 1.0f,
-                        dark = 2.0f,
-                    ),
+                PaymentMethodImplementation.ButtonMetadata.BorderWidthMetadata(
+                    colored = 1.5f,
+                    light = 1.0f,
+                    dark = 2.0f,
+                ),
                 cornerRadius = 4.0f,
                 text = "Pay",
                 textColor =
-                    PaymentMethodImplementation.ButtonMetadata.ColorMetadata(
-                        colored = "#ABCDEF",
-                        light = "#FFFFFF",
-                        dark = "#222222",
-                    ),
+                PaymentMethodImplementation.ButtonMetadata.ColorMetadata(
+                    colored = "#ABCDEF",
+                    light = "#FFFFFF",
+                    dark = "#222222",
+                ),
                 iconPosition = IconPosition.END,
             )
 
@@ -79,31 +79,31 @@ internal class TextDisplayMetadataKtTest {
             PaymentMethodImplementation.ButtonMetadata(
                 iconDisplayMetadata = emptyList(),
                 backgroundColor =
-                    PaymentMethodImplementation.ButtonMetadata.ColorMetadata(
-                        colored = "#789012",
-                        light = "#444444",
-                        dark = "#888888",
-                    ),
+                PaymentMethodImplementation.ButtonMetadata.ColorMetadata(
+                    colored = "#789012",
+                    light = "#444444",
+                    dark = "#888888",
+                ),
                 borderColor =
-                    PaymentMethodImplementation.ButtonMetadata.ColorMetadata(
-                        colored = "#210987",
-                        light = "#555555",
-                        dark = "#999999",
-                    ),
+                PaymentMethodImplementation.ButtonMetadata.ColorMetadata(
+                    colored = "#210987",
+                    light = "#555555",
+                    dark = "#999999",
+                ),
                 borderWidth =
-                    PaymentMethodImplementation.ButtonMetadata.BorderWidthMetadata(
-                        colored = 2.5f,
-                        light = 1.0f,
-                        dark = 3.0f,
-                    ),
+                PaymentMethodImplementation.ButtonMetadata.BorderWidthMetadata(
+                    colored = 2.5f,
+                    light = 1.0f,
+                    dark = 3.0f,
+                ),
                 cornerRadius = 5.0f,
                 text = "Pay",
                 textColor =
-                    PaymentMethodImplementation.ButtonMetadata.ColorMetadata(
-                        colored = "#FEDCBA",
-                        light = "#666666",
-                        dark = "#AAAAAA",
-                    ),
+                PaymentMethodImplementation.ButtonMetadata.ColorMetadata(
+                    colored = "#FEDCBA",
+                    light = "#666666",
+                    dark = "#AAAAAA",
+                ),
                 iconPosition = IconPosition.END,
             )
 
@@ -134,31 +134,31 @@ internal class TextDisplayMetadataKtTest {
             PaymentMethodImplementation.ButtonMetadata(
                 iconDisplayMetadata = emptyList(),
                 backgroundColor =
-                    PaymentMethodImplementation.ButtonMetadata.ColorMetadata(
-                        colored = "#345678",
-                        light = "#FFFFFF",
-                        dark = "#888888",
-                    ),
+                PaymentMethodImplementation.ButtonMetadata.ColorMetadata(
+                    colored = "#345678",
+                    light = "#FFFFFF",
+                    dark = "#888888",
+                ),
                 borderColor =
-                    PaymentMethodImplementation.ButtonMetadata.ColorMetadata(
-                        colored = "#876543",
-                        light = "#FFFFFF",
-                        dark = "#999999",
-                    ),
+                PaymentMethodImplementation.ButtonMetadata.ColorMetadata(
+                    colored = "#876543",
+                    light = "#FFFFFF",
+                    dark = "#999999",
+                ),
                 borderWidth =
-                    PaymentMethodImplementation.ButtonMetadata.BorderWidthMetadata(
-                        colored = 3.5f,
-                        light = 1.0f,
-                        dark = 3.0f,
-                    ),
+                PaymentMethodImplementation.ButtonMetadata.BorderWidthMetadata(
+                    colored = 3.5f,
+                    light = 1.0f,
+                    dark = 3.0f,
+                ),
                 cornerRadius = 6.0f,
                 text = "Pay",
                 textColor =
-                    PaymentMethodImplementation.ButtonMetadata.ColorMetadata(
-                        colored = "#BAFEDC",
-                        light = "#FFFFFF",
-                        dark = "#AAAAAA",
-                    ),
+                PaymentMethodImplementation.ButtonMetadata.ColorMetadata(
+                    colored = "#BAFEDC",
+                    light = "#FFFFFF",
+                    dark = "#AAAAAA",
+                ),
                 iconPosition = IconPosition.END,
             )
 

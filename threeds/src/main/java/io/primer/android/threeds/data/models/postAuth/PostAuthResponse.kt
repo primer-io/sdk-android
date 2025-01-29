@@ -21,20 +21,20 @@ internal data class PostAuthResponse(
             JSONObjectDeserializer { t ->
                 PostAuthResponse(
                     token =
-                        JSONSerializationUtils.getJsonObjectDeserializer<PaymentMethodTokenInternal>()
-                            .deserialize(
-                                t.getJSONObject(
-                                    TOKEN_FIELD,
-                                ),
+                    JSONSerializationUtils.getJsonObjectDeserializer<PaymentMethodTokenInternal>()
+                        .deserialize(
+                            t.getJSONObject(
+                                TOKEN_FIELD,
                             ),
+                        ),
                     authentication =
-                        t.optJSONObject(AUTHENTICATION_FIELD)?.let {
-                            JSONSerializationUtils
-                                .getJsonObjectDeserializer<AuthenticationDataResponse>()
-                                .deserialize(
-                                    it,
-                                )
-                        },
+                    t.optJSONObject(AUTHENTICATION_FIELD)?.let {
+                        JSONSerializationUtils
+                            .getJsonObjectDeserializer<AuthenticationDataResponse>()
+                            .deserialize(
+                                it,
+                            )
+                    },
                     resumeToken = t.optString(RESUME_TOKEN_FIELD),
                 )
             }

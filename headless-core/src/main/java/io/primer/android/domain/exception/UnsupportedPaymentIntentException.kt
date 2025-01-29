@@ -6,5 +6,5 @@ class UnsupportedPaymentIntentException(
     val paymentMethodType: String,
     val primerIntent: PrimerSessionIntent,
 ) : IllegalStateException(
-        "Cannot show $paymentMethodType because it does not support $primerIntent.",
-    )
+    "Cannot show $paymentMethodType because it does not support $primerIntent.",
+)

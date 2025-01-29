@@ -42,9 +42,9 @@ class RemoteKlarnaVaultPaymentSessionDataSourceTest {
                             sessionType = KlarnaSessionType.RECURRING_PAYMENT,
                             description = "description",
                             localeData =
-                                LocaleDataRequest(
-                                    countryCode = null, currencyCode = "USD", localeCode = "en_US",
-                                ),
+                            LocaleDataRequest(
+                                countryCode = null, currencyCode = "USD", localeCode = "en_US",
+                            ),
                         )
                 }
 
@@ -81,9 +81,9 @@ class RemoteKlarnaVaultPaymentSessionDataSourceTest {
                             sessionType = KlarnaSessionType.RECURRING_PAYMENT,
                             description = "description",
                             localeData =
-                                LocaleDataRequest(
-                                    countryCode = null, currencyCode = "USD", localeCode = "en_US",
-                                ),
+                            LocaleDataRequest(
+                                countryCode = null, currencyCode = "USD", localeCode = "en_US",
+                            ),
                         )
                 }
             val tested =

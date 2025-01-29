@@ -25,12 +25,12 @@ internal class BankIssuerPaymentDelegate(
     baseErrorResolver: BaseErrorResolver,
     private val bankIssuerResumeHandler: BankIssuerResumeHandler,
 ) : PaymentMethodPaymentDelegate(
-        paymentMethodTokenHandler,
-        resumePaymentHandler,
-        successHandler,
-        errorHandler,
-        baseErrorResolver,
-    ),
+    paymentMethodTokenHandler,
+    resumePaymentHandler,
+    successHandler,
+    errorHandler,
+    baseErrorResolver,
+),
     UiEventable {
     private val _uiEvent = MutableSharedFlow<ComposerUiEvent>()
     override val uiEvent: SharedFlow<ComposerUiEvent> = _uiEvent
@@ -47,13 +47,13 @@ internal class BankIssuerPaymentDelegate(
                             paymentMethodType = decision.paymentMethodType,
                             sessionIntent = PrimerSessionIntent.CHECKOUT,
                             initialLauncherParams =
-                                WebRedirectLauncherParams(
-                                    decision.title,
-                                    decision.paymentMethodType,
-                                    decision.redirectUrl,
-                                    decision.statusUrl,
-                                    decision.deeplinkUrl,
-                                ),
+                            WebRedirectLauncherParams(
+                                decision.title,
+                                decision.paymentMethodType,
+                                decision.redirectUrl,
+                                decision.statusUrl,
+                                decision.deeplinkUrl,
+                            ),
                         ),
                     ),
                 )

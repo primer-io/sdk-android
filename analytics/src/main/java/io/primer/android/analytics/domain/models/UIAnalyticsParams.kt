@@ -46,11 +46,11 @@ open class ThreeDsRuntimeFailureContextParams(
     override val threeDsSdkProvider: String,
     open val errorCode: String,
 ) : ThreeDsFailureContextParams(
-        threeDsSdkVersion,
-        initProtocolVersion,
-        threeDsWrapperSdkVersion,
-        threeDsSdkProvider,
-    )
+    threeDsSdkVersion,
+    initProtocolVersion,
+    threeDsWrapperSdkVersion,
+    threeDsSdkProvider,
+)
 
 data class ThreeDsProtocolFailureContextParams(
     val errorDetails: String,
@@ -65,11 +65,11 @@ data class ThreeDsProtocolFailureContextParams(
     override val threeDsWrapperSdkVersion: String,
     override val threeDsSdkProvider: String,
 ) : ThreeDsFailureContextParams(
-        threeDsSdkVersion,
-        initProtocolVersion,
-        threeDsWrapperSdkVersion,
-        threeDsSdkProvider,
-    )
+    threeDsSdkVersion,
+    initProtocolVersion,
+    threeDsWrapperSdkVersion,
+    threeDsSdkProvider,
+)
 
 open class ErrorContextParams(
     val errorId: String,

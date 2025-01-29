@@ -12,14 +12,14 @@ internal data class ImageDisplayMetadata(
     override val cornerRadius: Float?,
     val imageColor: ImageColor?,
 ) : BaseDisplayMetadata(
-        DisplayMetadataType.IMAGE,
-        name,
-        paymentMethodType,
-        backgroundColor,
-        borderColor,
-        borderWidth,
-        cornerRadius,
-    )
+    DisplayMetadataType.IMAGE,
+    name,
+    paymentMethodType,
+    backgroundColor,
+    borderColor,
+    borderWidth,
+    cornerRadius,
+)
 
 internal fun PaymentMethodImplementation.toImageDisplayMetadata(isDarkMode: Boolean) =
     ImageDisplayMetadata(

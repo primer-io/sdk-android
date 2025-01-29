@@ -11,9 +11,9 @@ internal class PlatformResolver : DISdkComponent {
             PaymentMethodType.ADYEN_VIPPS.toString() ->
                 AdyenVippsMapper(
                     cacheConfigurationDataSource =
-                        resolve(
-                            name = ConfigurationCoreContainer.CACHED_CONFIGURATION_DI_KEY,
-                        ),
+                    resolve(
+                        name = ConfigurationCoreContainer.CACHED_CONFIGURATION_DI_KEY,
+                    ),
                     context = resolve(),
                 ).getPlatform(paymentMethodType)
 

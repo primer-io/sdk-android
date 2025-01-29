@@ -56,8 +56,8 @@ internal data class AuthenticationDataResponse(
                     skippedReasonCode = t.optNullableString(SKIPPED_REASON_CODE_FIELD)?.let { SkippedCode.valueOf(it) },
                     skippedReasonText = t.optNullableString(SKIPPED_REASON_TEXT_FIELD),
                     declinedReasonCode =
-                        t.optNullableString(DECLINED_REASON_CODE_FIELD)
-                            ?.let { DeclinedReasonCode.valueOf(it) },
+                    t.optNullableString(DECLINED_REASON_CODE_FIELD)
+                        ?.let { DeclinedReasonCode.valueOf(it) },
                     declinedReasonText = t.optNullableString(DECLINED_REASON_TEXT_FIELD),
                 )
             }

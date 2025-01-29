@@ -12,8 +12,8 @@ import io.primer.cardShared.extension.removeSpaces
 internal class CardTokenizationDelegate(
     tokenizationInteractor: CardTokenizationInteractor,
 ) : PaymentMethodTokenizationDelegate<CardTokenizationInputable, CardPaymentInstrumentParams>(
-        tokenizationInteractor,
-    ),
+    tokenizationInteractor,
+),
     TokenizationCollectedDataMapper<CardTokenizationInputable, CardPaymentInstrumentParams> {
     override suspend fun mapTokenizationData(
         input: CardTokenizationInputable,
@@ -24,10 +24,10 @@ internal class CardTokenizationDelegate(
                     paymentMethodType = input.paymentMethodType,
                     number = input.cardData.cardNumber.removeSpaces(),
                     expirationMonth =
-                        input.cardData.expiryDate.split("/").first().padStart(
-                            EXPIRATION_MONTH_PAD_START_LENGTH,
-                            EXPIRATION_MONTH_PAD_START_CHAR,
-                        ),
+                    input.cardData.expiryDate.split("/").first().padStart(
+                        EXPIRATION_MONTH_PAD_START_LENGTH,
+                        EXPIRATION_MONTH_PAD_START_CHAR,
+                    ),
                     expirationYear = input.cardData.expiryDate.split("/")[1],
                     cvv = input.cardData.cvv,
                     cardholderName = input.cardData.cardHolderName,

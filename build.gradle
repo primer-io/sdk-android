@@ -11,7 +11,6 @@ plugins {
     alias libs.plugins.sonarqube
     alias libs.plugins.dexcount
     alias libs.plugins.kover apply false
-    alias libs.plugins.ktlint apply false
     alias libs.plugins.junit5 apply false
     alias libs.plugins.maven.publish apply false
     alias libs.plugins.google.secrets apply false
@@ -32,9 +31,6 @@ subprojects { subproject ->
             }
             subproject.apply {
                 from("$rootDir/tooling/code-analysis/static-analysis.gradle")
-            }
-            subproject.apply {
-                from("$rootDir/tooling/code-analysis/lint.gradle")
             }
         }
     }

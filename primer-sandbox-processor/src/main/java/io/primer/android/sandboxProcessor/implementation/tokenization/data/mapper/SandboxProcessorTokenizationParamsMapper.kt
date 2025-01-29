@@ -20,9 +20,9 @@ internal class SandboxProcessorTokenizationParamsMapper :
                 paymentMethodType = paymentInstrumentParams.paymentMethodType,
                 paymentMethodConfigId = paymentInstrumentParams.paymentMethodConfigId,
                 sessionInfo =
-                    SandboxProcessorSessionInfoDataRequest(
-                        flowDecision = paymentInstrumentParams.flowDecision,
-                    ),
+                SandboxProcessorSessionInfoDataRequest(
+                    flowDecision = paymentInstrumentParams.flowDecision,
+                ),
                 type = PaymentInstrumentType.OFF_SESSION_PAYMENT,
             )
         return instrumentDataRequest.toTokenizationRequest(params.sessionIntent)

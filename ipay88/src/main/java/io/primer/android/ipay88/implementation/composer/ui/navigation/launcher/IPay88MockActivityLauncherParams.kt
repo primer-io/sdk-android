@@ -8,6 +8,6 @@ internal data class IPay88MockActivityLauncherParams(
     val errorCode: Int,
     override val sessionIntent: PrimerSessionIntent,
 ) : PaymentMethodRedirectLauncherParams(
-        PaymentMethodType.IPAY88_CARD.name,
-        sessionIntent,
-    )
+    PaymentMethodType.IPAY88_CARD.name,
+    sessionIntent,
+)

@@ -40,9 +40,9 @@ class ClientTokenCoreContainer(
         registerSingleton<ClientTokenRepository> {
             ClientTokenDataRepository(
                 clientTokenDataSource =
-                    resolve<CacheClientTokenDataSource>(
-                        CACHE_CLIENT_TOKEN_DATA_SOURCE_DI_KEY,
-                    ),
+                resolve<CacheClientTokenDataSource>(
+                    CACHE_CLIENT_TOKEN_DATA_SOURCE_DI_KEY,
+                ),
             )
         }
 

@@ -24,9 +24,9 @@ internal class VaultedPaymentMethodExchangeDataRepository(
                         BaseRemoteUrlRequest(
                             url = "${configurationData.pciUrl}/payment-instruments/$id/exchange",
                             data =
-                                vaultedPaymentMethodAdditionalDataMapperRegistry.getMapper(
-                                    additionalData,
-                                ).map(additionalData),
+                            vaultedPaymentMethodAdditionalDataMapperRegistry.getMapper(
+                                additionalData,
+                            ).map(additionalData),
                         ),
                     )
             }

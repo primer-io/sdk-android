@@ -44,13 +44,22 @@
     "CF": "Centralnoafrička Republika",
     "TD": "Čad",
     "CL": "Čile",
-    "CN": ["Narodna Republika Kina", "Kina"],
+    "CN": [
+      "Narodna Republika Kina",
+      "Kina"
+    ],
     "CX": "Božićno Ostrvo",
     "CC": "Kokosova (Kiling) Ostrva",
     "CO": "Kolumbija",
     "KM": "Komori",
-    "CG": ["Republika Kongo", "Kongo"],
-    "CD": ["Demokratska Republika Kongo", "Kongo"],
+    "CG": [
+      "Republika Kongo",
+      "Kongo"
+    ],
+    "CD": [
+      "Demokratska Republika Kongo",
+      "Kongo"
+    ],
     "CK": "Kukova Ostrva",
     "CR": "Kostarika",
     "CI": "Obala Slonovače",
@@ -78,7 +87,10 @@
     "PF": "Francuska Polinezija",
     "TF": "Francuske Južne Teritorije",
     "GA": "Gabon",
-    "GM": ["Republika Gambija", "Gambija"],
+    "GM": [
+      "Republika Gambija",
+      "Gambija"
+    ],
     "GE": "Gruzija",
     "DE": "Nemačka",
     "GH": "Gana",
@@ -101,7 +113,10 @@
     "IS": "Island",
     "IN": "Indija",
     "ID": "Indonezija",
-    "IR": ["Islamska Republika Iran", "Iran"],
+    "IR": [
+      "Islamska Republika Iran",
+      "Iran"
+    ],
     "IQ": "Irak",
     "IE": "Irska",
     "IL": "Izrael",
@@ -157,13 +172,19 @@
     "NG": "Nigerija",
     "NU": "Nijue",
     "NF": "Norfolk Ostrvo",
-    "MK": ["Republika Severna Makedonija", "Severna Makedonija"],
+    "MK": [
+      "Republika Severna Makedonija",
+      "Severna Makedonija"
+    ],
     "MP": "Severna Marijanska Ostrva",
     "NO": "Norveška",
     "OM": "Oman",
     "PK": "Pakistan",
     "PW": "Palau",
-    "PS": ["Država Palestina", "Palestina"],
+    "PS": [
+      "Država Palestina",
+      "Palestina"
+    ],
     "PA": "Panama",
     "PG": "Papua Nova Gvineja",
     "PY": "Paragvaj",
@@ -176,7 +197,10 @@
     "QA": "Katar",
     "RE": "Reunion",
     "RO": "Rumunija",
-    "RU": ["Ruska Federacija", "Rusija"],
+    "RU": [
+      "Ruska Federacija",
+      "Rusija"
+    ],
     "RW": "Ruanda",
     "SH": "Sveta Helena",
     "KN": "Sent Kits i Nevis",
@@ -206,9 +230,15 @@
     "SE": "Švedska",
     "CH": "Švajcarska",
     "SY": "Sirijska Arapska Republika",
-    "TW": ["Tajvan, Provincija Kine", "Tajvan"],
+    "TW": [
+      "Tajvan, Provincija Kine",
+      "Tajvan"
+    ],
     "TJ": "Tadžikistan",
-    "TZ": ["Ujedinjena Republika Tanzanija", "Tanzanija"],
+    "TZ": [
+      "Ujedinjena Republika Tanzanija",
+      "Tanzanija"
+    ],
     "TH": "Tajland",
     "TL": "Timor-Leste",
     "TG": "Togo",
@@ -223,8 +253,16 @@
     "UG": "Uganda",
     "UA": "Ukrajina",
     "AE": "Ujedinjeni Arapski Emirati",
-    "GB": ["Ujedinjeno Kraljevstvo", "UK", "Velika Britanija"],
-    "US": ["Sjedinjene Američke Države", "Sjedinjene Države", "SAD"],
+    "GB": [
+      "Ujedinjeno Kraljevstvo",
+      "UK",
+      "Velika Britanija"
+    ],
+    "US": [
+      "Sjedinjene Američke Države",
+      "Sjedinjene Države",
+      "SAD"
+    ],
     "UM": "Manja udaljena ostrva SAD",
     "UY": "Urugvaj",
     "UZ": "Uzbekistan",

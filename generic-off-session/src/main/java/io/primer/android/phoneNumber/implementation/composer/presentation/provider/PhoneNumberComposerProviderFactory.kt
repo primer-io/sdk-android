@@ -16,22 +16,22 @@ internal class PhoneNumberComposerProviderFactory : PaymentMethodComposerProvide
     ): PaymentMethodComposer {
         return PhoneNumberComponent(
             tokenizationDelegate =
-                PhoneNumberTokenizationDelegate(
-                    tokenizationInteractor = resolve(name = paymentMethodType),
-                    configurationInteractor = resolve(name = paymentMethodType),
-                ),
+            PhoneNumberTokenizationDelegate(
+                tokenizationInteractor = resolve(name = paymentMethodType),
+                configurationInteractor = resolve(name = paymentMethodType),
+            ),
             pollingInteractor = resolve(PaymentsContainer.POLLING_INTERACTOR_DI_KEY),
             paymentDelegate =
-                PhoneNumberPaymentDelegate(
-                    paymentMethodTokenHandler = resolve(),
-                    resumePaymentHandler = resolve(),
-                    successHandler = resolve(),
-                    errorHandler = resolve(),
-                    pollingStartHandler = resolve(),
-                    baseErrorResolver = resolve(),
-                    resumeHandler = resolve(),
-                    tokenizedPaymentMethodRepository = resolve(),
-                ),
+            PhoneNumberPaymentDelegate(
+                paymentMethodTokenHandler = resolve(),
+                resumePaymentHandler = resolve(),
+                successHandler = resolve(),
+                errorHandler = resolve(),
+                pollingStartHandler = resolve(),
+                baseErrorResolver = resolve(),
+                resumeHandler = resolve(),
+                tokenizedPaymentMethodRepository = resolve(),
+            ),
             pollingStartHandler = resolve(),
             collectableDataValidator = resolve(),
             sdkAnalyticsEventLoggingDelegate = resolve(name = paymentMethodType),

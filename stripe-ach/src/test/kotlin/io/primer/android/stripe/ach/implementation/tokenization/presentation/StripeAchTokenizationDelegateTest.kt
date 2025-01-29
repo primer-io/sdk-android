@@ -89,22 +89,22 @@ class StripeAchTokenizationDelegateTest {
                 actionInteractor(
                     MultipleActionUpdateParams(
                         params =
-                            listOf(
-                                ActionUpdateSelectPaymentMethodParams(
-                                    paymentMethodType = PaymentMethodType.STRIPE_ACH.name,
-                                    cardNetwork = null,
-                                ),
+                        listOf(
+                            ActionUpdateSelectPaymentMethodParams(
+                                paymentMethodType = PaymentMethodType.STRIPE_ACH.name,
+                                cardNetwork = null,
                             ),
+                        ),
                     ),
                 )
                 configurationInteractor.invoke(StripeAchConfigParams(PaymentMethodType.STRIPE_ACH.name))
                 tokenizationInteractor(
                     TokenizationParams(
                         paymentInstrumentParams =
-                            StripeAchPaymentInstrumentParams(
-                                paymentMethodConfigId = "config_id",
-                                locale = "language_tag",
-                            ),
+                        StripeAchPaymentInstrumentParams(
+                            paymentMethodConfigId = "config_id",
+                            locale = "language_tag",
+                        ),
                         sessionIntent = PrimerSessionIntent.CHECKOUT,
                     ),
                 )
@@ -147,10 +147,10 @@ class StripeAchTokenizationDelegateTest {
                 tokenizationInteractor(
                     TokenizationParams(
                         paymentInstrumentParams =
-                            StripeAchPaymentInstrumentParams(
-                                paymentMethodConfigId = "config_id",
-                                locale = "language_tag",
-                            ),
+                        StripeAchPaymentInstrumentParams(
+                            paymentMethodConfigId = "config_id",
+                            locale = "language_tag",
+                        ),
                         sessionIntent = PrimerSessionIntent.CHECKOUT,
                     ),
                 )
@@ -185,12 +185,12 @@ class StripeAchTokenizationDelegateTest {
                 actionInteractor(
                     MultipleActionUpdateParams(
                         params =
-                            listOf(
-                                ActionUpdateSelectPaymentMethodParams(
-                                    paymentMethodType = PaymentMethodType.STRIPE_ACH.name,
-                                    cardNetwork = null,
-                                ),
+                        listOf(
+                            ActionUpdateSelectPaymentMethodParams(
+                                paymentMethodType = PaymentMethodType.STRIPE_ACH.name,
+                                cardNetwork = null,
                             ),
+                        ),
                     ),
                 )
             }
@@ -227,22 +227,22 @@ class StripeAchTokenizationDelegateTest {
                 actionInteractor(
                     MultipleActionUpdateParams(
                         params =
-                            listOf(
-                                ActionUpdateSelectPaymentMethodParams(
-                                    paymentMethodType = PaymentMethodType.STRIPE_ACH.name,
-                                    cardNetwork = null,
-                                ),
+                        listOf(
+                            ActionUpdateSelectPaymentMethodParams(
+                                paymentMethodType = PaymentMethodType.STRIPE_ACH.name,
+                                cardNetwork = null,
                             ),
+                        ),
                     ),
                 )
                 configurationInteractor.invoke(StripeAchConfigParams(PaymentMethodType.STRIPE_ACH.name))
                 tokenizationInteractor(
                     TokenizationParams(
                         paymentInstrumentParams =
-                            StripeAchPaymentInstrumentParams(
-                                paymentMethodConfigId = "config_id",
-                                locale = "language_tag",
-                            ),
+                        StripeAchPaymentInstrumentParams(
+                            paymentMethodConfigId = "config_id",
+                            locale = "language_tag",
+                        ),
                         sessionIntent = PrimerSessionIntent.CHECKOUT,
                     ),
                 )
@@ -273,12 +273,12 @@ class StripeAchTokenizationDelegateTest {
                 actionInteractor(
                     MultipleActionUpdateParams(
                         params =
-                            listOf(
-                                ActionUpdateSelectPaymentMethodParams(
-                                    paymentMethodType = PaymentMethodType.STRIPE_ACH.name,
-                                    cardNetwork = null,
-                                ),
+                        listOf(
+                            ActionUpdateSelectPaymentMethodParams(
+                                paymentMethodType = PaymentMethodType.STRIPE_ACH.name,
+                                cardNetwork = null,
                             ),
+                        ),
                     ),
                 )
                 configurationInteractor.invoke(StripeAchConfigParams(PaymentMethodType.STRIPE_ACH.name))

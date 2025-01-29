@@ -53,12 +53,12 @@ internal data class IPay88ClientTokenData(
                     countryCode = t.getString(SUPPORTED_COUNTRY_FIELD),
                     currencyCode = t.getString(SUPPORTED_CURRENCY_CODE_FIELD),
                     backendCallbackUrl =
-                        requireNotNull(
-                            URLEncoder.encode(
-                                t.getString(BACKEND_CALLBACK_URL_FIELD),
-                                Charsets.UTF_8.name(),
-                            ),
+                    requireNotNull(
+                        URLEncoder.encode(
+                            t.getString(BACKEND_CALLBACK_URL_FIELD),
+                            Charsets.UTF_8.name(),
                         ),
+                    ),
                 )
             }
     }

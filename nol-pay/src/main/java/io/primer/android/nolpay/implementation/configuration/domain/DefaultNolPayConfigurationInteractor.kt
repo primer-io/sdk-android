@@ -11,5 +11,5 @@ internal typealias NolPayConfigurationInteractor =
 internal class DefaultNolPayConfigurationInteractor(
     configurationRepository: PaymentMethodConfigurationRepository<NolPayConfig, NolPayConfigParams>,
 ) : PaymentMethodConfigurationInteractor<NolPayConfig, NolPayConfigParams>(
-        configurationRepository,
-    )
+    configurationRepository,
+)

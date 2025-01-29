@@ -29,6 +29,7 @@ internal class SelectCountryViewModel(
                     CountryDataType.NAME ->
                         countriesRepository.getCountries()
                             .mapCountryToCountryItem()
+
                     CountryDataType.DIAL_CODE ->
                         countriesRepository.getPhoneCodes()
                             .mapPhoneCodesToCountryItem()
@@ -52,6 +53,7 @@ internal class SelectCountryViewModel(
                     CountryDataType.NAME ->
                         countriesRepository.findCountryByQuery(query)
                             .mapCountryToCountryItem()
+
                     CountryDataType.DIAL_CODE ->
                         countriesRepository.findPhoneCodeByQuery(query)
                             .mapPhoneCodesToCountryItem()

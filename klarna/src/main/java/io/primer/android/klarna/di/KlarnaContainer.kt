@@ -159,11 +159,11 @@ internal class KlarnaContainer(
         registerFactory {
             KlarnaTokenizationInteractor(
                 tokenizationRepository =
-                    KlarnaTokenizationDataRepository(
-                        sdk().resolve(dependencyName = PaymentMethodType.KLARNA.name),
-                        sdk().resolve(ConfigurationCoreContainer.CACHED_CONFIGURATION_DI_KEY),
-                        resolve(),
-                    ),
+                KlarnaTokenizationDataRepository(
+                    sdk().resolve(dependencyName = PaymentMethodType.KLARNA.name),
+                    sdk().resolve(ConfigurationCoreContainer.CACHED_CONFIGURATION_DI_KEY),
+                    resolve(),
+                ),
                 tokenizedPaymentMethodRepository = sdk().resolve(),
                 preTokenizationHandler = sdk().resolve(),
                 logReporter = sdk().resolve(),

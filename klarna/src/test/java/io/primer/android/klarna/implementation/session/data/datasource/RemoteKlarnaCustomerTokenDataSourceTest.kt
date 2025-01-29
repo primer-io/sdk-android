@@ -42,9 +42,9 @@ class RemoteKlarnaCustomerTokenDataSourceTest {
                             authorizationToken = "authorizationToken",
                             description = "description",
                             localeData =
-                                LocaleDataRequest(
-                                    countryCode = null, currencyCode = "USD", localeCode = "en_US",
-                                ),
+                            LocaleDataRequest(
+                                countryCode = null, currencyCode = "USD", localeCode = "en_US",
+                            ),
                         )
                 }
 
@@ -82,9 +82,9 @@ class RemoteKlarnaCustomerTokenDataSourceTest {
                             authorizationToken = "authorizationToken",
                             description = "description",
                             localeData =
-                                LocaleDataRequest(
-                                    countryCode = null, currencyCode = "USD", localeCode = "en_US",
-                                ),
+                            LocaleDataRequest(
+                                countryCode = null, currencyCode = "USD", localeCode = "en_US",
+                            ),
                         )
                 }
             val tested =

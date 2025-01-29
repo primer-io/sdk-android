@@ -49,6 +49,7 @@ suspend fun retry(
     val isServerError = response.code in SERVER_ERRORS
     val isBadRequest = response.code in BAD_REQUEST_ERRORS
 
+    @Suppress("ComplexCondition")
     if (
         response.isSuccessful ||
         !config.enabled ||

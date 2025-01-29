@@ -7,7 +7,7 @@ import io.primer.sample.datasources.ApiKeyDataSource
 /**
  * This is just memory storage for API KEY, please @see(https://primer.io/docs/api)
  */
-class AppApiKeyRepository: ApiKeyDataSource {
+class AppApiKeyRepository : ApiKeyDataSource {
 
     private val storage = Paper.book()
 

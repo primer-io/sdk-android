@@ -36,6 +36,7 @@ import io.primer.android.ui.fragments.forms.binding.BaseFormBinding
 import io.primer.android.ui.fragments.forms.binding.toBaseFormBinding
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
+@Suppress("NestedBlockDepth")
 @ExperimentalCoroutinesApi
 internal class DynamicFormFragment : BaseFormFragment(), PrimerHeadlessUniversalCheckoutRawDataManagerListener {
     private val localConfig: PrimerConfig by inject()
@@ -127,6 +128,7 @@ internal class DynamicFormFragment : BaseFormFragment(), PrimerHeadlessUniversal
                     val digits = "${prefixText ?: ""} $it".keepDigits()
                     rawDataManager.setRawData(PrimerPhoneNumberData(phoneNumber = "+$digits"))
                 }
+
                 PaymentMethodType.ADYEN_BLIK.name -> rawDataManager.setRawData(PrimerOtpData(it.toString()))
 
                 else -> error("Unsupported payment method '${descriptor.paymentMethodType}'")

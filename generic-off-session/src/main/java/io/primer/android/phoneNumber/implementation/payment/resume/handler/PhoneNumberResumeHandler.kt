@@ -20,11 +20,11 @@ internal class PhoneNumberResumeHandler(
     private val clientTokenRepository: ClientTokenRepository,
     checkoutAdditionalInfoHandler: CheckoutAdditionalInfoHandler,
 ) : PrimerResumeDecisionHandlerV2<PhoneNumberDecision, PhoneNumberClientToken>(
-        clientTokenRepository = clientTokenRepository,
-        validateClientTokenRepository = validateClientTokenRepository,
-        clientTokenParser = clientTokenParser,
-        checkoutAdditionalInfoHandler = checkoutAdditionalInfoHandler,
-    ) {
+    clientTokenRepository = clientTokenRepository,
+    validateClientTokenRepository = validateClientTokenRepository,
+    clientTokenParser = clientTokenParser,
+    checkoutAdditionalInfoHandler = checkoutAdditionalInfoHandler,
+) {
     override val supportedClientTokenIntents: () -> List<String> = {
         listOf(tokenizedPaymentMethodRepository.getPaymentMethod().paymentMethodType.orEmpty())
             .map { paymentMethodType -> "${paymentMethodType}_REDIRECTION" }

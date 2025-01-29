@@ -13,7 +13,7 @@ internal class PhoneNumberTokenizationDataRepository(
     configurationDataSource: BaseCacheDataSource<ConfigurationData, ConfigurationData>,
     tokenizationParamsMapper: PhoneNumberTokenizationParamsMapper,
 ) : TokenizationDataRepository<PhoneNumberPaymentInstrumentParams, PhoneNumberPaymentInstrumentDataRequest>(
-        remoteTokenizationDataSource,
-        configurationDataSource,
-        tokenizationParamsMapper,
-    )
+    remoteTokenizationDataSource,
+    configurationDataSource,
+    tokenizationParamsMapper,
+)

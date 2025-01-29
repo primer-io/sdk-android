@@ -37,6 +37,7 @@ internal class DefaultPaymentMethodMapping(
     private val settings: PrimerSettings,
     private val configurationDataSource: BaseCacheDataSource<ConfigurationData, ConfigurationData>,
 ) : PaymentMethodMapping {
+    @Suppress("CyclomaticComplexMethod", "LongMethod")
     override fun getPaymentMethodFor(
         implementationType: PaymentMethodImplementationType,
         type: String,
@@ -74,7 +75,7 @@ internal class DefaultPaymentMethodMapping(
                         ).build()
 
                     PaymentMethodType.XFERS_PAYNOW,
-                    // PaymentMethodType.RAPYD_FAST, // TODO TWS: perhaps use a new factory
+                        // PaymentMethodType.RAPYD_FAST, // TODO TWS: perhaps use a new factory
                     PaymentMethodType.RAPYD_PROMPTPAY,
                     PaymentMethodType.OMISE_PROMPTPAY,
                     ->

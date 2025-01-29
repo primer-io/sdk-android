@@ -41,12 +41,12 @@ internal class PhoneNumberTokenizationDelegateTest {
             val expected =
                 TokenizationParams(
                     paymentInstrumentParams =
-                        PhoneNumberPaymentInstrumentParams(
-                            paymentMethodType = input.paymentMethodType,
-                            paymentMethodConfigId = config.paymentMethodConfigId,
-                            locale = config.locale,
-                            phoneNumber = input.phoneNumberData.phoneNumber,
-                        ),
+                    PhoneNumberPaymentInstrumentParams(
+                        paymentMethodType = input.paymentMethodType,
+                        paymentMethodConfigId = config.paymentMethodConfigId,
+                        locale = config.locale,
+                        phoneNumber = input.phoneNumberData.phoneNumber,
+                    ),
                     sessionIntent = input.primerSessionIntent,
                 )
 

@@ -16,6 +16,7 @@ class SessionUpdateError(
     override val exposedError = this
     override val recoverySuggestion =
         "Ensure that the payment method is configured correctly on the dashboard (https://dashboard.primer.io/)"
-    override val context: BaseContextParams get() =
-        ErrorContextParams(errorId)
+    override val context: BaseContextParams
+        get() =
+            ErrorContextParams(errorId)
 }

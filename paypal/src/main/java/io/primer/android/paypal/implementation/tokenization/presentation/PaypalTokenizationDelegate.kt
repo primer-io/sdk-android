@@ -16,8 +16,8 @@ internal class PaypalTokenizationDelegate(
     private val paypalCreateOrderInteractor: PaypalOrderInfoInteractor,
     private val confirmBillingAgreementInteractor: PaypalConfirmBillingAgreementInteractor,
 ) : PaymentMethodTokenizationDelegate<PaypalTokenizationInputable, PaypalPaymentInstrumentParams>(
-        tokenizationInteractor,
-    ),
+    tokenizationInteractor,
+),
     TokenizationCollectedDataMapper<
         PaypalTokenizationInputable,
         PaypalPaymentInstrumentParams,
@@ -33,14 +33,14 @@ internal class PaypalTokenizationDelegate(
                 ).map { orderInfo ->
                     TokenizationParams(
                         paymentInstrumentParams =
-                            PaypalPaymentInstrumentParams.PaypalCheckoutPaymentInstrumentParams(
-                                paymentMethodType = input.paymentMethodType,
-                                externalPayerId = orderInfo.externalPayerId,
-                                externalPayerInfoEmail = orderInfo.email,
-                                paypalOrderId = orderInfo.orderId,
-                                externalPayerFirstName = orderInfo.externalPayerFirstName,
-                                externalPayerLastName = orderInfo.externalPayerLastName,
-                            ),
+                        PaypalPaymentInstrumentParams.PaypalCheckoutPaymentInstrumentParams(
+                            paymentMethodType = input.paymentMethodType,
+                            externalPayerId = orderInfo.externalPayerId,
+                            externalPayerInfoEmail = orderInfo.email,
+                            paypalOrderId = orderInfo.orderId,
+                            externalPayerFirstName = orderInfo.externalPayerFirstName,
+                            externalPayerLastName = orderInfo.externalPayerLastName,
+                        ),
                         sessionIntent = input.primerSessionIntent,
                     )
                 }
@@ -52,12 +52,12 @@ internal class PaypalTokenizationDelegate(
                 ).map { billingAgreement ->
                     TokenizationParams(
                         paymentInstrumentParams =
-                            PaypalPaymentInstrumentParams.PaypalVaultPaymentInstrumentParams(
-                                paypalBillingAgreementId = billingAgreement.billingAgreementId,
-                                paymentMethodType = input.paymentMethodType,
-                                externalPayerInfo = billingAgreement.externalPayerInfo,
-                                shippingAddress = billingAgreement.shippingAddress,
-                            ),
+                        PaypalPaymentInstrumentParams.PaypalVaultPaymentInstrumentParams(
+                            paypalBillingAgreementId = billingAgreement.billingAgreementId,
+                            paymentMethodType = input.paymentMethodType,
+                            externalPayerInfo = billingAgreement.externalPayerInfo,
+                            shippingAddress = billingAgreement.shippingAddress,
+                        ),
                         sessionIntent = input.primerSessionIntent,
                     )
                 }
@@ -68,10 +68,10 @@ internal class PaypalTokenizationDelegate(
         orderId: String?,
     ) = paypalCreateOrderInteractor(
         params =
-            PaypalOrderInfoParams(
-                paymentMethodConfigId = paymentMethodConfigId,
-                orderId = orderId,
-            ),
+        PaypalOrderInfoParams(
+            paymentMethodConfigId = paymentMethodConfigId,
+            orderId = orderId,
+        ),
     )
 
     private suspend fun confirmBillingAgreement(
@@ -79,9 +79,9 @@ internal class PaypalTokenizationDelegate(
         token: String?,
     ) = confirmBillingAgreementInteractor(
         params =
-            PaypalConfirmBillingAgreementParams(
-                paymentMethodConfigId = paymentMethodConfigId,
-                tokenId = requireNotNull(token),
-            ),
+        PaypalConfirmBillingAgreementParams(
+            paymentMethodConfigId = paymentMethodConfigId,
+            tokenId = requireNotNull(token),
+        ),
     )
 }

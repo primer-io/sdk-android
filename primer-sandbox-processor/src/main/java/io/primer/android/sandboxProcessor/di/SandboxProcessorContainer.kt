@@ -31,7 +31,7 @@ internal class SandboxProcessorContainer(
         registerFactory(name = paymentMethodType) {
             PaymentMethodSdkAnalyticsEventLoggingDelegate(
                 primerPaymentMethodManagerCategory =
-                    PrimerPaymentMethodManagerCategory.NATIVE_UI.name,
+                PrimerPaymentMethodManagerCategory.NATIVE_UI.name,
                 analyticsInteractor = sdk().resolve(),
             )
         }
@@ -63,11 +63,11 @@ internal class SandboxProcessorContainer(
         registerFactory<ProcessorTestTokenizationInteractor>(name = paymentMethodType) {
             DefaultProcessorTestTokenizationInteractor(
                 tokenizationRepository =
-                    SandboxProcessorTokenizationDataRepository(
-                        remoteTokenizationDataSource = sdk().resolve(paymentMethodType),
-                        configurationDataSource = sdk().resolve(ConfigurationCoreContainer.CACHED_CONFIGURATION_DI_KEY),
-                        tokenizationParamsMapper = resolve(),
-                    ),
+                SandboxProcessorTokenizationDataRepository(
+                    remoteTokenizationDataSource = sdk().resolve(paymentMethodType),
+                    configurationDataSource = sdk().resolve(ConfigurationCoreContainer.CACHED_CONFIGURATION_DI_KEY),
+                    tokenizationParamsMapper = resolve(),
+                ),
                 tokenizedPaymentMethodRepository = sdk().resolve(),
                 preTokenizationHandler = sdk().resolve(),
                 logReporter = sdk().resolve(),

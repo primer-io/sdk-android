@@ -8,9 +8,9 @@ internal data class PreChallengeContinueAuthErrorDataRequest(
     override val reasonText: String,
     val recoverySuggestion: String?,
 ) : BaseContinueAuthErrorDataRequest(
-        reasonCode,
-        reasonText,
-    ) {
+    reasonCode,
+    reasonText,
+) {
     companion object {
         private const val RECOVERY_SUGGESTION_FIELD = "recoverySuggestion"
 

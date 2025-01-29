@@ -41,12 +41,12 @@ class OtpTokenizationDelegateTest {
             val expected =
                 TokenizationParams(
                     paymentInstrumentParams =
-                        OtpPaymentInstrumentParams(
-                            paymentMethodType = input.paymentMethodType,
-                            paymentMethodConfigId = config.paymentMethodConfigId,
-                            locale = config.locale,
-                            otp = input.otpData.otp,
-                        ),
+                    OtpPaymentInstrumentParams(
+                        paymentMethodType = input.paymentMethodType,
+                        paymentMethodConfigId = config.paymentMethodConfigId,
+                        locale = config.locale,
+                        otp = input.otpData.otp,
+                    ),
                     sessionIntent = input.primerSessionIntent,
                 )
 

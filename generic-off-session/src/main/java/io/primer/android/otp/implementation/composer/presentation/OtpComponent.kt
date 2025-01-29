@@ -92,9 +92,9 @@ internal class OtpComponent(
             methodName = RawDataManagerAnalyticsConstants.SET_RAW_DATA_METHOD,
             paymentMethodType = paymentMethodType,
             context =
-                mapOf(
-                    RawDataManagerAnalyticsConstants.PAYMENT_METHOD_TYPE_PARAM to paymentMethodType,
-                ).filterValues { it.isNotBlank() },
+            mapOf(
+                RawDataManagerAnalyticsConstants.PAYMENT_METHOD_TYPE_PARAM to paymentMethodType,
+            ).filterValues { it.isNotBlank() },
         )
         composerScope.launch {
             this@OtpComponent.collectedData.emit(collectedData)

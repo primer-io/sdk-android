@@ -95,8 +95,8 @@ class ValidStripeMandateDataRuleTest {
                 IllegalValueException(
                     key = StripeIllegalValueKey.STRIPE_MANDATE_DATA,
                     message =
-                        "Required value for " +
-                            "${StripeIllegalValueKey.STRIPE_MANDATE_DATA.key} was null.",
+                    "Required value for " +
+                        "${StripeIllegalValueKey.STRIPE_MANDATE_DATA.key} was null.",
                 ),
             ),
             result,

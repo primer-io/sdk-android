@@ -18,11 +18,11 @@ internal class WebRedirectTokenizationParamsMapper :
                 paymentMethodType = params.paymentInstrumentParams.paymentMethodType,
                 paymentMethodConfigId = params.paymentInstrumentParams.paymentMethodConfigId,
                 sessionInfo =
-                    WebRedirectSessionInfoDataRequest(
-                        redirectionUrl = params.paymentInstrumentParams.redirectionUrl,
-                        locale = params.paymentInstrumentParams.locale,
-                        platform = params.paymentInstrumentParams.platform,
-                    ),
+                WebRedirectSessionInfoDataRequest(
+                    redirectionUrl = params.paymentInstrumentParams.redirectionUrl,
+                    locale = params.paymentInstrumentParams.locale,
+                    platform = params.paymentInstrumentParams.platform,
+                ),
                 type = params.paymentInstrumentParams.type,
             )
         return instrumentDataRequest.toTokenizationRequest(params.sessionIntent)

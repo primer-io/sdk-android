@@ -24,8 +24,8 @@ internal class BankIssuerTokenizationDelegate(
     private val actionInteractor: ActionInteractor,
     private val deeplinkInteractor: RedirectDeeplinkInteractor,
 ) : PaymentMethodTokenizationDelegate<BankIssuerTokenizationInputable, BankIssuerPaymentInstrumentParams>(
-        tokenizationInteractor,
-    ),
+    tokenizationInteractor,
+),
     TokenizationCollectedDataMapper<BankIssuerTokenizationInputable, BankIssuerPaymentInstrumentParams> {
     override suspend fun mapTokenizationData(input: BankIssuerTokenizationInputable) =
         if (primerSettings.sdkIntegrationType == SdkIntegrationType.HEADLESS) {
@@ -37,13 +37,13 @@ internal class BankIssuerTokenizationDelegate(
         }.map { configuration ->
             TokenizationParams(
                 paymentInstrumentParams =
-                    BankIssuerPaymentInstrumentParams(
-                        paymentMethodType = input.paymentMethodType,
-                        paymentMethodConfigId = configuration.paymentMethodConfigId,
-                        locale = configuration.locale.toLanguageTag(),
-                        redirectionUrl = deeplinkInteractor(None),
-                        bankIssuer = input.bankIssuer,
-                    ),
+                BankIssuerPaymentInstrumentParams(
+                    paymentMethodType = input.paymentMethodType,
+                    paymentMethodConfigId = configuration.paymentMethodConfigId,
+                    locale = configuration.locale.toLanguageTag(),
+                    redirectionUrl = deeplinkInteractor(None),
+                    bankIssuer = input.bankIssuer,
+                ),
                 sessionIntent = input.primerSessionIntent,
             )
         }

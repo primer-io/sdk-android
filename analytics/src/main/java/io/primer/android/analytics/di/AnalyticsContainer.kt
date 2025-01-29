@@ -40,6 +40,7 @@ import okhttp3.Interceptor
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class AnalyticsContainer(private val sdk: () -> SdkContainer) : DependencyContainer() {
+    @Suppress("LongMethod")
     override fun registerInitialDependencies() {
         registerSingleton<CheckoutSessionIdProvider>(CHECKOUT_SESSION_ID_PROVIDER_DI_KEY) {
             CheckoutSessionIdDataSource()
@@ -71,14 +72,14 @@ class AnalyticsContainer(private val sdk: () -> SdkContainer) : DependencyContai
         registerSingleton(HTTP_CLIENT_DI_KEY) {
             PrimerHttpClient(
                 okHttpClient =
-                    HttpClientFactory(
-                        logReporter = sdk().resolve(),
-                        blacklistedHttpHeaderProviderRegistry =
-                            sdk().resolve(),
-                        whitelistedHttpBodyKeyProviderRegistry =
-                            sdk().resolve(),
-                        pciUrlProvider = resolve(PCI_URL_PROVIDER_INTERNAL_DI_KEY),
-                    ).build(),
+                HttpClientFactory(
+                    logReporter = sdk().resolve(),
+                    blacklistedHttpHeaderProviderRegistry =
+                    sdk().resolve(),
+                    whitelistedHttpBodyKeyProviderRegistry =
+                    sdk().resolve(),
+                    pciUrlProvider = resolve(PCI_URL_PROVIDER_INTERNAL_DI_KEY),
+                ).build(),
                 logProvider = resolve(MESSAGE_LOG_PROVIDER_DI_KEY),
                 messagePropertiesEventProvider = resolve(MESSAGE_PROPERTIES_PROVIDER_DI_KEY),
             )
@@ -129,16 +130,16 @@ class AnalyticsContainer(private val sdk: () -> SdkContainer) : DependencyContai
                 deviceIdDataSource = DeviceIdDataSource(sdk().resolve()),
                 networkTypeDataSource = NetworkTypeDataSource(sdk().resolve()),
                 uncaughtHandlerDataSource =
-                    UncaughtHandlerDataSource().also {
-                        Thread.setDefaultUncaughtExceptionHandler(it)
-                    },
+                UncaughtHandlerDataSource().also {
+                    Thread.setDefaultUncaughtExceptionHandler(it)
+                },
                 networkCallDataSource = sdk().resolve(HTTP_INTERCEPTOR_DI_KEY),
                 timerDataSource = sdk().resolve(),
                 checkoutSessionIdDataSource = resolve(CHECKOUT_SESSION_ID_PROVIDER_DI_KEY),
                 provider =
-                    sdk().resolve(
-                        ANALYTICS_PROVIDER_DATA_DI_KEY,
-                    ),
+                sdk().resolve(
+                    ANALYTICS_PROVIDER_DATA_DI_KEY,
+                ),
                 messagePropertiesDataSource = resolve(),
             )
         }

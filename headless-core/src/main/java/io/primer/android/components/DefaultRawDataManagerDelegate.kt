@@ -92,7 +92,7 @@ interface RawDataDelegate<T : PrimerRawData> {
     fun cleanup(paymentMethodType: String?)
 }
 
-@Suppress("LongParameterList")
+@Suppress("LongParameterList", "TooManyFunctions")
 internal class DefaultRawDataManagerDelegate(
     private val initValidationRulesResolver: PaymentMethodManagerInitValidationRulesResolver,
     private val paymentInputTypesInteractor: PaymentInputTypesInteractor,
@@ -166,7 +166,7 @@ internal class DefaultRawDataManagerDelegate(
                         (
                             paymentMethodNavigationFactoryRegistry.create(paymentMethodType) as?
                                 PaymentMethodContextNavigationHandler
-                        )
+                            )
                             ?.getSupportedNavigators(context = context)
                             ?.firstOrNull { it.canHandle(event.params) }?.navigate(event.params)
                             ?: println("Navigation handler for ${event.params} not found.")

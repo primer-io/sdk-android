@@ -30,7 +30,6 @@ abstract class BaseNolPayComponent<C : NolPayCollectableData, S : PrimerHeadless
     PrimerHeadlessStartable,
     PrimerHeadlessCollectDataComponent<C>,
     PrimerHeadlessSteppable<S> {
-    @Suppress("ktlint:standard:property-naming")
     protected val _componentStep: MutableSharedFlow<S> = MutableSharedFlow()
     override val componentStep: Flow<S> = _componentStep
 

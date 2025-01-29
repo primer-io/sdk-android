@@ -20,10 +20,10 @@ internal class CreatePaymentDataSource(
                 url = "${input.host}/payments",
                 request = input.data,
                 headers =
-                    mapOf(
-                        apiVersion().toHeaderPair(),
-                        HEADER_ACCEPT to "*/*",
-                    ),
+                mapOf(
+                    apiVersion().toHeaderPair(),
+                    HEADER_ACCEPT to "*/*",
+                ),
             ).body
     }
 

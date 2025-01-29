@@ -20,10 +20,10 @@ internal class RetailOutletsTokenizationParamsMapper :
                 paymentMethodType = paymentInstrumentParams.paymentMethodType,
                 paymentMethodConfigId = paymentInstrumentParams.paymentMethodConfigId,
                 sessionInfo =
-                    RetailOutletsSessionInfoDataRequest(
-                        retailerOutlet = paymentInstrumentParams.retailOutlet,
-                        locale = paymentInstrumentParams.locale,
-                    ),
+                RetailOutletsSessionInfoDataRequest(
+                    retailerOutlet = paymentInstrumentParams.retailOutlet,
+                    locale = paymentInstrumentParams.locale,
+                ),
                 type = PaymentInstrumentType.OFF_SESSION_PAYMENT,
             )
         return instrumentDataRequest.toTokenizationRequest(params.sessionIntent)

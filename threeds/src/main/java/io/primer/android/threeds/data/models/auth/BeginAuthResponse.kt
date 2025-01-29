@@ -21,19 +21,19 @@ internal data class BeginAuthResponse(
             JSONObjectDeserializer { t ->
                 BeginAuthResponse(
                     token =
-                        JSONSerializationUtils.getJsonObjectDeserializer<PaymentMethodTokenInternal>()
-                            .deserialize(
-                                t.getJSONObject(
-                                    TOKEN_FIELD,
-                                ),
+                    JSONSerializationUtils.getJsonObjectDeserializer<PaymentMethodTokenInternal>()
+                        .deserialize(
+                            t.getJSONObject(
+                                TOKEN_FIELD,
                             ),
+                        ),
                     authentication =
-                        JSONSerializationUtils.getJsonObjectDeserializer<AuthenticationDataResponse>()
-                            .deserialize(
-                                t.getJSONObject(
-                                    AUTHENTICATION_FIELD,
-                                ),
+                    JSONSerializationUtils.getJsonObjectDeserializer<AuthenticationDataResponse>()
+                        .deserialize(
+                            t.getJSONObject(
+                                AUTHENTICATION_FIELD,
                             ),
+                        ),
                     resumeToken = t.getString(RESUME_TOKEN_FIELD),
                 )
             }

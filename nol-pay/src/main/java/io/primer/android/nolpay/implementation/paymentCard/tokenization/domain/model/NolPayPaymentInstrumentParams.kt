@@ -11,8 +11,8 @@ internal data class NolPayPaymentInstrumentParams(
     val mobileNumber: String,
     val nolPayCardNumber: String,
 ) : BaseAsyncPaymentInstrumentParams(
-        paymentMethodType,
-        paymentMethodConfigId,
-        locale,
-        PaymentInstrumentType.OFF_SESSION_PAYMENT,
-    )
+    paymentMethodType,
+    paymentMethodConfigId,
+    locale,
+    PaymentInstrumentType.OFF_SESSION_PAYMENT,
+)

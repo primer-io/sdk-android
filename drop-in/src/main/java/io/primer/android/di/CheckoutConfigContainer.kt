@@ -30,6 +30,7 @@ import io.primer.android.ui.utils.DefaultCheckoutExitHandler
 import io.primer.android.ui.utils.DropInManualFlowSuccessHandler
 import io.primer.android.viewmodel.PrimerViewModelFactory
 
+@Suppress("LongMethod")
 internal class CheckoutConfigContainer(private val sdk: () -> SdkContainer) : DependencyContainer() {
     override fun registerInitialDependencies() {
         registerSingleton { sdk().resolve<PrimerConfig>().settings.uiOptions.theme }
@@ -116,9 +117,9 @@ internal class CheckoutConfigContainer(private val sdk: () -> SdkContainer) : De
         registerFactory {
             PrimerViewModelFactory(
                 configurationInteractor =
-                    sdk().resolve(
-                        dependencyName = ConfigurationCoreContainer.CONFIGURATION_INTERACTOR_DI_KEY,
-                    ),
+                sdk().resolve(
+                    dependencyName = ConfigurationCoreContainer.CONFIGURATION_INTERACTOR_DI_KEY,
+                ),
                 paymentMethodsImplementationInteractor = sdk().resolve(),
                 analyticsInteractor = sdk().resolve(),
                 headlessSdkInitInteractor = resolve(),

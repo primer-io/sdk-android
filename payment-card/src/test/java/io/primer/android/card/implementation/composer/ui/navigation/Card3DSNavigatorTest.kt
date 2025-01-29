@@ -51,9 +51,9 @@ internal class Card3DSNavigatorTest {
             ThreeDsActivity.Companion.getLaunchIntent(
                 context = activityContext,
                 params =
-                    ThreeDsActivityLauncherParams(
-                        supportedThreeDsProtocolVersions = threeDsParams.supportedThreeDsVersions,
-                    ),
+                ThreeDsActivityLauncherParams(
+                    supportedThreeDsProtocolVersions = threeDsParams.supportedThreeDsVersions,
+                ),
             )
         } returns intent
         every { launcher.launch(intent) } just runs

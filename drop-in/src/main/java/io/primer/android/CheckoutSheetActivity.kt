@@ -99,7 +99,7 @@ internal class CheckoutSheetActivity : BaseCheckoutActivity(), AchMandateActionH
                             (
                                 primerViewModel.selectedPaymentMethod.value
                                     ?: primerViewModel.selectedSavedPaymentMethodDescriptor
-                            )?.createSuccessBehavior(viewStatus)
+                                )?.createSuccessBehavior(viewStatus)
                         if (behaviour != null) {
                             openFragment(behaviour)
                             return@Observer
@@ -107,10 +107,10 @@ internal class CheckoutSheetActivity : BaseCheckoutActivity(), AchMandateActionH
                             SessionCompleteFragment.newInstance(
                                 delay = viewStatus.delay,
                                 viewType =
-                                    SessionCompleteViewType.Error(
-                                        ErrorType.DEFAULT,
-                                        getString(R.string.error_default),
-                                    ),
+                                SessionCompleteViewType.Error(
+                                    ErrorType.DEFAULT,
+                                    getString(R.string.error_default),
+                                ),
                             )
                         }
                     }
@@ -150,11 +150,11 @@ internal class CheckoutSheetActivity : BaseCheckoutActivity(), AchMandateActionH
                     fragment = it,
                     returnToPreviousOnBack = initFinished,
                     tag =
-                        if (it is SelectPaymentMethodFragment) {
-                            SelectPaymentMethodFragment.TAG
-                        } else {
-                            null
-                        },
+                    if (it is SelectPaymentMethodFragment) {
+                        SelectPaymentMethodFragment.TAG
+                    } else {
+                        null
+                    },
                 )
             } ?: run {
                 sheet.dialog?.hide()

@@ -242,6 +242,7 @@ internal class PrimerViewModel(
         _navigateActionEvent.postValue(behaviour)
     }
 
+    @Suppress("LongMethod", "CyclomaticComplexMethod")
     fun fetchConfiguration() {
         viewModelScope.launch {
             launch {
@@ -271,7 +272,7 @@ internal class PrimerViewModel(
                                                         paymentMethodType = paymentMethod.paymentMethodType,
                                                         paymentMethodName = paymentMethod.paymentMethodName,
                                                         paymentMethodManagerCategory =
-                                                            paymentMethod.paymentMethodManagerCategories.first(),
+                                                        paymentMethod.paymentMethodManagerCategories.first(),
                                                     )
                                                 }
                                                     .onFailure {
@@ -320,9 +321,9 @@ internal class PrimerViewModel(
                                 timerType = TimerType.END,
                                 duration = (timeSource.markNow() - start).inWholeMilliseconds,
                                 context =
-                                    DropInSourceAnalyticsContext(
-                                        source = config.toDropInSource(),
-                                    ),
+                                DropInSourceAnalyticsContext(
+                                    source = config.toDropInSource(),
+                                ),
                             )
                         }
 
@@ -360,9 +361,9 @@ internal class PrimerViewModel(
                         id = TimerId.DROP_IN_LOADING,
                         timerType = TimerType.START,
                         context =
-                            DropInSourceAnalyticsContext(
-                                source = config.toDropInSource(),
-                            ),
+                        DropInSourceAnalyticsContext(
+                            source = config.toDropInSource(),
+                        ),
                     ),
                 )
             }
@@ -566,14 +567,14 @@ internal class PrimerViewModel(
             orderInfo.let {
                 amountToCurrencyInteractor.execute(
                     params =
-                        FormatCurrencyParams(
-                            requireNotNull(
-                                MonetaryAmount.create(
-                                    orderInfo.currencyCode,
-                                    orderInfo.totalAmount,
-                                ),
+                    FormatCurrencyParams(
+                        requireNotNull(
+                            MonetaryAmount.create(
+                                orderInfo.currencyCode,
+                                orderInfo.totalAmount,
                             ),
                         ),
+                    ),
                 )
             }
         }
@@ -582,14 +583,14 @@ internal class PrimerViewModel(
         amount.let {
             amountToCurrencyInteractor.execute(
                 params =
-                    FormatCurrencyParams(
-                        requireNotNull(
-                            MonetaryAmount.create(
-                                currency = basicOrderInfoInteractor(None).currencyCode,
-                                value = amount,
-                            ),
+                FormatCurrencyParams(
+                    requireNotNull(
+                        MonetaryAmount.create(
+                            currency = basicOrderInfoInteractor(None).currencyCode,
+                            value = amount,
                         ),
                     ),
+                ),
             )
         }
 

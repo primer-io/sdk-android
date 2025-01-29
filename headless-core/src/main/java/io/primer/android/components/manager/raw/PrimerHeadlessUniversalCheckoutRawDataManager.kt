@@ -27,8 +27,8 @@ class PrimerHeadlessUniversalCheckoutRawDataManager private constructor(
             context = resolve(),
             paymentMethodType = paymentMethodType,
             primerSessionIntent =
-                runCatching { resolve<PrimerConfig>().paymentMethodIntent }
-                    .getOrElse { PrimerSessionIntent.CHECKOUT },
+            runCatching { resolve<PrimerConfig>().paymentMethodIntent }
+                .getOrElse { PrimerSessionIntent.CHECKOUT },
         )
     }
 

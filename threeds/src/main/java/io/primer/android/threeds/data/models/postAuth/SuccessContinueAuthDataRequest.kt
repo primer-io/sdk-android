@@ -10,8 +10,8 @@ internal data class SuccessContinueAuthDataRequest(
     val threeDsWrapperSdkVersion: String = BuildConfig.SDK_VERSION_STRING,
     val threeDsSdkProvider: ThreeDsSdkProvider = ThreeDsSdkProvider.NETCETERA,
 ) : BaseContinueAuthDataRequest(
-        ThreeDsAuthStatus.SUCCESS,
-    ) {
+    ThreeDsAuthStatus.SUCCESS,
+) {
     companion object {
         @JvmField
         val serializer =

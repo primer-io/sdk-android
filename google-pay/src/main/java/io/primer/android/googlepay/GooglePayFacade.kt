@@ -99,6 +99,7 @@ internal class GooglePayFacade(
         return resultCode == ConnectionResult.SUCCESS
     }
 
+    @Suppress("LongParameterList")
     fun pay(
         activity: Activity,
         gatewayMerchantId: String,
@@ -132,6 +133,7 @@ internal class GooglePayFacade(
         pay(activity, request)
     }
 
+    @Suppress("LongParameterList")
     @VisibleForTesting
     internal fun buildPaymentRequest(
         gatewayMerchantId: String,

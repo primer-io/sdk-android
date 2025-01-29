@@ -1,6 +1,6 @@
 package io.primer.android.threeds.data.models.common
 
-@Suppress("EnumEntryName", "EnumNaming")
+@Suppress("EnumEntryName", "EnumNaming", "EnumEntryNameCase")
 internal enum class SkippedCode {
     GATEWAY_UNAVAILABLE,
     DISABLED_BY_MERCHANT,

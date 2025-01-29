@@ -34,6 +34,7 @@ private const val CENTURY_START_YEAR = 2000
 private const val CARD_EXPIRATION_SEPARATOR = '/'
 private const val UPDATED_ELEMENT_TYPE_KEY = "updated_element_type"
 
+@Suppress("TooManyFunctions")
 @ExperimentalCoroutinesApi
 internal class BancontactCardFragment : BaseFragment(), PrimerHeadlessUniversalCheckoutRawDataManagerListener {
     private lateinit var rawDataManager: PrimerHeadlessUniversalCheckoutRawDataManagerInterface

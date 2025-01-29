@@ -21,12 +21,12 @@ internal class NolPayAppSecretDataRepository(
                 BaseRemoteHostRequest(
                     host = configuration.coreUrl,
                     data =
-                        NolPaySecretDataRequest(
-                            sdkId = sdkId,
-                            appId = appId,
-                            deviceVendor = Build.MANUFACTURER,
-                            deviceModel = Build.MODEL,
-                        ),
+                    NolPaySecretDataRequest(
+                        sdkId = sdkId,
+                        appId = appId,
+                        deviceVendor = Build.MANUFACTURER,
+                        deviceModel = Build.MODEL,
+                    ),
                 ),
             ).sdkSecret
         }

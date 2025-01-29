@@ -42,12 +42,12 @@ internal class RetailOutletsTokenizationDelegateTest {
             val expected =
                 TokenizationParams(
                     paymentInstrumentParams =
-                        RetailOutletsPaymentInstrumentParams(
-                            paymentMethodType = input.paymentMethodType,
-                            paymentMethodConfigId = config.paymentMethodConfigId,
-                            locale = config.locale,
-                            retailOutlet = retailerData.id,
-                        ),
+                    RetailOutletsPaymentInstrumentParams(
+                        paymentMethodType = input.paymentMethodType,
+                        paymentMethodConfigId = config.paymentMethodConfigId,
+                        locale = config.locale,
+                        retailOutlet = retailerData.id,
+                    ),
                     sessionIntent = input.primerSessionIntent,
                 )
 

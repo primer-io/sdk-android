@@ -13,8 +13,8 @@ internal class MultibancoTokenizationDelegate(
     private val configurationInteractor: MultibancoConfigurationInteractor,
     tokenizationInteractor: MultibancoTokenizationInteractor,
 ) : PaymentMethodTokenizationDelegate<MultibancoTokenizationInputable, MultibancoPaymentInstrumentParams>(
-        tokenizationInteractor,
-    ),
+    tokenizationInteractor,
+),
     TokenizationCollectedDataMapper<
         MultibancoTokenizationInputable,
         MultibancoPaymentInstrumentParams,
@@ -27,11 +27,11 @@ internal class MultibancoTokenizationDelegate(
         ).map { configuration ->
             TokenizationParams(
                 paymentInstrumentParams =
-                    MultibancoPaymentInstrumentParams(
-                        paymentMethodType = input.paymentMethodType,
-                        paymentMethodConfigId = configuration.paymentMethodConfigId,
-                        locale = configuration.locale,
-                    ),
+                MultibancoPaymentInstrumentParams(
+                    paymentMethodType = input.paymentMethodType,
+                    paymentMethodConfigId = configuration.paymentMethodConfigId,
+                    locale = configuration.locale,
+                ),
                 sessionIntent = input.primerSessionIntent,
             )
         }

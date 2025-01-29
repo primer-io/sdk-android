@@ -76,22 +76,22 @@ internal class KlarnaSessionDataRepository(
         BaseRemoteHostRequest(
             host = configurationDataSource.get().coreUrl,
             data =
-                CreateVaultPaymentSessionDataRequest(
-                    paymentMethodConfigId =
-                        requireNotNullCheck(
-                            paymentMethodConfig.id,
-                            KlarnaIllegalValueKey.PAYMENT_METHOD_CONFIG_ID,
-                        ),
-                    sessionType = KlarnaSessionType.RECURRING_PAYMENT,
-                    description =
-                        config.settings.paymentMethodOptions.klarnaOptions.recurringPaymentDescription,
-                    localeData =
-                        LocaleDataRequest(
-                            order.countryCode,
-                            order.currencyCode.orEmpty(),
-                            config.settings.locale.toLanguageTag(),
-                        ),
+            CreateVaultPaymentSessionDataRequest(
+                paymentMethodConfigId =
+                requireNotNullCheck(
+                    paymentMethodConfig.id,
+                    KlarnaIllegalValueKey.PAYMENT_METHOD_CONFIG_ID,
                 ),
+                sessionType = KlarnaSessionType.RECURRING_PAYMENT,
+                description =
+                config.settings.paymentMethodOptions.klarnaOptions.recurringPaymentDescription,
+                localeData =
+                LocaleDataRequest(
+                    order.countryCode,
+                    order.currencyCode.orEmpty(),
+                    config.settings.locale.toLanguageTag(),
+                ),
+            ),
         ),
     )
 
@@ -104,28 +104,28 @@ internal class KlarnaSessionDataRepository(
         BaseRemoteHostRequest(
             host = configurationDataSource.get().coreUrl,
             data =
-                CreateCheckoutPaymentSessionDataRequest(
-                    paymentMethodConfigId =
-                        requireNotNullCheck(
-                            paymentMethodConfig.id,
-                            KlarnaIllegalValueKey.PAYMENT_METHOD_CONFIG_ID,
-                        ),
-                    sessionType = KlarnaSessionType.ONE_OFF_PAYMENT,
-                    totalAmount =
-                        requireNotNullCheck(
-                            order.totalOrderAmount,
-                            KlarnaIllegalValueKey.TOTAL_ORDER_AMOUNT,
-                        ),
-                    localeData =
-                        LocaleDataRequest(
-                            order.countryCode,
-                            order.currencyCode.orEmpty(),
-                            config.settings.locale.toLanguageTag(),
-                        ),
-                    orderItems = createOrderItems(surcharge, order),
-                    billingAddress = customer.billingAddress?.toAddressData(customer),
-                    shippingAddress = customer.shippingAddress?.toAddressData(customer),
+            CreateCheckoutPaymentSessionDataRequest(
+                paymentMethodConfigId =
+                requireNotNullCheck(
+                    paymentMethodConfig.id,
+                    KlarnaIllegalValueKey.PAYMENT_METHOD_CONFIG_ID,
                 ),
+                sessionType = KlarnaSessionType.ONE_OFF_PAYMENT,
+                totalAmount =
+                requireNotNullCheck(
+                    order.totalOrderAmount,
+                    KlarnaIllegalValueKey.TOTAL_ORDER_AMOUNT,
+                ),
+                localeData =
+                LocaleDataRequest(
+                    order.countryCode,
+                    order.currencyCode.orEmpty(),
+                    config.settings.locale.toLanguageTag(),
+                ),
+                orderItems = createOrderItems(surcharge, order),
+                billingAddress = customer.billingAddress?.toAddressData(customer),
+                shippingAddress = customer.shippingAddress?.toAddressData(customer),
+            ),
         ),
     )
 
@@ -137,15 +137,15 @@ internal class KlarnaSessionDataRepository(
             order.lineItems.map {
                 CreateCheckoutPaymentSessionDataRequest.OrderItem(
                     name =
-                        requireNotNullCheck(
-                            it.description,
-                            KlarnaIllegalValueKey.ORDER_LINE_ITEM_DESCRIPTION,
-                        ),
+                    requireNotNullCheck(
+                        it.description,
+                        KlarnaIllegalValueKey.ORDER_LINE_ITEM_DESCRIPTION,
+                    ),
                     unitAmount =
-                        requireNotNullCheck(
-                            it.unitAmount,
-                            KlarnaIllegalValueKey.ORDER_LINE_ITEM_UNIT_AMOUNT,
-                        ),
+                    requireNotNullCheck(
+                        it.unitAmount,
+                        KlarnaIllegalValueKey.ORDER_LINE_ITEM_UNIT_AMOUNT,
+                    ),
                     reference = it.itemId,
                     quantity = it.quantity,
                     discountAmount = it.discountAmount,

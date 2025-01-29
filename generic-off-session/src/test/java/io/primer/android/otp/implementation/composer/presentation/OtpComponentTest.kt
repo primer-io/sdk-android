@@ -145,9 +145,9 @@ class OtpComponentTest {
                     methodName = RawDataManagerAnalyticsConstants.SET_RAW_DATA_METHOD,
                     paymentMethodType = paymentMethodType,
                     context =
-                        mapOf(
-                            RawDataManagerAnalyticsConstants.PAYMENT_METHOD_TYPE_PARAM to paymentMethodType,
-                        ),
+                    mapOf(
+                        RawDataManagerAnalyticsConstants.PAYMENT_METHOD_TYPE_PARAM to paymentMethodType,
+                    ),
                 )
                 tokenizationDelegate.tokenize(
                     OtpTokenizationInputable(
@@ -216,9 +216,9 @@ class OtpComponentTest {
                     methodName = RawDataManagerAnalyticsConstants.SET_RAW_DATA_METHOD,
                     paymentMethodType = paymentMethodType,
                     context =
-                        mapOf(
-                            RawDataManagerAnalyticsConstants.PAYMENT_METHOD_TYPE_PARAM to paymentMethodType,
-                        ),
+                    mapOf(
+                        RawDataManagerAnalyticsConstants.PAYMENT_METHOD_TYPE_PARAM to paymentMethodType,
+                    ),
                 )
                 tokenizationDelegate.tokenize(
                     OtpTokenizationInputable(
@@ -264,9 +264,9 @@ class OtpComponentTest {
                     methodName = RawDataManagerAnalyticsConstants.SET_RAW_DATA_METHOD,
                     paymentMethodType = paymentMethodType,
                     context =
-                        mapOf(
-                            RawDataManagerAnalyticsConstants.PAYMENT_METHOD_TYPE_PARAM to paymentMethodType,
-                        ),
+                    mapOf(
+                        RawDataManagerAnalyticsConstants.PAYMENT_METHOD_TYPE_PARAM to paymentMethodType,
+                    ),
                 )
                 tokenizationDelegate.tokenize(
                     OtpTokenizationInputable(

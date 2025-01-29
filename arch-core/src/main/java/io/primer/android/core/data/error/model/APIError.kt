@@ -48,12 +48,12 @@ data class APIError(
                     ValidationError(
                         model = t.getString(MODEL_FIELD),
                         errors =
-                            t.getJSONArray(ERRORS_FIELD)
-                                .sequence<JSONObject>().map {
-                                    JSONSerializationUtils
-                                        .getJsonObjectDeserializer<ValidationErrorDetail>()
-                                        .deserialize(it)
-                                }.toList(),
+                        t.getJSONArray(ERRORS_FIELD)
+                            .sequence<JSONObject>().map {
+                                JSONSerializationUtils
+                                    .getJsonObjectDeserializer<ValidationErrorDetail>()
+                                    .deserialize(it)
+                            }.toList(),
                     )
                 }
         }

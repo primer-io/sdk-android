@@ -31,7 +31,6 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.`when`
-import kotlin.Exception
 
 @ExperimentalCoroutinesApi
 @ExtendWith(InstantExecutorExtension::class, MockKExtension::class)

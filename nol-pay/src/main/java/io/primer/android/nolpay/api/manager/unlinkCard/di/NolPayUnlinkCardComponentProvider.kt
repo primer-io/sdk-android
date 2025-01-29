@@ -35,9 +35,9 @@ internal class NolPayUnlinkCardComponentProvider : DISdkComponent {
             },
         ).get(
             key =
-                runCatching {
-                    resolve<PrimerConfig>().clientTokenBase64.orEmpty()
-                }.getOrNull() ?: NolPayUnlinkCardComponent::class.java.canonicalName,
+            runCatching {
+                resolve<PrimerConfig>().clientTokenBase64.orEmpty()
+            }.getOrNull() ?: NolPayUnlinkCardComponent::class.java.canonicalName,
             modelClass = NolPayUnlinkCardComponent::class.java,
         )
     }

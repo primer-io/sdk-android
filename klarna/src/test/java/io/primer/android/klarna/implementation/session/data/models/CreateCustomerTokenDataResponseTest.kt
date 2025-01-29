@@ -21,13 +21,13 @@ internal class CreateCustomerTokenDataResponseTest {
                         WhitelistedKey.NonPrimitiveWhitelistedKey(
                             value = "orderLines",
                             children =
-                                listOf(
-                                    WhitelistedKey.PrimitiveWhitelistedKey("type"),
-                                    WhitelistedKey.PrimitiveWhitelistedKey("quantity"),
-                                    WhitelistedKey.PrimitiveWhitelistedKey("unit_price"),
-                                    WhitelistedKey.PrimitiveWhitelistedKey("total_amount"),
-                                    WhitelistedKey.PrimitiveWhitelistedKey("total_discount_amount"),
-                                ),
+                            listOf(
+                                WhitelistedKey.PrimitiveWhitelistedKey("type"),
+                                WhitelistedKey.PrimitiveWhitelistedKey("quantity"),
+                                WhitelistedKey.PrimitiveWhitelistedKey("unit_price"),
+                                WhitelistedKey.PrimitiveWhitelistedKey("total_amount"),
+                                WhitelistedKey.PrimitiveWhitelistedKey("total_discount_amount"),
+                            ),
                         ),
                     ),
                 ),
@@ -125,26 +125,26 @@ internal class CreateCustomerTokenDataResponseTest {
                 locale = "en_US",
                 orderAmount = 200,
                 orderLines =
-                    listOf(
-                        SessionOrderLines(
-                            type = "physical",
-                            name = "Test Item",
-                            quantity = 2,
-                            reference = "REF123",
-                            unitPrice = 100,
-                            totalAmount = 200,
-                            totalDiscountAmount = 10,
-                        ),
+                listOf(
+                    SessionOrderLines(
+                        type = "physical",
+                        name = "Test Item",
+                        quantity = 2,
+                        reference = "REF123",
+                        unitPrice = 100,
+                        totalAmount = 200,
+                        totalDiscountAmount = 10,
                     ),
+                ),
                 billingAddress = addressData,
                 shippingAddress = addressData,
                 tokenDetails =
-                    TokenDetailsData(
-                        brand = "VISA",
-                        maskedNumber = "**** **** **** 1234",
-                        type = "credit",
-                        expiryDate = "12/23",
-                    ),
+                TokenDetailsData(
+                    brand = "VISA",
+                    maskedNumber = "**** **** **** 1234",
+                    type = "credit",
+                    expiryDate = "12/23",
+                ),
                 orderTaxAmount = 20,
             )
 

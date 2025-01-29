@@ -116,12 +116,12 @@ class Processor3dsWebViewActivity : WebViewActivity(), DISdkComponent {
                 ObjectType.WEB_PAGE,
                 Place.PAYMENT_METHOD_POPUP,
                 context =
-                    UrlContextParams(
-                        url =
-                            Uri.parse(
-                                intent.extras?.getString(PAYMENT_URL_KEY).orEmpty(),
-                            ).host.orEmpty(),
-                    ),
+                UrlContextParams(
+                    url =
+                    Uri.parse(
+                        intent.extras?.getString(PAYMENT_URL_KEY).orEmpty(),
+                    ).host.orEmpty(),
+                ),
             ),
         )
 

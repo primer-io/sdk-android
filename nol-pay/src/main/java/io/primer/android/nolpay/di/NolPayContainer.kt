@@ -119,7 +119,7 @@ internal class NolPayContainer(
         registerFactory(name = PaymentMethodType.NOL_PAY.name) {
             PaymentMethodSdkAnalyticsEventLoggingDelegate(
                 primerPaymentMethodManagerCategory =
-                    PrimerPaymentMethodManagerCategory.NOL_PAY.name,
+                PrimerPaymentMethodManagerCategory.NOL_PAY.name,
                 analyticsInteractor = sdk().resolve(),
             )
         }
@@ -182,11 +182,11 @@ internal class NolPayContainer(
         registerFactory<NolPayTokenizationInteractor>(name = paymentMethodType) {
             DefaultNolPayTokenizationInteractor(
                 tokenizationRepository =
-                    NolPayTokenizationDataRepository(
-                        remoteTokenizationDataSource = sdk().resolve(paymentMethodType),
-                        configurationDataSource = sdk().resolve(ConfigurationCoreContainer.CACHED_CONFIGURATION_DI_KEY),
-                        tokenizationParamsMapper = resolve(),
-                    ),
+                NolPayTokenizationDataRepository(
+                    remoteTokenizationDataSource = sdk().resolve(paymentMethodType),
+                    configurationDataSource = sdk().resolve(ConfigurationCoreContainer.CACHED_CONFIGURATION_DI_KEY),
+                    tokenizationParamsMapper = resolve(),
+                ),
                 tokenizedPaymentMethodRepository = sdk().resolve(),
                 preTokenizationHandler = sdk().resolve(),
                 logReporter = sdk().resolve(),
@@ -196,13 +196,13 @@ internal class NolPayContainer(
         registerFactory {
             NolPayTokenizationDelegate(
                 configurationInteractor =
-                    resolve(
-                        name = paymentMethodType,
-                    ),
+                resolve(
+                    name = paymentMethodType,
+                ),
                 tokenizationInteractor =
-                    resolve(
-                        name = paymentMethodType,
-                    ),
+                resolve(
+                    name = paymentMethodType,
+                ),
                 phoneMetadataInteractor = sdk().resolve(),
             )
         }

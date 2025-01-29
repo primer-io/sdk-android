@@ -24,11 +24,11 @@ internal class AdyenBancontactTokenizationParamsMapper :
                 paymentMethodType = paymentInstrumentParams.paymentMethodType,
                 paymentMethodConfigId = paymentInstrumentParams.paymentMethodConfigId,
                 sessionInfo =
-                    AdyenBancontactSessionInfoDataRequest(
-                        locale = paymentInstrumentParams.locale,
-                        redirectionUrl = paymentInstrumentParams.redirectionUrl,
-                        userAgent = paymentInstrumentParams.userAgent,
-                    ),
+                AdyenBancontactSessionInfoDataRequest(
+                    locale = paymentInstrumentParams.locale,
+                    redirectionUrl = paymentInstrumentParams.redirectionUrl,
+                    userAgent = paymentInstrumentParams.userAgent,
+                ),
                 type = PaymentInstrumentType.CARD_OFF_SESSION_PAYMENT,
             )
         return instrumentDataRequest.toTokenizationRequest(params.sessionIntent)

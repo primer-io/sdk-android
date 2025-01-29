@@ -18,21 +18,21 @@ internal class WebRedirectTokenizationDelegate(
     private val deeplinkInteractor: RedirectDeeplinkInteractor,
     private val platformResolver: PlatformResolver,
 ) : PaymentMethodTokenizationDelegate<WebRedirectTokenizationInputable, WebRedirectPaymentInstrumentParams>(
-        tokenizationInteractor,
-    ),
+    tokenizationInteractor,
+),
     TokenizationCollectedDataMapper<WebRedirectTokenizationInputable, WebRedirectPaymentInstrumentParams> {
     override suspend fun mapTokenizationData(input: WebRedirectTokenizationInputable) =
         configurationInteractor(WebRedirectConfigParams(paymentMethodType = input.paymentMethodType))
             .map { configuration ->
                 TokenizationParams(
                     paymentInstrumentParams =
-                        WebRedirectPaymentInstrumentParams(
-                            paymentMethodType = input.paymentMethodType,
-                            paymentMethodConfigId = configuration.paymentMethodConfigId,
-                            locale = configuration.locale,
-                            redirectionUrl = deeplinkInteractor(None),
-                            platform = platformResolver.getPlatform(paymentMethodType = input.paymentMethodType),
-                        ),
+                    WebRedirectPaymentInstrumentParams(
+                        paymentMethodType = input.paymentMethodType,
+                        paymentMethodConfigId = configuration.paymentMethodConfigId,
+                        locale = configuration.locale,
+                        redirectionUrl = deeplinkInteractor(None),
+                        platform = platformResolver.getPlatform(paymentMethodType = input.paymentMethodType),
+                    ),
                     sessionIntent = input.primerSessionIntent,
                 )
             }

@@ -74,18 +74,18 @@ internal class StripeContainer(
         registerSingleton {
             GetClientSessionCustomerDetailsDelegate(
                 configurationInteractor =
-                    sdk().resolve(
-                        ConfigurationCoreContainer.CONFIGURATION_INTERACTOR_DI_KEY,
-                    ),
+                sdk().resolve(
+                    ConfigurationCoreContainer.CONFIGURATION_INTERACTOR_DI_KEY,
+                ),
             )
         }
 
         registerSingleton {
             StripeAchClientSessionPatchDelegate(
                 configurationInteractor =
-                    sdk().resolve(
-                        ConfigurationCoreContainer.CONFIGURATION_INTERACTOR_DI_KEY,
-                    ),
+                sdk().resolve(
+                    ConfigurationCoreContainer.CONFIGURATION_INTERACTOR_DI_KEY,
+                ),
                 actionInteractor = sdk().resolve(ActionsContainer.ACTION_INTERACTOR_IGNORE_ERRORS_DI_KEY),
             )
         }

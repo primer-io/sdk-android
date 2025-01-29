@@ -116,10 +116,10 @@ internal class WebRedirectPaymentMethod(
                     sdkContainer.registerContainer(
                         name = paymentMethodType,
                         container =
-                            WebRedirectContainer(
-                                sdk = { getSdkContainer() },
-                                paymentMethodType = paymentMethodType,
-                            ),
+                        WebRedirectContainer(
+                            sdk = { getSdkContainer() },
+                            paymentMethodType = paymentMethodType,
+                        ),
                     )
                     // Register the shared container only once.
                     runCatching {

@@ -33,9 +33,9 @@ internal class MultibancoTokenizationParamsMapperTest {
                 paymentMethodType = paymentMethodType,
                 paymentMethodConfigId = "testPaymentMethodConfigId",
                 sessionInfo =
-                    MultibancoSessionInfoDataRequest(
-                        locale = "testLocale",
-                    ),
+                MultibancoSessionInfoDataRequest(
+                    locale = "testLocale",
+                ),
                 type = PaymentInstrumentType.OFF_SESSION_PAYMENT,
             )
 

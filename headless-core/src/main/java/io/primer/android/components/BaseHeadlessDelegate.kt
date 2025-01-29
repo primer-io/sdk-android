@@ -28,6 +28,7 @@ internal interface NativeUiManagerHeadlessDelegate {
     fun cleanup()
 }
 
+@Suppress("LongParameterList")
 internal class DefaultNativeUiManagerHeadlessManagerDelegate(
     private val actionInteractor: ActionInteractor,
     private val sessionIntentRulesResolver: PaymentMethodManagerSessionIntentRulesResolver,

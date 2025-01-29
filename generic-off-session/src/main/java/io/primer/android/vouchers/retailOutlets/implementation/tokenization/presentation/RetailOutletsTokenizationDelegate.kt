@@ -13,8 +13,8 @@ internal class RetailOutletsTokenizationDelegate(
     private val configurationInteractor: RetailOutletsConfigurationInteractor,
     tokenizationInteractor: RetailOutletsTokenizationInteractor,
 ) : PaymentMethodTokenizationDelegate<RetailOutletsTokenizationInputable, RetailOutletsPaymentInstrumentParams>(
-        tokenizationInteractor,
-    ),
+    tokenizationInteractor,
+),
     TokenizationCollectedDataMapper<
         RetailOutletsTokenizationInputable,
         RetailOutletsPaymentInstrumentParams,
@@ -27,12 +27,12 @@ internal class RetailOutletsTokenizationDelegate(
         ).map { configuration ->
             TokenizationParams(
                 paymentInstrumentParams =
-                    RetailOutletsPaymentInstrumentParams(
-                        paymentMethodType = input.paymentMethodType,
-                        paymentMethodConfigId = configuration.paymentMethodConfigId,
-                        locale = configuration.locale,
-                        retailOutlet = input.retailOutletData.id,
-                    ),
+                RetailOutletsPaymentInstrumentParams(
+                    paymentMethodType = input.paymentMethodType,
+                    paymentMethodConfigId = configuration.paymentMethodConfigId,
+                    locale = configuration.locale,
+                    retailOutlet = input.retailOutletData.id,
+                ),
                 sessionIntent = input.primerSessionIntent,
             )
         }

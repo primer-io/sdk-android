@@ -121,12 +121,12 @@ internal class StripeAchBankSelectionHandler(
                 StripeBankAccountCollectorActivity.getLaunchIntent(
                     context = contextProvider(),
                     params =
-                        StripeBankAccountCollectorActivity.Params(
-                            fullName = fullName,
-                            emailAddress = emailAddress,
-                            publishableKey = publishableKey,
-                            clientSecret = clientSecret,
-                        ),
+                    StripeBankAccountCollectorActivity.Params(
+                        fullName = fullName,
+                        emailAddress = emailAddress,
+                        publishableKey = publishableKey,
+                        clientSecret = clientSecret,
+                    ),
                 ),
             )
         }

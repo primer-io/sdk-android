@@ -13,7 +13,7 @@ internal class IPay88TokenizationDataRepository(
     cacheDataSource: BaseCacheDataSource<ConfigurationData, ConfigurationData>,
     tokenizationParamsMapper: IPay88TokenizationParamsMapper,
 ) : TokenizationDataRepository<IPay88PaymentInstrumentParams, IPay88PaymentInstrumentDataRequest>(
-        remoteTokenizationDataSource = remoteTokenizationDataSource,
-        cacheDataSource = cacheDataSource,
-        tokenizationParamsMapper = tokenizationParamsMapper,
-    )
+    remoteTokenizationDataSource = remoteTokenizationDataSource,
+    cacheDataSource = cacheDataSource,
+    tokenizationParamsMapper = tokenizationParamsMapper,
+)

@@ -20,9 +20,9 @@ internal class MultibancoTokenizationParamsMapper :
                 paymentMethodType = paymentInstrumentParams.paymentMethodType,
                 paymentMethodConfigId = paymentInstrumentParams.paymentMethodConfigId,
                 sessionInfo =
-                    MultibancoSessionInfoDataRequest(
-                        locale = paymentInstrumentParams.locale,
-                    ),
+                MultibancoSessionInfoDataRequest(
+                    locale = paymentInstrumentParams.locale,
+                ),
                 type = PaymentInstrumentType.OFF_SESSION_PAYMENT,
             )
         return instrumentDataRequest.toTokenizationRequest(params.sessionIntent)

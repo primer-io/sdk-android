@@ -186,11 +186,11 @@ class PhoneNumberDropInDescriptorTest {
     ) = PhoneNumberDropInDescriptor(
         paymentMethodType = paymentMethodType.name,
         uiOptions =
-            UiOptions(
-                isDarkMode = isDarkMode,
-                isInitScreenEnabled = false,
-                isStandalonePaymentMethod = isStandalonePaymentMethod,
-            ),
+        UiOptions(
+            isDarkMode = isDarkMode,
+            isInitScreenEnabled = false,
+            isStandalonePaymentMethod = isStandalonePaymentMethod,
+        ),
         brandRegistry = brandRegistry,
         paymentMethodName = paymentMethodType.name,
     )

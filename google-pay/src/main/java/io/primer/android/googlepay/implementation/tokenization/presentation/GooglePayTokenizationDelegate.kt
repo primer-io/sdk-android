@@ -14,8 +14,8 @@ internal class GooglePayTokenizationDelegate(
     private val configurationInteractor: GooglePayConfigurationInteractor,
     tokenizationInteractor: GooglePayTokenizationInteractor,
 ) : PaymentMethodTokenizationDelegate<GooglePayTokenizationInputable, GooglePayPaymentInstrumentParams>(
-        tokenizationInteractor,
-    ),
+    tokenizationInteractor,
+),
     TokenizationCollectedDataMapper<GooglePayTokenizationInputable, GooglePayPaymentInstrumentParams> {
     override suspend fun mapTokenizationData(
         input: GooglePayTokenizationInputable,

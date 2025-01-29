@@ -62,6 +62,7 @@ internal interface ThreeDsInteractor {
     fun cleanup()
 }
 
+@Suppress("LongParameterList")
 internal class DefaultThreeDsInteractor(
     private val threeDsSdkClassValidator: ThreeDsSdkClassValidator,
     private val threeDsLibraryVersionValidator: ThreeDsLibraryVersionValidator,
@@ -182,13 +183,13 @@ internal class DefaultThreeDsInteractor(
                         threeDsSdkVersion = threeDsServiceRepository.threeDsSdkVersion,
                         initProtocolVersion = params.protocolVersions.max().versionNumber,
                         error =
-                            errorMapperRegistry.getPrimerError(throwable).also { error ->
-                                logAnalytics(error)
-                                logReporter.warn(
-                                    "${error.description} ${error.recoverySuggestion.orEmpty()}",
-                                    ANALYTICS_3DS_COMPONENT,
-                                )
-                            },
+                        errorMapperRegistry.getPrimerError(throwable).also { error ->
+                            logAnalytics(error)
+                            logReporter.warn(
+                                "${error.description} ${error.recoverySuggestion.orEmpty()}",
+                                ANALYTICS_3DS_COMPONENT,
+                            )
+                        },
                     ),
                 )
             }

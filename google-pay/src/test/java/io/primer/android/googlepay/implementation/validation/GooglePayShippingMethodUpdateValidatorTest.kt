@@ -67,9 +67,9 @@ internal class GooglePayShippingMethodUpdateValidatorTest {
             val otherShippingOptions =
                 CheckoutModule.Shipping(
                     shippingMethods =
-                        listOf(
-                            ShippingMethod("name", "description", 100, "other_id"),
-                        ),
+                    listOf(
+                        ShippingMethod("name", "description", 100, "other_id"),
+                    ),
                     selectedMethod = VALID_ID,
                 )
             val mockConfiguration =
@@ -91,9 +91,9 @@ internal class GooglePayShippingMethodUpdateValidatorTest {
             val validShippingOptions =
                 CheckoutModule.Shipping(
                     shippingMethods =
-                        listOf(
-                            ShippingMethod("name", "description", 100, "valid_id"),
-                        ),
+                    listOf(
+                        ShippingMethod("name", "description", 100, "valid_id"),
+                    ),
                     selectedMethod = VALID_ID,
                 )
             val mockConfiguration =

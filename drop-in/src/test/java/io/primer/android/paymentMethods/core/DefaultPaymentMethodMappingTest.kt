@@ -140,11 +140,11 @@ class DefaultPaymentMethodMappingTest {
             NativeUiDropInDescriptor(
                 paymentMethodType = paymentMethodType,
                 uiOptions =
-                    UiOptions(
-                        isStandalonePaymentMethod = true,
-                        isInitScreenEnabled = true,
-                        isDarkMode = true,
-                    ),
+                UiOptions(
+                    isStandalonePaymentMethod = true,
+                    isInitScreenEnabled = true,
+                    isDarkMode = true,
+                ),
                 primerSessionIntent = PrimerSessionIntent.CHECKOUT,
                 brandRegistry = brandRegistry,
             ),
@@ -168,11 +168,11 @@ class DefaultPaymentMethodMappingTest {
             PhoneNumberDropInDescriptor(
                 paymentMethodType = paymentMethodType,
                 uiOptions =
-                    UiOptions(
-                        isStandalonePaymentMethod = true,
-                        isInitScreenEnabled = true,
-                        isDarkMode = true,
-                    ),
+                UiOptions(
+                    isStandalonePaymentMethod = true,
+                    isInitScreenEnabled = true,
+                    isDarkMode = true,
+                ),
                 brandRegistry = brandRegistry,
                 paymentMethodName = paymentMethodName,
             ),
@@ -244,11 +244,11 @@ class DefaultPaymentMethodMappingTest {
             CardDropInDescriptor(
                 paymentMethodType = paymentMethodType,
                 uiOptions =
-                    UiOptions(
-                        isStandalonePaymentMethod = true,
-                        isInitScreenEnabled = true,
-                        isDarkMode = true,
-                    ),
+                UiOptions(
+                    isStandalonePaymentMethod = true,
+                    isInitScreenEnabled = true,
+                    isDarkMode = true,
+                ),
             ),
             result,
         )
@@ -268,11 +268,11 @@ class DefaultPaymentMethodMappingTest {
             StripeAchDropInDescriptor(
                 paymentMethodType = paymentMethodType,
                 uiOptions =
-                    UiOptions(
-                        isStandalonePaymentMethod = true,
-                        isInitScreenEnabled = true,
-                        isDarkMode = true,
-                    ),
+                UiOptions(
+                    isStandalonePaymentMethod = true,
+                    isInitScreenEnabled = true,
+                    isDarkMode = true,
+                ),
             ),
             result,
         )
@@ -292,11 +292,11 @@ class DefaultPaymentMethodMappingTest {
             BankIssuerDropInDescriptor(
                 paymentMethodType = paymentMethodType,
                 uiOptions =
-                    UiOptions(
-                        isStandalonePaymentMethod = true,
-                        isInitScreenEnabled = true,
-                        isDarkMode = true,
-                    ),
+                UiOptions(
+                    isStandalonePaymentMethod = true,
+                    isInitScreenEnabled = true,
+                    isDarkMode = true,
+                ),
             ),
             result,
         )
@@ -316,11 +316,11 @@ class DefaultPaymentMethodMappingTest {
             KlarnaDropInDescriptor(
                 paymentMethodType = paymentMethodType,
                 uiOptions =
-                    UiOptions(
-                        isStandalonePaymentMethod = true,
-                        isInitScreenEnabled = true,
-                        isDarkMode = true,
-                    ),
+                UiOptions(
+                    isStandalonePaymentMethod = true,
+                    isInitScreenEnabled = true,
+                    isDarkMode = true,
+                ),
             ),
             result,
         )

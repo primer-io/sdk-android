@@ -34,10 +34,10 @@ internal class RetailOutletsTokenizationParamsMapperTest {
                 paymentMethodType = paymentMethodType,
                 paymentMethodConfigId = "testPaymentMethodConfigId",
                 sessionInfo =
-                    RetailOutletsSessionInfoDataRequest(
-                        locale = "testLocale",
-                        retailerOutlet = "testRetailOutlet",
-                    ),
+                RetailOutletsSessionInfoDataRequest(
+                    locale = "testLocale",
+                    retailerOutlet = "testRetailOutlet",
+                ),
                 type = PaymentInstrumentType.OFF_SESSION_PAYMENT,
             )
 

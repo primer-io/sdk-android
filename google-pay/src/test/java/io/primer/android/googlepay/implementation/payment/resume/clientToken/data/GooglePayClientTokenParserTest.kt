@@ -67,10 +67,10 @@ class GooglePayClientTokenParserTest {
             GooglePayClientToken.GooglePayProcessor3DSClientToken(
                 clientTokenIntent = "testIntent",
                 processor3DS =
-                    Processor3DS(
-                        statusUrl = "https://www.example.com/status",
-                        redirectUrl = "https://www.example.com/redirect",
-                    ),
+                Processor3DS(
+                    statusUrl = "https://www.example.com/status",
+                    redirectUrl = "https://www.example.com/redirect",
+                ),
             )
         assertEquals(expected, result)
     }

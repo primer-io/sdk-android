@@ -18,11 +18,11 @@ internal class IPay88ConfigurationDataRepository(
         runSuspendCatching {
             IPay88Config(
                 paymentMethodConfigId =
-                    requireNotNullCheck(
-                        configurationDataSource.get()
-                            .paymentMethods.first { it.type == params.paymentMethodType }.id,
-                        AsyncIllegalValueKey.PAYMENT_METHOD_CONFIG_ID,
-                    ),
+                requireNotNullCheck(
+                    configurationDataSource.get()
+                        .paymentMethods.first { it.type == params.paymentMethodType }.id,
+                    AsyncIllegalValueKey.PAYMENT_METHOD_CONFIG_ID,
+                ),
                 locale = settings.locale.toLanguageTag(),
             )
         }

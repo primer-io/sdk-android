@@ -24,12 +24,12 @@ internal class CreateSessionDataResponseTest {
                 WhitelistedKey.NonPrimitiveWhitelistedKey(
                     value = "categories",
                     children =
-                        listOf(
-                            WhitelistedKey.PrimitiveWhitelistedKey("identifier"),
-                            WhitelistedKey.PrimitiveWhitelistedKey("name"),
-                            WhitelistedKey.PrimitiveWhitelistedKey("descriptiveAssetUrl"),
-                            WhitelistedKey.PrimitiveWhitelistedKey("standardAssetUrl"),
-                        ),
+                    listOf(
+                        WhitelistedKey.PrimitiveWhitelistedKey("identifier"),
+                        WhitelistedKey.PrimitiveWhitelistedKey("name"),
+                        WhitelistedKey.PrimitiveWhitelistedKey("descriptiveAssetUrl"),
+                        WhitelistedKey.PrimitiveWhitelistedKey("standardAssetUrl"),
+                    ),
                 ),
             )
 

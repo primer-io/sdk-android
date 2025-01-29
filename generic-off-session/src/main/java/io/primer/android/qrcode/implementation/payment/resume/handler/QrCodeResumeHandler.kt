@@ -26,11 +26,11 @@ internal class QrCodeResumeHandler(
     private val clientTokenRepository: ClientTokenRepository,
     checkoutAdditionalInfoHandler: CheckoutAdditionalInfoHandler,
 ) : PrimerResumeDecisionHandlerV2<QrCodeDecision, QrCodeClientToken>(
-        clientTokenRepository = clientTokenRepository,
-        validateClientTokenRepository = validateClientTokenRepository,
-        clientTokenParser = clientTokenParser,
-        checkoutAdditionalInfoHandler = checkoutAdditionalInfoHandler,
-    ) {
+    clientTokenRepository = clientTokenRepository,
+    validateClientTokenRepository = validateClientTokenRepository,
+    clientTokenParser = clientTokenParser,
+    checkoutAdditionalInfoHandler = checkoutAdditionalInfoHandler,
+) {
     private val dateFormatISO = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
     private val expiresDateFormat =
         DateFormat.getDateTimeInstance(
@@ -47,11 +47,11 @@ internal class QrCodeResumeHandler(
         return QrCodeDecision(
             statusUrl = clientToken.statusUrl,
             expiresAt =
-                clientToken.expiresAt?.let {
-                    dateFormatISO.parse(it)?.let { parsedExpiresAt ->
-                        expiresDateFormat.format(parsedExpiresAt)
-                    }
-                },
+            clientToken.expiresAt?.let {
+                dateFormatISO.parse(it)?.let { parsedExpiresAt ->
+                    expiresDateFormat.format(parsedExpiresAt)
+                }
+            },
             qrCodeUrl = clientToken.qrCodeUrl,
             qrCodeBase64 = clientToken.qrCodeBase64,
         )

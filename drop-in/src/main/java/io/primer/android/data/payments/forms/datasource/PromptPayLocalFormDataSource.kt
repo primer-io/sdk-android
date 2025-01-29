@@ -15,11 +15,11 @@ internal class PromptPayLocalFormDataSource(private val theme: PrimerTheme) :
             FormDataResponse(
                 title = R.string.scanToPay,
                 logo =
-                    if (theme.isDarkMode == true) {
-                        R.drawable.ic_logo_promptpay_dark
-                    } else {
-                        R.drawable.ic_logo_promptpay_light
-                    },
+                if (theme.isDarkMode == true) {
+                    R.drawable.ic_logo_promptpay_dark
+                } else {
+                    R.drawable.ic_logo_promptpay_light
+                },
                 buttonType = ButtonType.CONFIRM,
                 description = R.string.uploadScreenshot,
             ),

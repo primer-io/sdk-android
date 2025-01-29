@@ -25,9 +25,9 @@ internal class KlarnaTokenizationDelegate(
     private val finalizeKlarnaSessionInteractor: FinalizeKlarnaSessionInteractor,
     tokenizationInteractor: KlarnaTokenizationInteractor,
 ) : PaymentMethodTokenizationDelegate<
-        KlarnaTokenizationInputable,
-        KlarnaPaymentInstrumentParams,
-        >(tokenizationInteractor) {
+    KlarnaTokenizationInputable,
+    KlarnaPaymentInstrumentParams,
+    >(tokenizationInteractor) {
     override suspend fun mapTokenizationData(
         input: KlarnaTokenizationInputable,
     ): Result<TokenizationParams<KlarnaPaymentInstrumentParams>> =
@@ -39,25 +39,25 @@ internal class KlarnaTokenizationDelegate(
                 )
             TokenizationParams(
                 paymentInstrumentParams =
-                    when (input.primerSessionIntent) {
-                        PrimerSessionIntent.VAULT -> {
-                            val customerTokenData =
-                                klarnaCustomerTokenInteractor.invoke(tokenParams)
-                                    .getOrThrow()
-                            KlarnaVaultPaymentInstrumentParams(
-                                klarnaCustomerToken = customerTokenData.customerTokenId,
-                                sessionData = customerTokenData.sessionData,
-                            )
-                        }
+                when (input.primerSessionIntent) {
+                    PrimerSessionIntent.VAULT -> {
+                        val customerTokenData =
+                            klarnaCustomerTokenInteractor.invoke(tokenParams)
+                                .getOrThrow()
+                        KlarnaVaultPaymentInstrumentParams(
+                            klarnaCustomerToken = customerTokenData.customerTokenId,
+                            sessionData = customerTokenData.sessionData,
+                        )
+                    }
 
-                        PrimerSessionIntent.CHECKOUT -> {
-                            val data = finalizeKlarnaSessionInteractor.invoke(tokenParams).getOrThrow()
-                            KlarnaCheckoutPaymentInstrumentParams(
-                                klarnaAuthorizationToken = input.authorizationToken,
-                                sessionData = data.sessionData,
-                            )
-                        }
-                    },
+                    PrimerSessionIntent.CHECKOUT -> {
+                        val data = finalizeKlarnaSessionInteractor.invoke(tokenParams).getOrThrow()
+                        KlarnaCheckoutPaymentInstrumentParams(
+                            klarnaAuthorizationToken = input.authorizationToken,
+                            sessionData = data.sessionData,
+                        )
+                    }
+                },
                 sessionIntent = input.primerSessionIntent,
             )
         }

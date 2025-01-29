@@ -32,7 +32,7 @@ internal class MultibancoContainer(
         registerFactory(name = paymentMethodType) {
             PaymentMethodSdkAnalyticsEventLoggingDelegate(
                 primerPaymentMethodManagerCategory =
-                    PrimerPaymentMethodManagerCategory.NATIVE_UI.name,
+                PrimerPaymentMethodManagerCategory.NATIVE_UI.name,
                 analyticsInteractor = sdk().resolve(),
             )
         }
@@ -64,11 +64,11 @@ internal class MultibancoContainer(
         registerFactory<MultibancoTokenizationInteractor>(name = paymentMethodType) {
             DefaultMultibancoTokenizationInteractor(
                 tokenizationRepository =
-                    MultibancoTokenizationDataRepository(
-                        remoteTokenizationDataSource = sdk().resolve(paymentMethodType),
-                        configurationDataSource = sdk().resolve(ConfigurationCoreContainer.CACHED_CONFIGURATION_DI_KEY),
-                        tokenizationParamsMapper = resolve(),
-                    ),
+                MultibancoTokenizationDataRepository(
+                    remoteTokenizationDataSource = sdk().resolve(paymentMethodType),
+                    configurationDataSource = sdk().resolve(ConfigurationCoreContainer.CACHED_CONFIGURATION_DI_KEY),
+                    tokenizationParamsMapper = resolve(),
+                ),
                 tokenizedPaymentMethodRepository = sdk().resolve(),
                 preTokenizationHandler = sdk().resolve(),
                 logReporter = sdk().resolve(),

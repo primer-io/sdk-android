@@ -11,5 +11,5 @@ internal typealias MultibancoConfigurationInteractor =
 internal class DefaultMultibancoConfigurationInteractor(
     configurationRepository: PaymentMethodConfigurationRepository<MultibancoConfig, MultibancoConfigParams>,
 ) : PaymentMethodConfigurationInteractor<MultibancoConfig, MultibancoConfigParams>(
-        configurationRepository,
-    )
+    configurationRepository,
+)

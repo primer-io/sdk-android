@@ -62,7 +62,7 @@ internal class DefaultPaymentMethodStarter(
                     (
                         paymentMethodNavigationFactoryRegistry.create(paymentMethodType) as?
                             PaymentMethodContextNavigationHandler
-                    )
+                        )
                         ?.getSupportedNavigators(context)
                         ?.firstOrNull { it.canHandle(event.params) }?.navigate(event.params)
                         ?.also {

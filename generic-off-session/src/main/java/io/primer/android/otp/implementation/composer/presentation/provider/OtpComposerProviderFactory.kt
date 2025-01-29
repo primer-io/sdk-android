@@ -16,22 +16,22 @@ internal class OtpComposerProviderFactory : PaymentMethodComposerProvider.Factor
     ): PaymentMethodComposer {
         return OtpComponent(
             tokenizationDelegate =
-                OtpTokenizationDelegate(
-                    tokenizationInteractor = resolve(name = paymentMethodType),
-                    configurationInteractor = resolve(name = paymentMethodType),
-                ),
+            OtpTokenizationDelegate(
+                tokenizationInteractor = resolve(name = paymentMethodType),
+                configurationInteractor = resolve(name = paymentMethodType),
+            ),
             pollingInteractor = resolve(PaymentsContainer.POLLING_INTERACTOR_DI_KEY),
             paymentDelegate =
-                OtpPaymentDelegate(
-                    paymentMethodTokenHandler = resolve(),
-                    resumePaymentHandler = resolve(),
-                    successHandler = resolve(),
-                    errorHandler = resolve(),
-                    pollingStartHandler = resolve(),
-                    baseErrorResolver = resolve(),
-                    resumeHandler = resolve(),
-                    tokenizedPaymentMethodRepository = resolve(),
-                ),
+            OtpPaymentDelegate(
+                paymentMethodTokenHandler = resolve(),
+                resumePaymentHandler = resolve(),
+                successHandler = resolve(),
+                errorHandler = resolve(),
+                pollingStartHandler = resolve(),
+                baseErrorResolver = resolve(),
+                resumeHandler = resolve(),
+                tokenizedPaymentMethodRepository = resolve(),
+            ),
             pollingStartHandler = resolve(),
             collectableDataValidator = resolve(),
             sdkAnalyticsEventLoggingDelegate = resolve(name = paymentMethodType),

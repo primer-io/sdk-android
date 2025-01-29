@@ -81,9 +81,9 @@ internal class QrCodeResumeHandlerTest {
             QrCodeDecision(
                 statusUrl = clientToken.statusUrl,
                 expiresAt =
-                    expiresDateFormat.format(
-                        SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault()).parse(clientToken.expiresAt),
-                    ),
+                expiresDateFormat.format(
+                    SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault()).parse(clientToken.expiresAt),
+                ),
                 qrCodeUrl = clientToken.qrCodeUrl,
                 qrCodeBase64 = clientToken.qrCodeBase64,
             )

@@ -32,20 +32,20 @@ internal class NetworkContainer(private val sdk: () -> SdkContainer) : Dependenc
             HttpLoggerInterceptor(
                 logReporter = sdk().resolve(),
                 blacklistedHttpHeaderProviderRegistry =
-                    sdk().resolve<BlacklistedHttpHeaderProviderRegistry>()
-                        .apply {
-                            register(
-                                sdk().resolve(
-                                    HttpLogObfuscationContainer.DEFAULT_NAME,
-                                ),
-                            )
-                        },
-                whitelistedHttpBodyKeyProviderRegistry =
-                    sdk().resolve<WhitelistedHttpBodyKeyProviderRegistry>().apply {
-                        listOf(
-                            ConfigurationDataResponse.provider,
-                        ).forEach(::register)
+                sdk().resolve<BlacklistedHttpHeaderProviderRegistry>()
+                    .apply {
+                        register(
+                            sdk().resolve(
+                                HttpLogObfuscationContainer.DEFAULT_NAME,
+                            ),
+                        )
                     },
+                whitelistedHttpBodyKeyProviderRegistry =
+                sdk().resolve<WhitelistedHttpBodyKeyProviderRegistry>().apply {
+                    listOf(
+                        ConfigurationDataResponse.provider,
+                    ).forEach(::register)
+                },
                 pciUrlProvider = {
                     runCatching {
                         sdk().resolve<CacheConfigurationDataSource>(
@@ -66,9 +66,9 @@ internal class NetworkContainer(private val sdk: () -> SdkContainer) : Dependenc
         registerSingleton {
             buildOkhttpClient(
                 checkoutSessionIdProvider =
-                    sdk().resolve(AnalyticsContainer.CHECKOUT_SESSION_ID_PROVIDER_DI_KEY),
+                sdk().resolve(AnalyticsContainer.CHECKOUT_SESSION_ID_PROVIDER_DI_KEY),
                 localClientTokenDataSource =
-                    sdk().resolve(ClientTokenCoreContainer.CACHE_CLIENT_TOKEN_DATA_SOURCE_DI_KEY),
+                sdk().resolve(ClientTokenCoreContainer.CACHE_CLIENT_TOKEN_DATA_SOURCE_DI_KEY),
                 cache = resolve(),
             )
         }

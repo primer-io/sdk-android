@@ -15,17 +15,17 @@ internal class MultibancoComposerProviderFactory : PaymentMethodComposerProvider
         return MultibancoComponent(
             tokenizationDelegate = resolve(),
             paymentDelegate =
-                MultibancoPaymentDelegate(
-                    paymentMethodTokenHandler = resolve(),
-                    resumePaymentHandler = resolve(),
-                    config = resolve(),
-                    pendingResumeHandler = resolve(),
-                    successHandler = resolve(),
-                    manualFlowSuccessHandler = resolve(),
-                    errorHandler = resolve(),
-                    baseErrorResolver = resolve(),
-                    resumeHandler = resolve(),
-                ),
+            MultibancoPaymentDelegate(
+                paymentMethodTokenHandler = resolve(),
+                resumePaymentHandler = resolve(),
+                config = resolve(),
+                pendingResumeHandler = resolve(),
+                successHandler = resolve(),
+                manualFlowSuccessHandler = resolve(),
+                errorHandler = resolve(),
+                baseErrorResolver = resolve(),
+                resumeHandler = resolve(),
+            ),
         )
     }
 }

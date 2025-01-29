@@ -45,18 +45,18 @@ internal data class AnalyticsTimerEventRequest(
             JSONObjectDeserializer { t ->
                 AnalyticsTimerEventRequest(
                     device =
-                        JSONSerializationUtils.getJsonObjectDeserializer<DeviceData>().deserialize(
-                            t.getJSONObject(DEVICE_FIELD),
-                        ),
+                    JSONSerializationUtils.getJsonObjectDeserializer<DeviceData>().deserialize(
+                        t.getJSONObject(DEVICE_FIELD),
+                    ),
                     properties =
-                        JSONSerializationUtils.getJsonObjectDeserializer<TimerProperties>().deserialize(
-                            t.getJSONObject(PROPERTIES_FIELD),
-                        ),
+                    JSONSerializationUtils.getJsonObjectDeserializer<TimerProperties>().deserialize(
+                        t.getJSONObject(PROPERTIES_FIELD),
+                    ),
                     appIdentifier = t.getString(APP_IDENTIFIER_FIELD),
                     sdkSessionId = t.getString(SDK_SESSION_ID_FIELD),
                     sdkIntegrationType =
-                        t.optNullableString(SDK_INTEGRATION_TYPE_FIELD)
-                            ?.let { SdkIntegrationType.valueOf(it) },
+                    t.optNullableString(SDK_INTEGRATION_TYPE_FIELD)
+                        ?.let { SdkIntegrationType.valueOf(it) },
                     sdkPaymentHandling = t.optNullableString(SDK_PAYMENT_HANDLING_FIELD),
                     checkoutSessionId = t.getString(CHECKOUT_SESSION_ID_FIELD),
                     clientSessionId = t.optNullableString(CLIENT_SESSION_ID_FIELD),
@@ -106,10 +106,10 @@ data class TimerProperties(
                     timerType = TimerType.valueOf(t.getString(TIMER_TYPE_FIELD)),
                     duration = t.optNullableLong(DURATION_FIELD),
                     analyticsContext =
-                        t.optJSONObject(ANALYTICS_CONTEXT_FIELD)?.let {
-                            JSONSerializationUtils.getJsonObjectDeserializer<AnalyticsContext>()
-                                .deserialize(it)
-                        },
+                    t.optJSONObject(ANALYTICS_CONTEXT_FIELD)?.let {
+                        JSONSerializationUtils.getJsonObjectDeserializer<AnalyticsContext>()
+                            .deserialize(it)
+                    },
                 )
             }
     }

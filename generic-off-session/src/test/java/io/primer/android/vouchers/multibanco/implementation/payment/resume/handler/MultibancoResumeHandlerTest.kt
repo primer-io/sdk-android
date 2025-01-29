@@ -62,9 +62,9 @@ internal class MultibancoResumeHandlerTest {
         val expectedDecision =
             MultibancoDecision(
                 expiresAt =
-                    expiresDateFormat.format(
-                        SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault()).parse(clientToken.expiresAt),
-                    ),
+                expiresDateFormat.format(
+                    SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault()).parse(clientToken.expiresAt),
+                ),
                 reference = clientToken.reference,
                 entity = clientToken.entity,
             )

@@ -93,9 +93,9 @@ internal class ComponentsContainer(private val sdk: () -> SdkContainer) : Depend
                 paymentsTypesInteractor = resolve(),
                 analyticsInteractor = sdk().resolve(),
                 globalCacheConfigurationCacheDataSource =
-                    sdk().resolve(
-                        ConfigurationCoreContainer.GLOBAL_CACHED_CONFIGURATION_DI_KEY,
-                    ),
+                sdk().resolve(
+                    ConfigurationCoreContainer.GLOBAL_CACHED_CONFIGURATION_DI_KEY,
+                ),
                 scopeProvider = resolve(),
             )
         }

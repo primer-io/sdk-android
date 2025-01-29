@@ -77,7 +77,7 @@ class HeadlessActivity : BaseCheckoutActivity(), DISdkComponent {
                                     paymentMethodNavigationFactoryRegistry.create(
                                         params.paymentMethodType,
                                     ) as? PaymentMethodContextNavigationHandler
-                                )?.getSupportedNavigators(this@HeadlessActivity, resultLauncher)
+                                    )?.getSupportedNavigators(this@HeadlessActivity, resultLauncher)
                                     ?.firstOrNull { it.canHandle(event.params) }?.navigate(event.params)
                         }
                     }

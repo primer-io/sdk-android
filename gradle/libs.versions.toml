@@ -33,7 +33,6 @@ detekt = "1.23.7"
 sonarqube = "6.0.1.5171"
 dexcount = "4.0.0"
 kover = "0.8.0"
-ktlint = "12.1.2"
 junit5Plugin = "1.9.3.0"
 mavenPublish = "0.29.0"
 navigationFragmentKtx = "2.7.7"
@@ -44,6 +43,7 @@ activityKtx = "1.9.2"
 secretsGradlePlugin = "2.0.1"
 
 [libraries]
+detekt-formatting = { module = "io.gitlab.arturbosch.detekt:detekt-formatting", version.ref = "detekt" }
 kotlin-stdlib = { group = "org.jetbrains.kotlin", name = "kotlin-stdlib", version.ref = "kotlin" }
 kotlin-coroutines = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "coroutines" }
 android-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "ktx" }
@@ -98,7 +98,6 @@ detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
 sonarqube = { id = "org.sonarqube", version.ref = "sonarqube" }
 dexcount = { id = "com.getkeepsafe.dexcount", version.ref = "dexcount" }
 kover = { id = "org.jetbrains.kotlinx.kover", version.ref = "kover" }
-ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint" }
 junit5 = { id = "de.mannodermaus.android-junit5", version.ref = "junit5Plugin" }
 maven-publish = { id = "com.vanniktech.maven.publish", version.ref = "mavenPublish" }
 google-secrets = { id = "com.google.android.libraries.mapsplatform.secrets-gradle-plugin", version.ref = "secretsGradlePlugin" }

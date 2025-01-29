@@ -36,6 +36,7 @@ internal class DefaultErrorMapper : ErrorMapper {
                     throwable.diagnosticsId,
                     throwable.description,
                 )
+
             is SessionUpdateException ->
                 SessionUpdateError(
                     throwable.diagnosticsId,

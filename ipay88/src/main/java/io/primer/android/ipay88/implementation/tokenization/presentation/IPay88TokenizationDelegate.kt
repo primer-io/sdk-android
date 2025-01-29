@@ -13,19 +13,19 @@ internal class IPay88TokenizationDelegate(
     private val configurationInteractor: IPay88ConfigurationInteractor,
     private val tokenizationInteractor: IPay88TokenizationInteractor,
 ) : PaymentMethodTokenizationDelegate<IPay88TokenizationInputable, IPay88PaymentInstrumentParams>(
-        tokenizationInteractor,
-    ),
+    tokenizationInteractor,
+),
     TokenizationCollectedDataMapper<IPay88TokenizationInputable, IPay88PaymentInstrumentParams> {
     override suspend fun mapTokenizationData(input: IPay88TokenizationInputable) =
         configurationInteractor(IPay88ConfigParams(paymentMethodType = input.paymentMethodType))
             .map { configuration ->
                 TokenizationParams(
                     paymentInstrumentParams =
-                        IPay88PaymentInstrumentParams(
-                            paymentMethodType = input.paymentMethodType,
-                            paymentMethodConfigId = configuration.paymentMethodConfigId,
-                            locale = configuration.locale,
-                        ),
+                    IPay88PaymentInstrumentParams(
+                        paymentMethodType = input.paymentMethodType,
+                        paymentMethodConfigId = configuration.paymentMethodConfigId,
+                        locale = configuration.locale,
+                    ),
                     sessionIntent = input.primerSessionIntent,
                 )
             }

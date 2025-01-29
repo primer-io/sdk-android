@@ -24,11 +24,11 @@ internal class MultibancoResumeHandler(
     clientTokenRepository: ClientTokenRepository,
     checkoutAdditionalInfoHandler: CheckoutAdditionalInfoHandler,
 ) : PrimerResumeDecisionHandlerV2<MultibancoDecision, MultibancoClientToken>(
-        clientTokenRepository = clientTokenRepository,
-        validateClientTokenRepository = validateClientTokenRepository,
-        clientTokenParser = clientTokenParser,
-        checkoutAdditionalInfoHandler = checkoutAdditionalInfoHandler,
-    ) {
+    clientTokenRepository = clientTokenRepository,
+    validateClientTokenRepository = validateClientTokenRepository,
+    clientTokenParser = clientTokenParser,
+    checkoutAdditionalInfoHandler = checkoutAdditionalInfoHandler,
+) {
     private val dateFormatISO = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
     private val expiresDateFormat =
         DateFormat.getDateTimeInstance(
@@ -42,11 +42,11 @@ internal class MultibancoResumeHandler(
     override suspend fun getResumeDecision(clientToken: MultibancoClientToken): MultibancoDecision {
         return MultibancoDecision(
             expiresAt =
-                clientToken.expiresAt.let {
-                    dateFormatISO.parse(it).let { expiresAt ->
-                        expiresDateFormat.format(expiresAt)
-                    }
-                },
+            clientToken.expiresAt.let {
+                dateFormatISO.parse(it).let { expiresAt ->
+                    expiresDateFormat.format(expiresAt)
+                }
+            },
             reference = clientToken.reference,
             entity = clientToken.entity,
         )

@@ -36,12 +36,12 @@ internal class GooglePayPaymentDelegate(
     baseErrorResolver: BaseErrorResolver,
     val resumeHandler: GooglePayResumeHandler,
 ) : PaymentMethodPaymentDelegate(
-        paymentMethodTokenHandler,
-        resumePaymentHandler,
-        successHandler,
-        errorHandler,
-        baseErrorResolver,
-    ),
+    paymentMethodTokenHandler,
+    resumePaymentHandler,
+    successHandler,
+    errorHandler,
+    baseErrorResolver,
+),
     UiEventable {
     private val _uiEvent = MutableSharedFlow<ComposerUiEvent>()
     override val uiEvent: SharedFlow<ComposerUiEvent> = _uiEvent

@@ -47,12 +47,12 @@ class CardBinMetadataDataNetworksResponseTest {
         val expectedObject =
             CardBinMetadataDataNetworksResponse(
                 networks =
-                    listOf(
-                        CardNetworkDataResponse(
-                            displayName = "Visa",
-                            value = CardNetwork.Type.VISA,
-                        ),
+                listOf(
+                    CardNetworkDataResponse(
+                        displayName = "Visa",
+                        value = CardNetwork.Type.VISA,
                     ),
+                ),
             )
 
         assertEquals(expectedObject, deserializedObject)

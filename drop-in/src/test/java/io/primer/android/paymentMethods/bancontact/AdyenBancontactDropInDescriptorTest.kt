@@ -135,11 +135,11 @@ class AdyenBancontactDropInDescriptorTest {
         isStandalonePaymentMethod: Boolean = false,
     ) = AdyenBancontactDropInDescriptor(
         uiOptions =
-            UiOptions(
-                isDarkMode = isDarkMode,
-                isInitScreenEnabled = false,
-                isStandalonePaymentMethod = isStandalonePaymentMethod,
-            ),
+        UiOptions(
+            isDarkMode = isDarkMode,
+            isInitScreenEnabled = false,
+            isStandalonePaymentMethod = isStandalonePaymentMethod,
+        ),
         brandRegistry = brandRegistry,
     )
 }

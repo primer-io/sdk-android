@@ -23,11 +23,11 @@ internal class StripeAchVaultResumeDecisionHandler(
     clientTokenRepository: ClientTokenRepository,
     checkoutAdditionalInfoHandler: CheckoutAdditionalInfoHandler,
 ) : PrimerResumeDecisionHandlerV2<StripeAchVaultDecision, StripeAchClientToken>(
-        clientTokenRepository = clientTokenRepository,
-        validateClientTokenRepository = validateClientTokenRepository,
-        checkoutAdditionalInfoHandler = checkoutAdditionalInfoHandler,
-        clientTokenParser = clientTokenParser,
-    ) {
+    clientTokenRepository = clientTokenRepository,
+    validateClientTokenRepository = validateClientTokenRepository,
+    checkoutAdditionalInfoHandler = checkoutAdditionalInfoHandler,
+    clientTokenParser = clientTokenParser,
+) {
     override var checkoutAdditionalInfo: PrimerCheckoutAdditionalInfo? = null
         private set
 
@@ -39,10 +39,10 @@ internal class StripeAchVaultResumeDecisionHandler(
     override suspend fun getResumeDecision(clientToken: StripeAchClientToken): StripeAchVaultDecision {
         return StripeAchVaultDecision(
             sdkCompleteUrl =
-                requireNotNullCheck(
-                    value = clientToken.sdkCompleteUrl,
-                    key = StripeIllegalValueKey.MISSING_COMPLETION_URL,
-                ),
+            requireNotNullCheck(
+                value = clientToken.sdkCompleteUrl,
+                key = StripeIllegalValueKey.MISSING_COMPLETION_URL,
+            ),
         )
     }
 }

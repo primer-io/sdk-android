@@ -94,27 +94,27 @@ internal data class KlarnaSessionData(
                     locale = t.optNullableString(LOCALE_FIELD),
                     orderAmount = t.optNullableInt(ORDER_AMOUNT_FIELD),
                     orderLines =
-                        t.getJSONArray(ORDER_LINES_FIELD).sequence<JSONObject>()
-                            .map {
-                                JSONSerializationUtils
-                                    .getJsonObjectDeserializer<SessionOrderLines>()
-                                    .deserialize(it)
-                            }.toList(),
+                    t.getJSONArray(ORDER_LINES_FIELD).sequence<JSONObject>()
+                        .map {
+                            JSONSerializationUtils
+                                .getJsonObjectDeserializer<SessionOrderLines>()
+                                .deserialize(it)
+                        }.toList(),
                     billingAddress =
-                        t.optJSONObject(BILLING_ADDRESS_FIELD)?.let {
-                            JSONSerializationUtils.getJsonObjectDeserializer<AddressData>()
-                                .deserialize(it)
-                        },
+                    t.optJSONObject(BILLING_ADDRESS_FIELD)?.let {
+                        JSONSerializationUtils.getJsonObjectDeserializer<AddressData>()
+                            .deserialize(it)
+                    },
                     shippingAddress =
-                        t.optJSONObject(SHIPPING_ADDRESS_FIELD)?.let {
-                            JSONSerializationUtils.getJsonObjectDeserializer<AddressData>()
-                                .deserialize(it)
-                        },
+                    t.optJSONObject(SHIPPING_ADDRESS_FIELD)?.let {
+                        JSONSerializationUtils.getJsonObjectDeserializer<AddressData>()
+                            .deserialize(it)
+                    },
                     tokenDetails =
-                        t.optJSONObject(TOKEN_DETAILS_FIELD)?.let {
-                            JSONSerializationUtils.getJsonObjectDeserializer<TokenDetailsData>()
-                                .deserialize(it)
-                        },
+                    t.optJSONObject(TOKEN_DETAILS_FIELD)?.let {
+                        JSONSerializationUtils.getJsonObjectDeserializer<TokenDetailsData>()
+                            .deserialize(it)
+                    },
                     orderTaxAmount = t.optNullableInt(ORDER_TAX_AMOUNT_FIELD),
                 )
             }

@@ -25,11 +25,11 @@ internal class StripeAchResumeDecisionHandler(
     clientTokenRepository: ClientTokenRepository,
     checkoutAdditionalInfoHandler: CheckoutAdditionalInfoHandler,
 ) : PrimerResumeDecisionHandlerV2<StripeAchDecision, StripeAchClientToken>(
-        clientTokenRepository = clientTokenRepository,
-        validateClientTokenRepository = validateClientTokenRepository,
-        checkoutAdditionalInfoHandler = checkoutAdditionalInfoHandler,
-        clientTokenParser = clientTokenParser,
-    ) {
+    clientTokenRepository = clientTokenRepository,
+    validateClientTokenRepository = validateClientTokenRepository,
+    checkoutAdditionalInfoHandler = checkoutAdditionalInfoHandler,
+    clientTokenParser = clientTokenParser,
+) {
     override var checkoutAdditionalInfo: PrimerCheckoutAdditionalInfo? = null
         private set
 
@@ -41,20 +41,20 @@ internal class StripeAchResumeDecisionHandler(
     override suspend fun getResumeDecision(clientToken: StripeAchClientToken): StripeAchDecision {
         return StripeAchDecision(
             sdkCompleteUrl =
-                requireNotNullCheck(
-                    value = clientToken.sdkCompleteUrl,
-                    key = StripeIllegalValueKey.MISSING_COMPLETION_URL,
-                ),
+            requireNotNullCheck(
+                value = clientToken.sdkCompleteUrl,
+                key = StripeIllegalValueKey.MISSING_COMPLETION_URL,
+            ),
             stripePaymentIntentId =
-                requireNotNullCheck(
-                    value = clientToken.stripePaymentIntentId,
-                    key = StripeIllegalValueKey.MISSING_PAYMENT_INTENT_ID,
-                ),
+            requireNotNullCheck(
+                value = clientToken.stripePaymentIntentId,
+                key = StripeIllegalValueKey.MISSING_PAYMENT_INTENT_ID,
+            ),
             stripeClientSecret =
-                requireNotNullCheck(
-                    value = clientToken.stripeClientSecret,
-                    key = StripeIllegalValueKey.MISSING_CLIENT_SECRET,
-                ),
+            requireNotNullCheck(
+                value = clientToken.stripeClientSecret,
+                key = StripeIllegalValueKey.MISSING_CLIENT_SECRET,
+            ),
         )
     }
 }

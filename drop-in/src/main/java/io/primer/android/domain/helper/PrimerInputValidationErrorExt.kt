@@ -5,6 +5,7 @@ import io.primer.android.components.domain.core.models.card.PrimerCardData
 import io.primer.android.components.domain.error.PrimerInputValidationError
 import io.primer.android.model.SyncValidationError
 
+@Suppress("LongMethod")
 internal fun PrimerInputValidationError.toSyncValidationError(cardData: PrimerCardData?) =
     when (errorId) {
         "invalid-card-number" ->
@@ -12,11 +13,11 @@ internal fun PrimerInputValidationError.toSyncValidationError(cardData: PrimerCa
                 inputElementType = inputElementType,
                 errorId = errorId,
                 errorFormatId =
-                    if (cardData?.cardNumber.isNullOrBlank()) {
-                        R.string.form_error_required
-                    } else {
-                        R.string.form_error_invalid
-                    },
+                if (cardData?.cardNumber.isNullOrBlank()) {
+                    R.string.form_error_required
+                } else {
+                    R.string.form_error_invalid
+                },
                 fieldId = R.string.card_number,
             )
 
@@ -25,11 +26,11 @@ internal fun PrimerInputValidationError.toSyncValidationError(cardData: PrimerCa
                 inputElementType = inputElementType,
                 errorId = errorId,
                 errorFormatId =
-                    if (cardData?.cardNumber.isNullOrBlank()) {
-                        R.string.form_error_required
-                    } else {
-                        R.string.form_error_card_type_not_supported
-                    },
+                if (cardData?.cardNumber.isNullOrBlank()) {
+                    R.string.form_error_required
+                } else {
+                    R.string.form_error_card_type_not_supported
+                },
                 fieldId = R.string.card_number,
             )
 
@@ -38,11 +39,11 @@ internal fun PrimerInputValidationError.toSyncValidationError(cardData: PrimerCa
                 inputElementType = inputElementType,
                 errorId = errorId,
                 errorFormatId =
-                    if (cardData?.cvv.isNullOrBlank()) {
-                        R.string.form_error_required
-                    } else {
-                        R.string.form_error_invalid
-                    },
+                if (cardData?.cvv.isNullOrBlank()) {
+                    R.string.form_error_required
+                } else {
+                    R.string.form_error_invalid
+                },
                 fieldId = R.string.card_cvv,
             )
 
@@ -51,11 +52,11 @@ internal fun PrimerInputValidationError.toSyncValidationError(cardData: PrimerCa
                 inputElementType = inputElementType,
                 errorId = errorId,
                 errorFormatId =
-                    if (cardData?.expiryDate.isNullOrBlank()) {
-                        R.string.form_error_required
-                    } else {
-                        R.string.form_error_invalid
-                    },
+                if (cardData?.expiryDate.isNullOrBlank()) {
+                    R.string.form_error_required
+                } else {
+                    R.string.form_error_invalid
+                },
                 fieldId = R.string.card_expiry,
             )
 
@@ -64,11 +65,11 @@ internal fun PrimerInputValidationError.toSyncValidationError(cardData: PrimerCa
                 inputElementType = inputElementType,
                 errorId = errorId,
                 errorFormatId =
-                    if (cardData?.cardHolderName.isNullOrBlank()) {
-                        R.string.form_error_required
-                    } else {
-                        R.string.form_error_card_holder_name_length
-                    },
+                if (cardData?.cardHolderName.isNullOrBlank()) {
+                    R.string.form_error_required
+                } else {
+                    R.string.form_error_card_holder_name_length
+                },
                 fieldId = R.string.card_holder_name,
             )
 

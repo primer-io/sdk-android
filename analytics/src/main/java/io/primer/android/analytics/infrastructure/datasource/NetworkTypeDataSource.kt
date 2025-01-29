@@ -25,6 +25,7 @@ internal class NetworkTypeDataSource(private val context: Context) :
                             sharedFlow.tryEmit(
                                 NetworkTypeProperties(state.networkType),
                             )
+
                         else -> sharedFlow.tryEmit(NetworkTypeProperties(NetworkType.NONE))
                     }
                 } catch (ignored: Exception) {

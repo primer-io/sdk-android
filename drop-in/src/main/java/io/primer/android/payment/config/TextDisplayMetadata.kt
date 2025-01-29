@@ -19,14 +19,14 @@ internal data class TextDisplayMetadata(
     val imageColor: ImageColor?,
     val iconPosition: IconPosition?,
 ) : BaseDisplayMetadata(
-        DisplayMetadataType.TEXT,
-        name,
-        paymentMethodType,
-        backgroundColor,
-        borderColor,
-        borderWidth,
-        cornerRadius,
-    )
+    DisplayMetadataType.TEXT,
+    name,
+    paymentMethodType,
+    backgroundColor,
+    borderColor,
+    borderWidth,
+    cornerRadius,
+)
 
 internal fun PaymentMethodImplementation.toTextDisplayMetadata(
     isDarkMode: Boolean,
@@ -39,11 +39,11 @@ internal fun PaymentMethodImplementation.toTextDisplayMetadata(
     borderWidth = buttonMetadata?.borderWidth?.getBorderWidth(isDarkMode),
     cornerRadius = buttonMetadata?.cornerRadius,
     text =
-        if (paymentMethodType == PaymentMethodType.STRIPE_ACH.name) {
-            context.getString(R.string.pay_with_ach)
-        } else {
-            buttonMetadata?.text
-        },
+    if (paymentMethodType == PaymentMethodType.STRIPE_ACH.name) {
+        context.getString(R.string.pay_with_ach)
+    } else {
+        buttonMetadata?.text
+    },
     textColor = buttonMetadata?.textColor?.getColor(isDarkMode),
     imageColor = buttonMetadata?.iconDisplayMetadata?.getImageColor(isDarkMode),
     iconPosition = buttonMetadata?.iconPosition,

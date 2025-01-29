@@ -42,9 +42,9 @@ internal class PaypalComponent(
             try {
                 tokenizationCollectorDelegate.startDataCollection(
                     params =
-                        PaypalTokenizationCollectorParams(
-                            primerSessionIntent = primerSessionIntent,
-                        ),
+                    PaypalTokenizationCollectorParams(
+                        primerSessionIntent = primerSessionIntent,
+                    ),
                 ).onFailure { throwable ->
                     paymentDelegate.handleError(throwable)
                 }

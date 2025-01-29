@@ -47,16 +47,16 @@ data class PaymentMethodTokenInternal(
                     paymentMethodType = paymentMethodType ?: t.getString(PAYMENT_INSTRUMENT_TYPE_FIELD),
                     paymentInstrumentData = paymentInstrumentData,
                     vaultData =
-                        t.optJSONObject(VAULT_DATA_FIELD)?.let {
-                            JSONSerializationUtils.getJsonObjectDeserializer<VaultDataResponse>()
-                                .deserialize(it)
-                        },
+                    t.optJSONObject(VAULT_DATA_FIELD)?.let {
+                        JSONSerializationUtils.getJsonObjectDeserializer<VaultDataResponse>()
+                            .deserialize(it)
+                    },
                     threeDSecureAuthentication =
-                        t.optJSONObject(THREE_DS_AUTHENTICATION_FIELD)?.let {
-                            JSONSerializationUtils
-                                .getJsonObjectDeserializer<AuthenticationDetailsDataResponse>()
-                                .deserialize(it)
-                        },
+                    t.optJSONObject(THREE_DS_AUTHENTICATION_FIELD)?.let {
+                        JSONSerializationUtils
+                            .getJsonObjectDeserializer<AuthenticationDetailsDataResponse>()
+                            .deserialize(it)
+                    },
                     isVaulted = t.optBoolean(IS_VAULTED_FIELD),
                     analyticsId = t.getString(ANALYTICS_ID_FIELD),
                     tokenType = TokenType.valueOf(t.getString(TOKEN_TYPE_FIELD)),
@@ -73,36 +73,36 @@ fun PaymentMethodTokenInternal.toPaymentMethodToken() =
         paymentInstrumentType = paymentInstrumentType,
         paymentMethodType = paymentMethodType,
         paymentInstrumentData =
-            paymentInstrumentData?.let { paymentInstrumentData ->
-                PaymentInstrumentData(
-                    network = paymentInstrumentData.network,
-                    cardholderName = paymentInstrumentData.cardholderName,
-                    first6Digits = paymentInstrumentData.first6Digits,
-                    last4Digits = paymentInstrumentData.last4Digits,
-                    accountNumberLast4Digits = paymentInstrumentData.accountNumberLast4Digits,
-                    expirationMonth = paymentInstrumentData.expirationMonth,
-                    expirationYear = paymentInstrumentData.expirationYear,
-                    externalPayerInfo = paymentInstrumentData.externalPayerInfo,
-                    klarnaCustomerToken = paymentInstrumentData.klarnaCustomerToken,
-                    sessionData = paymentInstrumentData.sessionData,
-                    paymentMethodType = paymentInstrumentData.paymentMethodType,
-                    binData = null,
-                    bankName = paymentInstrumentData.bankName,
-                )
-            },
+        paymentInstrumentData?.let { paymentInstrumentData ->
+            PaymentInstrumentData(
+                network = paymentInstrumentData.network,
+                cardholderName = paymentInstrumentData.cardholderName,
+                first6Digits = paymentInstrumentData.first6Digits,
+                last4Digits = paymentInstrumentData.last4Digits,
+                accountNumberLast4Digits = paymentInstrumentData.accountNumberLast4Digits,
+                expirationMonth = paymentInstrumentData.expirationMonth,
+                expirationYear = paymentInstrumentData.expirationYear,
+                externalPayerInfo = paymentInstrumentData.externalPayerInfo,
+                klarnaCustomerToken = paymentInstrumentData.klarnaCustomerToken,
+                sessionData = paymentInstrumentData.sessionData,
+                paymentMethodType = paymentInstrumentData.paymentMethodType,
+                binData = null,
+                bankName = paymentInstrumentData.bankName,
+            )
+        },
         vaultData =
-            vaultData?.let {
-                PrimerPaymentMethodTokenData.VaultData(customerId = it.customerId)
-            },
+        vaultData?.let {
+            PrimerPaymentMethodTokenData.VaultData(customerId = it.customerId)
+        },
         threeDSecureAuthentication =
-            threeDSecureAuthentication?.let {
-                PrimerPaymentMethodTokenData.AuthenticationDetails(
-                    it.responseCode,
-                    it.reasonCode,
-                    it.reasonText,
-                    it.protocolVersion,
-                    it.challengeIssued,
-                )
-            },
+        threeDSecureAuthentication?.let {
+            PrimerPaymentMethodTokenData.AuthenticationDetails(
+                it.responseCode,
+                it.reasonCode,
+                it.reasonText,
+                it.protocolVersion,
+                it.challengeIssued,
+            )
+        },
         isVaulted = isVaulted,
     )

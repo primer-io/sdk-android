@@ -45,7 +45,6 @@ internal class AdyenBancontactComponent(
     BaseWebRedirectComposer {
     override val scope: CoroutineScope = composerScope
 
-    @Suppress("ktlint:standard:property-naming")
     override val _uiEvent: MutableSharedFlow<ComposerUiEvent> = MutableSharedFlow()
 
     private val _metadataFlow =
@@ -110,9 +109,9 @@ internal class AdyenBancontactComponent(
             methodName = RawDataManagerAnalyticsConstants.SET_RAW_DATA_METHOD,
             paymentMethodType = paymentMethodType,
             context =
-                mapOf(
-                    RawDataManagerAnalyticsConstants.PAYMENT_METHOD_TYPE_PARAM to paymentMethodType,
-                ).filterValues { it.isNotBlank() },
+            mapOf(
+                RawDataManagerAnalyticsConstants.PAYMENT_METHOD_TYPE_PARAM to paymentMethodType,
+            ).filterValues { it.isNotBlank() },
         )
         composerScope.launch {
             this@AdyenBancontactComponent.collectedData.emit(collectedData)

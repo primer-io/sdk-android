@@ -11,5 +11,5 @@ internal typealias PhoneNumberConfigurationInteractor =
 internal class DefaultPhoneNumberConfigurationInteractor(
     configurationRepository: PaymentMethodConfigurationRepository<PhoneNumberConfig, PhoneNumberConfigParams>,
 ) : PaymentMethodConfigurationInteractor<PhoneNumberConfig, PhoneNumberConfigParams>(
-        configurationRepository,
-    )
+    configurationRepository,
+)

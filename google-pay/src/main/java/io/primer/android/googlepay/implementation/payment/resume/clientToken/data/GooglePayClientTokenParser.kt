@@ -20,10 +20,10 @@ internal class GooglePayClientTokenParser :
             GooglePayClientToken.GooglePayProcessor3DSClientToken(
                 clientTokenIntent = clientTokenData.intent,
                 processor3DS =
-                    Processor3DS(
-                        statusUrl = clientTokenData.statusUrl,
-                        redirectUrl = clientTokenData.redirectUrl,
-                    ),
+                Processor3DS(
+                    statusUrl = clientTokenData.statusUrl,
+                    redirectUrl = clientTokenData.redirectUrl,
+                ),
             )
         }
     }

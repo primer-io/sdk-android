@@ -14,9 +14,9 @@ internal class RemoteActionDataSource(
     private val httpClient: PrimerHttpClient,
     private val apiVersion: () -> PrimerApiVersion,
 ) : BaseSuspendDataSource<
-        PrimerResponse<ConfigurationDataResponse>,
-        BaseRemoteHostRequest<ClientSessionActionsDataRequest>,
-        > {
+    PrimerResponse<ConfigurationDataResponse>,
+    BaseRemoteHostRequest<ClientSessionActionsDataRequest>,
+    > {
     override suspend fun execute(input: BaseRemoteHostRequest<ClientSessionActionsDataRequest>) =
         httpClient.withTimeout(PRIMER_15S_TIMEOUT)
             .suspendPost<ClientSessionActionsDataRequest, ConfigurationDataResponse>(

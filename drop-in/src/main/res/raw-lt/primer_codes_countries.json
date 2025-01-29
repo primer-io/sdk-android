@@ -44,13 +44,22 @@
     "CF": "Centrinės Afrikos Respublika",
     "TD": "Čadas",
     "CL": "Čilė",
-    "CN": ["Kinijos Liaudies Respublika", "Kinija"],
+    "CN": [
+      "Kinijos Liaudies Respublika",
+      "Kinija"
+    ],
     "CX": "Kalėdų sala",
     "CC": "Kokosų (Kilingo) salos",
     "CO": "Kolumbija",
     "KM": "Komorai",
-    "CG": ["Kongo Respublika", "Kongas"],
-    "CD": ["Kongo Demokratinė Respublika", "Kongo"],
+    "CG": [
+      "Kongo Respublika",
+      "Kongas"
+    ],
+    "CD": [
+      "Kongo Demokratinė Respublika",
+      "Kongo"
+    ],
     "CK": "Kuko salos",
     "CR": "Kosta Rika",
     "CI": "Dramblio Kaulo Krantas",
@@ -78,7 +87,11 @@
     "PF": "Prancūzijos Polinezija",
     "TF": "Prancūzijos pietinės teritorijos",
     "GA": "Gabonas",
-    "GM": ["Gambijos Respublika", "Gambija", "Gambija"],
+    "GM": [
+      "Gambijos Respublika",
+      "Gambija",
+      "Gambija"
+    ],
     "GE": "Gruzija",
     "DE": "Vokietija",
     "GH": "Gana",
@@ -101,7 +114,10 @@
     "IS": "Islandija",
     "IN": "Indija",
     "ID": "Indonezija",
-    "IR": ["Irano Islamo Respublika", "Iranas"],
+    "IR": [
+      "Irano Islamo Respublika",
+      "Iranas"
+    ],
     "IQ": "Irakas",
     "IE": "Airija",
     "IL": "Izraelis",
@@ -157,13 +173,19 @@
     "NG": "Nigerija",
     "NU": "Niue",
     "NF": "Norfolko sala",
-    "MK": ["Šiaurės Makedonijos Respublika", "Šiaurės Makedonija"],
+    "MK": [
+      "Šiaurės Makedonijos Respublika",
+      "Šiaurės Makedonija"
+    ],
     "MP": "Šiaurinės Marianų salos",
     "NO": "Norvegija",
     "OM": "Omanas",
     "PK": "Pakistanas",
     "PW": "Palau",
-    "PS": ["Palestinos valstybė", "Palestina"],
+    "PS": [
+      "Palestinos valstybė",
+      "Palestina"
+    ],
     "PA": "Panama",
     "PG": "Papua Naujoji Gvinėja",
     "PY": "Paragvajus",
@@ -176,7 +198,10 @@
     "QA": "Kataras",
     "RE": "Reunion",
     "RO": "Rumunija",
-    "RU": ["Rusijos Federacija", "Rusija"],
+    "RU": [
+      "Rusijos Federacija",
+      "Rusija"
+    ],
     "RW": "Ruanda",
     "SH": "Šventoji Elena",
     "KN": "Sent Kitsas ir Nevis",
@@ -206,9 +231,15 @@
     "SE": "Švedija",
     "CH": "Šveicarija",
     "SY": "Sirijos Arabų Respublika",
-    "TW": ["Taivanas, Kinijos provincija", "Taivanas"],
+    "TW": [
+      "Taivanas, Kinijos provincija",
+      "Taivanas"
+    ],
     "TJ": "Tadžikistanas",
-    "TZ": ["Jungtinė Tanzanijos Respublika", "Tanzanija"],
+    "TZ": [
+      "Jungtinė Tanzanijos Respublika",
+      "Tanzanija"
+    ],
     "TH": "Tailandas",
     "TL": "Timoras-Leste",
     "TG": "Togas",
@@ -223,8 +254,16 @@
     "UG": "Uganda",
     "UA": "Ukraina",
     "AE": "Jungtiniai Arabų Emyratai",
-    "GB": ["Jungtinė Karalystė", "JK", "Didžioji Britanija"],
-    "US": ["Jungtinės Amerikos Valstijos", "Jungtinės Valstijos", "JAV"],
+    "GB": [
+      "Jungtinė Karalystė",
+      "JK",
+      "Didžioji Britanija"
+    ],
+    "US": [
+      "Jungtinės Amerikos Valstijos",
+      "Jungtinės Valstijos",
+      "JAV"
+    ],
     "UM": "Jungtinių Valstijų mažosios atokios salos",
     "UY": "Urugvajus",
     "UZ": "Uzbekistanas",

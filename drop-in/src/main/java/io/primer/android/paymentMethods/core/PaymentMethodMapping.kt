@@ -27,6 +27,7 @@ internal interface PaymentMethodMapping {
     ): PaymentMethodDropInDescriptor
 }
 
+@Suppress("LongMethod", "CyclomaticComplexMethod")
 internal class DefaultPaymentMethodMapping(
     private val config: PrimerConfig,
     private val brandRegistry: BrandRegistry,

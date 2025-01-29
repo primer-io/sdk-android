@@ -31,12 +31,12 @@ internal class StripeAchVaultPaymentDelegate(
     private val paymentResultRepository: PaymentResultRepository,
     private val config: PrimerConfig,
 ) : PaymentMethodPaymentDelegate(
-        paymentMethodTokenHandler,
-        resumePaymentHandler,
-        successHandler,
-        errorHandler,
-        baseErrorResolver,
-    ) {
+    paymentMethodTokenHandler,
+    resumePaymentHandler,
+    successHandler,
+    errorHandler,
+    baseErrorResolver,
+) {
     override suspend fun handleNewClientToken(
         clientToken: String,
         payment: Payment?,

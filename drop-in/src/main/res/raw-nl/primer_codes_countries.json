@@ -223,8 +223,14 @@
     "UG": "Oeganda",
     "UA": "Oekraïne",
     "AE": "Verenigde Arabische Emiraten",
-    "GB": ["Groot-Brittannië", "Verenigd Koninkrijk"],
-    "US": ["Verenigde Staten van Amerika", "Verenigde Staten"],
+    "GB": [
+      "Groot-Brittannië",
+      "Verenigd Koninkrijk"
+    ],
+    "US": [
+      "Verenigde Staten van Amerika",
+      "Verenigde Staten"
+    ],
     "UM": "Ver afgelegen eilandjes van de Verenigde Staten",
     "UY": "Uruguay",
     "UZ": "Oezbekistan",
@@ -246,9 +252,18 @@
     "JE": "Jersey",
     "ME": "Montenegro",
     "BL": "Saint Barthélemy",
-    "MF": ["Sint-Maarten (Frans deel)", "Sint-Maarten (Franse Antillen)", "Collectiviteit van Sint-Maarten"],
+    "MF": [
+      "Sint-Maarten (Frans deel)",
+      "Sint-Maarten (Franse Antillen)",
+      "Collectiviteit van Sint-Maarten"
+    ],
     "RS": "Servië",
-    "SX": ["Sint Maarten", "Sint-Maarten", "Sint Maarten (Nederlands deel)", "Land Sint Maarten"],
+    "SX": [
+      "Sint Maarten",
+      "Sint-Maarten",
+      "Sint Maarten (Nederlands deel)",
+      "Land Sint Maarten"
+    ],
     "SS": "Zuid-Soedan",
     "XK": "Kosovo"
   }

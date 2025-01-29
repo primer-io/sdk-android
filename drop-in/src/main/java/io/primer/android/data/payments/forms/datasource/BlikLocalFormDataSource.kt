@@ -16,24 +16,24 @@ internal class BlikLocalFormDataSource(private val theme: PrimerTheme) :
             FormDataResponse(
                 title = null,
                 logo =
-                    if (theme.isDarkMode == true) {
-                        R.drawable.ic_logo_blik
-                    } else {
-                        R.drawable.ic_logo_blik_light
-                    },
+                if (theme.isDarkMode == true) {
+                    R.drawable.ic_logo_blik
+                } else {
+                    R.drawable.ic_logo_blik_light
+                },
                 buttonType = ButtonType.CONFIRM,
                 description = R.string.input_description_otp,
                 inputs =
-                    listOf(
-                        FormInputDataResponse(
-                            type = FormType.NUMBER,
-                            id = FORM_ID,
-                            hint = R.string.input_hint_form_blik_otp,
-                            level = null,
-                            mask = null,
-                            inputCharacters = null,
-                        ),
+                listOf(
+                    FormInputDataResponse(
+                        type = FormType.NUMBER,
+                        id = FORM_ID,
+                        hint = R.string.input_hint_form_blik_otp,
+                        level = null,
+                        mask = null,
+                        inputCharacters = null,
                     ),
+                ),
             ),
         )
 

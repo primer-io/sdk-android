@@ -40,7 +40,6 @@ class BaseWebRedirectComposerTest {
                 object : BaseWebRedirectComposer {
                     override val scope: CoroutineScope = this@BaseWebRedirectComposerTest.scope
 
-                    @Suppress("ktlint:standard:property-naming")
                     override val _uiEvent: MutableSharedFlow<ComposerUiEvent> = this@BaseWebRedirectComposerTest.uiEvent
 
                     override fun onResultCancelled(params: WebRedirectLauncherParams) {

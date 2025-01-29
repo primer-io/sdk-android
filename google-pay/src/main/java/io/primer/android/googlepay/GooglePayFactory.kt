@@ -15,6 +15,7 @@ class GooglePayFactory(
     val settings: PrimerSettings,
     val configurationDataSource: BaseCacheDataSource<ConfigurationData, ConfigurationData>,
 ) : PaymentMethodFactory {
+    @Suppress("ReturnCount")
     override fun build(): Either<PaymentMethod, Exception> {
         val order = requireNotNull(configurationDataSource.get().clientSession.order)
 
@@ -37,14 +38,14 @@ class GooglePayFactory(
                 countryCode = order.countryCode.toString(),
                 currencyCode = currency.currencyCode,
                 allowedCardNetworks =
-                    configurationDataSource.get().clientSession
-                        .paymentMethod?.orderedAllowedCardNetworks.orEmpty().intersect(
-                            GooglePay.allowedCardNetworks,
-                        ).toList(),
+                configurationDataSource.get().clientSession
+                    .paymentMethod?.orderedAllowedCardNetworks.orEmpty().intersect(
+                        GooglePay.allowedCardNetworks,
+                    ).toList(),
                 buttonStyle = settings.paymentMethodOptions.googlePayOptions.buttonStyle,
                 billingAddressRequired = settings.paymentMethodOptions.googlePayOptions.captureBillingAddress,
                 existingPaymentMethodRequired =
-                    settings.paymentMethodOptions.googlePayOptions.existingPaymentMethodRequired,
+                settings.paymentMethodOptions.googlePayOptions.existingPaymentMethodRequired,
             )
 
         return Success(googlePay)

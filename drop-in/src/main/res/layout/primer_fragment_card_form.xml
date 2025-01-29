@@ -54,26 +54,26 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="end"
-                android:orientation="horizontal"
                 android:layout_margin="@dimen/medium_vertical_margin2"
+                android:background="?android:attr/selectableItemBackground"
                 android:clickable="true"
                 android:focusable="true"
-                android:background="?android:attr/selectableItemBackground"
-                android:gravity="center_vertical">
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
 
                 <TextView
                     android:id="@+id/text_view_surcharge"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="@dimen/medium_vertical_margin2"
+                    android:background="@drawable/background_rounded_corners"
                     android:paddingStart="@dimen/medium_vertical_margin"
                     android:paddingEnd="@dimen/medium_vertical_margin"
                     android:textColor="@android:color/black"
                     android:textStyle="bold"
-                    android:background="@drawable/background_rounded_corners"
                     android:visibility="gone"
-                    tools:visibility="visible"
-                    tools:text="+ $5.00"/>
+                    tools:text="+ $5.00"
+                    tools:visibility="visible" />
 
                 <View
                     android:id="@+id/card_network_divider"
@@ -175,10 +175,10 @@
             android:id="@+id/billingAddressDivider"
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:visibility="gone"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="24dp"
-            android:background="#E5E5EA" />
+            android:background="#E5E5EA"
+            android:visibility="gone" />
 
         <io.primer.android.ui.components.BillingAddressFormView
             android:id="@+id/billingAddressForm"

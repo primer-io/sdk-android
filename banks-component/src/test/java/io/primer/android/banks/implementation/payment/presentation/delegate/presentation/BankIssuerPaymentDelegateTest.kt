@@ -78,13 +78,13 @@ internal class BankIssuerPaymentDelegateTest {
                             paymentMethodType = PaymentMethodType.GOOGLE_PAY.name,
                             sessionIntent = PrimerSessionIntent.CHECKOUT,
                             initialLauncherParams =
-                                WebRedirectLauncherParams(
-                                    decision.title,
-                                    decision.paymentMethodType,
-                                    decision.redirectUrl,
-                                    decision.statusUrl,
-                                    decision.deeplinkUrl,
-                                ),
+                            WebRedirectLauncherParams(
+                                decision.title,
+                                decision.paymentMethodType,
+                                decision.redirectUrl,
+                                decision.statusUrl,
+                                decision.deeplinkUrl,
+                            ),
                         ),
                     )
                 assertEquals(expectedEvent, event)
