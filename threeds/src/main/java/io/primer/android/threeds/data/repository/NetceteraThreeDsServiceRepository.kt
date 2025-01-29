@@ -6,7 +6,14 @@ import android.os.Build
 import com.netcetera.threeds.sdk.ThreeDS2ServiceInstance
 import com.netcetera.threeds.sdk.api.ThreeDS2Service
 import com.netcetera.threeds.sdk.api.configparameters.builder.ConfigurationBuilder
-import com.netcetera.threeds.sdk.api.configparameters.builder.SchemeConfiguration
+import com.netcetera.threeds.sdk.api.configparameters.builder.SchemeConfiguration.amexConfiguration
+import com.netcetera.threeds.sdk.api.configparameters.builder.SchemeConfiguration.cbConfiguration
+import com.netcetera.threeds.sdk.api.configparameters.builder.SchemeConfiguration.dinersSchemeConfiguration
+import com.netcetera.threeds.sdk.api.configparameters.builder.SchemeConfiguration.jcbConfiguration
+import com.netcetera.threeds.sdk.api.configparameters.builder.SchemeConfiguration.mastercardSchemeConfiguration
+import com.netcetera.threeds.sdk.api.configparameters.builder.SchemeConfiguration.newSchemeConfiguration
+import com.netcetera.threeds.sdk.api.configparameters.builder.SchemeConfiguration.unionSchemeConfiguration
+import com.netcetera.threeds.sdk.api.configparameters.builder.SchemeConfiguration.visaSchemeConfiguration
 import com.netcetera.threeds.sdk.api.transaction.Transaction
 import com.netcetera.threeds.sdk.api.transaction.challenge.ChallengeParameters
 import com.netcetera.threeds.sdk.api.transaction.challenge.ChallengeStatusReceiver
@@ -94,14 +101,30 @@ internal class NetceteraThreeDsServiceRepository(
 
             threeDsKeysParams.let { (environment, _, threeDsSecureCertificates) ->
                 if (environment != Environment.PRODUCTION) {
-                    threeDsSecureCertificates?.forEach { (_, rootCertificate, encryptionKey) ->
+                    threeDsSecureCertificates?.forEach { certificate ->
+                        val scheme =
+                            when (certificate.cardNetwork.uppercase()) {
+                                // Choose specialized scheme constructor if available
+                                CardNetwork.Type.MASTERCARD.name -> mastercardSchemeConfiguration()
+                                CardNetwork.Type.VISA.name -> visaSchemeConfiguration()
+                                CardNetwork.Type.AMEX.name -> amexConfiguration()
+                                CardNetwork.Type.DINERS_CLUB.name -> dinersSchemeConfiguration()
+                                CardNetwork.Type.UNIONPAY.name -> unionSchemeConfiguration()
+                                CardNetwork.Type.JCB.name -> jcbConfiguration()
+                                CardNetwork.Type.CARTES_BANCAIRES.name -> cbConfiguration()
+                                else -> {
+                                    // Fallback to default scheme constructor if no specialized API exists
+                                    newSchemeConfiguration(TEST_SCHEME_NAME)
+                                        .logo(R.drawable.ds_logo_visa.toString())
+                                        .logoDark(R.drawable.ds_logo_visa.toString())
+                                        .ids(listOf(TEST_SCHEME_ID))
+                                }
+                            }
+
                         configurationBuilder.configureScheme(
-                            SchemeConfiguration.newSchemeConfiguration(TEST_SCHEME_NAME)
-                                .logo(R.drawable.ds_logo_visa.toString())
-                                .logoDark(R.drawable.ds_logo_visa.toString())
-                                .ids(listOf(TEST_SCHEME_ID))
-                                .encryptionPublicKey(encryptionKey)
-                                .rootPublicKey(rootCertificate)
+                            scheme
+                                .encryptionPublicKey(certificate.encryptionKey)
+                                .rootPublicKey(certificate.rootCertificate)
                                 .build(),
                         )
                     }

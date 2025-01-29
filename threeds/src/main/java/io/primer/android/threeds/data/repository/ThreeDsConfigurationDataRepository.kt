@@ -21,7 +21,10 @@ internal class ThreeDsConfigurationDataRepository(
                     ThreeDsKeysParams(
                         configuration.environment,
                         configuration.keys?.netceteraApiKey,
-                        configuration.keys?.threeDSecureIoCertificates,
+                        listOfNotNull(
+                            configuration.keys?.threeDSecureIoCertificates,
+                            configuration.keys?.threeDsProviderCertificates,
+                        ).flatten(),
                     )
                 }
         }

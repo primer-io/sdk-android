@@ -4,6 +4,15 @@ import android.app.Activity
 import android.content.Context
 import android.os.Build
 import com.netcetera.threeds.sdk.api.ThreeDS2Service
+import com.netcetera.threeds.sdk.api.configparameters.builder.SchemeConfiguration
+import com.netcetera.threeds.sdk.api.configparameters.builder.SchemeConfiguration.amexConfiguration
+import com.netcetera.threeds.sdk.api.configparameters.builder.SchemeConfiguration.cbConfiguration
+import com.netcetera.threeds.sdk.api.configparameters.builder.SchemeConfiguration.dinersSchemeConfiguration
+import com.netcetera.threeds.sdk.api.configparameters.builder.SchemeConfiguration.jcbConfiguration
+import com.netcetera.threeds.sdk.api.configparameters.builder.SchemeConfiguration.mastercardSchemeConfiguration
+import com.netcetera.threeds.sdk.api.configparameters.builder.SchemeConfiguration.newSchemeConfiguration
+import com.netcetera.threeds.sdk.api.configparameters.builder.SchemeConfiguration.unionSchemeConfiguration
+import com.netcetera.threeds.sdk.api.configparameters.builder.SchemeConfiguration.visaSchemeConfiguration
 import com.netcetera.threeds.sdk.api.exceptions.InvalidInputException
 import com.netcetera.threeds.sdk.api.security.Warning
 import com.netcetera.threeds.sdk.api.transaction.Transaction
@@ -20,11 +29,13 @@ import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
 import io.mockk.mockkObject
+import io.mockk.mockkStatic
 import io.mockk.slot
 import io.mockk.unmockkAll
 import io.mockk.verify
 import io.primer.android.configuration.data.model.CardNetwork
 import io.primer.android.configuration.data.model.Environment
+import io.primer.android.configuration.data.model.ThreeDsSecureCertificateDataResponse
 import io.primer.android.core.utils.DeviceInfo
 import io.primer.android.threeds.InstantExecutorExtension
 import io.primer.android.threeds.data.exception.ThreeDsChallengeCancelledException
@@ -46,6 +57,9 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.Arguments
+import org.junit.jupiter.params.provider.MethodSource
 import org.mockito.Mockito
 import org.mockito.Mockito.mock
 import java.util.Locale
@@ -727,4 +741,71 @@ internal class NetceteraThreeDsServiceRepositoryTest {
                 flow.collect {}
             }
         }
+
+    @ParameterizedTest
+    @MethodSource("schemeConfigurations")
+    fun `initializeProvider should use correct scheme configuration`(
+        cardNetwork: String,
+        schemeFunction: () -> SchemeConfiguration.Builder,
+    ) = runTest {
+        mockkStatic("com.netcetera.threeds.sdk.api.configparameters.builder.SchemeConfiguration")
+        val schemeConfig = mockk<SchemeConfiguration.Builder>()
+        every { schemeFunction.invoke() } returns schemeConfig
+        repository.initializeProvider(
+            false,
+            Locale.US,
+            ThreeDsKeysParams(
+                environment = Environment.DEV,
+                apiKey = "testKey",
+                threeDsCertificates =
+                    listOf(
+                        ThreeDsSecureCertificateDataResponse(
+                            cardNetwork = cardNetwork,
+                            rootCertificate = "testCertificate",
+                            encryptionKey = "testEncryption",
+                        ),
+                    ),
+            ),
+        )
+        verify { schemeFunction.invoke() }
+    }
+
+    @Test
+    fun `initializeProvider should use newSchemeConfiguration when card network name isn't found`() =
+        runTest {
+            mockkStatic("com.netcetera.threeds.sdk.api.configparameters.builder.SchemeConfiguration")
+            val schemeConfig = mockk<SchemeConfiguration.Builder>()
+            every { newSchemeConfiguration(any()) } returns schemeConfig
+            repository.initializeProvider(
+                false,
+                Locale.US,
+                ThreeDsKeysParams(
+                    environment = Environment.DEV,
+                    apiKey = "testKey",
+                    threeDsCertificates =
+                        listOf(
+                            ThreeDsSecureCertificateDataResponse(
+                                cardNetwork = "OTHER",
+                                rootCertificate = "testCertificate",
+                                encryptionKey = "testEncryption",
+                            ),
+                        ),
+                ),
+            )
+            verify { newSchemeConfiguration(any()) }
+        }
+
+    companion object {
+        @JvmStatic
+        fun schemeConfigurations() =
+            listOf(
+                Arguments.of("VISA", ::visaSchemeConfiguration),
+                Arguments.of("MASTERCARD", ::mastercardSchemeConfiguration),
+                Arguments.of("AMEX", ::amexConfiguration),
+                Arguments.of("DINERS_CLUB", ::dinersSchemeConfiguration),
+                Arguments.of("UNIONPAY", ::unionSchemeConfiguration),
+                Arguments.of("JCB", ::jcbConfiguration),
+                Arguments.of("CARTES_BANCAIRES", ::cbConfiguration),
+            )
+    }
 }

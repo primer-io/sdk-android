@@ -9,10 +9,12 @@ import org.json.JSONObject
 
 data class ConfigurationKeysDataResponse(
     val threeDSecureIoCertificates: List<ThreeDsSecureCertificateDataResponse>?,
+    val threeDsProviderCertificates: List<ThreeDsSecureCertificateDataResponse>?,
     val netceteraApiKey: String?,
 ) : JSONDeserializable {
     companion object {
         private const val THREE_DS_CERTIFICATES_FIELD = "threeDSecureIoCertificates"
+        private const val THREE_DS_PROVIDER_CERTIFICATES_FIELD = "threeDsProviderCertificates"
         private const val NETCETERA_API_KEY = "netceteraApiKey"
 
         @JvmField
@@ -20,6 +22,11 @@ data class ConfigurationKeysDataResponse(
             JSONObjectDeserializer<ConfigurationKeysDataResponse> { t ->
                 ConfigurationKeysDataResponse(
                     t.optJSONArray(THREE_DS_CERTIFICATES_FIELD)?.sequence<JSONObject>()?.map {
+                        JSONSerializationUtils
+                            .getJsonObjectDeserializer<ThreeDsSecureCertificateDataResponse>()
+                            .deserialize(it)
+                    }?.toMutableList(),
+                    t.optJSONArray(THREE_DS_PROVIDER_CERTIFICATES_FIELD)?.sequence<JSONObject>()?.map {
                         JSONSerializationUtils
                             .getJsonObjectDeserializer<ThreeDsSecureCertificateDataResponse>()
                             .deserialize(it)
