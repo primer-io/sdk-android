@@ -2,6 +2,7 @@
 package io.primer.android.domain.error.models
 
 import io.primer.android.analytics.domain.models.BaseContextParams
+import io.primer.android.analytics.domain.models.ErrorContextParams
 
 abstract class PrimerError {
     abstract val errorId: String
@@ -10,5 +11,6 @@ abstract class PrimerError {
     abstract val errorCode: String?
     abstract val recoverySuggestion: String?
     abstract val exposedError: PrimerError
-    open val context: BaseContextParams? = null
+    open val context: BaseContextParams?
+        get() = ErrorContextParams(errorId = errorId)
 }

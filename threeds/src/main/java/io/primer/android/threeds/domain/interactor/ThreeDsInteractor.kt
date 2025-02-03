@@ -5,7 +5,6 @@ import com.netcetera.threeds.sdk.api.transaction.Transaction
 import io.primer.android.analytics.data.models.MessageType
 import io.primer.android.analytics.data.models.Severity
 import io.primer.android.analytics.domain.models.MessageAnalyticsParams
-import io.primer.android.analytics.domain.models.ThreeDsFailureContextParams
 import io.primer.android.analytics.domain.repository.AnalyticsRepository
 import io.primer.android.configuration.data.model.CardNetwork
 import io.primer.android.core.extensions.flatMap
@@ -89,13 +88,9 @@ internal class DefaultThreeDsInteractor(
                 threeDsLibraryVersionValidator.isValidVersion().not() -> {
                     Result.failure(
                         ThreeDsLibraryVersionMismatchException(
-                            BuildConfig.SDK_VERSION_STRING,
-                            ThreeDsFailureContextParams(
-                                threeDsSdkVersion = null,
-                                initProtocolVersion = null,
-                                threeDsWrapperSdkVersion = BuildConfig.SDK_VERSION_STRING,
-                                threeDsSdkProvider = ThreeDsSdkProvider.NETCETERA.name,
-                            ),
+                            validSdkVersion = BuildConfig.SDK_VERSION_STRING,
+                            threeDsWrapperSdkVersion = BuildConfig.SDK_VERSION_STRING,
+                            threeDsSdkProvider = ThreeDsSdkProvider.NETCETERA.name,
                         ),
                     )
                 }

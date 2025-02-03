@@ -35,6 +35,6 @@ internal object HeadlessUniversalCheckoutAnalyticsConstants {
     // Params
     const val AVAILABLE_PAYMENT_METHODS_PARAM = "availablePaymentMethods"
     const val ERROR_ID_PARAM = "errorId"
-    const val ERROR_DESCRIPTION_PARAM = "errorId"
+    const val ERROR_DESCRIPTION_PARAM = "errorDescription"
     const val PAYMENT_METHOD_TYPE = "paymentMethodType"
 }

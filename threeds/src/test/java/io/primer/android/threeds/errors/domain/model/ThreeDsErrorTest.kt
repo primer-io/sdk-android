@@ -1,167 +1,282 @@
 package io.primer.android.threeds.errors.domain.model
 
-import io.mockk.mockk
+import io.mockk.every
+import io.mockk.mockkStatic
+import io.mockk.unmockkStatic
+import io.primer.android.analytics.domain.models.ErrorContextParams
 import io.primer.android.analytics.domain.models.ThreeDsFailureContextParams
 import io.primer.android.analytics.domain.models.ThreeDsProtocolFailureContextParams
 import io.primer.android.analytics.domain.models.ThreeDsRuntimeFailureContextParams
 import io.primer.android.configuration.data.model.CardNetwork
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Nested
-import org.junit.jupiter.api.Test
+import io.primer.android.threeds.data.models.postAuth.ThreeDsSdkProvider
+import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.TestInstance
+import org.junit.jupiter.api.TestInstance.Lifecycle
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.Arguments
+import org.junit.jupiter.params.provider.MethodSource
+import java.util.UUID
+import java.util.stream.Stream
 
+@TestInstance(Lifecycle.PER_CLASS)
 internal class ThreeDsErrorTest {
-    private val mockContextParams: ThreeDsFailureContextParams =
-        object : ThreeDsFailureContextParams(
-            threeDsSdkVersion = "1.0.0",
-            initProtocolVersion = "2.1.0",
-            threeDsWrapperSdkVersion = "1.0.0",
-            threeDsSdkProvider = "Primer",
-        ) {}
-    private val mockProtocolContextParams: ThreeDsProtocolFailureContextParams = mockk()
-    private val mockRuntimeContextParams: ThreeDsRuntimeFailureContextParams = mockk()
-    private val mockCardNetwork = CardNetwork.Type.VISA
-    private val mockInitProtocolVersion = "2.1.0"
-    private val mockMessage = "Mock error message"
-    private val mockValidSdkVersion = "1.0.0"
 
-    @Nested
-    inner class ErrorTypesTests {
-        @Test
-        fun `ThreeDsLibraryMissingError should have correct properties`() {
-            val error = ThreeDsError.ThreeDsLibraryMissingError
-            assertEquals("missing-sdk-dependency", error.errorId)
-            assertEquals("Cannot perform 3DS due to missing library on classpath.", error.description)
-            assertEquals("Follow the integration guide and include 3DS dependency.", error.recoverySuggestion)
+    @ParameterizedTest
+    @MethodSource("errorProvider")
+    fun `ThreeDsError properties should be correct`(
+        error: ThreeDsError,
+        expectedErrorId: String,
+        expectedDescription: String,
+        expectedRecoverySuggestion: String,
+        expectedContext: ErrorContextParams?,
+    ) {
+        mockkStatic(UUID::class)
+        every { UUID.randomUUID().toString() } returns "uuid"
+
+        assertEquals(expectedErrorId, error.errorId)
+        assertEquals(expectedDescription, error.description)
+        assertEquals(expectedRecoverySuggestion, error.recoverySuggestion)
+
+        if (expectedContext != null) {
+            assertEquals(expectedContext, error.context, "Error context should match expected.")
+        } else {
+            assertNull(error.context, "Error context should be null.")
         }
 
-        @Test
-        fun `ThreeDsLibraryVersionError should have correct properties`() {
-            val error = ThreeDsError.ThreeDsLibraryVersionError(mockValidSdkVersion, mockContextParams)
-            assertEquals("invalid-3ds-sdk-version", error.errorId)
-            assertEquals("Cannot perform 3DS due to library versions mismatch.", error.description)
-            assertEquals("Update to io.primer:3ds-android:$mockValidSdkVersion", error.recoverySuggestion)
-        }
+        unmockkStatic(UUID::class)
+    }
 
-        @Test
-        fun `ThreeDsInitError should have correct properties`() {
-            val error = ThreeDsError.ThreeDsInitError(mockMessage, mockContextParams)
-            assertEquals("3ds-init-error", error.errorId)
-            assertEquals("3DS SDK init failed with errors: $mockMessage", error.description)
-            assertEquals(
+    private companion object {
+        @JvmStatic
+        fun errorProvider(): Stream<Arguments> = Stream.of(
+            Arguments.of(
+                ThreeDsError.ThreeDsLibraryMissingError,
+                "missing-sdk-dependency",
+                "Cannot perform 3DS due to missing library on classpath.",
+                "Follow the integration guide and include 3DS dependency.",
+                ErrorContextParams(errorId = "missing-sdk-dependency"),
+            ),
+            Arguments.of(
+                ThreeDsError.ThreeDsLibraryVersionError(
+                    validSdkVersion = "2.2.1",
+                    threeDsWrapperSdkVersion = "2.1.0",
+                    threeDsSdkProvider = ThreeDsSdkProvider.NETCETERA.name,
+                ),
+                "invalid-3ds-sdk-version",
+                "Cannot perform 3DS due to library versions mismatch.",
+                "Update to io.primer:3ds-android:2.2.1.",
+                ThreeDsFailureContextParams(
+                    errorId = "invalid-3ds-sdk-version",
+                    threeDsSdkVersion = null,
+                    initProtocolVersion = null,
+                    threeDsSdkProvider = ThreeDsSdkProvider.NETCETERA.name,
+                    threeDsWrapperSdkVersion = "2.1.0",
+                ),
+            ),
+            Arguments.of(
+                ThreeDsError.ThreeDsInitError(
+                    message = "Initialization failed",
+                    threeDsSdkVersion = "2.2.1",
+                    threeDsWrapperSdkVersion = "2.2.1",
+                    threeDsSdkProvider = ThreeDsSdkProvider.NETCETERA.name,
+                ),
+                "3ds-init-error",
+                "3DS SDK init failed with errors: Initialization failed",
                 """
-                If this application is not installed from a trusted source
-                (e.g. a debug version, or used on an emulator), try to set 
-                'PrimerDebugOptions.is3DSSanityCheckEnabled' to false.
-                Contact Primer and provide us with diagnostics id ${error.diagnosticsId}
-                """
-                    .trimIndent(),
-                error.recoverySuggestion,
-            )
-        }
-
-        @Test
-        fun `ThreeDsConfigurationError should have correct properties`() {
-            val error = ThreeDsError.ThreeDsConfigurationError(mockMessage, mockContextParams)
-            assertEquals("3ds-invalid-configuration", error.errorId)
-            assertEquals("Cannot perform 3DS due to invalid 3DS configuration. $mockMessage", error.description)
-            assertEquals(
-                "Contact Primer and provide us with diagnostics id ${error.diagnosticsId}",
-                error.recoverySuggestion,
-            )
-        }
-
-        @Test
-        fun `ThreeDsUnknownProtocolError should have correct properties`() {
-            val error = ThreeDsError.ThreeDsUnknownProtocolError(mockInitProtocolVersion, mockContextParams)
-            assertEquals("3ds-unknown-protocol", error.errorId)
-            assertEquals(
-                """
-                Cannot perform 3DS due to unsupported
-                3DS protocol version $mockInitProtocolVersion."
+                    If this application is not installed from a trusted source
+                    (e.g. a debug version, or used on an emulator), try to set 
+                    'PrimerDebugOptions.is3DSSanityCheckEnabled' to false.
+                    Contact Primer and provide us with diagnostics id uuid.
                 """.trimIndent(),
-                error.description,
-            )
-            assertEquals("Update to the newest io.primer:3ds-android version.", error.recoverySuggestion)
-        }
-
-        @Test
-        fun `ThreeDsMissingDirectoryServerIdError should have correct properties`() {
-            val error = ThreeDsError.ThreeDsMissingDirectoryServerIdError(mockCardNetwork, mockContextParams)
-            assertEquals("3ds-missing-directory-server-id", error.errorId)
-            assertEquals(
-                "Cannot perform 3DS due to missing directory server RID for $mockCardNetwork.",
-                error.description,
-            )
-            assertEquals(
-                "Contact Primer and provide us with diagnostics id ${error.diagnosticsId}",
-                error.recoverySuggestion,
-            )
-        }
-
-        @Test
-        fun `ThreeDsChallengeCancelledError should have correct properties`() {
-            val error = ThreeDsError.ThreeDsChallengeCancelledError(null, mockMessage, mockRuntimeContextParams)
-            assertEquals("3ds-challenge-cancelled-by-user", error.errorId)
-            assertEquals("3DS Challenge cancelled by user.", error.description)
-            assertEquals(error, error.exposedError)
-        }
-
-        @Test
-        fun `ThreeDsChallengeTimedOutError should have correct properties`() {
-            val error = ThreeDsError.ThreeDsChallengeTimedOutError(null, mockMessage, mockRuntimeContextParams)
-            assertEquals("3ds-challenge-timed-out", error.errorId)
-            assertEquals("3DS Challenge timed out.", error.description)
-            assertEquals(error, error.exposedError)
-        }
-
-        @Test
-        fun `ThreeDsChallengeFailedError should have correct properties`() {
-            val error = ThreeDsError.ThreeDsChallengeFailedError(mockMessage, mockRuntimeContextParams)
-            assertEquals("3ds-challenge-failed", error.errorId)
-            assertEquals(mockMessage, error.description)
-            assertEquals(error, error.exposedError)
-        }
-
-        @Test
-        fun `ThreeDsChallengeInvalidStatusError should have correct properties`() {
-            val error =
+                ThreeDsFailureContextParams(
+                    errorId = "3ds-init-error",
+                    threeDsSdkVersion = "2.2.1",
+                    initProtocolVersion = null,
+                    threeDsSdkProvider = ThreeDsSdkProvider.NETCETERA.name,
+                    threeDsWrapperSdkVersion = "2.2.1",
+                ),
+            ),
+            Arguments.of(
+                ThreeDsError.ThreeDsConfigurationError(
+                    message = "Invalid config",
+                    threeDsWrapperSdkVersion = "2.2.1",
+                    threeDsSdkProvider = ThreeDsSdkProvider.NETCETERA.name,
+                ),
+                "3ds-invalid-configuration",
+                "Cannot perform 3DS due to invalid 3DS configuration. Invalid config",
+                "Contact Primer and provide us with diagnostics id uuid.",
+                ThreeDsFailureContextParams(
+                    errorId = "3ds-invalid-configuration",
+                    threeDsSdkVersion = null,
+                    initProtocolVersion = null,
+                    threeDsSdkProvider = ThreeDsSdkProvider.NETCETERA.name,
+                    threeDsWrapperSdkVersion = "2.2.1",
+                ),
+            ),
+            Arguments.of(
+                ThreeDsError.ThreeDsUnknownProtocolError(
+                    initProtocolVersion = "2.0.0",
+                    threeDsWrapperSdkVersion = "2.2.1",
+                    threeDsSdkProvider = ThreeDsSdkProvider.NETCETERA.name,
+                ),
+                "3ds-unknown-protocol",
+                """
+                    Cannot perform 3DS due to unsupported
+                    3DS protocol version 2.0.0."
+                """.trimIndent(),
+                "Update to the newest io.primer:3ds-android version.",
+                ThreeDsFailureContextParams(
+                    errorId = "3ds-unknown-protocol",
+                    threeDsSdkVersion = null,
+                    initProtocolVersion = null,
+                    threeDsSdkProvider = ThreeDsSdkProvider.NETCETERA.name,
+                    threeDsWrapperSdkVersion = "2.2.1",
+                ),
+            ),
+            Arguments.of(
+                ThreeDsError.ThreeDsMissingDirectoryServerIdError(
+                    cardNetwork = CardNetwork.Type.JCB,
+                    threeDsSdkVersion = "2.2.1",
+                    threeDsWrapperSdkVersion = "2.2.2",
+                    threeDsSdkProvider = ThreeDsSdkProvider.NETCETERA.name,
+                ),
+                "3ds-missing-directory-server-id",
+                "Cannot perform 3DS due to missing directory server RID for JCB.",
+                "Contact Primer and provide us with diagnostics id uuid.",
+                ThreeDsFailureContextParams(
+                    errorId = "3ds-missing-directory-server-id",
+                    threeDsSdkVersion = "2.2.1",
+                    initProtocolVersion = null,
+                    threeDsSdkProvider = ThreeDsSdkProvider.NETCETERA.name,
+                    threeDsWrapperSdkVersion = "2.2.2",
+                ),
+            ),
+            Arguments.of(
+                ThreeDsError.ThreeDsChallengeCancelledError(
+                    message = "Challenge cancelled",
+                    threeDsSdkVersion = "2.2.1",
+                    threeDsWrapperSdkVersion = "2.1.2",
+                    threeDsSdkProvider = ThreeDsSdkProvider.NETCETERA.name,
+                    initProtocolVersion = "2.2.0",
+                    threeDsErrorCode = "-5",
+                ),
+                "3ds-challenge-cancelled-by-user",
+                "3DS Challenge cancelled by user.",
+                "Contact Primer and provide us with diagnostics id uuid.",
+                ThreeDsRuntimeFailureContextParams(
+                    errorId = "3ds-challenge-cancelled-by-user",
+                    threeDsSdkVersion = "2.2.1",
+                    initProtocolVersion = "2.2.0",
+                    threeDsSdkProvider = ThreeDsSdkProvider.NETCETERA.name,
+                    threeDsWrapperSdkVersion = "2.1.2",
+                    threeDsErrorCode = "-5",
+                ),
+            ),
+            Arguments.of(
+                ThreeDsError.ThreeDsChallengeTimedOutError(
+                    message = "Initialization failed",
+                    threeDsSdkVersion = "2.2.1",
+                    threeDsWrapperSdkVersion = "2.1.2",
+                    threeDsSdkProvider = ThreeDsSdkProvider.NETCETERA.name,
+                    initProtocolVersion = "2.2.0",
+                    threeDsErrorCode = "-3",
+                ),
+                "3ds-challenge-timed-out",
+                "3DS Challenge timed out.",
+                "Contact Primer and provide us with diagnostics id uuid.",
+                ThreeDsRuntimeFailureContextParams(
+                    errorId = "3ds-challenge-timed-out",
+                    threeDsSdkVersion = "2.2.1",
+                    initProtocolVersion = "2.2.0",
+                    threeDsSdkProvider = ThreeDsSdkProvider.NETCETERA.name,
+                    threeDsWrapperSdkVersion = "2.1.2",
+                    threeDsErrorCode = "-3",
+                ),
+            ),
+            Arguments.of(
+                ThreeDsError.ThreeDsChallengeFailedError(
+                    message = "3DS Challenge failed.",
+                    threeDsSdkVersion = "2.2.1",
+                    threeDsWrapperSdkVersion = "2.1.2",
+                    threeDsSdkProvider = ThreeDsSdkProvider.NETCETERA.name,
+                    initProtocolVersion = "2.2.0",
+                    threeDsErrorCode = "2100",
+                ),
+                "3ds-challenge-failed",
+                "3DS Challenge failed.",
+                "Contact Primer and provide us with diagnostics id uuid.",
+                ThreeDsRuntimeFailureContextParams(
+                    errorId = "3ds-challenge-failed",
+                    threeDsSdkVersion = "2.2.1",
+                    initProtocolVersion = "2.2.0",
+                    threeDsSdkProvider = ThreeDsSdkProvider.NETCETERA.name,
+                    threeDsWrapperSdkVersion = "2.1.2",
+                    threeDsErrorCode = "2100",
+                ),
+            ),
+            Arguments.of(
                 ThreeDsError.ThreeDsChallengeInvalidStatusError(
-                    "mockStatus",
-                    "mockTransactionId",
-                    null,
-                    mockMessage,
-                    mockRuntimeContextParams,
-                )
-            assertEquals("3ds-challenge-failed", error.errorId)
-            assertEquals(
-                "3DS challenge for transaction with id (mockTransactionId) failed with status (mockStatus).",
-                error.description,
-            )
-            assertEquals(error, error.exposedError)
-        }
-
-        @Test
-        fun `ThreeDsChallengeProtocolFailedError should have correct properties`() {
-            val error =
+                    message = "3DS Challenge failed.",
+                    threeDsSdkVersion = "2.2.1",
+                    threeDsWrapperSdkVersion = "2.1.2",
+                    threeDsSdkProvider = ThreeDsSdkProvider.NETCETERA.name,
+                    initProtocolVersion = "2.2.0",
+                    threeDsErrorCode = "100",
+                    transactionStatus = "N",
+                    transactionId = "1234",
+                ),
+                "3ds-challenge-failed",
+                "3DS challenge for transaction with id (1234) failed with status (N).",
+                "Contact Primer and provide us with diagnostics id uuid.",
+                ThreeDsRuntimeFailureContextParams(
+                    errorId = "3ds-challenge-failed",
+                    threeDsSdkVersion = "2.2.1",
+                    initProtocolVersion = "2.2.0",
+                    threeDsSdkProvider = ThreeDsSdkProvider.NETCETERA.name,
+                    threeDsWrapperSdkVersion = "2.1.2",
+                    threeDsErrorCode = "100",
+                ),
+            ),
+            Arguments.of(
                 ThreeDsError.ThreeDsChallengeProtocolFailedError(
-                    "mockErrorCode",
-                    mockMessage,
-                    mockProtocolContextParams,
-                )
-            assertEquals("3ds-challenge-failed", error.errorId)
-            assertEquals("3DS Challenge failed due to [mockErrorCode]. $mockMessage", error.description)
-            assertEquals(error, error.exposedError)
-        }
-
-        @Test
-        fun `ThreeDsUnknownError should have correct properties`() {
-            val error = ThreeDsError.ThreeDsUnknownError
-            assertEquals("3ds-unknown-error", error.errorId)
-            assertEquals("An unknown error occurred while trying to perform 3DS.", error.description)
-            assertEquals(
-                "Contact Primer and provide us with diagnostics id ${error.diagnosticsId}",
-                error.recoverySuggestion,
-            )
-        }
+                    message = "3DS Challenge failed.",
+                    threeDsSdkVersion = "2.2.1",
+                    threeDsWrapperSdkVersion = "2.1.2",
+                    threeDsSdkProvider = ThreeDsSdkProvider.NETCETERA.name,
+                    initProtocolVersion = "2.2.0",
+                    threeDsErrorCode = "100",
+                    threeDsComponent = "A",
+                    threeDsDescription = "Something went wrong.",
+                    threeDsErrorMessageType = "ARes",
+                    threeDsErrorDetails = "Invalid locale.",
+                    threeDsProtocolVersion = "2.2.0",
+                    threeDsTransactionId = "1234",
+                ),
+                "3ds-challenge-failed",
+                "3DS Challenge failed due to [100]. 3DS Challenge failed.",
+                "Contact Primer and provide us with diagnostics id uuid.",
+                ThreeDsProtocolFailureContextParams(
+                    errorId = "3ds-challenge-failed",
+                    threeDsSdkVersion = "2.2.1",
+                    initProtocolVersion = "2.2.0",
+                    threeDsSdkProvider = ThreeDsSdkProvider.NETCETERA.name,
+                    threeDsWrapperSdkVersion = "2.1.2",
+                    transactionId = "1234",
+                    errorCode = "100",
+                    errorDetails = "Invalid locale.",
+                    component = "A",
+                    errorType = "ARes",
+                    description = "Something went wrong.",
+                    version = "2.2.0",
+                ),
+            ),
+            Arguments.of(
+                ThreeDsError.ThreeDsUnknownError,
+                "3ds-unknown-error",
+                "An unknown error occurred while trying to perform 3DS.",
+                "Contact Primer and provide us with diagnostics id uuid.",
+                ErrorContextParams(errorId = "3ds-unknown-error"),
+            ),
+        )
     }
 }

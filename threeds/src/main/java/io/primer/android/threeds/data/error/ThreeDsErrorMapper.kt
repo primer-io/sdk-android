@@ -22,68 +22,97 @@ internal class ThreeDsErrorMapper : ErrorMapper {
             is ThreeDsLibraryNotFoundException -> ThreeDsError.ThreeDsLibraryMissingError
             is ThreeDsLibraryVersionMismatchException ->
                 ThreeDsError.ThreeDsLibraryVersionError(
-                    throwable.validSdkVersion,
-                    throwable.context,
+                    validSdkVersion = throwable.validSdkVersion,
+                    threeDsWrapperSdkVersion = throwable.threeDsWrapperSdkVersion,
+                    threeDsSdkProvider = throwable.threeDsSdkProvider,
                 )
 
             is ThreeDsConfigurationException ->
                 ThreeDsError.ThreeDsConfigurationError(
-                    throwable.message.orEmpty(),
-                    throwable.context,
+                    message = throwable.message.orEmpty(),
+                    threeDsWrapperSdkVersion = throwable.threeDsWrapperSdkVersion,
+                    threeDsSdkProvider = throwable.threeDsSdkProvider,
                 )
 
             is ThreeDsInitException ->
                 ThreeDsError.ThreeDsInitError(
-                    throwable.message.orEmpty(),
-                    throwable.context,
+                    message = throwable.message.orEmpty(),
+                    threeDsSdkVersion = throwable.threeDsSdkVersion,
+                    threeDsWrapperSdkVersion = throwable.threeDsWrapperSdkVersion,
+                    threeDsSdkProvider = throwable.threeDsSdkProvider,
                 )
 
             is ThreeDsChallengeTimedOutException ->
                 ThreeDsError.ThreeDsChallengeTimedOutError(
-                    throwable.errorCode,
-                    throwable.message,
-                    throwable.context,
+                    message = throwable.message,
+                    threeDsSdkVersion = throwable.threeDsSdkVersion,
+                    initProtocolVersion = throwable.initProtocolVersion,
+                    threeDsWrapperSdkVersion = throwable.threeDsWrapperSdkVersion,
+                    threeDsSdkProvider = throwable.threeDsSdkProvider,
+                    threeDsErrorCode = throwable.errorCode,
                 )
 
             is ThreeDsChallengeCancelledException ->
                 ThreeDsError.ThreeDsChallengeCancelledError(
-                    throwable.errorCode,
-                    throwable.message,
-                    throwable.context,
+                    message = throwable.message,
+                    threeDsSdkVersion = throwable.threeDsSdkVersion,
+                    initProtocolVersion = throwable.initProtocolVersion,
+                    threeDsWrapperSdkVersion = throwable.threeDsWrapperSdkVersion,
+                    threeDsSdkProvider = throwable.threeDsSdkProvider,
+                    threeDsErrorCode = throwable.errorCode,
                 )
 
             is ThreeDsInvalidStatusException ->
                 ThreeDsError.ThreeDsChallengeInvalidStatusError(
-                    throwable.transactionStatus,
-                    throwable.transactionId,
-                    throwable.errorCode,
-                    throwable.message,
-                    throwable.context,
+                    message = throwable.message,
+                    transactionStatus = throwable.transactionStatus,
+                    transactionId = throwable.transactionId,
+                    threeDsSdkVersion = throwable.threeDsSdkVersion,
+                    initProtocolVersion = throwable.initProtocolVersion,
+                    threeDsWrapperSdkVersion = throwable.threeDsWrapperSdkVersion,
+                    threeDsSdkProvider = throwable.threeDsSdkProvider,
+                    threeDsErrorCode = throwable.errorCode,
                 )
 
             is ThreeDsRuntimeFailedException ->
                 ThreeDsError.ThreeDsChallengeFailedError(
-                    throwable.message,
-                    throwable.context,
+                    message = throwable.message,
+                    threeDsSdkVersion = throwable.threeDsSdkVersion,
+                    initProtocolVersion = throwable.initProtocolVersion,
+                    threeDsWrapperSdkVersion = throwable.threeDsWrapperSdkVersion,
+                    threeDsSdkProvider = throwable.threeDsSdkProvider,
+                    threeDsErrorCode = throwable.errorCode,
                 )
 
             is ThreeDsProtocolFailedException ->
                 ThreeDsError.ThreeDsChallengeProtocolFailedError(
-                    throwable.errorCode,
-                    throwable.message,
-                    throwable.context,
+                    message = throwable.message,
+                    threeDsSdkVersion = throwable.threeDsSdkVersion,
+                    initProtocolVersion = throwable.initProtocolVersion,
+                    threeDsWrapperSdkVersion = throwable.threeDsWrapperSdkVersion,
+                    threeDsSdkProvider = throwable.threeDsSdkProvider,
+                    threeDsErrorCode = throwable.errorCode,
+                    threeDsErrorDetails = throwable.errorDetails,
+                    threeDsErrorMessageType = throwable.messageType,
+                    threeDsComponent = throwable.component,
+                    threeDsDescription = throwable.description,
+                    threeDsProtocolVersion = throwable.version,
+                    threeDsTransactionId = throwable.transactionId,
                 )
 
             is ThreeDsMissingDirectoryServerException ->
                 ThreeDsError.ThreeDsMissingDirectoryServerIdError(
                     throwable.cardNetwork,
-                    throwable.context,
+                    threeDsSdkVersion = throwable.threeDsSdkVersion,
+                    threeDsWrapperSdkVersion = throwable.threeDsWrapperSdkVersion,
+                    threeDsSdkProvider = throwable.threeDsSdkProvider,
                 )
 
             is ThreeDsUnknownProtocolException ->
                 ThreeDsError.ThreeDsUnknownProtocolError(
-                    throwable.initProtocolVersion,
-                    throwable.context,
+                    initProtocolVersion = throwable.initProtocolVersion,
+                    threeDsWrapperSdkVersion = throwable.threeDsWrapperSdkVersion,
+                    threeDsSdkProvider = throwable.threeDsSdkProvider,
                 )
 
             else -> error("Unsupported mapping for $throwable in ${this.javaClass.canonicalName}")

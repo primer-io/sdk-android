@@ -1,5 +1,6 @@
 package io.primer.android.threeds.errors.domain.model
 
+import io.primer.android.analytics.domain.models.BaseContextParams
 import io.primer.android.analytics.domain.models.ThreeDsFailureContextParams
 import io.primer.android.analytics.domain.models.ThreeDsProtocolFailureContextParams
 import io.primer.android.analytics.domain.models.ThreeDsRuntimeFailureContextParams
@@ -8,80 +9,126 @@ import io.primer.android.domain.error.models.PrimerError
 import java.util.UUID
 
 internal sealed class ThreeDsError : PrimerError() {
-    object ThreeDsLibraryMissingError : ThreeDsError()
+    interface WrapperVersion {
+        val threeDsWrapperSdkVersion: String
+        val threeDsSdkProvider: String
+    }
+
+    interface SdkVersion {
+        val threeDsSdkVersion: String?
+    }
+
+    interface ProtocolVersion {
+        val initProtocolVersion: String
+    }
+
+    interface ErrorCode {
+        val threeDsErrorCode: String
+    }
+
+    data object ThreeDsLibraryMissingError : ThreeDsError()
 
     class ThreeDsLibraryVersionError(
         val validSdkVersion: String,
-        override val context: ThreeDsFailureContextParams,
-    ) : ThreeDsError()
+        override val threeDsWrapperSdkVersion: String,
+        override val threeDsSdkProvider: String,
+    ) : ThreeDsError(), WrapperVersion
 
     class ThreeDsInitError(
         val message: String,
-        override val context: ThreeDsFailureContextParams,
-    ) : ThreeDsError()
+        override val threeDsSdkVersion: String?,
+        override val threeDsWrapperSdkVersion: String,
+        override val threeDsSdkProvider: String,
+    ) : ThreeDsError(), WrapperVersion, SdkVersion
 
     class ThreeDsConfigurationError(
         val message: String,
-        override val context: ThreeDsFailureContextParams,
-    ) : ThreeDsError()
+        override val threeDsWrapperSdkVersion: String,
+        override val threeDsSdkProvider: String,
+    ) : ThreeDsError(), WrapperVersion
 
     class ThreeDsUnknownProtocolError(
         val initProtocolVersion: String,
-        override val context: ThreeDsFailureContextParams,
-    ) : ThreeDsError()
+        override val threeDsWrapperSdkVersion: String,
+        override val threeDsSdkProvider: String,
+    ) : ThreeDsError(), WrapperVersion
 
     class ThreeDsMissingDirectoryServerIdError(
         val cardNetwork: CardNetwork.Type,
-        override val context: ThreeDsFailureContextParams,
-    ) : ThreeDsError()
+        override val threeDsSdkVersion: String?,
+        override val threeDsWrapperSdkVersion: String,
+        override val threeDsSdkProvider: String,
+    ) : ThreeDsError(), WrapperVersion, SdkVersion
 
     class ThreeDsChallengeCancelledError(
-        override val errorCode: String?,
-        internal val message: String?,
-        override val context: ThreeDsRuntimeFailureContextParams,
-    ) : ThreeDsError() {
+        val message: String?,
+        override val initProtocolVersion: String,
+        override val threeDsSdkVersion: String?,
+        override val threeDsWrapperSdkVersion: String,
+        override val threeDsSdkProvider: String,
+        override val threeDsErrorCode: String,
+    ) : ThreeDsError(), ProtocolVersion, SdkVersion, WrapperVersion, ErrorCode {
         override val exposedError: PrimerError
             get() = this
     }
 
     class ThreeDsChallengeTimedOutError(
-        override val errorCode: String?,
-        internal val message: String?,
-        override val context: ThreeDsRuntimeFailureContextParams,
-    ) : ThreeDsError() {
+        val message: String?,
+        override val initProtocolVersion: String,
+        override val threeDsSdkVersion: String?,
+        override val threeDsWrapperSdkVersion: String,
+        override val threeDsSdkProvider: String,
+        override val threeDsErrorCode: String,
+    ) : ThreeDsError(), ProtocolVersion, SdkVersion, WrapperVersion, ErrorCode {
         override val exposedError: PrimerError
             get() = this
     }
 
     class ThreeDsChallengeFailedError(
         internal val message: String?,
-        override val context: ThreeDsRuntimeFailureContextParams,
-    ) : ThreeDsError() {
+        override val initProtocolVersion: String,
+        override val threeDsSdkVersion: String?,
+        override val threeDsWrapperSdkVersion: String,
+        override val threeDsSdkProvider: String,
+        override val threeDsErrorCode: String,
+    ) : ThreeDsError(), ProtocolVersion, SdkVersion, WrapperVersion, ErrorCode {
         override val exposedError: PrimerError
             get() = this
     }
 
     class ThreeDsChallengeInvalidStatusError(
+        internal val message: String?,
         internal val transactionStatus: String,
         internal val transactionId: String,
-        override val errorCode: String?,
-        internal val message: String?,
-        override val context: ThreeDsRuntimeFailureContextParams,
-    ) : ThreeDsError() {
+        override val initProtocolVersion: String,
+        override val threeDsSdkVersion: String?,
+        override val threeDsWrapperSdkVersion: String,
+        override val threeDsSdkProvider: String,
+        override val threeDsErrorCode: String,
+    ) : ThreeDsError(), ProtocolVersion, SdkVersion, WrapperVersion, ErrorCode {
         override val exposedError: PrimerError
             get() = this
     }
 
     class ThreeDsChallengeProtocolFailedError(
-        override val errorCode: String,
         internal val message: String,
-        override val context: ThreeDsProtocolFailureContextParams,
+        val threeDsSdkVersion: String?,
+        val initProtocolVersion: String,
+        val threeDsWrapperSdkVersion: String,
+        val threeDsSdkProvider: String,
+        val threeDsErrorDetails: String,
+        val threeDsDescription: String,
+        val threeDsErrorCode: String,
+        val threeDsErrorMessageType: String,
+        val threeDsComponent: String,
+        val threeDsTransactionId: String,
+        val threeDsProtocolVersion: String,
     ) : ThreeDsError() {
         override val exposedError: PrimerError
             get() = this
     }
 
-    object ThreeDsUnknownError : ThreeDsError() {
+    data object ThreeDsUnknownError : ThreeDsError() {
         override val exposedError: PrimerError
             get() = this
     }
@@ -129,7 +176,7 @@ internal sealed class ThreeDsError : PrimerError() {
                 is ThreeDsChallengeTimedOutError -> "3DS Challenge timed out."
                 is ThreeDsChallengeFailedError -> message.orEmpty()
                 is ThreeDsChallengeProtocolFailedError ->
-                    "3DS Challenge failed due to [$errorCode]. $message"
+                    "3DS Challenge failed due to [$threeDsErrorCode]. $message"
 
                 is ThreeDsLibraryMissingError ->
                     "Cannot perform 3DS due to missing library on classpath."
@@ -143,7 +190,8 @@ internal sealed class ThreeDsError : PrimerError() {
 
     override val errorCode: String? = null
 
-    override val diagnosticsId = UUID.randomUUID().toString()
+    override val diagnosticsId
+        get() = UUID.randomUUID().toString()
 
     override val exposedError: PrimerError
         get() = this
@@ -155,14 +203,14 @@ internal sealed class ThreeDsError : PrimerError() {
                     "Follow the integration guide and include 3DS dependency."
 
                 is ThreeDsLibraryVersionError ->
-                    "Update to io.primer:3ds-android:$validSdkVersion"
+                    "Update to io.primer:3ds-android:$validSdkVersion."
 
                 is ThreeDsInitError ->
                     """
                     If this application is not installed from a trusted source
                     (e.g. a debug version, or used on an emulator), try to set 
                     'PrimerDebugOptions.is3DSSanityCheckEnabled' to false.
-                    Contact Primer and provide us with diagnostics id $diagnosticsId
+                    Contact Primer and provide us with diagnostics id $diagnosticsId.
                     """.trimIndent()
 
                 is ThreeDsUnknownProtocolError -> "Update to the newest io.primer:3ds-android version."
@@ -174,6 +222,49 @@ internal sealed class ThreeDsError : PrimerError() {
                 is ThreeDsChallengeProtocolFailedError,
                 is ThreeDsUnknownError,
                 is ThreeDsMissingDirectoryServerIdError,
-                -> "Contact Primer and provide us with diagnostics id $diagnosticsId"
+                -> "Contact Primer and provide us with diagnostics id $diagnosticsId."
             }
+
+    override val context: BaseContextParams?
+        get() = when (this) {
+            is ThreeDsLibraryMissingError, ThreeDsUnknownError -> super.context
+
+            is ThreeDsChallengeProtocolFailedError -> ThreeDsProtocolFailureContextParams(
+                errorId = errorId,
+                threeDsSdkVersion = threeDsSdkVersion,
+                initProtocolVersion = initProtocolVersion,
+                threeDsWrapperSdkVersion = threeDsWrapperSdkVersion,
+                threeDsSdkProvider = threeDsSdkProvider,
+                errorDetails = threeDsErrorDetails,
+                description = threeDsDescription,
+                errorCode = threeDsErrorCode,
+                errorType = threeDsErrorMessageType,
+                component = threeDsComponent,
+                transactionId = threeDsTransactionId,
+                version = threeDsProtocolVersion,
+            )
+
+            else -> when {
+                this is WrapperVersion && this is SdkVersion &&
+                    this is ProtocolVersion && this is ErrorCode ->
+                    ThreeDsRuntimeFailureContextParams(
+                        errorId = errorId,
+                        threeDsSdkVersion = threeDsSdkVersion,
+                        initProtocolVersion = initProtocolVersion,
+                        threeDsWrapperSdkVersion = threeDsWrapperSdkVersion,
+                        threeDsSdkProvider = threeDsSdkProvider,
+                        threeDsErrorCode = threeDsErrorCode,
+                    )
+
+                this is WrapperVersion -> ThreeDsFailureContextParams(
+                    errorId = errorId,
+                    threeDsSdkVersion = (this as? SdkVersion)?.threeDsSdkVersion,
+                    initProtocolVersion = (this as? ProtocolVersion)?.initProtocolVersion,
+                    threeDsWrapperSdkVersion = threeDsWrapperSdkVersion,
+                    threeDsSdkProvider = threeDsSdkProvider,
+                )
+
+                else -> super.context
+            }
+        }
 }

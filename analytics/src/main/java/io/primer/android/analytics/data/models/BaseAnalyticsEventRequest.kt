@@ -414,15 +414,17 @@ internal fun BaseContextParams.toAnalyticsContext() =
 
         is ThreeDsRuntimeFailureContextParams ->
             ThreeDsRuntimeFailureAnalyticsContext(
-                threeDsSdkVersion,
-                initProtocolVersion,
-                errorCode,
-                threeDsWrapperSdkVersion,
-                threeDsSdkProvider,
+                errorId = errorId,
+                threeDsSdkVersion = threeDsSdkVersion,
+                initProtocolVersion = initProtocolVersion,
+                errorCode = threeDsErrorCode,
+                threeDsWrapperSdkVersion = threeDsWrapperSdkVersion,
+                threeDsSdkProvider = threeDsSdkProvider,
             )
 
         is ThreeDsProtocolFailureContextParams ->
             ThreeDsProtocolFailureAnalyticsContext(
+                errorId,
                 errorDetails,
                 description,
                 errorCode,
@@ -438,6 +440,7 @@ internal fun BaseContextParams.toAnalyticsContext() =
 
         is ThreeDsFailureContextParams ->
             ThreeDsFailureAnalyticsContext(
+                errorId,
                 threeDsSdkVersion,
                 initProtocolVersion,
                 threeDsWrapperSdkVersion,

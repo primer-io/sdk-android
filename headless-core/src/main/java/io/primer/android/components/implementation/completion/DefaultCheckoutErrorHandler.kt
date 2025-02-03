@@ -1,5 +1,8 @@
 package io.primer.android.components.implementation.completion
 
+import io.primer.android.analytics.data.models.MessageType
+import io.primer.android.analytics.data.models.Severity
+import io.primer.android.analytics.domain.models.MessageAnalyticsParams
 import io.primer.android.analytics.domain.models.SdkFunctionParams
 import io.primer.android.analytics.domain.repository.AnalyticsRepository
 import io.primer.android.components.PrimerHeadlessUniversalCheckout
@@ -29,17 +32,28 @@ class DefaultCheckoutErrorHandler(
     ) {
         _errors.emit(error)
         coroutineDispatcher.dispatch(coroutineDispatcher.immediate) {
-            analyticsRepository.addEvent(
-                SdkFunctionParams(
-                    HeadlessUniversalCheckoutAnalyticsConstants.ON_CHECKOUT_FAILED,
-                    mapOf(
-                        HeadlessUniversalCheckoutAnalyticsConstants.ERROR_ID_PARAM
-                            to error.errorId,
-                        HeadlessUniversalCheckoutAnalyticsConstants.ERROR_DESCRIPTION_PARAM
-                            to error.description,
+            analyticsRepository.apply {
+                addEvent(
+                    params = SdkFunctionParams(
+                        HeadlessUniversalCheckoutAnalyticsConstants.ON_CHECKOUT_FAILED,
+                        mapOf(
+                            HeadlessUniversalCheckoutAnalyticsConstants.ERROR_ID_PARAM
+                                to error.errorId,
+                            HeadlessUniversalCheckoutAnalyticsConstants.ERROR_DESCRIPTION_PARAM
+                                to error.description,
+                        ),
                     ),
-                ),
-            )
+                )
+                addEvent(
+                    MessageAnalyticsParams(
+                        messageType = MessageType.ERROR,
+                        message = error.description,
+                        severity = Severity.ERROR,
+                        diagnosticsId = error.diagnosticsId,
+                        context = error.context,
+                    ),
+                )
+            }
             val checkoutListener = PrimerHeadlessUniversalCheckout.instance.checkoutListener
             when (config.settings.paymentHandling) {
                 PrimerPaymentHandling.AUTO ->

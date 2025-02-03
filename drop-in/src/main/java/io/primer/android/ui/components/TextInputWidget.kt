@@ -22,11 +22,11 @@ internal class TextInputWidget(ctx: Context, attrs: AttributeSet? = null) :
     internal var onValueChanged: (CharSequence?) -> Unit = {}
 
     private val theme: PrimerTheme by
-    if (isInEditMode) {
-        lazy { PrimerTheme.build() }
-    } else {
-        inject()
-    }
+        if (isInEditMode) {
+            lazy { PrimerTheme.build() }
+        } else {
+            inject()
+        }
 
     init {
         val colors =

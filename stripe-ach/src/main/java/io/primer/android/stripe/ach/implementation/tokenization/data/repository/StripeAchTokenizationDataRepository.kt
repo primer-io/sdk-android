@@ -10,8 +10,7 @@ import io.primer.android.stripe.ach.implementation.tokenization.domain.model.Str
 internal class StripeAchTokenizationDataRepository(
     remoteTokenizationDataSource: BaseRemoteTokenizationDataSource<StripeAchPaymentInstrumentDataRequest>,
     localConfigurationDataSource: CacheConfigurationDataSource,
-    tokenizationParamsMapper:
-    TokenizationParamsMapper<StripeAchPaymentInstrumentParams, StripeAchPaymentInstrumentDataRequest>,
+    tokenizationParamsMapper: TokenizationParamsMapper<StripeAchPaymentInstrumentParams, StripeAchPaymentInstrumentDataRequest>,
 ) : TokenizationDataRepository<StripeAchPaymentInstrumentParams, StripeAchPaymentInstrumentDataRequest>(
     remoteTokenizationDataSource,
     localConfigurationDataSource,

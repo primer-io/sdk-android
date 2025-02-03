@@ -41,7 +41,7 @@ internal class CheckoutSheetFragment :
 
     private val config: PrimerConfig by inject()
     private val viewModel: PrimerViewModel by
-    activityViewModel<PrimerViewModel, PrimerViewModelFactory>()
+        activityViewModel<PrimerViewModel, PrimerViewModelFactory>()
 
     @SuppressLint("RestrictedApi")
     override fun setupDialog(

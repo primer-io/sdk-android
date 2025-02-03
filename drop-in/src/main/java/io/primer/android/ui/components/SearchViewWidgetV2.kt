@@ -22,11 +22,11 @@ internal class SearchViewWidgetV2(
     attrs: AttributeSet? = null,
 ) : AppCompatEditText(context, attrs), DISdkComponent {
     private val theme: PrimerTheme by
-    if (isInEditMode) {
-        lazy { PrimerTheme.build() }
-    } else {
-        inject()
-    }
+        if (isInEditMode) {
+            lazy { PrimerTheme.build() }
+        } else {
+            inject()
+        }
 
     init {
         setHintTextColor(

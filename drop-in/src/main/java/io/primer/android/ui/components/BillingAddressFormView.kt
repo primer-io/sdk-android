@@ -31,11 +31,11 @@ constructor(
     defStyle: Int = 0,
 ) : FrameLayout(context, attrs, defStyle), DISdkComponent {
     private val theme: PrimerTheme by
-    if (isInEditMode) {
-        lazy { PrimerTheme.build() }
-    } else {
-        inject()
-    }
+        if (isInEditMode) {
+            lazy { PrimerTheme.build() }
+        } else {
+            inject()
+        }
 
     private val binding =
         PrimerLayoutBillingAddressFormBinding.inflate(

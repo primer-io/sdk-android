@@ -355,182 +355,27 @@ internal class NetceteraThreeDsServiceRepositoryTest {
         verify { threeDS2Service.createTransaction(any(), any()) }
     }
 
-    @Test
-    fun `performProviderAuth should select directory server DsRidValues-VISA for CardNetwork-VISA`() {
-        val protocolVersion = mockk<ProtocolVersion>(relaxed = true)
-        val transactionMock = mockk<Transaction>(relaxed = true)
-        val environment = mockk<Environment>(relaxed = true)
-
-        every { threeDS2Service.createTransaction(any(), any()) }.returns(transactionMock)
-
-        runTest {
-            val result =
-                repository.performProviderAuth(CardNetwork.Type.VISA, protocolVersion, environment)
-            assertEquals(transactionMock, result.getOrThrow())
-        }
-
-        val cardNetwork = slot<String>()
-        verify { threeDS2Service.createTransaction(capture(cardNetwork), any()) }
-
-        assertEquals(DsRidValues.VISA, cardNetwork.captured)
-    }
-
-    @Test
-    fun `performProviderAuth should select directory server DsRidValues-MASTERCARD for CardNetwork-MASTERCARD`() {
-        val protocolVersion = mockk<ProtocolVersion>(relaxed = true)
-        val transactionMock = mockk<Transaction>(relaxed = true)
-        val environment = mockk<Environment>(relaxed = true)
-
-        every { threeDS2Service.createTransaction(any(), any()) }.returns(transactionMock)
-
-        runTest {
-            val result =
-                repository.performProviderAuth(CardNetwork.Type.MASTERCARD, protocolVersion, environment)
-            assertEquals(transactionMock, result.getOrThrow())
-        }
-
-        val cardNetwork = slot<String>()
-        verify { threeDS2Service.createTransaction(capture(cardNetwork), any()) }
-
-        assertEquals(DsRidValues.MASTERCARD, cardNetwork.captured)
-    }
-
-    @Test
-    fun `performProviderAuth should select directory server DsRidValues-MASTERCARD for CardNetwork-MAESTRO`() {
-        val protocolVersion = mockk<ProtocolVersion>(relaxed = true)
-        val transactionMock = mockk<Transaction>(relaxed = true)
-        val environment = mockk<Environment>(relaxed = true)
-
-        every { threeDS2Service.createTransaction(any(), any()) }.returns(transactionMock)
-
-        runTest {
-            val result =
-                repository.performProviderAuth(CardNetwork.Type.MAESTRO, protocolVersion, environment)
-            assertEquals(transactionMock, result.getOrThrow())
-        }
-        val cardNetwork = slot<String>()
-        verify { threeDS2Service.createTransaction(capture(cardNetwork), any()) }
-
-        assertEquals(DsRidValues.MASTERCARD, cardNetwork.captured)
-    }
-
-    @Test
-    fun `performProviderAuth should select directory server DsRidValues-AMEX for CardNetwork-AMEX`() {
-        val protocolVersion = mockk<ProtocolVersion>(relaxed = true)
-        val transactionMock = mockk<Transaction>(relaxed = true)
-        val environment = mockk<Environment>(relaxed = true)
-
-        every { threeDS2Service.createTransaction(any(), any()) }.returns(transactionMock)
-
-        runTest {
-            val result =
-                repository.performProviderAuth(CardNetwork.Type.AMEX, protocolVersion, environment)
-            assertEquals(transactionMock, result.getOrThrow())
-        }
-
-        val cardNetwork = slot<String>()
-        verify { threeDS2Service.createTransaction(capture(cardNetwork), any()) }
-
-        assertEquals(DsRidValues.AMEX, cardNetwork.captured)
-    }
-
-    @Test
-    fun `performProviderAuth should select directory server DsRidValues-JCB for CardNetwork-JCB`() {
-        val protocolVersion = mockk<ProtocolVersion>(relaxed = true)
-        val transactionMock = mockk<Transaction>(relaxed = true)
-        val environment = mockk<Environment>(relaxed = true)
-
-        every { threeDS2Service.createTransaction(any(), any()) }.returns(transactionMock)
-
-        runTest {
-            val result =
-                repository.performProviderAuth(CardNetwork.Type.JCB, protocolVersion, environment)
-            assertEquals(transactionMock, result.getOrThrow())
-        }
-
-        val cardNetwork = slot<String>()
-        verify { threeDS2Service.createTransaction(capture(cardNetwork), any()) }
-
-        assertEquals(DsRidValues.JCB, cardNetwork.captured)
-    }
-
-    @Test
-    fun `performProviderAuth should select directory server DsRidValues-DINERS for CardNetwork-DINERS_CLUB`() {
-        val protocolVersion = mockk<ProtocolVersion>(relaxed = true)
-        val transactionMock = mockk<Transaction>(relaxed = true)
-        val environment = mockk<Environment>(relaxed = true)
-
-        every { threeDS2Service.createTransaction(any(), any()) }.returns(transactionMock)
-
-        runTest {
-            val result =
-                repository.performProviderAuth(CardNetwork.Type.DINERS_CLUB, protocolVersion, environment)
-            assertEquals(transactionMock, result.getOrThrow())
-        }
-
-        val cardNetwork = slot<String>()
-        verify { threeDS2Service.createTransaction(capture(cardNetwork), any()) }
-
-        assertEquals(DsRidValues.DINERS, cardNetwork.captured)
-    }
-
-    @Test
-    fun `performProviderAuth should select directory server DsRidValues-DINERS for CardNetwork-DISCOVER`() {
-        val protocolVersion = mockk<ProtocolVersion>(relaxed = true)
-        val transactionMock = mockk<Transaction>(relaxed = true)
-        val environment = mockk<Environment>(relaxed = true)
-
-        every { threeDS2Service.createTransaction(any(), any()) }.returns(transactionMock)
-
-        runTest {
-            val result =
-                repository.performProviderAuth(CardNetwork.Type.DISCOVER, protocolVersion, environment)
-            assertEquals(transactionMock, result.getOrThrow())
-        }
-
-        val cardNetwork = slot<String>()
-        verify { threeDS2Service.createTransaction(capture(cardNetwork), any()) }
-
-        assertEquals(DsRidValues.DINERS, cardNetwork.captured)
-    }
-
-    @Test
-    fun `performProviderAuth should select directory server DsRidValues-UNION for CardNetwork-UNIONPAY`() {
-        val protocolVersion = mockk<ProtocolVersion>(relaxed = true)
-        val transactionMock = mockk<Transaction>(relaxed = true)
-        val environment = mockk<Environment>(relaxed = true)
-
-        every { threeDS2Service.createTransaction(any(), any()) }.returns(transactionMock)
-
-        runTest {
-            val result =
-                repository.performProviderAuth(CardNetwork.Type.UNIONPAY, protocolVersion, environment)
-            assertEquals(transactionMock, result.getOrThrow())
-        }
-
-        val cardNetwork = slot<String>()
-        verify { threeDS2Service.createTransaction(capture(cardNetwork), any()) }
-
-        assertEquals(DsRidValues.UNION, cardNetwork.captured)
-    }
-
-    @Test
-    fun `performProviderAuth should select directory server TEST_SCHEME_ID for any other card network if environment is SANDBOX`() {
+    @ParameterizedTest
+    @MethodSource("networkDsRidProvider")
+    fun `performProviderAuth should select correct directory server for given CardNetwork`(
+        cardNetworkType: CardNetwork.Type,
+        expectedDsRidValue: String,
+        environment: Environment = Environment.PRODUCTION,
+    ) {
         val protocolVersion = mockk<ProtocolVersion>(relaxed = true)
         val transactionMock = mockk<Transaction>(relaxed = true)
 
-        every { threeDS2Service.createTransaction(any(), any()) }.returns(transactionMock)
+        every { threeDS2Service.createTransaction(any(), any()) } returns transactionMock
 
         runTest {
-            val result =
-                repository.performProviderAuth(CardNetwork.Type.OTHER, protocolVersion, Environment.SANDBOX)
+            val result = repository.performProviderAuth(cardNetworkType, protocolVersion, environment)
             assertEquals(transactionMock, result.getOrThrow())
         }
 
-        val cardNetwork = slot<String>()
-        verify { threeDS2Service.createTransaction(capture(cardNetwork), any()) }
+        val capturedCardNetwork = slot<String>()
+        verify { threeDS2Service.createTransaction(capture(capturedCardNetwork), any()) }
 
-        assertEquals(NetceteraThreeDsServiceRepository.TEST_SCHEME_ID, cardNetwork.captured)
+        assertEquals(expectedDsRidValue, capturedCardNetwork.captured)
     }
 
     @Test
@@ -758,13 +603,13 @@ internal class NetceteraThreeDsServiceRepositoryTest {
                 environment = Environment.DEV,
                 apiKey = "testKey",
                 threeDsCertificates =
-                    listOf(
-                        ThreeDsSecureCertificateDataResponse(
-                            cardNetwork = cardNetwork,
-                            rootCertificate = "testCertificate",
-                            encryptionKey = "testEncryption",
-                        ),
+                listOf(
+                    ThreeDsSecureCertificateDataResponse(
+                        cardNetwork = cardNetwork,
+                        rootCertificate = "testCertificate",
+                        encryptionKey = "testEncryption",
                     ),
+                ),
             ),
         )
         verify { schemeFunction.invoke() }
@@ -783,19 +628,39 @@ internal class NetceteraThreeDsServiceRepositoryTest {
                     environment = Environment.DEV,
                     apiKey = "testKey",
                     threeDsCertificates =
-                        listOf(
-                            ThreeDsSecureCertificateDataResponse(
-                                cardNetwork = "OTHER",
-                                rootCertificate = "testCertificate",
-                                encryptionKey = "testEncryption",
-                            ),
+                    listOf(
+                        ThreeDsSecureCertificateDataResponse(
+                            cardNetwork = "OTHER",
+                            rootCertificate = "testCertificate",
+                            encryptionKey = "testEncryption",
                         ),
+                    ),
                 ),
             )
             verify { newSchemeConfiguration(any()) }
         }
 
-    companion object {
+    private companion object {
+        @JvmStatic
+        fun networkDsRidProvider(): List<Arguments> {
+            return listOf(
+                Arguments.of(CardNetwork.Type.VISA, DsRidValues.VISA, Environment.SANDBOX),
+                Arguments.of(CardNetwork.Type.MASTERCARD, DsRidValues.MASTERCARD, Environment.SANDBOX),
+                Arguments.of(CardNetwork.Type.MAESTRO, DsRidValues.MASTERCARD, Environment.SANDBOX),
+                Arguments.of(CardNetwork.Type.AMEX, DsRidValues.AMEX, Environment.SANDBOX),
+                Arguments.of(CardNetwork.Type.JCB, DsRidValues.JCB, Environment.SANDBOX),
+                Arguments.of(CardNetwork.Type.CARTES_BANCAIRES, DsRidValues.CB, Environment.SANDBOX),
+                Arguments.of(CardNetwork.Type.DINERS_CLUB, DsRidValues.DINERS, Environment.SANDBOX),
+                Arguments.of(CardNetwork.Type.DISCOVER, DsRidValues.DINERS, Environment.SANDBOX),
+                Arguments.of(CardNetwork.Type.UNIONPAY, DsRidValues.UNION, Environment.SANDBOX),
+                Arguments.of(
+                    CardNetwork.Type.OTHER,
+                    NetceteraThreeDsServiceRepository.TEST_SCHEME_ID,
+                    Environment.SANDBOX,
+                ),
+            )
+        }
+
         @JvmStatic
         fun schemeConfigurations() =
             listOf(

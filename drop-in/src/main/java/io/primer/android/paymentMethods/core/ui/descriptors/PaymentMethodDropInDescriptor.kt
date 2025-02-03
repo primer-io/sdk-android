@@ -42,10 +42,10 @@ internal interface PaymentMethodDropInDescriptor {
     fun createPollingStartedBehavior(viewStatus: ViewStatus.PollingStarted): NewFragmentBehaviour? = null
 
     /**
-    The logic is the following:
-    1. if we are launched using `showPaymentMethod` (isStandalonePaymentMethod = true) and
-    we have disabled initial screen (isInitScreenEnabled.not()), we won't show loading screen.
-    2. Otherwise, we show loading screen.
+     The logic is the following:
+     1. if we are launched using `showPaymentMethod` (isStandalonePaymentMethod = true) and
+     we have disabled initial screen (isInitScreenEnabled.not()), we won't show loading screen.
+     2. Otherwise, we show loading screen.
      */
     val behaviours: List<PaymentMethodBehaviour>
         get() =

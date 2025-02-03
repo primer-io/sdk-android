@@ -1,10 +1,18 @@
 package io.primer.android.threeds.data.exception
 
-import io.primer.android.analytics.domain.models.ThreeDsProtocolFailureContextParams
 import java.util.concurrent.CancellationException
 
 internal class ThreeDsProtocolFailedException(
-    val errorCode: String,
-    val context: ThreeDsProtocolFailureContextParams,
     override val message: String,
+    val threeDsSdkVersion: String?,
+    val initProtocolVersion: String,
+    val threeDsWrapperSdkVersion: String,
+    val threeDsSdkProvider: String,
+    val errorDetails: String,
+    val description: String,
+    val errorCode: String,
+    val messageType: String,
+    val component: String,
+    val transactionId: String,
+    val version: String,
 ) : CancellationException()

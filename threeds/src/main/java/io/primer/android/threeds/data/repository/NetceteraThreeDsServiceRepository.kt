@@ -22,9 +22,6 @@ import com.netcetera.threeds.sdk.api.transaction.challenge.events.ProtocolErrorE
 import com.netcetera.threeds.sdk.api.transaction.challenge.events.RuntimeErrorEvent
 import com.netcetera.threeds.sdk.api.ui.logic.UiCustomization
 import com.netcetera.threeds.sdk.api.utils.DsRidValues
-import io.primer.android.analytics.domain.models.ThreeDsFailureContextParams
-import io.primer.android.analytics.domain.models.ThreeDsProtocolFailureContextParams
-import io.primer.android.analytics.domain.models.ThreeDsRuntimeFailureContextParams
 import io.primer.android.configuration.data.model.CardNetwork
 import io.primer.android.configuration.data.model.Environment
 import io.primer.android.core.extensions.runSuspendCatching
@@ -85,13 +82,9 @@ internal class NetceteraThreeDsServiceRepository(
                 requireNotNull(threeDsKeysParams.apiKey) { API_KEY_CONFIG_ERROR }
             } catch (expected: IllegalArgumentException) {
                 throw ThreeDsConfigurationException(
-                    expected.message,
-                    ThreeDsFailureContextParams(
-                        threeDsSdkVersion = null,
-                        initProtocolVersion = null,
-                        threeDsWrapperSdkVersion = BuildConfig.SDK_VERSION_STRING,
-                        threeDsSdkProvider = ThreeDsSdkProvider.NETCETERA.name,
-                    ),
+                    message = expected.message,
+                    threeDsWrapperSdkVersion = BuildConfig.SDK_VERSION_STRING,
+                    threeDsSdkProvider = ThreeDsSdkProvider.NETCETERA.name,
                 )
             }
 
@@ -144,13 +137,10 @@ internal class NetceteraThreeDsServiceRepository(
                 )
             } catch (expected: Exception) {
                 throw ThreeDsInitException(
-                    expected.message,
-                    ThreeDsFailureContextParams(
-                        threeDsSdkVersion = threeDsSdkVersion,
-                        initProtocolVersion = null,
-                        threeDsWrapperSdkVersion = BuildConfig.SDK_VERSION_STRING,
-                        threeDsSdkProvider = ThreeDsSdkProvider.NETCETERA.name,
-                    ),
+                    message = expected.message,
+                    threeDsSdkVersion = threeDsSdkVersion,
+                    threeDsWrapperSdkVersion = BuildConfig.SDK_VERSION_STRING,
+                    threeDsSdkProvider = ThreeDsSdkProvider.NETCETERA.name,
                 )
             }
 
@@ -162,12 +152,9 @@ internal class NetceteraThreeDsServiceRepository(
             } else {
                 throw ThreeDsInitException(
                     warnings.joinToString(" | ") { "${it.severity}  ${it.message}" },
-                    ThreeDsFailureContextParams(
-                        threeDsSdkVersion = threeDsSdkVersion,
-                        initProtocolVersion = null,
-                        threeDsWrapperSdkVersion = BuildConfig.SDK_VERSION_STRING,
-                        threeDsSdkProvider = ThreeDsSdkProvider.NETCETERA.name,
-                    ),
+                    threeDsSdkVersion = threeDsSdkVersion,
+                    threeDsWrapperSdkVersion = BuildConfig.SDK_VERSION_STRING,
+                    threeDsSdkProvider = ThreeDsSdkProvider.NETCETERA.name,
                 )
             }
         }
@@ -218,17 +205,14 @@ internal class NetceteraThreeDsServiceRepository(
                         } else {
                             cancel(
                                 ThreeDsInvalidStatusException(
-                                    completionEvent.transactionStatus,
-                                    completionEvent.sdkTransactionID,
-                                    THREE_DS_CHALLENGE_INVALID_STATUS_CODE,
-                                    ThreeDsRuntimeFailureContextParams(
-                                        threeDsSdkVersion = threeDsSdkVersion,
-                                        initProtocolVersion = initProtocolVersion,
-                                        threeDsWrapperSdkVersion = BuildConfig.SDK_VERSION_STRING,
-                                        threeDsSdkProvider = ThreeDsSdkProvider.NETCETERA.name,
-                                        THREE_DS_CHALLENGE_INVALID_STATUS_CODE,
-                                    ),
-                                    "3DS challenge failed.",
+                                    message = "3DS challenge failed.",
+                                    transactionStatus = completionEvent.transactionStatus,
+                                    transactionId = completionEvent.sdkTransactionID,
+                                    threeDsSdkVersion = threeDsSdkVersion,
+                                    initProtocolVersion = initProtocolVersion,
+                                    threeDsWrapperSdkVersion = BuildConfig.SDK_VERSION_STRING,
+                                    threeDsSdkProvider = ThreeDsSdkProvider.NETCETERA.name,
+                                    errorCode = THREE_DS_CHALLENGE_INVALID_STATUS_CODE,
                                 ),
                             )
                         }
@@ -238,15 +222,12 @@ internal class NetceteraThreeDsServiceRepository(
                     override fun cancelled() {
                         cancel(
                             ThreeDsChallengeCancelledException(
-                                THREE_DS_CHALLENGE_CANCELLED_ERROR_CODE,
-                                ThreeDsRuntimeFailureContextParams(
-                                    threeDsSdkVersion = threeDsSdkVersion,
-                                    initProtocolVersion = initProtocolVersion,
-                                    threeDsWrapperSdkVersion = BuildConfig.SDK_VERSION_STRING,
-                                    threeDsSdkProvider = ThreeDsSdkProvider.NETCETERA.name,
-                                    THREE_DS_CHALLENGE_CANCELLED_ERROR_CODE,
-                                ),
-                                "3DS Challenge cancelled.",
+                                message = "3DS Challenge cancelled.",
+                                threeDsSdkVersion = threeDsSdkVersion,
+                                initProtocolVersion = initProtocolVersion,
+                                threeDsWrapperSdkVersion = BuildConfig.SDK_VERSION_STRING,
+                                threeDsSdkProvider = ThreeDsSdkProvider.NETCETERA.name,
+                                errorCode = THREE_DS_CHALLENGE_CANCELLED_ERROR_CODE,
                             ),
                         )
                     }
@@ -254,15 +235,12 @@ internal class NetceteraThreeDsServiceRepository(
                     override fun timedout() {
                         cancel(
                             ThreeDsChallengeTimedOutException(
-                                THREE_DS_CHALLENGE_TIMEOUT_ERROR_CODE,
-                                ThreeDsRuntimeFailureContextParams(
-                                    threeDsSdkVersion = threeDsSdkVersion,
-                                    initProtocolVersion = initProtocolVersion,
-                                    threeDsWrapperSdkVersion = BuildConfig.SDK_VERSION_STRING,
-                                    threeDsSdkProvider = ThreeDsSdkProvider.NETCETERA.name,
-                                    errorCode = THREE_DS_CHALLENGE_TIMEOUT_ERROR_CODE,
-                                ),
-                                "3DS Challenge timed out.",
+                                message = "3DS Challenge timed out.",
+                                threeDsSdkVersion = threeDsSdkVersion,
+                                initProtocolVersion = initProtocolVersion,
+                                threeDsWrapperSdkVersion = BuildConfig.SDK_VERSION_STRING,
+                                threeDsSdkProvider = ThreeDsSdkProvider.NETCETERA.name,
+                                errorCode = THREE_DS_CHALLENGE_TIMEOUT_ERROR_CODE,
                             ),
                         )
                     }
@@ -271,21 +249,18 @@ internal class NetceteraThreeDsServiceRepository(
                         val errorMessage = errorEvent.errorMessage
                         cancel(
                             ThreeDsProtocolFailedException(
-                                errorEvent.errorMessage.errorCode,
-                                ThreeDsProtocolFailureContextParams(
-                                    errorMessage.errorDetails,
-                                    errorMessage.errorDescription,
-                                    errorMessage.errorCode,
-                                    errorMessage.errorMessageType,
-                                    errorMessage.errorComponent,
-                                    errorMessage.transactionID,
-                                    errorMessage.messageVersionNumber,
-                                    threeDsSdkVersion = threeDsSdkVersion,
-                                    initProtocolVersion = initProtocolVersion,
-                                    threeDsWrapperSdkVersion = BuildConfig.SDK_VERSION_STRING,
-                                    threeDsSdkProvider = ThreeDsSdkProvider.NETCETERA.name,
-                                ),
+                                message = errorMessage.errorDescription,
+                                threeDsSdkVersion = threeDsSdkVersion,
+                                initProtocolVersion = initProtocolVersion,
+                                threeDsWrapperSdkVersion = BuildConfig.SDK_VERSION_STRING,
+                                threeDsSdkProvider = ThreeDsSdkProvider.NETCETERA.name,
+                                errorMessage.errorDetails,
                                 errorMessage.errorDescription,
+                                errorMessage.errorCode,
+                                errorMessage.errorMessageType,
+                                errorMessage.errorComponent,
+                                errorMessage.transactionID,
+                                errorMessage.messageVersionNumber,
                             ),
                         )
                     }
@@ -293,14 +268,12 @@ internal class NetceteraThreeDsServiceRepository(
                     override fun runtimeError(errorEvent: RuntimeErrorEvent) {
                         cancel(
                             ThreeDsRuntimeFailedException(
-                                ThreeDsRuntimeFailureContextParams(
-                                    threeDsSdkVersion = threeDsSdkVersion,
-                                    initProtocolVersion = initProtocolVersion,
-                                    threeDsWrapperSdkVersion = BuildConfig.SDK_VERSION_STRING,
-                                    threeDsSdkProvider = ThreeDsSdkProvider.NETCETERA.name,
-                                    errorCode = errorEvent.errorCode,
-                                ),
-                                errorEvent.errorMessage,
+                                message = errorEvent.errorMessage,
+                                threeDsSdkVersion = threeDsSdkVersion,
+                                initProtocolVersion = initProtocolVersion,
+                                threeDsWrapperSdkVersion = BuildConfig.SDK_VERSION_STRING,
+                                threeDsSdkProvider = ThreeDsSdkProvider.NETCETERA.name,
+                                errorCode = errorEvent.errorCode,
                             ),
                         )
                     }
@@ -323,17 +296,15 @@ internal class NetceteraThreeDsServiceRepository(
         CardNetwork.Type.DINERS_CLUB, CardNetwork.Type.DISCOVER -> DsRidValues.DINERS
         CardNetwork.Type.UNIONPAY -> DsRidValues.UNION
         CardNetwork.Type.JCB -> DsRidValues.JCB
+        CardNetwork.Type.CARTES_BANCAIRES -> DsRidValues.CB
         CardNetwork.Type.MASTERCARD, CardNetwork.Type.MAESTRO -> DsRidValues.MASTERCARD
         else ->
             when (environment == Environment.PRODUCTION) {
                 true -> throw ThreeDsMissingDirectoryServerException(
-                    cardNetwork,
-                    ThreeDsFailureContextParams(
-                        threeDsSdkVersion = threeDsSdkVersion,
-                        initProtocolVersion = null,
-                        threeDsWrapperSdkVersion = BuildConfig.SDK_VERSION_STRING,
-                        threeDsSdkProvider = ThreeDsSdkProvider.NETCETERA.name,
-                    ),
+                    cardNetwork = cardNetwork,
+                    threeDsSdkVersion = threeDsSdkVersion,
+                    threeDsWrapperSdkVersion = BuildConfig.SDK_VERSION_STRING,
+                    threeDsSdkProvider = ThreeDsSdkProvider.NETCETERA.name,
                 )
 
                 false -> TEST_SCHEME_ID

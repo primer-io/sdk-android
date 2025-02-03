@@ -13,7 +13,6 @@ class ErrorResolverContainer(private val sdk: () -> SdkContainer) : DependencyCo
 
         registerFactory<BaseErrorResolver> {
             DefaultErrorResolver(
-                analyticsRepository = sdk().resolve(),
                 errorMapperRegistry = resolve(),
                 logReporter = sdk().resolve(),
             )

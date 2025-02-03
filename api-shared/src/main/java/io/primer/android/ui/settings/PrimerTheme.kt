@@ -436,7 +436,7 @@ data class PrimerTheme internal constructor(
                     ResourceColor.valueOf(
                         default =
                         input?.border?.selectedColor ?: primaryColor
-                        ?: R.color.primer_input_border_selected,
+                            ?: R.color.primer_input_border_selected,
                     ),
                     errorColor =
                     ResourceColor.valueOf(
@@ -489,7 +489,7 @@ data class PrimerTheme internal constructor(
                     ResourceDimension.valueOf(
                         default =
                         input?.cornerRadius ?: defaultCornerRadius
-                        ?: R.dimen.primer_default_corner_radius,
+                            ?: R.dimen.primer_default_corner_radius,
                     ),
                 )
 
@@ -525,7 +525,7 @@ data class PrimerTheme internal constructor(
                     ResourceColor.valueOf(
                         default =
                         searchInput?.backgroundColor ?: backgroundColor
-                        ?: R.color.primer_search_input_background,
+                            ?: R.color.primer_search_input_background,
                     ),
                     borderColor =
                     ResourceColor.valueOf(
@@ -537,7 +537,7 @@ data class PrimerTheme internal constructor(
                     ResourceDimension.valueOf(
                         default =
                         searchInput?.cornerRadius ?: defaultCornerRadius
-                        ?: R.dimen.primer_default_corner_radius,
+                            ?: R.dimen.primer_default_corner_radius,
                     ),
                 )
 

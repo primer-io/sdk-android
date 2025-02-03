@@ -32,27 +32,29 @@ data class IPay88PaymentMethodContextParams(
     val paymentMethodType: String,
 ) : BaseContextParams()
 
-open class ThreeDsFailureContextParams(
-    open val threeDsSdkVersion: String?,
-    open val initProtocolVersion: String?,
-    open val threeDsWrapperSdkVersion: String,
-    open val threeDsSdkProvider: String,
-) : BaseContextParams()
+data class ThreeDsFailureContextParams(
+    override val errorId: String,
+    val threeDsSdkVersion: String?,
+    val initProtocolVersion: String?,
+    val threeDsWrapperSdkVersion: String,
+    val threeDsSdkProvider: String,
+) : ErrorContextParams(errorId = errorId)
 
-open class ThreeDsRuntimeFailureContextParams(
-    override val threeDsSdkVersion: String?,
-    override val initProtocolVersion: String,
-    override val threeDsWrapperSdkVersion: String,
-    override val threeDsSdkProvider: String,
-    open val errorCode: String,
-) : ThreeDsFailureContextParams(
-    threeDsSdkVersion,
-    initProtocolVersion,
-    threeDsWrapperSdkVersion,
-    threeDsSdkProvider,
-)
+data class ThreeDsRuntimeFailureContextParams(
+    override val errorId: String,
+    val threeDsSdkVersion: String?,
+    val initProtocolVersion: String,
+    val threeDsWrapperSdkVersion: String,
+    val threeDsSdkProvider: String,
+    val threeDsErrorCode: String,
+) : ErrorContextParams(errorId = errorId)
 
 data class ThreeDsProtocolFailureContextParams(
+    override val errorId: String,
+    val threeDsSdkVersion: String?,
+    val initProtocolVersion: String,
+    val threeDsWrapperSdkVersion: String,
+    val threeDsSdkProvider: String,
     val errorDetails: String,
     val description: String,
     val errorCode: String,
@@ -60,19 +62,12 @@ data class ThreeDsProtocolFailureContextParams(
     val component: String,
     val transactionId: String,
     val version: String,
-    override val threeDsSdkVersion: String?,
-    override val initProtocolVersion: String,
-    override val threeDsWrapperSdkVersion: String,
-    override val threeDsSdkProvider: String,
-) : ThreeDsFailureContextParams(
-    threeDsSdkVersion,
-    initProtocolVersion,
-    threeDsWrapperSdkVersion,
-    threeDsSdkProvider,
+) : ErrorContextParams(
+    errorId = errorId,
 )
 
 open class ErrorContextParams(
-    val errorId: String,
+    open val errorId: String,
     val paymentMethodType: String? = null,
 ) : BaseContextParams() {
     override fun equals(other: Any?): Boolean {

@@ -75,7 +75,7 @@ internal class DefaultPaymentMethodMapping(
                         ).build()
 
                     PaymentMethodType.XFERS_PAYNOW,
-                        // PaymentMethodType.RAPYD_FAST, // TODO TWS: perhaps use a new factory
+                    // PaymentMethodType.RAPYD_FAST, // TODO TWS: perhaps use a new factory
                     PaymentMethodType.RAPYD_PROMPTPAY,
                     PaymentMethodType.OMISE_PROMPTPAY,
                     ->

@@ -52,7 +52,7 @@ internal fun FailureThreeDsContinueAuthParams.toContinueAuthDataRequest() =
                         ChallengeRuntimeContinueAuthErrorDataRequest(
                             ThreeDsSdkErrorReasonCode.`3DS_SDK_RUNTIME_ERROR`,
                             error.description,
-                            error.context.errorCode,
+                            error.threeDsErrorCode,
                             error.description,
                         )
 
@@ -82,14 +82,14 @@ internal fun FailureThreeDsContinueAuthParams.toContinueAuthDataRequest() =
 
                     is ThreeDsError.ThreeDsChallengeProtocolFailedError ->
                         ChallengeProtocolContinueAuthErrorDataRequest(
-                            ThreeDsSdkErrorReasonCode.`3DS_SDK_PROTOCOL_ERROR`,
-                            error.description,
-                            error.context.errorCode,
-                            error.context.description,
-                            error.context.component,
-                            error.context.errorDetails,
-                            error.context.transactionId,
-                            error.context.version,
+                            reasonCode = ThreeDsSdkErrorReasonCode.`3DS_SDK_PROTOCOL_ERROR`,
+                            reasonText = error.description,
+                            threeDsErrorCode = error.threeDsErrorCode,
+                            threeDsErrorDescription = error.threeDsDescription,
+                            threeDsErrorComponent = error.threeDsComponent,
+                            threeDsErrorDetails = error.threeDsErrorDetails,
+                            threeDsSdkTransactionId = error.threeDsTransactionId,
+                            protocolVersion = error.threeDsProtocolVersion,
                         )
 
                     is ThreeDsError.ThreeDsConfigurationError ->

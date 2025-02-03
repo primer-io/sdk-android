@@ -319,6 +319,7 @@ internal data class IPay88AnalyticsContext(
 }
 
 internal data class ThreeDsFailureAnalyticsContext(
+    val errorId: String,
     val threeDsSdkVersion: String?,
     val initProtocolVersion: String?,
     val threeDsWrapperSdkVersion: String,
@@ -326,6 +327,7 @@ internal data class ThreeDsFailureAnalyticsContext(
 ) :
     AnalyticsContext(AnalyticsContextType.THREE_DS_FAILURE) {
     companion object {
+        private const val ERROR_ID = "errorId"
         private const val SDK_VERSION_FIELD = "threeDsSdkVersion"
         private const val INIT_PROTOCOL_VERSION_FIELD = "initProtocolVersion"
         private const val SDK_WRAPPER_VERSION_FIELD = "threeDsWrapperSdkVersion"
@@ -335,6 +337,7 @@ internal data class ThreeDsFailureAnalyticsContext(
         val serializer =
             JSONObjectSerializer<ThreeDsFailureAnalyticsContext> { t ->
                 JSONObject().apply {
+                    put(ERROR_ID, t.errorId)
                     putOpt(SDK_VERSION_FIELD, t.threeDsSdkVersion)
                     putOpt(INIT_PROTOCOL_VERSION_FIELD, t.initProtocolVersion)
                     put(SDK_WRAPPER_VERSION_FIELD, t.threeDsWrapperSdkVersion)
@@ -347,6 +350,7 @@ internal data class ThreeDsFailureAnalyticsContext(
         val deserializer =
             JSONObjectDeserializer { t ->
                 ThreeDsFailureAnalyticsContext(
+                    t.optString(ERROR_ID),
                     t.optNullableString(SDK_VERSION_FIELD),
                     t.optNullableString(INIT_PROTOCOL_VERSION_FIELD),
                     t.optString(SDK_WRAPPER_VERSION_FIELD),
@@ -357,6 +361,7 @@ internal data class ThreeDsFailureAnalyticsContext(
 }
 
 internal data class ThreeDsRuntimeFailureAnalyticsContext(
+    val errorId: String,
     val threeDsSdkVersion: String?,
     val initProtocolVersion: String,
     val errorCode: String?,
@@ -365,6 +370,7 @@ internal data class ThreeDsRuntimeFailureAnalyticsContext(
 ) :
     AnalyticsContext(AnalyticsContextType.THREE_DS_RUNTIME_FAILURE) {
     companion object {
+        private const val ERROR_ID = "errorId"
         private const val SDK_VERSION_FIELD = "threeDsSdkVersion"
         private const val INIT_PROTOCOL_VERSION_FIELD = "initProtocolVersion"
         private const val SDK_WRAPPER_VERSION_FIELD = "threeDsWrapperSdkVersion"
@@ -375,6 +381,7 @@ internal data class ThreeDsRuntimeFailureAnalyticsContext(
         val serializer =
             JSONObjectSerializer<ThreeDsRuntimeFailureAnalyticsContext> { t ->
                 JSONObject().apply {
+                    put(ERROR_ID, t.errorId)
                     putOpt(SDK_VERSION_FIELD, t.threeDsSdkVersion)
                     put(INIT_PROTOCOL_VERSION_FIELD, t.initProtocolVersion)
                     putOpt(ERROR_CODE_FIELD, t.errorCode)
@@ -386,8 +393,9 @@ internal data class ThreeDsRuntimeFailureAnalyticsContext(
 
         @JvmField
         val deserializer =
-            JSONObjectDeserializer<ThreeDsRuntimeFailureAnalyticsContext> { t ->
+            JSONObjectDeserializer { t ->
                 ThreeDsRuntimeFailureAnalyticsContext(
+                    t.optString(ERROR_ID),
                     t.optNullableString(SDK_VERSION_FIELD),
                     t.optString(INIT_PROTOCOL_VERSION_FIELD),
                     t.optNullableString(ERROR_CODE_FIELD),
@@ -399,6 +407,7 @@ internal data class ThreeDsRuntimeFailureAnalyticsContext(
 }
 
 internal data class ThreeDsProtocolFailureAnalyticsContext(
+    val errorId: String,
     val errorDetails: String,
     val description: String,
     val errorCode: String,
@@ -413,6 +422,7 @@ internal data class ThreeDsProtocolFailureAnalyticsContext(
 ) :
     AnalyticsContext(AnalyticsContextType.THREE_DS_PROTOCOL_FAILURE) {
     companion object {
+        private const val ERROR_ID = "errorId"
         private const val ERROR_DETAILS_FIELD = "errorDetails"
         private const val DESCRIPTION_FIELD = "description"
         private const val ERROR_CODE_FIELD = "errorCode"
@@ -427,29 +437,29 @@ internal data class ThreeDsProtocolFailureAnalyticsContext(
 
         @JvmField
         val serializer =
-            object : JSONObjectSerializer<ThreeDsProtocolFailureAnalyticsContext> {
-                override fun serialize(t: ThreeDsProtocolFailureAnalyticsContext): JSONObject {
-                    return JSONObject().apply {
-                        put(ERROR_DETAILS_FIELD, t.errorDetails)
-                        put(DESCRIPTION_FIELD, t.description)
-                        put(ERROR_CODE_FIELD, t.errorCode)
-                        put(ERROR_TYPE_FIELD, t.errorType)
-                        put(COMPONENT_FIELD, t.component)
-                        put(TRANSACTION_FIELD, t.transactionId)
-                        put(VERSION_FIELD, t.version)
-                        putOpt(SDK_VERSION_FIELD, t.threeDsSdkVersion)
-                        put(INIT_PROTOCOL_VERSION_FIELD, t.initProtocolVersion)
-                        put(SDK_WRAPPER_VERSION_FIELD, t.threeDsWrapperSdkVersion)
-                        put(SDK_PROVIDER_FIELD, t.threeDsSdkProvider)
-                        put(ANALYTICS_CONTEXT_TYPE_FIELD, t.contextType.name)
-                    }
+            JSONObjectSerializer<ThreeDsProtocolFailureAnalyticsContext> { t ->
+                JSONObject().apply {
+                    put(ERROR_ID, t.errorId)
+                    put(ERROR_DETAILS_FIELD, t.errorDetails)
+                    put(DESCRIPTION_FIELD, t.description)
+                    put(ERROR_CODE_FIELD, t.errorCode)
+                    put(ERROR_TYPE_FIELD, t.errorType)
+                    put(COMPONENT_FIELD, t.component)
+                    put(TRANSACTION_FIELD, t.transactionId)
+                    put(VERSION_FIELD, t.version)
+                    putOpt(SDK_VERSION_FIELD, t.threeDsSdkVersion)
+                    put(INIT_PROTOCOL_VERSION_FIELD, t.initProtocolVersion)
+                    put(SDK_WRAPPER_VERSION_FIELD, t.threeDsWrapperSdkVersion)
+                    put(SDK_PROVIDER_FIELD, t.threeDsSdkProvider)
+                    put(ANALYTICS_CONTEXT_TYPE_FIELD, t.contextType.name)
                 }
             }
 
         @JvmField
         val deserializer =
-            JSONObjectDeserializer<ThreeDsProtocolFailureAnalyticsContext> { t ->
+            JSONObjectDeserializer { t ->
                 ThreeDsProtocolFailureAnalyticsContext(
+                    t.optString(ERROR_ID),
                     t.optString(ERROR_DETAILS_FIELD),
                     t.optString(DESCRIPTION_FIELD),
                     t.optString(ERROR_CODE_FIELD),

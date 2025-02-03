@@ -130,13 +130,14 @@ internal class ThreeDsConfigurationDataRepositoryTest {
     }
 
     @Test
-    fun `getPreAuthConfiguration should return V_220 when supportedThreeDsProtocolVersions contains 2_1_0, 2_2_0, 2_3_0`() {
+    fun `getPreAuthConfiguration should filter invalid threeds protocol versions`() {
         val configurationData = mockk<ConfigurationData>(relaxed = true)
 
         val supportedProtocolVersions =
             listOf(
                 ProtocolVersion.V_210.versionNumber,
                 ProtocolVersion.V_220.versionNumber,
+                ProtocolVersion.V_231.versionNumber,
                 UNSUPPORTED_PROTOCOL_VERSION,
             )
 
@@ -146,7 +147,7 @@ internal class ThreeDsConfigurationDataRepositoryTest {
         runTest {
             val preAuthConfiguration = repository.getPreAuthConfiguration(supportedProtocolVersions).getOrThrow()
             assertEquals(
-                listOf(ProtocolVersion.V_210, ProtocolVersion.V_220),
+                listOf(ProtocolVersion.V_210, ProtocolVersion.V_220, ProtocolVersion.V_231),
                 preAuthConfiguration.protocolVersions,
             )
             assertEquals(Environment.PRODUCTION, preAuthConfiguration.environment)
@@ -157,7 +158,7 @@ internal class ThreeDsConfigurationDataRepositoryTest {
     }
 
     @Test
-    fun `getPreAuthConfiguration should return ThreeDsUnknownProtocolException when there is no 2_1_0 or 2_2_0 in supported protocol versions`() {
+    fun `getPreAuthConfiguration should return ThreeDsUnknownProtocolException when there is no 2_1_0, 2_2_0 or 2_3_1 in supported protocol versions`() {
         val configurationData = mockk<ConfigurationData>(relaxed = true)
 
         val supportedThreeDsProtocolVersions = listOf(UNSUPPORTED_PROTOCOL_VERSION)
@@ -247,6 +248,6 @@ internal class ThreeDsConfigurationDataRepositoryTest {
     }
 
     private companion object {
-        const val UNSUPPORTED_PROTOCOL_VERSION = "2.3.1"
+        const val UNSUPPORTED_PROTOCOL_VERSION = "2.3.2"
     }
 }

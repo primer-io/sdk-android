@@ -1,6 +1,5 @@
 package io.primer.android.threeds.data.repository
 
-import io.primer.android.analytics.domain.models.ThreeDsFailureContextParams
 import io.primer.android.configuration.data.datasource.CacheConfigurationDataSource
 import io.primer.android.core.extensions.runSuspendCatching
 import io.primer.android.threeds.BuildConfig
@@ -42,12 +41,8 @@ internal class ThreeDsConfigurationDataRepository(
                     }.ifEmpty {
                         throw ThreeDsUnknownProtocolException(
                             initProtocolVersion = supportedThreeDsProtocolVersions.max(),
-                            ThreeDsFailureContextParams(
-                                threeDsSdkVersion = null,
-                                initProtocolVersion = null,
-                                threeDsWrapperSdkVersion = BuildConfig.SDK_VERSION_STRING,
-                                threeDsSdkProvider = ThreeDsSdkProvider.NETCETERA.name,
-                            ),
+                            threeDsWrapperSdkVersion = BuildConfig.SDK_VERSION_STRING,
+                            threeDsSdkProvider = ThreeDsSdkProvider.NETCETERA.name,
                         )
                     },
             )
