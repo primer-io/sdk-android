@@ -1,3 +1,11 @@
+## 2.36.0 (2025-02-03)
+
+### Feat
+
+- improve error reporting, support for 3DS CB, enable 2.3.1 protocol version (#858)
+- updated 3DS scheme to use specific builder for test environments (#849)
+- add missing localizations (#853)
+
 ## 2.35.0 (2025-01-23)
 
 ### Feat
