@@ -1,3 +1,9 @@
+## 2.36.1 (2025-02-05)
+
+### Fix
+
+- handle exception when trying to retrieve exit handler in Primer.dismiss() (#861)
+
 ## 2.36.0 (2025-02-03)
 
 ### Feat
