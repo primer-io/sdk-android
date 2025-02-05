@@ -114,9 +114,11 @@ class Primer private constructor() : PrimerInterface, DISdkComponent {
     override fun dismiss(clearListeners: Boolean) {
         addAnalyticsEvent(SdkFunctionParams("dismiss"))
         if (clearListeners) listener = null
-        resolve<CheckoutExitHandler>().apply {
-            handle()
+        runCatching {
+            resolve<CheckoutExitHandler>()
         }
+            .onSuccess { it.handle() }
+            .onFailure { Log.e("Primer", "Failed to retrieve exit handler, perhaps already dismissed", it) }
     }
 
     private fun addAnalyticsEvent(params: SdkFunctionParams) {
