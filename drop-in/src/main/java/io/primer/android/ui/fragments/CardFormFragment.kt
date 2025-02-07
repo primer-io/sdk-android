@@ -267,6 +267,7 @@ internal class CardFormFragment : BaseFragment() {
             updateCardNetworkViews(emptyList(), null) { }
         }
         showSurchargeIfNeeded()
+        setValidationErrors()
     }
 
     private fun updateCardNetworkViews(
@@ -276,8 +277,8 @@ internal class CardFormFragment : BaseFragment() {
     ) {
         when (networks.size) {
             0 -> showSingleCard(null)
-            1 -> showSingleCard(networks[0])
-            else -> showCoBadgeCardDropdown(networks, selectedNetwork ?: networks[0], onNetworkSelected)
+            1 -> showSingleCard(networks.first())
+            else -> showCoBadgeCardDropdown(networks, selectedNetwork ?: networks.first(), onNetworkSelected)
         }
     }
 
@@ -511,7 +512,7 @@ internal class CardFormFragment : BaseFragment() {
 
     private fun setBusy(isBusy: Boolean) {
         updateSubmitButton()
-        if (isBusy) binding.btnSubmitForm.isEnabled = false
+        binding.btnSubmitForm.isEnabled = isBusy.not() && cardViewModel.isValid()
     }
 
     private fun toggleLoading(on: Boolean) {

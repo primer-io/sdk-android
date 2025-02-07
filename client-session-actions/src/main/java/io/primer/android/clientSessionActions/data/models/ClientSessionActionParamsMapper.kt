@@ -44,12 +44,12 @@ internal fun BaseActionUpdateParams.toActionData(): List<ClientSessionActionsDat
                     AddressData(
                         firstName = firstName,
                         lastName = lastName,
-                        addressLine1 = addressLine1.orEmpty(),
+                        addressLine1 = addressLine1,
                         addressLine2 = addressLine2,
-                        postalCode = postalCode.orEmpty(),
-                        city = city.orEmpty(),
+                        postalCode = postalCode,
+                        city = city,
                         state = state,
-                        countryCode = CountryCode.safeValueOf(countryCode.orEmpty()),
+                        countryCode = countryCode?.let { CountryCode.safeValueOf(it) },
                     ),
                 ),
             )
@@ -62,14 +62,14 @@ internal fun BaseActionUpdateParams.toActionData(): List<ClientSessionActionsDat
                     AddressData(
                         firstName = firstName,
                         lastName = lastName,
-                        addressLine1 = addressLine1.orEmpty(),
+                        addressLine1 = addressLine1,
                         addressLine2 = addressLine2,
-                        postalCode = postalCode.orEmpty(),
-                        city = city.orEmpty(),
-                        countryCode = CountryCode.safeValueOf(countryCode.orEmpty()),
+                        postalCode = postalCode,
+                        city = city,
+                        countryCode = countryCode?.let { CountryCode.safeValueOf(it) },
                     ),
                 ),
             )
 
-        is ActionUpdateEmailAddressParams -> listOf(ClientSessionActionsDataRequest.SetEmailAddress(email))
+        is ActionUpdateEmailAddressParams -> listOf(ClientSessionActionsDataRequest.SetEmailAddress(email = email))
     }

@@ -74,8 +74,8 @@ internal class CardViewModel(
                 override fun onMetadataStateChanged(metadataState: PrimerPaymentMethodMetadataState) {
                     when (metadataState) {
                         is PrimerCardMetadataState.Fetched -> {
-                            handleFetchedMetadata(metadataState.cardNumberEntryMetadata)
                             isMetadataUpdating = false
+                            handleFetchedMetadata(metadataState.cardNumberEntryMetadata)
                         }
 
                         is PrimerCardMetadataState.Fetching -> {

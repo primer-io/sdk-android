@@ -164,7 +164,7 @@ internal class DefaultPrimerHeadlessRepository(
                             message: String?,
                             isCancellation: Boolean = false,
                         ) {
-                            if (config.settings.uiOptions.isSuccessScreenEnabled) {
+                            if (config.settings.uiOptions.isErrorScreenEnabled) {
                                 val errorType =
                                     when (config.intent.paymentMethodIntent) {
                                         PrimerSessionIntent.CHECKOUT ->
