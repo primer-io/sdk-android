@@ -1,3 +1,9 @@
+## 2.36.2 (2025-02-07)
+
+### Fix
+
+- fixed client session update action, fixed card form behaviour (#864)
+
 ## 2.36.1 (2025-02-05)
 
 ### Fix
