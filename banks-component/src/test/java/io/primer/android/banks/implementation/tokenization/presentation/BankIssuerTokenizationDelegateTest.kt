@@ -7,7 +7,7 @@ import io.mockk.mockk
 import io.mockk.mockkStatic
 import io.mockk.unmockkStatic
 import io.mockk.verify
-import io.primer.android.InstantExecutorExtension
+import io.primer.android.core.InstantExecutorExtension
 import io.primer.android.PrimerSessionIntent
 import io.primer.android.analytics.data.models.SdkIntegrationType
 import io.primer.android.banks.implementation.configuration.domain.BankIssuerConfigurationInteractor

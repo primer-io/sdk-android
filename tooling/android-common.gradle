@@ -15,7 +15,6 @@ android {
         consumerProguardFiles "consumer-rules.pro"
     }
 
-
     buildTypes.forEach {
         it.buildConfigField("String", "SDK_VERSION_STRING", "\"${project.findProperty("VERSION_NAME")}\"")
     }
@@ -61,4 +60,5 @@ dependencies {
 
     androidTestImplementation(libs.mockk.android)
     androidTestRuntimeOnly(libs.junit.test.runner)
+    testImplementation(testFixtures(project(":arch-core")))
 }

@@ -9,13 +9,13 @@ import io.mockk.mockk
 import io.primer.android.components.domain.error.PrimerValidationError
 import io.primer.android.components.manager.core.composable.PrimerValidationStatus
 import io.primer.android.errors.domain.ErrorMapperRegistry
-import io.primer.android.nolpay.InstantExecutorExtension
+import io.primer.android.core.InstantExecutorExtension
 import io.primer.android.nolpay.api.manager.analytics.NolPayAnalyticsConstants
 import io.primer.android.nolpay.api.manager.linkCard.composable.NolPayLinkCardStep
 import io.primer.android.nolpay.api.manager.linkCard.composable.NolPayLinkCollectableData
 import io.primer.android.nolpay.implementation.linkCard.domain.validation.NolPayLinkDataValidatorRegistry
 import io.primer.android.nolpay.implementation.linkCard.presentation.NolPayLinkPaymentCardDelegate
-import io.primer.android.nolpay.toListDuring
+import io.primer.android.core.toListDuring
 import io.primer.android.paymentmethods.analytics.delegate.PaymentMethodSdkAnalyticsEventLoggingDelegate
 import io.primer.android.paymentmethods.analytics.delegate.SdkAnalyticsErrorLoggingDelegate
 import io.primer.android.paymentmethods.analytics.delegate.SdkAnalyticsValidationErrorLoggingDelegate

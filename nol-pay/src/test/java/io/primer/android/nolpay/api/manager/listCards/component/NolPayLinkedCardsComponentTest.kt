@@ -6,7 +6,7 @@ import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
 import io.primer.android.components.domain.core.models.PrimerPaymentMethodManagerCategory
-import io.primer.android.nolpay.InstantExecutorExtension
+import io.primer.android.core.InstantExecutorExtension
 import io.primer.android.nolpay.api.manager.analytics.NolPayAnalyticsConstants
 import io.primer.android.nolpay.implementation.listCards.presentation.NolPayGetLinkedCardsDelegate
 import io.primer.android.paymentmethods.analytics.delegate.PaymentMethodSdkAnalyticsEventLoggingDelegate

@@ -18,9 +18,11 @@ import io.primer.android.bancontact.implementation.metadata.domain.BancontactCar
 import io.primer.android.bancontact.implementation.payment.delegate.AdyenBancontactPaymentDelegate
 import io.primer.android.bancontact.implementation.tokenization.presentation.AdyenBancontactTokenizationDelegate
 import io.primer.android.components.domain.error.PrimerInputValidationError
+import io.primer.android.core.InstantExecutorExtension
 import io.primer.android.core.di.DISdkContext
 import io.primer.android.core.di.DependencyContainer
 import io.primer.android.core.di.SdkContainer
+import io.primer.android.core.toListDuring
 import io.primer.android.core.utils.CoroutineScopeProvider
 import io.primer.android.domain.payments.create.model.Payment
 import io.primer.android.paymentmethods.PaymentInputDataValidator
@@ -31,8 +33,6 @@ import io.primer.android.payments.core.status.domain.AsyncPaymentMethodPollingIn
 import io.primer.android.payments.core.status.domain.model.AsyncStatus
 import io.primer.android.payments.core.status.domain.model.AsyncStatusParams
 import io.primer.android.webRedirectShared.implementation.composer.presentation.WebRedirectLauncherParams
-import io.primer.bancontact.implementation.InstantExecutorExtension
-import io.primer.bancontact.implementation.toListDuring
 import io.primer.paymentMethodCoreUi.core.ui.navigation.launchers.PaymentMethodLauncherParams
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi

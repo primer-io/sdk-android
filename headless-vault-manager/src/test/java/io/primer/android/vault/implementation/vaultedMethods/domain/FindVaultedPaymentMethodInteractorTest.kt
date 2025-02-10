@@ -7,7 +7,7 @@ import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
 import io.primer.android.components.domain.exception.InvalidVaultedPaymentMethodIdException
-import io.primer.android.vault.InstantExecutorExtension
+import io.primer.android.core.InstantExecutorExtension
 import io.primer.android.vault.implementation.vaultedMethods.data.model.PaymentMethodVaultTokenInternal
 import io.primer.android.vault.implementation.vaultedMethods.data.model.toVaultedPaymentMethod
 import io.primer.android.vault.implementation.vaultedMethods.domain.model.VaultPaymentMethodIdParams

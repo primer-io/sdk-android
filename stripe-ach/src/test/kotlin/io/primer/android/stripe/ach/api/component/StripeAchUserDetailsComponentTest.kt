@@ -35,7 +35,7 @@ import io.primer.android.payments.core.create.domain.model.PaymentDecision
 import io.primer.android.payments.core.helpers.CheckoutSuccessHandler
 import io.primer.android.payments.core.helpers.ManualFlowSuccessHandler
 import io.primer.android.payments.core.resume.domain.handler.PendingResumeHandler
-import io.primer.android.stripe.ach.InstantExecutorExtension
+import io.primer.android.core.InstantExecutorExtension
 import io.primer.android.stripe.ach.api.additionalInfo.AchAdditionalInfo
 import io.primer.android.stripe.ach.api.component.StripeAchUserDetailsComponent.CheckoutFailureException
 import io.primer.android.stripe.ach.api.composable.AchUserDetailsCollectableData

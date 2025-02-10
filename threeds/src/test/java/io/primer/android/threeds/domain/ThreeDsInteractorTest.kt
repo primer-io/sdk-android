@@ -19,7 +19,7 @@ import io.primer.android.errors.domain.ErrorMapperRegistry
 import io.primer.android.payments.core.tokenization.data.model.PaymentMethodTokenInternal
 import io.primer.android.payments.core.tokenization.data.model.ResponseCode
 import io.primer.android.payments.core.tokenization.domain.repository.TokenizedPaymentMethodRepository
-import io.primer.android.threeds.InstantExecutorExtension
+import io.primer.android.core.InstantExecutorExtension
 import io.primer.android.threeds.data.models.auth.BeginAuthResponse
 import io.primer.android.threeds.data.models.postAuth.PostAuthResponse
 import io.primer.android.threeds.domain.interactor.DefaultThreeDsInteractor

@@ -19,11 +19,11 @@ import io.primer.android.components.domain.core.models.card.PrimerCardNumberEntr
 import io.primer.android.components.domain.core.models.card.PrimerCardNumberEntryState
 import io.primer.android.components.domain.core.models.card.ValidationSource
 import io.primer.android.configuration.data.model.CardNetwork
+import io.primer.android.core.InstantExecutorExtension
 import io.primer.android.core.logging.internal.LogReporter
-import io.primer.cardShared.InstantExecutorExtension
+import io.primer.android.core.toListDuring
 import io.primer.cardShared.binData.domain.CardMetadataStateRetriever.Companion.REMOTE_VALIDATION_FAILED_MESSAGE
 import io.primer.cardShared.networks.domain.repository.OrderedAllowedCardNetworksRepository
-import io.primer.cardShared.toListDuring
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.runTest

@@ -10,7 +10,7 @@ import io.mockk.unmockkObject
 import io.mockk.verify
 import io.primer.android.analytics.domain.models.SdkFunctionParams
 import io.primer.android.analytics.domain.repository.AnalyticsRepository
-import io.primer.android.components.InstantExecutorExtension
+import io.primer.android.core.InstantExecutorExtension
 import io.primer.android.components.PrimerHeadlessUniversalCheckout
 import io.primer.android.components.PrimerHeadlessUniversalCheckoutListener
 import io.primer.android.components.implementation.HeadlessUniversalCheckoutAnalyticsConstants

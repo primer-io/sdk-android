@@ -28,7 +28,7 @@ liveDataTesting = "1.2.0"
 archCore = "2.2.0"
 
 # plugin versions
-androidGradlePlugin = "8.5.0"
+androidGradlePlugin = "8.5.2"
 detekt = "1.23.7"
 sonarqube = "6.0.1.5171"
 dexcount = "4.0.0"

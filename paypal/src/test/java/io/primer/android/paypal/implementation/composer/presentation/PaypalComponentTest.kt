@@ -20,13 +20,13 @@ import io.primer.android.core.di.SdkContainer
 import io.primer.android.core.utils.CoroutineScopeProvider
 import io.primer.android.errors.data.exception.PaymentMethodCancelledException
 import io.primer.android.paymentmethods.core.composer.composable.ComposerUiEvent
-import io.primer.android.paypal.InstantExecutorExtension
+import io.primer.android.core.InstantExecutorExtension
 import io.primer.android.paypal.implementation.payment.presentation.delegate.presentation.PaypalPaymentDelegate
 import io.primer.android.paypal.implementation.tokenization.presentation.PaypalTokenizationCollectorDelegate
 import io.primer.android.paypal.implementation.tokenization.presentation.PaypalTokenizationCollectorParams
 import io.primer.android.paypal.implementation.tokenization.presentation.PaypalTokenizationDelegate
 import io.primer.android.paypal.implementation.tokenization.presentation.model.PaypalTokenizationInputable
-import io.primer.android.paypal.toListDuring
+import io.primer.android.core.toListDuring
 import io.primer.paymentMethodCoreUi.core.ui.navigation.launchers.PaymentMethodLauncherParams
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope

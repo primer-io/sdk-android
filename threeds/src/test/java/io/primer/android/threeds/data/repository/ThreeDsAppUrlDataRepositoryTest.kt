@@ -13,9 +13,9 @@ import io.mockk.mockk
 import io.mockk.mockkObject
 import io.mockk.mockkStatic
 import io.mockk.verify
+import io.primer.android.core.InstantExecutorExtension
 import io.primer.android.data.settings.PrimerSettings
 import io.primer.android.data.settings.PrimerThreeDsOptions
-import io.primer.android.threeds.InstantExecutorExtension
 import io.primer.android.threeds.domain.repository.ThreeDsAppUrlRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest

@@ -3,13 +3,13 @@ package io.primer.android.payments.core.status.data.repository
 import io.mockk.coEvery
 import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
-import io.primer.android.payments.InstantExecutorExtension
+import io.primer.android.core.InstantExecutorExtension
+import io.primer.android.core.toListDuring
 import io.primer.android.payments.core.errors.data.exception.AsyncFlowIncompleteException
 import io.primer.android.payments.core.status.data.datasource.RemoteAsyncPaymentMethodStatusDataSource
 import io.primer.android.payments.core.status.data.models.AsyncMethodStatus
 import io.primer.android.payments.core.status.data.models.AsyncPaymentMethodStatusDataResponse
 import io.primer.android.payments.core.status.domain.model.AsyncStatus
-import io.primer.android.payments.toListDuring
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf

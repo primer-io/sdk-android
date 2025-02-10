@@ -53,6 +53,7 @@ import io.primer.android.stripe.ach.implementation.validation.rules.ValidStripeP
 internal class StripeContainer(
     private val sdk: () -> SdkContainer,
 ) : DependencyContainer() {
+    @Suppress("LongMethod")
     override fun registerInitialDependencies() {
         val paymentMethodType = PaymentMethodType.STRIPE_ACH.name
 

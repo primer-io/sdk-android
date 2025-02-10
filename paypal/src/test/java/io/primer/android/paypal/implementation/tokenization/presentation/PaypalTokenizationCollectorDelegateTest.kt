@@ -4,8 +4,9 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
+import io.primer.android.core.InstantExecutorExtension
+import io.primer.android.core.toListDuring
 import io.primer.android.paymentmethods.core.composer.composable.ComposerUiEvent
-import io.primer.android.paypal.InstantExecutorExtension
 import io.primer.android.paypal.implementation.configuration.domain.PaypalConfigurationInteractor
 import io.primer.android.paypal.implementation.configuration.domain.model.PaypalConfig
 import io.primer.android.paypal.implementation.configuration.domain.model.PaypalConfigParams
@@ -13,7 +14,6 @@ import io.primer.android.paypal.implementation.tokenization.domain.PaypalCreateB
 import io.primer.android.paypal.implementation.tokenization.domain.PaypalCreateOrderInteractor
 import io.primer.android.paypal.implementation.tokenization.domain.model.PaypalBillingAgreement
 import io.primer.android.paypal.implementation.tokenization.domain.model.PaypalOrder
-import io.primer.android.paypal.toListDuring
 import io.primer.paymentMethodCoreUi.core.ui.navigation.launchers.PaymentMethodLauncherParams
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch

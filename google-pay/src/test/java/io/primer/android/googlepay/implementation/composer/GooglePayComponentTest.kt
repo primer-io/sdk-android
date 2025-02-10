@@ -28,10 +28,11 @@ import io.primer.android.core.domain.validation.ValidationResult
 import io.primer.android.core.domain.validation.ValidationRule
 import io.primer.android.core.domain.validation.ValidationRulesChain
 import io.primer.android.core.extensions.getSerializableCompat
+import io.primer.android.core.toListDuring
 import io.primer.android.core.utils.CoroutineScopeProvider
 import io.primer.android.domain.tokenization.models.PrimerPaymentMethodTokenData
 import io.primer.android.errors.data.exception.PaymentMethodCancelledException
-import io.primer.android.googlepay.InstantExecutorExtension
+import io.primer.android.core.InstantExecutorExtension
 import io.primer.android.googlepay.implementation.clientSessionActions.presentation.mapper.mapToMultipleActionUpdateParams
 import io.primer.android.googlepay.implementation.clientSessionActions.presentation.mapper.mapToShippingOptionIdParams
 import io.primer.android.googlepay.implementation.composer.ui.navigation.GooglePayNative3DSActivityLauncherParams
@@ -45,7 +46,6 @@ import io.primer.android.googlepay.implementation.tokenization.presentation.Goog
 import io.primer.android.googlepay.implementation.tokenization.presentation.GooglePayTokenizationDelegate
 import io.primer.android.googlepay.implementation.validation.GooglePayShippingMethodUpdateValidator
 import io.primer.android.googlepay.implementation.validation.GooglePayValidationRulesResolver
-import io.primer.android.googlepay.toListDuring
 import io.primer.android.paymentmethods.core.composer.composable.ComposerUiEvent
 import io.primer.android.processor3ds.domain.model.Processor3DS
 import io.primer.android.processor3ds.ui.Processor3dsWebViewActivity

@@ -24,7 +24,7 @@ import io.primer.android.errors.domain.models.SessionUpdateError
 import java.io.IOException
 
 internal class DefaultErrorMapper : ErrorMapper {
-    @Suppress("ComplexMethod")
+    @Suppress("ComplexMethod", "LongMethod")
     override fun getPrimerError(throwable: Throwable): PrimerError {
         return when (throwable) {
             is IOException -> ConnectivityError(throwable.message.orEmpty())

@@ -19,6 +19,6 @@ class SandboxPayPalPaymentMethodDescriptorSandboxProcessorProcessor {
         val result = payPalDescriptor.headlessDefinition
 
         // Assert
-        assertEquals(listOf(PrimerPaymentMethodManagerCategory.NATIVE_UI), result?.paymentMethodManagerCategories)
+        assertEquals(listOf(PrimerPaymentMethodManagerCategory.NATIVE_UI), result.paymentMethodManagerCategories)
     }
 }

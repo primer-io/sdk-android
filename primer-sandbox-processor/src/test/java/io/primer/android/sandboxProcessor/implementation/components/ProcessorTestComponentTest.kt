@@ -19,12 +19,12 @@ import io.primer.android.core.di.SdkContainer
 import io.primer.android.core.utils.CoroutineScopeProvider
 import io.primer.android.domain.tokenization.models.PrimerPaymentMethodTokenData
 import io.primer.android.payments.core.create.domain.model.PaymentDecision
-import io.primer.android.sandboxProcessor.InstantExecutorExtension
+import io.primer.android.core.InstantExecutorExtension
 import io.primer.android.sandboxProcessor.SandboxProcessorDecisionType
 import io.primer.android.sandboxProcessor.implementation.payment.delegate.SandboxProcessorPaymentDelegate
 import io.primer.android.sandboxProcessor.implementation.tokenization.presentation.SandboxProcessorTokenizationDelegate
 import io.primer.android.sandboxProcessor.implementation.tokenization.presentation.composable.SandboxProcessorTokenizationInputable
-import io.primer.android.sandboxProcessor.toListDuring
+import io.primer.android.core.toListDuring
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.async

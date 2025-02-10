@@ -5,7 +5,7 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
-import io.primer.android.ipay88.InstantExecutorExtension
+import io.primer.android.core.InstantExecutorExtension
 import io.primer.android.ipay88.implementation.configuration.domain.model.IPay88Config
 import io.primer.android.ipay88.implementation.configuration.domain.model.IPay88ConfigParams
 import io.primer.android.paymentmethods.core.configuration.domain.repository.PaymentMethodConfigurationRepository

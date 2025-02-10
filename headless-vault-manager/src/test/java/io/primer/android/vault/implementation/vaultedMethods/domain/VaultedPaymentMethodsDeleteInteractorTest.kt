@@ -10,7 +10,7 @@ import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.verify
 import io.primer.android.core.logging.internal.LogReporter
-import io.primer.android.vault.InstantExecutorExtension
+import io.primer.android.core.InstantExecutorExtension
 import io.primer.android.vault.implementation.vaultedMethods.domain.model.VaultDeleteParams
 import io.primer.android.vault.implementation.vaultedMethods.domain.repository.VaultedPaymentMethodsRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi

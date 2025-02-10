@@ -10,7 +10,7 @@ import io.mockk.just
 import io.mockk.mockk
 import io.mockk.mockkStatic
 import io.mockk.unmockkStatic
-import io.primer.android.InstantExecutorExtension
+import io.primer.android.core.InstantExecutorExtension
 import io.primer.android.analytics.data.models.MessageType
 import io.primer.android.analytics.data.models.Severity
 import io.primer.android.analytics.domain.AnalyticsInteractor

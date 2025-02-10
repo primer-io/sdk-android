@@ -18,6 +18,7 @@ import io.primer.android.stripe.ach.implementation.payment.confirmation.presenta
 import io.primer.android.stripe.ach.implementation.payment.resume.handler.StripeAchVaultResumeDecisionHandler
 import java.util.Date
 
+@Suppress("LongParameterList")
 internal class StripeAchVaultPaymentDelegate(
     paymentMethodTokenHandler: PaymentMethodTokenHandler,
     resumePaymentHandler: PaymentResumeHandler,

@@ -58,7 +58,7 @@ class PrimerCheckoutListenerTest {
     @Test
     fun `onFailed(PrimerError, PrimerCheckoutData, PrimerErrorDecisionHandler) should call showErrorMessage() with description when error is StripeError`() {
         val error =
-            io.primer.android.stripe.ach.implementation.errors.domain.model.StripeError.StripeSdkError(
+            StripeError.StripeSdkError(
                 message = "message",
             )
         val errorHandler = mockk<PrimerErrorDecisionHandler>(relaxed = true)

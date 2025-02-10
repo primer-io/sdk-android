@@ -4,12 +4,12 @@ import com.jraska.livedata.test
 import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
-import io.primer.android.InstantExecutorExtension
 import io.primer.android.analytics.domain.AnalyticsInteractor
 import io.primer.android.clientSessionActions.domain.ActionInteractor
 import io.primer.android.components.assets.displayMetadata.PaymentMethodsImplementationInteractor
 import io.primer.android.configuration.domain.BasicOrderInfoInteractor
 import io.primer.android.configuration.domain.ConfigurationInteractor
+import io.primer.android.core.InstantExecutorExtension
 import io.primer.android.currencyformat.domain.FormatAmountToCurrencyInteractor
 import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.errors.domain.ErrorMapperRegistry

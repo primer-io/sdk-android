@@ -9,7 +9,7 @@ import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
 import io.primer.android.core.domain.None
 import io.primer.android.core.logging.internal.LogReporter
-import io.primer.android.nolpay.InstantExecutorExtension
+import io.primer.android.core.InstantExecutorExtension
 import io.primer.android.nolpay.implementation.common.domain.model.NolPayConfiguration
 import io.primer.android.nolpay.implementation.common.domain.repository.NolPayAppSecretRepository
 import io.primer.android.nolpay.implementation.common.domain.repository.NolPaySdkInitConfigurationRepository

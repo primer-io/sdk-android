@@ -12,7 +12,7 @@ import io.primer.android.payments.core.helpers.CheckoutErrorHandler
 import io.primer.android.payments.core.helpers.CheckoutSuccessHandler
 import io.primer.android.payments.core.resume.domain.handler.PaymentResumeHandler
 import io.primer.android.webRedirectShared.implementation.composer.presentation.WebRedirectLauncherParams
-import io.primer.android.webredirect.InstantExecutorExtension
+import io.primer.android.core.InstantExecutorExtension
 import io.primer.android.webredirect.implementation.payment.resume.handler.WebRedirectDecision
 import io.primer.android.webredirect.implementation.payment.resume.handler.WebRedirectResumeHandler
 import io.primer.paymentMethodCoreUi.core.ui.navigation.launchers.PaymentMethodLauncherParams

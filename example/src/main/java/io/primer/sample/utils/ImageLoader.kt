@@ -23,7 +23,7 @@ import java.util.WeakHashMap
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 
-internal class ImageLoader constructor(
+internal class ImageLoader(
     private val okHttpClient: OkHttpClient = OkHttpClient.Builder().build()
 ) {
     private val jobs = WeakHashMap<ImageView, Job>()
@@ -78,5 +78,3 @@ internal class ImageLoader constructor(
             continuation.invokeOnCancellation(callback)
         }
 }
-
-

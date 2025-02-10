@@ -17,7 +17,7 @@ import io.mockk.mockkStatic
 import io.mockk.unmockkObject
 import io.mockk.unmockkStatic
 import io.mockk.verify
-import io.primer.android.InstantExecutorExtension
+import io.primer.android.core.InstantExecutorExtension
 import io.primer.android.PrimerSessionIntent
 import io.primer.android.banks.di.BankWebRedirectComposer
 import io.primer.android.banks.implementation.rpc.domain.models.IssuingBank

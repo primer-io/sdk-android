@@ -8,6 +8,7 @@ import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
 import io.mockk.spyk
 import io.primer.android.PrimerSessionIntent
+import io.primer.android.core.InstantExecutorExtension
 import io.primer.android.core.di.DISdkContext
 import io.primer.android.core.di.DependencyContainer
 import io.primer.android.core.di.SdkContainer
@@ -19,7 +20,6 @@ import io.primer.android.payments.core.status.domain.model.AsyncStatus
 import io.primer.android.payments.core.status.domain.model.AsyncStatusParams
 import io.primer.android.qrcode.implementation.payment.delegate.QrCodePaymentDelegate
 import io.primer.android.qrcode.implementation.tokenization.presentation.QrCodeTokenizationDelegate
-import io.primer.android.vouchers.InstantExecutorExtension
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableSharedFlow

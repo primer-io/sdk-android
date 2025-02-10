@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<issues format="6" by="lint 8.5.2" type="baseline" client="gradle" dependencies="false" name="AGP (8.5.2)" variant="all" version="8.5.2">
+
+    <issue
+        id="RestrictedApi"
+        message="ArchTaskExecutor.getInstance can only be called from within the same library group prefix (referenced groupId=`androidx.arch.core` with prefix androidx.arch from groupId=`Primer`)"
+        errorLine1="        ArchTaskExecutor.getInstance().setDelegate("
+        errorLine2="                         ~~~~~~~~~~~">
+        <location
+            file="src/testFixtures/kotlin/io/primer/android/core/InstantExecutorExtension.kt"
+            line="28"
+            column="26"/>
+    </issue>
+
+    <issue
+        id="RestrictedApi"
+        message="ArchTaskExecutor.setDelegate can only be called from within the same library group prefix (referenced groupId=`androidx.arch.core` with prefix androidx.arch from groupId=`Primer`)"
+        errorLine1="        ArchTaskExecutor.getInstance().setDelegate("
+        errorLine2="                                       ~~~~~~~~~~~">
+        <location
+            file="src/testFixtures/kotlin/io/primer/android/core/InstantExecutorExtension.kt"
+            line="28"
+            column="40"/>
+    </issue>
+
+    <issue
+        id="RestrictedApi"
+        message="ArchTaskExecutor.setDelegate can only be called from within the same library group prefix (referenced groupId=`androidx.arch.core` with prefix androidx.arch from groupId=`Primer`)"
+        errorLine1="            object : TaskExecutor() {"
+        errorLine2="            ^">
+        <location
+            file="src/testFixtures/kotlin/io/primer/android/core/InstantExecutorExtension.kt"
+            line="29"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="RestrictedApi"
+        message="TaskExecutor can only be called from within the same library group prefix (referenced groupId=`androidx.arch.core` with prefix androidx.arch from groupId=`Primer`)"
+        errorLine1="            object : TaskExecutor() {"
+        errorLine2="            ^">
+        <location
+            file="src/testFixtures/kotlin/io/primer/android/core/InstantExecutorExtension.kt"
+            line="29"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="RestrictedApi"
+        message="TaskExecutor can only be called from within the same library group prefix (referenced groupId=`androidx.arch.core` with prefix androidx.arch from groupId=`Primer`)"
+        errorLine1="            object : TaskExecutor() {"
+        errorLine2="                     ~~~~~~~~~~~~">
+        <location
+            file="src/testFixtures/kotlin/io/primer/android/core/InstantExecutorExtension.kt"
+            line="29"
+            column="22"/>
+    </issue>
+
+    <issue
+        id="RestrictedApi"
+        message="TaskExecutor.executeOnDiskIO can only be called from within the same library group prefix (referenced groupId=`androidx.arch.core` with prefix androidx.arch from groupId=`Primer`)"
+        errorLine1="                override fun executeOnDiskIO(runnable: Runnable) = runnable.run()"
+        errorLine2="                             ~~~~~~~~~~~~~~~">
+        <location
+            file="src/testFixtures/kotlin/io/primer/android/core/InstantExecutorExtension.kt"
+            line="30"
+            column="30"/>
+    </issue>
+
+    <issue
+        id="RestrictedApi"
+        message="TaskExecutor.postToMainThread can only be called from within the same library group prefix (referenced groupId=`androidx.arch.core` with prefix androidx.arch from groupId=`Primer`)"
+        errorLine1="                override fun postToMainThread(runnable: Runnable) = runnable.run()"
+        errorLine2="                             ~~~~~~~~~~~~~~~~">
+        <location
+            file="src/testFixtures/kotlin/io/primer/android/core/InstantExecutorExtension.kt"
+            line="32"
+            column="30"/>
+    </issue>
+
+    <issue
+        id="RestrictedApi"
+        message="TaskExecutor.isMainThread can only be called from within the same library group prefix (referenced groupId=`androidx.arch.core` with prefix androidx.arch from groupId=`Primer`)"
+        errorLine1="                override fun isMainThread() = true"
+        errorLine2="                             ~~~~~~~~~~~~">
+        <location
+            file="src/testFixtures/kotlin/io/primer/android/core/InstantExecutorExtension.kt"
+            line="34"
+            column="30"/>
+    </issue>
+
+    <issue
+        id="RestrictedApi"
+        message="ArchTaskExecutor.getInstance can only be called from within the same library group prefix (referenced groupId=`androidx.arch.core` with prefix androidx.arch from groupId=`Primer`)"
+        errorLine1="        ArchTaskExecutor.getInstance().setDelegate(null)"
+        errorLine2="                         ~~~~~~~~~~~">
+        <location
+            file="src/testFixtures/kotlin/io/primer/android/core/InstantExecutorExtension.kt"
+            line="41"
+            column="26"/>
+    </issue>
+
+    <issue
+        id="RestrictedApi"
+        message="ArchTaskExecutor.setDelegate can only be called from within the same library group prefix (referenced groupId=`androidx.arch.core` with prefix androidx.arch from groupId=`Primer`)"
+        errorLine1="        ArchTaskExecutor.getInstance().setDelegate(null)"
+        errorLine2="                                       ~~~~~~~~~~~">
+        <location
+            file="src/testFixtures/kotlin/io/primer/android/core/InstantExecutorExtension.kt"
+            line="41"
+            column="40"/>
+    </issue>
+
+    <issue
+        id="RestrictedApi"
+        message="ArchTaskExecutor.setDelegate can only be called from within the same library group prefix (referenced groupId=`androidx.arch.core` with prefix androidx.arch from groupId=`Primer`)"
+        errorLine1="        ArchTaskExecutor.getInstance().setDelegate(null)"
+        errorLine2="                                                   ~~~~">
+        <location
+            file="src/testFixtures/kotlin/io/primer/android/core/InstantExecutorExtension.kt"
+            line="41"
+            column="52"/>
+    </issue>
+
+</issues>

@@ -12,7 +12,7 @@ import io.primer.android.payments.core.tokenization.data.model.PaymentMethodToke
 import io.primer.android.payments.core.tokenization.data.model.toPaymentMethodToken
 import io.primer.android.payments.core.tokenization.domain.handler.PreTokenizationHandler
 import io.primer.android.payments.core.tokenization.domain.repository.TokenizedPaymentMethodRepository
-import io.primer.android.vault.InstantExecutorExtension
+import io.primer.android.core.InstantExecutorExtension
 import io.primer.android.vault.implementation.vaultedMethods.domain.model.VaultTokenParams
 import io.primer.android.vault.implementation.vaultedMethods.domain.repository.VaultedPaymentMethodExchangeRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi

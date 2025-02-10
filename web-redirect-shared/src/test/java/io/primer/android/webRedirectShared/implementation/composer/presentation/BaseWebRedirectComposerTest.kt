@@ -9,7 +9,7 @@ import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.spyk
 import io.mockk.verify
-import io.primer.android.InstantExecutorExtension
+import io.primer.android.core.InstantExecutorExtension
 import io.primer.android.paymentmethods.core.composer.composable.ComposerUiEvent
 import io.primer.android.webRedirectShared.implementation.composer.ui.navigation.launcher.WebRedirectActivityLauncherParams
 import io.primer.paymentMethodCoreUi.core.ui.navigation.launchers.PaymentMethodLauncherParams

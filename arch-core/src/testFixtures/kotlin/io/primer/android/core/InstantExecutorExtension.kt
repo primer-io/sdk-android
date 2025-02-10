@@ -1,4 +1,4 @@
-package io.primer.android.paypal
+package io.primer.android.core
 
 import androidx.arch.core.executor.ArchTaskExecutor
 import androidx.arch.core.executor.TaskExecutor
@@ -17,7 +17,7 @@ import org.junit.jupiter.api.extension.ExtensionContext
 @ExperimentalCoroutinesApi
 class InstantExecutorExtension(
     private val scheduler: TestCoroutineScheduler = TestCoroutineScheduler(),
-    val dispatcher: TestDispatcher = StandardTestDispatcher(scheduler),
+    private val dispatcher: TestDispatcher = StandardTestDispatcher(scheduler),
 ) : BeforeEachCallback, AfterEachCallback, AfterTestExecutionCallback {
     override fun afterTestExecution(context: ExtensionContext?) {
         scheduler.advanceUntilIdle()

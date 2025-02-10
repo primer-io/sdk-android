@@ -6,7 +6,7 @@ import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
 import io.primer.android.configuration.domain.model.PaymentMethodConfig
 import io.primer.android.configuration.domain.repository.ConfigurationRepository
-import io.primer.android.vouchers.InstantExecutorExtension
+import io.primer.android.core.InstantExecutorExtension
 import io.primer.android.vouchers.retailOutlets.implementation.rpc.domain.models.RetailOutlet
 import io.primer.android.vouchers.retailOutlets.implementation.rpc.domain.models.RetailOutletParams
 import io.primer.android.vouchers.retailOutlets.implementation.rpc.domain.repository.RetailOutletRepository

@@ -8,7 +8,7 @@ import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
 import io.primer.android.errors.data.exception.PaymentMethodCancelledException
-import io.primer.android.payments.InstantExecutorExtension
+import io.primer.android.core.InstantExecutorExtension
 import io.primer.android.payments.core.status.domain.model.AsyncStatus
 import io.primer.android.payments.core.status.domain.model.AsyncStatusParams
 import io.primer.android.payments.core.status.domain.repository.AsyncPaymentMethodStatusRepository

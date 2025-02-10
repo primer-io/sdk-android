@@ -19,6 +19,7 @@ import io.primer.android.components.implementation.core.presentation.PaymentMeth
 import io.primer.android.components.implementation.core.presentation.PaymentMethodStarter
 import io.primer.android.components.validation.resolvers.PaymentMethodManagerSessionIntentRulesResolver
 import io.primer.android.configuration.domain.model.ClientSessionData
+import io.primer.android.core.InstantExecutorExtension
 import io.primer.android.core.utils.CoroutineScopeProvider
 import io.primer.android.paymentmethods.core.composer.InternalNativeUiPaymentMethodComponent
 import io.primer.android.paymentmethods.core.composer.registry.PaymentMethodComposerRegistry

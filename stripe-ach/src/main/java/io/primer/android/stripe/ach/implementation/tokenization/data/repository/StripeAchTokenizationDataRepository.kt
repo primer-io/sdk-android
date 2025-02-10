@@ -7,6 +7,7 @@ import io.primer.android.payments.core.tokenization.data.repository.Tokenization
 import io.primer.android.stripe.ach.implementation.tokenization.data.model.StripeAchPaymentInstrumentDataRequest
 import io.primer.android.stripe.ach.implementation.tokenization.domain.model.StripeAchPaymentInstrumentParams
 
+@Suppress("ParameterListSpacing")
 internal class StripeAchTokenizationDataRepository(
     remoteTokenizationDataSource: BaseRemoteTokenizationDataSource<StripeAchPaymentInstrumentDataRequest>,
     localConfigurationDataSource: CacheConfigurationDataSource,

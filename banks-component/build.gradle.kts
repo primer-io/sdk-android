@@ -1,4 +1,3 @@
-@Suppress("DSL_SCOPE_VIOLATION") // TODO: Remove once KTIJ-19369 is fixed
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
@@ -23,4 +22,5 @@ dependencies {
     implementation(project(":client-token-core"))
     implementation(project(":web-redirect-shared"))
     testImplementation(libs.mockwebserver)
+    testImplementation(testFixtures(project(":arch-core")))
 }

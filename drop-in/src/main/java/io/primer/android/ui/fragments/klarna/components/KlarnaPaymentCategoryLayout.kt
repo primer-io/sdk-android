@@ -89,7 +89,7 @@ internal class KlarnaPaymentCategoryLayout(context: Context, attrs: AttributeSet
             removeAllViews()
             lateinit var klarnaPaymentView: View
             val listener =
-                object : View.OnLayoutChangeListener {
+                object : OnLayoutChangeListener {
                     private var timer: Timer? = null
 
                     override fun onLayoutChange(

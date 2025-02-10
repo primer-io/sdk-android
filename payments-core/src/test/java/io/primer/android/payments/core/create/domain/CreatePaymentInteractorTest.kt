@@ -8,7 +8,7 @@ import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
 import io.mockk.verify
 import io.primer.android.core.logging.internal.LogReporter
-import io.primer.android.payments.InstantExecutorExtension
+import io.primer.android.core.InstantExecutorExtension
 import io.primer.android.payments.core.create.domain.model.CreatePaymentParams
 import io.primer.android.payments.core.create.domain.model.PaymentResult
 import io.primer.android.payments.core.create.domain.repository.CreatePaymentRepository

@@ -8,8 +8,8 @@ import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
 import io.primer.android.configuration.data.datasource.CacheConfigurationDataSource
 import io.primer.android.configuration.data.model.ConfigurationData
+import io.primer.android.core.InstantExecutorExtension
 import io.primer.android.core.data.network.PrimerResponse
-import io.primer.android.threeds.InstantExecutorExtension
 import io.primer.android.threeds.data.models.auth.BeginAuthResponse
 import io.primer.android.threeds.data.models.postAuth.PostAuthResponse
 import io.primer.android.threeds.domain.models.SuccessThreeDsContinueAuthParams

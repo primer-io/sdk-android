@@ -11,7 +11,7 @@ import io.primer.android.configuration.data.datasource.CacheConfigurationDataSou
 import io.primer.android.configuration.data.exception.MissingConfigurationException
 import io.primer.android.configuration.data.model.ConfigurationData
 import io.primer.android.configuration.data.model.Environment
-import io.primer.android.threeds.InstantExecutorExtension
+import io.primer.android.core.InstantExecutorExtension
 import io.primer.android.threeds.data.exception.ThreeDsUnknownProtocolException
 import io.primer.android.threeds.helpers.ProtocolVersion
 import kotlinx.coroutines.ExperimentalCoroutinesApi

@@ -2,7 +2,7 @@ package io.primer.android.components.implementation.completion
 
 import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
-import io.primer.android.components.InstantExecutorExtension
+import io.primer.android.core.InstantExecutorExtension
 import io.primer.android.payments.core.helpers.PollingStartHandler
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first

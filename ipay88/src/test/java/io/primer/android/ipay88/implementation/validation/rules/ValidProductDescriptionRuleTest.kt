@@ -4,10 +4,10 @@ import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
+import io.primer.android.core.InstantExecutorExtension
 import io.primer.android.core.domain.validation.ValidationResult
 import io.primer.android.domain.action.models.PrimerLineItem
 import io.primer.android.errors.data.exception.IllegalClientSessionValueException
-import io.primer.android.ipay88.InstantExecutorExtension
 import io.primer.android.ipay88.implementation.errors.data.exception.IPay88IllegalValueKey
 import io.primer.android.ipay88.implementation.validation.IPay88ValidationData
 import kotlinx.coroutines.ExperimentalCoroutinesApi

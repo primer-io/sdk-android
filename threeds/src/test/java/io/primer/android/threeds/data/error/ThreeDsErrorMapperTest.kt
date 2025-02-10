@@ -3,7 +3,7 @@ package io.primer.android.threeds.data.error
 import io.mockk.MockKAnnotations
 import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
-import io.primer.android.threeds.InstantExecutorExtension
+import io.primer.android.core.InstantExecutorExtension
 import io.primer.android.threeds.data.exception.ThreeDsChallengeCancelledException
 import io.primer.android.threeds.data.exception.ThreeDsChallengeTimedOutException
 import io.primer.android.threeds.data.exception.ThreeDsConfigurationException

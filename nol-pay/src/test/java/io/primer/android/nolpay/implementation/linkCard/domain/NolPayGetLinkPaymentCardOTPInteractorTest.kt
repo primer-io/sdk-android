@@ -4,7 +4,7 @@ import io.mockk.every
 import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
-import io.primer.android.nolpay.InstantExecutorExtension
+import io.primer.android.core.InstantExecutorExtension
 import io.primer.android.nolpay.implementation.linkCard.domain.model.NolPayLinkCardOTPParams
 import io.primer.nolpay.api.PrimerNolPay
 import io.primer.nolpay.api.exceptions.NolPaySdkException

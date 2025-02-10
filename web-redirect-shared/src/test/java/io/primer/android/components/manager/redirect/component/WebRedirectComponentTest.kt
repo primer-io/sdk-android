@@ -10,7 +10,7 @@ import io.mockk.junit5.MockKExtension
 import io.mockk.just
 import io.mockk.mockk
 import io.mockk.verify
-import io.primer.android.InstantExecutorExtension
+import io.primer.android.core.InstantExecutorExtension
 import io.primer.android.components.manager.redirect.composable.WebRedirectStep
 import io.primer.android.domain.error.models.PrimerError
 import io.primer.android.webRedirectShared.implementation.composer.presentation.delegate.WebRedirectDelegate

@@ -1,4 +1,4 @@
-package io.primer.bancontact.implementation
+package io.primer.android.core
 
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.coroutineScope

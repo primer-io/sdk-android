@@ -5,7 +5,7 @@ import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
 import io.primer.android.PrimerSessionIntent
 import io.primer.android.errors.domain.BaseErrorResolver
-import io.primer.android.ipay88.InstantExecutorExtension
+import io.primer.android.core.InstantExecutorExtension
 import io.primer.android.ipay88.implementation.composer.presentation.RedirectLauncherParams
 import io.primer.android.ipay88.implementation.payment.resume.handler.IPay88Decision
 import io.primer.android.ipay88.implementation.payment.resume.handler.IPay88ResumeHandler

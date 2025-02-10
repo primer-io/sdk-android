@@ -36,8 +36,8 @@ import io.mockk.verify
 import io.primer.android.configuration.data.model.CardNetwork
 import io.primer.android.configuration.data.model.Environment
 import io.primer.android.configuration.data.model.ThreeDsSecureCertificateDataResponse
+import io.primer.android.core.InstantExecutorExtension
 import io.primer.android.core.utils.DeviceInfo
-import io.primer.android.threeds.InstantExecutorExtension
 import io.primer.android.threeds.data.exception.ThreeDsChallengeCancelledException
 import io.primer.android.threeds.data.exception.ThreeDsChallengeTimedOutException
 import io.primer.android.threeds.data.exception.ThreeDsConfigurationException

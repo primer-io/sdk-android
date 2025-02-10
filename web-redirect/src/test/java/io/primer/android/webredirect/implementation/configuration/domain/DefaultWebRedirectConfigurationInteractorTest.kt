@@ -6,7 +6,7 @@ import io.mockk.coVerify
 import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
 import io.primer.android.paymentmethods.core.configuration.domain.repository.PaymentMethodConfigurationRepository
-import io.primer.android.webredirect.InstantExecutorExtension
+import io.primer.android.core.InstantExecutorExtension
 import io.primer.android.webredirect.implementation.configuration.domain.model.WebRedirectConfig
 import io.primer.android.webredirect.implementation.configuration.domain.model.WebRedirectConfigParams
 import kotlinx.coroutines.ExperimentalCoroutinesApi

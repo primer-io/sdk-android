@@ -23,12 +23,12 @@ import io.mockk.slot
 import io.mockk.unmockkObject
 import io.mockk.verify
 import io.primer.android.configuration.mock.presentation.MockConfigurationDelegate
+import io.primer.android.core.InstantExecutorExtension
 import io.primer.android.errors.data.exception.IllegalValueException
 import io.primer.android.errors.data.exception.PaymentMethodCancelledException
 import io.primer.android.paymentmethods.common.data.model.PaymentMethodType
 import io.primer.android.payments.core.helpers.CheckoutAdditionalInfoHandler
 import io.primer.android.stripe.StripeBankAccountCollectorActivity
-import io.primer.android.stripe.ach.InstantExecutorExtension
 import io.primer.android.stripe.ach.api.additionalInfo.AchAdditionalInfo
 import io.primer.android.stripe.ach.implementation.session.data.exception.StripeIllegalValueKey
 import io.primer.android.stripe.ach.implementation.session.presentation.GetClientSessionCustomerDetailsDelegate

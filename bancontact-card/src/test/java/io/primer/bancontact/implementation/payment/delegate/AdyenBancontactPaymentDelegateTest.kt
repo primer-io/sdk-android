@@ -15,7 +15,7 @@ import io.primer.android.payments.core.helpers.CheckoutErrorHandler
 import io.primer.android.payments.core.helpers.CheckoutSuccessHandler
 import io.primer.android.payments.core.resume.domain.handler.PaymentResumeHandler
 import io.primer.android.webRedirectShared.implementation.composer.presentation.WebRedirectLauncherParams
-import io.primer.bancontact.implementation.InstantExecutorExtension
+import io.primer.android.core.InstantExecutorExtension
 import io.primer.paymentMethodCoreUi.core.ui.navigation.launchers.PaymentMethodLauncherParams
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first

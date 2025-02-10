@@ -4,7 +4,7 @@ import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
-import io.primer.android.threeds.InstantExecutorExtension
+import io.primer.android.core.InstantExecutorExtension
 import io.primer.android.threeds.data.models.postAuth.error.ChallengeProtocolContinueAuthErrorDataRequest
 import io.primer.android.threeds.data.models.postAuth.error.ChallengeRuntimeContinueAuthErrorDataRequest
 import io.primer.android.threeds.data.models.postAuth.error.PreChallengeContinueAuthErrorDataRequest

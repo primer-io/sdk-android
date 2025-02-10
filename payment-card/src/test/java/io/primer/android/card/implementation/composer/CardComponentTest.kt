@@ -13,7 +13,6 @@ import io.mockk.mockk
 import io.mockk.spyk
 import io.mockk.verify
 import io.primer.android.PrimerSessionIntent
-import io.primer.android.card.InstantExecutorExtension
 import io.primer.android.card.implementation.composer.ui.navigation.CardNative3DSActivityLauncherParams
 import io.primer.android.card.implementation.composer.ui.navigation.CardProcessor3DSActivityLauncherParams
 import io.primer.android.card.implementation.composer.ui.navigation.MockCard3DSActivityLauncherParams
@@ -21,16 +20,17 @@ import io.primer.android.card.implementation.payment.delegate.CardPaymentDelegat
 import io.primer.android.card.implementation.payment.delegate.ProcessorThreeDsInitialLauncherParams
 import io.primer.android.card.implementation.payment.delegate.ThreeDsInitialLauncherParams
 import io.primer.android.card.implementation.tokenization.presentation.CardTokenizationDelegate
-import io.primer.android.card.toListDuring
 import io.primer.android.components.domain.core.models.card.PrimerCardData
 import io.primer.android.components.domain.core.models.card.PrimerCardMetadata
 import io.primer.android.components.domain.error.PrimerInputValidationError
 import io.primer.android.configuration.data.model.CardNetwork
 import io.primer.android.configuration.mock.presentation.MockConfigurationDelegate
+import io.primer.android.core.InstantExecutorExtension
 import io.primer.android.core.di.DISdkContext
 import io.primer.android.core.di.DependencyContainer
 import io.primer.android.core.di.SdkContainer
 import io.primer.android.core.extensions.getSerializableCompat
+import io.primer.android.core.toListDuring
 import io.primer.android.core.utils.CoroutineScopeProvider
 import io.primer.android.domain.payments.create.model.Payment
 import io.primer.android.errors.data.exception.PaymentMethodCancelledException

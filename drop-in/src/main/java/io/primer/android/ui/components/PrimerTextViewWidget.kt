@@ -7,7 +7,7 @@ import io.primer.android.core.di.DISdkComponent
 import io.primer.android.core.di.extensions.inject
 import io.primer.android.ui.settings.PrimerTheme
 
-internal class PrimerTextViewWidget constructor(
+internal class PrimerTextViewWidget(
     context: Context,
     attrs: AttributeSet? = null,
 ) : AppCompatTextView(context, attrs), DISdkComponent {

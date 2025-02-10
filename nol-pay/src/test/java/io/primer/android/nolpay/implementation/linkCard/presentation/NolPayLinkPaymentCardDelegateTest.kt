@@ -9,7 +9,7 @@ import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
 import io.mockk.verify
-import io.primer.android.nolpay.InstantExecutorExtension
+import io.primer.android.core.InstantExecutorExtension
 import io.primer.android.nolpay.api.manager.linkCard.composable.NolPayLinkCardStep
 import io.primer.android.nolpay.api.manager.linkCard.composable.NolPayLinkCollectableData
 import io.primer.android.nolpay.implementation.common.domain.NolPaySdkInitInteractor

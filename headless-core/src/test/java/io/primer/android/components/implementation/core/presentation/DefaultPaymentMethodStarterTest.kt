@@ -12,7 +12,7 @@ import io.mockk.runs
 import io.mockk.verify
 import io.primer.android.PrimerSessionIntent
 import io.primer.android.analytics.domain.AnalyticsInteractor
-import io.primer.android.components.InstantExecutorExtension
+import io.primer.android.core.InstantExecutorExtension
 import io.primer.android.components.domain.core.models.PrimerPaymentMethodManagerCategory
 import io.primer.android.paymentmethods.core.composer.composable.ComposerUiEvent
 import io.primer.android.paymentmethods.core.composer.provider.PaymentMethodProviderFactoryRegistry

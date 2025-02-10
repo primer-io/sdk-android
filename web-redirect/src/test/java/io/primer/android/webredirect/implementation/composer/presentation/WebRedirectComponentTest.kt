@@ -10,9 +10,11 @@ import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
 import io.mockk.spyk
 import io.primer.android.PrimerSessionIntent
+import io.primer.android.core.InstantExecutorExtension
 import io.primer.android.core.di.DISdkContext
 import io.primer.android.core.di.DependencyContainer
 import io.primer.android.core.di.SdkContainer
+import io.primer.android.core.toListDuring
 import io.primer.android.core.utils.CoroutineScopeProvider
 import io.primer.android.domain.tokenization.models.PrimerPaymentMethodTokenData
 import io.primer.android.paymentmethods.core.composer.composable.ComposerUiEvent
@@ -20,10 +22,8 @@ import io.primer.android.payments.core.status.domain.AsyncPaymentMethodPollingIn
 import io.primer.android.payments.core.status.domain.model.AsyncStatus
 import io.primer.android.payments.core.status.domain.model.AsyncStatusParams
 import io.primer.android.webRedirectShared.implementation.composer.presentation.WebRedirectLauncherParams
-import io.primer.android.webredirect.InstantExecutorExtension
 import io.primer.android.webredirect.implementation.payment.presentation.delegate.presentation.WebRedirectPaymentDelegate
 import io.primer.android.webredirect.implementation.tokenization.presentation.WebRedirectTokenizationDelegate
-import io.primer.android.webredirect.toListDuring
 import io.primer.paymentMethodCoreUi.core.ui.navigation.launchers.PaymentMethodLauncherParams
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi

@@ -8,7 +8,7 @@ import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
 import io.primer.android.components.domain.exception.VaultManagerFetchException
 import io.primer.android.core.domain.None
-import io.primer.android.vault.InstantExecutorExtension
+import io.primer.android.core.InstantExecutorExtension
 import io.primer.android.vault.implementation.vaultedMethods.data.model.PaymentMethodVaultTokenInternal
 import io.primer.android.vault.implementation.vaultedMethods.data.model.toVaultedPaymentMethod
 import io.primer.android.vault.implementation.vaultedMethods.domain.repository.VaultedPaymentMethodsRepository
