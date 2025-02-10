@@ -83,8 +83,6 @@ import io.primer.android.components.ui.assets.PrimerHeadlessUniversalCheckoutAss
 import io.primer.android.components.ui.assets.PrimerPaymentMethodAsset
 import io.primer.android.components.ui.assets.PrimerPaymentMethodNativeView
 import io.primer.android.domain.exception.UnsupportedPaymentIntentException
-import io.primer.android.components.SdkUninitializedException
-import io.primer.android.components.domain.core.models.PrimerPaymentMethodManagerCategory
 import io.primer.android.klarna.api.component.KlarnaComponent
 import io.primer.android.paymentmethods.common.data.model.PaymentMethodType
 import io.primer.android.qrcode.QrCodeCheckoutAdditionalInfo
