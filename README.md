@@ -58,15 +58,23 @@ Take a look at our [Quick Start Guide](https://primer.io/docs/get-started/androi
 
 Add the following to your `app/build.gradle` file:
 
+Using [bill of materials (BOM)][https://docs.gradle.org/6.2/userguide/platforms.html#sub:bom_import] available 
+to help you keep Primer artifacts up to date and be sure about version compatibility.
+
 ```kotlin{:copy}
 repositories {
   mavenCentral()
 }
-
 dependencies {
-  implementation 'io.primer:android:latest.version'
+   // define a BOM and its version
+   implementation(platform("io.primer:bom:latest.version"))
+
+   // define any required Primer artifacts without version
+   implementation("io.primer:android")
+   implementation("io.primer:3ds-android") // in case you are using 3DS SDK
 }
 ```
+
 For more details about SDK versions, please see our [changelog](https://www.notion.so/primerio/Android-SDK-8b4bd28444eb4af283678c9f2b5f46fe).
 
 It is highly recommended adding following settings to your `app/build.gradle` file:
