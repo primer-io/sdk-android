@@ -1,3 +1,10 @@
+## 2.36.3 (2025-02-11)
+
+### Fix
+
+- use 60 seconds instead of 15 seconds of timeout for payment resume
+- use 60 seconds instead of 15 seconds of timeout for payments (#866)
+
 ## 2.36.2 (2025-02-07)
 
 ### Fix
