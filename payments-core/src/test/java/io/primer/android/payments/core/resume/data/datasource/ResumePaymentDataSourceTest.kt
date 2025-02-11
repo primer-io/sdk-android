@@ -13,7 +13,7 @@ import io.primer.android.core.data.model.BaseRemoteHostRequest
 import io.primer.android.core.data.network.PrimerHttpClient
 import io.primer.android.core.data.network.exception.JsonDecodingException
 import io.primer.android.core.data.network.utils.PrimerTimeouts
-import io.primer.android.core.data.network.utils.PrimerTimeouts.PRIMER_15S_TIMEOUT
+import io.primer.android.core.data.network.utils.PrimerTimeouts.PRIMER_60S_TIMEOUT
 import io.primer.android.payments.core.resume.data.model.ResumePaymentDataRequest
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -48,7 +48,7 @@ class ResumePaymentDataSourceTest {
             val primerHttpClient =
                 mockk<PrimerHttpClient> {
                     every { okHttpClient } returns mockedOkHttpClient
-                    every { withTimeout(PRIMER_15S_TIMEOUT) } returns this
+                    every { withTimeout(PRIMER_60S_TIMEOUT) } returns this
                 }
             val tested = ResumePaymentDataSource(primerHttpClient) { apiVersion }
             val dataRequest = ResumePaymentDataRequest(resumeToken = "resumeToken")
@@ -87,7 +87,7 @@ class ResumePaymentDataSourceTest {
     fun `response is processed when the server responds in time`() =
         runTest {
             mockkObject(PrimerTimeouts)
-            every { PRIMER_15S_TIMEOUT } returns 200.milliseconds
+            every { PRIMER_60S_TIMEOUT } returns 200.milliseconds
             val mockWebServer =
                 MockWebServer().apply {
                     enqueue(MockResponse().setHeadersDelay(100, TimeUnit.MILLISECONDS))
@@ -118,7 +118,7 @@ class ResumePaymentDataSourceTest {
     fun `SocketTimeoutException is thrown when the server takes too long to respond`() =
         runTest {
             mockkObject(PrimerTimeouts)
-            every { PRIMER_15S_TIMEOUT } returns 100.milliseconds
+            every { PRIMER_60S_TIMEOUT } returns 100.milliseconds
             val mockWebServer =
                 MockWebServer().apply {
                     enqueue(MockResponse().setHeadersDelay(200, TimeUnit.MILLISECONDS))
