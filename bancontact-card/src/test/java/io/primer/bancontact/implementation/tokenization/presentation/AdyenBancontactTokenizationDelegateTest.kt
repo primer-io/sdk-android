@@ -12,9 +12,9 @@ import io.primer.android.bancontact.implementation.configuration.domain.model.Ad
 import io.primer.android.bancontact.implementation.tokenization.domain.AdyenBancontactTokenizationInteractor
 import io.primer.android.bancontact.implementation.tokenization.presentation.AdyenBancontactTokenizationDelegate
 import io.primer.android.bancontact.implementation.tokenization.presentation.composable.AdyenBancontactTokenizationInputable
+import io.primer.android.core.InstantExecutorExtension
 import io.primer.android.core.domain.None
 import io.primer.android.webRedirectShared.implementation.deeplink.domain.RedirectDeeplinkInteractor
-import io.primer.android.core.InstantExecutorExtension
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals

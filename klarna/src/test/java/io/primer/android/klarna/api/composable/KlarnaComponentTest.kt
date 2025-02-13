@@ -25,12 +25,12 @@ import io.primer.android.analytics.data.models.SdkIntegrationType
 import io.primer.android.components.domain.error.PrimerValidationError
 import io.primer.android.components.manager.core.composable.PrimerValidationStatus
 import io.primer.android.configuration.mock.presentation.MockConfigurationDelegate
+import io.primer.android.core.InstantExecutorExtension
 import io.primer.android.core.extensions.collectIn
 import io.primer.android.data.settings.PrimerSettings
 import io.primer.android.domain.error.models.PrimerError
 import io.primer.android.domain.tokenization.models.PrimerPaymentMethodTokenData
 import io.primer.android.errors.domain.ErrorMapperRegistry
-import io.primer.android.core.InstantExecutorExtension
 import io.primer.android.klarna.api.component.KlarnaComponent
 import io.primer.android.klarna.api.component.MOCK_EMISSION_DELAY
 import io.primer.android.klarna.implementation.analytics.KlarnaPaymentAnalyticsConstants

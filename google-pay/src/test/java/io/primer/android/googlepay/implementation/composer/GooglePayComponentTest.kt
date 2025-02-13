@@ -21,6 +21,7 @@ import io.primer.android.clientSessionActions.domain.ActionInteractor
 import io.primer.android.clientSessionActions.domain.models.ActionUpdateShippingOptionIdParams
 import io.primer.android.clientSessionActions.domain.models.MultipleActionUpdateParams
 import io.primer.android.configuration.mock.presentation.MockConfigurationDelegate
+import io.primer.android.core.InstantExecutorExtension
 import io.primer.android.core.di.DISdkContext
 import io.primer.android.core.di.DependencyContainer
 import io.primer.android.core.di.SdkContainer
@@ -32,7 +33,6 @@ import io.primer.android.core.toListDuring
 import io.primer.android.core.utils.CoroutineScopeProvider
 import io.primer.android.domain.tokenization.models.PrimerPaymentMethodTokenData
 import io.primer.android.errors.data.exception.PaymentMethodCancelledException
-import io.primer.android.core.InstantExecutorExtension
 import io.primer.android.googlepay.implementation.clientSessionActions.presentation.mapper.mapToMultipleActionUpdateParams
 import io.primer.android.googlepay.implementation.clientSessionActions.presentation.mapper.mapToShippingOptionIdParams
 import io.primer.android.googlepay.implementation.composer.ui.navigation.GooglePayNative3DSActivityLauncherParams

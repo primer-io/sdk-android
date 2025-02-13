@@ -15,10 +15,10 @@ import io.mockk.mockk
 import io.mockk.mockkStatic
 import io.mockk.unmockkStatic
 import io.primer.android.PrimerSessionIntent
+import io.primer.android.core.InstantExecutorExtension
 import io.primer.android.core.extensions.getSerializableCompat
 import io.primer.android.core.toListDuring
 import io.primer.android.errors.data.exception.PaymentMethodCancelledException
-import io.primer.android.core.InstantExecutorExtension
 import io.primer.android.googlepay.implementation.errors.domain.exception.GooglePayException
 import io.primer.android.googlepay.implementation.payment.delegate.GooglePayPaymentDelegate
 import io.primer.android.googlepay.implementation.payment.delegate.ProcessorThreeDsInitialLauncherParams

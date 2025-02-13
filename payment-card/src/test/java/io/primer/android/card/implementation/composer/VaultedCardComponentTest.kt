@@ -10,12 +10,12 @@ import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
 import io.primer.android.PrimerSessionIntent
-import io.primer.android.core.InstantExecutorExtension
 import io.primer.android.card.implementation.payment.delegate.CardPaymentDelegate
 import io.primer.android.card.implementation.payment.delegate.ProcessorThreeDsInitialLauncherParams
 import io.primer.android.card.implementation.payment.delegate.ThreeDsInitialLauncherParams
-import io.primer.android.core.toListDuring
+import io.primer.android.core.InstantExecutorExtension
 import io.primer.android.core.extensions.getSerializableCompat
+import io.primer.android.core.toListDuring
 import io.primer.android.errors.data.exception.PaymentMethodCancelledException
 import io.primer.android.paymentmethods.core.composer.composable.ComposerUiEvent
 import io.primer.android.processor3ds.domain.model.Processor3DS
