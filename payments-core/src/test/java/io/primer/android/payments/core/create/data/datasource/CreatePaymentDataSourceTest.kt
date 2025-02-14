@@ -13,10 +13,8 @@ import io.primer.android.core.data.model.BaseRemoteHostRequest
 import io.primer.android.core.data.network.PrimerHttpClient
 import io.primer.android.core.data.network.exception.JsonDecodingException
 import io.primer.android.core.data.network.utils.PrimerTimeouts
-import io.primer.android.core.data.network.utils.PrimerTimeouts.PRIMER_15S_TIMEOUT
+import io.primer.android.core.data.network.utils.PrimerTimeouts.PRIMER_60S_TIMEOUT
 import io.primer.android.payments.core.create.data.model.CreatePaymentDataRequest
-import io.primer.android.payments.core.resume.data.datasource.ResumePaymentDataSource
-import io.primer.android.payments.core.resume.data.model.ResumePaymentDataRequest
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.runTest
@@ -50,7 +48,7 @@ class CreatePaymentDataSourceTest {
             val primerHttpClient =
                 mockk<PrimerHttpClient> {
                     every { okHttpClient } returns mockedOkHttpClient
-                    every { withTimeout(PRIMER_15S_TIMEOUT) } returns this
+                    every { withTimeout(PRIMER_60S_TIMEOUT) } returns this
                 }
             val tested = CreatePaymentDataSource(primerHttpClient) { apiVersion }
             val dataRequest = CreatePaymentDataRequest("paymentMethodToken")
@@ -95,21 +93,21 @@ class CreatePaymentDataSourceTest {
     fun `response is processed when the server responds in time`() =
         runTest {
             mockkObject(PrimerTimeouts)
-            every { PRIMER_15S_TIMEOUT } returns 200.milliseconds
+            every { PRIMER_60S_TIMEOUT } returns 200.milliseconds
             val mockWebServer =
                 MockWebServer().apply {
                     enqueue(MockResponse().setHeadersDelay(100, TimeUnit.MILLISECONDS))
                     start()
                 }
-            val dataRequest = ResumePaymentDataRequest(resumeToken = "resumeToken")
+            val dataRequest = CreatePaymentDataRequest(paymentMethodToken = "paymentMethodToken")
             val input =
-                mockk<BaseRemoteHostRequest<Pair<String, ResumePaymentDataRequest>>> {
+                mockk<BaseRemoteHostRequest<CreatePaymentDataRequest>> {
                     every { host } returns mockWebServer.url("/").toString()
-                    every { data } returns Pair("paymentId", dataRequest)
+                    every { data } returns dataRequest
                 }
 
             val tested =
-                ResumePaymentDataSource(
+                CreatePaymentDataSource(
                     PrimerHttpClient(
                         okHttpClient = OkHttpClient().newBuilder().build(),
                         logProvider = mockk(),
@@ -126,21 +124,21 @@ class CreatePaymentDataSourceTest {
     fun `SocketTimeoutException is thrown when the server takes too long to respond`() =
         runTest {
             mockkObject(PrimerTimeouts)
-            every { PRIMER_15S_TIMEOUT } returns 100.milliseconds
+            every { PRIMER_60S_TIMEOUT } returns 100.milliseconds
             val mockWebServer =
                 MockWebServer().apply {
                     enqueue(MockResponse().setHeadersDelay(200, TimeUnit.MILLISECONDS))
                     start()
                 }
-            val dataRequest = ResumePaymentDataRequest(resumeToken = "resumeToken")
+            val dataRequest = CreatePaymentDataRequest(paymentMethodToken = "paymentMethodToken")
             val input =
-                mockk<BaseRemoteHostRequest<Pair<String, ResumePaymentDataRequest>>> {
+                mockk<BaseRemoteHostRequest<CreatePaymentDataRequest>> {
                     every { host } returns mockWebServer.url("/").toString()
-                    every { data } returns Pair("paymentId", dataRequest)
+                    every { data } returns dataRequest
                 }
 
             val tested =
-                ResumePaymentDataSource(
+                CreatePaymentDataSource(
                     PrimerHttpClient(
                         okHttpClient = OkHttpClient().newBuilder().build(),
                         logProvider = mockk(),

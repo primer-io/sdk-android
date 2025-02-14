@@ -5,9 +5,9 @@ import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import io.primer.android.PrimerSessionIntent
+import io.primer.android.core.InstantExecutorExtension
 import io.primer.android.core.domain.None
 import io.primer.android.webRedirectShared.implementation.deeplink.domain.RedirectDeeplinkInteractor
-import io.primer.android.core.InstantExecutorExtension
 import io.primer.android.webredirect.implementation.configuration.domain.WebRedirectConfigurationInteractor
 import io.primer.android.webredirect.implementation.configuration.domain.model.WebRedirectConfig
 import io.primer.android.webredirect.implementation.configuration.domain.model.WebRedirectConfigParams

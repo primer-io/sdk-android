@@ -8,9 +8,9 @@ import io.mockk.mockk
 import io.mockk.mockkObject
 import io.mockk.unmockkObject
 import io.primer.android.analytics.domain.repository.AnalyticsRepository
-import io.primer.android.core.InstantExecutorExtension
 import io.primer.android.components.PrimerHeadlessUniversalCheckout
 import io.primer.android.components.PrimerHeadlessUniversalCheckoutListener
+import io.primer.android.core.InstantExecutorExtension
 import io.primer.android.data.settings.PrimerPaymentHandling
 import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.domain.error.models.PrimerError

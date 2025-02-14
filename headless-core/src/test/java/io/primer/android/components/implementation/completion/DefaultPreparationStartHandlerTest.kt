@@ -10,10 +10,10 @@ import io.mockk.unmockkObject
 import io.mockk.verify
 import io.primer.android.analytics.domain.models.SdkFunctionParams
 import io.primer.android.analytics.domain.repository.AnalyticsRepository
-import io.primer.android.core.InstantExecutorExtension
 import io.primer.android.components.PrimerHeadlessUniversalCheckout
 import io.primer.android.components.PrimerHeadlessUniversalCheckoutUiListener
 import io.primer.android.components.implementation.HeadlessUniversalCheckoutAnalyticsConstants
+import io.primer.android.core.InstantExecutorExtension
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first

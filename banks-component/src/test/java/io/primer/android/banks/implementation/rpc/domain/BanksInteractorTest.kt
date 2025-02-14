@@ -6,10 +6,10 @@ import io.mockk.coVerify
 import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
-import io.primer.android.core.InstantExecutorExtension
 import io.primer.android.banks.implementation.rpc.domain.models.IssuingBank
 import io.primer.android.banks.implementation.rpc.domain.models.IssuingBankParams
 import io.primer.android.banks.implementation.rpc.domain.repository.IssuingBankRepository
+import io.primer.android.core.InstantExecutorExtension
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals

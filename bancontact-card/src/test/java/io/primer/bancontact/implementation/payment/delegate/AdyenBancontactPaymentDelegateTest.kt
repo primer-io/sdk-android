@@ -7,6 +7,7 @@ import io.primer.android.PrimerSessionIntent
 import io.primer.android.bancontact.implementation.payment.delegate.AdyenBancontactPaymentDelegate
 import io.primer.android.bancontact.implementation.payment.resume.handler.AydenBancontactDecision
 import io.primer.android.bancontact.implementation.payment.resume.handler.AydenBancontactResumeHandler
+import io.primer.android.core.InstantExecutorExtension
 import io.primer.android.errors.domain.BaseErrorResolver
 import io.primer.android.paymentmethods.common.data.model.PaymentMethodType
 import io.primer.android.paymentmethods.core.composer.composable.ComposerUiEvent
@@ -15,7 +16,6 @@ import io.primer.android.payments.core.helpers.CheckoutErrorHandler
 import io.primer.android.payments.core.helpers.CheckoutSuccessHandler
 import io.primer.android.payments.core.resume.domain.handler.PaymentResumeHandler
 import io.primer.android.webRedirectShared.implementation.composer.presentation.WebRedirectLauncherParams
-import io.primer.android.core.InstantExecutorExtension
 import io.primer.paymentMethodCoreUi.core.ui.navigation.launchers.PaymentMethodLauncherParams
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first

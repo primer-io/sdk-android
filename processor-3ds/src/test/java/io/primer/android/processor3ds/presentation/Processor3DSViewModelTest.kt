@@ -8,9 +8,9 @@ import io.mockk.mockk
 import io.mockk.verify
 import io.primer.android.analytics.domain.AnalyticsInteractor
 import io.primer.android.analytics.domain.models.BaseAnalyticsParams
+import io.primer.android.core.InstantExecutorExtension
 import io.primer.android.payments.core.status.domain.AsyncPaymentMethodPollingInteractor
 import io.primer.android.payments.core.status.domain.model.AsyncStatus
-import io.primer.android.core.InstantExecutorExtension
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flow

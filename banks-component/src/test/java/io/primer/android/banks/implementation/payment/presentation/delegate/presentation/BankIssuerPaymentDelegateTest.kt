@@ -3,10 +3,10 @@ package io.primer.android.banks.implementation.payment.presentation.delegate.pre
 import io.mockk.coEvery
 import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
-import io.primer.android.core.InstantExecutorExtension
 import io.primer.android.PrimerSessionIntent
 import io.primer.android.banks.implementation.payment.resume.handler.BankIssuerDecision
 import io.primer.android.banks.implementation.payment.resume.handler.BankIssuerResumeHandler
+import io.primer.android.core.InstantExecutorExtension
 import io.primer.android.errors.domain.BaseErrorResolver
 import io.primer.android.paymentmethods.common.data.model.PaymentMethodType
 import io.primer.android.paymentmethods.core.composer.composable.ComposerUiEvent

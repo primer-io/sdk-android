@@ -20,6 +20,9 @@ detekt {
     debug = true
     parallel = true
     disableDefaultRuleSets = false
+    autoCorrect = true
+
+    autoCorrect = true
 
     ignoredBuildTypes = ["debug"]
 

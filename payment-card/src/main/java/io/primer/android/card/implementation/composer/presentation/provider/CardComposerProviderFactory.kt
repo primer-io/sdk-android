@@ -8,7 +8,7 @@ import io.primer.android.paymentmethods.core.composer.PaymentMethodComposer
 import io.primer.android.paymentmethods.core.composer.provider.PaymentMethodComposerProvider
 import io.primer.android.payments.core.helpers.PaymentMethodPaymentDelegate
 
- class CardComposerProviderFactory : PaymentMethodComposerProvider.Factory {
+class CardComposerProviderFactory : PaymentMethodComposerProvider.Factory {
     override fun create(
         paymentMethodType: String,
         sessionIntent: PrimerSessionIntent,

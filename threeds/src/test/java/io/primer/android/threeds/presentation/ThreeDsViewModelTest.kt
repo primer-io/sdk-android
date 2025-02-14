@@ -13,9 +13,9 @@ import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
 import io.mockk.verify
 import io.primer.android.analytics.domain.AnalyticsInteractor
+import io.primer.android.core.InstantExecutorExtension
 import io.primer.android.data.settings.PrimerSettings
 import io.primer.android.payments.core.tokenization.data.model.ResponseCode
-import io.primer.android.core.InstantExecutorExtension
 import io.primer.android.threeds.data.models.auth.BeginAuthResponse
 import io.primer.android.threeds.data.models.postAuth.PostAuthResponse
 import io.primer.android.threeds.domain.interactor.ThreeDsInteractor

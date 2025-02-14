@@ -17,7 +17,6 @@ import io.mockk.mockkStatic
 import io.mockk.unmockkObject
 import io.mockk.unmockkStatic
 import io.mockk.verify
-import io.primer.android.core.InstantExecutorExtension
 import io.primer.android.PrimerSessionIntent
 import io.primer.android.banks.di.BankWebRedirectComposer
 import io.primer.android.banks.implementation.rpc.domain.models.IssuingBank
@@ -30,6 +29,7 @@ import io.primer.android.components.manager.banks.analytics.BanksAnalyticsConsta
 import io.primer.android.components.manager.banks.composable.BanksCollectableData
 import io.primer.android.components.manager.banks.composable.BanksStep
 import io.primer.android.components.manager.core.composable.PrimerValidationStatus
+import io.primer.android.core.InstantExecutorExtension
 import io.primer.android.core.extensions.collectIn
 import io.primer.android.domain.error.models.PrimerError
 import io.primer.android.errors.domain.ErrorMapperRegistry

@@ -5,8 +5,9 @@ import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
-import io.primer.android.errors.domain.BaseErrorResolver
 import io.primer.android.core.InstantExecutorExtension
+import io.primer.android.core.toListDuring
+import io.primer.android.errors.domain.BaseErrorResolver
 import io.primer.android.nolpay.api.manager.payment.composable.NolPayPaymentCollectableData
 import io.primer.android.nolpay.api.manager.payment.composable.NolPayPaymentStep
 import io.primer.android.nolpay.implementation.paymentCard.completion.domain.NolPayCompletePaymentInteractor
@@ -15,7 +16,6 @@ import io.primer.android.nolpay.implementation.paymentCard.completion.domain.mod
 import io.primer.android.nolpay.implementation.paymentCard.completion.domain.model.NolPayRequestPaymentParams
 import io.primer.android.nolpay.implementation.paymentCard.payment.resume.handler.NolPayResumeDecision
 import io.primer.android.nolpay.implementation.paymentCard.payment.resume.handler.NolPayResumeHandler
-import io.primer.android.core.toListDuring
 import io.primer.android.payments.core.create.domain.handler.PaymentMethodTokenHandler
 import io.primer.android.payments.core.create.domain.model.PaymentDecision
 import io.primer.android.payments.core.helpers.CheckoutErrorHandler

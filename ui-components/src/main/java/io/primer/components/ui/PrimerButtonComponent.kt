@@ -1,4 +1,4 @@
-package io.primer.ui_components
+package io.primer.components.ui
 
 import androidx.compose.foundation.Image
 import androidx.compose.material3.ButtonDefaults
@@ -13,14 +13,14 @@ import io.primer.android.components.domain.core.models.PrimerHeadlessUniversalCh
 import io.primer.android.components.ui.assets.PrimerHeadlessUniversalCheckoutAssetsManager
 
 @Composable
-fun PrimerPaymentMethodButtonComponent(
+fun PrimerButtonComponent(
     modifier: Modifier = Modifier,
     paymentMethod: PrimerHeadlessUniversalCheckoutPaymentMethod,
     onMethodSelected: (PrimerHeadlessUniversalCheckoutPaymentMethod) -> Unit,
 ) {
     val asset = PrimerHeadlessUniversalCheckoutAssetsManager.getPaymentMethodAsset(
         context = LocalContext.current,
-        paymentMethodType = paymentMethod.paymentMethodType
+        paymentMethodType = paymentMethod.paymentMethodType,
     )
     OutlinedButton(
         onClick = {
@@ -28,10 +28,11 @@ fun PrimerPaymentMethodButtonComponent(
         },
         colors = ButtonDefaults.buttonColors()
             .copy(containerColor = asset.paymentMethodBackgroundColor.colored?.let { Color(it) } ?: Color.White),
-        modifier = modifier) {
+        modifier = modifier,
+    ) {
         Image(
             bitmap = asset.paymentMethodLogo.colored?.toBitmap()?.asImageBitmap()!!,
-            contentDescription = "Pay using ${paymentMethod.paymentMethodName}"
+            contentDescription = "Pay using ${paymentMethod.paymentMethodName}",
         )
     }
 }

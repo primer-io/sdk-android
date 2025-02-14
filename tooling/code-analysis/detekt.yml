@@ -10,6 +10,10 @@ complexity:
     excludes: [ '**/test/**', '**/*.Test.kt', '**/*.Spec.kt' ]
   LargeClass:
     excludes: [ '**/test/**', '**/*.Test.kt', '**/*.Spec.kt' ]
+naming:
+  active: true
+  FunctionNaming:
+    ignoreAnnotated: [ 'Composable' ]
 formatting:
   android: true
   autoCorrect: true
