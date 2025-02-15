@@ -18,8 +18,8 @@ import androidx.compose.ui.unit.dp
 @Suppress("all")
 @Composable
 fun PrimerCardFormComponent(
-    modifier: Modifier = Modifier,
-    onFieldsValidated: () -> Unit,
+    modifier: Modifier = Modifier, // TODO TWS: use this modifier
+    onFieldsValidated: () -> Unit, // TODO TWS: callback doesn't match compose naming convention
 ) {
     var cardNumber by remember { mutableStateOf("") }
     var expiry by remember { mutableStateOf("") }

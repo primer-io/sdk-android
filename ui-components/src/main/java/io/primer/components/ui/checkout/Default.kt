@@ -24,12 +24,13 @@ import kotlinx.coroutines.launch
 
 @Composable
 internal fun DefaultCheckoutContent(
+    modifier: Modifier = Modifier,
     scope: PaymentFlowScope,
     onPaymentCompleted: (PaymentResult) -> Unit,
 ) {
     val selectedMethod by scope.selectedMethod.collectAsState()
     val coroutineScope = rememberCoroutineScope()
-    Column(modifier = Modifier.fillMaxWidth()) {
+    Column(modifier = modifier.fillMaxWidth()) {
         when (selectedMethod) {
             null -> {
                 val methods by scope.paymentMethods.collectAsState()
@@ -64,7 +65,7 @@ internal fun DefaultCheckoutContent(
                             },
                             enabled = methodState.validationState.isValid,
                         ) {
-                            Text("Pay with ${method.paymentMethodName.orEmpty()}")
+                            Text("Pay with ${method.paymentMethodName.orEmpty()}") // TODO TWS: use string resources
                         }
                     }
                 }

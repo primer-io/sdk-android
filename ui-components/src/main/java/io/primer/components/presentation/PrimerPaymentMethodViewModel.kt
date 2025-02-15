@@ -5,8 +5,7 @@ import io.primer.android.components.domain.core.models.PrimerHeadlessUniversalCh
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
-class PrimerPaymentMethodViewModel : ViewModel() {
-
+internal class PrimerPaymentMethodViewModel : ViewModel() {
     private val _selectedMethod = MutableStateFlow<PrimerHeadlessUniversalCheckoutPaymentMethod?>(null)
     val selectedMethod = _selectedMethod.asStateFlow()
 

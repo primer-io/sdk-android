@@ -14,7 +14,15 @@ import io.primer.android.klarna.api.component.KlarnaComponent
 import io.primer.android.klarna.api.composable.KlarnaPaymentCollectableData
 import io.primer.android.klarna.api.composable.KlarnaPaymentStep
 import io.primer.android.klarna.implementation.session.domain.models.KlarnaPaymentCategory
+import io.primer.android.paymentmethods.manager.component.PrimerHeadlessCollectDataComponent
 
+/**
+ * A composable that dynamically renders UI for [PrimerHeadlessCollectDataComponent] implementations.
+ *
+ * @param modifier The [Modifier] to be applied to the component.
+ * @param component The [PrimerHeadlessCollectDataComponent] managing the data collection flow.
+ */
+// TODO TWS: create internal implementation for all relevant payment methods
 @Composable
 fun PrimerDynamicComponent(
     modifier: Modifier = Modifier,
@@ -25,7 +33,7 @@ fun PrimerDynamicComponent(
 
     var paymentCategories by remember { mutableStateOf<List<KlarnaPaymentCategory>>(emptyList()) }
 
-    LaunchedEffect("") {
+    LaunchedEffect("") { // TODO TWS: we likely want to restart every time the component instance changes
         component.start()
     }
 
@@ -35,8 +43,8 @@ fun PrimerDynamicComponent(
 
             is KlarnaPaymentStep.PaymentSessionCreated -> {
                 PrimerRadioGroupComponent(
-                    options = step.paymentCategories.map { it.name },
                     modifier = modifier,
+                    options = step.paymentCategories.map { it.name },
                 ) { selected ->
                     component.updateCollectedData(
                         KlarnaPaymentCollectableData.PaymentOptions(
@@ -53,8 +61,8 @@ fun PrimerDynamicComponent(
             KlarnaPaymentStep.PaymentSessionFinalized -> Unit
             is KlarnaPaymentStep.PaymentViewLoaded -> {
                 PrimerRadioGroupComponent(
-                    options = paymentCategories.map { it.name },
                     modifier = modifier,
+                    options = paymentCategories.map { it.name },
                 ) { selected ->
                     component.updateCollectedData(
                         KlarnaPaymentCollectableData.PaymentOptions(
@@ -64,7 +72,7 @@ fun PrimerDynamicComponent(
                         ),
                     )
                 }
-                PrimerAndroidViewComponent(step.paymentView)
+                PrimerAndroidViewComponent(view = step.paymentView)
             }
 
             null -> Unit

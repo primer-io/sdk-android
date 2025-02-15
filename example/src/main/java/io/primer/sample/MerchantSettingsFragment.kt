@@ -264,6 +264,10 @@ class MerchantSettingsFragment : Fragment() {
             headlessManagerViewModel.callbacks.clear()
             findNavController().navigate(R.id.action_MerchantSettingsFragment_to_MerchantCheckoutFragment)
         }
+        binding.componentsButton.setOnClickListener {
+            headlessManagerViewModel.callbacks.clear()
+            findNavController().navigate(R.id.action_FirstFragment_to_ComponentsFragment)
+        }
     }
 
     override fun onDestroyView() {

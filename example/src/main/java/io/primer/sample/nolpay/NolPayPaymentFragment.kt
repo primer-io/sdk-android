@@ -52,7 +52,7 @@ class NolPayPaymentFragment : Fragment() {
                 headlessManagerViewModel.uiState.observe(viewLifecycleOwner) { state ->
                     when (state) {
                         is UiState.ShowError -> findNavController().navigate(
-                            R.id.action_NolPayPaymentFragment_to_NolFragment
+                            R.id.action_NolPayPaymentFragment_to_HeadlessFragment
                         )
 
                         else -> Unit
@@ -111,7 +111,7 @@ class NolPayPaymentFragment : Fragment() {
                             )
                                 .show()
                             findNavController().navigate(
-                                R.id.action_NolPayPaymentFragment_to_NolFragment
+                                R.id.action_NolPayPaymentFragment_to_HeadlessFragment
                             )
                         }
                     }

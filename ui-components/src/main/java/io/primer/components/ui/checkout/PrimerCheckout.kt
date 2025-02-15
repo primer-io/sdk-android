@@ -26,8 +26,19 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 
+/**
+ * A composable function that serves as the entry point for initiating and managing payments using the Primer SDK.
+ *
+ * @param modifier The [Modifier] to be applied to the layout.
+ * @param clientToken The client token required for authorization.
+ * @param onPaymentCompleted A callback invoked upon successful completion of a payment.
+ * @param content An optional composable lambda that allows building a completely custom checkout UI using data provided
+ * by a [PaymentFlowScope]. If omitted, the default implementation displays payment methods in a vertically scrollable
+ * list.
+ */
 @Composable
 fun PrimerCheckout(
+    modifier: Modifier = Modifier,
     clientToken: String,
     onPaymentCompleted: (PaymentResult) -> Unit = {},
     content: (@Composable PaymentFlowScope.() -> Unit)? = null,
@@ -106,6 +117,6 @@ fun PrimerCheckout(
     if (content != null) {
         content(scope)
     } else {
-        DefaultCheckoutContent(scope, onPaymentCompleted)
+        DefaultCheckoutContent(modifier = modifier, scope = scope, onPaymentCompleted = onPaymentCompleted)
     }
 }

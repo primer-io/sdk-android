@@ -20,36 +20,49 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
+/**
+ * A composable radio group component that allows users to select an option from a list.
+ *
+ * @param modifier The [Modifier] to be applied to the radio group container.
+ * @param options A list of string options to be displayed as selectable items.
+ * @param onSelectionChange A callback triggered when an option is selected, providing the selected value.
+ */
 @Composable
-fun PrimerRadioGroupComponent(options: List<String>, modifier: Modifier, onOptionSelected: (String) -> Unit) {
+fun PrimerRadioGroupComponent(
+    modifier: Modifier = Modifier,
+    options: List<String>,
+    onSelectionChange: (String) -> Unit,
+) {
     // State to keep track of the selected option
     var selectedOption by remember { mutableStateOf(options.firstOrNull()) }
 
-    Column(modifier = modifier.border(border = BorderStroke(2.dp, Color.Blue), shape = CutCornerShape(8.dp))) {
+    Column(
+        modifier = modifier.border(border = BorderStroke(2.dp, Color.Blue), shape = CutCornerShape(8.dp)),
+    ) { // TODO TWS: don't hardcode colors or dimens
         options.forEach { option ->
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                modifier = modifier
+                modifier = modifier // TODO TWS: modifiers shouldn't be reused like this
                     .fillMaxWidth()
                     .selectable(
                         selected = (option == selectedOption),
                         onClick = {
                             selectedOption = option
-                            onOptionSelected(option)
+                            onSelectionChange(option)
                         },
                     )
-                    .padding(8.dp),
+                    .padding(8.dp), // TODO TWS: don't hardcode dimens
             ) {
                 RadioButton(
                     selected = (option == selectedOption),
                     onClick = {
                         selectedOption = option
-                        onOptionSelected(option)
+                        onSelectionChange(option)
                     },
                 )
                 Text(
                     text = option,
-                    modifier = Modifier.padding(start = 8.dp),
+                    modifier = Modifier.padding(start = 8.dp), // TODO TWS: don't hardcode dimens
                 )
             }
         }
