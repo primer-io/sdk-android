@@ -1,4 +1,4 @@
-package io.primer.components.ui
+package io.primer.components.ui.components.cardform
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -12,15 +12,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import io.primer.components.Primer
 
-@Suppress("all")
 @Composable
-fun PrimerCardFormComponent(
-    modifier: Modifier = Modifier, // TODO TWS: use this modifier
-    onFieldsValidated: () -> Unit, // TODO TWS: callback doesn't match compose naming convention
-) {
+fun PrimerCardComponent(scope: Primer.Scope.PaymentMethod.Card) {
     var cardNumber by remember { mutableStateOf("") }
     var expiry by remember { mutableStateOf("") }
     var cvv by remember { mutableStateOf("") }
@@ -31,6 +29,7 @@ fun PrimerCardFormComponent(
             .fillMaxWidth()
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         TextField(
             value = cardNumber,

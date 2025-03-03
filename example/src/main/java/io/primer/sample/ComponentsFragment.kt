@@ -21,6 +21,8 @@ import com.google.gson.GsonBuilder
 import io.primer.android.qrcode.QrCodeCheckoutAdditionalInfo
 import io.primer.android.stripe.ach.api.additionalInfo.AchAdditionalInfo
 import io.primer.android.vouchers.multibanco.MultibancoCheckoutAdditionalInfo
+import io.primer.components.PrimerCheckout
+import io.primer.components.ui.examples.CustomComponentExample
 import io.primer.sample.databinding.FragmentComponentsBinding
 import io.primer.sample.datamodels.CheckoutDataWithError
 import io.primer.sample.datamodels.TransactionState
@@ -251,10 +253,18 @@ class ComponentsFragment : Fragment() {
     private fun setupPaymentMethod() {
         binding.composeView.setContent {
             Scaffold {
-                Box(modifier = Modifier
-                    .fillMaxSize()
-                    .padding(it)) {
-                    io.primer.components.ui.checkout.PrimerCheckout(clientToken = "test")
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(it)
+                ) {
+//                    PrimerCheckout()
+                    PrimerCheckout {
+//                        ListExample()
+//                        TabLayoutExample()
+                        CustomComponentExample()
+//                        RadioGroupExample()
+                    }
                 }
             }
         }
