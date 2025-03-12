@@ -18,6 +18,7 @@ import io.primer.android.paymentmethods.common.data.model.PaymentMethodType
 import io.primer.android.paymentmethods.core.composer.provider.PaymentMethodProviderFactoryRegistry
 import io.primer.android.paymentmethods.core.composer.provider.VaultedPaymentMethodProviderFactoryRegistry
 import io.primer.android.paymentmethods.core.ui.navigation.PaymentMethodNavigationFactoryRegistry
+import io.primer.android.webRedirectShared.implementation.composer.ui.assets.IdealBrand
 import io.primer.android.webRedirectShared.implementation.composer.ui.navigation.provider.WebRedirectNavigatorProviderFactory
 import io.primer.android.webredirect.di.WebRedirectContainer
 import io.primer.android.webredirect.implementation.composer.presentation.provider.WebRedirectComposerProviderFactory
@@ -163,6 +164,7 @@ internal class WebRedirectPaymentMethod(
                 brandRegistry.register(paymentMethodType = PaymentMethodType.RAPYD_GRABPAY.name, GrabPayBrand())
                 brandRegistry.register(paymentMethodType = PaymentMethodType.HOOLAH.name, HoolahBrand())
                 brandRegistry.register(paymentMethodType = PaymentMethodType.ADYEN_INTERAC.name, InteracBrand())
+                brandRegistry.register(paymentMethodType = PaymentMethodType.ADYEN_IDEAL.name, IdealBrand())
                 brandRegistry.register(paymentMethodType = PaymentMethodType.ADYEN_MOBILEPAY.name, MobilePayBrand())
                 brandRegistry.register(paymentMethodType = PaymentMethodType.OPENNODE.name, OpenNodeBrand())
                 brandRegistry.register(paymentMethodType = PaymentMethodType.PAY_NL_P24.name, P24Brand())

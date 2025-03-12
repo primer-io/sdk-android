@@ -61,9 +61,7 @@ internal class DefaultPaymentMethodMapping(
                     PaymentMethodType.PRIMER_TEST_PAYPAL -> SandboxProcessorPayPalFactory(type).build()
                     PaymentMethodType.PAYPAL -> PayPalFactory(type).build()
 
-                    PaymentMethodType.ADYEN_IDEAL,
-                    PaymentMethodType.ADYEN_DOTPAY,
-                    -> BankIssuerFactory(type).build()
+                    PaymentMethodType.ADYEN_DOTPAY -> BankIssuerFactory(type).build()
 
                     PaymentMethodType.ADYEN_BLIK -> OtpFactory(type).build()
                     PaymentMethodType.ADYEN_BANCONTACT_CARD -> AdyenBancontactFactory().build()

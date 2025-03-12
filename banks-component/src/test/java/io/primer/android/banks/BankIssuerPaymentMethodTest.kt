@@ -10,7 +10,7 @@ import io.mockk.verify
 import io.primer.android.assets.ui.registry.BrandRegistry
 import io.primer.android.banks.implementation.composer.provider.BankIssuerComposerProviderFactory
 import io.primer.android.banks.implementation.composer.ui.assets.DotpayBrand
-import io.primer.android.banks.implementation.composer.ui.assets.IdealBrand
+import io.primer.android.webRedirectShared.implementation.composer.ui.assets.IdealBrand
 import io.primer.android.configuration.data.model.ConfigurationData
 import io.primer.android.configuration.data.model.PaymentMethodConfigDataResponse
 import io.primer.android.data.settings.internal.PrimerConfig
@@ -126,7 +126,6 @@ internal class BankIssuerPaymentMethodTest {
 
         with(brandRegistry) {
             verify { register(PaymentMethodType.ADYEN_DOTPAY.name, ofType<DotpayBrand>()) }
-            verify { register(PaymentMethodType.ADYEN_IDEAL.name, ofType<IdealBrand>()) }
             verify { register(PaymentMethodType.BUCKAROO_IDEAL.name, ofType<IdealBrand>()) }
             verify { register(PaymentMethodType.MOLLIE_IDEAL.name, ofType<IdealBrand>()) }
             verify { register(PaymentMethodType.PAY_NL_IDEAL.name, ofType<IdealBrand>()) }

@@ -127,20 +127,6 @@ internal class PaymentMethodMappingTest {
     }
 
     @Test
-    fun `test maps adyen ideal correctly`() {
-        when (
-            val result =
-                mapping.getPaymentMethodFor(
-                    PaymentMethodImplementationType.NATIVE_SDK,
-                    PaymentMethodType.ADYEN_IDEAL.name,
-                )
-        ) {
-            is Failure -> assertFails {}
-            is Success -> assertEquals(result.value.type, PaymentMethodType.ADYEN_IDEAL.name)
-        }
-    }
-
-    @Test
     fun `test maps adyen dotpay correctly`() {
         when (
             val result =
