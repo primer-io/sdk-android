@@ -1,6 +1,7 @@
-package io.primer.android.threeds.domain
+package io.primer.android.threeds.domain.interactor
 
 import android.app.Activity
+import com.netcetera.threeds.sdk.api.exceptions.SDKRuntimeException
 import com.netcetera.threeds.sdk.api.transaction.Transaction
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
@@ -22,8 +23,6 @@ import io.primer.android.payments.core.tokenization.data.model.ResponseCode
 import io.primer.android.payments.core.tokenization.domain.repository.TokenizedPaymentMethodRepository
 import io.primer.android.threeds.data.models.auth.BeginAuthResponse
 import io.primer.android.threeds.data.models.postAuth.PostAuthResponse
-import io.primer.android.threeds.domain.interactor.DefaultThreeDsInteractor
-import io.primer.android.threeds.domain.interactor.ThreeDsInteractor
 import io.primer.android.threeds.domain.models.BaseThreeDsParams
 import io.primer.android.threeds.domain.models.ChallengeStatusData
 import io.primer.android.threeds.domain.models.ThreeDsAuthParams
@@ -52,7 +51,7 @@ import java.util.UUID
 
 @ExperimentalCoroutinesApi
 @ExtendWith(InstantExecutorExtension::class, MockKExtension::class)
-internal class ThreeDsInteractorTest {
+internal class DefaultThreeDsInteractorTest {
     @RelaxedMockK
     internal lateinit var threeDsSdkClassValidator: ThreeDsSdkClassValidator
 
@@ -412,6 +411,34 @@ internal class ThreeDsInteractorTest {
             }
 
         coVerify { threeDsServiceRepository.performChallenge(any(), any(), any(), any(), any()) }
+
+        assertEquals(exception.javaClass, capturedException.javaClass)
+        assertEquals(exception.message, capturedException.message)
+    }
+
+    @Test
+    fun `performChallenge() should dispatch error events when fetching appUrl encounters error`() {
+        val activity = mockk<Activity>(relaxed = true)
+        val transaction = mockk<Transaction>(relaxed = true)
+        val authResponse = mockk<BeginAuthResponse>(relaxed = true)
+        val challengeStatusData = mockk<ChallengeStatusData>()
+
+        val exception = mockk<SDKRuntimeException>(relaxed = true)
+
+        every {
+            threeDsAppUrlRepository.getAppUrl(any())
+        }.throws(exception)
+
+        val capturedException =
+            assertThrows<Exception> {
+                runTest {
+                    val statusData =
+                        interactor.performChallenge(activity, transaction, authResponse).first()
+                    assertEquals(challengeStatusData, statusData)
+                }
+            }
+        verify { threeDsAppUrlRepository.getAppUrl(any()) }
+        coVerify(exactly = 0) { threeDsServiceRepository.performChallenge(any(), any(), any(), any(), any()) }
 
         assertEquals(exception.javaClass, capturedException.javaClass)
         assertEquals(exception.message, capturedException.message)

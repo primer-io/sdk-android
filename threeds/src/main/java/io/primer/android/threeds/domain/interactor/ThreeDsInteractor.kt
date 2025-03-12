@@ -32,7 +32,10 @@ import io.primer.android.threeds.helpers.ThreeDsLibraryVersionValidator
 import io.primer.android.threeds.helpers.ThreeDsSdkClassValidator
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.withContext
 
 internal interface ThreeDsInteractor {
@@ -129,26 +132,28 @@ internal class DefaultThreeDsInteractor(
             )
         }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     override fun performChallenge(
         activity: Activity,
         transaction: Transaction,
         authResponse: BeginAuthResponse,
-    ) = threeDsServiceRepository.performChallenge(
-        activity,
-        transaction,
-        authResponse,
-        threeDsAppUrlRepository.getAppUrl(transaction) ?: run {
-            when (
-                authResponse.authentication.protocolVersion.orEmpty() >=
-                    ProtocolVersion.V_220.versionNumber
-            ) {
-                true -> logReporter.warn(PRIMER_INVALID_APP_URL_ERROR, ANALYTICS_3DS_COMPONENT)
-                false -> Unit
-            }
-            null
-        },
-        authResponse.authentication.protocolVersion.orEmpty(),
-    )
+    ) = flow {
+        val appUrl = threeDsAppUrlRepository.getAppUrl(transaction)
+        if (appUrl == null &&
+            authResponse.authentication.protocolVersion.orEmpty() >= ProtocolVersion.V_220.versionNumber
+        ) {
+            logReporter.warn(PRIMER_INVALID_APP_URL_ERROR, ANALYTICS_3DS_COMPONENT)
+        }
+        emit(appUrl)
+    }.flatMapLatest { threeDsUrl ->
+        threeDsServiceRepository.performChallenge(
+            activity,
+            transaction,
+            authResponse,
+            threeDsUrl,
+            authResponse.authentication.protocolVersion.orEmpty(),
+        )
+    }
 
     override suspend fun continueRemoteAuth(
         challengeStatusData: ChallengeStatusData,
