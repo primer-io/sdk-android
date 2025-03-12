@@ -22,7 +22,6 @@ import io.primer.android.threeds.domain.models.ChallengeStatusData
 import io.primer.android.threeds.domain.models.ThreeDsCheckoutParams
 import io.primer.android.threeds.domain.models.ThreeDsInitParams
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.launch
 
 @Suppress("TooManyFunctions")
@@ -114,8 +113,7 @@ internal class ThreeDsViewModel(
                 ).catch { throwable ->
                     logThreeDsScreenDismissed()
                     _threeDsErrorEvent.postValue(throwable)
-                    transaction.close()
-                }.onCompletion { challengeInProgress = false }.collect {
+                }.collect {
                     logThreeDsScreenDismissed()
                     _threeDsStatusChangedEvent.postValue(it)
                 }

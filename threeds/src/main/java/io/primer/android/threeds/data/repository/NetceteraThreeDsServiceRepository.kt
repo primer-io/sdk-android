@@ -2,7 +2,6 @@ package io.primer.android.threeds.data.repository
 
 import android.app.Activity
 import android.content.Context
-import android.os.Build
 import com.netcetera.threeds.sdk.ThreeDS2ServiceInstance
 import com.netcetera.threeds.sdk.api.ThreeDS2Service
 import com.netcetera.threeds.sdk.api.configparameters.builder.ConfigurationBuilder
@@ -25,7 +24,6 @@ import com.netcetera.threeds.sdk.api.utils.DsRidValues
 import io.primer.android.configuration.data.model.CardNetwork
 import io.primer.android.configuration.data.model.Environment
 import io.primer.android.core.extensions.runSuspendCatching
-import io.primer.android.core.utils.DeviceInfo
 import io.primer.android.threeds.BuildConfig
 import io.primer.android.threeds.data.exception.ThreeDsChallengeCancelledException
 import io.primer.android.threeds.data.exception.ThreeDsChallengeTimedOutException
@@ -40,6 +38,7 @@ import io.primer.android.threeds.data.models.postAuth.ThreeDsSdkProvider
 import io.primer.android.threeds.domain.models.ChallengeStatusData
 import io.primer.android.threeds.domain.models.ThreeDsKeysParams
 import io.primer.android.threeds.domain.repository.ThreeDsServiceRepository
+import io.primer.android.threeds.extensions.toNormalizedLocale
 import io.primer.android.threeds.helpers.ProtocolVersion
 import io.primer.android.threeds.main.R
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -128,11 +127,7 @@ internal class NetceteraThreeDsServiceRepository(
                 threeDS2Service.initialize(
                     context,
                     configurationBuilder.build(),
-                    if (DeviceInfo.isSdkVersionAtLeast(Build.VERSION_CODES.O)) {
-                        locale.stripExtensions().toString()
-                    } else {
-                        locale.toString()
-                    },
+                    locale.toNormalizedLocale(),
                     emptyMap<UiCustomization.UiCustomizationType, UiCustomization>(),
                 )
             } catch (expected: Exception) {
@@ -278,7 +273,7 @@ internal class NetceteraThreeDsServiceRepository(
                         )
                     }
                 },
-                CHALLENGE_TIMEOUT_IN_SECONDS,
+                CHALLENGE_TIMEOUT_IN_MINUTES,
             )
 
             awaitClose {}
@@ -313,7 +308,7 @@ internal class NetceteraThreeDsServiceRepository(
 
     internal companion object {
         private const val TEST_SCHEME_NAME = "test_schema"
-        private const val CHALLENGE_TIMEOUT_IN_SECONDS = 60
+        private const val CHALLENGE_TIMEOUT_IN_MINUTES = 60
 
         const val TEST_SCHEME_ID = "A999999999"
 

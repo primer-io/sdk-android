@@ -14,7 +14,6 @@ import io.primer.android.core.data.datasource.PrimerApiVersion
 import io.primer.android.core.di.DependencyContainer
 import io.primer.android.core.di.SdkContainer
 import io.primer.android.core.utils.BaseDataProvider
-import io.primer.android.data.settings.PrimerSettings
 import io.primer.android.data.settings.internal.PrimerConfig
 
 internal class SharedContainer(
@@ -68,7 +67,7 @@ internal class SharedContainer(
 
         registerSingleton<BaseDataProvider<PrimerApiVersion>> {
             BaseDataProvider {
-                sdk().resolve<PrimerSettings>().apiVersion
+                config.settings.apiVersion
             }
         }
 
