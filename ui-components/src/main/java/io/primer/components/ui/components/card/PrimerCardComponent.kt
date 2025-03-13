@@ -1,4 +1,4 @@
-package io.primer.components.ui.components.cardform
+package io.primer.components.ui.components.card
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -15,21 +15,20 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import io.primer.components.Primer
 
 @Composable
-fun PrimerCardComponent(scope: Primer.Scope.PaymentMethod.Card) {
+fun CardPaymentMethodScope.PrimerCardComponent(modifier: Modifier = Modifier) {
     var cardNumber by remember { mutableStateOf("") }
     var expiry by remember { mutableStateOf("") }
     var cvv by remember { mutableStateOf("") }
     var name by remember { mutableStateOf("") }
 
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         TextField(
             value = cardNumber,

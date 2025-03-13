@@ -16,11 +16,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import io.primer.components.Primer
-import io.primer.components.models.render
+import io.primer.components.PrimerCheckoutScope
 
 @Composable
-fun Primer.Scope.Checkout.TabLayoutExample() {
+fun PrimerCheckoutScope.TabLayoutExample() {
     val paymentMethods by paymentMethods.collectAsState()
     var selectedTabIndex by remember { mutableIntStateOf(0) }
 
@@ -28,20 +27,20 @@ fun Primer.Scope.Checkout.TabLayoutExample() {
         if (paymentMethods.isNotEmpty()) {
             ScrollableTabRow(
                 selectedTabIndex = selectedTabIndex,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
             ) {
                 paymentMethods.forEachIndexed { index, method ->
                     Tab(
                         selected = selectedTabIndex == index,
                         onClick = { selectedTabIndex = index },
-                        text = { Text(method.name) }
+                        text = { Text(method.name.orEmpty()) },
                     )
                 }
             }
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            paymentMethods.getOrNull(selectedTabIndex)?.render()
+            paymentMethods.getOrNull(selectedTabIndex)?.DefaultContent()
         }
     }
 }

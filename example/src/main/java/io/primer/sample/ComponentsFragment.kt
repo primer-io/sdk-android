@@ -259,7 +259,7 @@ class ComponentsFragment : Fragment() {
                         .padding(it)
                 ) {
 //                    PrimerCheckout()
-                    PrimerCheckout {
+                    PrimerCheckout(clientToken = viewModel.clientToken.value.orEmpty()) {
 //                        ListExample()
 //                        TabLayoutExample()
                         CustomComponentExample()

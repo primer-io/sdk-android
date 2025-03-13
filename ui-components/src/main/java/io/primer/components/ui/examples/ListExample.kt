@@ -14,32 +14,31 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import io.primer.components.Primer
-import io.primer.components.models.render
+import io.primer.components.PrimerCheckoutScope
 
 @Composable
-fun Primer.Scope.Checkout.ListExample() {
+fun PrimerCheckoutScope.ListExample() {
     val paymentMethods by paymentMethods.collectAsState()
-    val selectedMethod by selectedPaymentMethod.collectAsState()
+    val selectedPaymentMethod by selectedPaymentMethod.collectAsState()
 
     LazyColumn(
         modifier = Modifier
             .fillMaxWidth()
             .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+        verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         items(paymentMethods) { method ->
-            Button(onClick = {
-                selectPaymentMethod(method)
-            }) {
-                Text(method.name)
+            Button(onClick = { selectPaymentMethod(method) }) {
+                Text(method.name.orEmpty())
             }
         }
         item {
             Spacer(modifier = Modifier.height(16.dp))
         }
-        item {
-            selectedMethod?.render()
+        selectedPaymentMethod?.let {
+            item {
+                it.DefaultContent()
+            }
         }
     }
 }

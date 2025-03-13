@@ -1,49 +1,54 @@
 package io.primer.components.models
 
-import android.annotation.SuppressLint
 import androidx.compose.runtime.Composable
-import io.primer.components.Primer
-import io.primer.components.ui.components.PaymentMethodFactoryProvider
+import io.primer.android.components.domain.core.models.PrimerPaymentMethodManagerCategory
+import io.primer.android.paymentmethods.common.data.model.PaymentMethodType
+import io.primer.components.PrimerPaymentMethodScope
 
 /**
- * Represents a payment method available in the SDK.
- * Each payment method has a specific [type] that determines the UI component used to render it.
+ * Represents a payment method available in the Primer checkout flow.
  *
- * @property type The category of the payment method (FORM, NATIVE, or REDIRECT).
- * @property name The display name of the payment method.
+ * Each payment method has its own UI representation along with state management, encapsulated by its associated
+ * [PrimerPaymentMethodScope]. This class provides both a customizable UI interface and a default implementation.
+ *
+ * @param T The specific implementation of [PrimerPaymentMethodScope] that manages
+ *          the state and behavior for this payment method.
+ * @param name Optional display name for the payment method.
+ * @param type The type of payment method.
+ * @param paymentMethodManagerCategories Internal categories for payment method manager selection.
  */
-class PaymentMethod(
-    val type: Type,
-    val name: String
+sealed class PaymentMethod<T : PrimerPaymentMethodScope<*>>(
+    val name: String? = null,
+    val type: PaymentMethodType,
+    internal val paymentMethodManagerCategories: List<PrimerPaymentMethodManagerCategory>,
 ) {
     /**
-     * Represents the possible states of a payment method.
-     * This is currently a placeholder; actual state management is handled separately.
+     * Provides access to this payment method's state and behavior.
+     *
+     * This property is internal to the SDK but is implicitly made available as the receiver (`this`) within the custom
+     * UI composable provided to the [Content] function, effectively giving access to payment method-specific state and
+     * behavior when overriding the default UI implementation.
      */
-    sealed class State {
-        data object Loading : State()
-        data object Success : State()
-        data object Failure : State()
-    }
+    @get:Composable
+    internal abstract val scope: T
 
     /**
-     * Defines the different types of payment methods, which determine the UI component to render.
+     * Defines a custom UI for this payment method.
+     *
+     * The [content] parameter is an extension composable of the payment method's scope, giving direct access to the
+     * payment method's state and behavior in a type-safe manner.
+     *
+     * @param content A composable function that uses the payment method's scope as a receiver, allowing full access to
+     *                the payment method's state and behavior.
      */
-    enum class Type {
-        CARD, GOOGLE_PAY, KLARNA
-    }
-}
+    @Composable
+    abstract fun Content(content: @Composable T.() -> Unit)
 
-/**
- * Renders the appropriate UI component for the given [PaymentMethod].
- * The component selection is based on the [type] of the payment method.
- * - If [content] is provided, it is used to render a custom UI using [PaymentMethodScope].
- * - If [content] is null, the default implementation is rendered.
- */
-@SuppressLint("ComposableNaming")
-@Composable
-fun PaymentMethod.render(content: (@Composable Primer.Scope.PaymentMethod.() -> Unit)? = null) {
-    val factory = PaymentMethodFactoryProvider.getFactory<Primer.Scope.PaymentMethod>(type)
-    val paymentMethodScope = factory.createViewModel()
-    content?.invoke(paymentMethodScope) ?: factory.render(paymentMethodScope)
+    /**
+     * Provides the default UI implementation for this payment method.
+     *
+     * Use this function when you want to use Primer's pre-built UI experience for this payment method.
+     */
+    @Composable
+    abstract fun DefaultContent()
 }

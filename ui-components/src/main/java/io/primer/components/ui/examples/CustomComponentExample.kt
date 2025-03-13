@@ -16,73 +16,55 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import io.primer.components.Primer
-import io.primer.components.models.PaymentMethod
-import io.primer.components.models.render
+import io.primer.components.PrimerCheckoutScope
+import io.primer.components.models.CardPaymentMethod
+import io.primer.components.models.KlarnaPaymentMethod
+import io.primer.components.ui.components.card.CardPaymentMethodScope
 
 @Composable
-fun Primer.Scope.Checkout.CustomComponentExample() {
-
+fun PrimerCheckoutScope.CustomComponentExample() {
     val paymentMethods by paymentMethods.collectAsState()
-    val selectedMethod by selectedPaymentMethod.collectAsState()
+    val selectedMethod = selectedPaymentMethod.collectAsState().value
 
     LazyColumn(
         modifier = Modifier
             .fillMaxWidth()
             .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+        verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         items(paymentMethods) { method ->
             Button(onClick = {
                 selectPaymentMethod(method)
             }) {
-                Text(method.name)
+                Text(method.name.orEmpty())
             }
         }
         item {
             Spacer(modifier = Modifier.height(16.dp))
         }
         item {
-            when(selectedMethod?.type) {
-                PaymentMethod.Type.CARD -> CustomCardForm(scope = this@CustomComponentExample)
-                PaymentMethod.Type.GOOGLE_PAY -> selectedMethod?.render()
-                PaymentMethod.Type.KLARNA -> CustomKlarna(scope = this@CustomComponentExample)
-                null -> Unit
+            when (selectedMethod) {
+                is KlarnaPaymentMethod -> selectedMethod.DefaultContent()
+                is CardPaymentMethod -> selectedMethod.Content(content = { CustomCardForm() })
+                else -> Unit
             }
         }
     }
 }
 
-
 @Composable
-fun CustomKlarna(scope: Primer.Scope.Checkout) {
+fun CardPaymentMethodScope.CustomCardForm() {
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
-    ) {
-        Text("Another example of custom component for klarna")
-
-        Button(onClick = { scope.pay() }) {
-            Text("Pay Now Klarna")
-        }
-    }
-}
-
-@Composable
-fun CustomCardForm(scope: Primer.Scope.Checkout) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+        verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         Text("Some ugly card form from a merchant")
-        
+
         HorizontalDivider()
-        
-        Button(onClick = { scope.pay() }) {
+
+        Button(onClick = { submit() }) {
             Text("Pay Now Card")
         }
     }

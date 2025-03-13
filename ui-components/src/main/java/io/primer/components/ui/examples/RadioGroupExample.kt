@@ -20,40 +20,41 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import io.primer.components.Primer
+import io.primer.components.PrimerCheckoutScope
 import io.primer.components.models.PaymentMethod
-import io.primer.components.models.render
 
 @Composable
-fun Primer.Scope.Checkout.RadioGroupExample() {
+fun PrimerCheckoutScope.RadioGroupExample() {
     val paymentMethods by paymentMethods.collectAsState()
-    var selectedMethod by remember { mutableStateOf<PaymentMethod?>(null) }
+    var selectedPaymentMethod by remember { mutableStateOf<PaymentMethod<*>?>(null) }
 
-    Column(modifier = Modifier
-        .fillMaxSize()
-        .padding(16.dp)) {
-        paymentMethods.forEach { method ->
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
+    ) {
+        paymentMethods.forEach { paymentMethod ->
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .selectable(
-                        selected = selectedMethod == method,
-                        onClick = { selectedMethod = method }
+                        selected = selectedPaymentMethod == paymentMethod,
+                        onClick = { selectedPaymentMethod = paymentMethod },
                     )
                     .padding(8.dp),
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.CenterVertically,
             ) {
                 RadioButton(
-                    selected = selectedMethod == method,
-                    onClick = { selectedMethod = method }
+                    selected = selectedPaymentMethod == paymentMethod,
+                    onClick = { selectedPaymentMethod = paymentMethod },
                 )
                 Spacer(modifier = Modifier.width(8.dp))
-                Text(method.name)
+                Text(paymentMethod.name.orEmpty())
             }
         }
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        selectedMethod?.render()
+        selectedPaymentMethod?.DefaultContent()
     }
 }
