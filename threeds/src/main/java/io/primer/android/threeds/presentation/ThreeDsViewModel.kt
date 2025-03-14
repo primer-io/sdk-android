@@ -141,6 +141,7 @@ internal class ThreeDsViewModel(
 
     fun continueRemoteAuthWithException(
         throwable: Throwable,
+        resumeToken: String?,
         supportedThreeDsProtocolVersions: List<String>,
     ) {
         viewModelScope.launch {
@@ -148,7 +149,7 @@ internal class ThreeDsViewModel(
                 throwable = throwable,
                 supportedThreeDsProtocolVersions = supportedThreeDsProtocolVersions,
             ).onFailure {
-                _threeDsErrorEvent.postValue(throwable)
+                _threeDsFinishedEvent.postValue(resumeToken.orEmpty())
             }
                 .onSuccess { response ->
                     _threeDsFinishedEvent.postValue(response.resumeToken)

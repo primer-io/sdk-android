@@ -322,6 +322,7 @@ class ThreeDsViewModelTest {
         runTest {
             viewModel.continueRemoteAuthWithException(
                 Exception(),
+                "resume_token",
                 listOf(ProtocolVersion.V_210.versionNumber),
             )
         }
@@ -335,7 +336,7 @@ class ThreeDsViewModelTest {
     fun `continueRemoteAuthWithException() should receive finished event when interactor continueRemoteAuthWithException() failed`() {
         val exception = mockk<Exception>(relaxed = true)
 
-        val observer = viewModel.threeDsErrorEvent.test()
+        val observer = viewModel.threeDsFinishedEvent.test()
         coEvery {
             threeDsInteractor.continueRemoteAuthWithException(any(), any())
         }.returns(Result.failure(exception))
@@ -343,13 +344,14 @@ class ThreeDsViewModelTest {
         runTest {
             viewModel.continueRemoteAuthWithException(
                 Exception(),
+                "resume_token",
                 listOf(ProtocolVersion.V_210.versionNumber),
             )
         }
 
         coVerify { threeDsInteractor.continueRemoteAuthWithException(any(), any()) }
 
-        assertEquals(exception::class, observer.value()::class)
+        assertEquals("resume_token", observer.value())
     }
 
     @Test

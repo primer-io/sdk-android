@@ -37,6 +37,7 @@ import io.primer.android.threeds.errors.domain.exception.ThreeDsLibraryVersionMi
 import io.primer.android.threeds.helpers.ProtocolVersion
 import io.primer.android.threeds.helpers.ThreeDsLibraryVersionValidator
 import io.primer.android.threeds.helpers.ThreeDsSdkClassValidator
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
@@ -391,6 +392,39 @@ internal class DefaultThreeDsInteractorTest {
         val challengeStatusData = mockk<ChallengeStatusData>()
 
         val exception = mockk<Exception>(relaxed = true)
+        every { exception.message }.returns("Failed to perform 3DS challenge.")
+
+        coEvery {
+            threeDsServiceRepository.performChallenge(any(), any(), any(), any(), any())
+        }.returns(
+            flow {
+                throw exception
+            },
+        )
+
+        val capturedException =
+            assertThrows<Exception> {
+                runTest {
+                    val statusData =
+                        interactor.performChallenge(activity, transaction, authResponse).first()
+                    assertEquals(challengeStatusData, statusData)
+                }
+            }
+
+        coVerify { threeDsServiceRepository.performChallenge(any(), any(), any(), any(), any()) }
+
+        assertEquals(exception.javaClass, capturedException.javaClass)
+        assertEquals(exception.message, capturedException.message)
+    }
+
+    @Test
+    fun `performChallenge() should dispatch error events when repository performChallenge() failed with instance of CancellationException`() {
+        val activity = mockk<Activity>(relaxed = true)
+        val transaction = mockk<Transaction>(relaxed = true)
+        val authResponse = mockk<BeginAuthResponse>(relaxed = true)
+        val challengeStatusData = mockk<ChallengeStatusData>()
+
+        val exception = mockk<CancellationException>(relaxed = true)
         every { exception.message }.returns("Failed to perform 3DS challenge.")
 
         coEvery {

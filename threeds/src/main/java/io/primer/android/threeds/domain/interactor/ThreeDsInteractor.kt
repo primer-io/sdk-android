@@ -32,9 +32,7 @@ import io.primer.android.threeds.helpers.ThreeDsLibraryVersionValidator
 import io.primer.android.threeds.helpers.ThreeDsSdkClassValidator
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.withContext
 
@@ -132,7 +130,6 @@ internal class DefaultThreeDsInteractor(
             )
         }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     override fun performChallenge(
         activity: Activity,
         transaction: Transaction,
@@ -144,15 +141,16 @@ internal class DefaultThreeDsInteractor(
         ) {
             logReporter.warn(PRIMER_INVALID_APP_URL_ERROR, ANALYTICS_3DS_COMPONENT)
         }
-        emit(appUrl)
-    }.flatMapLatest { threeDsUrl ->
+
         threeDsServiceRepository.performChallenge(
             activity,
             transaction,
             authResponse,
-            threeDsUrl,
+            appUrl,
             authResponse.authentication.protocolVersion.orEmpty(),
-        )
+        ).collect { challengeStatus ->
+            emit(challengeStatus)
+        }
     }
 
     override suspend fun continueRemoteAuth(

@@ -83,6 +83,7 @@ class ThreeDsActivity : BaseCheckoutActivity() {
         viewModel.threeDsErrorEvent.observe(this) { throwable ->
             viewModel.continueRemoteAuthWithException(
                 throwable = throwable,
+                resumeToken = viewModel.challengeRequiredEvent.value?.authData?.resumeToken,
                 supportedThreeDsProtocolVersions = getSupportedThreeDsProtocolVersion(),
             )
         }
