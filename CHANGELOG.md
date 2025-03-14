@@ -1,3 +1,15 @@
+## 2.37.0 (2025-03-14)
+
+### Feat
+
+- Migrate Adyen iDeal to web redirect (#882)
+
+### Fix
+
+- **3DS**: Fix error propagation, finish flow in case continueRemoteAuthWithException fails (#890)
+- Capture error on app url retrieval during 3DS (#886)
+- **3DS**: Fixed crash when flow is restarted on config changes, better locale normalization (#888)
+
 ## 2.36.3 (2025-02-11)
 
 ### Fix
