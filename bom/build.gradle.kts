@@ -1,5 +1,5 @@
 plugins {
-    id("com.vanniktech.maven.publish.base")
+    id("com.vanniktech.maven.publish")
     id("java-platform")
 }
 
@@ -25,12 +25,14 @@ dependencies {
     }
 }
 
-publishing {
-    val version = project.findProperty("VERSION_NAME") as String
-    val groupId = project.findProperty("GROUP") as String
-    setVersion(version)
-    group = groupId
-    publications.create<MavenPublication>("maven") {
-        from(project.components["javaPlatform"])
+mavenPublishing {
+    val version = project.findProperty("VERSION_NAME").toString()
+    val groupId = project.findProperty("GROUP").toString()
+    val artifactId = project.findProperty("POM_ARTIFACT_ID").toString()
+    val artifactDescription = project.findProperty("POM_DESCRIPTION").toString()
+    coordinates(groupId, artifactId, version)
+
+    pom {
+        description.set(artifactDescription)
     }
 }
