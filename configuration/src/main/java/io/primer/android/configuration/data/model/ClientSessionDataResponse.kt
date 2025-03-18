@@ -30,20 +30,6 @@ data class ClientSessionDataResponse(
         val options: List<PaymentMethodOptionDataResponse>,
         val orderedAllowedCardNetworks: List<CardNetwork.Type>,
     ) : JSONDeserializable {
-        val surcharges: Map<String, Int>
-            get() {
-                val map = mutableMapOf<String, Int>()
-                options.forEach { option ->
-                    if (option.type == PAYMENT_CARD_TYPE) {
-                        option.networks?.forEach { network ->
-                            map[network.type] = network.surcharge
-                        }
-                    } else {
-                        map[option.type] = option.surcharge ?: 0
-                    }
-                }
-                return map
-            }
 
         fun toPrimerPaymentMethod() = PrimerPaymentMethod(orderedAllowedCardNetworks)
 

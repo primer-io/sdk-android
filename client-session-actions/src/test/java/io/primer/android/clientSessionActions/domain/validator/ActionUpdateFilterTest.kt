@@ -8,6 +8,8 @@ import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
+import io.mockk.mockkStatic
+import io.mockk.unmockkStatic
 import io.primer.android.clientSessionActions.domain.models.ActionUpdateBillingAddressParams
 import io.primer.android.clientSessionActions.domain.models.ActionUpdateCustomerDetailsParams
 import io.primer.android.clientSessionActions.domain.models.ActionUpdateEmailAddressParams
@@ -16,13 +18,16 @@ import io.primer.android.clientSessionActions.domain.models.ActionUpdateSelectPa
 import io.primer.android.clientSessionActions.domain.models.ActionUpdateShippingAddressParams
 import io.primer.android.clientSessionActions.domain.models.ActionUpdateShippingOptionIdParams
 import io.primer.android.clientSessionActions.domain.models.ActionUpdateUnselectPaymentMethodParams
+import io.primer.android.configuration.data.extensions.surcharges
 import io.primer.android.configuration.domain.model.Configuration
+import io.primer.android.configuration.domain.model.Surcharge
 import io.primer.android.configuration.domain.repository.ConfigurationRepository
 import io.primer.android.data.settings.internal.PrimerConfig
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 
@@ -37,8 +42,14 @@ internal class ActionUpdateFilterTest {
     @InjectMockKs
     private lateinit var filter: ActionUpdateFilter
 
+    @BeforeEach
+    fun setup() {
+        mockkStatic(EXT_FILE_NAME)
+    }
+
     @AfterEach
     fun tearDown() {
+        unmockkStatic(EXT_FILE_NAME)
         confirmVerified(configurationRepository, config)
     }
 
@@ -83,7 +94,7 @@ internal class ActionUpdateFilterTest {
             } returns
                 mockk<Configuration> {
                     every {
-                        clientSession.clientSessionDataResponse.paymentMethod?.surcharges
+                        clientSession.clientSessionDataResponse.paymentMethod?.surcharges()
                     } returns emptyMap()
                 }
 
@@ -106,8 +117,8 @@ internal class ActionUpdateFilterTest {
             } returns
                 mockk<Configuration> {
                     every {
-                        clientSession.clientSessionDataResponse.paymentMethod?.surcharges
-                    } returns mapOf("order" to 1)
+                        clientSession.clientSessionDataResponse.paymentMethod?.surcharges()
+                    } returns mapOf("order" to Surcharge.PaymentMethodSurcharge(amount = 1))
                 }
             every { config.intent.paymentMethodIntent.isVault } returns false
 
@@ -145,7 +156,7 @@ internal class ActionUpdateFilterTest {
             } returns
                 mockk {
                     every {
-                        clientSession.clientSessionDataResponse.paymentMethod?.surcharges
+                        clientSession.clientSessionDataResponse.paymentMethod?.surcharges()
                     } returns emptyMap()
                 }
 
@@ -168,8 +179,8 @@ internal class ActionUpdateFilterTest {
             } returns
                 mockk {
                     every {
-                        clientSession.clientSessionDataResponse.paymentMethod?.surcharges
-                    } returns mapOf("order" to 1)
+                        clientSession.clientSessionDataResponse.paymentMethod?.surcharges()
+                    } returns mapOf("order" to Surcharge.PaymentMethodSurcharge(amount = 1))
                 }
 
             every { config.intent.paymentMethodIntent.isVault } returns false
@@ -214,4 +225,10 @@ internal class ActionUpdateFilterTest {
 
             assertFalse(result)
         }
+
+    private companion object {
+
+        private const val EXT_FILE_NAME =
+            "io.primer.android.configuration.data.extensions.PaymentMethodDataResponseKt"
+    }
 }

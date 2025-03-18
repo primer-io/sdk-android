@@ -3,11 +3,11 @@ package io.primer.android.surcharge.utils
 import android.content.Context
 import io.primer.android.R
 import io.primer.android.components.currencyformat.domain.models.FormatCurrencyParams
+import io.primer.android.configuration.domain.model.Surcharge
 import io.primer.android.core.domain.None
 import io.primer.android.currencyformat.domain.FormatAmountToCurrencyInteractor
 import io.primer.android.data.settings.internal.MonetaryAmount
 import io.primer.android.domain.tokenization.models.PrimerVaultedPaymentMethod
-import io.primer.android.paymentmethods.common.data.model.PaymentMethodType
 import io.primer.android.surcharge.domain.SurchargeInteractor
 import java.util.Currency
 
@@ -19,21 +19,17 @@ internal class SurchargeFormatter(
     fun getSurchargeForSavedPaymentMethod(token: PrimerVaultedPaymentMethod?): Int {
         if (token == null) return 0
         val type = token.paymentMethodType
-        return if (type == PaymentMethodType.PAYMENT_CARD.name) {
-            surchargeInteractor(None)[token.paymentInstrumentData.binData?.network] ?: 0
-        } else {
-            surchargeInteractor(None)[type] ?: 0
-        }
+        return getSurchargeForPaymentMethodType(type = type, network = token.paymentInstrumentData.binData?.network)
     }
 
     fun getSurchargeForPaymentMethodType(
         type: String,
         network: String? = null,
     ): Int =
-        if (type != PaymentMethodType.PAYMENT_CARD.name) {
-            surchargeInteractor(None)[type] ?: 0
-        } else {
-            surchargeInteractor(None)[network] ?: 0
+        when (val surcharge = surchargeInteractor(None)[type]) {
+            is Surcharge.CardNetworksSurcharge -> surcharge.surcharges[network] ?: 0
+            is Surcharge.PaymentMethodSurcharge -> surcharge.amount
+            null -> 0
         }
 
     fun formatSurchargeAsString(

@@ -120,7 +120,7 @@ interface ClientSession : ExampleAppRequestBody {
                             ),
                             ADYEN_IDEAL = PaymentMethodOption(
                                 surcharge = SurchargeOption(
-                                    amount = 0,
+                                    amount = 3000,
                                 )
                             ),
                             ADYEN_GIROPAY = PaymentMethodOption(
@@ -160,7 +160,7 @@ interface ClientSession : ExampleAppRequestBody {
                                     ),
                                     VISA = NetworkOption(
                                         surcharge = SurchargeOption(
-                                            amount = 100,
+                                            amount = 120,
                                         )
                                     ),
                                 ),

@@ -33,6 +33,7 @@ import io.primer.android.components.manager.vault.PrimerHeadlessUniversalCheckou
 import io.primer.android.configuration.domain.BasicOrderInfoInteractor
 import io.primer.android.configuration.domain.CachePolicy
 import io.primer.android.configuration.domain.ConfigurationInteractor
+import io.primer.android.configuration.domain.extensions.disabled
 import io.primer.android.configuration.domain.model.CheckoutModule
 import io.primer.android.configuration.domain.model.ConfigurationParams
 import io.primer.android.configuration.domain.model.findFirstInstance
@@ -423,7 +424,7 @@ internal class PrimerViewModel(
             if (config.intent.paymentMethodIntent.isVault) return true
             if (
                 surchargeInteractor(None).let { surcharges ->
-                    surcharges.all { item -> item.value == 0 } || surcharges.isEmpty()
+                    surcharges.all { surcharge -> surcharge.value.disabled() } || surcharges.isEmpty()
                 }
             ) {
                 return true
