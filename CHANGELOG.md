@@ -1,3 +1,9 @@
+## 2.37.1 (2025-03-19)
+
+### Fix
+
+- **surcharge**: Improved surcharge UI builder (#895)
+
 ## 2.37.0 (2025-03-14)
 
 ### Feat
