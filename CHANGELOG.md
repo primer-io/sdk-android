@@ -1,3 +1,9 @@
+## 2.37.2 (2025-03-20)
+
+### Fix
+
+- Finish activites in case killed app was opened from deeplink (#897)
+
 ## 2.37.1 (2025-03-19)
 
 ### Fix
