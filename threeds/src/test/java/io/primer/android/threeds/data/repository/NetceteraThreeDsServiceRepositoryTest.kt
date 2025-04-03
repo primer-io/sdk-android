@@ -174,13 +174,14 @@ internal class NetceteraThreeDsServiceRepositoryTest {
         }
 
     @Test
-    fun `initializeProvider should strip extensions from Locale in Android O and later`() =
+    fun `initializeProvider should normalize Locale`() =
         runTest {
             val keysParams = mockk<ThreeDsKeysParams>(relaxed = true)
             every { DeviceInfo.isSdkVersionAtLeast(Build.VERSION_CODES.O) } returns true
             val locale =
                 Locale.Builder()
-                    .setLanguageTag("en-US")
+                    .setScript("Hant")
+                    .setLanguageTag("zh-CN")
                     .setExtension('u', "mu-celsius")
                     .build()
 
@@ -206,46 +207,7 @@ internal class NetceteraThreeDsServiceRepositoryTest {
                 threeDS2Service.initialize(
                     context,
                     any(),
-                    "en_US",
-                    emptyMap<UiCustomization.UiCustomizationType, UiCustomization>(),
-                )
-            }
-        }
-
-    @Test
-    fun `initializeProvider should not strip extensions from Locale in Android versions older than O`() =
-        runTest {
-            val keysParams = mockk<ThreeDsKeysParams>(relaxed = true)
-            every { DeviceInfo.isSdkVersionAtLeast(Build.VERSION_CODES.O) } returns false
-            val locale =
-                Locale.Builder()
-                    .setLanguageTag("en-US")
-                    .setExtension('u', "mu-celsius")
-                    .build()
-
-            every {
-                threeDS2Service.initialize(
-                    any(),
-                    any(),
-                    any(),
-                    any<Map<UiCustomization.UiCustomizationType, UiCustomization>>(),
-                )
-            } returns Unit
-
-            val result =
-                repository.initializeProvider(
-                    is3DSSanityCheckEnabled = false,
-                    locale = locale,
-                    threeDsKeysParams = keysParams,
-                )
-
-            result.getOrThrow()
-
-            verify {
-                threeDS2Service.initialize(
-                    context,
-                    any(),
-                    "en_US_#u-mu-celsius",
+                    "zh_CN",
                     emptyMap<UiCustomization.UiCustomizationType, UiCustomization>(),
                 )
             }

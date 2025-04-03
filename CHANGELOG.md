@@ -1,3 +1,33 @@
+## 2.38.0 (2025-03-24)
+
+### Feat
+
+- default to API v2.4 (#904)
+
+## 2.37.2 (2025-03-20)
+
+### Fix
+
+- Finish activites in case killed app was opened from deeplink (#897)
+
+## 2.37.1 (2025-03-19)
+
+### Fix
+
+- **surcharge**: Improved surcharge UI builder (#895)
+
+## 2.37.0 (2025-03-14)
+
+### Feat
+
+- Migrate Adyen iDeal to web redirect (#882)
+
+### Fix
+
+- **3DS**: Fix error propagation, finish flow in case continueRemoteAuthWithException fails (#890)
+- Capture error on app url retrieval during 3DS (#886)
+- **3DS**: Fixed crash when flow is restarted on config changes, better locale normalization (#888)
+
 ## 2.36.3 (2025-02-11)
 
 ### Fix

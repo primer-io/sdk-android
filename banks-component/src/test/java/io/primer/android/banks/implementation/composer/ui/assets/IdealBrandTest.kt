@@ -1,6 +1,7 @@
 package io.primer.android.banks.implementation.composer.ui.assets
 
 import io.primer.android.banks.R
+import io.primer.android.webRedirectShared.implementation.composer.ui.assets.IdealBrand
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 

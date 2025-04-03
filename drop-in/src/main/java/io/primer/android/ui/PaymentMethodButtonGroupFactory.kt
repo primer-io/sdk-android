@@ -8,14 +8,14 @@ import android.view.View
 import android.widget.LinearLayout
 import io.primer.android.R
 import io.primer.android.components.ui.views.PrimerPaymentMethodViewFactory
+import io.primer.android.configuration.domain.model.Surcharge
 import io.primer.android.payment.config.BaseDisplayMetadata
 import io.primer.android.paymentMethods.core.ui.descriptors.PaymentMethodDropInDescriptor
-import io.primer.android.paymentmethods.common.data.model.PaymentMethodType
 import io.primer.android.surcharge.utils.SurchargeFormatter
 import io.primer.android.ui.components.PaymentMethodButtonGroupBox
 
 internal class PaymentMethodButtonGroupFactory(
-    private var surcharges: Map<String, Int>,
+    private var surcharges: Map<String, Surcharge>,
     private val formatter: SurchargeFormatter,
 ) {
     @Suppress("LongMethod", "CyclomaticComplexMethod", "NestedBlockDepth")
@@ -29,64 +29,45 @@ internal class PaymentMethodButtonGroupFactory(
         val surchargeMapping = mutableMapOf<Int, PaymentMethodButtonGroupBox>()
         descriptors.filter { displayMetadata.map { it.paymentMethodType }.contains(it.paymentMethodType) }
             .forEach { d ->
-                // todo: include card in main group if no surcharge
-                if (d.paymentMethodType == PaymentMethodType.PAYMENT_CARD.name) {
-                    val box = PaymentMethodButtonGroupBox(context)
-                    val text =
-                        formatter
-                            .getSurchargeLabelTextForPaymentMethodType(null, context)
-                    box.showSurchargeLabel(text)
-                    val button: View =
-                        viewFactory.getViewForPaymentMethod(
-                            displayMetadata.first { d.paymentMethodType == it.paymentMethodType },
-                            box,
-                        )
-                    button.setOnClickListener { onClick(d) }
-                    box.addView(button)
-                    surchargeMapping[KEY_SURCHARGING_BOX] = box
-                } else {
-                    val key = getSurcharge(d)
-                    val box =
-                        surchargeMapping[key] ?: PaymentMethodButtonGroupBox(context).apply {
-                            if (surcharges.isNotEmpty()) {
-                                if (key == 0) {
-                                    hideSurchargeFrame(FRAME_PADDING)
-                                } else {
-                                    val text = formatter.formatSurchargeAsString(key, context = context)
-                                    showSurchargeLabel(text)
-                                }
+                val key = getPaymentMethodGroupKey(d)
+                val box =
+                    surchargeMapping[key] ?: PaymentMethodButtonGroupBox(context).apply {
+                        if (surcharges.isNotEmpty()) {
+                            if (key == 0) {
+                                hideSurchargeFrame(FRAME_PADDING)
+                            } else {
+                                val text = getPaymentMethodSurchargeLabel(context = context, descriptor = d)
+                                showSurchargeLabel(text)
                             }
                         }
-                    val button: View =
-                        viewFactory.getViewForPaymentMethod(
-                            displayMetadata.first {
-                                d.paymentMethodType == it.paymentMethodType
-                            },
-                            box,
-                        )
-                    val nonCardOptions = surcharges.filter { item -> item.key != "PAYMENT_CARD" }
-
-                    var matchingSurcharges = nonCardOptions.count { item -> (item.value) == key }
-
-                    if (key == 0) {
-                        matchingSurcharges += descriptors.count { getSurcharge(it) == 0 }
                     }
+                val button: View = viewFactory.getViewForPaymentMethod(
+                    displayMetadata.first {
+                        d.paymentMethodType == it.paymentMethodType
+                    },
+                    box,
+                )
 
-                    if (box.childCount < matchingSurcharges || surcharges.isEmpty()) {
-                        button.layoutParams =
-                            button.layoutParams.apply {
-                                val layoutParams = this as LinearLayout.LayoutParams
-                                layoutParams.bottomMargin =
-                                    context.resources.getDimension(R.dimen.medium_vertical_margin2).toInt()
-                            }
-                    }
+                var matchingSurcharges = descriptors.count { item -> getPaymentMethodGroupKey(item) == key }
 
-                    button.setOnClickListener {
-                        onClick(d)
-                    }
-                    box.addView(button)
-                    surchargeMapping[key] = box
+                if (key == 0) {
+                    matchingSurcharges += descriptors.count { getPaymentMethodGroupKey(it) == 0 }
                 }
+
+                if (box.childCount < matchingSurcharges || surcharges.isEmpty()) {
+                    button.layoutParams =
+                        button.layoutParams.apply {
+                            val layoutParams = this as LinearLayout.LayoutParams
+                            layoutParams.bottomMargin =
+                                context.resources.getDimension(R.dimen.medium_vertical_margin2).toInt()
+                        }
+                }
+
+                button.setOnClickListener {
+                    onClick(d)
+                }
+                box.addView(button)
+                surchargeMapping[key] = box
             }
 
         if (surchargeMapping.keys.all { it == 0 }) {
@@ -104,9 +85,35 @@ internal class PaymentMethodButtonGroupFactory(
         return surchargeMapping.toSortedMap().map { it.value }
     }
 
-    private fun getSurcharge(descriptor: PaymentMethodDropInDescriptor): Int {
+    private fun getPaymentMethodGroupKey(descriptor: PaymentMethodDropInDescriptor): Int {
         val paymentMethodType = descriptor.paymentMethodType
-        return surcharges[paymentMethodType] ?: return 0
+
+        return when (val surcharge = surcharges[paymentMethodType]) {
+            is Surcharge.CardNetworksSurcharge -> if (surcharge.surcharges.any { it.value != 0 }) KEY_SURCHARGING_BOX else 0
+            is Surcharge.PaymentMethodSurcharge -> surcharge.amount
+            null -> 0
+        }
+    }
+
+    private fun getPaymentMethodSurchargeLabel(
+        context: Context,
+        descriptor: PaymentMethodDropInDescriptor,
+    ): String {
+        val paymentMethodType = descriptor.paymentMethodType
+
+        return when (val surcharge = surcharges[paymentMethodType]) {
+            is Surcharge.CardNetworksSurcharge -> formatter.getSurchargeLabelTextForPaymentMethodType(
+                null,
+                context = context,
+            )
+
+            is Surcharge.PaymentMethodSurcharge -> formatter.formatSurchargeAsString(
+                surcharge.amount,
+                context = context,
+            )
+
+            null -> ""
+        }
     }
 
     companion object {

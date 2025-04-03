@@ -9,6 +9,8 @@ import io.primer.android.clientSessionActions.domain.models.ActionUpdateShipping
 import io.primer.android.clientSessionActions.domain.models.ActionUpdateShippingOptionIdParams
 import io.primer.android.clientSessionActions.domain.models.ActionUpdateUnselectPaymentMethodParams
 import io.primer.android.clientSessionActions.domain.models.BaseActionUpdateParams
+import io.primer.android.configuration.data.extensions.surcharges
+import io.primer.android.configuration.domain.extensions.disabled
 import io.primer.android.configuration.domain.repository.ConfigurationRepository
 import io.primer.android.data.settings.internal.PrimerConfig
 
@@ -26,9 +28,9 @@ internal class ActionUpdateFilter(
                     config.intent.paymentMethodIntent.isVault ||
                         it.clientSession.clientSessionDataResponse
                             .paymentMethod
-                            ?.surcharges.orEmpty()
+                            ?.surcharges().orEmpty()
                             .all { item ->
-                                item.value == 0
+                                item.value.disabled()
                             } // TODO: only consider currently available payment methods as an optimization
                 }
 

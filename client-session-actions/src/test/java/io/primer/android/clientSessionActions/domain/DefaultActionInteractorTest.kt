@@ -11,6 +11,7 @@ import io.primer.android.clientSessionActions.domain.models.BaseActionUpdatePara
 import io.primer.android.clientSessionActions.domain.models.MultipleActionUpdateParams
 import io.primer.android.clientSessionActions.domain.repository.ActionRepository
 import io.primer.android.clientSessionActions.domain.validator.ActionUpdateFilter
+import io.primer.android.configuration.data.extensions.surcharges
 import io.primer.android.configuration.data.model.ConfigurationData
 import io.primer.android.configuration.domain.model.ClientSessionData
 import io.primer.android.configuration.domain.model.Configuration
@@ -82,7 +83,7 @@ internal class DefaultActionInteractorTest {
 
         every { actionUpdateFilter.filter(params) } returns false
         coEvery { actionRepository.updateClientActions(listOf(params)) } returns Result.success(clientSessionData)
-        every { configurationData.clientSession.paymentMethod?.surcharges.orEmpty() } returns emptyMap()
+        every { configurationData.clientSession.paymentMethod?.surcharges().orEmpty() } returns emptyMap()
 
         runTest {
             val result = defaultActionInteractor(MultipleActionUpdateParams(listOf(params)))

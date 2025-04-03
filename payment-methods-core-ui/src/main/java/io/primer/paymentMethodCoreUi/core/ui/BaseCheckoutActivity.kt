@@ -17,7 +17,11 @@ open class BaseCheckoutActivity : AppCompatActivity(), DISdkComponent {
         logReporter.debug("Creating activity (hashcode ${hashCode()})")
         supportActionBar?.hide()
 
-        if (savedInstanceState != null && DISdkContext.headlessSdkContainer?.containers.isNullOrEmpty()) {
+        val deeplinkLaunchAfterKill: Boolean = savedInstanceState == null && intent?.data != null
+        val processRestartWithoutContainer: Boolean = savedInstanceState != null &&
+            DISdkContext.headlessSdkContainer?.containers.isNullOrEmpty()
+
+        if (deeplinkLaunchAfterKill || processRestartWithoutContainer) {
             logReporter.warn(
                 "Finishing activity (hashcode ${hashCode()}) because headless container is null or empty",
             )

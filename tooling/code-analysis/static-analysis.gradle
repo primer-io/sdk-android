@@ -22,8 +22,6 @@ detekt {
     disableDefaultRuleSets = false
     autoCorrect = true
 
-    autoCorrect = true
-
     ignoredBuildTypes = ["debug"]
 
     reports {
