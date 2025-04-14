@@ -1,3 +1,10 @@
+## 2.38.1 (2025-04-14)
+
+### Fix
+
+- **klarna**: update Klarna to 1.1.0 (#919)
+- **klarna**: Improved styling support (#918)
+
 ## 2.38.0 (2025-03-24)
 
 ### Feat
