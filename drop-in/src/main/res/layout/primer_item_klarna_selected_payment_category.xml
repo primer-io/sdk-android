@@ -2,9 +2,9 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/primer_item_selected_klarna_category"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/klarna_selected_payment_category"
     android:orientation="vertical">
 
     <include
@@ -40,7 +40,9 @@
         android:id="@+id/klarna_payment_view_container"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:padding="4dp"
+        android:paddingHorizontal="@dimen/small_padding"
+        android:paddingTop="@dimen/small_padding"
+        android:paddingBottom="@dimen/medium_large_padding"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
