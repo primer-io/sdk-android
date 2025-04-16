@@ -198,7 +198,7 @@ internal class DefaultPrimerHeadlessRepository(
     }
 
     override fun cleanup() {
-        headlessUniversalCheckout.cleanup()
+        headlessUniversalCheckout.cleanup(cleanClientSessionCache = false)
     }
 
     override suspend fun handleManualFlowSuccess(additionalInfo: PrimerCheckoutAdditionalInfo?) {

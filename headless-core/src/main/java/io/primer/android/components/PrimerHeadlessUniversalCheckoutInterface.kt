@@ -38,6 +38,8 @@ interface PrimerHeadlessUniversalCheckoutInterface {
      * Once instance of [PrimerHeadlessUniversalCheckout] has freed up the used resources,
      * it is in the same state as newly created [PrimerHeadlessUniversalCheckout] and can be used once again,
      * but should go through [start] once again.
+     * Optionally, you can disable cleanup of client session cache by setting [cleanClientSessionCache] to `false`.
+     * This will only have effect in case [PrimerSettings.clientSessionCachingEnabled] was set to `true`.
      */
-    fun cleanup()
+    fun cleanup(cleanClientSessionCache: Boolean = true)
 }

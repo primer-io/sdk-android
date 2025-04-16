@@ -17,8 +17,10 @@ interface PrimerInterface {
      * Once instance of [Primer] has freed up the used resources,
      * it is in the same state as newly created [Primer] and can be used once again,
      * but should go through [configure] once again.
+     * Optionally, you can disable cleanup of client session cache by setting [cleanClientSessionCache] to `false`.
+     * This will only have effect in case [PrimerSettings.clientSessionCachingEnabled] was set to `true`.
      */
-    fun cleanup()
+    fun cleanup(cleanClientSessionCache: Boolean = true)
 
     /**
      * Initialise and show Primer's Universal Checkout with all configured payment methods.

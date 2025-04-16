@@ -20,7 +20,7 @@ internal interface HeadlessUniversalCheckoutDelegate {
 
     fun addAnalyticsEvent(params: BaseAnalyticsParams)
 
-    fun clear(exception: CancellationException?)
+    fun clear(exception: CancellationException?, cleanClientSessionCache: Boolean)
 }
 
 internal class DefaultHeadlessUniversalCheckoutDelegate(
@@ -58,8 +58,8 @@ internal class DefaultHeadlessUniversalCheckoutDelegate(
         }
     }
 
-    override fun clear(exception: CancellationException?) {
-        globalCacheConfigurationCacheDataSource.clear()
+    override fun clear(exception: CancellationException?, cleanClientSessionCache: Boolean) {
+        if (cleanClientSessionCache) globalCacheConfigurationCacheDataSource.clear()
         scope.coroutineContext.cancelChildren()
     }
 }
