@@ -44,7 +44,6 @@ import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.databinding.PrimerFragmentCardFormBinding
 import io.primer.android.model.SyncValidationError
 import io.primer.android.payment.NewFragmentBehaviour
-import io.primer.android.paymentMethods.core.ui.assets.AssetsManager
 import io.primer.android.paymentmethods.common.data.model.PaymentMethodType
 import io.primer.android.ui.FieldFocuser
 import io.primer.android.ui.TextInputMask
@@ -61,6 +60,7 @@ import io.primer.android.viewmodel.CardNetworksState
 import io.primer.android.viewmodel.CardViewModel
 import io.primer.android.viewmodel.TokenizationStatus
 import io.primer.cardShared.extension.isCardHolderNameEnabled
+import io.primer.ui_core.assets.AssetsManager
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine

@@ -9,7 +9,7 @@ import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.payment.config.BaseDisplayMetadata
 import io.primer.android.payment.config.ImageDisplayMetadata
 import io.primer.android.payment.config.TextDisplayMetadata
-import io.primer.android.paymentMethods.core.ui.assets.AssetsManager
+import io.primer.ui_core.assets.AssetsManager
 import io.primer.android.paymentmethods.common.data.model.PaymentMethodType
 
 internal class PrimerPaymentMethodViewFactory(

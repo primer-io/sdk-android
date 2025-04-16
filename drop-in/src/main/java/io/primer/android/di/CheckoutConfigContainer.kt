@@ -19,8 +19,6 @@ import io.primer.android.paymentMethods.core.PrimerHeadlessSdkInitInteractor
 import io.primer.android.paymentMethods.core.data.repository.DefaultPrimerHeadlessRepository
 import io.primer.android.paymentMethods.core.domain.PrimerEventsInteractor
 import io.primer.android.paymentMethods.core.domain.repository.PrimerHeadlessRepository
-import io.primer.android.paymentMethods.core.ui.assets.AssetsManager
-import io.primer.android.paymentMethods.core.ui.assets.DefaultPrimerAssetsManager
 import io.primer.android.paymentMethods.core.ui.descriptors.PrimerDropInPaymentMethodDescriptorRegistry
 import io.primer.android.payments.core.helpers.CheckoutExitHandler
 import io.primer.android.payments.core.helpers.ManualFlowSuccessHandler
@@ -29,6 +27,8 @@ import io.primer.android.surcharge.domain.SurchargeInteractor
 import io.primer.android.ui.utils.DefaultCheckoutExitHandler
 import io.primer.android.ui.utils.DropInManualFlowSuccessHandler
 import io.primer.android.viewmodel.PrimerViewModelFactory
+import io.primer.ui_core.assets.AssetsManager
+import io.primer.ui_core.assets.DefaultPrimerAssetsManager
 
 @Suppress("LongMethod")
 internal class CheckoutConfigContainer(private val sdk: () -> SdkContainer) : DependencyContainer() {

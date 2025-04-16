@@ -1,14 +1,13 @@
-package io.primer.android.paymentMethods.core.ui.assets
+package io.primer.ui_core.assets
 
 import android.content.Context
 import android.graphics.drawable.Drawable
 import io.primer.android.components.ui.assets.PrimerHeadlessUniversalCheckoutAssetsManager
 import io.primer.android.components.ui.assets.PrimerPaymentMethodResource
-import io.primer.android.components.ui.extensions.get
 import io.primer.android.configuration.data.model.CardNetwork
 import io.primer.android.displayMetadata.domain.model.ImageColor
 
-internal interface AssetsManager {
+interface AssetsManager {
     fun getPaymentMethodImage(
         context: Context,
         paymentMethodType: String,
@@ -26,7 +25,7 @@ internal interface AssetsManager {
     ): PrimerPaymentMethodResource
 }
 
-internal class DefaultPrimerAssetsManager(
+class DefaultPrimerAssetsManager(
     private val headlessUniversalCheckoutAssetsManager: PrimerHeadlessUniversalCheckoutAssetsManager.Companion,
 ) : AssetsManager {
     override fun getPaymentMethodImage(

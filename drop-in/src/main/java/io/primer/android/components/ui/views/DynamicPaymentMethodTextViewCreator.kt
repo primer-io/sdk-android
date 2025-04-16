@@ -8,12 +8,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import io.primer.android.components.ui.assets.PrimerPaymentMethodAsset
-import io.primer.android.components.ui.extensions.get
 import io.primer.android.configuration.data.model.IconPosition
 import io.primer.android.databinding.PrimerPaymentMethodTextButtonBinding
 import io.primer.android.payment.config.TextDisplayMetadata
 import io.primer.android.payment.utils.ButtonViewHelper
 import io.primer.android.ui.settings.PrimerTheme
+import io.primer.ui_core.assets.get
 
 internal class DynamicPaymentMethodTextViewCreator(
     private val theme: PrimerTheme,

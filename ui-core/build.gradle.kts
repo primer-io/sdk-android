@@ -27,6 +27,7 @@ android {
 
 dependencies {
 
+    implementation(project(":headless-core"))
     implementation(libs.android.ktx)
     implementation(libs.android.appcompat)
     implementation(libs.android.material)
