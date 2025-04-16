@@ -26,12 +26,21 @@ internal class PaypalConfigurationDataRepository(
 
             val uuid = UUID.randomUUID().toString()
             val host = "$PRIMER_PAYPAL_PREFIX${applicationIdProvider.provide()}"
-            val baseUri =
+            val successUri =
                 Uri.Builder()
                     .scheme(PRIMER_PAYPAL_SCHEMA)
                     .authority(host)
                     .appendPath(PRIMER_PAYPAL_PATH_PREFIX)
                     .appendPath(uuid)
+                    .appendPath(SUCCESS_PATH_SEGMENT)
+
+            val cancelUri =
+                Uri.Builder()
+                    .scheme(PRIMER_PAYPAL_SCHEMA)
+                    .authority(host)
+                    .appendPath(PRIMER_PAYPAL_PATH_PREFIX)
+                    .appendPath(uuid)
+                    .appendPath(CANCEL_PATH_SEGMENT)
 
             when (params.sessionIntent) {
                 PrimerSessionIntent.CHECKOUT -> {
@@ -45,16 +54,8 @@ internal class PaypalConfigurationDataRepository(
                         ),
                         amount = order?.currentAmount,
                         currencyCode = order?.currencyCode,
-                        successUrl =
-                        baseUri
-                            .appendPath(SUCCESS_PATH_SEGMENT)
-                            .build()
-                            .toString(),
-                        cancelUrl =
-                        baseUri
-                            .appendPath(CANCEL_PATH_SEGMENT)
-                            .build()
-                            .toString(),
+                        successUrl = successUri.build().toString(),
+                        cancelUrl = cancelUri.build().toString(),
                     )
                 }
 
@@ -65,16 +66,8 @@ internal class PaypalConfigurationDataRepository(
                             paymentMethodConfig.id,
                             PaypalIllegalValueKey.PAYMENT_METHOD_CONFIG_ID,
                         ),
-                        successUrl =
-                        baseUri
-                            .appendPath(SUCCESS_PATH_SEGMENT)
-                            .build()
-                            .toString(),
-                        cancelUrl =
-                        baseUri
-                            .appendPath(CANCEL_PATH_SEGMENT)
-                            .build()
-                            .toString(),
+                        successUrl = successUri.build().toString(),
+                        cancelUrl = cancelUri.build().toString(),
                     )
                 }
             }

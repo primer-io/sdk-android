@@ -1,8 +1,9 @@
 package io.primer.android.paypal.implementation.composer.presentation
 
 import android.content.Intent
-import android.net.Uri
+import androidx.core.net.toUri
 import io.primer.android.PrimerSessionIntent
+import io.primer.android.core.extensions.debounce
 import io.primer.android.core.extensions.flatMap
 import io.primer.android.errors.data.exception.PaymentMethodCancelledException
 import io.primer.android.paymentmethods.core.composer.InternalNativeUiPaymentMethodComponent
@@ -26,6 +27,62 @@ internal class PaypalComponent(
 ) : InternalNativeUiPaymentMethodComponent(),
     ActivityStartIntentHandler,
     ActivityResultIntentHandler {
+
+    private class ActivityResultIntent(
+        val params: PaymentMethodLauncherParams,
+        val intent: Intent?,
+    )
+
+    /**
+     * Handles the case where the user is returned from a Chrome Custom Tab.
+     *
+     * In this flow, `onActivityResult()` is called first with `Activity.RESULT_CANCELED`,
+     * followed shortly by `onNewIntent()` containing the actual deep link data.
+     *
+     * This can result in both callbacks being triggered for a single user action.
+     * To avoid processing stale or duplicate data, this logic debounces the events
+     * and ensures that only the **latest result** (usually from `onNewIntent`) is consumed.
+     */
+
+    private val activityResultIntentUpdated: (ActivityResultIntent) -> Unit =
+        composerScope.debounce { resultIntent ->
+            val redirectParams = resultIntent.params.initialLauncherParams as RedirectLauncherParams
+            when (resultIntent.intent?.data?.buildUpon()?.clearQuery()?.build()) {
+                redirectParams.successUrl.toUri() -> {
+                    tokenize(
+                        when (resultIntent.params.sessionIntent) {
+                            PrimerSessionIntent.CHECKOUT ->
+                                PaypalTokenizationInputable.PaypalCheckoutTokenizationInputable(
+                                    orderId = resultIntent.intent.data?.getQueryParameter(TOKEN_QUERY_PARAM),
+                                    paymentMethodType = paymentMethodType,
+                                    paymentMethodConfigId = redirectParams.paymentMethodConfigId,
+                                    primerSessionIntent = primerSessionIntent,
+                                )
+
+                            PrimerSessionIntent.VAULT ->
+                                PaypalTokenizationInputable.PaypalVaultTokenizationInputable(
+                                    tokenId = resultIntent.intent.data?.getQueryParameter(BA_TOKEN_QUERY_PARAM),
+                                    paymentMethodConfigId = redirectParams.paymentMethodConfigId,
+                                    paymentMethodType = paymentMethodType,
+                                    primerSessionIntent = primerSessionIntent,
+                                )
+                        },
+                    )
+                }
+
+                else -> {
+                    composerScope.launch {
+                        paymentDelegate.handleError(
+                            PaymentMethodCancelledException(
+                                resultIntent.params.paymentMethodType,
+                            ),
+                        )
+                    }
+                }
+            }
+            close()
+        }
+
     override fun start(
         paymentMethodType: String,
         primerSessionIntent: PrimerSessionIntent,
@@ -59,41 +116,7 @@ internal class PaypalComponent(
         resultCode: Int,
         intent: Intent?,
     ) {
-        val redirectParams = params.initialLauncherParams as RedirectLauncherParams
-        when (intent?.data?.buildUpon()?.clearQuery()?.build()) {
-            Uri.parse(redirectParams.successUrl) -> {
-                tokenize(
-                    when (params.sessionIntent) {
-                        PrimerSessionIntent.CHECKOUT ->
-                            PaypalTokenizationInputable.PaypalCheckoutTokenizationInputable(
-                                orderId = intent?.data?.getQueryParameter(TOKEN_QUERY_PARAM),
-                                paymentMethodType = paymentMethodType,
-                                paymentMethodConfigId = redirectParams.paymentMethodConfigId,
-                                primerSessionIntent = primerSessionIntent,
-                            )
-
-                        PrimerSessionIntent.VAULT ->
-                            PaypalTokenizationInputable.PaypalVaultTokenizationInputable(
-                                tokenId = intent?.data?.getQueryParameter(BA_TOKEN_QUERY_PARAM),
-                                paymentMethodConfigId = redirectParams.paymentMethodConfigId,
-                                paymentMethodType = paymentMethodType,
-                                primerSessionIntent = primerSessionIntent,
-                            )
-                    },
-                )
-            }
-
-            else -> {
-                composerScope.launch {
-                    paymentDelegate.handleError(
-                        PaymentMethodCancelledException(
-                            params.paymentMethodType,
-                        ),
-                    )
-                }
-            }
-        }
-        close()
+        activityResultIntentUpdated(ActivityResultIntent(params = params, intent = intent))
     }
 
     override fun handleActivityStartEvent(params: PaymentMethodLauncherParams) {

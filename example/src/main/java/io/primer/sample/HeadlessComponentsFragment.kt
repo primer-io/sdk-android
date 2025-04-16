@@ -310,7 +310,7 @@ class HeadlessComponentsFragment : Fragment() {
                                 }
                             )
 
-                        paymentMethodType == "ADYEN_IDEAL" || paymentMethodType == "ADYEN_DOTPAY" ->
+                        paymentMethodType == "ADYEN_DOTPAY" ->
                             findNavController().navigate(
                                 R.id.action_HeadlessComponentsFragment_to_AdyenBankSelectionFragment,
                                 bundleOf("paymentMethodType" to paymentMethodType)

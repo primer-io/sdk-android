@@ -19,6 +19,6 @@ internal class PaypalNavigationHandler : PaymentMethodContextNavigationHandler {
         activity: Activity,
         launcher: ActivityResultLauncher<Intent>,
     ): List<Navigator<NavigationParams>> {
-        return listOf(PaypalNavigator(activity))
+        return listOf(PaypalNavigator(activity, launcher))
     }
 }

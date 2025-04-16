@@ -11,4 +11,5 @@ android {
 
 dependencies {
     implementation(libs.androidx.browser)
+    implementation(libs.androidx.activity.ktx)
 }
