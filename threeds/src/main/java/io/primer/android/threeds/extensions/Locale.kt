@@ -2,7 +2,9 @@ package io.primer.android.threeds.extensions
 
 import java.util.Locale
 
-private const val SEPARATOR = "_"
+private const val JOIN_SEPARATOR = "_"
+private const val LANGUAGE_SEPARATOR = "-"
 
 internal fun Locale.toNormalizedLocale() =
-    listOf(this.language, this.country).filter { it.isNotBlank() }.joinToString(SEPARATOR)
+    listOf(this.language.split(LANGUAGE_SEPARATOR).firstOrNull(), this.country).filter { it.orEmpty().isNotBlank() }
+        .joinToString(JOIN_SEPARATOR)

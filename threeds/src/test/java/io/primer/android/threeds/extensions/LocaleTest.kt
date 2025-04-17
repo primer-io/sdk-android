@@ -2,7 +2,11 @@ package io.primer.android.threeds.extensions
 
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.Arguments
+import org.junit.jupiter.params.provider.MethodSource
 import java.util.Locale
+import java.util.stream.Stream
 
 internal class LocaleTest {
 
@@ -34,6 +38,13 @@ internal class LocaleTest {
         assertEquals("zh_HK", result)
     }
 
+    @ParameterizedTest
+    @MethodSource("malformedLocaleProvider")
+    fun `should handle invalid languages`(locale: Locale, expected: String) {
+        val result = locale.toNormalizedLocale()
+        assertEquals(expected, result)
+    }
+
     @Test
     fun `should handle multiple extensions`() {
         val locale = Locale.Builder().setLanguage("en")
@@ -43,5 +54,15 @@ internal class LocaleTest {
             .build()
         val result = locale.toNormalizedLocale()
         assertEquals("en_GB", result)
+    }
+
+    private companion object {
+        @JvmStatic
+        fun malformedLocaleProvider(): Stream<Arguments> = Stream.of(
+            Arguments.of(Locale("pl-pl", "PL"), "pl_PL"),
+            Arguments.of(Locale("zh-hk", "HK"), "zh_HK"),
+            Arguments.of(Locale("de-at", "AT"), "de_AT"),
+            Arguments.of(Locale("tr-cy", "CY"), "tr_CY"),
+        )
     }
 }
