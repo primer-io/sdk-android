@@ -1,3 +1,11 @@
+## 2.38.2 (2025-04-17)
+
+### Fix
+
+- **3DS**: Handle locale formatting for usecases where language is formed as xx-xx (#924)
+- added additional controls on how client session cache can be cleaned up (#922)
+- **paypal**: Better handling of custom tabs (#921)
+
 ## 2.38.1 (2025-04-14)
 
 ### Fix
