@@ -23,7 +23,7 @@ primer-stripe = "1.1.2"
 junit5 = "5.12.2"
 androidJunit5TestRunner = "1.12.0.0"
 mockk = "1.13.11"
-json = "20240303"
+json = "20250107"
 liveDataTesting = "1.2.0"
 archCore = "2.2.0"
 
