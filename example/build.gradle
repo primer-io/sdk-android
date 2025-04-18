@@ -108,6 +108,7 @@ dependencies {
     implementation libs.primer.stripe
     implementation project(':ui-components')
     implementation libs.androidx.navigation.compose
+    implementation libs.androidx.runtime.livedata
 
     debugImplementation "com.squareup.leakcanary:leakcanary-android:2.14"
     testImplementation "junit:junit:4.13.2"

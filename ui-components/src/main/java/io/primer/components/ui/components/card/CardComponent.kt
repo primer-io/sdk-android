@@ -15,9 +15,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import io.primer.components.PaymentMethodScope
 
 @Composable
-fun CardPaymentMethodScope.PrimerCardComponent(modifier: Modifier = Modifier) {
+fun PaymentMethodScope.CardComponent(modifier: Modifier = Modifier) {
     var cardNumber by remember { mutableStateOf("") }
     var expiry by remember { mutableStateOf("") }
     var cvv by remember { mutableStateOf("") }

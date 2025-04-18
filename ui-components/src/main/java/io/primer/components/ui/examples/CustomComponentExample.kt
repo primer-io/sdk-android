@@ -12,19 +12,19 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import io.primer.components.PrimerCheckoutScope
-import io.primer.components.models.CardPaymentMethod
-import io.primer.components.models.KlarnaPaymentMethod
+import io.primer.components.models.paymentMethods.CardPaymentMethod
+import io.primer.components.ui.components.card.CardComponent
 import io.primer.components.ui.components.card.CardPaymentMethodScope
 
 @Composable
 fun PrimerCheckoutScope.CustomComponentExample() {
-    val paymentMethods by paymentMethods.collectAsState()
-    val selectedMethod = selectedPaymentMethod.collectAsState().value
+
+    val state by state.collectAsStateWithLifecycle()
 
     LazyColumn(
         modifier = Modifier
@@ -32,21 +32,28 @@ fun PrimerCheckoutScope.CustomComponentExample() {
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        items(paymentMethods) { method ->
-            Button(onClick = {
-                selectPaymentMethod(method)
-            }) {
-                Text(method.name.orEmpty())
+
+        (state as? PrimerCheckoutScope.State.Ready?)?.paymentMethods?.let {
+            items(it) { method ->
+                Button(onClick = {
+                    selectPaymentMethod(method)
+                }) {
+                    Text(method.name.orEmpty())
+                }
             }
         }
+
         item {
             Spacer(modifier = Modifier.height(16.dp))
         }
+
         item {
-            when (selectedMethod) {
-                is KlarnaPaymentMethod -> selectedMethod.DefaultContent()
-                is CardPaymentMethod -> selectedMethod.Content(content = { CustomCardForm() })
-                else -> Unit
+            (state as? PrimerCheckoutScope.State.Selected?)?.paymentMethod?.let {
+                when(val current = it) {
+                    is CardPaymentMethod -> current.Render {
+                        (this as CardPaymentMethodScope).CardComponent()
+                    }
+                }
             }
         }
     }

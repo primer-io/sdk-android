@@ -1,14 +1,13 @@
 package io.primer.components.ui.components.card
 
 import io.primer.android.configuration.data.model.CardNetwork
-import io.primer.components.PrimerPaymentMethodScope
+import io.primer.components.PaymentMethodScope
 
 /**
- * Defines the scope for the card payment method, extending the base [PrimerPaymentMethodScope].
- * This interface provides methods to handle changes to card payment form fields, along with the [state] [StateFlow]
+ * Defines the scope for the card payment method, extending the base [PaymentMethodScope].
  * and methods to [submit] the card form and to [cancel] the checkout process.
  */
-interface CardPaymentMethodScope : PrimerPaymentMethodScope<CardPaymentUiState> {
+interface CardPaymentMethodScope : PaymentMethodScope {
     /**
      * Handles changes to the card number input.
      * @param value The updated card number
