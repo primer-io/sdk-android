@@ -13,7 +13,7 @@ import io.primer.android.databinding.PrimerPaymentMethodTextButtonBinding
 import io.primer.android.payment.config.TextDisplayMetadata
 import io.primer.android.payment.utils.ButtonViewHelper
 import io.primer.android.ui.settings.PrimerTheme
-import io.primer.ui_core.assets.get
+import io.primer.ui.core.assets.get
 
 internal class DynamicPaymentMethodTextViewCreator(
     private val theme: PrimerTheme,

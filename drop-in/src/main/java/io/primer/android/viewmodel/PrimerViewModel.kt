@@ -30,7 +30,6 @@ import io.primer.android.components.domain.inputs.models.PrimerInputElementType
 import io.primer.android.components.manager.nativeUi.PrimerHeadlessUniversalCheckoutNativeUiManagerInterface
 import io.primer.android.components.manager.vault.PrimerHeadlessUniversalCheckoutVaultManager
 import io.primer.android.components.manager.vault.PrimerHeadlessUniversalCheckoutVaultManagerInterface
-import io.primer.android.configuration.domain.BasicOrderInfoInteractor
 import io.primer.android.configuration.domain.CachePolicy
 import io.primer.android.configuration.domain.ConfigurationInteractor
 import io.primer.android.configuration.domain.extensions.disabled
@@ -67,6 +66,7 @@ import io.primer.android.surcharge.utils.SurchargeFormatter
 import io.primer.android.ui.PaymentMethodButtonGroupFactory
 import io.primer.android.utils.orNull
 import io.primer.android.vault.implementation.vaultedMethods.domain.PrimerVaultedPaymentMethodAdditionalData
+import io.primer.ui.core.configuration.domain.model.BasicOrderInfoInteractor
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.flow.collectLatest

@@ -6,7 +6,6 @@ import androidx.lifecycle.viewmodel.CreationExtras
 import io.primer.android.analytics.domain.AnalyticsInteractor
 import io.primer.android.clientSessionActions.domain.ActionInteractor
 import io.primer.android.components.assets.displayMetadata.PaymentMethodsImplementationInteractor
-import io.primer.android.configuration.domain.BasicOrderInfoInteractor
 import io.primer.android.configuration.domain.ConfigurationInteractor
 import io.primer.android.currencyformat.domain.FormatAmountToCurrencyInteractor
 import io.primer.android.data.settings.internal.PrimerConfig
@@ -20,6 +19,7 @@ import io.primer.android.paymentMethods.core.ui.descriptors.PrimerDropInPaymentM
 import io.primer.android.payments.core.helpers.CheckoutErrorHandler
 import io.primer.android.payments.core.helpers.PollingStartHandler
 import io.primer.android.surcharge.domain.SurchargeInteractor
+import io.primer.ui.core.configuration.domain.model.BasicOrderInfoInteractor
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 @OptIn(ExperimentalCoroutinesApi::class)

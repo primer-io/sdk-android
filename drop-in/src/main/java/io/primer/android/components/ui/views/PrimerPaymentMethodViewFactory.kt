@@ -9,8 +9,8 @@ import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.payment.config.BaseDisplayMetadata
 import io.primer.android.payment.config.ImageDisplayMetadata
 import io.primer.android.payment.config.TextDisplayMetadata
-import io.primer.ui_core.assets.AssetsManager
 import io.primer.android.paymentmethods.common.data.model.PaymentMethodType
+import io.primer.ui.core.assets.AssetsManager
 
 internal class PrimerPaymentMethodViewFactory(
     val context: Context,

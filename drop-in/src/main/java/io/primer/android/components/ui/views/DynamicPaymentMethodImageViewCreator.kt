@@ -8,11 +8,11 @@ import android.view.View
 import android.view.ViewGroup
 import io.primer.android.R
 import io.primer.android.components.ui.assets.PrimerPaymentMethodAsset
-import io.primer.ui_core.assets.get
 import io.primer.android.databinding.PrimerPaymentMethodImageButtonBinding
 import io.primer.android.payment.config.ImageDisplayMetadata
 import io.primer.android.payment.utils.ButtonViewHelper
 import io.primer.android.ui.settings.PrimerTheme
+import io.primer.ui.core.assets.get
 
 internal class DynamicPaymentMethodImageViewCreator(
     private val theme: PrimerTheme,

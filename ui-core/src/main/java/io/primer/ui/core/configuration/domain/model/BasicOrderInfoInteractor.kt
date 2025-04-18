@@ -1,11 +1,10 @@
-package io.primer.android.configuration.domain
+package io.primer.ui.core.configuration.domain.model
 
 import io.primer.android.configuration.domain.repository.ConfigurationRepository
-import io.primer.android.configuration.model.BasicOrderInfo
 import io.primer.android.core.domain.BaseInteractor
 import io.primer.android.core.domain.None
 
-internal class BasicOrderInfoInteractor(private val configurationRepository: ConfigurationRepository) :
+class BasicOrderInfoInteractor(private val configurationRepository: ConfigurationRepository) :
     BaseInteractor<BasicOrderInfo, None>() {
     override fun execute(params: None): BasicOrderInfo {
         return configurationRepository.getConfiguration().let { configuration ->

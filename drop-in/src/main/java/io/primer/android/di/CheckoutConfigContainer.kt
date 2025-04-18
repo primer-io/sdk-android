@@ -5,7 +5,6 @@ import io.primer.android.clientSessionActions.di.ActionsContainer
 import io.primer.android.components.ui.assets.PrimerHeadlessUniversalCheckoutAssetsManager
 import io.primer.android.components.ui.views.PrimerPaymentMethodViewFactory
 import io.primer.android.configuration.di.ConfigurationCoreContainer
-import io.primer.android.configuration.domain.BasicOrderInfoInteractor
 import io.primer.android.core.di.DependencyContainer
 import io.primer.android.core.di.SdkContainer
 import io.primer.android.currencyformat.domain.FormatAmountToCurrencyInteractor
@@ -27,8 +26,9 @@ import io.primer.android.surcharge.domain.SurchargeInteractor
 import io.primer.android.ui.utils.DefaultCheckoutExitHandler
 import io.primer.android.ui.utils.DropInManualFlowSuccessHandler
 import io.primer.android.viewmodel.PrimerViewModelFactory
-import io.primer.ui_core.assets.AssetsManager
-import io.primer.ui_core.assets.DefaultPrimerAssetsManager
+import io.primer.ui.core.assets.AssetsManager
+import io.primer.ui.core.assets.DefaultPrimerAssetsManager
+import io.primer.ui.core.configuration.domain.model.BasicOrderInfoInteractor
 
 @Suppress("LongMethod")
 internal class CheckoutConfigContainer(private val sdk: () -> SdkContainer) : DependencyContainer() {
@@ -87,7 +87,7 @@ internal class CheckoutConfigContainer(private val sdk: () -> SdkContainer) : De
 
         registerFactory<AssetsManager> {
             DefaultPrimerAssetsManager(
-                PrimerHeadlessUniversalCheckoutAssetsManager.Companion,
+                PrimerHeadlessUniversalCheckoutAssetsManager,
             )
         }
 
