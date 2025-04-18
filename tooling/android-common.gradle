@@ -46,6 +46,7 @@ dependencies {
     testRuntimeOnly(libs.junit.jupiter.api)
     testImplementation(libs.junit.jupiter.engine)
     testImplementation(libs.junit.jupiter.params)
+    testRuntimeOnly(libs.junit.platform.launcher)
 
     testImplementation(libs.mockk) {
         exclude group: "org.slf4j", module: "slf4j-log4j12"
@@ -59,6 +60,5 @@ dependencies {
     testImplementation(libs.json)
 
     androidTestImplementation(libs.mockk.android)
-    androidTestRuntimeOnly(libs.junit.test.runner)
     testImplementation(testFixtures(project(":arch-core")))
 }

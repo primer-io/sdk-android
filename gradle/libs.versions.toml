@@ -20,8 +20,8 @@ primer-ipay88 = "1.0.3"
 primer-nol-pay = "1.0.2"
 primer-stripe = "1.1.2"
 
-junit5 = "5.11.4"
-androidJunit5TestRunner = "1.3.0"
+junit5 = "5.12.2"
+androidJunit5TestRunner = "1.12.0.0"
 mockk = "1.13.11"
 json = "20240303"
 liveDataTesting = "1.2.0"
@@ -33,7 +33,7 @@ detekt = "1.23.7"
 sonarqube = "6.0.1.5171"
 dexcount = "4.0.0"
 kover = "0.8.0"
-junit5Plugin = "1.9.3.0"
+junit5Plugin = "1.12.0.0"
 mavenPublish = "0.31.0"
 junit = "4.13.2"
 androidx-test-ext-junit = "1.1.5"
@@ -71,6 +71,7 @@ primer-stripe = { group = "io.primer", name = "stripe-android", version.ref = "p
 junit-jupiter-api = { group = "org.junit.jupiter", name = "junit-jupiter-api", version.ref = "junit5" }
 junit-jupiter-engine = { group = "org.junit.jupiter", name = "junit-jupiter-engine", version.ref = "junit5" }
 junit-jupiter-params = { group = "org.junit.jupiter", name = "junit-jupiter-params", version.ref = "junit5" }
+junit-platform-launcher = { group = "org.junit.platform", name = "junit-platform-launcher" }
 junit-test-runner = { group = "de.mannodermaus.junit5", name = "android-test-runner", version.ref = "androidJunit5TestRunner" }
 
 mockk = { group = "io.mockk", name = "mockk", version.ref = "mockk" }
