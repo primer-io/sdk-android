@@ -7,7 +7,7 @@ import io.primer.components.models.paymentMethods.PaymentMethod
  * Defines the scope for the card payment method, extending the base [PaymentMethod.Scope].
  * and methods to [submit] the card form and to [cancel] the checkout process.
  */
-interface CardScope : PaymentMethod.Scope {
+interface CardScope : PaymentMethod.Scope<CardScope.State> {
     /**
      * Handles changes to the card number input.
      * @param value The updated card number

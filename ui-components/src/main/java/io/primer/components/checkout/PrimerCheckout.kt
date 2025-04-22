@@ -16,7 +16,7 @@ interface PrimerCheckoutScope {
     /**
      * Sets the selected payment method for checkout.
      */
-    fun selectPaymentMethod(method: PaymentMethod)
+    fun selectPaymentMethod(method: PaymentMethod<*, *>)
 
     /**
      * Clears selected payment method.
@@ -36,12 +36,12 @@ interface PrimerCheckoutScope {
          * The checkout flow has been initialized, and available payment methods are now ready.
          * Contains a list of [PaymentMethod] objects representing the methods available for selection.
          */
-        data class Ready(val paymentMethods: List<PaymentMethod>) : State
+        data class Ready(val paymentMethods: List<PaymentMethod<*, *>>) : State
 
         /**
          * The user has selected a payment method from the list.
          */
-        data class Selected(val paymentMethod: PaymentMethod) : State
+        data class Selected(val paymentMethod: PaymentMethod<*, *>) : State
     }
 }
 

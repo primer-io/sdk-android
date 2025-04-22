@@ -37,7 +37,10 @@ fun CardScope.CardComponent(modifier: Modifier = Modifier) {
         is CardScope.State.Loaded -> {
             // TODO: add loaded state
         }
+
+        null -> TODO()
     }
+
     Column(
         modifier = modifier
             .fillMaxWidth()
