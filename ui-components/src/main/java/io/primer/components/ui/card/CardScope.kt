@@ -1,13 +1,13 @@
-package io.primer.components.ui.components.card
+package io.primer.components.ui.card
 
 import io.primer.android.configuration.data.model.CardNetwork
-import io.primer.components.PaymentMethodScope
+import io.primer.components.models.paymentMethods.PaymentMethod
 
 /**
- * Defines the scope for the card payment method, extending the base [PaymentMethodScope].
+ * Defines the scope for the card payment method, extending the base [PaymentMethod.Scope].
  * and methods to [submit] the card form and to [cancel] the checkout process.
  */
-interface CardPaymentMethodScope : PaymentMethodScope {
+interface CardScope : PaymentMethod.Scope {
     /**
      * Handles changes to the card number input.
      * @param value The updated card number
@@ -37,4 +37,19 @@ interface CardPaymentMethodScope : PaymentMethodScope {
      * @param value The selected card network type
      */
     fun onCardNetworkChange(value: CardNetwork.Type)
+
+    sealed interface State {
+
+        data object Loading : State
+
+        data object Error : State
+
+        data class Loaded(
+            val cardNumber: String,
+            val cvv: String,
+            val expiration: String,
+            val cardholderName: String,
+        ) : State
+    }
+
 }

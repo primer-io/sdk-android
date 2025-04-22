@@ -1,4 +1,4 @@
-package io.primer.components.ui.components.card
+package io.primer.components.ui.card
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -15,15 +15,29 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import io.primer.components.PaymentMethodScope
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 
 @Composable
-fun PaymentMethodScope.CardComponent(modifier: Modifier = Modifier) {
+fun CardScope.CardComponent(modifier: Modifier = Modifier) {
+
     var cardNumber by remember { mutableStateOf("") }
     var expiry by remember { mutableStateOf("") }
     var cvv by remember { mutableStateOf("") }
     var name by remember { mutableStateOf("") }
 
+    val state by state.collectAsStateWithLifecycle()
+
+    when(state) {
+        CardScope.State.Loading -> {
+            // TODO: add loading state
+        }
+        CardScope.State.Error -> {
+            // TODO: add error state
+        }
+        is CardScope.State.Loaded -> {
+            // TODO: add loaded state
+        }
+    }
     Column(
         modifier = modifier
             .fillMaxWidth()

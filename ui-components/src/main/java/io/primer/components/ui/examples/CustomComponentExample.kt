@@ -16,15 +16,16 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import io.primer.components.PrimerCheckoutScope
-import io.primer.components.models.paymentMethods.CardPaymentMethod
-import io.primer.components.ui.components.card.CardComponent
-import io.primer.components.ui.components.card.CardPaymentMethodScope
+import io.primer.components.checkout.PrimerCheckoutScope
+import io.primer.components.ui.card.CardPaymentMethod
+import io.primer.components.ui.card.CardScope
 
 @Composable
 fun PrimerCheckoutScope.CustomComponentExample() {
 
     val state by state.collectAsStateWithLifecycle()
+    val readyState = state as? PrimerCheckoutScope.State.Ready
+    val selectedState = state as? PrimerCheckoutScope.State.Selected
 
     LazyColumn(
         modifier = Modifier
@@ -33,7 +34,7 @@ fun PrimerCheckoutScope.CustomComponentExample() {
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
 
-        (state as? PrimerCheckoutScope.State.Ready?)?.paymentMethods?.let {
+        readyState?.paymentMethods?.let {
             items(it) { method ->
                 Button(onClick = {
                     selectPaymentMethod(method)
@@ -48,10 +49,10 @@ fun PrimerCheckoutScope.CustomComponentExample() {
         }
 
         item {
-            (state as? PrimerCheckoutScope.State.Selected?)?.paymentMethod?.let {
+            selectedState?.paymentMethod?.let {
                 when(val current = it) {
                     is CardPaymentMethod -> current.Render {
-                        (this as CardPaymentMethodScope).CardComponent()
+                        (this as CardScope).CustomCardForm()
                     }
                 }
             }
@@ -60,7 +61,7 @@ fun PrimerCheckoutScope.CustomComponentExample() {
 }
 
 @Composable
-fun CardPaymentMethodScope.CustomCardForm() {
+fun CardScope.CustomCardForm() {
     Column(
         modifier = Modifier
             .fillMaxWidth()

@@ -1,18 +1,17 @@
-package io.primer.components.ui.components.card
+package io.primer.components.ui.card
 
 import androidx.lifecycle.ViewModel
 import io.primer.android.configuration.data.model.CardNetwork
-import io.primer.components.PaymentMethodScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
-internal class CardViewModel : ViewModel(), CardPaymentMethodScope {
+internal class CardViewModel : ViewModel(), CardScope {
 
-    private val _state = MutableStateFlow<PaymentMethodScope.State?>(null)
+    private val _state = MutableStateFlow<CardScope.State?>(null)
     override val state = _state.asStateFlow()
 
     init {
-        _state.value = State.Loading
+        _state.value = CardScope.State.Loading
     }
 
     override fun onCardNumberChange(value: String) {
@@ -41,19 +40,5 @@ internal class CardViewModel : ViewModel(), CardPaymentMethodScope {
 
     override fun cancel() {
         // TODO
-    }
-
-    sealed interface State : PaymentMethodScope.State {
-
-        data object Loading : State
-
-        data class Loaded(
-            val cardNumber: String,
-            val cvv: String,
-            val expiration: String,
-            val cardholderName: String,
-        ) : State
-
-        data object Error : State
     }
 }

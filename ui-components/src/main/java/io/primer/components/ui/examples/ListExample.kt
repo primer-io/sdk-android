@@ -14,12 +14,15 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import io.primer.components.PrimerCheckoutScope
+import io.primer.components.checkout.PrimerCheckoutScope
 
 @Composable
 fun PrimerCheckoutScope.ListExample() {
 
     val state by state.collectAsStateWithLifecycle()
+
+    val readyState = state as? PrimerCheckoutScope.State.Ready
+    val selectedState = state as? PrimerCheckoutScope.State.Selected
 
     LazyColumn(
         modifier = Modifier
@@ -28,7 +31,7 @@ fun PrimerCheckoutScope.ListExample() {
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
 
-        (state as? PrimerCheckoutScope.State.Ready)?.paymentMethods?.let {
+        readyState?.paymentMethods?.let {
             items(it) { method ->
                 Button(onClick = { selectPaymentMethod(method) }) {
                     Text(method.name.orEmpty())
@@ -40,7 +43,7 @@ fun PrimerCheckoutScope.ListExample() {
             Spacer(modifier = Modifier.height(16.dp))
         }
 
-        (state as? PrimerCheckoutScope.State.Selected)?.paymentMethod?.let {
+        selectedState?.paymentMethod?.let {
             item {
                 it.Render()
             }

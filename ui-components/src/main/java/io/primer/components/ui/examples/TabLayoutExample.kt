@@ -16,17 +16,19 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import io.primer.components.PrimerCheckoutScope
+import io.primer.components.checkout.PrimerCheckoutScope
 
 @Composable
 fun PrimerCheckoutScope.TabLayoutExample() {
 
     val state by state.collectAsStateWithLifecycle()
     var selectedTabIndex by remember { mutableIntStateOf(0) }
+    val readyState = state as? PrimerCheckoutScope.State.Ready
+    val selectedState = state as? PrimerCheckoutScope.State.Selected
 
     Column(modifier = Modifier.fillMaxSize()) {
 
-        (state as? PrimerCheckoutScope.State.Ready)?.paymentMethods?.let {
+        readyState?.paymentMethods?.let {
             ScrollableTabRow(
                 selectedTabIndex = selectedTabIndex,
                 modifier = Modifier.fillMaxWidth(),
@@ -49,6 +51,6 @@ fun PrimerCheckoutScope.TabLayoutExample() {
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        (state as? PrimerCheckoutScope.State.Selected)?.paymentMethod?.Render()
+        selectedState?.paymentMethod?.Render()
     }
 }

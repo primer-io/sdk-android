@@ -21,7 +21,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import io.primer.components.PrimerCheckoutScope
+import io.primer.components.checkout.PrimerCheckoutScope
 import io.primer.components.models.paymentMethods.PaymentMethod
 
 @Composable
@@ -30,13 +30,15 @@ fun PrimerCheckoutScope.RadioGroupExample() {
     val state by state.collectAsStateWithLifecycle()
 
     var selectedPaymentMethod by remember { mutableStateOf<PaymentMethod?>(null) }
+    val readyState = state as? PrimerCheckoutScope.State.Ready
+    val selectedState = state as? PrimerCheckoutScope.State.Selected
 
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp),
     ) {
-        (state as? PrimerCheckoutScope.State.Ready)?.paymentMethods?.let {
+        readyState?.paymentMethods?.let {
             items(it) { paymentMethod ->
 
                 val isSelected = selectedPaymentMethod?.type == paymentMethod.type
@@ -67,7 +69,7 @@ fun PrimerCheckoutScope.RadioGroupExample() {
             }
         }
 
-        (state as PrimerCheckoutScope.State.Selected?)?.let {
+        selectedState?.let {
             item {
                 Spacer(modifier = Modifier.height(16.dp))
             }

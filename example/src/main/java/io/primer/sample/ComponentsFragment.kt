@@ -22,7 +22,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import io.primer.components.PrimerCheckout
+import io.primer.components.checkout.PrimerCheckout
 import io.primer.sample.viewmodels.MainViewModel
 
 class ComponentsFragment : Fragment() {

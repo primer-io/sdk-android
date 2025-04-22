@@ -1,4 +1,4 @@
-package io.primer.components.implementation.checkout
+package io.primer.components.checkout
 
 import android.content.Context
 import androidx.lifecycle.ViewModel
@@ -11,9 +11,8 @@ import io.primer.android.domain.PrimerCheckoutData
 import io.primer.android.domain.error.models.PrimerError
 import io.primer.android.domain.tokenization.models.PrimerPaymentMethodTokenData
 import io.primer.android.paymentmethods.common.data.model.PaymentMethodType
-import io.primer.components.PrimerCheckoutScope
-import io.primer.components.models.paymentMethods.CardPaymentMethod
 import io.primer.components.models.paymentMethods.PaymentMethod
+import io.primer.components.ui.card.CardPaymentMethod
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 

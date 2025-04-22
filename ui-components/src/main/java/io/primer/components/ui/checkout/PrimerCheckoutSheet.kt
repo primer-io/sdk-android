@@ -25,7 +25,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import io.primer.components.PrimerCheckoutScope
+import io.primer.components.checkout.PrimerCheckoutScope
 import io.primer.components.models.paymentMethods.PaymentMethod
 
 @OptIn(ExperimentalMaterial3Api::class)
