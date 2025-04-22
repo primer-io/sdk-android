@@ -29,7 +29,7 @@ fun PrimerCheckoutScope.RadioGroupExample() {
 
     val state by state.collectAsStateWithLifecycle()
 
-    var selectedPaymentMethod by remember { mutableStateOf<PaymentMethod<*, *>?>(null) }
+    var selectedPaymentMethod by remember { mutableStateOf<PaymentMethod<*>?>(null) }
     val readyState = state as? PrimerCheckoutScope.State.Ready
     val selectedState = state as? PrimerCheckoutScope.State.Selected
 

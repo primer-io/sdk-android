@@ -25,9 +25,9 @@ internal class PrimerCheckoutViewModel : ViewModel(),
         MutableStateFlow<PrimerCheckoutScope.State>(PrimerCheckoutScope.State.Loading)
     override val state = _state.asStateFlow()
 
-    private val _paymentMethods = MutableStateFlow<List<PaymentMethod<*, *>>>(emptyList())
+    private val _paymentMethods = MutableStateFlow<List<PaymentMethod<*>>>(emptyList())
 
-    override fun selectPaymentMethod(method: PaymentMethod<*, *>) {
+    override fun selectPaymentMethod(method: PaymentMethod<*>) {
         _state.value = PrimerCheckoutScope.State.Selected(method)
         // TODO: call action interactor conditionally
     }

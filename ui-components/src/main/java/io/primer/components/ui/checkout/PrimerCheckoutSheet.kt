@@ -75,7 +75,7 @@ fun PrimerCheckoutScope.PrimerCheckoutSheet(modifier: Modifier = Modifier) {
 }
 
 @Composable
-private fun SelectedPaymentMethod(paymentMethod: PaymentMethod<*, *>, onBackClick: () -> Unit) {
+private fun SelectedPaymentMethod(paymentMethod: PaymentMethod<*>, onBackClick: () -> Unit) {
     Column {
         IconButton(onClick = onBackClick) {
             Icon(Icons.AutoMirrored.Filled.ArrowBack, null) // TODO TWS: set content description
@@ -85,7 +85,7 @@ private fun SelectedPaymentMethod(paymentMethod: PaymentMethod<*, *>, onBackClic
 }
 
 @Composable
-private fun PrimerCheckoutScope.PaymentMethodList(paymentMethods: List<PaymentMethod<*, *>>) {
+private fun PrimerCheckoutScope.PaymentMethodList(paymentMethods: List<PaymentMethod<*>>) {
     LazyColumn(
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {

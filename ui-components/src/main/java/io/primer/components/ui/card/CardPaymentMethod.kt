@@ -5,7 +5,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import io.primer.android.paymentmethods.common.data.model.PaymentMethodType
 import io.primer.components.models.paymentMethods.PaymentMethod
 
-class CardPaymentMethod : PaymentMethod<CardScope.State, CardScope>(
+class CardPaymentMethod : PaymentMethod<CardScope>(
     name = "Card",
     type = PaymentMethodType.PAYMENT_CARD,
     component = { CardComponent() }

@@ -4,7 +4,7 @@ import androidx.compose.runtime.Composable
 import io.primer.android.paymentmethods.common.data.model.PaymentMethodType
 import kotlinx.coroutines.flow.StateFlow
 
-abstract class PaymentMethod<STATE, SCOPE>(
+abstract class PaymentMethod<SCOPE>(
     open val name: String?,
     open val type: PaymentMethodType,
     open val component: @Composable SCOPE.() -> Unit
