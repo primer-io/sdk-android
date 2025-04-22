@@ -51,7 +51,7 @@ fun PrimerCheckoutScope.CustomComponentExample() {
         item {
             selectedState?.paymentMethod?.let {
                 when(val current = it) {
-                    is CardPaymentMethod -> current.Render { CustomCardForm() }
+                    is CardPaymentMethod -> current.Custom { CustomCardForm() }
                 }
             }
         }

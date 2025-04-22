@@ -45,7 +45,7 @@ fun PrimerCheckoutScope.ListExample() {
 
         selectedState?.paymentMethod?.let {
             item {
-                it.Render()
+                it.Default()
             }
         }
     }

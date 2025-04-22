@@ -51,6 +51,6 @@ fun PrimerCheckoutScope.TabLayoutExample() {
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        selectedState?.paymentMethod?.Render()
+        selectedState?.paymentMethod?.Default()
     }
 }
