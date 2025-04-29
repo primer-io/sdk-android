@@ -3,6 +3,7 @@ package io.primer.android.webRedirectShared.implementation.composer.ui.activity
 import android.content.Intent
 import android.net.Uri
 import android.util.Log
+import androidx.core.net.toUri
 import io.primer.paymentMethodCoreUi.core.ui.webview.BaseWebViewClient
 import io.primer.paymentMethodCoreUi.core.ui.webview.WebViewActivity
 
@@ -13,7 +14,7 @@ internal class WebRedirectPaymentMethodWebViewClient(
 ) : BaseWebViewClient(activity, url, returnUrl) {
     override fun getUrlState(url: String) =
         when {
-            Uri.parse(url).pathSegments.contains(CANCEL_STATE_QUERY_PARAM) -> UrlState.CANCELLED
+            url.toUri().pathSegments.contains(CANCEL_STATE_QUERY_PARAM) -> UrlState.CANCELLED
             else -> UrlState.PROCESSING
         }
 

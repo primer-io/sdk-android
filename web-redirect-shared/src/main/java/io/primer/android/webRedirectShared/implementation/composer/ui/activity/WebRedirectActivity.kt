@@ -2,8 +2,8 @@ package io.primer.android.webRedirectShared.implementation.composer.ui.activity
 
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
+import androidx.core.net.toUri
 import io.primer.android.analytics.data.models.AnalyticsAction
 import io.primer.android.analytics.data.models.ObjectId
 import io.primer.android.analytics.data.models.ObjectType
@@ -21,7 +21,9 @@ class WebRedirectActivity : WebViewActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        logAnalyticsViewed()
+        runIfNotFinishing {
+            logAnalyticsViewed()
+        }
     }
 
     override fun onSupportNavigateUp(): Boolean {
@@ -31,6 +33,7 @@ class WebRedirectActivity : WebViewActivity() {
 
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
+        logNewIntentCalled(intent = intent)
         when (
             intent?.data?.pathSegments?.contains(
                 WebRedirectPaymentMethodWebViewClient.CANCEL_STATE_QUERY_PARAM,
@@ -67,10 +70,18 @@ class WebRedirectActivity : WebViewActivity() {
                 Place.PAYMENT_METHOD_POPUP,
                 context =
                 UrlContextParams(
-                    Uri.parse(
-                        intent.extras?.getString(PAYMENT_URL_KEY).orEmpty(),
-                    ).host.orEmpty(),
+                    intent.extras?.getString(PAYMENT_URL_KEY).orEmpty().toUri().host.orEmpty(),
                 ),
+            ),
+        )
+
+    private fun logNewIntentCalled(intent: Intent?) =
+        viewModel.addAnalyticsEvent(
+            UIAnalyticsParams(
+                AnalyticsAction.NEW_INTENT,
+                ObjectType.WEB_PAGE,
+                Place.PAYMENT_METHOD_POPUP,
+                context = UrlContextParams(intent?.data.toString()),
             ),
         )
 

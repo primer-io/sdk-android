@@ -125,6 +125,7 @@ enum class AnalyticsAction {
     BLUR,
     PRESENT,
     DISMISS,
+    NEW_INTENT,
 }
 
 @Suppress("EnumEntryName", "EnumNaming")
