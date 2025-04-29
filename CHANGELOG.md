@@ -1,3 +1,10 @@
+## 2.38.3 (2025-04-29)
+
+### Fix
+
+- fixed crash when destroyed redirect screen is re-opened by deeplink (#946)
+- fixed crash when destroyed redirect screen is re-opened by deeplink
+
 ## 2.38.2 (2025-04-17)
 
 ### Fix
