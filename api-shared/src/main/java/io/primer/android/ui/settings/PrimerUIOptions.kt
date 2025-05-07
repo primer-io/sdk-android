@@ -15,6 +15,7 @@ data class PrimerUIOptions(
     var isErrorScreenEnabled: Boolean = true,
     var dismissalMechanism: List<DismissalMechanism> = listOf(DismissalMechanism.GESTURES),
     var theme: PrimerTheme = PrimerTheme.build(),
+    var cardFormUIOptions: PrimerCardFormUIOptions = PrimerCardFormUIOptions(),
 ) : Parcelable, JSONObjectSerializable {
     constructor(parcel: Parcel) : this(
         isInitScreenEnabled = parcel.readByte() != 0.toByte(),
@@ -27,6 +28,7 @@ data class PrimerUIOptions(
             stringList.forEach { add(DismissalMechanism.valueOf(it)) }
         },
         theme = parcel.readParcelable<PrimerTheme>() ?: PrimerTheme.build(),
+        cardFormUIOptions = parcel.readParcelable<PrimerCardFormUIOptions>() ?: PrimerCardFormUIOptions(),
     )
 
     override fun writeToParcel(
@@ -38,6 +40,7 @@ data class PrimerUIOptions(
         parcel.writeByte(if (isErrorScreenEnabled) 1 else 0)
         parcel.writeStringList(dismissalMechanism.map { it.name })
         parcel.writeParcelable(theme, flags)
+        parcel.writeParcelable(cardFormUIOptions, flags)
     }
 
     override fun describeContents(): Int {
@@ -57,6 +60,7 @@ data class PrimerUIOptions(
         private const val SUCCESS_SCREEN_ENABLED_FIELD = "isSuccessScreenEnabled"
         private const val ERROR_SCREEN_ENABLED_FIELD = "isErrorScreenEnabled"
         private const val DISMISSAL_MECHANISMS_FIELD = "dismissalMechanism"
+        private const val CARD_FORM_UI_OPTIONS_FIELD = "cardFormUIOptions"
 
         @JvmField
         val serializer =
@@ -66,6 +70,7 @@ data class PrimerUIOptions(
                     put(SUCCESS_SCREEN_ENABLED_FIELD, t.isSuccessScreenEnabled)
                     put(ERROR_SCREEN_ENABLED_FIELD, t.isErrorScreenEnabled)
                     put(DISMISSAL_MECHANISMS_FIELD, JSONArray(t.dismissalMechanism.map { it.name }))
+                    put(CARD_FORM_UI_OPTIONS_FIELD, PrimerCardFormUIOptions.serializer.serialize(t.cardFormUIOptions))
                 }
             }
     }
