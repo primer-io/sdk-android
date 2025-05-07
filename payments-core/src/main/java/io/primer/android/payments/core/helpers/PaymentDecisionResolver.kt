@@ -1,6 +1,7 @@
 package io.primer.android.payments.core.helpers
 
 import io.primer.android.core.logging.internal.LogReporter
+import io.primer.android.payments.core.create.data.model.CheckoutOutcome
 import io.primer.android.payments.core.create.data.model.PaymentStatus
 import io.primer.android.payments.core.create.domain.model.PaymentDecision
 import io.primer.android.payments.core.create.domain.model.PaymentResult
@@ -13,33 +14,44 @@ internal class PaymentDecisionResolver(
 ) {
     fun resolve(paymentResult: PaymentResult): PaymentDecision {
         logReporter.info("Received new payment status: ${paymentResult.paymentStatus}.")
-        return when {
-            paymentResult.paymentStatus == PaymentStatus.PENDING &&
-                paymentResult.showSuccessCheckoutOnPendingPayment.not() -> {
-                logReporter.debug(
-                    "Handling required action: ${paymentResult.requiredActionName?.name}" +
-                        " for payment id: ${paymentResult.payment.id}",
-                )
-                PaymentDecision.Pending(
-                    clientToken = paymentResult.clientToken.orEmpty(),
-                    payment = paymentResult.payment,
-                )
-            }
-
-            paymentResult.paymentStatus == PaymentStatus.FAILED -> {
-                PaymentDecision.Error(
-                    error =
-                    PaymentError.PaymentFailedError(
-                        paymentId = paymentResult.payment.id,
-                        paymentStatus = paymentResult.paymentStatus,
-                        paymentMethodType =
-                        tokenizedPaymentMethodRepository.getPaymentMethod().paymentMethodType.orEmpty(),
-                    ),
-                    payment = paymentResult.payment,
-                )
-            }
-
-            else -> PaymentDecision.Success(payment = paymentResult.payment)
+        return when (paymentResult.checkoutOutcome) {
+            CheckoutOutcome.CHECKOUT_COMPLETE -> PaymentDecision.Success(payment = paymentResult.payment)
+            CheckoutOutcome.CHECKOUT_FAILURE -> PaymentDecision.Error(
+                error = paymentResult.toError(),
+                payment = paymentResult.payment,
+            )
+            else -> paymentResult.toPaymentDecision()
         }
+    }
+
+    private fun PaymentResult.toPaymentDecision() = when {
+        paymentStatus == PaymentStatus.PENDING &&
+            showSuccessCheckoutOnPendingPayment.not() -> {
+            logReporter.debug(
+                "Handling required action: ${requiredActionName?.name}" +
+                    " for payment id: ${payment.id}",
+            )
+            PaymentDecision.Pending(
+                clientToken = clientToken.orEmpty(),
+                payment = payment,
+            )
+        }
+
+        paymentStatus == PaymentStatus.FAILED -> {
+            PaymentDecision.Error(
+                error = toError(),
+                payment = payment,
+            )
+        }
+        else -> PaymentDecision.Success(payment = payment)
+    }
+
+    private fun PaymentResult.toError(): PaymentError.PaymentFailedError {
+        return PaymentError.PaymentFailedError(
+            paymentId = payment.id,
+            paymentStatus = paymentStatus,
+            paymentMethodType = tokenizedPaymentMethodRepository.getPaymentMethod()
+                .paymentMethodType.orEmpty(),
+        )
     }
 }

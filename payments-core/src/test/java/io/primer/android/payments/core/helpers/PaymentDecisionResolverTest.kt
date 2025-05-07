@@ -6,6 +6,7 @@ import io.mockk.mockk
 import io.mockk.verify
 import io.primer.android.core.logging.internal.LogReporter
 import io.primer.android.domain.payments.create.model.Payment
+import io.primer.android.payments.core.create.data.model.CheckoutOutcome
 import io.primer.android.payments.core.create.data.model.PaymentStatus
 import io.primer.android.payments.core.create.data.model.RequiredActionName
 import io.primer.android.payments.core.create.domain.model.PaymentDecision
@@ -36,14 +37,57 @@ class PaymentDecisionResolverTest {
     }
 
     @Test
+    fun `resolve should return Success when checkoutOutcome is CHECKOUT_COMPLETE`() {
+        val paymentResult = PaymentResult(
+            payment = Payment("payment123", "order456"),
+            paymentStatus = PaymentStatus.PENDING,
+            requiredActionName = null,
+            clientToken = null,
+            checkoutOutcome = CheckoutOutcome.CHECKOUT_COMPLETE,
+        )
+
+        val decision = paymentDecisionResolver.resolve(paymentResult)
+
+        assertEquals(PaymentDecision.Success(paymentResult.payment), decision)
+        verify { logReporter.info("Received new payment status: ${PaymentStatus.PENDING}.") }
+    }
+
+    @Test
+    fun `resolve should return Error when checkoutOutcome is CHECKOUT_FAILURE`() {
+        val paymentMethodToken = mockk<PaymentMethodTokenInternal>()
+        every { paymentMethodToken.paymentMethodType } returns "credit_card"
+        every { tokenizedPaymentMethodRepository.getPaymentMethod() } returns paymentMethodToken
+
+        val paymentResult = PaymentResult(
+            payment = Payment("payment456", "order789"),
+            paymentStatus = PaymentStatus.SUCCESS, // even if SUCCESS, checkoutOutcome overrides
+            requiredActionName = null,
+            clientToken = null,
+            checkoutOutcome = CheckoutOutcome.CHECKOUT_FAILURE,
+        )
+
+        val decision = paymentDecisionResolver.resolve(paymentResult)
+
+        assertEquals(
+            PaymentDecision.Error(
+                PaymentError.PaymentFailedError("payment456", PaymentStatus.SUCCESS, "credit_card"),
+                paymentResult.payment,
+            ),
+            decision,
+        )
+        verify { logReporter.info("Received new payment status: ${PaymentStatus.SUCCESS}.") }
+    }
+
+    @Test
     fun `resolve should return Pending decision when PaymentStatus is PENDING`() {
         // Arrange
         val paymentResult =
             PaymentResult(
-                Payment("payment123", "order456"),
-                PaymentStatus.PENDING,
-                RequiredActionName.USE_PRIMER_SDK,
-                "clientToken123",
+                payment = Payment("payment123", "order456"),
+                paymentStatus = PaymentStatus.PENDING,
+                requiredActionName = RequiredActionName.USE_PRIMER_SDK,
+                clientToken = "clientToken123",
+                checkoutOutcome = null,
             )
 
         // Act
@@ -63,10 +107,11 @@ class PaymentDecisionResolverTest {
         every { tokenizedPaymentMethodRepository.getPaymentMethod() } returns paymentMethodToken
         val paymentResult =
             PaymentResult(
-                Payment("payment456", "order789"),
-                PaymentStatus.FAILED,
-                null,
-                null,
+                payment = Payment("payment456", "order789"),
+                paymentStatus = PaymentStatus.FAILED,
+                requiredActionName = null,
+                clientToken = null,
+                checkoutOutcome = null,
             )
 
         // Act
@@ -89,10 +134,11 @@ class PaymentDecisionResolverTest {
         // Arrange
         val paymentResult =
             PaymentResult(
-                Payment("payment789", "order012"),
-                PaymentStatus.SUCCESS,
-                null,
-                null,
+                payment = Payment("payment789", "order012"),
+                paymentStatus = PaymentStatus.SUCCESS,
+                requiredActionName = null,
+                clientToken = null,
+                checkoutOutcome = null,
             )
 
         // Act
@@ -102,5 +148,49 @@ class PaymentDecisionResolverTest {
         assertEquals(PaymentDecision.Success(paymentResult.payment), decision)
         verify { logReporter.info("Received new payment status: ${PaymentStatus.SUCCESS}.") }
         verify(exactly = 0) { logReporter.debug(any()) } // No debug log expected for SUCCESS status
+    }
+
+    @Test
+    fun `resolve should return Success when checkoutOutcome is DETERMINE_FROM_PAYMENT_STATUS and status is SUCCESS`() {
+        val paymentResult = PaymentResult(
+            payment = Payment("payment789", "order012"),
+            paymentStatus = PaymentStatus.SUCCESS,
+            requiredActionName = null,
+            clientToken = null,
+            checkoutOutcome = CheckoutOutcome.DETERMINE_FROM_PAYMENT_STATUS,
+        )
+
+        val decision = paymentDecisionResolver.resolve(paymentResult)
+
+        assertEquals(PaymentDecision.Success(paymentResult.payment), decision)
+        verify { logReporter.info("Received new payment status: ${PaymentStatus.SUCCESS}.") }
+        verify(exactly = 0) { logReporter.debug(any()) }
+    }
+
+    @Test
+    fun `resolve should return Error when checkoutOutcome is DETERMINE_FROM_PAYMENT_STATUS and status is FAILED`() {
+        val paymentMethodToken = mockk<PaymentMethodTokenInternal>()
+        every { paymentMethodToken.paymentMethodType } returns "credit_card"
+        every { tokenizedPaymentMethodRepository.getPaymentMethod() } returns paymentMethodToken
+
+        val paymentResult = PaymentResult(
+            payment = Payment("payment456", "order789"),
+            paymentStatus = PaymentStatus.FAILED,
+            requiredActionName = null,
+            clientToken = null,
+            checkoutOutcome = CheckoutOutcome.DETERMINE_FROM_PAYMENT_STATUS,
+        )
+
+        val decision = paymentDecisionResolver.resolve(paymentResult)
+
+        assertEquals(
+            PaymentDecision.Error(
+                PaymentError.PaymentFailedError("payment456", PaymentStatus.FAILED, "credit_card"),
+                paymentResult.payment,
+            ),
+            decision,
+        )
+        verify { logReporter.info("Received new payment status: ${PaymentStatus.FAILED}.") }
+        verify(exactly = 0) { logReporter.debug(any()) }
     }
 }

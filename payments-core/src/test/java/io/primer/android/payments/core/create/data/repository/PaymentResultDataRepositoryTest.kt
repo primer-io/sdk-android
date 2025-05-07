@@ -36,6 +36,7 @@ class PaymentResultDataRepositoryTest {
                 paymentFailureReason = null,
                 requiredAction = null,
                 showSuccessCheckoutOnPendingPayment = false,
+                checkoutOutcome = null,
             )
         val expectedPaymentResult = paymentDataResponse.toPaymentResult()
 
