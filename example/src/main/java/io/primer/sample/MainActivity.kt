@@ -10,6 +10,7 @@ import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import io.primer.sample.databinding.ActivityMainBinding
 import io.primer.sample.datamodels.AppCountryCode
+import io.primer.sample.datamodels.AppLinkParams
 import io.primer.sample.datasources.CountryDataSource
 import io.primer.sample.repositories.AppApiKeyRepository
 import io.primer.sample.repositories.CountryRepository
@@ -43,9 +44,15 @@ class MainActivity : AppCompatActivity() {
         val countryDataSource = CountryDataSource(AppCountryCode.DE)
         val countryRepository = CountryRepository(countryDataSource)
 
+        val appLinkParams = intent?.data?.let {
+            val token = it.getQueryParameter("clientToken")
+            val settings = it.getQueryParameter("settings")
+            AppLinkParams(token, settings)
+        }
+
         mainViewModel = ViewModelProvider(
             this,
-            MainViewModelFactory(WeakReference(this), countryRepository, apiKeyDataSource),
+            MainViewModelFactory(WeakReference(this), countryRepository, apiKeyDataSource, appLinkParams),
         )[MainViewModel::class.java]
 
         settingsViewModel = ViewModelProvider(

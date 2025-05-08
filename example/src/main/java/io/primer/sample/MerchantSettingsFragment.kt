@@ -88,8 +88,16 @@ class MerchantSettingsFragment : Fragment() {
         }
 
         viewModel.selectedFlow.observe(viewLifecycleOwner) { flow ->
-            binding.clientTokenTextFieldLayout.isVisible =
-                flow == MainViewModel.SelectedFlow.CLIENT_TOKEN
+            when(flow) {
+                MainViewModel.SelectedFlow.CREATE_SESSION -> {
+                    binding.flowToggleGroup.check(binding.clientSession.id)
+                    binding.clientTokenTextFieldLayout.isVisible = false
+                }
+                MainViewModel.SelectedFlow.CLIENT_TOKEN -> {
+                    binding.flowToggleGroup.check(binding.clientToken.id)
+                    binding.clientTokenTextFieldLayout.isVisible = true
+                }
+            }
         }
     }
 
@@ -164,7 +172,7 @@ class MerchantSettingsFragment : Fragment() {
 
     private fun configureFlowToggleViews() {
         binding.flowToggleGroup.apply {
-            addOnButtonCheckedListener { _, checkedId, _ ->
+            setOnCheckedChangeListener { _, checkedId ->
                 viewModel.setSelectedFlow(
                     when (checkedId) {
                         binding.clientSession.id -> MainViewModel.SelectedFlow.CREATE_SESSION
@@ -173,7 +181,6 @@ class MerchantSettingsFragment : Fragment() {
                     }
                 )
             }
-            check(binding.clientSession.id)
         }
     }
 

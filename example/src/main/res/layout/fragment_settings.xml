@@ -20,36 +20,25 @@
             android:orientation="vertical"
             android:padding="@dimen/medium_padding">
 
-            <com.google.android.material.button.MaterialButtonToggleGroup
+            <RadioGroup
                 android:id="@+id/flowToggleGroup"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:checkedButton="@id/clientSession"
-                android:orientation="horizontal"
-                app:singleSelection="true">
+                android:layout_margin="10dp"
+                android:checkedButton="@id/paymentHandlingAuto">
 
-                <Button
+                <RadioButton
                     android:id="@+id/clientSession"
-                    style="?attr/materialButtonOutlinedStyle"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:contentDescription="@string/flow_client_session"
-                    android:gravity="center"
-                    android:text="@string/flow_client_session"
-                    android:textAllCaps="false" />
+                    android:text="@string/flow_client_session" />
 
-                <Button
+                <RadioButton
                     android:id="@+id/clientToken"
-                    style="?attr/materialButtonOutlinedStyle"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:contentDescription="@string/flow_client_token"
-                    android:gravity="center"
-                    android:text="@string/flow_client_token"
-                    android:textAllCaps="false" />
-            </com.google.android.material.button.MaterialButtonToggleGroup>
+                    android:text="@string/flow_client_token" />
+            </RadioGroup>
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/clientTokenTextFieldLayout"
