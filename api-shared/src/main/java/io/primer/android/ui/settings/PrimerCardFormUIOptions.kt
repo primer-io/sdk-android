@@ -7,7 +7,7 @@ import io.primer.android.core.data.serialization.json.JSONObjectSerializer
 import org.json.JSONObject
 
 data class PrimerCardFormUIOptions(
-    var payButtonAddNewCard: Boolean = true,
+    var payButtonAddNewCard: Boolean = false,
 ) : Parcelable, JSONObjectSerializable {
     constructor(parcel: Parcel) : this(
         payButtonAddNewCard = parcel.readByte() != 0.toByte(),

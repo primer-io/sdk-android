@@ -31,12 +31,14 @@
                     android:id="@+id/clientSession"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:contentDescription="@string/flow_client_session"
                     android:text="@string/flow_client_session" />
 
                 <RadioButton
                     android:id="@+id/clientToken"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:contentDescription="@string/flow_client_token"
                     android:text="@string/flow_client_token" />
             </RadioGroup>
 
