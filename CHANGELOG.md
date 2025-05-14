@@ -1,3 +1,14 @@
+## 2.39.0 (2025-05-14)
+
+### Feat
+
+- override checkout behaviour (#948)
+- add new card option (#949)
+
+### Fix
+
+- fix crash with CheckoutExitHandler misuse (#952)
+
 ## 2.38.3 (2025-04-29)
 
 ### Fix
