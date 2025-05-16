@@ -38,7 +38,7 @@ mavenPublish = "0.31.0"
 junit = "4.13.2"
 androidx-test-ext-junit = "1.2.1"
 espresso-core = "3.5.1"
-activityKtx = "1.9.2"
+activityKtx = "1.10.1"
 secretsGradlePlugin = "2.0.1"
 
 [libraries]
