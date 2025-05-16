@@ -11,16 +11,15 @@ repositories {
     maven {
         url "https://x.klarnacdn.net/mobile-sdk/"
     }
-    jcenter()
 }
 
 android {
 
     defaultConfig {
         applicationId "io.primer.sample"
-        compileSdk 34
+        compileSdk 35
         minSdkVersion 21
-        targetSdkVersion 34
+        targetSdkVersion 35
         versionCode 4
         versionName "1.0"
 
