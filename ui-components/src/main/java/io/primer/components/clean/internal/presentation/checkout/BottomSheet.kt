@@ -10,6 +10,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
@@ -21,7 +22,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import io.primer.components.Primer
 import io.primer.components.clean.internal.di.ComposableManager
-import io.primer.components.clean.ui.PrimerPaymentMethodItem
+import io.primer.components.clean.ui.Default
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -74,13 +75,14 @@ internal fun Primer.BottomSheet(
                         style = MaterialTheme.typography.headlineSmall
                     )
 
+                    HorizontalDivider(modifier = Modifier.padding(8.dp))
+
                     // Payment Methods List
                     LazyColumn(
                         verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
                         items(current.paymentMethods) { paymentMethod ->
-                            PrimerPaymentMethodItem(
-                                paymentMethod = paymentMethod,
+                            paymentMethod.Default(
                                 onSelect = {
                                     selectPaymentMethod(paymentMethod)
                                 }

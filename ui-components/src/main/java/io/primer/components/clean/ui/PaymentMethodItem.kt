@@ -12,8 +12,7 @@ import androidx.compose.ui.unit.dp
 import io.primer.components.clean.model.PrimerPaymentMethod
 
 @Composable
-fun PrimerPaymentMethodItem(
-    paymentMethod: PrimerPaymentMethod,
+fun PrimerPaymentMethod.Default(
     onSelect: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -24,7 +23,7 @@ fun PrimerPaymentMethodItem(
     ) {
         Text(
             modifier = Modifier.padding(16.dp),
-            text = paymentMethod.name,
+            text = name,
             style = MaterialTheme.typography.titleMedium
         )
     }
