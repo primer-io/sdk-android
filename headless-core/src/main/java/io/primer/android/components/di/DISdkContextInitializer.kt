@@ -9,6 +9,7 @@ import io.primer.android.configuration.mock.di.MockContainer
 import io.primer.android.core.di.DISdkComponent
 import io.primer.android.core.di.DISdkContext
 import io.primer.android.core.di.SdkContainer
+import io.primer.android.core.di.SdkType
 import io.primer.android.core.di.plus
 import io.primer.android.data.settings.PrimerSettings
 import io.primer.android.data.settings.internal.PrimerConfig
@@ -23,6 +24,7 @@ object DISdkContextInitializer : DISdkComponent {
         config: PrimerConfig,
         context: Context,
     ) {
+        DISdkContext.sdkType = SdkType.HEADLESS
         SdkContainer().let { container ->
             container.init(config, context)
             DISdkContext.headlessSdkContainer?.clear()
@@ -34,13 +36,25 @@ object DISdkContextInitializer : DISdkComponent {
         config: PrimerConfig,
         context: Context,
     ) {
-        DISdkContext.isDropIn = true
+        DISdkContext.sdkType = SdkType.DROP_IN
         SdkContainer().let { container ->
             container.init(config, context)
             // Remove headless implementation
             container.unregisterType<ManualFlowSuccessHandler>()
             DISdkContext.dropInSdkContainer?.clear()
             DISdkContext.dropInSdkContainer = container
+        }
+    }
+
+    fun initComponents(
+        config: PrimerConfig,
+        context: Context,
+    ) {
+        DISdkContext.sdkType = SdkType.COMPONENTS
+        SdkContainer().let { container ->
+            container.init(config, context)
+            DISdkContext.componentsSdkContainer?.clear()
+            DISdkContext.componentsSdkContainer = container
         }
     }
 
@@ -52,7 +66,11 @@ object DISdkContextInitializer : DISdkComponent {
     fun clearDropIn() {
         DISdkContext.dropInSdkContainer?.clear()
         DISdkContext.dropInSdkContainer = null
-        DISdkContext.isDropIn = false
+    }
+
+    fun clearComponents() {
+        DISdkContext.componentsSdkContainer?.clear()
+        DISdkContext.componentsSdkContainer = null
     }
     // endregion
 

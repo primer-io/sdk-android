@@ -5,23 +5,29 @@ import androidx.annotation.RestrictTo
 import io.primer.android.core.di.exception.SdkContainerUninitializedException
 import java.util.concurrent.ConcurrentHashMap
 
+enum class SdkType {
+    HEADLESS,
+    DROP_IN,
+    COMPONENTS
+}
+
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 object DISdkContext {
     private val merged: SdkContainer by lazy { SdkContainer() }
 
-    var isDropIn: Boolean = false
+    var sdkType: SdkType = SdkType.HEADLESS
     var dropInSdkContainer: SdkContainer? = null
     var headlessSdkContainer: SdkContainer? = null
+    var componentsSdkContainer: SdkContainer? = null
     var coreContainer: SdkContainer? = null
 
     val container: () -> SdkContainer
         get() = {
-            val selectedContainer =
-                if (isDropIn) {
-                    dropInSdkContainer + coreContainer
-                } else {
-                    headlessSdkContainer + coreContainer
-                }
+            val selectedContainer = when (sdkType) {
+                SdkType.DROP_IN -> dropInSdkContainer + coreContainer
+                SdkType.HEADLESS -> headlessSdkContainer + coreContainer
+                SdkType.COMPONENTS -> componentsSdkContainer + coreContainer
+            }
 
             selectedContainer?.let { container ->
                 // this is necessary in case we use `getSdkContainer().registerContainer`
