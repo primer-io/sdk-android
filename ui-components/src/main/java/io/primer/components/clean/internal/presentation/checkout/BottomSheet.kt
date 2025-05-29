@@ -20,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import io.primer.components.Primer
+import io.primer.components.clean.internal.di.ComposableManager
 import io.primer.components.clean.ui.PrimerPaymentMethodItem
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -31,78 +32,78 @@ internal fun Primer.BottomSheet(
     val state by state.collectAsStateWithLifecycle()
 
     ModalBottomSheet(
-        onDismissRequest = {
-            // TODO: implement dismiss
-        },
+        onDismissRequest = { ComposableManager.cleanup() },
         modifier = modifier
             .fillMaxWidth()
-            .padding(8.dp) // TODO: use dimens from theme
+            .padding(8.dp)
     ) {
-        Text(
-            text = "Select Payment Method",
-            style = MaterialTheme.typography.headlineSmall
-        )
-
-        when(val current = state) {
-            Primer.State.Loading -> {
-                // Loading State
-                Column(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    CircularProgressIndicator()
-                    Text(
-                        text = "Loading payment methods...",
-                        style = MaterialTheme.typography.bodyMedium,
-                        modifier = Modifier.padding(top = 8.dp)
-                    )
-                }
-            }
-
-            is Primer.State.Error -> {
-                // Error State
-                Column(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Text(
-                        text = current.message,
-                        color = MaterialTheme.colorScheme.error,
-                        style = MaterialTheme.typography.bodyMedium
-                    )
-                }
-            }
-
-            is Primer.State.Ready -> {
-                // Payment Methods List
-                LazyColumn(
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    items(current.paymentMethods) { paymentMethod ->
-                        PrimerPaymentMethodItem(
-                            paymentMethod = paymentMethod,
-                            onSelect = {
-                                selectPaymentMethod(paymentMethod)
-                            }
+        Column(modifier = Modifier.padding(8.dp)) {
+            when (val current = state) {
+                Primer.State.Loading -> {
+                    // Loading State
+                    Column(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        CircularProgressIndicator()
+                        Text(
+                            text = "Loading payment methods...",
+                            style = MaterialTheme.typography.bodyMedium,
+                            modifier = Modifier.padding(top = 8.dp)
                         )
                     }
                 }
-            }
 
-            is Primer.State.Selected -> {
-                Card(
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.primaryContainer
-                    )
-                ) {
+                is Primer.State.Error -> {
+                    // Error State
                     Column(
-                        modifier = Modifier.padding(16.dp)
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Text(
-                            text = "Selected: ${current.paymentMethod}",
-                            style = MaterialTheme.typography.titleMedium
+                            text = current.message,
+                            color = MaterialTheme.colorScheme.error,
+                            style = MaterialTheme.typography.bodyMedium
                         )
+                    }
+                }
+
+                is Primer.State.Ready -> {
+                    Text(
+                        text = "Select Payment Method",
+                        style = MaterialTheme.typography.headlineSmall
+                    )
+
+                    // Payment Methods List
+                    LazyColumn(
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        items(current.paymentMethods) { paymentMethod ->
+                            PrimerPaymentMethodItem(
+                                paymentMethod = paymentMethod,
+                                onSelect = {
+                                    selectPaymentMethod(paymentMethod)
+                                }
+                            )
+                        }
+                    }
+                }
+
+                is Primer.State.Selected -> {
+                    Card(
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = CardDefaults.cardColors(
+                            containerColor = MaterialTheme.colorScheme.primaryContainer
+                        )
+                    ) {
+                        Column(
+                            modifier = Modifier.padding(16.dp)
+                        ) {
+                            Text(
+                                text = "Selected: ${current.paymentMethod}",
+                                style = MaterialTheme.typography.titleMedium
+                            )
+                        }
                     }
                 }
             }
