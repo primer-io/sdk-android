@@ -2,7 +2,8 @@ package io.primer.components.clean.internal.presentation.checkout
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import io.primer.android.core.di.DISdkContext
+import io.primer.android.core.di.DISdkComponent
+import io.primer.android.core.di.extensions.resolve
 import io.primer.components.Primer
 import io.primer.components.clean.internal.domain.usecases.GetAvailablePaymentMethodsUseCase
 import io.primer.components.clean.model.PrimerPaymentMethod
@@ -11,10 +12,10 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-internal class PrimerViewModel : ViewModel(), Primer {
+internal class PrimerViewModel : ViewModel(), Primer, DISdkComponent {
 
-    private val getAvailablePaymentMethodsUseCase: GetAvailablePaymentMethodsUseCase by lazy {
-        DISdkContext.container().resolve()
+    private val getAvailablePaymentMethodsUseCase : GetAvailablePaymentMethodsUseCase by lazy {
+        resolve()
     }
 
     private val _uiState = MutableStateFlow<Primer.State>(Primer.State.Loading)

@@ -2,10 +2,7 @@ package io.primer.components.clean.internal.presentation.card
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import io.primer.android.core.di.DISdkContext
 import io.primer.components.clean.internal.domain.models.Card
-import io.primer.components.clean.internal.domain.usecases.ProcessCardPaymentUseCase
-import io.primer.components.clean.internal.domain.usecases.ValidateCardUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -16,14 +13,6 @@ import kotlinx.coroutines.launch
  * Coordinates between UI layer and domain layer.
  */
 internal class CardViewModel : ViewModel() {
-
-    private val processCardPaymentUseCase: ProcessCardPaymentUseCase by lazy {
-        DISdkContext.container().resolve()
-    }
-
-    private val validateCardUseCase: ValidateCardUseCase by lazy {
-        DISdkContext.container().resolve()
-    }
 
     private val _uiState = MutableStateFlow(CardUiState())
     val uiState: StateFlow<CardUiState> = _uiState.asStateFlow()
@@ -106,13 +95,13 @@ internal class CardViewModel : ViewModel() {
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isLoading = true)
 
-            val validationResult = validateCardUseCase(card)
+//            val validationResult = validateCardUseCase(card)
 
-            _uiState.value = _uiState.value.copy(
-                isLoading = false,
-                validationErrors = validationResult.errors,
-                isValid = validationResult.isValid
-            )
+//            _uiState.value = _uiState.value.copy(
+//                isLoading = false,
+//                validationErrors = validationResult.errors,
+//                isValid = validationResult.isValid
+//            )
         }
     }
 
@@ -126,27 +115,27 @@ internal class CardViewModel : ViewModel() {
             )
 
             try {
-                val result = processCardPaymentUseCase(
-                    card = _uiState.value.card,
-                    amount = "10.00", // This should come from somewhere else
-                    currency = "USD"   // This should come from somewhere else
-                )
-
-                result.fold(
-                    onSuccess = { payment ->
-                        // Handle successful payment
-                        _uiState.value = _uiState.value.copy(
-                            isSubmitting = false
-                        )
-                        // Could emit a success event or navigate
-                    },
-                    onFailure = { error ->
-                        _uiState.value = _uiState.value.copy(
-                            isSubmitting = false,
-                            submitError = error.message ?: "Payment failed"
-                        )
-                    }
-                )
+//                val result = processCardPaymentUseCase(
+//                    card = _uiState.value.card,
+//                    amount = "10.00", // This should come from somewhere else
+//                    currency = "USD"   // This should come from somewhere else
+//                )
+//
+//                result.fold(
+//                    onSuccess = { payment ->
+//                        // Handle successful payment
+//                        _uiState.value = _uiState.value.copy(
+//                            isSubmitting = false
+//                        )
+//                        // Could emit a success event or navigate
+//                    },
+//                    onFailure = { error ->
+//                        _uiState.value = _uiState.value.copy(
+//                            isSubmitting = false,
+//                            submitError = error.message ?: "Payment failed"
+//                        )
+//                    }
+//                )
             } catch (e: Exception) {
                 _uiState.value = _uiState.value.copy(
                     isSubmitting = false,
@@ -158,7 +147,7 @@ internal class CardViewModel : ViewModel() {
 
     private fun clearErrors() {
         _uiState.value = _uiState.value.copy(
-            validationErrors = emptyList(),
+//            validationErrors = emptyList(),
             submitError = null
         )
     }

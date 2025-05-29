@@ -2,16 +2,15 @@ package io.primer.components.clean.ui
 
 import android.content.Context
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.DisposableEffect
 import androidx.lifecycle.viewmodel.compose.viewModel
-import io.primer.android.banks.di.BanksComponentProvider.getSdkContainer
 import io.primer.android.components.di.DISdkContextInitializer
 import io.primer.android.core.di.DISdkContext
 import io.primer.android.data.settings.PrimerSettings
 import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.domain.error.models.PrimerError
 import io.primer.components.Primer
-import io.primer.components.clean.internal.di.ComponentsSdkContainer
+import io.primer.components.clean.internal.di.ComposableContainer
 import io.primer.components.clean.internal.presentation.checkout.BottomSheet
 import io.primer.components.clean.internal.presentation.checkout.PrimerViewModel
 
@@ -31,9 +30,7 @@ fun ComposableCheckout(
     },
 ) {
 
-    val viewModel = viewModel<PrimerViewModel>()
-
-    LaunchedEffect(clientToken) {
+    DisposableEffect(clientToken) {
         if (DISdkContext.componentsSdkContainer == null) {
             DISdkContextInitializer.initComponents(
                 config = PrimerConfig().apply {
@@ -43,10 +40,17 @@ fun ComposableCheckout(
                 context = context
             )
             DISdkContext.componentsSdkContainer?.apply {
-                registerContainer(ComponentsSdkContainer { getSdkContainer() })
+                registerContainer(ComposableContainer { DISdkContext.container() })
             }
         }
+
+        onDispose {
+            DISdkContext.componentsSdkContainer?.clear()
+            DISdkContext.componentsSdkContainer = null
+        }
     }
+
+    val viewModel = viewModel<PrimerViewModel>()
 
     content(viewModel)
 

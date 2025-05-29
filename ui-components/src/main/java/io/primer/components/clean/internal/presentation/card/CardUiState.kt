@@ -2,7 +2,6 @@ package io.primer.components.clean.internal.presentation.card
 
 import io.primer.android.configuration.data.model.CardNetwork
 import io.primer.components.clean.internal.domain.models.Card
-import io.primer.components.clean.internal.domain.usecases.ValidateCardUseCase
 
 /**
  * UI state for card payment component.
@@ -11,14 +10,14 @@ import io.primer.components.clean.internal.domain.usecases.ValidateCardUseCase
 internal data class CardUiState(
     val card: Card = Card.empty(),
     val isLoading: Boolean = false,
-    val validationErrors: List<ValidateCardUseCase.ValidationResult.ValidationError> = emptyList(),
+//    val validationErrors: List<ValidateCardUseCase.ValidationResult.ValidationError> = emptyList(),
     val isValid: Boolean = false,
     val supportedNetworks: List<CardNetwork.Type> = emptyList(),
     val selectedNetwork: CardNetwork.Type? = null,
     val isSubmitting: Boolean = false,
     val submitError: String? = null
 ) {
-    val hasErrors: Boolean get() = validationErrors.isNotEmpty()
+//    val hasErrors: Boolean get() = validationErrors.isNotEmpty()
     val canSubmit: Boolean get() = isValid && !isLoading && !isSubmitting
 }
 

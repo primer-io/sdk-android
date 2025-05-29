@@ -1,7 +1,9 @@
 package io.primer.components.clean.internal.domain.repositories
 
+import io.primer.android.components.domain.core.models.PrimerHeadlessUniversalCheckoutPaymentMethod
+
 internal interface HeadlessRepository {
 
-    suspend fun getAvailablePaymentMethods()
+    suspend fun getAvailablePaymentMethods(): List<PrimerHeadlessUniversalCheckoutPaymentMethod>
 
 }
