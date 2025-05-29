@@ -26,7 +26,7 @@ class ComponentsFragment : Fragment() {
         return ComposeView(requireContext()).apply {
             setContent {
                 val clientToken by viewModel.clientToken.observeAsState()
-                clientToken?.let { ComposableCheckout(context, it, PrimerSettings()) }
+                clientToken?.let { ComposableCheckout(it, PrimerSettings()) }
             }
         }
     }

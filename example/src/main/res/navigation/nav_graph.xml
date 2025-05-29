@@ -222,7 +222,7 @@
     <fragment
         android:id="@+id/ComponentsFragment"
         android:name="io.primer.sample.ComponentsFragment"
-        android:label="Components"
+        android:label="Composable"
         tools:layout="@layout/fragment_components">
 
         <action

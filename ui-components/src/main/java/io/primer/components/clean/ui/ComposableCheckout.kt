@@ -1,22 +1,19 @@
 package io.primer.components.clean.ui
 
-import android.content.Context
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import io.primer.android.components.di.DISdkContextInitializer
-import io.primer.android.core.di.DISdkContext
 import io.primer.android.data.settings.PrimerSettings
-import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.domain.error.models.PrimerError
 import io.primer.components.Primer
-import io.primer.components.clean.internal.di.ComposableContainer
+import io.primer.components.clean.internal.di.ComposableManager
 import io.primer.components.clean.internal.presentation.checkout.BottomSheet
 import io.primer.components.clean.internal.presentation.checkout.PrimerViewModel
 
 @Composable
 fun ComposableCheckout(
-    context: Context,
     clientToken: String,
     primerSettings: PrimerSettings,
     successContent: @Composable () -> Unit = {
@@ -30,29 +27,21 @@ fun ComposableCheckout(
     },
 ) {
 
-    DisposableEffect(clientToken) {
-        if (DISdkContext.componentsSdkContainer == null) {
-            DISdkContextInitializer.initComponents(
-                config = PrimerConfig().apply {
-                    settings = primerSettings
-                    clientTokenBase64 = clientToken
-                },
-                context = context
-            )
-            DISdkContext.componentsSdkContainer?.apply {
-                registerContainer(ComposableContainer { DISdkContext.container() })
-            }
-        }
+    val context = LocalContext.current
 
-        onDispose {
-            DISdkContext.componentsSdkContainer?.clear()
-            DISdkContext.componentsSdkContainer = null
+    DisposableEffect(clientToken) {
+        ComposableManager.initialize(context, clientToken, primerSettings)
+        onDispose { ComposableManager.cleanup() }
+    }
+
+    when(ComposableManager.state.collectAsStateWithLifecycle().value) {
+        is ComposableManager.State.Error -> Unit
+        ComposableManager.State.Initializing -> Unit
+        ComposableManager.State.NotInitialized -> Unit
+        ComposableManager.State.Ready -> {
+            val viewModel = viewModel<PrimerViewModel>()
+            content(viewModel)
         }
     }
 
-    val viewModel = viewModel<PrimerViewModel>()
-
-    content(viewModel)
-
-    // TODO add ondestroy clear
 }

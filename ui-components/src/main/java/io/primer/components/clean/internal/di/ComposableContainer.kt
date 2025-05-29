@@ -1,5 +1,6 @@
 package io.primer.components.clean.internal.di
 
+import io.primer.android.components.PrimerHeadlessUniversalCheckout
 import io.primer.android.core.di.DependencyContainer
 import io.primer.android.core.di.SdkContainer
 import io.primer.components.clean.internal.data.mappers.PaymentMethodMapper
@@ -17,7 +18,7 @@ internal class ComposableContainer(private val sdk: () -> SdkContainer) : Depend
         }
 
         registerSingleton<HeadlessRepository> {
-            HeadlessRepositoryImpl(resolve())
+            HeadlessRepositoryImpl(PrimerHeadlessUniversalCheckout.current)
         }
 
         registerSingleton {
