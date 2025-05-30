@@ -9,8 +9,7 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import io.primer.android.data.settings.PrimerSettings
-import io.primer.components.clean.ui.ComposableCheckout
+import io.primer.components.Primer
 import io.primer.sample.viewmodels.MainViewModel
 
 class ComponentsFragment : Fragment() {
@@ -23,10 +22,16 @@ class ComponentsFragment : Fragment() {
     ): View {
         super.onCreateView(inflater, container, savedInstanceState)
         viewModel.fetchClientSession()
+        
         return ComposeView(requireContext()).apply {
             setContent {
                 val clientToken by viewModel.clientToken.observeAsState()
-                clientToken?.let { ComposableCheckout(it, PrimerSettings()) }
+                clientToken?.let { token ->
+                    with(Primer) {
+                        configure(token)
+                        ComposableCheckout()
+                    }
+                }
             }
         }
     }

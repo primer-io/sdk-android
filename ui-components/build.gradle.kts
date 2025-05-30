@@ -35,6 +35,7 @@ dependencies {
     implementation(composeBom)
     androidTestImplementation(composeBom)
 
-    implementation("androidx.compose.material3:material3")
-    implementation ("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.5")
+    implementation(libs.androidx.material3)
+    implementation (libs.androidx.lifecycle.viewmodel.compose)
+    implementation(libs.androidx.navigation.compose)
 }

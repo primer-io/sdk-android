@@ -4,7 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import io.primer.android.core.di.DISdkComponent
 import io.primer.android.core.di.extensions.resolve
-import io.primer.components.Primer
+import io.primer.components.PrimerCheckout
+import io.primer.components.clean.internal.di.ComposableSdk
 import io.primer.components.clean.internal.domain.usecases.GetAvailablePaymentMethodsUseCase
 import io.primer.components.clean.model.PrimerPaymentMethod
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -12,14 +13,14 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-internal class PrimerViewModel : ViewModel(), Primer, DISdkComponent {
+internal class PrimerCheckoutViewModel : ViewModel(), PrimerCheckout, DISdkComponent {
 
     private val getAvailablePaymentMethodsUseCase : GetAvailablePaymentMethodsUseCase by lazy {
         resolve()
     }
 
-    private val _uiState = MutableStateFlow<Primer.State>(Primer.State.Loading)
-    override val state: StateFlow<Primer.State> = _uiState.asStateFlow()
+    private val _uiState = MutableStateFlow<PrimerCheckout.State>(PrimerCheckout.State.Loading)
+    override val state: StateFlow<PrimerCheckout.State> = _uiState.asStateFlow()
 
     init { loadPaymentMethods() }
 
@@ -27,10 +28,10 @@ internal class PrimerViewModel : ViewModel(), Primer, DISdkComponent {
         viewModelScope.launch {
             getAvailablePaymentMethodsUseCase().fold(
                 onSuccess = { methods ->
-                    _uiState.value = Primer.State.Ready(methods)
+                    _uiState.value = PrimerCheckout.State.Ready(methods)
                 },
                 onFailure = { error ->
-                    _uiState.value = Primer.State.Error(error.message.orEmpty())
+                    _uiState.value = PrimerCheckout.State.Error(error.message.orEmpty())
                 }
             )
         }
@@ -46,5 +47,9 @@ internal class PrimerViewModel : ViewModel(), Primer, DISdkComponent {
 //        _uiState.value = _uiState.value.copy(
 //            selectedPaymentMethod = null
 //        )
+    }
+
+    override fun cleanup() {
+        ComposableSdk.cleanup()
     }
 }

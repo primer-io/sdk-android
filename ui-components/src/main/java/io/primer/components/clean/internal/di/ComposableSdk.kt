@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
-internal object ComposableManager {
+internal object ComposableSdk {
 
     sealed class State {
         data object NotInitialized : State()

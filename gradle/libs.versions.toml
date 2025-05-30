@@ -5,6 +5,7 @@ ktx = "1.13.1"
 appcompat = "1.6.1"
 fragment = "1.6.2"
 constraint-layout = "2.1.4"
+lifecycleViewmodelCompose = "2.9.0"
 material = "1.10.0"
 startup = "1.2.0"
 lifecycle = "2.8.7"
@@ -45,6 +46,8 @@ navigationCompose = "2.8.4"
 runtimeLivedata = "1.7.8"
 
 [libraries]
+androidx-lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycleViewmodelCompose" }
+androidx-material3 = { module = "androidx.compose.material3:material3" }
 detekt-formatting = { module = "io.gitlab.arturbosch.detekt:detekt-formatting", version.ref = "detekt" }
 kotlin-stdlib = { group = "org.jetbrains.kotlin", name = "kotlin-stdlib", version.ref = "kotlin" }
 kotlin-coroutines = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "coroutines" }
