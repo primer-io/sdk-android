@@ -1,6 +1,6 @@
 @file:Suppress("ALL")
 
-package io.primer.composable.styleDictionary
+package io.primer.composable.internal.tokens
 
 // Auto-generated file. Do not modify!
 

@@ -1,4 +1,4 @@
-const PACKAGE_NAME = 'io.primer.components.styleDictionary';
+const PACKAGE_NAME = 'io.primer.composable.internal.tokens';
 
 // Utility to generate Kotlin data class
 export const generateKotlinDataClass = (packageName, imports, className, content) => `@file:Suppress("ALL")

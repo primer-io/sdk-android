@@ -17,7 +17,7 @@ StyleDictionary.registerFormat({
 
     return `@file:Suppress("ALL")
 
-package io.primer.components.styleDictionary
+package io.primer.composable.internal.tokens
 
 // Auto-generated file. Do not modify!
 
@@ -26,7 +26,7 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
-import io.primer.ui_components.R
+import io.primer.composable.R
 
 data class TypographyTokens(
     ${Object.entries(typographyTokens)
