@@ -12,7 +12,7 @@ import androidx.fragment.app.activityViewModels
 import io.primer.composable.Primer
 import io.primer.sample.viewmodels.MainViewModel
 
-class ComponentsFragment : Fragment() {
+class ComposableCheckoutFragment : Fragment() {
 
     private val viewModel: MainViewModel by activityViewModels()
 
