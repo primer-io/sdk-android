@@ -24,7 +24,7 @@ interface Primer {
     )
 
     companion object {
-        val instance: Primer = PrimerImpl
+        val instance: Primer = PrimerImpl()
     }
 
 }

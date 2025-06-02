@@ -41,8 +41,11 @@ internal fun NavigationHost(
         composable(Screen.CardForm.route) {
             viewModel<CardViewModel>().cardFormScopeScreen()
         }
-        composable(Screen.Error.route) {
-            errorScreen(TODO("get from arguments"))
+        composable(Screen.Error.route) { backStackEntry ->
+            // Retrieve error from SavedStateHandle - set when navigating via:
+            // navController.currentBackStackEntry?.savedStateHandle?.set("error", primerError)
+            val error = backStackEntry.savedStateHandle.get<PrimerError>("error")
+            error?.let { errorScreen(it) }
         }
 
         composable(Screen.Success.route) {

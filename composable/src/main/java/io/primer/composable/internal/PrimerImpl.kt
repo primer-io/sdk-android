@@ -20,7 +20,7 @@ import io.primer.composable.scope.CardFormScope
 import io.primer.composable.scope.PaymentMethodSelectionScope
 import io.primer.composable.scope.PrimerCheckoutScope
 
-internal object PrimerImpl: Primer {
+internal class PrimerImpl: Primer {
 
     private lateinit var clientToken: String
     private lateinit var primerSettings: PrimerSettings
