@@ -12,8 +12,8 @@ interface CardFormScope {
     sealed interface State {
         object Loading : State
         data class Ready(
-            val cardInputFields: List<PrimerInputElementType>,
-            val billingInputFields: List<PrimerInputElementType>
+            val cardFields: List<PrimerInputElementType>,
+            val billingFields: List<PrimerInputElementType>
         ) : State
     }
 

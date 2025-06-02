@@ -47,7 +47,7 @@ internal fun CardFormScope.CardFormScreen(
                     .fillMaxWidth()
                     .padding(16.dp)
             ) {
-                if (current.cardInputFields.isNotEmpty()) {
+                if (current.cardFields.isNotEmpty()) {
                     Text(
                         text = "CARD DETAILS",
                         style = MaterialTheme.typography.labelMedium.copy(
@@ -58,13 +58,13 @@ internal fun CardFormScope.CardFormScreen(
                     )
 
                     CardDetailsForm(
-                        cardInputFields = current.cardInputFields
+                        cardInputFields = current.cardFields
                     )
 
                     Spacer(modifier = Modifier.height(24.dp))
                 }
 
-                if (current.billingInputFields.isNotEmpty()) {
+                if (current.billingFields.isNotEmpty()) {
                     Text(
                         text = "BILLING ADDRESS",
                         style = MaterialTheme.typography.labelMedium.copy(
@@ -75,7 +75,7 @@ internal fun CardFormScope.CardFormScreen(
                     )
 
                     BillingAddressForm(
-                        billingInputFields = current.billingInputFields
+                        billingInputFields = current.billingFields
                     )
 
                     Spacer(modifier = Modifier.height(24.dp))

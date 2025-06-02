@@ -10,7 +10,7 @@ import io.primer.composable.internal.data.mappers.PaymentMethodMapperImpl
 import io.primer.composable.internal.data.repositories.HeadlessRepositoryImpl
 import io.primer.composable.internal.data.repositories.RawDataManagerRepositoryImpl
 import io.primer.composable.internal.domain.interactor.GetAvailablePaymentMethodsInteractor
-import io.primer.composable.internal.domain.interactor.GetCardFieldsInteractor
+import io.primer.composable.internal.domain.interactor.GetRequiredFieldsInteractor
 import io.primer.composable.internal.domain.repositories.HeadlessRepository
 import io.primer.composable.internal.domain.repositories.RawDataManagerRepository
 import io.primer.composable.internal.presentation.checkout.CheckoutNavigator
@@ -40,7 +40,7 @@ internal class ComposableContainer(private val sdk: () -> SdkContainer) : Depend
         }
 
         registerSingleton {
-            GetCardFieldsInteractor()
+            GetRequiredFieldsInteractor()
         }
 
         registerSingleton {
