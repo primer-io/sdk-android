@@ -6,7 +6,6 @@ import io.primer.android.domain.error.models.PrimerError
 import io.primer.composable.internal.presentation.checkout.Checkout
 import io.primer.composable.scope.CardFormScope
 import io.primer.composable.scope.PaymentMethodSelectionScope
-import io.primer.composable.scope.PrimerCheckoutScope
 
 object Primer {
 
@@ -27,8 +26,7 @@ object Primer {
         paymentSelectionScreen: (@Composable PaymentMethodSelectionScope.() -> Unit)? = null,
         cardFormScopeScreen: (@Composable CardFormScope.() -> Unit)? = null,
         successScreen: (@Composable () -> Unit)? = null,
-        errorScreen: (@Composable (cause: PrimerError) -> Unit)? = null,
-        content: (@Composable PrimerCheckoutScope.() -> Unit)? = null,
+        errorScreen: (@Composable (cause: PrimerError) -> Unit)? = null
     ) {
         Checkout(
             clientToken = clientToken,
@@ -37,8 +35,7 @@ object Primer {
             paymentSelectionScreen = paymentSelectionScreen,
             cardFormScopeScreen = cardFormScopeScreen,
             successScreen = successScreen,
-            errorScreen = errorScreen,
-            content = content
+            errorScreen = errorScreen
         )
     }
 

@@ -1,19 +1,19 @@
 package io.primer.composable.internal.presentation.checkout
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import io.primer.android.domain.error.models.PrimerError
+import io.primer.composable.internal.presentation.screens.card.CardViewModel
+import io.primer.composable.internal.presentation.screens.paymentMethodSelection.PaymentMethodSelectionViewModel
 import io.primer.composable.scope.CardFormScope
 import io.primer.composable.scope.PaymentMethodSelectionScope
-import io.primer.composable.scope.PrimerCheckoutScope
 
 @Composable
-internal fun PrimerCheckoutScope.NavigationHost(
+internal fun NavigationHost(
     modifier: Modifier = Modifier,
     loadingScreen: (@Composable () -> Unit),
     paymentSelectionScreen: (@Composable PaymentMethodSelectionScope.() -> Unit),
@@ -26,7 +26,7 @@ internal fun PrimerCheckoutScope.NavigationHost(
 
     NavHost(
         navController = navController,
-        startDestination = Screen.PaymentsList.route,
+        startDestination = Screen.Loading.route,
         modifier = modifier
     ) {
 
@@ -35,11 +35,11 @@ internal fun PrimerCheckoutScope.NavigationHost(
         }
 
         composable(Screen.PaymentsList.route) {
-            paymentSelectionScreen(TODO("get from arguments"))
+            viewModel<PaymentMethodSelectionViewModel>().paymentSelectionScreen()
         }
 
         composable(Screen.CardForm.route) {
-            cardFormScopeScreen(TODO("get from arguments"))
+            viewModel<CardViewModel>().cardFormScopeScreen()
         }
         composable(Screen.Error.route) {
             errorScreen(TODO("get from arguments"))
@@ -48,15 +48,6 @@ internal fun PrimerCheckoutScope.NavigationHost(
         composable(Screen.Success.route) {
             successScreen()
         }
-    }
-
-    val state by state.collectAsStateWithLifecycle()
-    when (val current = state) {
-        PrimerCheckoutScope.State.Loading -> navController.navigate(Screen.Loading.route)
-        is PrimerCheckoutScope.State.Ready -> navController.navigate(Screen.PaymentsList.route)
-        is PrimerCheckoutScope.State.SelectedPaymentMethod -> navController.navigate(Screen.CardForm.route)
-        PrimerCheckoutScope.State.Success -> navController.navigate(Screen.Success.route)
-        is PrimerCheckoutScope.State.Error -> navController.navigate(Screen.Error.route)
     }
 }
 

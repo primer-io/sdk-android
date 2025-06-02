@@ -12,14 +12,22 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import io.primer.composable.model.PrimerPaymentMethod
 import io.primer.composable.scope.PaymentMethodSelectionScope
 
 @Composable
 internal fun PaymentMethodSelectionScope.PaymentMethodSelectionScreen(
     modifier: Modifier = Modifier,
 ) {
+
+    val state by state.collectAsStateWithLifecycle()
+    val paymentMethods =
+        (state as? PaymentMethodSelectionScope.State.Ready)?.paymentMethods ?: emptyList()
+
     Column(modifier = modifier.padding(8.dp)) {
         Text(
             text = "Select Payment Method",
@@ -34,29 +42,26 @@ internal fun PaymentMethodSelectionScope.PaymentMethodSelectionScreen(
         ) {
             items(paymentMethods) {
                 PaymentMethodItem(
-                    name = it.name
-                ) {
-                    onPaymentMethodSelected(it)
-                }
+                    primerPaymentMethod = it
+                )
             }
         }
     }
 }
 
 @Composable
-internal fun PaymentMethodItem(
+internal fun PaymentMethodSelectionScope.PaymentMethodItem(
     modifier: Modifier = Modifier,
-    name: String,
-    onSelect: () -> Unit,
+    primerPaymentMethod: PrimerPaymentMethod
 ) {
     Card(
         modifier = modifier
             .fillMaxWidth()
-            .clickable { onSelect() }
+            .clickable { onPaymentMethodSelected(primerPaymentMethod) }
     ) {
         Text(
             modifier = Modifier.padding(16.dp),
-            text = name,
+            text = primerPaymentMethod.name,
             style = MaterialTheme.typography.titleMedium
         )
     }

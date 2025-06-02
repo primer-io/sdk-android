@@ -1,55 +1,55 @@
 package io.primer.composable.internal.presentation.checkout
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import io.primer.android.components.di.DISdkContextInitializer
 import io.primer.android.core.di.DISdkComponent
-import io.primer.android.core.di.extensions.resolve
-import io.primer.composable.internal.di.ComposableSdk
-import io.primer.composable.internal.domain.usecases.GetAvailablePaymentMethodsUseCase
-import io.primer.composable.model.PrimerPaymentMethod
+import io.primer.android.core.di.DISdkContext
+import io.primer.android.core.extensions.onError
+import io.primer.android.data.settings.PrimerSettings
+import io.primer.android.data.settings.internal.PrimerConfig
+import io.primer.composable.internal.di.ComposableContainer
 import io.primer.composable.scope.PrimerCheckoutScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.launch
 
 internal class CheckoutViewModel : ViewModel(), PrimerCheckoutScope, DISdkComponent {
 
-    private val getAvailablePaymentMethodsUseCase : GetAvailablePaymentMethodsUseCase by lazy {
-        resolve()
-    }
+    private val _state =
+        MutableStateFlow<PrimerCheckoutScope.State>(PrimerCheckoutScope.State.NotInitialized)
+    override val state: StateFlow<PrimerCheckoutScope.State> = _state.asStateFlow()
 
-    private val _uiState = MutableStateFlow<PrimerCheckoutScope.State>(PrimerCheckoutScope.State.Loading)
-    override val state: StateFlow<PrimerCheckoutScope.State> = _uiState.asStateFlow()
+    @Synchronized
+    fun initialize(
+        context: Context,
+        clientToken: String,
+        primerSettings: PrimerSettings
+    ) {
 
-    init { loadPaymentMethods() }
+        _state.value = PrimerCheckoutScope.State.Initializing
 
-    private fun loadPaymentMethods() {
-        viewModelScope.launch {
-            getAvailablePaymentMethodsUseCase().fold(
-                onSuccess = { methods ->
-                    _uiState.value = PrimerCheckoutScope.State.Ready(methods)
+        runCatching {
+            DISdkContextInitializer.initComponents(
+                config = PrimerConfig().apply {
+                    settings = primerSettings
+                    clientTokenBase64 = clientToken
                 },
-                onFailure = { error ->
-//                    _uiState.value = PrimerCheckoutScope.State.Error(PrimerError())
-                }
+                context = context
             )
+            DISdkContext.componentsSdkContainer?.apply {
+                registerContainer(ComposableContainer { DISdkContext.container() })
+            }
+            _state.value = PrimerCheckoutScope.State.Ready
+        }.onError {
+            _state.value = PrimerCheckoutScope.State.Error(it)
         }
     }
 
-    override fun selectPaymentMethod(method: PrimerPaymentMethod) {
-//        _uiState.value = _uiState.value.copy(
-//            selectedPaymentMethod = method
-//        )
-    }
-
-    override fun clearSelectedPaymentMethod() {
-//        _uiState.value = _uiState.value.copy(
-//            selectedPaymentMethod = null
-//        )
-    }
-
+    @Synchronized
     override fun cleanup() {
-        ComposableSdk.cleanup()
+        DISdkContext.componentsSdkContainer?.clear()
+        DISdkContext.componentsSdkContainer = null
+        _state.value = PrimerCheckoutScope.State.NotInitialized
     }
 }
