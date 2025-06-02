@@ -13,40 +13,55 @@ import io.primer.android.components.domain.inputs.models.PrimerInputElementType
 
 @Composable
 internal fun CardDetailsForm(
+    cardInputFields: List<PrimerInputElementType>,
     modifier: Modifier = Modifier
 ) {
     Column(
         modifier = modifier.fillMaxWidth()
     ) {
-        // Card number
-        Input(
-            type = PrimerInputElementType.CARD_NUMBER,
-            modifier = Modifier.fillMaxWidth()
-        )
-        
-        Spacer(modifier = Modifier.height(12.dp))
-        
-        // Expiry date | CVV
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
+        if (cardInputFields.contains(PrimerInputElementType.CARD_NUMBER)) {
             Input(
-                type = PrimerInputElementType.EXPIRY_DATE,
-                modifier = Modifier.weight(1f)
+                type = PrimerInputElementType.CARD_NUMBER,
+                modifier = Modifier.fillMaxWidth()
             )
+            
+            if (cardInputFields.any { it == PrimerInputElementType.EXPIRY_DATE || it == PrimerInputElementType.CVV || it == PrimerInputElementType.CARDHOLDER_NAME }) {
+                Spacer(modifier = Modifier.height(12.dp))
+            }
+        }
+
+        val hasExpiry = cardInputFields.contains(PrimerInputElementType.EXPIRY_DATE)
+        val hasCvv = cardInputFields.contains(PrimerInputElementType.CVV)
+        
+        if (hasExpiry || hasCvv) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                if (hasExpiry) {
+                    Input(
+                        type = PrimerInputElementType.EXPIRY_DATE,
+                        modifier = if (hasCvv) Modifier.weight(1f) else Modifier.fillMaxWidth()
+                    )
+                }
+                if (hasCvv) {
+                    Input(
+                        type = PrimerInputElementType.CVV,
+                        modifier = if (hasExpiry) Modifier.weight(1f) else Modifier.fillMaxWidth()
+                    )
+                }
+            }
+            
+            if (cardInputFields.contains(PrimerInputElementType.CARDHOLDER_NAME)) {
+                Spacer(modifier = Modifier.height(12.dp))
+            }
+        }
+
+        if (cardInputFields.contains(PrimerInputElementType.CARDHOLDER_NAME)) {
             Input(
-                type = PrimerInputElementType.CVV,
-                modifier = Modifier.weight(1f)
+                type = PrimerInputElementType.CARDHOLDER_NAME,
+                modifier = Modifier.fillMaxWidth()
             )
         }
-        
-        Spacer(modifier = Modifier.height(12.dp))
-        
-        // Cardholder name
-        Input(
-            type = PrimerInputElementType.CARDHOLDER_NAME,
-            modifier = Modifier.fillMaxWidth()
-        )
     }
 }

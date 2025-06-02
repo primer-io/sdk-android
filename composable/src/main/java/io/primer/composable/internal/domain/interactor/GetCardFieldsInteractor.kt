@@ -16,7 +16,11 @@ class GetCardFieldsInteractor: DISdkComponent {
 
     suspend fun getCardFields(): List<PrimerInputElementType> {
         val result = configurationInteractor(ConfigurationParams(CachePolicy.ForceCache))
-        val cardInfoFields = result.getOrThrow().checkoutModules.findFirstInstance<CheckoutModule.CardInformation>()?.options
+        val cardInfoModule = result.getOrThrow().checkoutModules.findFirstInstance<CheckoutModule.CardInformation>()
+
+        if (cardInfoModule == null) {
+            return emptyList()
+        }
         
         val defaultCardFields = listOf(
             PrimerInputElementType.CARD_NUMBER,
@@ -25,12 +29,16 @@ class GetCardFieldsInteractor: DISdkComponent {
             PrimerInputElementType.CARDHOLDER_NAME
         )
         
-        return filterAvailableFields(cardInfoFields, defaultCardFields)
+        return filterAvailableFields(cardInfoModule.options, defaultCardFields)
     }
 
     suspend fun getBillingFields(): List<PrimerInputElementType> {
         val result = configurationInteractor(ConfigurationParams(CachePolicy.ForceCache))
-        val billingFields = result.getOrThrow().checkoutModules.findFirstInstance<CheckoutModule.BillingAddress>()?.options
+        val billingModule = result.getOrThrow().checkoutModules.findFirstInstance<CheckoutModule.BillingAddress>()
+
+        if (billingModule == null) {
+            return emptyList()
+        }
         
         val defaultBillingFields = listOf(
             PrimerInputElementType.COUNTRY_CODE,
@@ -43,7 +51,7 @@ class GetCardFieldsInteractor: DISdkComponent {
             PrimerInputElementType.STATE
         )
         
-        return filterAvailableFields(billingFields, defaultBillingFields)
+        return filterAvailableFields(billingModule.options, defaultBillingFields)
     }
 
     private fun filterAvailableFields(
