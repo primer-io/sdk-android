@@ -11,8 +11,8 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import io.primer.composable.Primer
 import io.primer.composable.PrimerLoadingScreen
+import io.primer.composable.internal.Primer
 import io.primer.composable.scope.PaymentMethodSelectionScope
 import io.primer.sample.viewmodels.MainViewModel
 
@@ -31,7 +31,7 @@ class ComposableCheckoutFragment : Fragment() {
             setContent {
                 val clientToken by viewModel.clientToken.observeAsState()
                 clientToken?.let { token ->
-                    with(Primer.instance) {
+                    with(Primer) {
                         configure(token)
                         ComposableCheckout(
                             loadingScreen = { PrimerLoadingScreen() },
