@@ -67,9 +67,9 @@ internal fun CheckoutNavHost(
 }
 
 internal sealed class Screen(val route: String) {
+    data object Loading : Screen("loading")
     data object PaymentsList : Screen("payments_list")
     data object CardForm : Screen("card_form")
     data object Success : Screen("success")
     data object Error : Screen("error")
-    data object Loading : Screen("loading")
 }

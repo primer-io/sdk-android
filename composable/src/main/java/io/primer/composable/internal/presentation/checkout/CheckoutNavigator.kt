@@ -46,14 +46,8 @@ internal fun CheckoutNavigator(navHost: @Composable () -> Unit) {
     LaunchedEffect(checkoutNavigator) {
         checkoutNavigator.navigationEvents.collectLatest { event ->
             when (event) {
-                is NavigationEvent.NavigateTo -> {
-                    navController.navigate(event.screen.route)
-                }
-
-                NavigationEvent.NavigateBack -> {
-                    navController.popBackStack()
-                }
-
+                is NavigationEvent.NavigateTo -> navController.navigate(event.screen.route)
+                NavigationEvent.NavigateBack -> navController.popBackStack()
                 is NavigationEvent.NavigateToError -> {
                     navController.currentBackStackEntry?.savedStateHandle?.set("error", event.errorMessage)
                     navController.navigate(Screen.Error.route)

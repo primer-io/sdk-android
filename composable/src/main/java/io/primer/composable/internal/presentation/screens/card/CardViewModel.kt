@@ -6,10 +6,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
-/**
- * Clean Architecture ViewModel for card payment component.
- * Coordinates between UI layer and domain layer.
- */
 internal class CardViewModel : ViewModel(), CardFormScope {
 
     private val _uiState = MutableStateFlow(State.Empty)

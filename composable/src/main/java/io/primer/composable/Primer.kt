@@ -1,5 +1,7 @@
 package io.primer.composable
 
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.platform.LocalContext
@@ -12,6 +14,7 @@ import io.primer.composable.internal.presentation.screens.card.CardFormScreen
 import io.primer.composable.internal.presentation.screens.error.ErrorScreen
 import io.primer.composable.internal.presentation.screens.loading.LoadingScreen
 import io.primer.composable.internal.presentation.screens.paymentMethodSelection.PaymentMethodSelectionScreen
+import io.primer.composable.internal.presentation.screens.splash.SplashScreen
 import io.primer.composable.internal.presentation.screens.success.SuccessScreen
 import io.primer.composable.scope.CardFormScope
 import io.primer.composable.scope.PaymentMethodSelectionScope
@@ -53,8 +56,10 @@ object Primer {
         this.primerSettings = settings
     }
 
+    @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     fun ComposableCheckout(
+        splashScreen: (@Composable () -> Unit)? = null,
         loadingScreen: (@Composable () -> Unit)? = null,
         paymentSelectionScreen: (@Composable PaymentMethodSelectionScope.() -> Unit)? = null,
         cardFormScreen: (@Composable CardFormScope.() -> Unit)? = null,
@@ -63,7 +68,7 @@ object Primer {
     ) {
         val checkoutViewModel = viewModel<CheckoutViewModel>()
         val context = LocalContext.current
-        
+
         DisposableEffect(clientToken) {
             checkoutViewModel.initialize(context, clientToken, primerSettings)
             onDispose { checkoutViewModel.cleanup() }
@@ -72,19 +77,33 @@ object Primer {
         when (val state = checkoutViewModel.state.collectAsStateWithLifecycle().value) {
             PrimerCheckoutScope.State.NotInitialized -> Unit
             PrimerCheckoutScope.State.Initializing -> {
-                loadingScreen?.invoke() ?: LoadingScreen(text = "Splash loading")
+                splashScreen?.invoke() ?: SplashScreen()
             }
+
             is PrimerCheckoutScope.State.Error ->
-                errorScreen?.invoke(state.exception.message!!) ?: ErrorScreen(message = state.exception.message!!)
+                errorScreen?.invoke(state.exception.message!!)
+                    ?: ErrorScreen(message = state.exception.message!!)
+
             PrimerCheckoutScope.State.Ready -> {
-//                    navHostController.navigate(Screen.PaymentsList.route)
-                CheckoutNavHost(
-                    loadingScreen = { loadingScreen?.invoke() ?: LoadingScreen() },
-                    paymentSelectionScreen = { paymentSelectionScreen?.let { it() } ?: PaymentMethodSelectionScreen() },
-                    cardFormScopeScreen = { cardFormScreen?.let { it() } ?: CardFormScreen() },
-                    successScreen = { successScreen?.invoke() ?: SuccessScreen(message = "Success!") },
-                    errorScreen = { error -> errorScreen?.let { it(error) } ?: ErrorScreen(message = error) }
-                )
+
+                ModalBottomSheet(
+                    onDismissRequest = checkoutViewModel::cleanup
+                ) {
+                    CheckoutNavHost(
+                        loadingScreen = { loadingScreen?.invoke() ?: LoadingScreen() },
+                        paymentSelectionScreen = {
+                            paymentSelectionScreen?.let { it() } ?: PaymentMethodSelectionScreen()
+                        },
+                        cardFormScopeScreen = { cardFormScreen?.let { it() } ?: CardFormScreen() },
+                        successScreen = {
+                            successScreen?.invoke() ?: SuccessScreen(message = "Success!")
+                        },
+                        errorScreen = { error ->
+                            errorScreen?.let { it(error) } ?: ErrorScreen(message = error)
+                        }
+                    )
+                }
+
             }
         }
     }
