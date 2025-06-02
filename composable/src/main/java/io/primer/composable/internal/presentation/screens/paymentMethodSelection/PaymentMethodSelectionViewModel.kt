@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import io.primer.android.core.di.DISdkComponent
 import io.primer.android.core.di.extensions.resolve
-import io.primer.composable.internal.domain.usecases.GetAvailablePaymentMethodsUseCase
+import io.primer.composable.internal.domain.interactor.GetAvailablePaymentMethodsInteractor
 import io.primer.composable.internal.presentation.checkout.CheckoutNavigator
 import io.primer.composable.internal.presentation.checkout.Screen
 import io.primer.composable.model.PrimerPaymentMethod
@@ -16,7 +16,7 @@ import kotlinx.coroutines.launch
 
 class PaymentMethodSelectionViewModel : ViewModel(), PaymentMethodSelectionScope, DISdkComponent {
 
-    private val getAvailablePaymentMethodsUseCase: GetAvailablePaymentMethodsUseCase by lazy { resolve() }
+    private val getAvailablePaymentMethodsInteractor: GetAvailablePaymentMethodsInteractor by lazy { resolve() }
 
     private val checkoutNavigator: CheckoutNavigator by lazy { resolve() }
 
@@ -28,7 +28,7 @@ class PaymentMethodSelectionViewModel : ViewModel(), PaymentMethodSelectionScope
 
     private fun loadPaymentMethods() {
         viewModelScope.launch {
-            getAvailablePaymentMethodsUseCase().fold(
+            getAvailablePaymentMethodsInteractor().fold(
                 onSuccess = { methods ->
                     _uiState.value = PaymentMethodSelectionScope.State.Ready(methods)
                 },

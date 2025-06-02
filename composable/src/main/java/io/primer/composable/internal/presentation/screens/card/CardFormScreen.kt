@@ -9,6 +9,8 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -21,6 +23,9 @@ internal fun CardFormScope.CardFormScreen(
     modifier: Modifier = Modifier,
     submitButton: (@Composable () -> Unit)? = { SubmitButton(text = "Submit") }
 ) {
+
+    val state: CardFormScope.State by state.collectAsState()
+
     Column(
         modifier = modifier
             .fillMaxWidth()
@@ -35,11 +40,11 @@ internal fun CardFormScope.CardFormScreen(
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.padding(bottom = 16.dp)
         )
-        
+
         CardDetailsForm()
-        
+
         Spacer(modifier = Modifier.height(24.dp))
-        
+
         // Billing Address Section
         Text(
             text = "BILLING ADDRESS",
@@ -49,11 +54,11 @@ internal fun CardFormScope.CardFormScreen(
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.padding(bottom = 16.dp)
         )
-        
+
         BillingAddressForm()
-        
+
         Spacer(modifier = Modifier.height(24.dp))
-        
+
         submitButton?.invoke()
     }
 }
