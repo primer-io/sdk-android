@@ -34,7 +34,7 @@ class ComposableCheckoutFragment : Fragment() {
                         ComposableCheckout(
                             cardFormScreen = {
                                 PrimerCardFormScreen {
-                                    PrimerSubmitButton(text = "Test")
+                                    PrimerSubmitButton(text = "Custom label")
                                 }
                             }
                         )
