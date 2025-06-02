@@ -1,6 +1,5 @@
 package io.primer.composable.scope
 
-import io.primer.android.domain.error.models.PrimerError
 import io.primer.composable.model.PrimerPaymentMethod
 import kotlinx.coroutines.flow.StateFlow
 
@@ -13,7 +12,7 @@ interface PaymentMethodSelectionScope {
     sealed interface State {
         data object Loading : State
         data class Ready(val paymentMethods: List<PrimerPaymentMethod>) : State
-        data class Error(val error: PrimerError) : State
+        data class Error(val exception: Throwable) : State
     }
 
 }

@@ -6,7 +6,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import io.primer.android.domain.error.models.PrimerError
 import io.primer.composable.internal.presentation.screens.card.CardViewModel
 import io.primer.composable.internal.presentation.screens.paymentMethodSelection.PaymentMethodSelectionViewModel
 import io.primer.composable.scope.CardFormScope
@@ -19,7 +18,7 @@ internal fun NavigationHost(
     paymentSelectionScreen: (@Composable PaymentMethodSelectionScope.() -> Unit),
     cardFormScopeScreen: (@Composable CardFormScope.() -> Unit),
     successScreen: (@Composable () -> Unit),
-    errorScreen: (@Composable (cause: PrimerError) -> Unit),
+    errorScreen: (@Composable (message: String) -> Unit),
 ) {
 
     val navController = rememberNavController()
@@ -44,7 +43,7 @@ internal fun NavigationHost(
         composable(Screen.Error.route) { backStackEntry ->
             // Retrieve error from SavedStateHandle - set when navigating via:
             // navController.currentBackStackEntry?.savedStateHandle?.set("error", primerError)
-            val error = backStackEntry.savedStateHandle.get<PrimerError>("error")
+            val error = backStackEntry.savedStateHandle.get<String>("error")
             error?.let { errorScreen(it) }
         }
 

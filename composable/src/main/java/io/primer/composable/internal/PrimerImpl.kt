@@ -6,7 +6,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import io.primer.android.data.settings.PrimerSettings
-import io.primer.android.domain.error.models.PrimerError
 import io.primer.composable.internal.presentation.checkout.CheckoutViewModel
 import io.primer.composable.internal.presentation.checkout.NavigationHost
 import io.primer.composable.internal.presentation.screens.card.CardFormScreen
@@ -37,12 +36,11 @@ object Primer {
         paymentSelectionScreen: (@Composable PaymentMethodSelectionScope.() -> Unit)? = null,
         cardFormScopeScreen: (@Composable CardFormScope.() -> Unit)? = null,
         successScreen: (@Composable () -> Unit)? = null,
-        errorScreen: (@Composable (cause: PrimerError) -> Unit)? = null
+        errorScreen: (@Composable (cause: String) -> Unit)? = null
     ) {
 
         val checkoutViewModel = viewModel<CheckoutViewModel>()
         val context = LocalContext.current
-
         DisposableEffect(clientToken) {
             checkoutViewModel.initialize(context, clientToken, primerSettings)
             onDispose { checkoutViewModel.cleanup() }
@@ -52,7 +50,7 @@ object Primer {
             PrimerCheckoutScope.State.NotInitialized -> Unit
             PrimerCheckoutScope.State.Initializing -> loadingScreen?.invoke() ?: LoadingScreen()
             is PrimerCheckoutScope.State.Error ->
-                errorScreen?.invoke(state.error) ?: ErrorScreen(message = state.error.description)
+                errorScreen?.invoke(state.exception.message!!) ?: ErrorScreen(message = state.exception.message!!)
 
             PrimerCheckoutScope.State.Ready -> {
                 NavigationHost(
@@ -60,9 +58,7 @@ object Primer {
                     paymentSelectionScreen = { paymentSelectionScreen?.let { it() } ?: PaymentMethodSelectionScreen() },
                     cardFormScopeScreen = { cardFormScopeScreen?.let { it() } ?: CardFormScreen() },
                     successScreen = { successScreen?.invoke() ?: SuccessScreen(message = "Success!") },
-                    errorScreen = { error ->
-                        errorScreen?.let { it(error) } ?: ErrorScreen(message = error.description)
-                    }
+                    errorScreen = { error -> errorScreen?.let { it(error) } ?: ErrorScreen(message = error) }
                 )
             }
         }

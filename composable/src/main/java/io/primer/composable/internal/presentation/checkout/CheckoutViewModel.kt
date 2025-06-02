@@ -5,7 +5,6 @@ import androidx.lifecycle.ViewModel
 import io.primer.android.components.di.DISdkContextInitializer
 import io.primer.android.core.di.DISdkComponent
 import io.primer.android.core.di.DISdkContext
-import io.primer.android.core.extensions.onError
 import io.primer.android.data.settings.PrimerSettings
 import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.composable.internal.di.ComposableContainer
@@ -21,7 +20,7 @@ internal class CheckoutViewModel : ViewModel(), PrimerCheckoutScope, DISdkCompon
     override val state: StateFlow<PrimerCheckoutScope.State> = _state.asStateFlow()
 
     @Synchronized
-    fun initialize(
+    override fun initialize(
         context: Context,
         clientToken: String,
         primerSettings: PrimerSettings
@@ -41,7 +40,7 @@ internal class CheckoutViewModel : ViewModel(), PrimerCheckoutScope, DISdkCompon
                 registerContainer(ComposableContainer { DISdkContext.container() })
             }
             _state.value = PrimerCheckoutScope.State.Ready
-        }.onError {
+        }.onFailure {
             _state.value = PrimerCheckoutScope.State.Error(it)
         }
     }

@@ -33,7 +33,7 @@ class PaymentMethodSelectionViewModel : ViewModel(), PaymentMethodSelectionScope
                     _uiState.value = PaymentMethodSelectionScope.State.Ready(methods)
                 },
                 onFailure = { error ->
-//                    _uiState.value = PrimerCheckoutScope.State.Error(PrimerError())
+                    _uiState.value = PaymentMethodSelectionScope.State.Error(error)
                 }
             )
         }
