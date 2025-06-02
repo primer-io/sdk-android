@@ -4,23 +4,23 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import io.primer.android.core.di.DISdkComponent
 import io.primer.android.core.di.extensions.resolve
-import io.primer.composable.PrimerCheckout
 import io.primer.composable.internal.di.ComposableSdk
 import io.primer.composable.internal.domain.usecases.GetAvailablePaymentMethodsUseCase
 import io.primer.composable.model.PrimerPaymentMethod
+import io.primer.composable.scope.PrimerCheckoutScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-internal class CheckoutViewModel : ViewModel(), PrimerCheckout, DISdkComponent {
+internal class CheckoutViewModel : ViewModel(), PrimerCheckoutScope, DISdkComponent {
 
     private val getAvailablePaymentMethodsUseCase : GetAvailablePaymentMethodsUseCase by lazy {
         resolve()
     }
 
-    private val _uiState = MutableStateFlow<PrimerCheckout.State>(PrimerCheckout.State.Loading)
-    override val state: StateFlow<PrimerCheckout.State> = _uiState.asStateFlow()
+    private val _uiState = MutableStateFlow<PrimerCheckoutScope.State>(PrimerCheckoutScope.State.Loading)
+    override val state: StateFlow<PrimerCheckoutScope.State> = _uiState.asStateFlow()
 
     init { loadPaymentMethods() }
 
@@ -28,10 +28,10 @@ internal class CheckoutViewModel : ViewModel(), PrimerCheckout, DISdkComponent {
         viewModelScope.launch {
             getAvailablePaymentMethodsUseCase().fold(
                 onSuccess = { methods ->
-                    _uiState.value = PrimerCheckout.State.Ready(methods)
+                    _uiState.value = PrimerCheckoutScope.State.Ready(methods)
                 },
                 onFailure = { error ->
-                    _uiState.value = PrimerCheckout.State.Error(error.message.orEmpty())
+//                    _uiState.value = PrimerCheckoutScope.State.Error(PrimerError())
                 }
             )
         }

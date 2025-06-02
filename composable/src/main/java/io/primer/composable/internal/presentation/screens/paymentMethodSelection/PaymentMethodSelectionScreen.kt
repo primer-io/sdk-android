@@ -14,13 +14,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import io.primer.composable.model.PrimerPaymentMethod
+import io.primer.composable.scope.PaymentMethodSelectionScope
 
 @Composable
-internal fun PaymentMethodSelectionScreen(
+internal fun PaymentMethodSelectionScope.PaymentMethodSelectionScreen(
     modifier: Modifier = Modifier,
-    paymentMethods: List<PrimerPaymentMethod>,
-    selectPaymentMethod: (PrimerPaymentMethod) -> Unit,
 ) {
     Column(modifier = modifier.padding(8.dp)) {
         Text(
@@ -38,7 +36,7 @@ internal fun PaymentMethodSelectionScreen(
                 PaymentMethodItem(
                     name = it.name
                 ) {
-                    selectPaymentMethod(it)
+                    onPaymentMethodSelected(it)
                 }
             }
         }
