@@ -31,7 +31,7 @@ class ComposableCheckoutFragment : Fragment() {
             setContent {
                 val clientToken by viewModel.clientToken.observeAsState()
                 clientToken?.let { token ->
-                    with(Primer) {
+                    with(Primer.instance) {
                         configure(token)
                         ComposableCheckout(
                             loadingScreen = { PrimerLoadingScreen() },
