@@ -5,7 +5,7 @@ import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
+import io.primer.composable.internal.LocalPrimerNavController
 import io.primer.composable.internal.presentation.screens.card.CardViewModel
 import io.primer.composable.internal.presentation.screens.paymentMethodSelection.PaymentMethodSelectionViewModel
 import io.primer.composable.scope.CardFormScope
@@ -21,10 +21,8 @@ internal fun NavigationHost(
     errorScreen: (@Composable (message: String) -> Unit),
 ) {
 
-    val navController = rememberNavController()
-
     NavHost(
-        navController = navController,
+        navController = LocalPrimerNavController.current,
         startDestination = Screen.Loading.route,
         modifier = modifier
     ) {

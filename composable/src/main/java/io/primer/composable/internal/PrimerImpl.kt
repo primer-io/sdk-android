@@ -1,13 +1,18 @@
 package io.primer.composable.internal
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import io.primer.android.data.settings.PrimerSettings
 import io.primer.composable.internal.presentation.checkout.CheckoutViewModel
 import io.primer.composable.internal.presentation.checkout.NavigationHost
+import io.primer.composable.internal.presentation.checkout.Screen
 import io.primer.composable.internal.presentation.screens.card.CardFormScreen
 import io.primer.composable.internal.presentation.screens.error.ErrorScreen
 import io.primer.composable.internal.presentation.screens.loading.LoadingScreen
@@ -38,30 +43,37 @@ object Primer {
         successScreen: (@Composable () -> Unit)? = null,
         errorScreen: (@Composable (cause: String) -> Unit)? = null
     ) {
+        val navHostController = rememberNavController()
 
-        val checkoutViewModel = viewModel<CheckoutViewModel>()
-        val context = LocalContext.current
-        DisposableEffect(clientToken) {
-            checkoutViewModel.initialize(context, clientToken, primerSettings)
-            onDispose { checkoutViewModel.cleanup() }
-        }
-
-        when (val state = checkoutViewModel.state.collectAsStateWithLifecycle().value) {
-            PrimerCheckoutScope.State.NotInitialized -> Unit
-            PrimerCheckoutScope.State.Initializing -> loadingScreen?.invoke() ?: LoadingScreen()
-            is PrimerCheckoutScope.State.Error ->
-                errorScreen?.invoke(state.exception.message!!) ?: ErrorScreen(message = state.exception.message!!)
-
-            PrimerCheckoutScope.State.Ready -> {
-                NavigationHost(
-                    loadingScreen = { loadingScreen?.invoke() ?: LoadingScreen() },
-                    paymentSelectionScreen = { paymentSelectionScreen?.let { it() } ?: PaymentMethodSelectionScreen() },
-                    cardFormScopeScreen = { cardFormScopeScreen?.let { it() } ?: CardFormScreen() },
-                    successScreen = { successScreen?.invoke() ?: SuccessScreen(message = "Success!") },
-                    errorScreen = { error -> errorScreen?.let { it(error) } ?: ErrorScreen(message = error) }
-                )
+        CompositionLocalProvider(LocalPrimerNavController provides navHostController) {
+            val checkoutViewModel = viewModel<CheckoutViewModel>()
+            val context = LocalContext.current
+            DisposableEffect(clientToken) {
+                checkoutViewModel.initialize(context, clientToken, primerSettings)
+                onDispose { checkoutViewModel.cleanup() }
             }
+
+            when (val state = checkoutViewModel.state.collectAsStateWithLifecycle().value) {
+                PrimerCheckoutScope.State.NotInitialized -> Unit
+                PrimerCheckoutScope.State.Initializing -> Unit
+                is PrimerCheckoutScope.State.Error ->
+                    errorScreen?.invoke(state.exception.message!!) ?: ErrorScreen(message = state.exception.message!!)
+                PrimerCheckoutScope.State.Ready -> navHostController.navigate(Screen.PaymentsList)
+            }
+
+            NavigationHost(
+                loadingScreen = { loadingScreen?.invoke() ?: LoadingScreen() },
+                paymentSelectionScreen = { paymentSelectionScreen?.let { it() } ?: PaymentMethodSelectionScreen() },
+                cardFormScopeScreen = { cardFormScopeScreen?.let { it() } ?: CardFormScreen() },
+                successScreen = { successScreen?.invoke() ?: SuccessScreen(message = "Success!") },
+                errorScreen = { error -> errorScreen?.let { it(error) } ?: ErrorScreen(message = error) }
+            )
         }
+
     }
 
+}
+
+internal val LocalPrimerNavController = staticCompositionLocalOf<NavHostController> {
+    error("NavController not provided")
 }
