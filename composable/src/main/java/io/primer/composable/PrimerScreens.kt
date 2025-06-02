@@ -22,8 +22,9 @@ fun PaymentMethodSelectionScope.PrimerPaymentMethodSelectionScreen(
 
 @Composable
 fun CardFormScope.PrimerCardFormScreen(
-    modifier: Modifier = Modifier
-) = CardFormScreen(modifier)
+    modifier: Modifier = Modifier,
+    submitButton: (@Composable () -> Unit)? = null
+) = CardFormScreen(modifier, submitButton)
 
 @Composable
 fun PrimerErrorScreen(

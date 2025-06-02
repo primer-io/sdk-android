@@ -9,10 +9,10 @@ import io.primer.composable.scope.CardFormScope
 @Composable
 internal fun CardFormScope.CardFormScreen(
     modifier: Modifier = Modifier,
-    submitButton: @Composable () -> Unit = { SubmitButton(text = "Submit") }
+    submitButton: (@Composable () -> Unit)? = { SubmitButton(text = "Submit") }
 ) {
     Text("Card Form Screen")
-    submitButton()
+    submitButton?.invoke()
 }
 
 @Composable
