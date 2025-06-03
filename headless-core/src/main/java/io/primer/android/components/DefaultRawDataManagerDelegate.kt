@@ -193,10 +193,6 @@ internal class DefaultRawDataManagerDelegate(
                 composer.metadataStateFlow.distinctUntilChanged().collectLatest { metadataState ->
                     logSdkAnalyticsEvent(
                         RawDataManagerAnalyticsConstants.ON_METADATA_STATE_CHANGED,
-                        mapOf(
-                            RawDataManagerAnalyticsConstants.ON_METADATA_STATE_STATE_PARAM
-                                to metadataState.toString(),
-                        ),
                     )
                     listener?.onMetadataStateChanged(metadataState)
                 }
