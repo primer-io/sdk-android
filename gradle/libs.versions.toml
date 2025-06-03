@@ -1,7 +1,7 @@
 [versions]
 kotlin = "1.9.24"
 coroutines = "1.8.0"
-ktx = "1.13.1"
+ktx = "1.16.0"
 appcompat = "1.7.0"
 fragment = "1.6.2"
 constraint-layout = "2.1.4"
