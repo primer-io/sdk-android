@@ -7,6 +7,7 @@ import io.primer.android.core.di.DISdkComponent
 import io.primer.android.core.di.extensions.resolve
 import io.primer.android.core.logging.internal.LogReporter
 import io.primer.composable.internal.domain.interactor.GetRequiredFieldsInteractor
+import io.primer.composable.internal.domain.interactor.GetValidationStateInteractor
 import io.primer.composable.scope.CardFormScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -16,6 +17,8 @@ import kotlinx.coroutines.launch
 internal class CardViewModel : ViewModel(), CardFormScope, DISdkComponent {
 
     private val getAvailableCardFieldsInteractor: GetRequiredFieldsInteractor by lazy { resolve() }
+
+    private val getValidationStateInteractor: GetValidationStateInteractor by lazy { resolve() }
 
     private val logReporter: LogReporter by lazy { resolve() }
     private val actionInteractor: ActionInteractor by lazy { resolve() }
