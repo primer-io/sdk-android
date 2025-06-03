@@ -6,62 +6,68 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import io.primer.android.components.domain.inputs.models.PrimerInputElementType
+import io.primer.composable.scope.CardFormScope
 
 @Composable
-internal fun CardDetailsForm(
-    modifier: Modifier = Modifier,
-    cardInputFields: List<PrimerInputElementType>,
+internal fun CardFormScope.CardDetailsForm(
+    modifier: Modifier = Modifier
 ) {
+
+    val state by state.collectAsState()
+    val cardInputFields = state.cardFields
+    if (cardInputFields.isEmpty()) return
+
     Column(
         modifier = modifier.fillMaxWidth()
     ) {
-        if (cardInputFields.contains(PrimerInputElementType.CARD_NUMBER)) {
+
+        Text(
+            text = "CARD DETAILS",
+            style = MaterialTheme.typography.labelMedium.copy(
+                fontWeight = FontWeight.Medium
+            ),
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.padding(bottom = 16.dp)
+        )
+
+        Input(
+            type = PrimerInputElementType.CARD_NUMBER,
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        Spacer(modifier = Modifier.height(12.dp))
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
             Input(
-                type = PrimerInputElementType.CARD_NUMBER,
-                modifier = Modifier.fillMaxWidth()
+                type = PrimerInputElementType.EXPIRY_DATE,
+                modifier = Modifier.weight(1f)
             )
-            
-            if (cardInputFields.any { it == PrimerInputElementType.EXPIRY_DATE || it == PrimerInputElementType.CVV || it == PrimerInputElementType.CARDHOLDER_NAME }) {
-                Spacer(modifier = Modifier.height(12.dp))
-            }
-        }
-
-        val hasExpiry = cardInputFields.contains(PrimerInputElementType.EXPIRY_DATE)
-        val hasCvv = cardInputFields.contains(PrimerInputElementType.CVV)
-        
-        if (hasExpiry || hasCvv) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                if (hasExpiry) {
-                    Input(
-                        type = PrimerInputElementType.EXPIRY_DATE,
-                        modifier = if (hasCvv) Modifier.weight(1f) else Modifier.fillMaxWidth()
-                    )
-                }
-                if (hasCvv) {
-                    Input(
-                        type = PrimerInputElementType.CVV,
-                        modifier = if (hasExpiry) Modifier.weight(1f) else Modifier.fillMaxWidth()
-                    )
-                }
-            }
-            
-            if (cardInputFields.contains(PrimerInputElementType.CARDHOLDER_NAME)) {
-                Spacer(modifier = Modifier.height(12.dp))
-            }
-        }
-
-        if (cardInputFields.contains(PrimerInputElementType.CARDHOLDER_NAME)) {
             Input(
-                type = PrimerInputElementType.CARDHOLDER_NAME,
-                modifier = Modifier.fillMaxWidth()
+                type = PrimerInputElementType.CVV,
+                modifier = Modifier.weight(1f)
             )
         }
+
+        Spacer(modifier = Modifier.height(12.dp))
+
+        Input(
+            type = PrimerInputElementType.CARDHOLDER_NAME,
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        Spacer(modifier = Modifier.height(24.dp))
     }
 }

@@ -1,22 +1,29 @@
 package io.primer.composable.internal.presentation.screens.card.components
 
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import io.primer.android.components.domain.inputs.models.PrimerInputElementType
+import io.primer.composable.scope.CardFormScope
 
 @Composable
-internal fun Input(
-    modifier: Modifier = Modifier,
+internal fun CardFormScope.Input(
     type: PrimerInputElementType,
+    modifier: Modifier = Modifier,
 ) {
-    var value by remember { mutableStateOf("") }
+    val state by state.collectAsState()
+    
+    // Check if this field should be shown
+    val isFieldRequired = type in state.cardFields || type in state.billingFields
+    if (!isFieldRequired) return
+    
+    val value = state.inputFields[type]
+    val error = state.fieldErrors.find { it.inputElementType == type }
 
     val (label, placeholder) = when (type) {
         PrimerInputElementType.CARD_NUMBER -> "Card Number" to "1234 5678 9012 3456"
@@ -38,11 +45,20 @@ internal fun Input(
     }
 
     OutlinedTextField(
-        value = value,
-        onValueChange = { value = it },
+        value = value ?: "",
+        onValueChange = { updateInput(it to type) },
         label = { Text(label) },
         placeholder = { Text(placeholder) },
         modifier = modifier.fillMaxWidth(),
-        singleLine = true
+        singleLine = true,
+        isError = error != null,
+        supportingText = if (error != null) {
+            {
+                Text(
+                    text = error.description,
+                    color = MaterialTheme.colorScheme.error
+                )
+            }
+        } else null
     )
 }

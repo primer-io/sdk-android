@@ -8,17 +8,15 @@ interface CardFormScope {
 
     val state: StateFlow<State>
 
-    fun updateInput(content: String, type: PrimerInputElementType)
+    fun updateInput(content: Pair<String, PrimerInputElementType>)
 
     fun submit()
 
-    sealed interface State {
-        object Loading : State
-        data class Ready(
-            val cardFields: List<PrimerInputElementType> = emptyList(),
-            val billingFields: List<PrimerInputElementType> = emptyList(),
-            val fieldErrors: List<PrimerInputValidationError> = emptyList()
-        ) : State
-    }
+    data class State(
+        val cardFields: List<PrimerInputElementType> = emptyList(),
+        val billingFields: List<PrimerInputElementType> = emptyList(),
+        val fieldErrors: List<PrimerInputValidationError> = emptyList(),
+        val inputFields: Map<PrimerInputElementType, String> = emptyMap(),
+    )
 
 }

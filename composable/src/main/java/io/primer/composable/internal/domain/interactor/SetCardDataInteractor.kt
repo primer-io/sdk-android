@@ -12,7 +12,7 @@ class SetCardDataInteractor : DISdkComponent {
 
     private var data: PrimerCardData? = null
 
-    operator fun invoke(content: String, type: PrimerInputElementType) {
+    operator fun invoke(content: Pair<String, PrimerInputElementType>) {
         // Initialize data if null
         if (data == null) {
             data = PrimerCardData(
@@ -25,11 +25,11 @@ class SetCardDataInteractor : DISdkComponent {
         }
 
         // Update the specific field based on the input type
-        data = when (type) {
-            PrimerInputElementType.CARD_NUMBER -> data?.copy(cardNumber = content)
-            PrimerInputElementType.EXPIRY_DATE -> data?.copy(expiryDate = content)
-            PrimerInputElementType.CVV -> data?.copy(cvv = content)
-            PrimerInputElementType.CARDHOLDER_NAME -> data?.copy(cardHolderName = content.takeIf { it.isNotEmpty() })
+        data = when (content.second) {
+            PrimerInputElementType.CARD_NUMBER -> data?.copy(cardNumber = content.first)
+            PrimerInputElementType.EXPIRY_DATE -> data?.copy(expiryDate = content.first)
+            PrimerInputElementType.CVV -> data?.copy(cvv = content.first)
+            PrimerInputElementType.CARDHOLDER_NAME -> data?.copy(cardHolderName = content.first.takeIf { it.isNotEmpty() })
             else -> data // For other types, keep the current data
         }
 

@@ -27,18 +27,18 @@ internal class CardViewModel : ViewModel(), CardFormScope, DISdkComponent {
     private val actionInteractor: ActionInteractor by lazy { resolve() }
 
 
-    private val _uiState = MutableStateFlow<CardFormScope.State>(CardFormScope.State.Loading)
+    private val _uiState = MutableStateFlow<CardFormScope.State>(CardFormScope.State())
     override val state: StateFlow<CardFormScope.State> = _uiState.asStateFlow()
 
     init {
         viewModelScope.launch {
             val cardInputFields = getAvailableCardFieldsInteractor.getCardFields()
             val billingInputFields = getAvailableCardFieldsInteractor.getBillingFields()
-            _uiState.value = CardFormScope.State.Ready(cardInputFields, billingInputFields)
+            _uiState.value = CardFormScope.State(cardInputFields, billingInputFields)
         }
     }
 
-    override fun updateInput(content: String, type: PrimerInputElementType) = setDataInteractor(content, type)
+    override fun updateInput(content: Pair<String, PrimerInputElementType>) = setDataInteractor(content)
 
     override fun submit() {
         TODO("Not yet implemented")
