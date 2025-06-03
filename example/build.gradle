@@ -88,7 +88,7 @@ dependencies {
     implementation libs.logging.interceptor.okhttp
     implementation libs.android.constraintlayout
     implementation "androidx.navigation:navigation-fragment-ktx:2.8.9"
-    implementation "androidx.navigation:navigation-ui-ktx:2.7.7"
+    implementation "androidx.navigation:navigation-ui-ktx:2.8.9"
     implementation libs.primer.threeds
     implementation libs.android.lifecycle.livedata.ktx
     implementation libs.android.lifecycle.viewmodel.ktx
