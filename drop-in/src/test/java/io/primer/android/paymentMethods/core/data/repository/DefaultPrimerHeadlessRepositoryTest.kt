@@ -982,12 +982,12 @@ class DefaultPrimerHeadlessRepositoryTest {
     @Test
     fun `calling cleanup should cleanup PrimerHeadlessUniversalCheckout`() =
         runTest {
-            every { headlessUniversalCheckout.cleanup() } just Runs
+            every { headlessUniversalCheckout.cleanup(cleanClientSessionCache = false) } just Runs
 
             repository.cleanup()
 
             verify {
-                headlessUniversalCheckout.cleanup()
+                headlessUniversalCheckout.cleanup(cleanClientSessionCache = false)
             }
         }
 }

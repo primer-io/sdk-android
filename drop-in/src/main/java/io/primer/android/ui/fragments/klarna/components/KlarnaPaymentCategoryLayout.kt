@@ -8,20 +8,25 @@ import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.Space
 import io.primer.android.R
+import io.primer.android.core.di.DISdkComponent
+import io.primer.android.core.di.extensions.inject
 import io.primer.android.databinding.PrimerItemKlarnaSelectedPaymentCategoryBinding
 import io.primer.android.databinding.PrimerItemKlarnaUnselectedPaymentCategoryBinding
+import io.primer.android.payment.utils.ButtonViewHelper
 import io.primer.android.ui.fragments.klarna.model.KlarnaPaymentCategory
+import io.primer.android.ui.settings.PrimerTheme
 import java.util.Timer
 import java.util.TimerTask
 
 private const val TIMER_DELAY = 300L
 
 internal class KlarnaPaymentCategoryLayout(context: Context, attrs: AttributeSet?) :
-    LinearLayout(context, attrs) {
+    LinearLayout(context, attrs), DISdkComponent {
     init {
         orientation = VERTICAL
     }
 
+    private val theme: PrimerTheme by inject()
     private val layoutInflater by lazy { LayoutInflater.from(context) }
 
     private var onItemClickListener: (Int) -> Unit = {}
@@ -46,14 +51,23 @@ internal class KlarnaPaymentCategoryLayout(context: Context, attrs: AttributeSet
                     is KlarnaPaymentCategory.UnselectedKlarnaPaymentCategory -> {
                         val binding =
                             PrimerItemKlarnaUnselectedPaymentCategoryBinding.inflate(layoutInflater)
-                        binding.bind(klarnaPaymentCategory)
+                        binding.apply {
+                            bind(klarnaPaymentCategory)
+                            primerItemUnselectedKlarnaCategory.background =
+                                ButtonViewHelper.generateButtonContent(context, theme = theme)
+                        }
                         binding.root
                     }
 
                     is KlarnaPaymentCategory.SelectedKlarnaPaymentCategory -> {
                         val binding =
                             PrimerItemKlarnaSelectedPaymentCategoryBinding.inflate(layoutInflater)
-                        binding.bind(klarnaPaymentCategory)
+                        binding.apply {
+                            bind(klarnaPaymentCategory)
+                            primerItemSelectedKlarnaCategory.background =
+                                ButtonViewHelper.generateButtonContent(context = context, theme = theme)
+                            primerItemSelectedKlarnaCategory.isSelected = true
+                        }
                         binding.root
                     }
                 }.apply {

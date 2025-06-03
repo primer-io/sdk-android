@@ -1,7 +1,6 @@
 package io.primer.paymentMethodCoreUi.core.ui.webview
 
 import android.annotation.SuppressLint
-import android.annotation.TargetApi
 import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.net.Uri
@@ -25,7 +24,7 @@ abstract class BaseWebViewClient(
     private val browserApps by lazy {
         activity.packageManager.queryIntentActivities(
             Intent(Intent.ACTION_VIEW).apply {
-                data = Uri.parse(SAMPLE_URL)
+                data = SAMPLE_URL.toUri()
             },
             0,
         ).map { it.activityInfo.packageName }.toSet()
@@ -57,7 +56,7 @@ abstract class BaseWebViewClient(
         handleError(failingUrl, errorCode)
     }
 
-    @TargetApi(Build.VERSION_CODES.M)
+    @RequiresApi(Build.VERSION_CODES.M)
     override fun onReceivedError(
         view: WebView?,
         request: WebResourceRequest?,
@@ -74,9 +73,7 @@ abstract class BaseWebViewClient(
     @VisibleForTesting(otherwise = VisibleForTesting.PROTECTED)
     open fun handleDeepLink(uri: Uri?): Boolean {
         val intent = Intent(Intent.ACTION_VIEW)
-        uri.let { uri ->
-            intent.apply { data = uri }
-        }
+        intent.apply { data = uri }
         intent.data?.let { data ->
             if (canCaptureUrl(data.scheme)) {
                 onUrlCaptured(intent)

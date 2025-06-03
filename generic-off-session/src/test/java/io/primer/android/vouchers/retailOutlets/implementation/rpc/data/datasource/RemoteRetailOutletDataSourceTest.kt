@@ -3,7 +3,7 @@ package io.primer.android.vouchers.retailOutlets.implementation.rpc.data.datasou
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkObject
-import io.mockk.unmockkAll
+import io.mockk.unmockkObject
 import io.primer.android.core.data.model.BaseRemoteHostRequest
 import io.primer.android.core.data.network.PrimerHttpClient
 import io.primer.android.core.data.network.exception.JsonDecodingException
@@ -51,7 +51,7 @@ class RemoteRetailOutletDataSourceTest {
             assertThrows<JsonDecodingException> { tested.execute(input) }
 
             mockWebServer.shutdown()
-            unmockkAll()
+            unmockkObject(PrimerTimeouts)
         }
 
     @Test
@@ -83,6 +83,6 @@ class RemoteRetailOutletDataSourceTest {
             assertThrows<SocketTimeoutException> { tested.execute(input) }
 
             mockWebServer.shutdown()
-            unmockkAll()
+            unmockkObject(PrimerTimeouts)
         }
 }

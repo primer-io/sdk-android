@@ -56,6 +56,8 @@ internal class KlarnaPaymentCategorySelectionFragment : BaseFragment() {
     private var categories: ArrayList<DomainKlarnaPaymentCategory>? = null
     private var selectedCategory: DomainKlarnaPaymentCategory? = null
 
+    private val backButton by lazy { getToolbar()?.getBackButton() }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -97,9 +99,9 @@ internal class KlarnaPaymentCategorySelectionFragment : BaseFragment() {
             }
         }
 
-        getToolbar()?.showOnlyLogo(R.drawable.ic_logo_klarna)
-
-        getToolbar()?.getBackButton()?.visibility = View.INVISIBLE
+        getToolbar()?.showOnlyLogo(
+            if (theme.isDarkMode == true) R.drawable.ic_logo_klarna_dark else R.drawable.ic_logo_klarna,
+        )
 
         binding.authorize.setOnClickListener {
             it.isEnabled = false
@@ -114,8 +116,9 @@ internal class KlarnaPaymentCategorySelectionFragment : BaseFragment() {
     }
 
     private fun updatePaymentMethodBackVisibility(isVisible: Boolean? = null) {
-        getToolbar()?.getBackButton()?.isVisible =
-            isVisible ?: primerConfig.isStandalonePaymentMethod.not()
+        val showBackButton: Boolean = isVisible ?: primerConfig.isStandalonePaymentMethod.not()
+        backButton?.isVisible = showBackButton
+        getToolbar()?.getCloseButton()?.visibility = if (showBackButton) View.INVISIBLE else View.GONE
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -152,11 +155,14 @@ internal class KlarnaPaymentCategorySelectionFragment : BaseFragment() {
                         binding.progressGroup.isVisible = false
                         binding.paymentCategoryGroup.isVisible = true
                         updatePaymentMethodBackVisibility()
+                        backButton?.setOnClickListener {
+                            parentFragmentManager.popBackStack()
+                        }
                     }
                 }
 
                 is KlarnaPaymentStep.PaymentViewLoaded -> {
-                    getToolbar()?.getBackButton()?.setOnClickListener {
+                    backButton?.setOnClickListener {
                         parentFragmentManager.popBackStack()
                     }
                     binding.paymentCategories.klarnaPaymentCategories =

@@ -3,7 +3,6 @@ package io.primer.android.configuration.data.datasource
 import io.primer.android.analytics.data.models.TimerId
 import io.primer.android.analytics.data.models.TimerProperties
 import io.primer.android.analytics.data.models.TimerType
-import io.primer.android.analytics.data.models.UrlAnalyticsContext
 import io.primer.android.configuration.data.model.PaymentMethodConfigDataResponse
 import io.primer.android.core.data.datasource.BaseSuspendDataSource
 import io.primer.android.core.data.infrastructure.FileProvider
@@ -42,12 +41,6 @@ class RemoteConfigurationResourcesDataSource(
                     ).map { urlColor ->
                         async(Dispatchers.IO) {
                             withTimeoutOrNull(DEFAULT_REQUEST_TIMEOUT_MILLIS) {
-                                logAnalyticsImageLoadingTimerEvent(
-                                    TimerType.START,
-                                    config.type,
-                                    urlColor.first,
-                                )
-
                                 val request =
                                     Request.Builder()
                                         .url(urlColor.first)
@@ -57,11 +50,6 @@ class RemoteConfigurationResourcesDataSource(
                                     okHttpClient
                                         .newCall(request)
                                         .await().use {
-                                            logAnalyticsImageLoadingTimerEvent(
-                                                TimerType.END,
-                                                config.type,
-                                                urlColor.first,
-                                            )
                                             if (it.isSuccessful) {
                                                 val bufferedInputStream =
                                                     BufferedInputStream(it.body?.byteStream())
@@ -127,22 +115,6 @@ class RemoteConfigurationResourcesDataSource(
             logAnalyticsAllImageDurationTimerEvent(TimerType.END)
             iconsMetadata
         }
-
-    private fun logAnalyticsImageLoadingTimerEvent(
-        timerType: TimerType,
-        paymentMethodType: String,
-        iconUrl: String,
-    ) = timerEventProvider.getEventProvider().tryEmit(
-        TimerProperties(
-            id = TimerId.PM_IMAGE_LOADING_DURATION,
-            timerType = timerType,
-            analyticsContext =
-            UrlAnalyticsContext(
-                paymentMethodType = paymentMethodType,
-                url = iconUrl,
-            ),
-        ),
-    )
 
     private fun logAnalyticsAllImageDurationTimerEvent(timerType: TimerType) =
         timerEventProvider.getEventProvider().tryEmit(

@@ -95,12 +95,6 @@ internal class PaypalComponentTest {
         every { Uri.parse(any()) } returns mockk(relaxed = true)
         coEvery { tokenizationCollectorDelegate.startDataCollection(any()) } throws CancellationException()
 
-        val params =
-            mockk<PaymentMethodLauncherParams>(relaxed = true) {
-                every { paymentMethodType } returns "PAYPAL"
-                every { initialLauncherParams } returns mockk<RedirectLauncherParams>(relaxed = true)
-            }
-
         // when
         runTest {
             component.start("PAYPAL", PrimerSessionIntent.CHECKOUT)

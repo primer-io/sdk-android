@@ -311,9 +311,13 @@ internal class CheckoutSheetActivity : BaseCheckoutActivity(), AchMandateActionH
         if (!exited) {
             addTimerDurationEvent(TimerType.END)
             exited = true
-            val exitHandler = checkoutExitHandler
-            primerViewModel.cleanup()
-            exitHandler.handle()
+            runCatching {
+                // Some merchants are cleaning up instances before this is evaluated.
+                // That is causing crashes as DI does not contain exit handler anymore.
+                val exitHandler = checkoutExitHandler
+                primerViewModel.cleanup()
+                exitHandler.handle()
+            }
             finish()
         }
     }

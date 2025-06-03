@@ -5,7 +5,7 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkObject
 import io.mockk.slot
-import io.mockk.unmockkAll
+import io.mockk.unmockkObject
 import io.mockk.verify
 import io.primer.android.core.data.datasource.PrimerApiVersion
 import io.primer.android.core.data.datasource.toHeaderMap
@@ -107,7 +107,7 @@ class RemoteEmptyExchangeDataSourceTest {
             assertThrows<JsonDecodingException> { tested.execute(input) }
 
             mockWebServer.shutdown()
-            unmockkAll()
+            unmockkObject(PrimerTimeouts)
         }
 
     @Test
@@ -133,6 +133,6 @@ class RemoteEmptyExchangeDataSourceTest {
             assertThrows<SocketTimeoutException> { tested.execute(input) }
 
             mockWebServer.shutdown()
-            unmockkAll()
+            unmockkObject(PrimerTimeouts)
         }
 }

@@ -199,7 +199,14 @@ internal class CardFormFragment : BaseFragment() {
     }
 
     private fun renderTitle() {
-        getToolbar()?.showOnlyTitle(R.string.pay_with_card)
+        val replaceDefaultTitle = localConfig.settings.uiOptions.cardFormUIOptions.payButtonAddNewCard
+        getToolbar()?.showOnlyTitle(
+            if (replaceDefaultTitle) {
+                R.string.add_card
+            } else {
+                R.string.pay_with_card
+            },
+        )
     }
 
     private fun renderCardDetailsTitle() {
@@ -440,9 +447,7 @@ internal class CardFormFragment : BaseFragment() {
         binding.btnSubmitForm.text =
             when (uxMode) {
                 PrimerSessionIntent.VAULT -> context.getString(R.string.add_card)
-                PrimerSessionIntent.CHECKOUT -> {
-                    String.format(getString(R.string.pay_specific_amount), primerViewModel.getTotalAmountFormatted())
-                }
+                PrimerSessionIntent.CHECKOUT -> getCheckoutLabel()
             }
 
         binding.btnSubmitForm.setOnClickListener { onSubmitButtonPressed() }
@@ -474,9 +479,15 @@ internal class CardFormFragment : BaseFragment() {
             binding.btnSubmitForm.text = getString(R.string.add_card)
             return
         }
-        val amountString = primerViewModel.getTotalAmountFormatted()
-        binding.btnSubmitForm.text = getString(R.string.pay_specific_amount, amountString)
+        binding.btnSubmitForm.text = getCheckoutLabel()
     }
+
+    private fun getCheckoutLabel() =
+        if (localConfig.settings.uiOptions.cardFormUIOptions.payButtonAddNewCard) {
+            requireContext().getString(R.string.add_card)
+        } else {
+            String.format(getString(R.string.pay_specific_amount), primerViewModel.getTotalAmountFormatted())
+        }
 
     private fun configureTokenizationObservers() {
         // submit button loading status

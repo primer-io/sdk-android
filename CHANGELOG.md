@@ -1,3 +1,36 @@
+## 2.39.0 (2025-05-14)
+
+### Feat
+
+- override checkout behaviour (#948)
+- add new card option (#949)
+
+### Fix
+
+- fix crash with CheckoutExitHandler misuse (#952)
+
+## 2.38.3 (2025-04-29)
+
+### Fix
+
+- fixed crash when destroyed redirect screen is re-opened by deeplink (#946)
+- fixed crash when destroyed redirect screen is re-opened by deeplink
+
+## 2.38.2 (2025-04-17)
+
+### Fix
+
+- **3DS**: Handle locale formatting for usecases where language is formed as xx-xx (#924)
+- added additional controls on how client session cache can be cleaned up (#922)
+- **paypal**: Better handling of custom tabs (#921)
+
+## 2.38.1 (2025-04-14)
+
+### Fix
+
+- **klarna**: update Klarna to 1.1.0 (#919)
+- **klarna**: Improved styling support (#918)
+
 ## 2.38.0 (2025-03-24)
 
 ### Feat

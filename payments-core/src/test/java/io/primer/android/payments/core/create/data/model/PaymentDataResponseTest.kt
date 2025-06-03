@@ -59,6 +59,10 @@ internal class PaymentDataResponseTest {
                         )
                     },
                 )
+                put(
+                    "checkoutOutcome",
+                    "CHECKOUT_COMPLETE",
+                )
             }
 
         // Act
@@ -76,6 +80,7 @@ internal class PaymentDataResponseTest {
         assertEquals(RequiredActionName.`3DS_AUTHENTICATION`, paymentDataResponse.requiredAction?.name)
         assertEquals("Authenticate the transaction", paymentDataResponse.requiredAction?.description)
         assertEquals("token123", paymentDataResponse.requiredAction?.clientToken)
+        assertEquals(CheckoutOutcome.CHECKOUT_COMPLETE, paymentDataResponse.checkoutOutcome)
     }
 
     @Test
@@ -99,6 +104,7 @@ internal class PaymentDataResponseTest {
                 paymentFailureReason = "None",
                 requiredAction = requiredActionData,
                 showSuccessCheckoutOnPendingPayment = false,
+                checkoutOutcome = CheckoutOutcome.CHECKOUT_COMPLETE,
             )
 
         // Act
@@ -111,6 +117,7 @@ internal class PaymentDataResponseTest {
         assertEquals(RequiredActionName.`3DS_AUTHENTICATION`, paymentResult.requiredActionName)
         assertEquals("token123", paymentResult.clientToken)
         assertEquals(null, paymentResult.paymentMethodData)
+        assertEquals(CheckoutOutcome.CHECKOUT_COMPLETE, paymentResult.checkoutOutcome)
     }
 }
 

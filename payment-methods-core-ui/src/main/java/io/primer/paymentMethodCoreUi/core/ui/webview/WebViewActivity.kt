@@ -37,6 +37,11 @@ abstract class WebViewActivity : BaseCheckoutActivity() {
         return true
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        webView.destroy()
+    }
+
     protected abstract fun setupWebViewClient()
 
     private fun setupViews() {
@@ -68,6 +73,8 @@ abstract class WebViewActivity : BaseCheckoutActivity() {
             val url = intent.extras?.getString(PAYMENT_URL_KEY)
             url?.let {
                 webView.loadUrl(it)
+            } ?: run {
+                finish()
             }
         }
     }

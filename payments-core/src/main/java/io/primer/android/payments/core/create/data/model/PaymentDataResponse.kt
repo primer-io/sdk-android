@@ -19,6 +19,7 @@ data class PaymentDataResponse(
     val paymentFailureReason: String?,
     val requiredAction: RequiredActionData?,
     val showSuccessCheckoutOnPendingPayment: Boolean?,
+    val checkoutOutcome: CheckoutOutcome?,
 ) : JSONDeserializable {
     companion object {
         private const val ID_FIELD = "id"
@@ -31,6 +32,7 @@ data class PaymentDataResponse(
         private const val PAYMENT_FAILURE_REASON_FIELD = "paymentFailureReason"
         private const val REQUIRED_ACTION_DATA_FIELD = "requiredAction"
         private const val SHOW_SUCCESS_CHECKOUT_ON_PENDING_PAYMENT_FIELD = "showSuccessCheckoutOnPendingPayment"
+        private const val CHECKOUT_OUTCOME_FIELD = "checkoutOutcome"
 
         @JvmField
         val deserializer =
@@ -49,6 +51,9 @@ data class PaymentDataResponse(
                             .deserialize(it)
                     },
                     t.optBoolean(SHOW_SUCCESS_CHECKOUT_ON_PENDING_PAYMENT_FIELD),
+                    t.optNullableString(CHECKOUT_OUTCOME_FIELD)?.let {
+                        CheckoutOutcome.valueOf(it)
+                    },
                 )
             }
     }
@@ -58,6 +63,12 @@ enum class PaymentStatus {
     PENDING,
     SUCCESS,
     FAILED,
+}
+
+enum class CheckoutOutcome {
+    DETERMINE_FROM_PAYMENT_STATUS,
+    CHECKOUT_COMPLETE,
+    CHECKOUT_FAILURE,
 }
 
 data class RequiredActionData(
@@ -101,4 +112,5 @@ fun PaymentDataResponse.toPaymentResult(paymentMethodData: PrimerCheckoutAdditio
         clientToken = requiredAction?.clientToken,
         paymentMethodData = paymentMethodData,
         showSuccessCheckoutOnPendingPayment = showSuccessCheckoutOnPendingPayment == true,
+        checkoutOutcome = checkoutOutcome,
     )

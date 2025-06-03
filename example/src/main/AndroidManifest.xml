@@ -27,6 +27,19 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
+            <intent-filter tools:targetApi="m">
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <!-- If needed, the scheme can be changed to https (with the tag autoverify=true)
+                to open the app using assetlinks. The json file is already hosted on sdk-demo.
+                This scheme is used only for E2E tests -->
+                <data android:scheme="primer" />
+                <data android:host="sdk-demo.primer.io" />
+            </intent-filter>
         </activity>
 
         <activity

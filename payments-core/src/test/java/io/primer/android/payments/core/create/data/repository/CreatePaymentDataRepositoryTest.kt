@@ -58,6 +58,7 @@ internal class CreatePaymentDataRepositoryTest {
                     paymentFailureReason = null,
                     requiredAction = null,
                     showSuccessCheckoutOnPendingPayment = false,
+                    checkoutOutcome = null,
                 )
 
             coEvery { configurationDataSource.get() } returns configurationData

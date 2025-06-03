@@ -13,6 +13,7 @@ import androidx.lifecycle.viewModelScope
 import com.google.android.gms.wallet.button.ButtonConstants
 import io.primer.android.Primer
 import io.primer.android.PrimerCheckoutListener
+import io.primer.android.core.data.serialization.json.JSONSerializationUtils.serialize
 import io.primer.android.data.settings.GooglePayButtonOptions
 import io.primer.android.data.settings.PrimerDebugOptions
 import io.primer.android.data.settings.PrimerGooglePayOptions
@@ -40,6 +41,7 @@ import io.primer.sample.repositories.CountryRepository
 import io.primer.sample.repositories.PaymentsRepository
 import io.primer.sample.repositories.ResumeRepository
 import io.primer.sample.utils.CombinedLiveData
+import io.primer.sample.utils.DeeplinkMapper.overrideWith
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -80,7 +82,7 @@ class MainViewModel(
 
     private val _transactionId: MutableLiveData<String?> = MutableLiveData<String?>()
 
-    private val _selectedFlow = MutableLiveData<SelectedFlow>()
+    private val _selectedFlow = MutableLiveData(SelectedFlow.CREATE_SESSION)
     val selectedFlow: LiveData<SelectedFlow> = _selectedFlow
     fun setSelectedFlow(flow: SelectedFlow) = _selectedFlow.postValue(flow)
 
@@ -132,7 +134,6 @@ class MainViewModel(
     fun setMetadata(metadata: String) = _metadata.postValue(metadata)
 
     private val _captureVaultedCardCvv = MutableLiveData(false)
-    val captureVaultedCardCvv: LiveData<Boolean> = _captureVaultedCardCvv
     fun setCaptureVaultedCardCvv(captureVaultedCardCvv: Boolean) = _captureVaultedCardCvv.postValue(
         captureVaultedCardCvv
     )
@@ -188,44 +189,49 @@ class MainViewModel(
     val canLaunchPrimer: MutableLiveData<Boolean> =
         CombinedLiveData(customerId, _amount, ::canLaunch)
 
-    val settings: PrimerSettings
-        get() = PrimerSettings(
-            // todo: refactor to reintroduce custom values through client session
-            paymentHandling = _paymentHandling.value ?: PrimerPaymentHandling.AUTO,
-            paymentMethodOptions = PrimerPaymentMethodOptions(
-                redirectScheme = "primer",
-                klarnaOptions = PrimerKlarnaOptions(
-                    recurringPaymentDescription = "This is custom description",
-                    returnIntentUrl = Uri.Builder()
-                        .scheme("app")
-                        .authority("deeplink.return.activity")
-                        .build()
-                        .toString()
-                ),
-                googlePayOptions = PrimerGooglePayOptions(
-                    captureBillingAddress = true,
-                    existingPaymentMethodRequired = false,
-                    shippingAddressParameters = PrimerGoogleShippingAddressParameters(
-                        phoneNumberRequired = true
-                    ),
-                    emailAddressRequired = true,
-                    requireShippingMethod = false,
-                    buttonOptions = GooglePayButtonOptions(buttonType = ButtonConstants.ButtonType.PAY)
-                ),
-                threeDsOptions = PrimerThreeDsOptions("https://primer.io/3ds"),
-                stripeOptions = PrimerStripeOptions(
-                    mandateData = PrimerStripeOptions.MandateData.TemplateMandateData("Primer Inc."),
-                    publishableKey = BuildConfig.STRIPE_PUBLISHABLE_KEY
-                )
+    val settings = PrimerSettings(
+        // todo: refactor to reintroduce custom values through client session
+        paymentHandling = _paymentHandling.value ?: PrimerPaymentHandling.AUTO,
+        paymentMethodOptions = PrimerPaymentMethodOptions(
+            redirectScheme = "primer",
+            klarnaOptions = PrimerKlarnaOptions(
+                recurringPaymentDescription = "This is custom description",
+                returnIntentUrl = Uri.Builder()
+                    .scheme("app")
+                    .authority("deeplink.return.activity")
+                    .build()
+                    .toString()
             ),
-            uiOptions = _uiOptions.value ?: PrimerUIOptions(),
-            debugOptions = PrimerDebugOptions(is3DSSanityCheckEnabled = false),
-            clientSessionCachingEnabled = true
-        )
+            googlePayOptions = PrimerGooglePayOptions(
+                captureBillingAddress = true,
+                existingPaymentMethodRequired = false,
+                shippingAddressParameters = PrimerGoogleShippingAddressParameters(
+                    phoneNumberRequired = true
+                ),
+                emailAddressRequired = true,
+                requireShippingMethod = false,
+                buttonOptions = GooglePayButtonOptions(buttonType = ButtonConstants.ButtonType.PAY)
+            ),
+            threeDsOptions = PrimerThreeDsOptions("https://primer.io/3ds"),
+            stripeOptions = PrimerStripeOptions(
+                mandateData = PrimerStripeOptions.MandateData.TemplateMandateData("Primer Inc."),
+                publishableKey = BuildConfig.STRIPE_PUBLISHABLE_KEY
+            )
+        ),
+        uiOptions = _uiOptions.value ?: PrimerUIOptions(),
+        debugOptions = PrimerDebugOptions(is3DSSanityCheckEnabled = false),
+        clientSessionCachingEnabled = true
+    ).overrideWith(savedStateHandle["settings"]).also { Log.d("PrimerSettings", it.serialize().toString()) }
 
     private val _collectedTag: MutableLiveData<Intent?> = MutableLiveData()
     val collectedTag: LiveData<Intent?> = _collectedTag
     fun setTag(intent: Intent?) = _collectedTag.postValue(intent)
+
+    init {
+        if (_clientToken.value.isNullOrEmpty().not()) {
+            _selectedFlow.postValue(SelectedFlow.CLIENT_TOKEN)
+        }
+    }
 
     fun configure(
         listener: PrimerCheckoutListener,

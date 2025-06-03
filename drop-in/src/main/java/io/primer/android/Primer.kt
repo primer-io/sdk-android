@@ -42,9 +42,9 @@ class Primer private constructor() : PrimerInterface, DISdkComponent {
         )
     }
 
-    override fun cleanup() {
+    override fun cleanup(cleanClientSessionCache: Boolean) {
         addAnalyticsEvent(SdkFunctionParams("cleanup"))
-        clearGlobalCache()
+        if (cleanClientSessionCache) clearGlobalCache()
         listener = null
     }
 

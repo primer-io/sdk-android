@@ -2,13 +2,13 @@ apply plugin: "com.android.library"
 apply plugin: "kotlin-android"
 
 android {
-    compileSdk 34
-    buildToolsVersion "34.0.0"
+    compileSdk 35
+    buildToolsVersion "35.0.0"
 
     defaultConfig {
         testInstrumentationRunnerArguments runnerBuilder: 'de.mannodermaus.junit5.AndroidJUnit5Builder'
         minSdkVersion 21
-        targetSdkVersion 34
+        targetSdkVersion 35
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
@@ -21,6 +21,7 @@ android {
 
     buildFeatures {
         viewBinding = true
+        buildConfig = true
     }
 
     compileOptions {
@@ -37,6 +38,7 @@ android {
 
         unitTests.all {
             useJUnitPlatform()
+            systemProperty("junit.jupiter.execution.parallel.enabled", "false")
         }
         unitTests.returnDefaultValues = true
     }
@@ -46,6 +48,7 @@ dependencies {
     testRuntimeOnly(libs.junit.jupiter.api)
     testImplementation(libs.junit.jupiter.engine)
     testImplementation(libs.junit.jupiter.params)
+    testRuntimeOnly(libs.junit.platform.launcher)
 
     testImplementation(libs.mockk) {
         exclude group: "org.slf4j", module: "slf4j-log4j12"
@@ -59,6 +62,5 @@ dependencies {
     testImplementation(libs.json)
 
     androidTestImplementation(libs.mockk.android)
-    androidTestRuntimeOnly(libs.junit.test.runner)
     testImplementation(testFixtures(project(":arch-core")))
 }
