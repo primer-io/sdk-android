@@ -13,8 +13,8 @@ import io.primer.composable.scope.CardFormScope
 
 @Composable
 internal fun CardFormScope.Input(
-    type: PrimerInputElementType,
     modifier: Modifier = Modifier,
+    type: PrimerInputElementType,
 ) {
     val state by state.collectAsState()
     

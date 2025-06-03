@@ -41,8 +41,8 @@ internal fun CardFormScope.CardDetailsForm(
         )
 
         Input(
-            type = PrimerInputElementType.CARD_NUMBER,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            type = PrimerInputElementType.CARD_NUMBER
         )
 
         Spacer(modifier = Modifier.height(12.dp))
@@ -52,20 +52,20 @@ internal fun CardFormScope.CardDetailsForm(
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             Input(
-                type = PrimerInputElementType.EXPIRY_DATE,
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f),
+                type = PrimerInputElementType.EXPIRY_DATE
             )
             Input(
-                type = PrimerInputElementType.CVV,
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f),
+                type = PrimerInputElementType.CVV
             )
         }
 
         Spacer(modifier = Modifier.height(12.dp))
 
         Input(
-            type = PrimerInputElementType.CARDHOLDER_NAME,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            type = PrimerInputElementType.CARDHOLDER_NAME
         )
 
         Spacer(modifier = Modifier.height(24.dp))

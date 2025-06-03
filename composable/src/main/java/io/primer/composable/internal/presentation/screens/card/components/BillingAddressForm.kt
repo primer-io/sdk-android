@@ -41,8 +41,8 @@ internal fun CardFormScope.BillingAddressForm(
         )
 
         Input(
-            type = PrimerInputElementType.COUNTRY_CODE,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            type = PrimerInputElementType.COUNTRY_CODE
         )
         
         Spacer(modifier = Modifier.height(12.dp))
@@ -52,27 +52,27 @@ internal fun CardFormScope.BillingAddressForm(
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             Input(
-                type = PrimerInputElementType.FIRST_NAME,
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f),
+                type = PrimerInputElementType.FIRST_NAME
             )
             Input(
-                type = PrimerInputElementType.LAST_NAME,
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f),
+                type = PrimerInputElementType.LAST_NAME
             )
         }
         
         Spacer(modifier = Modifier.height(12.dp))
         
         Input(
-            type = PrimerInputElementType.ADDRESS_LINE_1,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            type = PrimerInputElementType.ADDRESS_LINE_1
         )
         
         Spacer(modifier = Modifier.height(12.dp))
         
         Input(
-            type = PrimerInputElementType.ADDRESS_LINE_2,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            type = PrimerInputElementType.ADDRESS_LINE_2
         )
         
         Spacer(modifier = Modifier.height(12.dp))
@@ -82,20 +82,20 @@ internal fun CardFormScope.BillingAddressForm(
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             Input(
-                type = PrimerInputElementType.POSTAL_CODE,
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f),
+                type = PrimerInputElementType.POSTAL_CODE
             )
             Input(
-                type = PrimerInputElementType.CITY,
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f),
+                type = PrimerInputElementType.CITY
             )
         }
         
         Spacer(modifier = Modifier.height(12.dp))
         
         Input(
-            type = PrimerInputElementType.STATE,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            type = PrimerInputElementType.STATE
         )
 
         Spacer(modifier = Modifier.height(24.dp))
