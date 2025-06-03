@@ -12,5 +12,4 @@ internal interface RawDataManagerRepository {
     val validationState: Flow<List<PrimerInputValidationError>>
 
     fun setData(data: PrimerCardData)
-
 }

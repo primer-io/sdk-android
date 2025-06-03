@@ -11,16 +11,16 @@ import androidx.compose.ui.Modifier
 @Composable
 internal fun SuccessScreen(
     modifier: Modifier = Modifier,
-    message: String
+    message: String,
 ) {
     Column(
         modifier = Modifier.fillMaxWidth(),
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Text(
             text = message,
             color = MaterialTheme.colorScheme.error,
-            style = MaterialTheme.typography.bodyMedium
+            style = MaterialTheme.typography.bodyMedium,
         )
     }
 }

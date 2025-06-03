@@ -8,7 +8,7 @@ interface CardFormScope {
 
     val state: StateFlow<State>
 
-    fun updateInput(content: Pair<String, PrimerInputElementType>)
+    fun updateInput(content: Pair<PrimerInputElementType, String>)
 
     fun submit()
 
@@ -18,5 +18,4 @@ interface CardFormScope {
         val fieldErrors: List<PrimerInputValidationError> = emptyList(),
         val inputFields: Map<PrimerInputElementType, String> = emptyMap(),
     )
-
 }

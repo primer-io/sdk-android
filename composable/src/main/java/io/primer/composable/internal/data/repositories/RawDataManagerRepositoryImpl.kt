@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 
 class RawDataManagerRepositoryImpl(
-    private val cardManager: PrimerHeadlessUniversalCheckoutRawDataManagerInterface
+    private val cardManager: PrimerHeadlessUniversalCheckoutRawDataManagerInterface,
 ) : RawDataManagerRepository, DISdkComponent {
 
     override fun getRequiredInputElementTypes(): List<PrimerInputElementType> =
@@ -22,7 +22,7 @@ class RawDataManagerRepositoryImpl(
         cardManager.setListener(object : PrimerHeadlessUniversalCheckoutRawDataManagerListener {
             override fun onValidationChanged(
                 isValid: Boolean,
-                errors: List<PrimerInputValidationError>
+                errors: List<PrimerInputValidationError>,
             ) {
                 trySend(errors)
             }
@@ -34,5 +34,4 @@ class RawDataManagerRepositoryImpl(
     }
 
     override fun setData(data: PrimerCardData) = cardManager.setRawData(data)
-
 }

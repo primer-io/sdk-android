@@ -28,18 +28,16 @@ internal fun CheckoutNavHost(
     successScreen: (@Composable () -> Unit),
     errorScreen: (@Composable (message: String) -> Unit),
 ) {
-
     CompositionLocalProvider(
         LocalNavController provides rememberNavController(),
-        LocalCheckoutNavigator provides DISdkContext.componentsSdkContainer?.resolve<CheckoutNavigator>()!!
+        LocalCheckoutNavigator provides DISdkContext.componentsSdkContainer?.resolve<CheckoutNavigator>()!!,
     ) {
         CheckoutNavigator {
             NavHost(
                 navController = LocalNavController.current,
                 startDestination = Screen.PaymentsList.route,
-                modifier = modifier
+                modifier = modifier,
             ) {
-
                 composable(Screen.Loading.route) {
                     loadingScreen()
                 }

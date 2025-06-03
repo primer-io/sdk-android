@@ -14,12 +14,12 @@ import io.primer.composable.scope.CardFormScope
 @Composable
 internal fun CardFormScope.CardFormScreen(
     modifier: Modifier = Modifier,
-    submitButton: (@Composable () -> Unit)? = { SubmitButton(text = "Submit") }
+    submitButton: (@Composable () -> Unit)? = { SubmitButton(text = "Submit") },
 ) {
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .padding(16.dp)
+            .padding(16.dp),
     ) {
         CardDetailsForm()
         BillingAddressForm()

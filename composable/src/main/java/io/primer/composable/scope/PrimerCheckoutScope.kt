@@ -11,7 +11,7 @@ interface PrimerCheckoutScope {
     fun initialize(
         context: Context,
         clientToken: String,
-        primerSettings: PrimerSettings
+        primerSettings: PrimerSettings,
     )
 
     fun cleanup()

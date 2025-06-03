@@ -23,7 +23,6 @@ import io.primer.composable.scope.PaymentMethodSelectionScope
 internal fun PaymentMethodSelectionScope.PaymentMethodSelectionScreen(
     modifier: Modifier = Modifier,
 ) {
-
     val state by state.collectAsStateWithLifecycle()
     val paymentMethods =
         (state as? PaymentMethodSelectionScope.State.Ready)?.paymentMethods ?: emptyList()
@@ -31,17 +30,17 @@ internal fun PaymentMethodSelectionScope.PaymentMethodSelectionScreen(
     Column(modifier = modifier.padding(8.dp)) {
         Text(
             text = "Select Payment Method",
-            style = MaterialTheme.typography.headlineSmall
+            style = MaterialTheme.typography.headlineSmall,
         )
 
         HorizontalDivider(modifier = Modifier.padding(8.dp))
 
         LazyColumn(
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+            verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             items(paymentMethods) {
                 PaymentMethodItem(
-                    primerPaymentMethod = it
+                    primerPaymentMethod = it,
                 )
             }
         }
@@ -51,17 +50,17 @@ internal fun PaymentMethodSelectionScope.PaymentMethodSelectionScreen(
 @Composable
 internal fun PaymentMethodSelectionScope.PaymentMethodItem(
     modifier: Modifier = Modifier,
-    primerPaymentMethod: PrimerPaymentMethod
+    primerPaymentMethod: PrimerPaymentMethod,
 ) {
     Card(
         modifier = modifier
             .fillMaxWidth()
-            .clickable { onPaymentMethodSelected(primerPaymentMethod) }
+            .clickable { onPaymentMethodSelected(primerPaymentMethod) },
     ) {
         Text(
             modifier = Modifier.padding(16.dp),
             text = primerPaymentMethod.name,
-            style = MaterialTheme.typography.titleMedium
+            style = MaterialTheme.typography.titleMedium,
         )
     }
 }

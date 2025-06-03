@@ -16,48 +16,47 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import io.primer.android.components.domain.inputs.models.PrimerInputElementType
+import io.primer.composable.internal.presentation.screens.card.components.input.Input
 import io.primer.composable.scope.CardFormScope
 
 @Composable
 internal fun CardFormScope.CardDetailsForm(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
-
     val state by state.collectAsState()
     val cardInputFields = state.cardFields
     if (cardInputFields.isEmpty()) return
 
     Column(
-        modifier = modifier.fillMaxWidth()
+        modifier = modifier.fillMaxWidth(),
     ) {
-
         Text(
             text = "CARD DETAILS",
             style = MaterialTheme.typography.labelMedium.copy(
-                fontWeight = FontWeight.Medium
+                fontWeight = FontWeight.Medium,
             ),
             color = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.padding(bottom = 16.dp)
+            modifier = Modifier.padding(bottom = 16.dp),
         )
 
         Input(
             modifier = Modifier.fillMaxWidth(),
-            type = PrimerInputElementType.CARD_NUMBER
+            type = PrimerInputElementType.CARD_NUMBER,
         )
 
         Spacer(modifier = Modifier.height(12.dp))
 
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(12.dp)
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             Input(
                 modifier = Modifier.weight(1f),
-                type = PrimerInputElementType.EXPIRY_DATE
+                type = PrimerInputElementType.EXPIRY_DATE,
             )
             Input(
                 modifier = Modifier.weight(1f),
-                type = PrimerInputElementType.CVV
+                type = PrimerInputElementType.CVV,
             )
         }
 
@@ -65,7 +64,7 @@ internal fun CardFormScope.CardDetailsForm(
 
         Input(
             modifier = Modifier.fillMaxWidth(),
-            type = PrimerInputElementType.CARDHOLDER_NAME
+            type = PrimerInputElementType.CARDHOLDER_NAME,
         )
 
         Spacer(modifier = Modifier.height(24.dp))

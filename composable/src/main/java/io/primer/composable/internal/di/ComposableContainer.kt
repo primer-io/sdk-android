@@ -20,7 +20,6 @@ import io.primer.composable.internal.presentation.checkout.CheckoutNavigator
 internal class ComposableContainer(private val sdk: () -> SdkContainer) : DependencyContainer() {
 
     override fun registerInitialDependencies() {
-
         registerSingleton<PaymentMethodMapper> {
             PaymentMethodMapperImpl()
         }
@@ -32,8 +31,8 @@ internal class ComposableContainer(private val sdk: () -> SdkContainer) : Depend
         registerSingleton<RawDataManagerRepository> {
             RawDataManagerRepositoryImpl(
                 PrimerHeadlessUniversalCheckoutRawDataManager.newInstance(
-                    PaymentMethodType.PAYMENT_CARD.name
-                )
+                    PaymentMethodType.PAYMENT_CARD.name,
+                ),
             )
         }
 

@@ -26,7 +26,6 @@ internal class CardViewModel : ViewModel(), CardFormScope, DISdkComponent {
     private val logReporter: LogReporter by lazy { resolve() }
     private val actionInteractor: ActionInteractor by lazy { resolve() }
 
-
     private val _uiState = MutableStateFlow<CardFormScope.State>(CardFormScope.State())
     override val state: StateFlow<CardFormScope.State> = _uiState.asStateFlow()
 
@@ -38,10 +37,16 @@ internal class CardViewModel : ViewModel(), CardFormScope, DISdkComponent {
         }
     }
 
-    override fun updateInput(content: Pair<String, PrimerInputElementType>) = setDataInteractor(content)
+    override fun updateInput(content: Pair<PrimerInputElementType, String>) {
+        viewModelScope.launch {
+            _uiState.value = _uiState.value.copy(
+                inputFields = _uiState.value.inputFields + content
+            )
+        }
+        setDataInteractor(content)
+    }
 
     override fun submit() {
         TODO("Not yet implemented")
     }
-
 }

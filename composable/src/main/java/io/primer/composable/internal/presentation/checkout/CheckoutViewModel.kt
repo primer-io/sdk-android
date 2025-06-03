@@ -25,7 +25,7 @@ internal class CheckoutViewModel : ViewModel(), PrimerCheckoutScope, DISdkCompon
     override fun initialize(
         context: Context,
         clientToken: String,
-        primerSettings: PrimerSettings
+        primerSettings: PrimerSettings,
     ) {
         viewModelScope.launch {
             _state.value = PrimerCheckoutScope.State.Initializing
@@ -35,7 +35,7 @@ internal class CheckoutViewModel : ViewModel(), PrimerCheckoutScope, DISdkCompon
                         settings = primerSettings
                         clientTokenBase64 = clientToken
                     },
-                    context = context
+                    context = context,
                 )
                 DISdkContext.componentsSdkContainer?.apply {
                     registerContainer(ComposableContainer { DISdkContext.container() })

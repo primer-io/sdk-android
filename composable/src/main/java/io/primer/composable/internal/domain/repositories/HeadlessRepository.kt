@@ -5,5 +5,4 @@ import io.primer.android.components.domain.core.models.PrimerHeadlessUniversalCh
 internal interface HeadlessRepository {
 
     suspend fun getAvailablePaymentMethods(): List<PrimerHeadlessUniversalCheckoutPaymentMethod>
-
 }

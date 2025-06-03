@@ -10,11 +10,11 @@ import io.primer.composable.scope.CardFormScope
 @Composable
 internal fun CardFormScope.SubmitButton(
     modifier: Modifier = Modifier,
-    text: String
+    text: String,
 ) {
     Button(
         onClick = { submit() },
-        modifier = modifier.fillMaxWidth()
+        modifier = modifier.fillMaxWidth(),
     ) {
         Text(text)
     }

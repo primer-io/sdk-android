@@ -1,4 +1,4 @@
-package io.primer.composable.internal.presentation.screens.card.components
+package io.primer.composable.internal.presentation.screens.card.components.input
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.MaterialTheme
@@ -12,17 +12,18 @@ import io.primer.android.components.domain.inputs.models.PrimerInputElementType
 import io.primer.composable.scope.CardFormScope
 
 @Composable
-internal fun CardFormScope.Input(
+internal fun CardFormScope.BaseInput(
     modifier: Modifier = Modifier,
     type: PrimerInputElementType,
+    value: String,
+    onValueChange: (String) -> Unit,
 ) {
     val state by state.collectAsState()
-    
+
     // Check if this field should be shown
     val isFieldRequired = type in state.cardFields || type in state.billingFields
     if (!isFieldRequired) return
-    
-    val value = state.inputFields[type]
+
     val error = state.fieldErrors.find { it.inputElementType == type }
 
     val (label, placeholder) = when (type) {
@@ -45,20 +46,20 @@ internal fun CardFormScope.Input(
     }
 
     OutlinedTextField(
-        value = value ?: "",
-        onValueChange = { updateInput(it to type) },
+        value = value,
+        onValueChange = onValueChange,
         label = { Text(label) },
         placeholder = { Text(placeholder) },
         modifier = modifier.fillMaxWidth(),
         singleLine = true,
         isError = error != null,
-        supportingText = if (error != null) {
-            {
+        supportingText = {
+            error?.let {
                 Text(
-                    text = error.description,
-                    color = MaterialTheme.colorScheme.error
+                    text = it.description,
+                    color = MaterialTheme.colorScheme.error,
                 )
             }
-        } else null
+        },
     )
 }

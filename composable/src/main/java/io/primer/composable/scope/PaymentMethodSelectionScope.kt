@@ -14,5 +14,4 @@ interface PaymentMethodSelectionScope {
         data class Ready(val paymentMethods: List<PrimerPaymentMethod>) : State
         data class Error(val exception: Throwable) : State
     }
-
 }

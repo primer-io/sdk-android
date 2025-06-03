@@ -12,28 +12,28 @@ import io.primer.composable.scope.PaymentMethodSelectionScope
 
 @Composable
 fun PrimerLoadingScreen(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) = LoadingScreen(modifier)
 
 @Composable
 fun PaymentMethodSelectionScope.PrimerPaymentMethodSelectionScreen(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) = PaymentMethodSelectionScreen(modifier)
 
 @Composable
 fun CardFormScope.PrimerCardFormScreen(
     modifier: Modifier = Modifier,
-    submitButton: (@Composable () -> Unit)? = null
+    submitButton: (@Composable () -> Unit)? = null,
 ) = CardFormScreen(modifier, submitButton)
 
 @Composable
 fun PrimerErrorScreen(
     modifier: Modifier = Modifier,
-    message: String
+    message: String,
 ) = ErrorScreen(modifier, message)
 
 @Composable
 fun PrimerSuccessScreen(
     modifier: Modifier = Modifier,
-    message: String
+    message: String,
 ) = SuccessScreen(modifier, message)

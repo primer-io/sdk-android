@@ -13,7 +13,7 @@ import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.resume
 
 internal class HeadlessRepositoryImpl(
-    private val headless: PrimerHeadlessUniversalCheckoutInterface
+    private val headless: PrimerHeadlessUniversalCheckoutInterface,
 ) : HeadlessRepository, DISdkComponent {
 
     override suspend fun getAvailablePaymentMethods() =
@@ -23,12 +23,13 @@ internal class HeadlessRepositoryImpl(
                 clientToken = resolve<PrimerConfig>().clientTokenBase64!!,
                 settings = resolve<PrimerConfig>().settings,
                 checkoutListener = object : PrimerHeadlessUniversalCheckoutListener {
-                    override fun onAvailablePaymentMethodsLoaded(paymentMethods: List<PrimerHeadlessUniversalCheckoutPaymentMethod>) =
+                    override fun onAvailablePaymentMethodsLoaded(
+                        paymentMethods: List<PrimerHeadlessUniversalCheckoutPaymentMethod>,
+                    ) =
                         continuation.resume(paymentMethods)
 
                     override fun onCheckoutCompleted(checkoutData: PrimerCheckoutData) = Unit
-                }
+                },
             )
         }
-
 }

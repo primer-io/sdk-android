@@ -21,7 +21,7 @@ import io.primer.composable.scope.PaymentMethodSelectionScope
 import io.primer.composable.scope.PrimerCheckoutScope
 
 // TODO Overridable Composable functions with default values are not currently supported
-//interface Primer {
+// interface Primer {
 //
 //    fun configure(
 //        clientToken: String,
@@ -41,7 +41,7 @@ import io.primer.composable.scope.PrimerCheckoutScope
 //        val instance: Primer = PrimerImpl()
 //    }
 //
-//}
+// }
 
 object Primer {
 
@@ -64,7 +64,7 @@ object Primer {
         paymentSelectionScreen: (@Composable PaymentMethodSelectionScope.() -> Unit)? = null,
         cardFormScreen: (@Composable CardFormScope.() -> Unit)? = null,
         successScreen: (@Composable () -> Unit)? = null,
-        errorScreen: (@Composable (cause: String) -> Unit)? = null
+        errorScreen: (@Composable (cause: String) -> Unit)? = null,
     ) {
         val checkoutViewModel = viewModel<CheckoutViewModel>()
         val context = LocalContext.current
@@ -85,9 +85,8 @@ object Primer {
                     ?: ErrorScreen(message = state.exception.message!!)
 
             PrimerCheckoutScope.State.Ready -> {
-
                 ModalBottomSheet(
-                    onDismissRequest = checkoutViewModel::cleanup
+                    onDismissRequest = checkoutViewModel::cleanup,
                 ) {
                     CheckoutNavHost(
                         loadingScreen = { loadingScreen?.invoke() ?: LoadingScreen() },
@@ -100,10 +99,9 @@ object Primer {
                         },
                         errorScreen = { error ->
                             errorScreen?.let { it(error) } ?: ErrorScreen(message = error)
-                        }
+                        },
                     )
                 }
-
             }
         }
     }

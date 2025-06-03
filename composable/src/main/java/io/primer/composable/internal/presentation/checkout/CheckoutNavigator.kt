@@ -39,7 +39,6 @@ internal class CheckoutNavigator() {
 
 @Composable
 internal fun CheckoutNavigator(navHost: @Composable () -> Unit) {
-
     val checkoutNavigator = LocalCheckoutNavigator.current
     val navController = LocalNavController.current
 

@@ -34,7 +34,7 @@ class PaymentMethodSelectionViewModel : ViewModel(), PaymentMethodSelectionScope
                 },
                 onFailure = { error ->
                     _uiState.value = PaymentMethodSelectionScope.State.Error(error)
-                }
+                },
             )
         }
     }
