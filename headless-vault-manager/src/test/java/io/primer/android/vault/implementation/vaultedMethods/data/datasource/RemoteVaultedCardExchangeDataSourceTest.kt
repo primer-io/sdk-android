@@ -6,7 +6,7 @@ import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
 import io.mockk.mockkObject
 import io.mockk.slot
-import io.mockk.unmockkAll
+import io.mockk.unmockkObject
 import io.mockk.verify
 import io.primer.android.core.data.datasource.PrimerApiVersion
 import io.primer.android.core.data.datasource.toHeaderMap
@@ -28,6 +28,7 @@ import okio.Buffer
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
+import org.junit.jupiter.api.parallel.ResourceLock
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.EnumSource
 import java.net.SocketTimeoutException
@@ -38,6 +39,7 @@ import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
 
 @ExtendWith(MockKExtension::class)
+@ResourceLock("PrimerTimeouts")
 class RemoteVaultedCardExchangeDataSourceTest {
     private val dataRequest = mockk<CardVaultExchangeDataRequest>()
 
@@ -110,7 +112,7 @@ class RemoteVaultedCardExchangeDataSourceTest {
             assertThrows<JsonDecodingException> { tested.execute(input) }
 
             mockWebServer.shutdown()
-            unmockkAll()
+            unmockkObject(PrimerTimeouts)
         }
 
     @Test
@@ -136,6 +138,6 @@ class RemoteVaultedCardExchangeDataSourceTest {
             assertThrows<SocketTimeoutException> { tested.execute(input) }
 
             mockWebServer.shutdown()
-            unmockkAll()
+            unmockkObject(PrimerTimeouts)
         }
 }

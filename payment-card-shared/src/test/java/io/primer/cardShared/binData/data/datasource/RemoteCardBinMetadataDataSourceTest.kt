@@ -5,7 +5,7 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkObject
 import io.mockk.slot
-import io.mockk.unmockkAll
+import io.mockk.unmockkObject
 import io.mockk.verify
 import io.primer.android.core.data.datasource.PrimerApiVersion
 import io.primer.android.core.data.datasource.toHeaderMap
@@ -24,6 +24,7 @@ import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import org.junit.jupiter.api.parallel.ResourceLock
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.EnumSource
 import java.net.SocketTimeoutException
@@ -32,6 +33,7 @@ import kotlin.test.assertEquals
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
 
+@ResourceLock("PrimerTimeouts")
 class RemoteCardBinMetadataDataSourceTest {
     @ParameterizedTest
     @EnumSource(value = PrimerApiVersion::class)
@@ -98,7 +100,7 @@ class RemoteCardBinMetadataDataSourceTest {
             assertThrows<JsonDecodingException> { tested.execute(input) }
 
             mockWebServer.shutdown()
-            unmockkAll()
+            unmockkObject(PrimerTimeouts)
         }
 
     @Test
@@ -128,6 +130,6 @@ class RemoteCardBinMetadataDataSourceTest {
             assertThrows<SocketTimeoutException> { tested.execute(input) }
 
             mockWebServer.shutdown()
-            unmockkAll()
+            unmockkObject(PrimerTimeouts)
         }
 }

@@ -38,6 +38,7 @@ android {
 
         unitTests.all {
             useJUnitPlatform()
+            systemProperty("junit.jupiter.execution.parallel.enabled", "false")
         }
         unitTests.returnDefaultValues = true
     }

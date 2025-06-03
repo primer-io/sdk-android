@@ -31,6 +31,7 @@ import okio.Buffer
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
+import org.junit.jupiter.api.parallel.ResourceLock
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.EnumSource
 import java.net.SocketTimeoutException
@@ -41,6 +42,7 @@ import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
 
 @ExtendWith(MockKExtension::class)
+@ResourceLock("PrimerTimeouts")
 internal class RemoteActionDataSourceTest {
     private val dataRequest = ClientSessionActionsDataRequest(actions = emptyList())
 

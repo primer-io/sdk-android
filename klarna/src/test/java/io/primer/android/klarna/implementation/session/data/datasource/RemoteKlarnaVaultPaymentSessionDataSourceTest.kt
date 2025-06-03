@@ -3,7 +3,7 @@ package io.primer.android.klarna.implementation.session.data.datasource
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkObject
-import io.mockk.unmockkAll
+import io.mockk.unmockkObject
 import io.primer.android.core.data.model.BaseRemoteHostRequest
 import io.primer.android.core.data.network.PrimerHttpClient
 import io.primer.android.core.data.network.exception.JsonDecodingException
@@ -18,10 +18,12 @@ import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import org.junit.jupiter.api.parallel.ResourceLock
 import java.net.SocketTimeoutException
 import java.util.concurrent.TimeUnit
 import kotlin.time.Duration.Companion.milliseconds
 
+@ResourceLock("PrimerTimeouts")
 class RemoteKlarnaVaultPaymentSessionDataSourceTest {
     @Test
     fun `response is processed when the server responds in time`() =
@@ -59,7 +61,7 @@ class RemoteKlarnaVaultPaymentSessionDataSourceTest {
             assertThrows<JsonDecodingException> { tested.execute(input) }
 
             mockWebServer.shutdown()
-            unmockkAll()
+            unmockkObject(PrimerTimeouts)
         }
 
     @Test
@@ -97,6 +99,6 @@ class RemoteKlarnaVaultPaymentSessionDataSourceTest {
             assertThrows<SocketTimeoutException> { tested.execute(input) }
 
             mockWebServer.shutdown()
-            unmockkAll()
+            unmockkObject(PrimerTimeouts)
         }
 }

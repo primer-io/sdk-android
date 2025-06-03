@@ -8,7 +8,6 @@ import io.primer.android.core.data.datasource.toHeaderMap
 import io.primer.android.core.data.model.BaseRemoteHostRequest
 import io.primer.android.core.data.network.PrimerHttpClient
 import io.primer.android.core.data.network.utils.PrimerTimeouts.PRIMER_15S_TIMEOUT
-import kotlin.time.Duration
 
 internal class ValidationTokenDataSource(
     private val primerHttpClient: PrimerHttpClient,
@@ -22,9 +21,4 @@ internal class ValidationTokenDataSource(
                 request = input.data,
                 headers = apiVersion().toHeaderMap(),
             ).body
-
-    data class RequestSettings(
-        val timeout: Duration,
-        val headers: Map<String, String>,
-    )
 }
