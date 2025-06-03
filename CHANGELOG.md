@@ -1,3 +1,13 @@
+## 2.40.0 (2025-06-03)
+
+### Feat
+
+- upgrade compile and target Sdk versions to 35 (#951)
+
+### Refactor
+
+- **analytics**: remove unnecessary events (#961)
+
 ## 2.39.0 (2025-05-14)
 
 ### Feat
