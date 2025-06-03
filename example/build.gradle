@@ -103,6 +103,7 @@ dependencies {
     implementation libs.primer.stripe
     implementation project(':composable')
     implementation libs.androidx.runtime.livedata
+    implementation(libs.androidx.material3)
 
     debugImplementation "com.squareup.leakcanary:leakcanary-android:2.14"
     testImplementation "junit:junit:4.13.2"

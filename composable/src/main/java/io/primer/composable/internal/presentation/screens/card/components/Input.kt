@@ -13,8 +13,8 @@ import io.primer.android.components.domain.inputs.models.PrimerInputElementType
 
 @Composable
 internal fun Input(
+    modifier: Modifier = Modifier,
     type: PrimerInputElementType,
-    modifier: Modifier = Modifier
 ) {
     var value by remember { mutableStateOf("") }
 

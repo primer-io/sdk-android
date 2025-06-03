@@ -13,8 +13,8 @@ import io.primer.android.components.domain.inputs.models.PrimerInputElementType
 
 @Composable
 internal fun CardDetailsForm(
+    modifier: Modifier = Modifier,
     cardInputFields: List<PrimerInputElementType>,
-    modifier: Modifier = Modifier
 ) {
     Column(
         modifier = modifier.fillMaxWidth()
