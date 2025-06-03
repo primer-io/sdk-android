@@ -12,7 +12,7 @@ import io.primer.composable.internal.data.repositories.RawDataManagerRepositoryI
 import io.primer.composable.internal.domain.interactor.GetAvailablePaymentMethodsInteractor
 import io.primer.composable.internal.domain.interactor.GetRequiredFieldsInteractor
 import io.primer.composable.internal.domain.interactor.GetValidationStateInteractor
-import io.primer.composable.internal.domain.interactor.SetRawDataInteractor
+import io.primer.composable.internal.domain.interactor.SetCardDataInteractor
 import io.primer.composable.internal.domain.repositories.HeadlessRepository
 import io.primer.composable.internal.domain.repositories.RawDataManagerRepository
 import io.primer.composable.internal.presentation.checkout.CheckoutNavigator
@@ -46,11 +46,11 @@ internal class ComposableContainer(private val sdk: () -> SdkContainer) : Depend
         }
 
         registerSingleton {
-            GetValidationStateInteractor()
+            SetCardDataInteractor()
         }
 
         registerSingleton {
-            SetRawDataInteractor()
+            GetValidationStateInteractor()
         }
 
         registerSingleton {

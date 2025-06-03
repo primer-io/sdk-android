@@ -1,11 +1,11 @@
 package io.primer.composable.internal.data.repositories
 
+import io.primer.android.components.domain.core.models.card.PrimerCardData
 import io.primer.android.components.domain.error.PrimerInputValidationError
 import io.primer.android.components.domain.inputs.models.PrimerInputElementType
 import io.primer.android.components.manager.raw.PrimerHeadlessUniversalCheckoutRawDataManagerInterface
 import io.primer.android.components.manager.raw.PrimerHeadlessUniversalCheckoutRawDataManagerListener
 import io.primer.android.core.di.DISdkComponent
-import io.primer.android.paymentmethods.PrimerRawData
 import io.primer.composable.internal.domain.repositories.RawDataManagerRepository
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
@@ -33,8 +33,6 @@ class RawDataManagerRepositoryImpl(
         }
     }
 
-    override fun setRawData(rawData: PrimerRawData) {
-        cardManager.setRawData(rawData)
-    }
+    override fun setData(data: PrimerCardData) = cardManager.setRawData(data)
 
 }
