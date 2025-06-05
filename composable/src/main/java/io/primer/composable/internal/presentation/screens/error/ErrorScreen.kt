@@ -7,18 +7,18 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import io.primer.composable.scope.PrimerCheckoutScope
 
 @Composable
-internal fun ErrorScreen(
+internal fun PrimerCheckoutScope.ErrorScreen(
     modifier: Modifier = Modifier,
-    message: String,
 ) {
     Column(
         modifier = Modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Text(
-            text = message,
+            text = "Error",
             color = MaterialTheme.colorScheme.error,
             style = MaterialTheme.typography.bodyMedium,
         )

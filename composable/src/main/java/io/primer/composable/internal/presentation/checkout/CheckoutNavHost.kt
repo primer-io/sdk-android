@@ -23,10 +23,10 @@ internal val LocalNavController = staticCompositionLocalOf<NavHostController> {
 internal fun CheckoutNavHost(
     modifier: Modifier = Modifier,
     loadingScreen: (@Composable () -> Unit),
-    paymentSelectionScreen: (@Composable PaymentMethodSelectionScope.() -> Unit),
-    cardFormScopeScreen: (@Composable CardFormScope.() -> Unit),
     successScreen: (@Composable () -> Unit),
     errorScreen: (@Composable (message: String) -> Unit),
+    paymentSelectionScreen: (@Composable PaymentMethodSelectionScope.() -> Unit),
+    cardFormScopeScreen: (@Composable CardFormScope.() -> Unit),
 ) {
     CompositionLocalProvider(
         LocalNavController provides rememberNavController(),
@@ -42,13 +42,6 @@ internal fun CheckoutNavHost(
                     loadingScreen()
                 }
 
-                composable(Screen.PaymentsList.route) {
-                    viewModel<PaymentMethodSelectionViewModel>().paymentSelectionScreen()
-                }
-
-                composable(Screen.CardForm.route) {
-                    viewModel<CardViewModel>().cardFormScopeScreen()
-                }
                 composable(Screen.Error.route) { backStackEntry ->
                     // Retrieve error from SavedStateHandle - set when navigating via:
                     // navController.currentBackStackEntry?.savedStateHandle?.set("error", primerError)
@@ -59,6 +52,15 @@ internal fun CheckoutNavHost(
                 composable(Screen.Success.route) {
                     successScreen()
                 }
+
+                composable(Screen.PaymentsList.route) {
+                    viewModel<PaymentMethodSelectionViewModel>().paymentSelectionScreen()
+                }
+
+                composable(Screen.CardForm.route) {
+                    viewModel<CardViewModel>().cardFormScopeScreen()
+                }
+
             }
         }
     }

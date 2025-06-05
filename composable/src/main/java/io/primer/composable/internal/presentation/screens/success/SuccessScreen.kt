@@ -7,18 +7,18 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import io.primer.composable.scope.PrimerCheckoutScope
 
 @Composable
-internal fun SuccessScreen(
-    modifier: Modifier = Modifier,
-    message: String,
+internal fun PrimerCheckoutScope.SuccessScreen(
+    modifier: Modifier = Modifier
 ) {
     Column(
         modifier = Modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Text(
-            text = message,
+            text = "Success",
             color = MaterialTheme.colorScheme.error,
             style = MaterialTheme.typography.bodyMedium,
         )

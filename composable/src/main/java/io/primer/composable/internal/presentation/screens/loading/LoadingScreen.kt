@@ -10,9 +10,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import io.primer.composable.scope.PrimerCheckoutScope
 
 @Composable
-internal fun LoadingScreen(
+internal fun PrimerCheckoutScope.LoadingScreen(
     modifier: Modifier = Modifier,
     text: String = "Loading",
 ) {

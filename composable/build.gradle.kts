@@ -31,6 +31,8 @@ android {
 dependencies {
 
     implementation(project(":headless-core"))
+    implementation(project(":ui-core"))
+    implementation(project(":payment-card-shared"))
     val composeBom = platform("androidx.compose:compose-bom:2024.10.01")
     implementation(composeBom)
     androidTestImplementation(composeBom)

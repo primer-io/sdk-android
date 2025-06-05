@@ -10,8 +10,10 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import io.primer.composable.Primer
-import io.primer.composable.PrimerCardFormScreen
-import io.primer.composable.PrimerSubmitButton
+import io.primer.composable.scope.CardFormScope.Companion.PrimerBillingAddress
+import io.primer.composable.scope.CardFormScope.Companion.PrimerCardDetails
+import io.primer.composable.scope.CardFormScope.Companion.PrimerCardFormScreen
+import io.primer.composable.scope.CardFormScope.Companion.PrimerSubmitButton
 import io.primer.sample.viewmodels.MainViewModel
 
 class ComposableCheckoutFragment : Fragment() {
@@ -34,6 +36,8 @@ class ComposableCheckoutFragment : Fragment() {
                         ComposableCheckout(
                             cardFormScreen = {
                                 PrimerCardFormScreen {
+                                    PrimerCardDetails()
+                                    PrimerBillingAddress()
                                     PrimerSubmitButton(text = "Gimme your moni")
                                 }
                             }
