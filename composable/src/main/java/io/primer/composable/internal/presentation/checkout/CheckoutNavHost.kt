@@ -14,17 +14,19 @@ import io.primer.composable.internal.presentation.screens.card.CardViewModel
 import io.primer.composable.internal.presentation.screens.paymentMethodSelection.PaymentMethodSelectionViewModel
 import io.primer.composable.scope.CardFormScope
 import io.primer.composable.scope.PaymentMethodSelectionScope
+import io.primer.composable.scope.PrimerCheckoutScope
 
 internal val LocalNavController = staticCompositionLocalOf<NavHostController> {
     error("NavController not provided")
 }
 
 @Composable
-internal fun CheckoutNavHost(
+internal fun PrimerCheckoutScope.CheckoutNavHost(
     modifier: Modifier = Modifier,
-    loadingScreen: (@Composable () -> Unit),
-    successScreen: (@Composable () -> Unit),
-    errorScreen: (@Composable (message: String) -> Unit),
+    splashScreen: (@Composable PrimerCheckoutScope.() -> Unit),
+    loadingScreen: (@Composable PrimerCheckoutScope.() -> Unit),
+    successScreen: (@Composable PrimerCheckoutScope.() -> Unit),
+    errorScreen: (@Composable PrimerCheckoutScope.(message: String) -> Unit),
     paymentSelectionScreen: (@Composable PaymentMethodSelectionScope.() -> Unit),
     cardFormScopeScreen: (@Composable CardFormScope.() -> Unit),
 ) {
@@ -38,6 +40,10 @@ internal fun CheckoutNavHost(
                 startDestination = Screen.PaymentsList.route,
                 modifier = modifier,
             ) {
+                composable(Screen.Splash.route) {
+                    splashScreen()
+                }
+
                 composable(Screen.Loading.route) {
                     loadingScreen()
                 }
@@ -67,6 +73,7 @@ internal fun CheckoutNavHost(
 }
 
 internal sealed class Screen(val route: String) {
+    data object Splash : Screen("splash")
     data object Loading : Screen("loading")
     data object PaymentsList : Screen("payments_list")
     data object CardForm : Screen("card_form")

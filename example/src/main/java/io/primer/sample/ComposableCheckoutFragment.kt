@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.platform.ComposeView
@@ -36,9 +37,11 @@ class ComposableCheckoutFragment : Fragment() {
                         ComposableCheckout(
                             cardFormScreen = {
                                 PrimerCardFormScreen {
-                                    PrimerCardDetails()
-                                    PrimerBillingAddress()
-                                    PrimerSubmitButton(text = "Gimme your moni")
+                                    Column {
+                                        PrimerCardDetails()
+                                        PrimerBillingAddress()
+                                        PrimerSubmitButton(text = "Gimme your moni")
+                                    }
                                 }
                             }
                         )

@@ -21,12 +21,12 @@ import io.primer.composable.scope.PrimerCheckoutScope
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun Primer.Checkout(
-    splashScreen: (@Composable PrimerCheckoutScope.() -> Unit)? = { SplashScreen() },
-    errorScreen: (@Composable PrimerCheckoutScope.(cause: String) -> Unit)? = { ErrorScreen() },
-    loadingScreen: (@Composable PrimerCheckoutScope.() -> Unit)? = { LoadingScreen() },
-    paymentSelectionScreen: (@Composable PaymentMethodSelectionScope.() -> Unit)? = { PaymentMethodSelectionScreen() },
-    cardFormScreen: (@Composable CardFormScope.() -> Unit)? = { CardFormScreen() },
-    successScreen: (@Composable PrimerCheckoutScope.() -> Unit)? = { SuccessScreen() },
+    splashScreen: (@Composable PrimerCheckoutScope.() -> Unit)?,
+    errorScreen: (@Composable PrimerCheckoutScope.(cause: String) -> Unit)?,
+    loadingScreen: (@Composable PrimerCheckoutScope.() -> Unit)?,
+    paymentSelectionScreen: (@Composable PaymentMethodSelectionScope.() -> Unit)?,
+    cardFormScreen: (@Composable CardFormScope.() -> Unit)?,
+    successScreen: (@Composable PrimerCheckoutScope.() -> Unit)?,
 ) = with(viewModel<CheckoutViewModel>()) {
 
     val context = LocalContext.current
@@ -43,11 +43,12 @@ internal fun Primer.Checkout(
         PrimerCheckoutScope.State.Ready -> {
             ModalBottomSheet(onDismissRequest = ::cleanup) {
                 CheckoutNavHost(
-                    loadingScreen = { loadingScreen?.invoke(this@with) },
-                    paymentSelectionScreen = { paymentSelectionScreen?.invoke(this) },
-                    cardFormScopeScreen = { cardFormScreen?.invoke(this) },
-                    successScreen = { successScreen?.invoke(this@with) },
-                    errorScreen = { errorScreen?.invoke(this@with, it) },
+                    splashScreen = { splashScreen?.invoke(this@with) ?: SplashScreen() },
+                    loadingScreen = { loadingScreen?.invoke(this@with) ?: LoadingScreen() },
+                    paymentSelectionScreen = { paymentSelectionScreen?.invoke(this) ?: PaymentMethodSelectionScreen() },
+                    cardFormScopeScreen = { cardFormScreen?.invoke(this) ?: CardFormScreen() },
+                    successScreen = { successScreen?.invoke(this@with) ?: SuccessScreen() },
+                    errorScreen = { errorScreen?.invoke(this@with, it) ?: ErrorScreen() },
                 )
             }
         }
