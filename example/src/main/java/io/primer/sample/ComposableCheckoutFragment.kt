@@ -4,17 +4,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import io.primer.composable.Primer
-import io.primer.composable.scope.CardFormScope.Companion.PrimerBillingAddress
-import io.primer.composable.scope.CardFormScope.Companion.PrimerCardDetails
-import io.primer.composable.scope.CardFormScope.Companion.PrimerCardFormScreen
-import io.primer.composable.scope.CardFormScope.Companion.PrimerSubmitButton
 import io.primer.sample.viewmodels.MainViewModel
 
 class ComposableCheckoutFragment : Fragment() {
@@ -34,17 +29,7 @@ class ComposableCheckoutFragment : Fragment() {
                 clientToken?.let { token ->
                     with(Primer) {
                         configure(token)
-                        ComposableCheckout(
-                            cardFormScreen = {
-                                PrimerCardFormScreen {
-                                    Column {
-                                        PrimerCardDetails()
-                                        PrimerBillingAddress()
-                                        PrimerSubmitButton(text = "Gimme your moni")
-                                    }
-                                }
-                            }
-                        )
+                        ComposableCheckout()
                     }
                 }
             }

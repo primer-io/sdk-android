@@ -35,6 +35,12 @@ internal class CardViewModel : ViewModel(), CardFormScope, DISdkComponent {
             val billingInputFields = getAvailableCardFieldsInteractor.getBillingFields()
             _uiState.value = CardFormScope.State(cardInputFields, billingInputFields)
         }
+
+        viewModelScope.launch {
+            getValidationStateInteractor.getValidationState().collect { errors ->
+                _uiState.value = _uiState.value.copy(fieldErrors = errors)
+            }
+        }
     }
 
     override fun updateInput(content: Pair<PrimerInputElementType, String>) {
