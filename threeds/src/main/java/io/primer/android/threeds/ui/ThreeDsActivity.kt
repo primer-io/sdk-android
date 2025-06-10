@@ -3,6 +3,7 @@ package io.primer.android.threeds.ui
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import android.view.WindowManager
 import io.primer.android.analytics.data.models.AnalyticsAction
 import io.primer.android.analytics.data.models.ObjectType
@@ -18,6 +19,7 @@ import io.primer.android.threeds.presentation.ThreeDsViewModel
 import io.primer.android.threeds.presentation.ThreeDsViewModelFactory
 import io.primer.android.threeds.ui.launcher.ThreeDsActivityLauncherParams
 import io.primer.paymentMethodCoreUi.core.ui.BaseCheckoutActivity
+import io.primer.paymentMethodCoreUi.core.ui.extension.applyFullWindowInsetsPadding
 
 class ThreeDsActivity : BaseCheckoutActivity() {
     private val viewModel: ThreeDsViewModel
@@ -26,6 +28,7 @@ class ThreeDsActivity : BaseCheckoutActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_primer_progress)
+        findViewById<View>(R.id.rootView).applyFullWindowInsetsPadding()
         runIfNotFinishing {
             registerContainer(containerProvider = {
                 ThreeDsContainer(sdk = it)

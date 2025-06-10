@@ -10,7 +10,6 @@ import io.primer.android.core.di.DISdkComponent
 import io.primer.android.core.di.DISdkContext
 import io.primer.android.core.di.SdkContainer
 import io.primer.android.core.di.plus
-import io.primer.android.data.settings.PrimerSettings
 import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.errors.di.ErrorResolverContainer
 import io.primer.android.payments.core.helpers.ManualFlowSuccessHandler
@@ -62,8 +61,6 @@ object DISdkContextInitializer : DISdkComponent {
     ) {
         apply {
             val container = { requireNotNull(getSdkContainer() + this) }
-
-            val apiVersion = { container().resolve<PrimerSettings>().apiVersion }
 
             registerContainer(ErrorResolverContainer { container() })
 

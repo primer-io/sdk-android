@@ -4,12 +4,14 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import android.webkit.WebView
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.widget.Toolbar
 import io.primer.android.paymentMethodCoreUi.BuildConfig
 import io.primer.android.paymentMethodCoreUi.R
 import io.primer.paymentMethodCoreUi.core.ui.BaseCheckoutActivity
+import io.primer.paymentMethodCoreUi.core.ui.extension.applyFullWindowInsetsPadding
 
 abstract class WebViewActivity : BaseCheckoutActivity() {
     protected val webView by lazy { findViewById<WebView>(R.id.webView) }
@@ -17,6 +19,8 @@ abstract class WebViewActivity : BaseCheckoutActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_primer_webview)
+
+        findViewById<View>(R.id.rootView).applyFullWindowInsetsPadding()
 
         setupViews()
         setupListeners()
