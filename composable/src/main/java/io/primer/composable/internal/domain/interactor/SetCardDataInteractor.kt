@@ -10,30 +10,46 @@ class SetCardDataInteractor : DISdkComponent {
 
     private val rawDataManagerRepository: RawDataManagerRepository by lazy { resolve() }
 
-    private var data: PrimerCardData? = null
+    private var data = PrimerCardData(
+        cardNumber = "",
+        expiryDate = "",
+        cvv = "",
+        cardHolderName = null,
+        cardNetwork = null,
+    )
 
     operator fun invoke(content: Pair<PrimerInputElementType, String>) {
-        // Initialize data if null
-        if (data == null) {
-            data = PrimerCardData(
-                cardNumber = "",
-                expiryDate = "",
-                cvv = "",
-                cardHolderName = null,
-                cardNetwork = null,
-            )
-        }
 
         // Update the specific field based on the input type
         data = when (content.first) {
-            PrimerInputElementType.CARD_NUMBER -> data?.copy(cardNumber = content.second)
-            PrimerInputElementType.EXPIRY_DATE -> data?.copy(expiryDate = content.second)
-            PrimerInputElementType.CVV -> data?.copy(cvv = content.second)
-            PrimerInputElementType.CARDHOLDER_NAME -> data?.copy(cardHolderName = content.second.takeIf { it.isNotEmpty() })
+            PrimerInputElementType.CARD_NUMBER -> data.copy(cardNumber = content.second)
+            PrimerInputElementType.EXPIRY_DATE -> data.copy(expiryDate = content.second)
+            PrimerInputElementType.CVV -> data.copy(cvv = content.second)
+            PrimerInputElementType.CARDHOLDER_NAME -> data.copy(cardHolderName = content.second.takeIf { it.isNotEmpty() })
             else -> data // For other types, keep the current data
         }
 
-        // Update the repository with the new data
-        data?.let { rawDataManagerRepository.setData(it) }
+        if (areAllRequiredFieldsComplete(data)) {
+            rawDataManagerRepository.setData(data)
+        }
+    }
+
+    private fun areAllRequiredFieldsComplete(cardData: PrimerCardData): Boolean {
+        val requiredFields = rawDataManagerRepository.getRequiredInputElementTypes()
+
+        // Check each required field
+        return requiredFields.all { field ->
+            when (field) {
+                PrimerInputElementType.CARD_NUMBER -> cardData.cardNumber.isNotBlank()
+                PrimerInputElementType.EXPIRY_DATE -> cardData.expiryDate.isNotBlank()
+                PrimerInputElementType.CVV -> cardData.cvv.isNotBlank()
+                PrimerInputElementType.CARDHOLDER_NAME -> cardData.cardHolderName?.isNotBlank() == true
+                else -> {
+                    // For non-card fields (like billing address), return true
+                    // as they're handled separately
+                    true
+                }
+            }
+        }
     }
 }
