@@ -126,6 +126,7 @@ class PrimerHeadlessUniversalCheckout private constructor() :
         context: Context,
         config: PrimerConfig,
     ) {
+        DISdkContextInitializer.clearHeadless()
         DISdkContextInitializer.initHeadless(config, context.applicationContext)
 
         // refresh the instances

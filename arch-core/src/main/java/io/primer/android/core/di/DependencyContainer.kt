@@ -1,5 +1,6 @@
 package io.primer.android.core.di
 
+import java.util.concurrent.ConcurrentHashMap
 import kotlin.reflect.KClass
 
 @Suppress("TooManyFunctions")
@@ -8,7 +9,7 @@ abstract class DependencyContainer {
 
     abstract fun registerInitialDependencies()
 
-    val dependencies = mutableMapOf<Key, Any>()
+    val dependencies = ConcurrentHashMap<Key, Any>()
 
     inline fun <reified T : Any> registerSingleton(noinline factory: () -> T) {
         dependencies[Key(T::class.java.name, T::class)] = lazy(factory)
