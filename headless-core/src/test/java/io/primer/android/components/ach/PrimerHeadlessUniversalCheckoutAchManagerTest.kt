@@ -102,7 +102,7 @@ class PrimerHeadlessUniversalCheckoutAchManagerTest {
             primerSettings.paymentMethodOptions.stripeOptions
         } returns primerStripeOptions
         every { paymentMethodInitializer.init(any(), any()) } just Runs
-        every { paymentMethodInitializer.start(any(), any(), any(), any(), any()) } just Runs
+        every { paymentMethodInitializer.start(any(), any(), any(), any()) } just Runs
 
         val rule =
             mockk<ValidationRule<PrimerStripeOptions>> {
@@ -126,7 +126,6 @@ class PrimerHeadlessUniversalCheckoutAchManagerTest {
                 paymentMethodType = PaymentMethodType.STRIPE_ACH.name,
                 sessionIntent = PrimerSessionIntent.CHECKOUT,
                 category = PrimerPaymentMethodManagerCategory.STRIPE_ACH,
-                onPostStart = any(),
             )
         }
         unmockkObject(StripeAchUserDetailsComponent.Companion)

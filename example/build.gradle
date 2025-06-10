@@ -96,6 +96,7 @@ dependencies {
     implementation libs.android.lifecycle.livedata.ktx
     implementation libs.android.lifecycle.viewmodel.ktx
     implementation "io.github.pilgr:paperdb:2.7.2"
+
     implementation libs.primer.klarna
     implementation libs.primer.ipay88
     implementation libs.primer.nol.pay
