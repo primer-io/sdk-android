@@ -87,7 +87,7 @@ internal class CheckoutConfigContainer(private val sdk: () -> SdkContainer) : De
 
         registerFactory<AssetsManager> {
             DefaultPrimerAssetsManager(
-                PrimerHeadlessUniversalCheckoutAssetsManager,
+                PrimerHeadlessUniversalCheckoutAssetsManager.Companion,
             )
         }
 

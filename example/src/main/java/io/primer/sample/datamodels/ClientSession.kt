@@ -62,7 +62,6 @@ interface ClientSession : ExampleAppRequestBody {
                         })
                         put("scenario", "STRIPE_ACH_ONEOFF")
                     },
-                    amount = 100000,
                     order = Order(
                         countryCode = countryCode,
                         lineItems = listOf(
