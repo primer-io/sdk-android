@@ -45,11 +45,13 @@ internal class CardViewModel : ViewModel(), CardFormScope, DISdkComponent {
 
     override fun updateInput(content: Pair<PrimerInputElementType, String>) {
         viewModelScope.launch {
+            // Update UI state
             _uiState.value = _uiState.value.copy(
-                inputFields = _uiState.value.inputFields + content
+                inputFields = _uiState.value.inputFields + content,
             )
+            // Set data in background thread to avoid blocking main thread
+            setDataInteractor(content)
         }
-        setDataInteractor(content)
     }
 
     override fun submit() {

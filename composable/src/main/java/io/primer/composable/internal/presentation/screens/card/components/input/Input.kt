@@ -15,7 +15,7 @@ import io.primer.composable.scope.CardFormScope
 @Composable
 internal fun CardFormScope.Input(
     modifier: Modifier = Modifier,
-    type: PrimerInputElementType
+    type: PrimerInputElementType,
 ) {
     val state by state.collectAsState()
 
@@ -31,21 +31,21 @@ internal fun CardFormScope.Input(
         InputFieldConfigurations.getConfig(type, state.inputFields)
     }
 
-    // Simple value processing
+    // Apply essential input filtering while letting validation framework provide feedback
     val onValueChange: (String) -> Unit = { newValue ->
         var processedValue = newValue
-        
-        // Apply allowed characters filter
+
+        // Apply allowed characters filter for strict input types (like CVV, card numbers)
         if (config.allowedChars != null) {
             processedValue = newValue.filter { it in config.allowedChars }
         }
-        
-        // Apply max length constraint
+
+        // Apply max length constraint to prevent excessive input
         if (config.maxLength != null && processedValue.length > config.maxLength) {
-            // Don't update if exceeds max length
-        } else {
-            updateInput(type to processedValue)
+            processedValue = processedValue.take(config.maxLength)
         }
+
+        updateInput(type to processedValue)
     }
 
     OutlinedTextField(

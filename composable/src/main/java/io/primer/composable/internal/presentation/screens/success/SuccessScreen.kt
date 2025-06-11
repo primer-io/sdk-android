@@ -11,7 +11,7 @@ import io.primer.composable.scope.PrimerCheckoutScope
 
 @Composable
 internal fun PrimerCheckoutScope.SuccessScreen(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Column(
         modifier = Modifier.fillMaxWidth(),

@@ -34,19 +34,19 @@ interface PrimerCheckoutScope {
         @Composable
         fun PrimerCheckoutScope.PrimerLoadingScreen(
             modifier: Modifier = Modifier,
-            content: (@Composable PrimerCheckoutScope.() -> Unit)? = null
+            content: (@Composable PrimerCheckoutScope.() -> Unit)? = null,
         ) = content?.invoke(this) ?: LoadingScreen(modifier)
 
         @Composable
         fun PrimerCheckoutScope.PrimerErrorScreen(
             modifier: Modifier = Modifier,
-            content: (@androidx.compose.runtime.Composable PrimerCheckoutScope.() -> Unit)? = null
+            content: (@Composable PrimerCheckoutScope.() -> Unit)? = null,
         ) = content?.invoke(this) ?: ErrorScreen(modifier)
 
         @Composable
         fun PrimerCheckoutScope.PrimerSuccessScreen(
             modifier: Modifier = Modifier,
-            content: (@androidx.compose.runtime.Composable PrimerCheckoutScope.() -> Unit)? = null
+            content: (@Composable PrimerCheckoutScope.() -> Unit)? = null,
         ) = content?.invoke(this) ?: SuccessScreen(modifier)
     }
 }

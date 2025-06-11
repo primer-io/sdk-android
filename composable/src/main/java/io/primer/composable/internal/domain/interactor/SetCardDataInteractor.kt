@@ -19,13 +19,16 @@ class SetCardDataInteractor : DISdkComponent {
     )
 
     operator fun invoke(content: Pair<PrimerInputElementType, String>) {
-
         // Update the specific field based on the input type
         data = when (content.first) {
             PrimerInputElementType.CARD_NUMBER -> data.copy(cardNumber = content.second)
-            PrimerInputElementType.EXPIRY_DATE -> data.copy(expiryDate = content.second)
+            PrimerInputElementType.EXPIRY_DATE -> data.copy(
+                expiryDate = formatExpiryDate(content.second),
+            )
             PrimerInputElementType.CVV -> data.copy(cvv = content.second)
-            PrimerInputElementType.CARDHOLDER_NAME -> data.copy(cardHolderName = content.second.takeIf { it.isNotEmpty() })
+            PrimerInputElementType.CARDHOLDER_NAME -> data.copy(
+                cardHolderName = content.second.takeIf { it.isNotEmpty() },
+            )
             else -> data // For other types, keep the current data
         }
 
@@ -51,5 +54,24 @@ class SetCardDataInteractor : DISdkComponent {
                 }
             }
         }
+    }
+
+    /**
+     * Simple format function to convert raw input to MM/YYYY format
+     * Input: "122024" -> Output: "12/2024"
+     */
+    private fun formatExpiryDate(input: String): String {
+        if (input.isEmpty()) return input
+
+        return when {
+            input.length <= MONTH_LENGTH -> input
+            input.length == FULL_EXPIRY_LENGTH -> "${input.take(MONTH_LENGTH)}/${input.drop(MONTH_LENGTH)}"
+            else -> input // Return as-is for incomplete input
+        }
+    }
+
+    companion object {
+        private const val MONTH_LENGTH = 2
+        private const val FULL_EXPIRY_LENGTH = 6
     }
 }

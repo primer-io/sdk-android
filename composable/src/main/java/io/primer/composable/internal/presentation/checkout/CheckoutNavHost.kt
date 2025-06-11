@@ -66,7 +66,6 @@ internal fun PrimerCheckoutScope.CheckoutNavHost(
                 composable(Screen.CardForm.route) {
                     viewModel<CardViewModel>().cardFormScopeScreen()
                 }
-
             }
         }
     }

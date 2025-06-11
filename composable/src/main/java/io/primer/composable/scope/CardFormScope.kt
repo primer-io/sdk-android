@@ -31,18 +31,18 @@ interface CardFormScope {
         @Composable
         fun CardFormScope.PrimerCardFormScreen(
             modifier: Modifier = Modifier,
-            content: (@Composable CardFormScope.() -> Unit)? = null
+            content: (@Composable CardFormScope.() -> Unit)? = null,
         ) = content?.invoke(this) ?: CardFormScreen(modifier)
 
         @Composable
         fun CardFormScope.PrimerSubmitButton(
             modifier: Modifier = Modifier,
             text: String = "Submit",
-            content: (@Composable CardFormScope.() -> Unit)? = null
+            content: (@Composable CardFormScope.() -> Unit)? = null,
         ) {
             content?.invoke(this) ?: SubmitButton(
                 modifier = modifier,
-                text = text
+                text = text,
             )
         }
 
@@ -50,18 +50,18 @@ interface CardFormScope {
         fun CardFormScope.PrimerInput(
             modifier: Modifier = Modifier,
             type: PrimerInputElementType,
-            content: (@Composable CardFormScope.() -> Unit)? = null
+            content: (@Composable CardFormScope.() -> Unit)? = null,
         ) {
             content?.invoke(this) ?: Input(
                 modifier = modifier,
-                type = type
+                type = type,
             )
         }
 
         @Composable
         fun CardFormScope.PrimerCardDetails(
             modifier: Modifier = Modifier,
-            content: (@Composable CardFormScope.() -> Unit)? = null
+            content: (@Composable CardFormScope.() -> Unit)? = null,
         ) {
             content?.invoke(this) ?: CardDetailsForm(modifier)
         }
@@ -69,7 +69,7 @@ interface CardFormScope {
         @Composable
         fun CardFormScope.PrimerBillingAddress(
             modifier: Modifier = Modifier,
-            content: (@Composable CardFormScope.() -> Unit)? = null
+            content: (@Composable CardFormScope.() -> Unit)? = null,
         ) {
             content?.invoke(this) ?: BillingAddressForm(modifier)
         }

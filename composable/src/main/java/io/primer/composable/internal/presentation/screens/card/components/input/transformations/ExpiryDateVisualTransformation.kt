@@ -4,50 +4,49 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.input.OffsetMapping
 import androidx.compose.ui.text.input.TransformedText
 import androidx.compose.ui.text.input.VisualTransformation
-import io.primer.cardShared.ExpiryDateFormatter
+
+private const val MONTH_LENGTH = 2
 
 /**
- * Visual transformation for expiry dates using ExpiryDateFormatter from payment-card-shared
+ * Simple visual transformation for expiry dates
+ * Adds "/" after 2 characters: MM/YYYY
  */
 internal class ExpiryDateVisualTransformation : VisualTransformation {
     override fun filter(text: AnnotatedString): TransformedText {
-        val formatter = ExpiryDateFormatter.fromString(text.text, autoInsert = true)
-        val formatted = formatter.toString()
-        
+        val input = text.text
+
+        // Simple formatting: add "/" after 2 characters
+        val formatted = when {
+            input.length <= MONTH_LENGTH -> input
+            else -> "${input.take(MONTH_LENGTH)}/${input.drop(MONTH_LENGTH)}"
+        }
+
         return TransformedText(
             text = AnnotatedString(formatted),
-            offsetMapping = ExpiryDateOffsetMapping(text.text, formatted)
+            offsetMapping = ExpiryDateOffsetMapping(input.length, formatted.length),
         )
     }
 }
 
 /**
- * Offset mapping for expiry date formatting (handles forward slash)
+ * Simple offset mapping for expiry date formatting
  */
 private class ExpiryDateOffsetMapping(
-    private val original: String,
-    private val formatted: String
+    private val originalLength: Int,
+    private val formattedLength: Int,
 ) : OffsetMapping {
     override fun originalToTransformed(offset: Int): Int {
-        if (offset == 0) return 0
-        
-        // If we're past 2 digits and there's a slash in formatted, account for it
-        val slashIndex = formatted.indexOf('/')
-        return if (slashIndex != -1 && offset > slashIndex) {
-            offset + 1
-        } else {
-            offset
-        }
+        return when {
+            offset <= MONTH_LENGTH -> offset
+            else -> offset + 1 // Account for the "/" character
+        }.coerceIn(0, formattedLength)
     }
 
     override fun transformedToOriginal(offset: Int): Int {
-        if (offset == 0) return 0
-        
-        val slashIndex = formatted.indexOf('/')
-        return if (slashIndex != -1 && offset > slashIndex) {
-            (offset - 1).coerceAtLeast(0)
-        } else {
-            offset
-        }.coerceAtMost(original.length)
+        return when {
+            offset <= MONTH_LENGTH -> offset
+            offset == MONTH_LENGTH + 1 -> MONTH_LENGTH // The "/" position maps to end of month
+            else -> offset - 1 // Account for the "/" character
+        }.coerceIn(0, originalLength)
     }
 }

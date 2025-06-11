@@ -28,7 +28,6 @@ internal fun Primer.Checkout(
     cardFormScreen: (@Composable CardFormScope.() -> Unit)?,
     successScreen: (@Composable PrimerCheckoutScope.() -> Unit)?,
 ) = with(viewModel<CheckoutViewModel>()) {
-
     val context = LocalContext.current
 
     DisposableEffect(clientToken) {

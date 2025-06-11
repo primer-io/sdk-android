@@ -24,7 +24,7 @@ interface PaymentMethodSelectionScope {
         @Composable
         fun PaymentMethodSelectionScope.PrimerPaymentMethodSelectionScreen(
             modifier: Modifier = Modifier,
-            content: (@Composable PaymentMethodSelectionScope.() -> Unit)? = null
+            content: (@Composable PaymentMethodSelectionScope.() -> Unit)? = null,
         ) = content?.invoke(this) ?: PaymentMethodSelectionScreen(modifier)
 
         @Composable
@@ -32,6 +32,5 @@ interface PaymentMethodSelectionScope {
             modifier: Modifier = Modifier,
             primerPaymentMethod: PrimerPaymentMethod,
         ) = PaymentMethodItem(modifier, primerPaymentMethod)
-
     }
 }
