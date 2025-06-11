@@ -34,4 +34,6 @@ class RawDataManagerRepositoryImpl(
     }
 
     override fun setData(data: PrimerCardData) = cardManager.setRawData(data)
+
+    override fun submit() = cardManager.submit()
 }

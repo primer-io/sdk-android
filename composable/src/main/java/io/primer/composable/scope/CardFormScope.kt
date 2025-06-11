@@ -24,6 +24,8 @@ interface CardFormScope {
         val billingFields: List<PrimerInputElementType> = emptyList(),
         val fieldErrors: List<PrimerInputValidationError> = emptyList(),
         val inputFields: Map<PrimerInputElementType, String> = emptyMap(),
+        val isLoading: Boolean = false,
+        val isSubmitEnabled: Boolean = false,
     )
 
     companion object {
