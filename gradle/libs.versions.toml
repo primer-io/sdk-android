@@ -24,7 +24,7 @@ junit5 = "5.13.0"
 androidJunit5TestRunner = "1.12.0.0"
 mockk = "1.14.2"
 json = "20250107"
-liveDataTesting = "1.2.0"
+liveDataTesting = "1.3.0"
 archCore = "2.2.0"
 
 # plugin versions
