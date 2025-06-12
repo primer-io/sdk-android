@@ -45,7 +45,7 @@ internal fun CardFormScope.Input(
             processedValue = processedValue.take(config.maxLength)
         }
 
-        updateInput(type to processedValue)
+        updateInput(processedValue, type)
     }
 
     OutlinedTextField(

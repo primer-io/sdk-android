@@ -14,6 +14,7 @@ import io.primer.composable.internal.domain.interactor.GetRequiredFieldsInteract
 import io.primer.composable.internal.domain.interactor.GetValidationStateInteractor
 import io.primer.composable.internal.domain.interactor.SetCardDataInteractor
 import io.primer.composable.internal.domain.interactor.SubmitPaymentInteractor
+import io.primer.composable.internal.domain.interactor.TrackDirtyFieldsInteractor
 import io.primer.composable.internal.domain.interactor.ValidateBillingAddressInteractor
 import io.primer.composable.internal.domain.repositories.HeadlessRepository
 import io.primer.composable.internal.domain.repositories.RawDataManagerRepository
@@ -44,6 +45,10 @@ internal class ComposableContainer(private val sdk: () -> SdkContainer) : Depend
 
         registerSingleton {
             GetRequiredFieldsInteractor()
+        }
+
+        registerSingleton {
+            TrackDirtyFieldsInteractor()
         }
 
         registerSingleton {

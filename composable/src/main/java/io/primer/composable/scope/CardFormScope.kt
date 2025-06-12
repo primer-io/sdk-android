@@ -15,7 +15,7 @@ interface CardFormScope {
 
     val state: StateFlow<State>
 
-    fun updateInput(content: Pair<PrimerInputElementType, String>)
+    fun updateInput(input: String, type: PrimerInputElementType)
 
     fun submit()
 

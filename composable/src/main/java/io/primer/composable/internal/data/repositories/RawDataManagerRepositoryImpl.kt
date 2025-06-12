@@ -7,9 +7,13 @@ import io.primer.android.components.manager.raw.PrimerHeadlessUniversalCheckoutR
 import io.primer.android.components.manager.raw.PrimerHeadlessUniversalCheckoutRawDataManagerListener
 import io.primer.android.core.di.DISdkComponent
 import io.primer.composable.internal.domain.repositories.RawDataManagerRepository
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.shareIn
 
 class RawDataManagerRepositoryImpl(
     private val cardManager: PrimerHeadlessUniversalCheckoutRawDataManagerInterface,
@@ -31,7 +35,11 @@ class RawDataManagerRepositoryImpl(
         awaitClose {
             cardManager.cleanup()
         }
-    }
+    }.shareIn(
+        scope = CoroutineScope(Dispatchers.Main),
+        started = SharingStarted.Lazily,
+        replay = 1
+    )
 
     override fun setData(data: PrimerCardData) = cardManager.setRawData(data)
 
