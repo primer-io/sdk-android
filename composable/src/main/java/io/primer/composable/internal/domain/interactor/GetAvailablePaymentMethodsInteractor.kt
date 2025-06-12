@@ -12,7 +12,6 @@ internal class GetAvailablePaymentMethodsInteractor : DISdkComponent {
 
     suspend operator fun invoke() = runCatching {
         headlessRepository.getAvailablePaymentMethods()
-            .map { paymentMethodMapper.toInternal(it) }
-            .map { paymentMethodMapper.toPublic(it) }
+            .map { paymentMethodMapper.toComposable(it) }
     }
 }

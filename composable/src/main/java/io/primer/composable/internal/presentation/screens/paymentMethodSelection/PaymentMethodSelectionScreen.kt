@@ -16,7 +16,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import io.primer.composable.model.PrimerPaymentMethod
+import io.primer.composable.model.PrimerComposablePaymentMethod
 import io.primer.composable.scope.PaymentMethodSelectionScope
 
 @Composable
@@ -50,7 +50,7 @@ internal fun PaymentMethodSelectionScope.PaymentMethodSelectionScreen(
 @Composable
 internal fun PaymentMethodSelectionScope.PaymentMethodItem(
     modifier: Modifier = Modifier,
-    primerPaymentMethod: PrimerPaymentMethod,
+    primerPaymentMethod: PrimerComposablePaymentMethod,
 ) {
     Card(
         modifier = modifier
@@ -59,7 +59,7 @@ internal fun PaymentMethodSelectionScope.PaymentMethodItem(
     ) {
         Text(
             modifier = Modifier.padding(16.dp),
-            text = primerPaymentMethod.name,
+            text = primerPaymentMethod.paymentMethodName ?: "",
             style = MaterialTheme.typography.titleMedium,
         )
     }

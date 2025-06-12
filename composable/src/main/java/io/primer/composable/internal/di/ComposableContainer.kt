@@ -20,7 +20,7 @@ import io.primer.composable.internal.domain.repositories.HeadlessRepository
 import io.primer.composable.internal.domain.repositories.RawDataManagerRepository
 import io.primer.composable.internal.presentation.checkout.CheckoutNavigator
 
-internal class ComposableContainer(private val sdk: () -> SdkContainer) : DependencyContainer() {
+internal class ComposableContainer(@Suppress("UNUSED_PARAMETER") private val sdk: () -> SdkContainer) : DependencyContainer() {
 
     override fun registerInitialDependencies() {
         registerSingleton<PaymentMethodMapper> {

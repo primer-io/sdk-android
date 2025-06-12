@@ -22,11 +22,11 @@ internal class ValidateBillingAddressInteractor : DISdkComponent {
                 PrimerInputElementType.CITY,
                 PrimerInputElementType.POSTAL_CODE,
                 PrimerInputElementType.COUNTRY_CODE,
-                PrimerInputElementType.STATE
+                PrimerInputElementType.STATE,
             )
-            
+
             val billingAddressData = inputFields.filterKeys { it in billingAddressFields }
-            
+
             // If no billing address fields are filled, validation passes
             if (billingAddressData.isEmpty() || billingAddressData.values.all { it.isBlank() }) {
                 return Result.success(Unit)
@@ -46,7 +46,7 @@ internal class ValidateBillingAddressInteractor : DISdkComponent {
             actionInteractor(MultipleActionUpdateParams(listOf(action)))
                 .fold(
                     onSuccess = { Result.success(Unit) },
-                    onFailure = { Result.failure(it) }
+                    onFailure = { Result.failure(it) },
                 )
         } catch (e: Exception) {
             Result.failure(e)

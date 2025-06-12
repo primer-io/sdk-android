@@ -15,7 +15,7 @@ class GetValidationStateInteractor : DISdkComponent {
     val validationState: Flow<List<PrimerInputValidationError>> =
         combine(
             rawDataManagerRepository.validationState,
-            trackDirtyFieldsInteractor.dirtyFields
+            trackDirtyFieldsInteractor.dirtyFields,
         ) { errors, dirtyFields ->
             errors.filter { error ->
                 error.inputElementType in dirtyFields
@@ -25,7 +25,7 @@ class GetValidationStateInteractor : DISdkComponent {
     val isSubmitAllowed: Flow<Boolean> =
         combine(
             rawDataManagerRepository.validationState,
-            trackDirtyFieldsInteractor.dirtyFields
+            trackDirtyFieldsInteractor.dirtyFields,
         ) { errors, dirtyFields ->
             val requiredFields = rawDataManagerRepository.getRequiredInputElementTypes()
             val allRequiredFieldsTouched = requiredFields.all { it in dirtyFields }

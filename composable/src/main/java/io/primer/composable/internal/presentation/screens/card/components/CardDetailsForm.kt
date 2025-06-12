@@ -16,9 +16,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import io.primer.composable.internal.presentation.screens.card.components.input.CardNumberInput
+import io.primer.composable.internal.presentation.screens.card.components.input.CardholderNameInput
 import io.primer.composable.internal.presentation.screens.card.components.input.CvvInput
 import io.primer.composable.internal.presentation.screens.card.components.input.ExpiryDateInput
-import io.primer.composable.internal.presentation.screens.card.components.input.CardholderNameInput
 import io.primer.composable.scope.CardFormScope
 
 @Composable

@@ -34,7 +34,7 @@ private object InputConfigs {
         PrimerInputElementType.OTP_CODE -> "OTP Code"
         else -> type.field
     }
-    
+
     fun placeholder(type: PrimerInputElementType): String = when (type) {
         PrimerInputElementType.CARDHOLDER_NAME -> "John Doe"
         PrimerInputElementType.EXPIRY_DATE -> "MM/YYYY"
@@ -51,27 +51,27 @@ private object InputConfigs {
         PrimerInputElementType.OTP_CODE -> "123456"
         else -> ""
     }
-    
+
     fun keyboardOptions(type: PrimerInputElementType): KeyboardOptions = when (type) {
-        PrimerInputElementType.EXPIRY_DATE, PrimerInputElementType.OTP_CODE -> 
+        PrimerInputElementType.EXPIRY_DATE, PrimerInputElementType.OTP_CODE ->
             KeyboardOptions(keyboardType = KeyboardType.Number)
-        PrimerInputElementType.PHONE_NUMBER -> 
+        PrimerInputElementType.PHONE_NUMBER ->
             KeyboardOptions(keyboardType = KeyboardType.Phone)
-        PrimerInputElementType.POSTAL_CODE -> 
+        PrimerInputElementType.POSTAL_CODE ->
             KeyboardOptions(keyboardType = KeyboardType.Text)
         else -> KeyboardOptions.Default
     }
-    
+
     fun visualTransformation(type: PrimerInputElementType): VisualTransformation = when (type) {
         PrimerInputElementType.EXPIRY_DATE -> ExpiryDateVisualTransformation()
         else -> VisualTransformation.None
     }
-    
+
     fun maxLength(type: PrimerInputElementType): Int? = when (type) {
         PrimerInputElementType.EXPIRY_DATE -> 6
         else -> null
     }
-    
+
     fun allowedChars(type: PrimerInputElementType): String? = when (type) {
         PrimerInputElementType.EXPIRY_DATE, PrimerInputElementType.OTP_CODE -> "0123456789"
         else -> null
@@ -150,7 +150,7 @@ internal fun CardFormScope.CardNumberInput(
     // Apply essential input filtering for card numbers
     val processedOnValueChange: (String) -> Unit = { newValue ->
         var processedValue = newValue.filter { it in "0123456789" }
-        
+
         val maxLength = formatter.getMaxLength()
         if (processedValue.length > maxLength) {
             processedValue = processedValue.take(maxLength)
@@ -199,7 +199,7 @@ internal fun CardFormScope.CvvInput(
     // Apply essential input filtering for CVV
     val processedOnValueChange: (String) -> Unit = { newValue ->
         var processedValue = newValue.filter { it in "0123456789" }
-        
+
         if (processedValue.length > cvvLength) {
             processedValue = processedValue.take(cvvLength)
         }

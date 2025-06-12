@@ -38,7 +38,7 @@ class RawDataManagerRepositoryImpl(
     }.shareIn(
         scope = CoroutineScope(Dispatchers.Main),
         started = SharingStarted.Lazily,
-        replay = 1
+        replay = 1,
     )
 
     override fun setData(data: PrimerCardData) = cardManager.setRawData(data)

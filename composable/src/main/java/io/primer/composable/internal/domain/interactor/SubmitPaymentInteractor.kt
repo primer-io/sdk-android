@@ -24,11 +24,11 @@ class SubmitPaymentInteractor : DISdkComponent {
             onFailure = { error ->
                 // Billing address validation failed
                 return Result.failure(
-                    Exception("Billing address validation failed: ${error.message}")
+                    Exception("Billing address validation failed: ${error.message}"),
                 )
-            }
+            },
         )
-        
+
         // Wait for the result from the headless repository listener
         return headlessRepository.paymentResults.first()
     }

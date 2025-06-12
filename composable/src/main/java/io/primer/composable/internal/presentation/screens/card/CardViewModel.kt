@@ -29,7 +29,6 @@ internal class CardViewModel : ViewModel(), CardFormScope, DISdkComponent {
     private val _uiState = MutableStateFlow<CardFormScope.State>(CardFormScope.State())
     override val state: StateFlow<CardFormScope.State> = _uiState.asStateFlow()
 
-
     init {
         viewModelScope.launch {
             val cardInputFields = getAvailableCardFieldsInteractor.getCardFields()
@@ -60,7 +59,6 @@ internal class CardViewModel : ViewModel(), CardFormScope, DISdkComponent {
                 }
             }
         }
-
     }
 
     override fun updateCardNumber(cardNumber: String) {
@@ -136,7 +134,7 @@ internal class CardViewModel : ViewModel(), CardFormScope, DISdkComponent {
                     onFailure = { error ->
                         logReporter.error("Payment failed: ${error.message}")
                         _uiState.value = _uiState.value.copy(isLoading = false, isSubmitEnabled = true)
-                    }
+                    },
                 )
             } catch (e: Exception) {
                 logReporter.error("Payment submission failed: ${e.message}")

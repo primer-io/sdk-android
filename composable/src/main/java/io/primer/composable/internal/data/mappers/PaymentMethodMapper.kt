@@ -1,28 +1,21 @@
 package io.primer.composable.internal.data.mappers
 
 import io.primer.android.components.domain.core.models.PrimerHeadlessUniversalCheckoutPaymentMethod
-import io.primer.android.paymentmethods.common.data.model.PaymentMethodType
-import io.primer.android.paymentmethods.common.data.model.PaymentMethodType.Companion.safeValueOf
-import io.primer.composable.internal.domain.models.PaymentMethod
-import io.primer.composable.model.PrimerPaymentMethod
+import io.primer.composable.model.PrimerComposablePaymentMethod
 
 internal interface PaymentMethodMapper {
-    fun toInternal(public: PrimerPaymentMethod): PaymentMethod
-    fun toPublic(internal: PaymentMethod): PrimerPaymentMethod
-    fun toInternal(headless: PrimerHeadlessUniversalCheckoutPaymentMethod): PaymentMethod
+    fun toComposable(headless: PrimerHeadlessUniversalCheckoutPaymentMethod): PrimerComposablePaymentMethod
 }
 
 internal class PaymentMethodMapperImpl : PaymentMethodMapper {
 
-    override fun toInternal(public: PrimerPaymentMethod): PaymentMethod {
-        return PaymentMethod(name = public.name, type = PaymentMethodType.PAYMENT_CARD)
-    }
-
-    override fun toPublic(internal: PaymentMethod): PrimerPaymentMethod {
-        return PrimerPaymentMethod(internal.name)
-    }
-
-    override fun toInternal(headless: PrimerHeadlessUniversalCheckoutPaymentMethod): PaymentMethod {
-        return PaymentMethod(name = headless.paymentMethodName!!, type = safeValueOf(headless.paymentMethodType))
+    override fun toComposable(headless: PrimerHeadlessUniversalCheckoutPaymentMethod): PrimerComposablePaymentMethod {
+        return PrimerComposablePaymentMethod(
+            paymentMethodType = headless.paymentMethodType,
+            paymentMethodName = headless.paymentMethodName,
+            supportedPrimerSessionIntents = headless.supportedPrimerSessionIntents,
+            paymentMethodManagerCategories = headless.paymentMethodManagerCategories,
+            requiredInputDataClass = headless.requiredInputDataClass,
+        )
     }
 }
