@@ -9,6 +9,7 @@ import io.primer.android.currencyformat.domain.FormatAmountToCurrencyInteractor
 import io.primer.android.data.settings.internal.MonetaryAmount
 import io.primer.android.domain.tokenization.models.PrimerVaultedPaymentMethod
 import io.primer.android.surcharge.domain.SurchargeInteractor
+import io.primer.ui.core.payment.domain.interactor.SurchargeCalculationInteractor
 import java.util.Currency
 
 internal class SurchargeFormatter(
@@ -16,21 +17,25 @@ internal class SurchargeFormatter(
     private val surchargeInteractor: SurchargeInteractor,
     private val currency: Currency,
 ) {
+    private val surchargeCalculationInteractor = SurchargeCalculationInteractor()
+
     fun getSurchargeForSavedPaymentMethod(token: PrimerVaultedPaymentMethod?): Int {
-        if (token == null) return 0
-        val type = token.paymentMethodType
-        return getSurchargeForPaymentMethodType(type = type, network = token.paymentInstrumentData.binData?.network)
+        return surchargeCalculationInteractor.getSurchargeForSavedPaymentMethod(
+            token = token,
+            surcharges = surchargeInteractor(None)
+        )
     }
 
     fun getSurchargeForPaymentMethodType(
         type: String,
         network: String? = null,
-    ): Int =
-        when (val surcharge = surchargeInteractor(None)[type]) {
-            is Surcharge.CardNetworksSurcharge -> surcharge.surcharges[network] ?: 0
-            is Surcharge.PaymentMethodSurcharge -> surcharge.amount
-            null -> 0
-        }
+    ): Int {
+        return surchargeCalculationInteractor.getSurchargeForPaymentMethodType(
+            type = type,
+            network = network,
+            surcharges = surchargeInteractor(None)
+        )
+    }
 
     fun formatSurchargeAsString(
         amount: Int,

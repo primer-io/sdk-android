@@ -17,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import io.primer.composable.internal.domain.models.PrimerComposablePaymentMethod
+import io.primer.composable.internal.presentation.components.SurchargeLabel
 import io.primer.composable.scope.PaymentMethodSelectionScope
 
 @Composable
@@ -24,8 +25,9 @@ internal fun PaymentMethodSelectionScope.PaymentMethodSelectionScreen(
     modifier: Modifier = Modifier,
 ) {
     val state by state.collectAsStateWithLifecycle()
-    val paymentMethods =
-        (state as? PaymentMethodSelectionScope.State.Ready)?.paymentMethods ?: emptyList()
+    val readyState = state as? PaymentMethodSelectionScope.State.Ready
+    val paymentMethods = readyState?.paymentMethods ?: emptyList()
+    val currency = readyState?.currency
 
     Column(modifier = modifier.padding(8.dp)) {
         Text(
@@ -41,6 +43,7 @@ internal fun PaymentMethodSelectionScope.PaymentMethodSelectionScreen(
             items(paymentMethods) {
                 PaymentMethodItem(
                     primerPaymentMethod = it,
+                    currency = currency,
                 )
             }
         }
@@ -51,16 +54,25 @@ internal fun PaymentMethodSelectionScope.PaymentMethodSelectionScreen(
 internal fun PaymentMethodSelectionScope.PaymentMethodItem(
     modifier: Modifier = Modifier,
     primerPaymentMethod: PrimerComposablePaymentMethod,
+    currency: java.util.Currency? = null,
 ) {
     Card(
         modifier = modifier
             .fillMaxWidth()
             .clickable { onPaymentMethodSelected(primerPaymentMethod) },
     ) {
-        Text(
+        Column(
             modifier = Modifier.padding(16.dp),
-            text = primerPaymentMethod.paymentMethodName ?: "",
-            style = MaterialTheme.typography.titleMedium,
-        )
+        ) {
+            Text(
+                text = primerPaymentMethod.paymentMethodName ?: "",
+                style = MaterialTheme.typography.titleMedium,
+            )
+            
+            SurchargeLabel(
+                surcharge = primerPaymentMethod.surcharge,
+                currency = currency,
+            )
+        }
     }
 }

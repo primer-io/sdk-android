@@ -2,9 +2,9 @@ package io.primer.composable.scope
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import io.primer.composable.internal.domain.models.PrimerComposablePaymentMethod
 import io.primer.composable.internal.presentation.screens.paymentMethodSelection.PaymentMethodItem
 import io.primer.composable.internal.presentation.screens.paymentMethodSelection.PaymentMethodSelectionScreen
-import io.primer.composable.internal.domain.models.PrimerComposablePaymentMethod
 import kotlinx.coroutines.flow.StateFlow
 
 interface PaymentMethodSelectionScope {
@@ -15,7 +15,10 @@ interface PaymentMethodSelectionScope {
 
     sealed interface State {
         data object Loading : State
-        data class Ready(val paymentMethods: List<PrimerComposablePaymentMethod>) : State
+        data class Ready(
+            val paymentMethods: List<PrimerComposablePaymentMethod>,
+            val currency: java.util.Currency?
+        ) : State
         data class Error(val exception: Throwable) : State
     }
 
@@ -31,6 +34,7 @@ interface PaymentMethodSelectionScope {
         fun PaymentMethodSelectionScope.PrimerPaymentMethodItem(
             modifier: Modifier = Modifier,
             primerPaymentMethod: PrimerComposablePaymentMethod,
-        ) = PaymentMethodItem(modifier, primerPaymentMethod)
+            currency: java.util.Currency? = null,
+        ) = PaymentMethodItem(modifier, primerPaymentMethod, currency)
     }
 }

@@ -2,6 +2,7 @@ package io.primer.composable.internal.domain.models
 
 import io.primer.android.PrimerSessionIntent
 import io.primer.android.components.domain.core.models.PrimerPaymentMethodManagerCategory
+import io.primer.android.configuration.domain.model.Surcharge
 import io.primer.android.paymentmethods.PrimerRawData
 import kotlin.reflect.KClass
 
@@ -11,4 +12,5 @@ data class PrimerComposablePaymentMethod(
     val supportedPrimerSessionIntents: List<PrimerSessionIntent>,
     val paymentMethodManagerCategories: List<PrimerPaymentMethodManagerCategory>,
     val requiredInputDataClass: KClass<out PrimerRawData>? = null,
+    val surcharge: Surcharge? = null,
 )

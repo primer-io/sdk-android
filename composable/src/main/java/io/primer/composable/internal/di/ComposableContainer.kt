@@ -19,6 +19,8 @@ import io.primer.composable.internal.domain.interactor.ValidateBillingAddressInt
 import io.primer.composable.internal.domain.repositories.HeadlessRepository
 import io.primer.composable.internal.domain.repositories.RawDataManagerRepository
 import io.primer.composable.internal.presentation.checkout.CheckoutNavigator
+import io.primer.ui.core.configuration.domain.model.BasicOrderInfoInteractor
+import io.primer.ui.core.payment.domain.interactor.SurchargeInteractor
 
 internal class ComposableContainer(@Suppress("UNUSED_PARAMETER") private val sdk: () -> SdkContainer) : DependencyContainer() {
 
@@ -29,6 +31,14 @@ internal class ComposableContainer(@Suppress("UNUSED_PARAMETER") private val sdk
 
         registerSingleton<HeadlessRepository> {
             HeadlessRepositoryImpl(PrimerHeadlessUniversalCheckout.current)
+        }
+
+        registerSingleton {
+            SurchargeInteractor(sdk().resolve())
+        }
+
+        registerSingleton {
+            BasicOrderInfoInteractor(sdk().resolve())
         }
 
         registerSingleton<RawDataManagerRepository> {
