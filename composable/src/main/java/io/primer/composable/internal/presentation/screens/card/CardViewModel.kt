@@ -63,10 +63,64 @@ internal class CardViewModel : ViewModel(), CardFormScope, DISdkComponent {
 
     }
 
-    override fun updateInput(input: String, type: PrimerInputElementType) {
-        viewModelScope.launch {
-            setDataInteractor.updateInput(input, type)
-        }
+    override fun updateCardNumber(cardNumber: String) {
+        setDataInteractor.updateInput(cardNumber, PrimerInputElementType.CARD_NUMBER)
+    }
+
+    override fun updateCvv(cvv: String) {
+        setDataInteractor.updateInput(cvv, PrimerInputElementType.CVV)
+    }
+
+    override fun updateExpiryDate(expiryDate: String) {
+        setDataInteractor.updateInput(expiryDate, PrimerInputElementType.EXPIRY_DATE)
+    }
+
+    override fun updateCardholderName(cardholderName: String) {
+        setDataInteractor.updateInput(cardholderName, PrimerInputElementType.CARDHOLDER_NAME)
+    }
+
+    override fun updatePostalCode(postalCode: String) {
+        setDataInteractor.updateInput(postalCode, PrimerInputElementType.POSTAL_CODE)
+    }
+
+    override fun updateCountryCode(countryCode: String) {
+        setDataInteractor.updateInput(countryCode, PrimerInputElementType.COUNTRY_CODE)
+    }
+
+    override fun updateCity(city: String) {
+        setDataInteractor.updateInput(city, PrimerInputElementType.CITY)
+    }
+
+    override fun updateState(state: String) {
+        setDataInteractor.updateInput(state, PrimerInputElementType.STATE)
+    }
+
+    override fun updateAddressLine1(addressLine1: String) {
+        setDataInteractor.updateInput(addressLine1, PrimerInputElementType.ADDRESS_LINE_1)
+    }
+
+    override fun updateAddressLine2(addressLine2: String) {
+        setDataInteractor.updateInput(addressLine2, PrimerInputElementType.ADDRESS_LINE_2)
+    }
+
+    override fun updatePhoneNumber(phoneNumber: String) {
+        setDataInteractor.updateInput(phoneNumber, PrimerInputElementType.PHONE_NUMBER)
+    }
+
+    override fun updateFirstName(firstName: String) {
+        setDataInteractor.updateInput(firstName, PrimerInputElementType.FIRST_NAME)
+    }
+
+    override fun updateLastName(lastName: String) {
+        setDataInteractor.updateInput(lastName, PrimerInputElementType.LAST_NAME)
+    }
+
+    override fun updateRetailOutlet(retailOutlet: String) {
+        setDataInteractor.updateInput(retailOutlet, PrimerInputElementType.RETAIL_OUTLET)
+    }
+
+    override fun updateOtpCode(otpCode: String) {
+        setDataInteractor.updateInput(otpCode, PrimerInputElementType.OTP_CODE)
     }
 
     override fun submit() {

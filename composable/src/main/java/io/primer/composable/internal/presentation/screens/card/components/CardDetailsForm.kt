@@ -15,8 +15,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import io.primer.android.components.domain.inputs.models.PrimerInputElementType
-import io.primer.composable.internal.presentation.screens.card.components.input.Input
+import io.primer.composable.internal.presentation.screens.card.components.input.CardNumberInput
+import io.primer.composable.internal.presentation.screens.card.components.input.CvvInput
+import io.primer.composable.internal.presentation.screens.card.components.input.ExpiryDateInput
+import io.primer.composable.internal.presentation.screens.card.components.input.CardholderNameInput
 import io.primer.composable.scope.CardFormScope
 
 @Composable
@@ -39,9 +41,8 @@ internal fun CardFormScope.CardDetailsForm(
             modifier = Modifier.padding(bottom = 16.dp),
         )
 
-        Input(
+        CardNumberInput(
             modifier = Modifier.fillMaxWidth(),
-            type = PrimerInputElementType.CARD_NUMBER,
         )
 
         Spacer(modifier = Modifier.height(12.dp))
@@ -50,21 +51,18 @@ internal fun CardFormScope.CardDetailsForm(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            Input(
+            ExpiryDateInput(
                 modifier = Modifier.weight(1f),
-                type = PrimerInputElementType.EXPIRY_DATE,
             )
-            Input(
+            CvvInput(
                 modifier = Modifier.weight(1f),
-                type = PrimerInputElementType.CVV,
             )
         }
 
         Spacer(modifier = Modifier.height(12.dp))
 
-        Input(
+        CardholderNameInput(
             modifier = Modifier.fillMaxWidth(),
-            type = PrimerInputElementType.CARDHOLDER_NAME,
         )
 
         Spacer(modifier = Modifier.height(24.dp))
