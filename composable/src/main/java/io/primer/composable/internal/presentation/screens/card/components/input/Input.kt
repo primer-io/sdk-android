@@ -17,86 +17,64 @@ import io.primer.composable.internal.presentation.screens.card.components.input.
 import io.primer.composable.internal.presentation.screens.card.components.input.transformations.ExpiryDateVisualTransformation
 import io.primer.composable.scope.CardFormScope
 
-internal data class InputFieldConfig(
-    val label: String,
-    val placeholder: String,
-    val keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
-    val visualTransformation: VisualTransformation = VisualTransformation.None,
-    val maxLength: Int? = null,
-    val allowedChars: String? = null,
-) {
-    companion object {
-        val CARDHOLDER_NAME = InputFieldConfig(
-            label = "Cardholder Name",
-            placeholder = "John Doe",
-        )
-        
-        val EXPIRY_DATE = InputFieldConfig(
-            label = "Expiry Date",
-            placeholder = "MM/YYYY",
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-            visualTransformation = ExpiryDateVisualTransformation(),
-            maxLength = 6,
-            allowedChars = "0123456789",
-        )
-        
-        val POSTAL_CODE = InputFieldConfig(
-            label = "Postal Code",
-            placeholder = "12345",
-        )
-        
-        val COUNTRY_CODE = InputFieldConfig(
-            label = "Country Code",
-            placeholder = "US",
-        )
-        
-        val CITY = InputFieldConfig(
-            label = "City",
-            placeholder = "New York",
-        )
-        
-        val STATE = InputFieldConfig(
-            label = "State",
-            placeholder = "NY",
-        )
-        
-        val ADDRESS_LINE_1 = InputFieldConfig(
-            label = "Address Line 1",
-            placeholder = "123 Main Street",
-        )
-        
-        val ADDRESS_LINE_2 = InputFieldConfig(
-            label = "Address Line 2",
-            placeholder = "Apt 4B",
-        )
-        
-        val PHONE_NUMBER = InputFieldConfig(
-            label = "Phone Number",
-            placeholder = "+1 (555) 123-4567",
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
-        )
-        
-        val FIRST_NAME = InputFieldConfig(
-            label = "First Name",
-            placeholder = "John",
-        )
-        
-        val LAST_NAME = InputFieldConfig(
-            label = "Last Name",
-            placeholder = "Doe",
-        )
-        
-        val RETAIL_OUTLET = InputFieldConfig(
-            label = "Retail Outlet",
-            placeholder = "Select outlet",
-        )
-        
-        val OTP_CODE = InputFieldConfig(
-            label = "OTP Code",
-            placeholder = "123456",
-            allowedChars = "0123456789",
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-        )
+private object InputConfigs {
+    fun label(type: PrimerInputElementType): String = when (type) {
+        PrimerInputElementType.CARDHOLDER_NAME -> "Cardholder Name"
+        PrimerInputElementType.EXPIRY_DATE -> "Expiry Date"
+        PrimerInputElementType.POSTAL_CODE -> "Postal Code"
+        PrimerInputElementType.COUNTRY_CODE -> "Country Code"
+        PrimerInputElementType.CITY -> "City"
+        PrimerInputElementType.STATE -> "State"
+        PrimerInputElementType.ADDRESS_LINE_1 -> "Address Line 1"
+        PrimerInputElementType.ADDRESS_LINE_2 -> "Address Line 2"
+        PrimerInputElementType.PHONE_NUMBER -> "Phone Number"
+        PrimerInputElementType.FIRST_NAME -> "First Name"
+        PrimerInputElementType.LAST_NAME -> "Last Name"
+        PrimerInputElementType.RETAIL_OUTLET -> "Retail Outlet"
+        PrimerInputElementType.OTP_CODE -> "OTP Code"
+        else -> type.field
+    }
+    
+    fun placeholder(type: PrimerInputElementType): String = when (type) {
+        PrimerInputElementType.CARDHOLDER_NAME -> "John Doe"
+        PrimerInputElementType.EXPIRY_DATE -> "MM/YYYY"
+        PrimerInputElementType.POSTAL_CODE -> "12345"
+        PrimerInputElementType.COUNTRY_CODE -> "US"
+        PrimerInputElementType.CITY -> "New York"
+        PrimerInputElementType.STATE -> "NY"
+        PrimerInputElementType.ADDRESS_LINE_1 -> "123 Main Street"
+        PrimerInputElementType.ADDRESS_LINE_2 -> "Apt 4B"
+        PrimerInputElementType.PHONE_NUMBER -> "+1 (555) 123-4567"
+        PrimerInputElementType.FIRST_NAME -> "John"
+        PrimerInputElementType.LAST_NAME -> "Doe"
+        PrimerInputElementType.RETAIL_OUTLET -> "Select outlet"
+        PrimerInputElementType.OTP_CODE -> "123456"
+        else -> ""
+    }
+    
+    fun keyboardOptions(type: PrimerInputElementType): KeyboardOptions = when (type) {
+        PrimerInputElementType.EXPIRY_DATE, PrimerInputElementType.OTP_CODE -> 
+            KeyboardOptions(keyboardType = KeyboardType.Number)
+        PrimerInputElementType.PHONE_NUMBER -> 
+            KeyboardOptions(keyboardType = KeyboardType.Phone)
+        PrimerInputElementType.POSTAL_CODE -> 
+            KeyboardOptions(keyboardType = KeyboardType.Text)
+        else -> KeyboardOptions.Default
+    }
+    
+    fun visualTransformation(type: PrimerInputElementType): VisualTransformation = when (type) {
+        PrimerInputElementType.EXPIRY_DATE -> ExpiryDateVisualTransformation()
+        else -> VisualTransformation.None
+    }
+    
+    fun maxLength(type: PrimerInputElementType): Int? = when (type) {
+        PrimerInputElementType.EXPIRY_DATE -> 6
+        else -> null
+    }
+    
+    fun allowedChars(type: PrimerInputElementType): String? = when (type) {
+        PrimerInputElementType.EXPIRY_DATE, PrimerInputElementType.OTP_CODE -> "0123456789"
+        else -> null
     }
 }
 
@@ -104,7 +82,6 @@ internal data class InputFieldConfig(
 private fun CardFormScope.Input(
     modifier: Modifier = Modifier,
     type: PrimerInputElementType,
-    config: InputFieldConfig,
     onValueChange: (String) -> Unit,
 ) {
     val state by state.collectAsState()
@@ -116,11 +93,30 @@ private fun CardFormScope.Input(
     val value = state.inputFields[type] ?: ""
     val error = state.fieldErrors.find { it.inputElementType == type }
 
+    // Apply essential input filtering while letting validation framework provide feedback
+    val processedOnValueChange: (String) -> Unit = { newValue ->
+        var processedValue = newValue
+
+        // Apply allowed characters filter for strict input types (like CVV, card numbers)
+        InputConfigs.allowedChars(type)?.let { allowedChars ->
+            processedValue = newValue.filter { it in allowedChars }
+        }
+
+        // Apply max length constraint to prevent excessive input
+        InputConfigs.maxLength(type)?.let { maxLength ->
+            if (processedValue.length > maxLength) {
+                processedValue = processedValue.take(maxLength)
+            }
+        }
+
+        onValueChange(processedValue)
+    }
+
     OutlinedTextField(
         value = value,
-        onValueChange = onValueChange,
-        label = { Text(config.label) },
-        placeholder = { Text(config.placeholder) },
+        onValueChange = processedOnValueChange,
+        label = { Text(InputConfigs.label(type)) },
+        placeholder = { Text(InputConfigs.placeholder(type)) },
         modifier = modifier.fillMaxWidth(),
         singleLine = true,
         isError = error != null,
@@ -132,8 +128,8 @@ private fun CardFormScope.Input(
                 )
             }
         },
-        visualTransformation = config.visualTransformation,
-        keyboardOptions = config.keyboardOptions,
+        visualTransformation = InputConfigs.visualTransformation(type),
+        keyboardOptions = InputConfigs.keyboardOptions(type),
     )
 }
 
@@ -142,22 +138,45 @@ internal fun CardFormScope.CardNumberInput(
     modifier: Modifier = Modifier,
 ) {
     val state by state.collectAsState()
-    val cardNumber = state.inputFields[PrimerInputElementType.CARD_NUMBER] ?: ""
-    val formatter = CardNumberFormatter.fromString(cardNumber)
-    val config = InputFieldConfig(
-        label = "Card Number",
-        placeholder = "1234 5678 9012 3456",
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+
+    // Check if this field should be shown
+    val isFieldRequired = PrimerInputElementType.CARD_NUMBER in state.cardFields || PrimerInputElementType.CARD_NUMBER in state.billingFields
+    if (!isFieldRequired) return
+
+    val value = state.inputFields[PrimerInputElementType.CARD_NUMBER] ?: ""
+    val error = state.fieldErrors.find { it.inputElementType == PrimerInputElementType.CARD_NUMBER }
+    val formatter = CardNumberFormatter.fromString(value)
+
+    // Apply essential input filtering for card numbers
+    val processedOnValueChange: (String) -> Unit = { newValue ->
+        var processedValue = newValue.filter { it in "0123456789" }
+        
+        val maxLength = formatter.getMaxLength()
+        if (processedValue.length > maxLength) {
+            processedValue = processedValue.take(maxLength)
+        }
+
+        updateCardNumber(processedValue)
+    }
+
+    OutlinedTextField(
+        value = value,
+        onValueChange = processedOnValueChange,
+        label = { Text("Card Number") },
+        placeholder = { Text("1234 5678 9012 3456") },
+        modifier = modifier.fillMaxWidth(),
+        singleLine = true,
+        isError = error != null,
+        supportingText = {
+            error?.let {
+                Text(
+                    text = it.description,
+                    color = MaterialTheme.colorScheme.error,
+                )
+            }
+        },
         visualTransformation = CardNumberVisualTransformation(),
-        maxLength = formatter.getMaxLength(),
-        allowedChars = "0123456789",
-    )
-    
-    Input(
-        modifier = modifier,
-        type = PrimerInputElementType.CARD_NUMBER,
-        config = config,
-        onValueChange = ::updateCardNumber
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
     )
 }
 
@@ -166,73 +185,96 @@ internal fun CardFormScope.CvvInput(
     modifier: Modifier = Modifier,
 ) {
     val state by state.collectAsState()
+
+    // Check if this field should be shown
+    val isFieldRequired = PrimerInputElementType.CVV in state.cardFields || PrimerInputElementType.CVV in state.billingFields
+    if (!isFieldRequired) return
+
+    val value = state.inputFields[PrimerInputElementType.CVV] ?: ""
+    val error = state.fieldErrors.find { it.inputElementType == PrimerInputElementType.CVV }
     val cardNumber = state.inputFields[PrimerInputElementType.CARD_NUMBER] ?: ""
     val formatter = CardNumberFormatter.fromString(cardNumber)
     val cvvLength = formatter.getCvvLength()
-    val config = InputFieldConfig(
-        label = "CVV",
-        placeholder = "1".repeat(cvvLength),
+
+    // Apply essential input filtering for CVV
+    val processedOnValueChange: (String) -> Unit = { newValue ->
+        var processedValue = newValue.filter { it in "0123456789" }
+        
+        if (processedValue.length > cvvLength) {
+            processedValue = processedValue.take(cvvLength)
+        }
+
+        updateCvv(processedValue)
+    }
+
+    OutlinedTextField(
+        value = value,
+        onValueChange = processedOnValueChange,
+        label = { Text("CVV") },
+        placeholder = { Text("1".repeat(cvvLength)) },
+        modifier = modifier.fillMaxWidth(),
+        singleLine = true,
+        isError = error != null,
+        supportingText = {
+            error?.let {
+                Text(
+                    text = it.description,
+                    color = MaterialTheme.colorScheme.error,
+                )
+            }
+        },
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-        maxLength = cvvLength,
-        allowedChars = "0123456789",
-    )
-    
-    Input(
-        modifier = modifier,
-        type = PrimerInputElementType.CVV,
-        config = config,
-        onValueChange = ::updateCvv
     )
 }
 
 @Composable
 internal fun CardFormScope.ExpiryDateInput(modifier: Modifier = Modifier) =
-    Input(modifier, PrimerInputElementType.EXPIRY_DATE, InputFieldConfig.EXPIRY_DATE, ::updateExpiryDate)
+    Input(modifier, PrimerInputElementType.EXPIRY_DATE, ::updateExpiryDate)
 
 @Composable
 internal fun CardFormScope.CardholderNameInput(modifier: Modifier = Modifier) =
-    Input(modifier, PrimerInputElementType.CARDHOLDER_NAME, InputFieldConfig.CARDHOLDER_NAME, ::updateCardholderName)
+    Input(modifier, PrimerInputElementType.CARDHOLDER_NAME, ::updateCardholderName)
 
 @Composable
 internal fun CardFormScope.PostalCodeInput(modifier: Modifier = Modifier) =
-    Input(modifier, PrimerInputElementType.POSTAL_CODE, InputFieldConfig.POSTAL_CODE, ::updatePostalCode)
+    Input(modifier, PrimerInputElementType.POSTAL_CODE, ::updatePostalCode)
 
 @Composable
 internal fun CardFormScope.CountryCodeInput(modifier: Modifier = Modifier) =
-    Input(modifier, PrimerInputElementType.COUNTRY_CODE, InputFieldConfig.COUNTRY_CODE, ::updateCountryCode)
+    Input(modifier, PrimerInputElementType.COUNTRY_CODE, ::updateCountryCode)
 
 @Composable
 internal fun CardFormScope.CityInput(modifier: Modifier = Modifier) =
-    Input(modifier, PrimerInputElementType.CITY, InputFieldConfig.CITY, ::updateCity)
+    Input(modifier, PrimerInputElementType.CITY, ::updateCity)
 
 @Composable
 internal fun CardFormScope.StateInput(modifier: Modifier = Modifier) =
-    Input(modifier, PrimerInputElementType.STATE, InputFieldConfig.STATE, ::updateState)
+    Input(modifier, PrimerInputElementType.STATE, ::updateState)
 
 @Composable
 internal fun CardFormScope.AddressLine1Input(modifier: Modifier = Modifier) =
-    Input(modifier, PrimerInputElementType.ADDRESS_LINE_1, InputFieldConfig.ADDRESS_LINE_1, ::updateAddressLine1)
+    Input(modifier, PrimerInputElementType.ADDRESS_LINE_1, ::updateAddressLine1)
 
 @Composable
 internal fun CardFormScope.AddressLine2Input(modifier: Modifier = Modifier) =
-    Input(modifier, PrimerInputElementType.ADDRESS_LINE_2, InputFieldConfig.ADDRESS_LINE_2, ::updateAddressLine2)
+    Input(modifier, PrimerInputElementType.ADDRESS_LINE_2, ::updateAddressLine2)
 
 @Composable
 internal fun CardFormScope.PhoneNumberInput(modifier: Modifier = Modifier) =
-    Input(modifier, PrimerInputElementType.PHONE_NUMBER, InputFieldConfig.PHONE_NUMBER, ::updatePhoneNumber)
+    Input(modifier, PrimerInputElementType.PHONE_NUMBER, ::updatePhoneNumber)
 
 @Composable
 internal fun CardFormScope.FirstNameInput(modifier: Modifier = Modifier) =
-    Input(modifier, PrimerInputElementType.FIRST_NAME, InputFieldConfig.FIRST_NAME, ::updateFirstName)
+    Input(modifier, PrimerInputElementType.FIRST_NAME, ::updateFirstName)
 
 @Composable
 internal fun CardFormScope.LastNameInput(modifier: Modifier = Modifier) =
-    Input(modifier, PrimerInputElementType.LAST_NAME, InputFieldConfig.LAST_NAME, ::updateLastName)
+    Input(modifier, PrimerInputElementType.LAST_NAME, ::updateLastName)
 
 @Composable
 internal fun CardFormScope.RetailOutletInput(modifier: Modifier = Modifier) =
-    Input(modifier, PrimerInputElementType.RETAIL_OUTLET, InputFieldConfig.RETAIL_OUTLET, ::updateRetailOutlet)
+    Input(modifier, PrimerInputElementType.RETAIL_OUTLET, ::updateRetailOutlet)
 
 @Composable
 internal fun CardFormScope.OtpCodeInput(modifier: Modifier = Modifier) =
-    Input(modifier, PrimerInputElementType.OTP_CODE, InputFieldConfig.OTP_CODE, ::updateOtpCode)
+    Input(modifier, PrimerInputElementType.OTP_CODE, ::updateOtpCode)
