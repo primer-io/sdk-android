@@ -7,7 +7,7 @@ import io.primer.android.core.di.extensions.resolve
 import io.primer.composable.internal.domain.interactor.GetAvailablePaymentMethodsInteractor
 import io.primer.composable.internal.presentation.checkout.CheckoutNavigator
 import io.primer.composable.internal.presentation.checkout.Screen
-import io.primer.composable.model.PrimerComposablePaymentMethod
+import io.primer.composable.internal.domain.models.PrimerComposablePaymentMethod
 import io.primer.composable.scope.PaymentMethodSelectionScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

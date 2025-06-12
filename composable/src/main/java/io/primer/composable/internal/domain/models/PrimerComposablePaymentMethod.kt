@@ -1,4 +1,4 @@
-package io.primer.composable.model
+package io.primer.composable.internal.domain.models
 
 import io.primer.android.PrimerSessionIntent
 import io.primer.android.components.domain.core.models.PrimerPaymentMethodManagerCategory

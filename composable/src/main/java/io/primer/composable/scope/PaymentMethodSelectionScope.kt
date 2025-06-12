@@ -4,7 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import io.primer.composable.internal.presentation.screens.paymentMethodSelection.PaymentMethodItem
 import io.primer.composable.internal.presentation.screens.paymentMethodSelection.PaymentMethodSelectionScreen
-import io.primer.composable.model.PrimerComposablePaymentMethod
+import io.primer.composable.internal.domain.models.PrimerComposablePaymentMethod
 import kotlinx.coroutines.flow.StateFlow
 
 interface PaymentMethodSelectionScope {

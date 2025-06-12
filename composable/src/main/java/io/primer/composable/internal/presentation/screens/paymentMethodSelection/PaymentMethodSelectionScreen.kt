@@ -16,7 +16,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import io.primer.composable.model.PrimerComposablePaymentMethod
+import io.primer.composable.internal.domain.models.PrimerComposablePaymentMethod
 import io.primer.composable.scope.PaymentMethodSelectionScope
 
 @Composable

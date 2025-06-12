@@ -1,7 +1,7 @@
 package io.primer.composable.internal.data.mappers
 
 import io.primer.android.components.domain.core.models.PrimerHeadlessUniversalCheckoutPaymentMethod
-import io.primer.composable.model.PrimerComposablePaymentMethod
+import io.primer.composable.internal.domain.models.PrimerComposablePaymentMethod
 
 internal interface PaymentMethodMapper {
     fun toComposable(headless: PrimerHeadlessUniversalCheckoutPaymentMethod): PrimerComposablePaymentMethod
