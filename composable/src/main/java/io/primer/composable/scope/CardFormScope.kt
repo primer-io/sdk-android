@@ -71,137 +71,120 @@ interface CardFormScope {
         @Composable
         fun CardFormScope.PrimerCardNumberInput(
             modifier: Modifier = Modifier,
-            content: (@Composable CardFormScope.() -> Unit)? = null,
         ) {
-            content?.invoke(this) ?: CardNumberInput(modifier)
+            CardNumberInput(modifier)
         }
 
         @Composable
         fun CardFormScope.PrimerCvvInput(
             modifier: Modifier = Modifier,
-            content: (@Composable CardFormScope.() -> Unit)? = null,
         ) {
-            content?.invoke(this) ?: CvvInput(modifier)
+            CvvInput(modifier)
         }
 
         @Composable
         fun CardFormScope.PrimerExpiryDateInput(
             modifier: Modifier = Modifier,
-            content: (@Composable CardFormScope.() -> Unit)? = null,
         ) {
-            content?.invoke(this) ?: ExpiryDateInput(modifier)
+            ExpiryDateInput(modifier)
         }
 
         @Composable
         fun CardFormScope.PrimerCardholderNameInput(
             modifier: Modifier = Modifier,
-            content: (@Composable CardFormScope.() -> Unit)? = null,
         ) {
-            content?.invoke(this) ?: CardholderNameInput(modifier)
+            CardholderNameInput(modifier)
         }
 
         @Composable
         fun CardFormScope.PrimerPostalCodeInput(
             modifier: Modifier = Modifier,
-            content: (@Composable CardFormScope.() -> Unit)? = null,
         ) {
-            content?.invoke(this) ?: PostalCodeInput(modifier)
+            PostalCodeInput(modifier)
         }
 
         @Composable
         fun CardFormScope.PrimerCountryCodeInput(
             modifier: Modifier = Modifier,
-            content: (@Composable CardFormScope.() -> Unit)? = null,
         ) {
-            content?.invoke(this) ?: CountryCodeInput(modifier)
+            CountryCodeInput(modifier)
         }
 
         @Composable
         fun CardFormScope.PrimerCityInput(
             modifier: Modifier = Modifier,
-            content: (@Composable CardFormScope.() -> Unit)? = null,
         ) {
-            content?.invoke(this) ?: CityInput(modifier)
+            CityInput(modifier)
         }
 
         @Composable
         fun CardFormScope.PrimerStateInput(
             modifier: Modifier = Modifier,
-            content: (@Composable CardFormScope.() -> Unit)? = null,
         ) {
-            content?.invoke(this) ?: StateInput(modifier)
+            StateInput(modifier)
         }
 
         @Composable
         fun CardFormScope.PrimerAddressLine1Input(
             modifier: Modifier = Modifier,
-            content: (@Composable CardFormScope.() -> Unit)? = null,
         ) {
-            content?.invoke(this) ?: AddressLine1Input(modifier)
+            AddressLine1Input(modifier)
         }
 
         @Composable
         fun CardFormScope.PrimerAddressLine2Input(
             modifier: Modifier = Modifier,
-            content: (@Composable CardFormScope.() -> Unit)? = null,
         ) {
-            content?.invoke(this) ?: AddressLine2Input(modifier)
+            AddressLine2Input(modifier)
         }
 
         @Composable
         fun CardFormScope.PrimerPhoneNumberInput(
             modifier: Modifier = Modifier,
-            content: (@Composable CardFormScope.() -> Unit)? = null,
         ) {
-            content?.invoke(this) ?: PhoneNumberInput(modifier)
+            PhoneNumberInput(modifier)
         }
 
         @Composable
         fun CardFormScope.PrimerFirstNameInput(
             modifier: Modifier = Modifier,
-            content: (@Composable CardFormScope.() -> Unit)? = null,
         ) {
-            content?.invoke(this) ?: FirstNameInput(modifier)
+            FirstNameInput(modifier)
         }
 
         @Composable
         fun CardFormScope.PrimerLastNameInput(
             modifier: Modifier = Modifier,
-            content: (@Composable CardFormScope.() -> Unit)? = null,
         ) {
-            content?.invoke(this) ?: LastNameInput(modifier)
+            LastNameInput(modifier)
         }
 
         @Composable
         fun CardFormScope.PrimerRetailOutletInput(
             modifier: Modifier = Modifier,
-            content: (@Composable CardFormScope.() -> Unit)? = null,
         ) {
-            content?.invoke(this) ?: RetailOutletInput(modifier)
+            RetailOutletInput(modifier)
         }
 
         @Composable
         fun CardFormScope.PrimerOtpCodeInput(
             modifier: Modifier = Modifier,
-            content: (@Composable CardFormScope.() -> Unit)? = null,
         ) {
-            content?.invoke(this) ?: OtpCodeInput(modifier)
+            OtpCodeInput(modifier)
         }
 
         @Composable
         fun CardFormScope.PrimerCardDetails(
             modifier: Modifier = Modifier,
-            content: (@Composable CardFormScope.() -> Unit)? = null,
         ) {
-            content?.invoke(this) ?: CardDetailsForm(modifier)
+            CardDetailsForm(modifier)
         }
 
         @Composable
         fun CardFormScope.PrimerBillingAddress(
             modifier: Modifier = Modifier,
-            content: (@Composable CardFormScope.() -> Unit)? = null,
         ) {
-            content?.invoke(this) ?: BillingAddressForm(modifier)
+            BillingAddressForm(modifier)
         }
     }
 }
