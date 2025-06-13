@@ -16,9 +16,16 @@ object DISdkContext {
     private val merged: SdkContainer by lazy { SdkContainer() }
 
     var sdkType: SdkType = SdkType.HEADLESS
+    @Volatile
     var dropInSdkContainer: SdkContainer? = null
+
+    @Volatile
     var headlessSdkContainer: SdkContainer? = null
+  
+    @Volatile
     var componentsSdkContainer: SdkContainer? = null
+
+    @Volatile
     var coreContainer: SdkContainer? = null
 
     val container: () -> SdkContainer

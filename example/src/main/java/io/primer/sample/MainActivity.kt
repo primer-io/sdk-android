@@ -2,12 +2,14 @@ package io.primer.sample
 
 import android.content.Intent
 import android.os.Bundle
+import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
+import io.primer.paymentMethodCoreUi.core.ui.extension.applyFullWindowInsetsPadding
 import io.primer.sample.databinding.ActivityMainBinding
 import io.primer.sample.datamodels.AppCountryCode
 import io.primer.sample.datamodels.AppLinkParams
@@ -30,6 +32,7 @@ class MainActivity : AppCompatActivity() {
     private val apiKeyDataSource = AppApiKeyRepository()
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -40,6 +43,8 @@ class MainActivity : AppCompatActivity() {
         val navController = navHostFragment.navController
         appBarConfiguration = AppBarConfiguration(navController.graph)
         setupActionBarWithNavController(navController, appBarConfiguration)
+
+        binding.rootLayout.applyFullWindowInsetsPadding()
 
         val countryDataSource = CountryDataSource(AppCountryCode.DE)
         val countryRepository = CountryRepository(countryDataSource)

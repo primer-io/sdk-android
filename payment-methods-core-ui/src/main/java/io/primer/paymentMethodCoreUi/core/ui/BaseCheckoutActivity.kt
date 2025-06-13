@@ -1,6 +1,7 @@
 package io.primer.paymentMethodCoreUi.core.ui
 
 import android.os.Bundle
+import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import io.primer.android.core.di.DISdkComponent
 import io.primer.android.core.di.DISdkContext
@@ -13,6 +14,8 @@ open class BaseCheckoutActivity : AppCompatActivity(), DISdkComponent {
     protected val logReporter by inject<LogReporter>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        enableEdgeToEdge()
+
         super.onCreate(savedInstanceState)
         logReporter.debug("Creating activity (hashcode ${hashCode()})")
         supportActionBar?.hide()

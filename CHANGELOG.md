@@ -1,3 +1,10 @@
+## 2.40.1 (2025-06-10)
+
+### Fix
+
+- improve edge-to-edge handling (#973)
+- improve dependecy container cleanup (#974)
+
 ## 2.40.0 (2025-06-03)
 
 ### Feat
