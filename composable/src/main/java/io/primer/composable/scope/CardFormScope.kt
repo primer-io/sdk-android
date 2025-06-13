@@ -4,7 +4,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import io.primer.android.components.domain.error.PrimerInputValidationError
 import io.primer.android.components.domain.inputs.models.PrimerInputElementType
-import io.primer.composable.internal.presentation.screens.card.CardFormScreen
 import io.primer.composable.internal.presentation.screens.card.components.BillingAddressForm
 import io.primer.composable.internal.presentation.screens.card.components.CardDetailsForm
 import io.primer.composable.internal.presentation.screens.card.components.SubmitButton
@@ -59,18 +58,11 @@ interface CardFormScope {
     companion object {
 
         @Composable
-        fun CardFormScope.PrimerCardFormScreen(
-            modifier: Modifier = Modifier,
-            content: (@Composable CardFormScope.() -> Unit)? = null,
-        ) = content?.invoke(this) ?: CardFormScreen(modifier)
-
-        @Composable
         fun CardFormScope.PrimerSubmitButton(
             modifier: Modifier = Modifier,
             text: String = "Submit",
-            content: (@Composable CardFormScope.() -> Unit)? = null,
         ) {
-            content?.invoke(this) ?: SubmitButton(
+            SubmitButton(
                 modifier = modifier,
                 text = text,
             )
