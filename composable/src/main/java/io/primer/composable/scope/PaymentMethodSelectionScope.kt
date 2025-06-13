@@ -4,7 +4,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import io.primer.composable.internal.domain.models.PrimerComposablePaymentMethod
 import io.primer.composable.internal.presentation.screens.paymentMethodSelection.PaymentMethodItem
-import io.primer.composable.internal.presentation.screens.paymentMethodSelection.PaymentMethodSelectionScreen
 import kotlinx.coroutines.flow.StateFlow
 
 interface PaymentMethodSelectionScope {
@@ -23,12 +22,6 @@ interface PaymentMethodSelectionScope {
     }
 
     companion object {
-
-        @Composable
-        fun PaymentMethodSelectionScope.PrimerPaymentMethodSelectionScreen(
-            modifier: Modifier = Modifier,
-            content: (@Composable PaymentMethodSelectionScope.() -> Unit)? = null,
-        ) = content?.invoke(this) ?: PaymentMethodSelectionScreen(modifier)
 
         @Composable
         fun PaymentMethodSelectionScope.PrimerPaymentMethodItem(
