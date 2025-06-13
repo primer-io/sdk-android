@@ -21,6 +21,7 @@ import io.primer.composable.scope.PrimerCheckoutScope
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun Primer.Checkout(
+    container: (@Composable PrimerCheckoutScope.(content: @Composable () -> Unit) -> Unit)?,
     splashScreen: (@Composable PrimerCheckoutScope.() -> Unit)?,
     errorScreen: (@Composable PrimerCheckoutScope.(cause: String) -> Unit)?,
     loadingScreen: (@Composable PrimerCheckoutScope.() -> Unit)?,
@@ -40,7 +41,7 @@ internal fun Primer.Checkout(
         PrimerCheckoutScope.State.Initializing -> splashScreen?.invoke(this)
         is PrimerCheckoutScope.State.Error -> errorScreen?.invoke(this, "${state.exception.message}")
         PrimerCheckoutScope.State.Ready -> {
-            ModalBottomSheet(onDismissRequest = ::cleanup) {
+            val content: @Composable () -> Unit = {
                 CheckoutNavHost(
                     splashScreen = { splashScreen?.invoke(this@with) ?: SplashScreen() },
                     loadingScreen = { loadingScreen?.invoke(this@with) ?: LoadingScreen() },
@@ -50,6 +51,8 @@ internal fun Primer.Checkout(
                     errorScreen = { errorScreen?.invoke(this@with, it) ?: ErrorScreen() },
                 )
             }
+
+            container?.invoke(this, content) ?: ModalBottomSheet(onDismissRequest = ::cleanup) { content() }
         }
     }
 }

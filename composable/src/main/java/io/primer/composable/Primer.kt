@@ -24,6 +24,7 @@ object Primer {
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     fun ComposableCheckout(
+        container: (@Composable PrimerCheckoutScope.(content: @Composable () -> Unit) -> Unit)? = null,
         splashScreen: (@Composable PrimerCheckoutScope.() -> Unit)? = null,
         loadingScreen: (@Composable PrimerCheckoutScope.() -> Unit)? = null,
         paymentSelectionScreen: (@Composable PaymentMethodSelectionScope.() -> Unit)? = null,
@@ -32,6 +33,7 @@ object Primer {
         errorScreen: (@Composable PrimerCheckoutScope.(cause: String) -> Unit)? = null,
     ) {
         Checkout(
+            container = container,
             splashScreen = splashScreen,
             loadingScreen = loadingScreen,
             successScreen = successScreen,
