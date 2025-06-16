@@ -52,7 +52,9 @@ internal fun Primer.Checkout(
                 )
             }
 
-            container?.invoke(this, content) ?: ModalBottomSheet(onDismissRequest = ::cleanup) { content() }
+            container?.invoke(this, content) ?: ModalBottomSheet(
+                onDismissRequest = ::cleanup,
+                dragHandle = {}) { content() }
         }
     }
 }

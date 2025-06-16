@@ -29,11 +29,7 @@ class ComposableCheckoutFragment : Fragment() {
                 clientToken?.let { token ->
                     with(Primer) {
                         configure(token)
-                        ComposableCheckout(
-                            container = { content ->
-                                content()
-                            }
-                        )
+                        ComposableCheckout()
                     }
                 }
             }
