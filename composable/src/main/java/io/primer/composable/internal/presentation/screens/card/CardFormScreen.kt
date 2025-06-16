@@ -1,7 +1,6 @@
 package io.primer.composable.internal.presentation.screens.card
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -16,9 +15,7 @@ internal fun CardFormScope.CardFormScreen(
     modifier: Modifier = Modifier,
 ) {
     Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(16.dp),
+        modifier = modifier.padding(16.dp),
     ) {
         CardDetailsForm()
         BillingAddressForm()

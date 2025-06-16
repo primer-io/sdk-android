@@ -1,7 +1,6 @@
 package io.primer.composable.internal.presentation.screens.loading
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
@@ -18,7 +17,7 @@ internal fun PrimerCheckoutScope.LoadingScreen(
     text: String = "Loading",
 ) {
     Column(
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         CircularProgressIndicator()

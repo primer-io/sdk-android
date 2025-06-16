@@ -29,7 +29,10 @@ internal fun PaymentMethodSelectionScope.PaymentMethodSelectionScreen(
     val paymentMethods = readyState?.paymentMethods ?: emptyList()
     val currency = readyState?.currency
 
-    Column(modifier = modifier.padding(LocalPrimerSpacingTokens.current.large)) {
+    Column(
+        modifier = modifier
+            .padding(LocalPrimerSpacingTokens.current.large)
+    ) {
 
         LazyColumn(
             verticalArrangement = Arrangement.spacedBy(LocalPrimerSpacingTokens.current.small),

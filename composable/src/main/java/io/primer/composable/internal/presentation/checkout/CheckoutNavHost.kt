@@ -1,5 +1,6 @@
 package io.primer.composable.internal.presentation.checkout
 
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -54,7 +55,7 @@ internal fun PrimerCheckoutScope.CheckoutNavHost(
                     // TODO: Implement checkout cancellation
                     navController.popBackStack(Screen.PaymentsList.route, inclusive = false)
                 },
-                modifier = modifier
+                modifier = modifier.fillMaxSize()
             ) { paddingValues ->
                 CheckoutNavigator {
                     NavHost(
