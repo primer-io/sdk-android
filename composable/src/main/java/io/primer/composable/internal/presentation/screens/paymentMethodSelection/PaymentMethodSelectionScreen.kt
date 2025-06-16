@@ -17,6 +17,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import io.primer.composable.internal.domain.models.PrimerComposablePaymentMethod
 import io.primer.composable.internal.presentation.components.SurchargeLabel
+import io.primer.composable.internal.presentation.theme.LocalPrimerSpacingTokens
 import io.primer.composable.scope.PaymentMethodSelectionScope
 
 @Composable
@@ -28,10 +29,18 @@ internal fun PaymentMethodSelectionScope.PaymentMethodSelectionScreen(
     val paymentMethods = readyState?.paymentMethods ?: emptyList()
     val currency = readyState?.currency
 
-    Column(modifier = modifier.padding(8.dp)) {
+    Column(modifier = modifier.padding(LocalPrimerSpacingTokens.current.large)) {
+
         LazyColumn(
-            verticalArrangement = Arrangement.spacedBy(8.dp),
+            verticalArrangement = Arrangement.spacedBy(LocalPrimerSpacingTokens.current.small),
         ) {
+            item {
+                Text(
+                    text = "Choose payment method",
+                    style = MaterialTheme.typography.titleLarge,
+                )
+            }
+
             items(paymentMethods) {
                 PaymentMethodItem(
                     primerPaymentMethod = it,
@@ -60,7 +69,7 @@ internal fun PaymentMethodSelectionScope.PaymentMethodItem(
                 text = primerPaymentMethod.paymentMethodName ?: "",
                 style = MaterialTheme.typography.titleMedium,
             )
-            
+
             SurchargeLabel(
                 surcharge = primerPaymentMethod.surcharge,
                 currency = currency,

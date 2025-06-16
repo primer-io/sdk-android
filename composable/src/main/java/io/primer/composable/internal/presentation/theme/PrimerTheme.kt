@@ -11,10 +11,25 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.staticCompositionLocalOf
 import io.primer.composable.internal.tokens.DarkColorTokens
 import io.primer.composable.internal.tokens.LightColorTokens
+import io.primer.composable.internal.tokens.RadiusTokens
+import io.primer.composable.internal.tokens.SizeTokens
+import io.primer.composable.internal.tokens.SpacingTokens
 import io.primer.composable.internal.tokens.TypographyTokens
 
 val LocalPrimerColorTokens = staticCompositionLocalOf<LightColorTokens> {
     error("No PrimerColorTokens provided")
+}
+
+val LocalPrimerRadiusTokens = staticCompositionLocalOf<RadiusTokens> {
+    RadiusTokens()
+}
+
+val LocalPrimerSizeTokens = staticCompositionLocalOf<SizeTokens> {
+    SizeTokens()
+}
+
+val LocalPrimerSpacingTokens = staticCompositionLocalOf<SpacingTokens> {
+    SpacingTokens()
 }
 
 @Composable

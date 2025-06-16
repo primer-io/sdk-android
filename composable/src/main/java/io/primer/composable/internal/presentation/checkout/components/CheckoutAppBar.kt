@@ -10,12 +10,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
 import io.primer.composable.internal.presentation.theme.LocalPrimerColorTokens
+import io.primer.composable.internal.presentation.theme.LocalPrimerSpacingTokens
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -31,8 +29,8 @@ internal fun CheckoutAppBar(
         title = {
             Text(
                 text = title,
-                style = MaterialTheme.typography.titleLarge,
-                color = MaterialTheme.colorScheme.onSurface
+                style = MaterialTheme.typography.displayLarge,
+                color = colorTokens.primerColorTextPrimary
             )
         },
         navigationIcon = {
@@ -50,24 +48,16 @@ internal fun CheckoutAppBar(
             onCancelClick?.let {
                 TextButton(
                     onClick = it,
-                    modifier = Modifier.padding(end = 8.dp)
+                    modifier = Modifier.padding(end = LocalPrimerSpacingTokens.current.small)
                 ) {
                     Text(
                         text = "Cancel",
-                        style = MaterialTheme.typography.bodyMedium.copy(
-                            fontWeight = FontWeight.Medium
-                        ),
-                        color = colorTokens.primerColorTextLink
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                 }
             }
         },
-        colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = MaterialTheme.colorScheme.surface,
-            titleContentColor = MaterialTheme.colorScheme.onSurface,
-            navigationIconContentColor = MaterialTheme.colorScheme.onSurface,
-            actionIconContentColor = colorTokens.primerColorTextLink
-        ),
         modifier = modifier
     )
 }
