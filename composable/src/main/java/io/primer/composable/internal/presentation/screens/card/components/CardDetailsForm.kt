@@ -14,11 +14,11 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
 import io.primer.composable.internal.presentation.screens.card.components.input.CardNumberInput
 import io.primer.composable.internal.presentation.screens.card.components.input.CardholderNameInput
 import io.primer.composable.internal.presentation.screens.card.components.input.CvvInput
 import io.primer.composable.internal.presentation.screens.card.components.input.ExpiryDateInput
+import io.primer.composable.internal.presentation.theme.LocalPrimerSpacingTokens
 import io.primer.composable.scope.CardFormScope
 
 @Composable
@@ -38,18 +38,18 @@ internal fun CardFormScope.CardDetailsForm(
                 fontWeight = FontWeight.Medium,
             ),
             color = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.padding(bottom = 16.dp),
+            modifier = Modifier.padding(bottom = LocalPrimerSpacingTokens.current.large),
         )
 
         CardNumberInput(
             modifier = Modifier.fillMaxWidth(),
         )
 
-        Spacer(modifier = Modifier.height(12.dp))
+        Spacer(modifier = Modifier.height(LocalPrimerSpacingTokens.current.small))
 
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            horizontalArrangement = Arrangement.spacedBy(LocalPrimerSpacingTokens.current.medium),
         ) {
             ExpiryDateInput(
                 modifier = Modifier.weight(1f),
@@ -59,12 +59,12 @@ internal fun CardFormScope.CardDetailsForm(
             )
         }
 
-        Spacer(modifier = Modifier.height(12.dp))
+        Spacer(modifier = Modifier.height(LocalPrimerSpacingTokens.current.small))
 
         CardholderNameInput(
             modifier = Modifier.fillMaxWidth(),
         )
 
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(LocalPrimerSpacingTokens.current.large))
     }
 }

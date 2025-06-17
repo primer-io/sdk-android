@@ -1,6 +1,5 @@
 package io.primer.composable.internal.presentation.checkout
 
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.runtime.Composable
@@ -56,12 +55,14 @@ internal fun Primer.Checkout(
                 )
             }
 
-            container?.invoke(this, content) ?: ModalBottomSheet(
-                onDismissRequest = ::cleanup,
-                dragHandle = {},
-                modifier = modifier.fillMaxHeight(),
-                content = { content() }
-            )
+            container?.invoke(this, content) ?: run {
+                ModalBottomSheet(
+                    onDismissRequest = ::cleanup,
+                    dragHandle = {},
+                    modifier = modifier,
+                    content = { content() }
+                )
+            }
         }
     }
 }
