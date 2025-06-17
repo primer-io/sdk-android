@@ -15,6 +15,8 @@ import io.primer.composable.internal.presentation.screens.loading.LoadingScreen
 import io.primer.composable.internal.presentation.screens.paymentMethodSelection.PaymentMethodSelectionScreen
 import io.primer.composable.internal.presentation.screens.splash.SplashScreen
 import io.primer.composable.internal.presentation.screens.success.SuccessScreen
+import io.primer.composable.internal.presentation.theme.LocalPrimerColorTokens
+import io.primer.composable.internal.presentation.theme.PrimerTheme
 import io.primer.composable.scope.CardFormScope
 import io.primer.composable.scope.PaymentMethodSelectionScope
 import io.primer.composable.scope.PrimerCheckoutScope
@@ -31,38 +33,43 @@ internal fun Primer.Checkout(
     cardFormScreen: (@Composable CardFormScope.() -> Unit)?,
     successScreen: (@Composable PrimerCheckoutScope.() -> Unit)?,
 ) = with(viewModel<CheckoutViewModel>()) {
-    val context = LocalContext.current
 
-    DisposableEffect(clientToken) {
-        initialize(context, clientToken, primerSettings)
-        onDispose { onDismiss() }
-    }
+    PrimerTheme {
+        val context = LocalContext.current
 
-    when (val state = state.collectAsStateWithLifecycle().value) {
-        PrimerCheckoutScope.State.Dismissed -> Unit
-        PrimerCheckoutScope.State.Initializing -> splashScreen?.invoke(this)
-        is PrimerCheckoutScope.State.Error -> errorScreen?.invoke(this, "${state.exception.message}")
-        PrimerCheckoutScope.State.Ready -> {
-            val content: @Composable () -> Unit = {
-                CheckoutNavHost(
-                    modifier = modifier,
-                    splashScreen = { splashScreen?.invoke(this@with) ?: SplashScreen() },
-                    loadingScreen = { loadingScreen?.invoke(this@with) ?: LoadingScreen() },
-                    paymentSelectionScreen = { paymentSelectionScreen?.invoke(this) ?: PaymentMethodSelectionScreen() },
-                    cardFormScopeScreen = { cardFormScreen?.invoke(this) ?: CardFormScreen() },
-                    successScreen = { successScreen?.invoke(this@with) ?: SuccessScreen() },
-                    errorScreen = { errorScreen?.invoke(this@with, it) ?: ErrorScreen() },
-                )
-            }
+        DisposableEffect(clientToken) {
+            initialize(context, clientToken, primerSettings)
+            onDispose { onDismiss() }
+        }
 
-            container?.invoke(this, content) ?: run {
-                ModalBottomSheet(
-                    onDismissRequest = ::onDismiss,
-                    dragHandle = {},
-                    modifier = modifier,
-                    content = { content() },
-                )
+        when (val state = state.collectAsStateWithLifecycle().value) {
+            PrimerCheckoutScope.State.Dismissed -> Unit
+            PrimerCheckoutScope.State.Initializing -> splashScreen?.invoke(this)
+            is PrimerCheckoutScope.State.Error -> errorScreen?.invoke(this, "${state.exception.message}")
+            PrimerCheckoutScope.State.Ready -> {
+                val content: @Composable () -> Unit = {
+                    CheckoutNavHost(
+                        modifier = modifier,
+                        splashScreen = { splashScreen?.invoke(this@with) ?: SplashScreen() },
+                        loadingScreen = { loadingScreen?.invoke(this@with) ?: LoadingScreen() },
+                        paymentSelectionScreen = { paymentSelectionScreen?.invoke(this) ?: PaymentMethodSelectionScreen() },
+                        cardFormScopeScreen = { cardFormScreen?.invoke(this) ?: CardFormScreen() },
+                        successScreen = { successScreen?.invoke(this@with) ?: SuccessScreen() },
+                        errorScreen = { errorScreen?.invoke(this@with, it) ?: ErrorScreen() },
+                    )
+                }
+
+                container?.invoke(this, content) ?: run {
+                    ModalBottomSheet(
+                        onDismissRequest = ::onDismiss,
+                        dragHandle = {},
+                        modifier = modifier,
+                        containerColor = LocalPrimerColorTokens.current.primerColorBackground,
+                        content = { content() },
+                    )
+                }
             }
         }
     }
+
 }

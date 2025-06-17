@@ -1,12 +1,7 @@
 package io.primer.composable.internal.presentation.screens.card
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.imePadding
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import io.primer.composable.internal.presentation.checkout.components.CheckoutAppBar
@@ -24,11 +19,7 @@ internal fun CardFormScope.CardFormScreen(
 
     Column(
         modifier = modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState())
-            .padding(spacing.large)
-            .imePadding()
-            .navigationBarsPadding(),
+            .padding(spacing.large),
     ) {
 
         CheckoutAppBar(

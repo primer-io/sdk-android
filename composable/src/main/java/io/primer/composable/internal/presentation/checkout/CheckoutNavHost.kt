@@ -13,7 +13,6 @@ import androidx.navigation.compose.rememberNavController
 import io.primer.android.core.di.DISdkContext
 import io.primer.composable.internal.presentation.screens.card.CardViewModel
 import io.primer.composable.internal.presentation.screens.paymentMethodSelection.PaymentMethodSelectionViewModel
-import io.primer.composable.internal.presentation.theme.PrimerTheme
 import io.primer.composable.scope.CardFormScope
 import io.primer.composable.scope.PaymentMethodSelectionScope
 import io.primer.composable.scope.PrimerCheckoutScope
@@ -32,45 +31,43 @@ internal fun PrimerCheckoutScope.CheckoutNavHost(
     paymentSelectionScreen: (@Composable PaymentMethodSelectionScope.() -> Unit),
     cardFormScopeScreen: (@Composable CardFormScope.() -> Unit),
 ) {
-    PrimerTheme {
-        CompositionLocalProvider(
-            LocalNavController provides rememberNavController(),
-            LocalCheckoutNavigator provides DISdkContext.componentsSdkContainer?.resolve<CheckoutNavigator>()!!,
-        ) {
-            val navController = LocalNavController.current
+    CompositionLocalProvider(
+        LocalNavController provides rememberNavController(),
+        LocalCheckoutNavigator provides DISdkContext.componentsSdkContainer?.resolve<CheckoutNavigator>()!!,
+    ) {
+        val navController = LocalNavController.current
 
-            CheckoutNavigator {
-                NavHost(
-                    navController = navController,
-                    startDestination = Screen.PaymentsList.route,
-                    modifier = modifier.fillMaxSize(),
-                ) {
-                    composable(Screen.Splash.route) {
-                        splashScreen()
-                    }
+        CheckoutNavigator {
+            NavHost(
+                navController = navController,
+                startDestination = Screen.PaymentsList.route,
+                modifier = modifier.fillMaxSize(),
+            ) {
+                composable(Screen.Splash.route) {
+                    splashScreen()
+                }
 
-                    composable(Screen.Loading.route) {
-                        loadingScreen()
-                    }
+                composable(Screen.Loading.route) {
+                    loadingScreen()
+                }
 
-                    composable(Screen.Error.route) { backStackEntry ->
-                        // Retrieve error from SavedStateHandle - set when navigating via:
-                        // navController.currentBackStackEntry?.savedStateHandle?.set("error", primerError)
-                        val error = backStackEntry.savedStateHandle.get<String>("error")
-                        error?.let { errorScreen(it) }
-                    }
+                composable(Screen.Error.route) { backStackEntry ->
+                    // Retrieve error from SavedStateHandle - set when navigating via:
+                    // navController.currentBackStackEntry?.savedStateHandle?.set("error", primerError)
+                    val error = backStackEntry.savedStateHandle.get<String>("error")
+                    error?.let { errorScreen(it) }
+                }
 
-                    composable(Screen.Success.route) {
-                        successScreen()
-                    }
+                composable(Screen.Success.route) {
+                    successScreen()
+                }
 
-                    composable(Screen.PaymentsList.route) {
-                        viewModel<PaymentMethodSelectionViewModel>().paymentSelectionScreen()
-                    }
+                composable(Screen.PaymentsList.route) {
+                    viewModel<PaymentMethodSelectionViewModel>().paymentSelectionScreen()
+                }
 
-                    composable(Screen.CardForm.route) {
-                        viewModel<CardViewModel>().cardFormScopeScreen()
-                    }
+                composable(Screen.CardForm.route) {
+                    viewModel<CardViewModel>().cardFormScopeScreen()
                 }
             }
         }
