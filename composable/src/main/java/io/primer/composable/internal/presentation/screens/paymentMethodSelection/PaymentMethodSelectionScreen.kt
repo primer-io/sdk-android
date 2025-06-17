@@ -15,6 +15,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import io.primer.composable.internal.domain.models.PrimerComposablePaymentMethod
+import io.primer.composable.internal.presentation.checkout.components.CheckoutAppBar
 import io.primer.composable.internal.presentation.components.SurchargeLabel
 import io.primer.composable.internal.presentation.theme.LocalPrimerSpacingTokens
 import io.primer.composable.scope.PaymentMethodSelectionScope
@@ -30,8 +31,14 @@ internal fun PaymentMethodSelectionScope.PaymentMethodSelectionScreen(
 
     Column(
         modifier = modifier
-            .padding(LocalPrimerSpacingTokens.current.large)
+            .padding(LocalPrimerSpacingTokens.current.large),
     ) {
+
+        CheckoutAppBar(
+            title = "Select Payment Method",
+            onBackClick = null,
+            onCancelClick = { onCancel() },
+        )
 
         LazyColumn(
             verticalArrangement = Arrangement.spacedBy(LocalPrimerSpacingTokens.current.small),
@@ -60,7 +67,7 @@ internal fun PaymentMethodSelectionScope.PaymentMethodItem(
     currency: java.util.Currency? = null,
 ) {
     val spacing = LocalPrimerSpacingTokens.current
-    
+
     Card(
         modifier = modifier
             .fillMaxWidth()

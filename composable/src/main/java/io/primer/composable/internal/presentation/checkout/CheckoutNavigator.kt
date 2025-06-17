@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.staticCompositionLocalOf
 import io.primer.composable.internal.presentation.checkout.CheckoutNavigator.NavigationEvent
+import io.primer.composable.internal.presentation.checkout.CheckoutNavigator.NavigationEvent.Dismiss
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -30,10 +31,15 @@ internal class CheckoutNavigator() {
         _navigationEvents.emit(NavigationEvent.NavigateToError(errorMessage))
     }
 
+    suspend fun dismiss() {
+        _navigationEvents.emit(Dismiss)
+    }
+
     internal sealed class NavigationEvent {
         data class NavigateTo(val screen: Screen) : NavigationEvent()
         object NavigateBack : NavigationEvent()
         data class NavigateToError(val errorMessage: String) : NavigationEvent()
+        object Dismiss: NavigationEvent()
     }
 }
 
@@ -50,6 +56,9 @@ internal fun CheckoutNavigator(navHost: @Composable () -> Unit) {
                 is NavigationEvent.NavigateToError -> {
                     navController.currentBackStackEntry?.savedStateHandle?.set("error", event.errorMessage)
                     navController.navigate(Screen.Error.route)
+                }
+                Dismiss -> {
+
                 }
             }
         }

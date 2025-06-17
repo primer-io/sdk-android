@@ -149,4 +149,17 @@ internal class CardViewModel : ViewModel(), CardFormScope, DISdkComponent {
 //            }
 //        }
     }
+
+    override fun exit() {
+        viewModelScope.launch {
+            checkoutNavigator.navigateBack()
+        }
+    }
+
+    // TODO this should be checkout scope, dismiss everything and call cleanup
+    override fun dismiss() {
+        viewModelScope.launch {
+            checkoutNavigator.dismiss()
+        }
+    }
 }

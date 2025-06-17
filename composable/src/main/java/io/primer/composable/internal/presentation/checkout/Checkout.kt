@@ -60,7 +60,7 @@ internal fun Primer.Checkout(
                     onDismissRequest = ::cleanup,
                     dragHandle = {},
                     modifier = modifier,
-                    content = { content() }
+                    content = { content() },
                 )
             }
         }

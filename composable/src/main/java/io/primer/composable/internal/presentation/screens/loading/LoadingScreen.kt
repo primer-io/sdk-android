@@ -17,7 +17,7 @@ internal fun PrimerCheckoutScope.LoadingScreen(
     text: String = "Loading",
 ) {
     val spacing = LocalPrimerSpacingTokens.current
-    
+
     Column(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally,

@@ -23,5 +23,4 @@ interface PrimerCheckoutScope {
         data object Ready : State
         data class Error(val exception: Throwable) : State
     }
-
 }

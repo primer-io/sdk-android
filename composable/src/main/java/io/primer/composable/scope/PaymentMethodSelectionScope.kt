@@ -12,11 +12,13 @@ interface PaymentMethodSelectionScope {
 
     fun onPaymentMethodSelected(paymentMethod: PrimerComposablePaymentMethod)
 
+    fun onCancel()
+
     sealed interface State {
         data object Loading : State
         data class Ready(
             val paymentMethods: List<PrimerComposablePaymentMethod>,
-            val currency: java.util.Currency?
+            val currency: java.util.Currency?,
         ) : State
         data class Error(val exception: Throwable) : State
     }

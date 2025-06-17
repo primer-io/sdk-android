@@ -46,6 +46,10 @@ interface CardFormScope {
 
     fun submit()
 
+    fun exit()
+
+    fun dismiss()
+
     data class State(
         val cardFields: List<PrimerInputElementType> = emptyList(),
         val billingFields: List<PrimerInputElementType> = emptyList(),

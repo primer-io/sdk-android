@@ -20,7 +20,7 @@ internal class GetAvailablePaymentMethodsInteractor : DISdkComponent {
         } catch (e: Exception) {
             emptyMap()
         }
-        
+
         paymentMethods.map { paymentMethodMapper.toComposable(it, surcharges) }
     }
 }

@@ -14,7 +14,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
-import io.primer.composable.internal.presentation.theme.LocalPrimerSpacingTokens
 import io.primer.composable.internal.presentation.screens.card.components.input.AddressLine1Input
 import io.primer.composable.internal.presentation.screens.card.components.input.AddressLine2Input
 import io.primer.composable.internal.presentation.screens.card.components.input.CityInput
@@ -23,6 +22,7 @@ import io.primer.composable.internal.presentation.screens.card.components.input.
 import io.primer.composable.internal.presentation.screens.card.components.input.LastNameInput
 import io.primer.composable.internal.presentation.screens.card.components.input.PostalCodeInput
 import io.primer.composable.internal.presentation.screens.card.components.input.StateInput
+import io.primer.composable.internal.presentation.theme.LocalPrimerSpacingTokens
 import io.primer.composable.scope.CardFormScope
 
 @Composable
@@ -32,7 +32,7 @@ internal fun CardFormScope.BillingAddressForm(
     val state by state.collectAsState()
     val billingInputFields = state.billingFields
     if (billingInputFields.isEmpty()) return
-    
+
     val spacing = LocalPrimerSpacingTokens.current
 
     Column(

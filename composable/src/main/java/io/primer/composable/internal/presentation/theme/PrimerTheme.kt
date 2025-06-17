@@ -53,7 +53,7 @@ private fun createColorScheme(colorTokens: LightColorTokens): ColorScheme {
             error = colorTokens.primerColorRed500,
             onError = colorTokens.primerColorGray000,
             errorContainer = colorTokens.primerColorRed100,
-            onErrorContainer = colorTokens.primerColorRed900
+            onErrorContainer = colorTokens.primerColorRed900,
         )
     } else {
         lightColorScheme(
@@ -74,7 +74,7 @@ private fun createColorScheme(colorTokens: LightColorTokens): ColorScheme {
             error = colorTokens.primerColorRed500,
             onError = colorTokens.primerColorGray000,
             errorContainer = colorTokens.primerColorRed100,
-            onErrorContainer = colorTokens.primerColorRed900
+            onErrorContainer = colorTokens.primerColorRed900,
         )
     }
 }
@@ -89,34 +89,34 @@ private fun createTypography(typographyTokens: TypographyTokens): Typography {
         bodyMedium = typographyTokens.bodyMedium.toTextStyle(),
         bodySmall = typographyTokens.bodySmall.toTextStyle(),
         labelMedium = typographyTokens.bodyMedium.toTextStyle(),
-        labelSmall = typographyTokens.bodySmall.toTextStyle()
+        labelSmall = typographyTokens.bodySmall.toTextStyle(),
     )
 }
 
 @Composable
 internal fun PrimerTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    content: @Composable () -> Unit
+    content: @Composable () -> Unit,
 ) {
     val colorTokens = if (darkTheme) DarkColorTokens() else LightColorTokens()
     val typographyTokens = TypographyTokens()
     val sizeTokens = SizeTokens()
     val spacingTokens = SpacingTokens()
     val radiusTokens = RadiusTokens()
-    
+
     val colorScheme = createColorScheme(colorTokens)
     val typography = createTypography(typographyTokens)
-    
+
     CompositionLocalProvider(
         LocalPrimerColorTokens provides colorTokens,
         LocalPrimerSizeTokens provides sizeTokens,
         LocalPrimerSpacingTokens provides spacingTokens,
-        LocalPrimerRadiusTokens provides radiusTokens
+        LocalPrimerRadiusTokens provides radiusTokens,
     ) {
         MaterialTheme(
             colorScheme = colorScheme,
             typography = typography,
-            content = content
+            content = content,
         )
     }
 }

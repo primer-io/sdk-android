@@ -12,7 +12,6 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import io.primer.composable.internal.presentation.theme.LocalPrimerColorTokens
 import io.primer.composable.internal.presentation.theme.LocalPrimerSpacingTokens
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -21,16 +20,14 @@ internal fun CheckoutAppBar(
     title: String,
     onBackClick: (() -> Unit)?,
     onCancelClick: (() -> Unit)?,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
-    val colorTokens = LocalPrimerColorTokens.current
-    
+
     TopAppBar(
         title = {
             Text(
                 text = title,
                 style = MaterialTheme.typography.displayLarge,
-                color = colorTokens.primerColorTextPrimary
             )
         },
         navigationIcon = {
@@ -39,7 +36,7 @@ internal fun CheckoutAppBar(
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                         contentDescription = "Back",
-                        tint = MaterialTheme.colorScheme.onSurface
+                        tint = MaterialTheme.colorScheme.onSurface,
                     )
                 }
             }
@@ -48,16 +45,16 @@ internal fun CheckoutAppBar(
             onCancelClick?.let {
                 TextButton(
                     onClick = it,
-                    modifier = Modifier.padding(end = LocalPrimerSpacingTokens.current.small)
+                    modifier = Modifier.padding(end = LocalPrimerSpacingTokens.current.small),
                 ) {
                     Text(
                         text = "Cancel",
                         style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurface
+                        color = MaterialTheme.colorScheme.onSurface,
                     )
                 }
             }
         },
-        modifier = modifier
+        modifier = modifier,
     )
 }

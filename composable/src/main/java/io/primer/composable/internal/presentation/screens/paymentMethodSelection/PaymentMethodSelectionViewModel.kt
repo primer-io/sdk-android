@@ -54,4 +54,11 @@ class PaymentMethodSelectionViewModel : ViewModel(), PaymentMethodSelectionScope
             checkoutNavigator.navigateTo(Screen.CardForm)
         }
     }
+
+    override fun onCancel() {
+        viewModelScope.launch {
+            // TODO: Handle checkout cancellation logic
+            checkoutNavigator.navigateBack()
+        }
+    }
 }

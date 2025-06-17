@@ -28,7 +28,7 @@ internal fun PrimerCheckoutScope.SuccessScreen(
     val spacing = LocalPrimerSpacingTokens.current
     val sizeTokens = LocalPrimerSizeTokens.current
     val colorTokens = LocalPrimerColorTokens.current
-    
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -41,29 +41,29 @@ internal fun PrimerCheckoutScope.SuccessScreen(
             imageVector = Icons.Default.Check,
             contentDescription = "Success",
             tint = Color.White,
-            modifier = Modifier.size(sizeTokens.xxxlarge)
+            modifier = Modifier.size(sizeTokens.xxxlarge),
         )
-        
+
         Spacer(modifier = Modifier.height(spacing.xlarge))
-        
+
         // Title
         Text(
             text = "Payment successful",
             style = MaterialTheme.typography.bodyLarge,
             color = colorTokens.primerColorTextPrimary,
-            textAlign = TextAlign.Center
+            textAlign = TextAlign.Center,
         )
-        
+
         Spacer(modifier = Modifier.height(spacing.small))
-        
+
         // Subtitle
         Text(
             text = "You'll be redirected to the order confirmation page soon.",
             style = MaterialTheme.typography.bodyMedium,
             color = colorTokens.primerColorTextSecondary,
-            textAlign = TextAlign.Center
+            textAlign = TextAlign.Center,
         )
-        
+
         Spacer(modifier = Modifier.weight(1f))
     }
 }

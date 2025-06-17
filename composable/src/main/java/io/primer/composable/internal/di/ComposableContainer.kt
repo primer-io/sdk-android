@@ -22,7 +22,11 @@ import io.primer.composable.internal.presentation.checkout.CheckoutNavigator
 import io.primer.ui.core.configuration.domain.model.BasicOrderInfoInteractor
 import io.primer.ui.core.payment.domain.interactor.SurchargeInteractor
 
-internal class ComposableContainer(@Suppress("UNUSED_PARAMETER") private val sdk: () -> SdkContainer) : DependencyContainer() {
+internal class ComposableContainer(
+    @Suppress(
+        "UNUSED_PARAMETER",
+    ) private val sdk: () -> SdkContainer,
+) : DependencyContainer() {
 
     override fun registerInitialDependencies() {
         registerSingleton<PaymentMethodMapper> {

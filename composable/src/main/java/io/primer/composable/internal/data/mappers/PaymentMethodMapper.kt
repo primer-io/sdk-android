@@ -7,7 +7,7 @@ import io.primer.composable.internal.domain.models.PrimerComposablePaymentMethod
 internal interface PaymentMethodMapper {
     fun toComposable(
         headless: PrimerHeadlessUniversalCheckoutPaymentMethod,
-        surcharges: Map<String, Surcharge> = emptyMap()
+        surcharges: Map<String, Surcharge> = emptyMap(),
     ): PrimerComposablePaymentMethod
 }
 
@@ -15,7 +15,7 @@ internal class PaymentMethodMapperImpl : PaymentMethodMapper {
 
     override fun toComposable(
         headless: PrimerHeadlessUniversalCheckoutPaymentMethod,
-        surcharges: Map<String, Surcharge>
+        surcharges: Map<String, Surcharge>,
     ): PrimerComposablePaymentMethod {
         return PrimerComposablePaymentMethod(
             paymentMethodType = headless.paymentMethodType,
