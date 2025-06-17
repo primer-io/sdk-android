@@ -10,6 +10,8 @@ import io.primer.composable.internal.domain.interactor.GetRequiredFieldsInteract
 import io.primer.composable.internal.domain.interactor.GetValidationStateInteractor
 import io.primer.composable.internal.domain.interactor.SetCardDataInteractor
 import io.primer.composable.internal.domain.interactor.SubmitPaymentInteractor
+import io.primer.composable.internal.presentation.checkout.CheckoutNavigator
+import io.primer.composable.internal.presentation.checkout.Screen
 import io.primer.composable.scope.CardFormScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -23,6 +25,7 @@ internal class CardViewModel : ViewModel(), CardFormScope, DISdkComponent {
     private val setDataInteractor: SetCardDataInteractor by lazy { resolve() }
     private val getValidationStateInteractor: GetValidationStateInteractor by lazy { resolve() }
     private val submitPaymentInteractor: SubmitPaymentInteractor by lazy { resolve() }
+    private val checkoutNavigator: CheckoutNavigator by lazy { resolve() }
 
     private val logReporter: LogReporter by lazy { resolve() }
 
@@ -123,23 +126,27 @@ internal class CardViewModel : ViewModel(), CardFormScope, DISdkComponent {
 
     override fun submit() {
         viewModelScope.launch {
-            _uiState.value = _uiState.value.copy(isLoading = true, isSubmitEnabled = false)
-            try {
-                val result = submitPaymentInteractor(_uiState.value.inputFields)
-                result.fold(
-                    onSuccess = { checkoutData ->
-                        logReporter.debug("Payment completed successfully")
-                        _uiState.value = _uiState.value.copy(isLoading = false, isSubmitEnabled = true)
-                    },
-                    onFailure = { error ->
-                        logReporter.error("Payment failed: ${error.message}")
-                        _uiState.value = _uiState.value.copy(isLoading = false, isSubmitEnabled = true)
-                    },
-                )
-            } catch (e: Exception) {
-                logReporter.error("Payment submission failed: ${e.message}")
-                _uiState.value = _uiState.value.copy(isLoading = false, isSubmitEnabled = true)
-            }
+            checkoutNavigator.navigateTo(Screen.Success)
         }
+
+//        viewModelScope.launch {
+//            _uiState.value = _uiState.value.copy(isLoading = true, isSubmitEnabled = false)
+//            try {
+//                val result = submitPaymentInteractor(_uiState.value.inputFields)
+//                result.fold(
+//                    onSuccess = { checkoutData ->
+//                        logReporter.debug("Payment completed successfully")
+//                        _uiState.value = _uiState.value.copy(isLoading = false, isSubmitEnabled = true)
+//                    },
+//                    onFailure = { error ->
+//                        logReporter.error("Payment failed: ${error.message}")
+//                        _uiState.value = _uiState.value.copy(isLoading = false, isSubmitEnabled = true)
+//                    },
+//                )
+//            } catch (e: Exception) {
+//                logReporter.error("Payment submission failed: ${e.message}")
+//                _uiState.value = _uiState.value.copy(isLoading = false, isSubmitEnabled = true)
+//            }
+//        }
     }
 }

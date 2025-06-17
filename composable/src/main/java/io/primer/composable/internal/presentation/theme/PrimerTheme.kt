@@ -100,11 +100,19 @@ internal fun PrimerTheme(
 ) {
     val colorTokens = if (darkTheme) DarkColorTokens() else LightColorTokens()
     val typographyTokens = TypographyTokens()
+    val sizeTokens = SizeTokens()
+    val spacingTokens = SpacingTokens()
+    val radiusTokens = RadiusTokens()
     
     val colorScheme = createColorScheme(colorTokens)
     val typography = createTypography(typographyTokens)
     
-    CompositionLocalProvider(LocalPrimerColorTokens provides colorTokens) {
+    CompositionLocalProvider(
+        LocalPrimerColorTokens provides colorTokens,
+        LocalPrimerSizeTokens provides sizeTokens,
+        LocalPrimerSpacingTokens provides spacingTokens,
+        LocalPrimerRadiusTokens provides radiusTokens
+    ) {
         MaterialTheme(
             colorScheme = colorScheme,
             typography = typography,
