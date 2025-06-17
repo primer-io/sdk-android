@@ -18,7 +18,7 @@ import kotlinx.coroutines.launch
 internal class CheckoutViewModel : ViewModel(), PrimerCheckoutScope, DISdkComponent {
 
     private val _state =
-        MutableStateFlow<PrimerCheckoutScope.State>(PrimerCheckoutScope.State.NotInitialized)
+        MutableStateFlow<PrimerCheckoutScope.State>(PrimerCheckoutScope.State.Initializing)
     override val state: StateFlow<PrimerCheckoutScope.State> = _state.asStateFlow()
 
     @Synchronized
@@ -28,7 +28,6 @@ internal class CheckoutViewModel : ViewModel(), PrimerCheckoutScope, DISdkCompon
         primerSettings: PrimerSettings,
     ) {
         viewModelScope.launch {
-            _state.value = PrimerCheckoutScope.State.Initializing
             runCatching {
                 DISdkContextInitializer.initComponents(
                     config = PrimerConfig().apply {
@@ -48,9 +47,10 @@ internal class CheckoutViewModel : ViewModel(), PrimerCheckoutScope, DISdkCompon
     }
 
     @Synchronized
-    override fun cleanup() {
+    override fun dismiss() {
         DISdkContext.componentsSdkContainer?.clear()
         DISdkContext.componentsSdkContainer = null
-        _state.value = PrimerCheckoutScope.State.NotInitialized
+        _state.value = PrimerCheckoutScope.State.Dismissed
     }
+
 }

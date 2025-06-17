@@ -14,13 +14,16 @@ interface PrimerCheckoutScope {
         primerSettings: PrimerSettings,
     )
 
-    fun cleanup()
+    fun dismiss()
 
     sealed interface State {
 
-        data object NotInitialized : State
         data object Initializing : State
+
         data object Ready : State
+
+        data object Dismissed : State
+
         data class Error(val exception: Throwable) : State
     }
 }

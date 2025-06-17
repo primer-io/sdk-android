@@ -35,11 +35,11 @@ internal fun Primer.Checkout(
 
     DisposableEffect(clientToken) {
         initialize(context, clientToken, primerSettings)
-        onDispose { cleanup() }
+        onDispose { dismiss() }
     }
 
     when (val state = state.collectAsStateWithLifecycle().value) {
-        PrimerCheckoutScope.State.NotInitialized -> Unit
+        PrimerCheckoutScope.State.Dismissed -> Unit
         PrimerCheckoutScope.State.Initializing -> splashScreen?.invoke(this)
         is PrimerCheckoutScope.State.Error -> errorScreen?.invoke(this, "${state.exception.message}")
         PrimerCheckoutScope.State.Ready -> {
@@ -57,7 +57,7 @@ internal fun Primer.Checkout(
 
             container?.invoke(this, content) ?: run {
                 ModalBottomSheet(
-                    onDismissRequest = ::cleanup,
+                    onDismissRequest = ::dismiss,
                     dragHandle = {},
                     modifier = modifier,
                     content = { content() },

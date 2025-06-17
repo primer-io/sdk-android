@@ -5,6 +5,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.staticCompositionLocalOf
 import io.primer.composable.internal.presentation.checkout.CheckoutNavigator.NavigationEvent
 import io.primer.composable.internal.presentation.checkout.CheckoutNavigator.NavigationEvent.Dismiss
+import io.primer.composable.scope.PrimerCheckoutScope
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -14,7 +15,7 @@ internal val LocalCheckoutNavigator = staticCompositionLocalOf<CheckoutNavigator
     error("CheckoutNavigator not provided")
 }
 
-internal class CheckoutNavigator() {
+internal class CheckoutNavigator {
 
     private val _navigationEvents = MutableSharedFlow<NavigationEvent>()
     val navigationEvents: SharedFlow<NavigationEvent> = _navigationEvents.asSharedFlow()
@@ -44,7 +45,9 @@ internal class CheckoutNavigator() {
 }
 
 @Composable
-internal fun CheckoutNavigator(navHost: @Composable () -> Unit) {
+internal fun PrimerCheckoutScope.CheckoutNavigator(
+    navHost: @Composable () -> Unit
+) {
     val checkoutNavigator = LocalCheckoutNavigator.current
     val navController = LocalNavController.current
 
@@ -57,9 +60,7 @@ internal fun CheckoutNavigator(navHost: @Composable () -> Unit) {
                     navController.currentBackStackEntry?.savedStateHandle?.set("error", event.errorMessage)
                     navController.navigate(Screen.Error.route)
                 }
-                Dismiss -> {
-
-                }
+                Dismiss -> dismiss()
             }
         }
     }
