@@ -7,7 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
+import io.primer.composable.internal.presentation.theme.LocalPrimerSpacingTokens
 import io.primer.android.configuration.domain.model.Surcharge
 import io.primer.ui.core.payment.domain.formatter.DefaultSurchargeFormatter
 
@@ -18,6 +18,7 @@ internal fun SurchargeLabel(
     modifier: Modifier = Modifier,
 ) {
     if (surcharge != null && currency != null) {
+        val spacing = LocalPrimerSpacingTokens.current
         val surchargeFormatter = remember { DefaultSurchargeFormatter() }
         
         Text(
@@ -26,7 +27,7 @@ internal fun SurchargeLabel(
                 fontWeight = FontWeight.Medium,
             ),
             color = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = modifier.padding(top = 4.dp),
+            modifier = modifier.padding(top = spacing.xsmall),
         )
     }
 }

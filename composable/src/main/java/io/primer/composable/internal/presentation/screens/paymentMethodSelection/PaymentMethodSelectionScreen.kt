@@ -13,7 +13,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import io.primer.composable.internal.domain.models.PrimerComposablePaymentMethod
 import io.primer.composable.internal.presentation.components.SurchargeLabel
@@ -60,13 +59,15 @@ internal fun PaymentMethodSelectionScope.PaymentMethodItem(
     primerPaymentMethod: PrimerComposablePaymentMethod,
     currency: java.util.Currency? = null,
 ) {
+    val spacing = LocalPrimerSpacingTokens.current
+    
     Card(
         modifier = modifier
             .fillMaxWidth()
             .clickable { onPaymentMethodSelected(primerPaymentMethod) },
     ) {
         Column(
-            modifier = Modifier.padding(16.dp),
+            modifier = Modifier.padding(spacing.large),
         ) {
             Text(
                 text = primerPaymentMethod.paymentMethodName ?: "",
