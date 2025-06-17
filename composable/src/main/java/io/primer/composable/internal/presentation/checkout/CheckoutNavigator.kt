@@ -60,7 +60,7 @@ internal fun PrimerCheckoutScope.CheckoutNavigator(
                     navController.currentBackStackEntry?.savedStateHandle?.set("error", event.errorMessage)
                     navController.navigate(Screen.Error.route)
                 }
-                Dismiss -> dismiss()
+                Dismiss -> onDismiss()
             }
         }
     }

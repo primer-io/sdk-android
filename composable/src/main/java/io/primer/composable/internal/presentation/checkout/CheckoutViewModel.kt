@@ -47,7 +47,7 @@ internal class CheckoutViewModel : ViewModel(), PrimerCheckoutScope, DISdkCompon
     }
 
     @Synchronized
-    override fun dismiss() {
+    override fun onDismiss() {
         DISdkContext.componentsSdkContainer?.clear()
         DISdkContext.componentsSdkContainer = null
         _state.value = PrimerCheckoutScope.State.Dismissed

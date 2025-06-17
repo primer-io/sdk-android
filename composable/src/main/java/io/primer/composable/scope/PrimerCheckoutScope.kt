@@ -14,7 +14,7 @@ interface PrimerCheckoutScope {
         primerSettings: PrimerSettings,
     )
 
-    fun dismiss()
+    fun onDismiss()
 
     sealed interface State {
 

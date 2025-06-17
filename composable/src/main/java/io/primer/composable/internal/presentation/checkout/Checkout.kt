@@ -35,7 +35,7 @@ internal fun Primer.Checkout(
 
     DisposableEffect(clientToken) {
         initialize(context, clientToken, primerSettings)
-        onDispose { dismiss() }
+        onDispose { onDismiss() }
     }
 
     when (val state = state.collectAsStateWithLifecycle().value) {
@@ -57,7 +57,7 @@ internal fun Primer.Checkout(
 
             container?.invoke(this, content) ?: run {
                 ModalBottomSheet(
-                    onDismissRequest = ::dismiss,
+                    onDismissRequest = ::onDismiss,
                     dragHandle = {},
                     modifier = modifier,
                     content = { content() },

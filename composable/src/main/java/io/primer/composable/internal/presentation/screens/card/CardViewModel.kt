@@ -124,7 +124,7 @@ internal class CardViewModel : ViewModel(), CardFormScope, DISdkComponent {
         setDataInteractor.updateInput(otpCode, PrimerInputElementType.OTP_CODE)
     }
 
-    override fun submit() {
+    override fun onSubmit() {
         viewModelScope.launch {
             checkoutNavigator.navigateTo(Screen.Success)
         }
@@ -150,13 +150,13 @@ internal class CardViewModel : ViewModel(), CardFormScope, DISdkComponent {
 //        }
     }
 
-    override fun exit() {
+    override fun onBack() {
         viewModelScope.launch {
             checkoutNavigator.navigateBack()
         }
     }
 
-    override fun dismiss() {
+    override fun onCancel() {
         viewModelScope.launch {
             checkoutNavigator.dismiss()
         }

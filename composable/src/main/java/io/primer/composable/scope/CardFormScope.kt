@@ -44,11 +44,11 @@ interface CardFormScope {
     fun updateRetailOutlet(retailOutlet: String)
     fun updateOtpCode(otpCode: String)
 
-    fun submit()
+    fun onSubmit()
 
-    fun exit()
+    fun onBack()
 
-    fun dismiss()
+    fun onCancel()
 
     data class State(
         val cardFields: List<PrimerInputElementType> = emptyList(),

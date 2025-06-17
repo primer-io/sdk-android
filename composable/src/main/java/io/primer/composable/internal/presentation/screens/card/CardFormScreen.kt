@@ -33,8 +33,8 @@ internal fun CardFormScope.CardFormScreen(
 
         CheckoutAppBar(
             title = "Pay with card",
-            onBackClick = { exit() },
-            onCancelClick = { dismiss() },
+            onBackClick = { onBack() },
+            onCancelClick = { onCancel() },
         )
         CardDetailsForm()
         BillingAddressForm()

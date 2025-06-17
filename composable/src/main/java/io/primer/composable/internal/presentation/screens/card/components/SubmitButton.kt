@@ -17,7 +17,7 @@ internal fun CardFormScope.SubmitButton(
     val currentState by state.collectAsState()
 
     Button(
-        onClick = { submit() },
+        onClick = { onSubmit() },
         modifier = modifier.fillMaxWidth(),
         enabled = currentState.isSubmitEnabled,
     ) {
