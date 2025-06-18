@@ -36,7 +36,8 @@ internal fun PaymentMethodSelectionScope.PaymentMethodSelector(
         PaymentMethodType.ADYEN_IDEAL,
         PaymentMethodType.BUCKAROO_IDEAL,
         PaymentMethodType.MOLLIE_IDEAL,
-        PaymentMethodType.PAY_NL_IDEAL -> {
+        PaymentMethodType.PAY_NL_IDEAL,
+        -> {
             PaymentMethodItemIdeal { onPaymentMethodSelected() }
         }
 
@@ -57,13 +58,13 @@ internal fun PaymentMethodSelectionScope.PaymentMethodSelector(
             PaymentMethodItem(
                 borderColor = LocalPrimerColorTokens.current.primerColorBorderOutlinedDefault,
                 backgroundColor = LocalPrimerColorTokens.current.primerColorBackground,
-                onPaymentMethodSelected = onPaymentMethodSelected
+                onPaymentMethodSelected = onPaymentMethodSelected,
             ) {
                 Text(
                     text = primerMethod.paymentMethodName ?: "",
                     style = LocalPrimerTypographyTokens.current.titleLarge.toTextStyle(),
                     color = LocalPrimerColorTokens.current.primerColorTextPrimary,
-                    modifier = Modifier.padding(LocalPrimerSpacingTokens.current.large)
+                    modifier = Modifier.padding(LocalPrimerSpacingTokens.current.large),
                 )
             }
         }
@@ -84,18 +85,18 @@ internal fun PaymentMethodSelectionScope.PaymentMethodItem(
             .height(LocalPrimerSizeTokens.current.xxlarge)
             .background(
                 color = backgroundColor,
-                shape = RoundedCornerShape(LocalPrimerRadiusTokens.current.medium)
+                shape = RoundedCornerShape(LocalPrimerRadiusTokens.current.medium),
             )
             .then(
                 borderColor?.let {
                     Modifier.border(
                         width = 1.dp,
                         color = it,
-                        shape = RoundedCornerShape(LocalPrimerRadiusTokens.current.medium)
+                        shape = RoundedCornerShape(LocalPrimerRadiusTokens.current.medium),
                     )
-                } ?: Modifier
+                } ?: Modifier,
             )
             .clickable { onPaymentMethodSelected() },
-        contentAlignment = Alignment.Center
+        contentAlignment = Alignment.Center,
     ) { content() }
 }

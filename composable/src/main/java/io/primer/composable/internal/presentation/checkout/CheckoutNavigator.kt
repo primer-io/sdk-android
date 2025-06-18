@@ -40,13 +40,13 @@ internal class CheckoutNavigator {
         data class NavigateTo(val screen: Screen) : NavigationEvent()
         object NavigateBack : NavigationEvent()
         data class NavigateToError(val errorMessage: String) : NavigationEvent()
-        object Dismiss: NavigationEvent()
+        object Dismiss : NavigationEvent()
     }
 }
 
 @Composable
 internal fun PrimerCheckoutScope.CheckoutNavigator(
-    navHost: @Composable () -> Unit
+    navHost: @Composable () -> Unit,
 ) {
     val checkoutNavigator = LocalCheckoutNavigator.current
     val navController = LocalNavController.current

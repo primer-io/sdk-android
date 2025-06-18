@@ -9,13 +9,13 @@ interface SurchargeFormatter {
         amount: Int,
         currency: Currency,
         excludeZero: Boolean = true,
-        noFeeText: String = "No additional fee"
+        noFeeText: String = "No additional fee",
     ): String
 
     fun getSurchargeLabelText(
         amount: Int?,
         currency: Currency,
-        mayApplyText: String = "Additional fees may apply"
+        mayApplyText: String = "Additional fees may apply",
     ): String
 
     fun formatSurchargeAmount(surcharge: Surcharge, currency: Currency): String
@@ -27,10 +27,10 @@ class DefaultSurchargeFormatter : SurchargeFormatter {
         amount: Int,
         currency: Currency,
         excludeZero: Boolean,
-        noFeeText: String
+        noFeeText: String,
     ): String {
         if (amount == 0 && excludeZero) return noFeeText
-        
+
         val numberFormat = NumberFormat.getCurrencyInstance().apply {
             this.currency = currency
         }
@@ -41,7 +41,7 @@ class DefaultSurchargeFormatter : SurchargeFormatter {
     override fun getSurchargeLabelText(
         amount: Int?,
         currency: Currency,
-        mayApplyText: String
+        mayApplyText: String,
     ): String {
         return if (amount == null) {
             mayApplyText

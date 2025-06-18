@@ -52,5 +52,4 @@ internal class CheckoutViewModel : ViewModel(), PrimerCheckoutScope, DISdkCompon
         DISdkContext.componentsSdkContainer = null
         _state.value = PrimerCheckoutScope.State.Dismissed
     }
-
 }

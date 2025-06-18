@@ -26,7 +26,7 @@ internal fun CheckoutAppBar(
             Text(
                 text = title,
                 style = LocalPrimerTypographyTokens.current.titleXlarge.toTextStyle(),
-                color = LocalPrimerColorTokens.current.primerColorTextPrimary
+                color = LocalPrimerColorTokens.current.primerColorTextPrimary,
             )
         },
         navigationIcon = {
@@ -46,7 +46,7 @@ internal fun CheckoutAppBar(
                     Text(
                         text = "Cancel",
                         style = LocalPrimerTypographyTokens.current.titleLarge.toTextStyle(),
-                        color = LocalPrimerColorTokens.current.primerColorTextPrimary
+                        color = LocalPrimerColorTokens.current.primerColorTextPrimary,
                     )
                 }
             }

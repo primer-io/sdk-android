@@ -36,7 +36,6 @@ internal fun PaymentMethodSelectionScope.PaymentMethodSelectionScreen(
             modifier = modifier.padding(horizontal = LocalPrimerSpacingTokens.current.large),
             verticalArrangement = Arrangement.spacedBy(LocalPrimerSpacingTokens.current.small),
         ) {
-
             item {
                 Text(
                     text = "Choose payment method",
@@ -48,7 +47,7 @@ internal fun PaymentMethodSelectionScope.PaymentMethodSelectionScreen(
             items(paymentMethods) { primerMethod ->
                 PaymentMethodSelector(
                     primerMethod = primerMethod,
-                    onPaymentMethodSelected = { onPaymentMethodSelected(primerMethod) }
+                    onPaymentMethodSelected = { onPaymentMethodSelected(primerMethod) },
                 )
             }
         }

@@ -19,18 +19,17 @@ internal fun PaymentMethodSelectionScope.PaymentMethodItemPaypal(
     PaymentMethodItem(
         modifier = modifier,
         backgroundColor = Color(0xFFFFC439),
-        onPaymentMethodSelected = onPaymentMethodSelected
+        onPaymentMethodSelected = onPaymentMethodSelected,
     ) {
         Row {
             Icon(
                 painter = painterResource(id = R.drawable.ic_primer_paypal_icon),
                 contentDescription = null,
             )
-
             Icon(
                 painter = painterResource(id = R.drawable.ic_primer_paypal_logo),
                 contentDescription = null,
-                modifier = Modifier.padding(start = LocalPrimerSpacingTokens.current.xsmall)
+                modifier = Modifier.padding(start = LocalPrimerSpacingTokens.current.xsmall),
             )
         }
     }

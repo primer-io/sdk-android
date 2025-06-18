@@ -23,7 +23,6 @@ import io.primer.composable.scope.CardFormScope
 internal fun CardFormScope.CardDetailsForm(
     modifier: Modifier = Modifier,
 ) {
-
     Column(
         modifier = modifier.fillMaxWidth(),
     ) {

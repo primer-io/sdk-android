@@ -55,10 +55,13 @@ private object InputConfigs {
     fun keyboardOptions(type: PrimerInputElementType): KeyboardOptions = when (type) {
         PrimerInputElementType.EXPIRY_DATE, PrimerInputElementType.OTP_CODE ->
             KeyboardOptions(keyboardType = KeyboardType.Number)
+
         PrimerInputElementType.PHONE_NUMBER ->
             KeyboardOptions(keyboardType = KeyboardType.Phone)
+
         PrimerInputElementType.POSTAL_CODE ->
             KeyboardOptions(keyboardType = KeyboardType.Text)
+
         else -> KeyboardOptions.Default
     }
 
@@ -140,7 +143,8 @@ internal fun CardFormScope.CardNumberInput(
     val state by state.collectAsState()
 
     // Check if this field should be shown
-    val isFieldRequired = PrimerInputElementType.CARD_NUMBER in state.cardFields || PrimerInputElementType.CARD_NUMBER in state.billingFields
+    val isFieldRequired = PrimerInputElementType.CARD_NUMBER in state.cardFields ||
+        PrimerInputElementType.CARD_NUMBER in state.billingFields
     if (!isFieldRequired) return
 
     val value = state.inputFields[PrimerInputElementType.CARD_NUMBER] ?: ""
@@ -187,7 +191,8 @@ internal fun CardFormScope.CvvInput(
     val state by state.collectAsState()
 
     // Check if this field should be shown
-    val isFieldRequired = PrimerInputElementType.CVV in state.cardFields || PrimerInputElementType.CVV in state.billingFields
+    val isFieldRequired =
+        PrimerInputElementType.CVV in state.cardFields || PrimerInputElementType.CVV in state.billingFields
     if (!isFieldRequired) return
 
     val value = state.inputFields[PrimerInputElementType.CVV] ?: ""

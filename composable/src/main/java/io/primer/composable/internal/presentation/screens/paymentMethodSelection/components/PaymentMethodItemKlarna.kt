@@ -17,17 +17,16 @@ internal fun PaymentMethodSelectionScope.PaymentMethodItemKlarna(
     PaymentMethodItem(
         borderColor = LocalPrimerColorTokens.current.primerColorBorderOutlinedDefault,
         backgroundColor = LocalPrimerColorTokens.current.primerColorBackground,
-        onPaymentMethodSelected = onPaymentMethodSelected
+        onPaymentMethodSelected = onPaymentMethodSelected,
     ) {
         Row(
             modifier = modifier
                 .padding(
                     horizontal = LocalPrimerSpacingTokens.current.small,
-                    vertical = LocalPrimerSpacingTokens.current.medium
+                    vertical = LocalPrimerSpacingTokens.current.medium,
                 ),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-
         }
     }
 }

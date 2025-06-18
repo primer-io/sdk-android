@@ -34,7 +34,6 @@ internal fun Primer.Checkout(
     cardFormScreen: (@Composable CardFormScope.() -> Unit)?,
     successScreen: (@Composable PrimerCheckoutScope.() -> Unit)?,
 ) = with(viewModel<CheckoutViewModel>()) {
-
     PrimerTheme {
         val context = LocalContext.current
 
@@ -64,9 +63,9 @@ internal fun Primer.Checkout(
 
                 container?.invoke(this, content) ?: run {
                     val sheetState = rememberModalBottomSheetState(
-                        skipPartiallyExpanded = true
+                        skipPartiallyExpanded = true,
                     )
-                    
+
                     ModalBottomSheet(
                         sheetState = sheetState,
                         onDismissRequest = ::onDismiss,
@@ -78,5 +77,4 @@ internal fun Primer.Checkout(
             }
         }
     }
-
 }

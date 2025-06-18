@@ -23,22 +23,21 @@ internal fun PaymentMethodSelectionScope.PaymentMethodItemCard(
     PaymentMethodItem(
         modifier = modifier,
         borderColor = LocalPrimerColorTokens.current.primerColorBorderOutlinedDefault,
-        onPaymentMethodSelected = onPaymentMethodSelected
+        onPaymentMethodSelected = onPaymentMethodSelected,
     ) {
         Row {
             Icon(
                 painter = painterResource(id = R.drawable.ic_primer_credit_card),
                 contentDescription = null,
                 tint = LocalPrimerColorTokens.current.primerColorTextPrimary,
-                modifier = Modifier.size(LocalPrimerSizeTokens.current.medium)
+                modifier = Modifier.size(LocalPrimerSizeTokens.current.medium),
             )
             Text(
                 text = "Pay with card",
                 style = LocalPrimerTypographyTokens.current.titleLarge.toTextStyle(),
                 color = LocalPrimerColorTokens.current.primerColorTextPrimary,
-                modifier = Modifier.padding(start = LocalPrimerSpacingTokens.current.small)
+                modifier = Modifier.padding(start = LocalPrimerSpacingTokens.current.small),
             )
         }
-
     }
 }
