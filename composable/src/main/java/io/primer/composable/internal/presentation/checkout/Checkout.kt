@@ -1,8 +1,5 @@
 package io.primer.composable.internal.presentation.checkout
 
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.imePadding
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -74,10 +71,6 @@ internal fun Primer.Checkout(
                         sheetState = sheetState,
                         onDismissRequest = ::onDismiss,
                         dragHandle = {},
-                        modifier = modifier
-                            .fillMaxWidth()
-                            .imePadding()
-                            .navigationBarsPadding(),
                         containerColor = LocalPrimerColorTokens.current.primerColorBackground,
                         content = { content() },
                     )

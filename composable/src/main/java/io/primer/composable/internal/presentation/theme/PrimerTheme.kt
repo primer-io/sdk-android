@@ -3,7 +3,6 @@ package io.primer.composable.internal.presentation.theme
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Typography
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
@@ -30,6 +29,10 @@ val LocalPrimerSizeTokens = staticCompositionLocalOf<SizeTokens> {
 
 val LocalPrimerSpacingTokens = staticCompositionLocalOf<SpacingTokens> {
     SpacingTokens()
+}
+
+val LocalPrimerTypographyTokens = staticCompositionLocalOf<TypographyTokens> {
+    TypographyTokens()
 }
 
 @Composable
@@ -80,20 +83,6 @@ private fun createColorScheme(colorTokens: LightColorTokens): ColorScheme {
 }
 
 @Composable
-private fun createTypography(typographyTokens: TypographyTokens): Typography {
-    return Typography(
-        displayLarge = typographyTokens.titleXlarge.toTextStyle(),
-        headlineMedium = typographyTokens.titleLarge.toTextStyle(),
-        titleLarge = typographyTokens.titleLarge.toTextStyle(),
-        bodyLarge = typographyTokens.bodyLarge.toTextStyle(),
-        bodyMedium = typographyTokens.bodyMedium.toTextStyle(),
-        bodySmall = typographyTokens.bodySmall.toTextStyle(),
-        labelMedium = typographyTokens.bodyMedium.toTextStyle(),
-        labelSmall = typographyTokens.bodySmall.toTextStyle(),
-    )
-}
-
-@Composable
 internal fun PrimerTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable () -> Unit,
@@ -105,17 +94,16 @@ internal fun PrimerTheme(
     val radiusTokens = RadiusTokens()
 
     val colorScheme = createColorScheme(colorTokens)
-    val typography = createTypography(typographyTokens)
 
     CompositionLocalProvider(
         LocalPrimerColorTokens provides colorTokens,
         LocalPrimerSizeTokens provides sizeTokens,
         LocalPrimerSpacingTokens provides spacingTokens,
         LocalPrimerRadiusTokens provides radiusTokens,
+        LocalPrimerTypographyTokens provides typographyTokens,
     ) {
         MaterialTheme(
             colorScheme = colorScheme,
-            typography = typography,
             content = content,
         )
     }

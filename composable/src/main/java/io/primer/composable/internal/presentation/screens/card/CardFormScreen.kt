@@ -17,18 +17,19 @@ internal fun CardFormScope.CardFormScreen(
 ) {
     val spacing = LocalPrimerSpacingTokens.current
 
-    Column(
-        modifier = modifier
-            .padding(spacing.large),
-    ) {
-
+    Column {
         CheckoutAppBar(
             title = "Pay with card",
             onBackClick = { onBack() },
             onCancelClick = { onCancel() },
         )
-        CardDetailsForm()
-        BillingAddressForm()
-        SubmitButton(text = "Submit")
+        Column(
+            modifier = modifier
+                .padding(spacing.large),
+        ) {
+            CardDetailsForm()
+            BillingAddressForm()
+            SubmitButton(text = "Submit")
+        }
     }
 }
