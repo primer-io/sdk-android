@@ -40,7 +40,7 @@ class PaymentMethodSelectionViewModel : ViewModel(), PaymentMethodSelectionScope
                             null
                         }
                     }
-                    _uiState.value = PaymentMethodSelectionScope.State.Ready(methods, currency)
+                    _uiState.value = PaymentMethodSelectionScope.State.Ready(methods, currency, orderInfo.totalAmount)
                 },
                 onFailure = { error ->
                     _uiState.value = PaymentMethodSelectionScope.State.Error(error)

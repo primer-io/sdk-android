@@ -19,6 +19,7 @@ interface PaymentMethodSelectionScope {
         data class Ready(
             val paymentMethods: List<PrimerComposablePaymentMethod>,
             val currency: java.util.Currency?,
+            val totalAmount: Int,
         ) : State
 
         data class Error(val exception: Throwable) : State
