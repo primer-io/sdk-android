@@ -1,12 +1,12 @@
 package io.primer.android.ui.components
 
 import android.content.Context
-import android.graphics.drawable.ColorDrawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.drawable.toDrawable
 import androidx.core.view.isVisible
 import io.primer.android.R
 import io.primer.android.components.assets.ui.getCardImageAsset
@@ -41,16 +41,14 @@ internal class CardPopupMenuAdapter(
             textViewCardNetworkName.text = menuList[position].displayName
             imageViewCheckmark.isVisible = isSelected
             linearLayoutCardNetworkDescription.background =
-                ColorDrawable(
-                    ContextCompat.getColor(
-                        context,
-                        if (isSelected) {
-                            R.color.primer_gray_100
-                        } else {
-                            R.color.design_default_color_background
-                        },
-                    ),
-                )
+                ContextCompat.getColor(
+                    context,
+                    if (isSelected) {
+                        R.color.primer_gray_100
+                    } else {
+                        R.color.design_default_color_background
+                    },
+                ).toDrawable()
         }
         return view
     }

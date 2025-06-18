@@ -180,7 +180,7 @@ constructor(
     }
 
     fun onHandleAvailable(billingFields: Map<String, Boolean>?) {
-        if (billingFields == null || billingFields.isEmpty()) {
+        if (billingFields.isNullOrEmpty()) {
             fields().forEach { it.onFocusChangeListener = null }
             isVisible = false
         } else {

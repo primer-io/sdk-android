@@ -1,12 +1,12 @@
 package io.primer.android.data.settings
 
 import android.content.Context
-import android.graphics.Color
 import android.os.Parcel
 import android.os.Parcelable
 import androidx.annotation.ColorInt
 import androidx.annotation.ColorRes
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.toColorInt
 import io.primer.android.core.data.serialization.json.JSONObjectSerializable
 import io.primer.android.core.data.serialization.json.JSONObjectSerializer
 import io.primer.android.core.utils.UiMode
@@ -133,7 +133,7 @@ class DynamicColor private constructor(
 
         private fun hexToColorInt(hex: String): Int {
             require(hex.matches(HEX_PATTERN)) { "color input ($hex) is not a hex value" }
-            return Color.parseColor(hex)
+            return hex.toColorInt()
         }
 
         fun valueOf(

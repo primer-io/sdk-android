@@ -19,7 +19,7 @@ data class ConfigurationKeysDataResponse(
 
         @JvmField
         val deserializer =
-            JSONObjectDeserializer<ConfigurationKeysDataResponse> { t ->
+            JSONObjectDeserializer { t ->
                 ConfigurationKeysDataResponse(
                     t.optJSONArray(THREE_DS_CERTIFICATES_FIELD)?.sequence<JSONObject>()?.map {
                         JSONSerializationUtils
@@ -48,15 +48,12 @@ data class ThreeDsSecureCertificateDataResponse(
         private const val ENCRYPTION_KEY_FIELD = "encryptionKey"
 
         @JvmField
-        val deserializer =
-            object : JSONObjectDeserializer<ThreeDsSecureCertificateDataResponse> {
-                override fun deserialize(t: JSONObject): ThreeDsSecureCertificateDataResponse {
-                    return ThreeDsSecureCertificateDataResponse(
-                        t.getString(CARD_NETWORK_FIELD),
-                        t.getString(ROOT_CERTIFICATE_FIELD),
-                        t.getString(ENCRYPTION_KEY_FIELD),
-                    )
-                }
-            }
+        val deserializer = JSONObjectDeserializer { t ->
+            ThreeDsSecureCertificateDataResponse(
+                t.getString(CARD_NETWORK_FIELD),
+                t.getString(ROOT_CERTIFICATE_FIELD),
+                t.getString(ENCRYPTION_KEY_FIELD),
+            )
+        }
     }
 }

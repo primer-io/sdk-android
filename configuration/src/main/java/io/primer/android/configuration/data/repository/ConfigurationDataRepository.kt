@@ -1,6 +1,6 @@
 package io.primer.android.configuration.data.repository
 
-import android.net.Uri
+import androidx.core.net.toUri
 import io.primer.android.analytics.data.models.CacheSourceAnalyticsContext
 import io.primer.android.analytics.data.models.TimerId
 import io.primer.android.analytics.data.models.TimerProperties
@@ -95,7 +95,7 @@ internal class ConfigurationDataRepository(
         )
         val configurationResponse =
             remoteConfigurationDataSource.execute(
-                Uri.parse(configurationUrlProvider.provide())
+                configurationUrlProvider.provide().toUri()
                     .buildWithQueryParams(mapOf(DISPLAY_METADATA_QUERY_KEY to true)),
             )
 

@@ -2,11 +2,11 @@ package io.primer.android.webredirect.implementation.tokenization.domain.platfor
 
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
+import androidx.core.net.toUri
 import io.primer.android.configuration.data.datasource.CacheConfigurationDataSource
 import io.primer.android.configuration.data.model.Environment
 
-internal interface PlatformMapper {
+internal fun interface PlatformMapper {
     fun getPlatform(paymentMethodType: String): String
 }
 
@@ -26,7 +26,7 @@ internal class AdyenVippsMapper(
         context: Context,
         deeplink: String,
     ): Boolean {
-        val uri = Uri.parse(deeplink)
+        val uri = deeplink.toUri()
         val intent = Intent(Intent.ACTION_VIEW, uri)
         val packageManager = context.packageManager
         val componentName = intent.resolveActivity(packageManager)
