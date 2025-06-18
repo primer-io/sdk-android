@@ -2,10 +2,12 @@ package io.primer.composable.internal.presentation.screens.paymentMethodSelectio
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import io.primer.composable.internal.presentation.theme.LocalPrimerColorTokens
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
+import io.primer.composable.R
 import io.primer.composable.internal.presentation.theme.LocalPrimerSpacingTokens
 import io.primer.composable.scope.PaymentMethodSelectionScope
 
@@ -15,19 +17,21 @@ internal fun PaymentMethodSelectionScope.PaymentMethodItemPaypal(
     onPaymentMethodSelected: () -> Unit,
 ) {
     PaymentMethodItem(
-        borderColor = LocalPrimerColorTokens.current.primerColorBorderOutlinedDefault,
-        backgroundColor = LocalPrimerColorTokens.current.primerColorBackground,
+        modifier = modifier,
+        backgroundColor = Color(0xFFFFC439),
         onPaymentMethodSelected = onPaymentMethodSelected
     ) {
-        Row(
-            modifier = modifier
-                .padding(
-                    horizontal = LocalPrimerSpacingTokens.current.small,
-                    vertical = LocalPrimerSpacingTokens.current.medium
-                ),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
+        Row {
+            Icon(
+                painter = painterResource(id = R.drawable.ic_primer_paypal_icon),
+                contentDescription = null,
+            )
 
+            Icon(
+                painter = painterResource(id = R.drawable.ic_primer_paypal_logo),
+                contentDescription = null,
+                modifier = Modifier.padding(start = LocalPrimerSpacingTokens.current.xsmall)
+            )
         }
     }
 }

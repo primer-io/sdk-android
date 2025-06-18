@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import io.primer.composable.R
@@ -22,20 +21,13 @@ internal fun PaymentMethodSelectionScope.PaymentMethodItemCard(
     onPaymentMethodSelected: () -> Unit,
 ) {
     PaymentMethodItem(
+        modifier = modifier,
         borderColor = LocalPrimerColorTokens.current.primerColorBorderOutlinedDefault,
-        backgroundColor = LocalPrimerColorTokens.current.primerColorBackground,
         onPaymentMethodSelected = onPaymentMethodSelected
     ) {
-        Row(
-            modifier = modifier
-                .padding(
-                    horizontal = LocalPrimerSpacingTokens.current.small,
-                    vertical = LocalPrimerSpacingTokens.current.medium
-                ),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
+        Row {
             Icon(
-                painter = painterResource(id = R.drawable.icon_credit_card),
+                painter = painterResource(id = R.drawable.ic_primer_credit_card),
                 contentDescription = null,
                 tint = LocalPrimerColorTokens.current.primerColorTextPrimary,
                 modifier = Modifier.size(LocalPrimerSizeTokens.current.medium)
@@ -47,5 +39,6 @@ internal fun PaymentMethodSelectionScope.PaymentMethodItemCard(
                 modifier = Modifier.padding(start = LocalPrimerSpacingTokens.current.small)
             )
         }
+
     }
 }
