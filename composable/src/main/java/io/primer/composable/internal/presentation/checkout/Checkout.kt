@@ -1,7 +1,11 @@
 package io.primer.composable.internal.presentation.checkout
 
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.Modifier
@@ -52,7 +56,9 @@ internal fun Primer.Checkout(
                         modifier = modifier,
                         splashScreen = { splashScreen?.invoke(this@with) ?: SplashScreen() },
                         loadingScreen = { loadingScreen?.invoke(this@with) ?: LoadingScreen() },
-                        paymentSelectionScreen = { paymentSelectionScreen?.invoke(this) ?: PaymentMethodSelectionScreen() },
+                        paymentSelectionScreen = {
+                            paymentSelectionScreen?.invoke(this) ?: PaymentMethodSelectionScreen()
+                        },
                         cardFormScopeScreen = { cardFormScreen?.invoke(this) ?: CardFormScreen() },
                         successScreen = { successScreen?.invoke(this@with) ?: SuccessScreen() },
                         errorScreen = { errorScreen?.invoke(this@with, it) ?: ErrorScreen() },
@@ -60,10 +66,18 @@ internal fun Primer.Checkout(
                 }
 
                 container?.invoke(this, content) ?: run {
+                    val sheetState = rememberModalBottomSheetState(
+                        skipPartiallyExpanded = true
+                    )
+                    
                     ModalBottomSheet(
+                        sheetState = sheetState,
                         onDismissRequest = ::onDismiss,
                         dragHandle = {},
-                        modifier = modifier,
+                        modifier = modifier
+                            .fillMaxWidth()
+                            .imePadding()
+                            .navigationBarsPadding(),
                         containerColor = LocalPrimerColorTokens.current.primerColorBackground,
                         content = { content() },
                     )

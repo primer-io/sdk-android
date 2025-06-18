@@ -1,6 +1,6 @@
 package io.primer.composable.internal.presentation.checkout
 
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.staticCompositionLocalOf
@@ -41,7 +41,7 @@ internal fun PrimerCheckoutScope.CheckoutNavHost(
             NavHost(
                 navController = navController,
                 startDestination = Screen.PaymentsList.route,
-                modifier = modifier.fillMaxSize(),
+                modifier = modifier.fillMaxWidth(),
             ) {
                 composable(Screen.Splash.route) {
                     splashScreen()

@@ -29,33 +29,31 @@ internal fun PaymentMethodSelectionScope.PaymentMethodSelectionScreen(
     val paymentMethods = readyState?.paymentMethods ?: emptyList()
     val currency = readyState?.currency
 
-    Column(
-        modifier = modifier
-            .padding(LocalPrimerSpacingTokens.current.large),
+    LazyColumn(
+        modifier = modifier.padding(horizontal = LocalPrimerSpacingTokens.current.large),
+        verticalArrangement = Arrangement.spacedBy(LocalPrimerSpacingTokens.current.small),
     ) {
 
-        CheckoutAppBar(
-            title = "Select Payment Method",
-            onBackClick = null,
-            onCancelClick = { onCancel() },
-        )
+        item {
+            CheckoutAppBar(
+                title = "Select Payment Method",
+                onBackClick = null,
+                onCancelClick = { onCancel() },
+            )
+        }
 
-        LazyColumn(
-            verticalArrangement = Arrangement.spacedBy(LocalPrimerSpacingTokens.current.small),
-        ) {
-            item {
-                Text(
-                    text = "Choose payment method",
-                    style = MaterialTheme.typography.titleLarge,
-                )
-            }
+        item {
+            Text(
+                text = "Choose payment method",
+                style = MaterialTheme.typography.titleLarge,
+            )
+        }
 
-            items(paymentMethods) {
-                PaymentMethodItem(
-                    primerPaymentMethod = it,
-                    currency = currency,
-                )
-            }
+        items(paymentMethods) {
+            PaymentMethodItem(
+                primerPaymentMethod = it,
+                currency = currency,
+            )
         }
     }
 }

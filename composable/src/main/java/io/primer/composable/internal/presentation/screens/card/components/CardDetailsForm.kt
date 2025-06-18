@@ -10,8 +10,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import io.primer.composable.internal.presentation.screens.card.components.input.CardNumberInput
@@ -25,9 +23,6 @@ import io.primer.composable.scope.CardFormScope
 internal fun CardFormScope.CardDetailsForm(
     modifier: Modifier = Modifier,
 ) {
-    val state by state.collectAsState()
-    val cardInputFields = state.cardFields
-    if (cardInputFields.isEmpty()) return
 
     Column(
         modifier = modifier.fillMaxWidth(),
