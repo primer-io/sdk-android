@@ -1,12 +1,11 @@
 package io.primer.composable.internal.presentation.screens.paymentMethodSelection.components
 
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import io.primer.composable.internal.presentation.theme.LocalPrimerColorTokens
-import io.primer.composable.internal.presentation.theme.LocalPrimerSpacingTokens
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
+import io.primer.composable.R
 import io.primer.composable.scope.PaymentMethodSelectionScope
 
 @Composable
@@ -15,18 +14,14 @@ internal fun PaymentMethodSelectionScope.PaymentMethodItemIdeal(
     onPaymentMethodSelected: () -> Unit,
 ) {
     PaymentMethodItem(
-        borderColor = LocalPrimerColorTokens.current.primerColorBorderOutlinedDefault,
-        backgroundColor = LocalPrimerColorTokens.current.primerColorBackground,
+        modifier = modifier,
+        backgroundColor = Color(0xFFCC0066),
         onPaymentMethodSelected = onPaymentMethodSelected,
     ) {
-        Row(
-            modifier = modifier
-                .padding(
-                    horizontal = LocalPrimerSpacingTokens.current.small,
-                    vertical = LocalPrimerSpacingTokens.current.medium,
-                ),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-        }
+        Icon(
+            painter = painterResource(id = R.drawable.ic_primer_ideal_logo),
+            contentDescription = null,
+            tint = Color.Unspecified,
+        )
     }
 }
