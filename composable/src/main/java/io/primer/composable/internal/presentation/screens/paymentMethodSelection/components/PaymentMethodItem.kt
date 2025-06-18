@@ -29,32 +29,21 @@ internal fun PaymentMethodSelectionScope.PaymentMethodSelector(
     onPaymentMethodSelected: () -> Unit,
 ) {
     when (safeValueOf(primerMethod.paymentMethodType)) {
-        PaymentMethodType.PAYMENT_CARD -> {
-            PaymentMethodItemCard { onPaymentMethodSelected() }
-        }
+        PaymentMethodType.PAYMENT_CARD -> PaymentMethodItemCard { onPaymentMethodSelected() }
 
+        // TODO COMPOSABLE check which one to use
         PaymentMethodType.ADYEN_IDEAL,
         PaymentMethodType.BUCKAROO_IDEAL,
         PaymentMethodType.MOLLIE_IDEAL,
         PaymentMethodType.PAY_NL_IDEAL,
-        -> {
-            PaymentMethodItemIdeal { onPaymentMethodSelected() }
-        }
+        -> PaymentMethodItemIdeal { onPaymentMethodSelected() }
 
-        PaymentMethodType.GOOGLE_PAY -> {
-            PaymentMethodItemGooglePay { onPaymentMethodSelected() }
-        }
+        PaymentMethodType.GOOGLE_PAY -> PaymentMethodItemGooglePay { onPaymentMethodSelected() }
+        PaymentMethodType.KLARNA -> PaymentMethodItemKlarna { onPaymentMethodSelected() }
+        PaymentMethodType.PAYPAL -> PaymentMethodItemPaypal { onPaymentMethodSelected() }
 
-        PaymentMethodType.KLARNA -> {
-            PaymentMethodItemKlarna { onPaymentMethodSelected() }
-        }
-
-        PaymentMethodType.PAYPAL -> {
-            PaymentMethodItemPaypal { onPaymentMethodSelected() }
-        }
-
-        else -> {
-            // TODO: Handle other payment methods
+        else ->
+            // TODO COMPOSABLE Handle other payment methods
             PaymentMethodItem(
                 borderColor = LocalPrimerColorTokens.current.primerColorBorderOutlinedDefault,
                 backgroundColor = LocalPrimerColorTokens.current.primerColorBackground,
@@ -67,7 +56,6 @@ internal fun PaymentMethodSelectionScope.PaymentMethodSelector(
                     modifier = Modifier.padding(LocalPrimerSpacingTokens.current.large),
                 )
             }
-        }
     }
 }
 

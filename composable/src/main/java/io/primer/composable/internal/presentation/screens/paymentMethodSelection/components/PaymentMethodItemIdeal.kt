@@ -15,11 +15,13 @@ internal fun PaymentMethodSelectionScope.PaymentMethodItemIdeal(
 ) {
     PaymentMethodItem(
         modifier = modifier,
+        // TODO COMPOSABLE move this somewhere in constants
         backgroundColor = Color(0xFFCC0066),
         onPaymentMethodSelected = onPaymentMethodSelected,
     ) {
         Icon(
             painter = painterResource(id = R.drawable.ic_primer_ideal_logo),
+            // TODO COMPOSABLE content description
             contentDescription = null,
             tint = Color.Unspecified,
         )

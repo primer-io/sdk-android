@@ -27,6 +27,7 @@ class PaymentMethodSelectionViewModel : ViewModel(), PaymentMethodSelectionScope
         MutableStateFlow<PaymentMethodSelectionScope.State>(PaymentMethodSelectionScope.State.Loading)
     override val state: StateFlow<PaymentMethodSelectionScope.State> = _uiState.asStateFlow()
 
+    // TODO COMPOSABLE move this to a separate function in scope
     init { loadPaymentMethods() }
 
     private fun loadPaymentMethods() {
@@ -46,6 +47,7 @@ class PaymentMethodSelectionViewModel : ViewModel(), PaymentMethodSelectionScope
 
     override fun onPaymentMethodSelected(paymentMethod: PrimerComposablePaymentMethod) {
         viewModelScope.launch {
+            // TODO COMPOSABLE make it dynamic
             checkoutNavigator.navigateTo(Screen.CardForm)
         }
     }

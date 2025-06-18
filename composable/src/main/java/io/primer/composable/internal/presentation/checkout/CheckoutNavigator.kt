@@ -11,6 +11,8 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.collectLatest
 
+// TODO COMPOSABLE make this more compact or smaller
+
 internal val LocalCheckoutNavigator = staticCompositionLocalOf<CheckoutNavigator> {
     error("CheckoutNavigator not provided")
 }

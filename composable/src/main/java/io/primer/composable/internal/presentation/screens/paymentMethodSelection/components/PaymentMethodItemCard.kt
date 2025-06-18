@@ -28,11 +28,13 @@ internal fun PaymentMethodSelectionScope.PaymentMethodItemCard(
         Row {
             Icon(
                 painter = painterResource(id = R.drawable.ic_primer_credit_card),
+                // TODO COMPOSABLE content description
                 contentDescription = null,
                 tint = LocalPrimerColorTokens.current.primerColorTextPrimary,
                 modifier = Modifier.size(LocalPrimerSizeTokens.current.medium),
             )
             Text(
+                // TODO COMPOSABLE extract string resource
                 text = "Pay with card",
                 style = LocalPrimerTypographyTokens.current.titleLarge.toTextStyle(),
                 color = LocalPrimerColorTokens.current.primerColorTextPrimary,

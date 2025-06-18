@@ -20,21 +20,22 @@ val LocalPrimerColorTokens = staticCompositionLocalOf<LightColorTokens> {
 }
 
 val LocalPrimerRadiusTokens = staticCompositionLocalOf<RadiusTokens> {
-    RadiusTokens()
+    error("No PrimerRadiusTokens provided")
 }
 
 val LocalPrimerSizeTokens = staticCompositionLocalOf<SizeTokens> {
-    SizeTokens()
+    error("No PrimerSizeTokens provided")
 }
 
 val LocalPrimerSpacingTokens = staticCompositionLocalOf<SpacingTokens> {
-    SpacingTokens()
+    error("No PrimerSpacingTokens provided")
 }
 
 val LocalPrimerTypographyTokens = staticCompositionLocalOf<TypographyTokens> {
-    TypographyTokens()
+    error("No PrimerTypographyTokens provided")
 }
 
+// TODO COMPOSABLE optimise this
 @Composable
 private fun createColorScheme(colorTokens: LightColorTokens): ColorScheme {
     return if (colorTokens is DarkColorTokens) {
@@ -88,19 +89,15 @@ internal fun PrimerTheme(
     content: @Composable () -> Unit,
 ) {
     val colorTokens = if (darkTheme) DarkColorTokens() else LightColorTokens()
-    val typographyTokens = TypographyTokens()
-    val sizeTokens = SizeTokens()
-    val spacingTokens = SpacingTokens()
-    val radiusTokens = RadiusTokens()
 
     val colorScheme = createColorScheme(colorTokens)
 
     CompositionLocalProvider(
         LocalPrimerColorTokens provides colorTokens,
-        LocalPrimerSizeTokens provides sizeTokens,
-        LocalPrimerSpacingTokens provides spacingTokens,
-        LocalPrimerRadiusTokens provides radiusTokens,
-        LocalPrimerTypographyTokens provides typographyTokens,
+        LocalPrimerSizeTokens provides SizeTokens(),
+        LocalPrimerSpacingTokens provides SpacingTokens(),
+        LocalPrimerRadiusTokens provides RadiusTokens(),
+        LocalPrimerTypographyTokens provides TypographyTokens(),
     ) {
         MaterialTheme(
             colorScheme = colorScheme,

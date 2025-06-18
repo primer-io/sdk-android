@@ -9,11 +9,13 @@ import io.primer.composable.scope.CardFormScope
 import io.primer.composable.scope.PaymentMethodSelectionScope
 import io.primer.composable.scope.PrimerCheckoutScope
 
+// TODO COMPOSABLE add kdocs
 object Primer {
 
     internal lateinit var clientToken: String
     internal lateinit var primerSettings: PrimerSettings
 
+    // TODO COMPOSABLE add listener?
     fun configure(
         clientToken: String,
         settings: PrimerSettings = PrimerSettings(),
@@ -22,6 +24,7 @@ object Primer {
         this.primerSettings = settings
     }
 
+    // TODO COMPOSABLE maybe return the checkout scope to use it separately
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     fun ComposableCheckout(

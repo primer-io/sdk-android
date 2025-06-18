@@ -27,7 +27,7 @@ internal fun CheckoutAppBar(
             Text(
                 text = title,
                 style = LocalPrimerTypographyTokens.current.titleXlarge.toTextStyle()
-                    // TODO why do i need to override the font weight to make it bold?
+                    // TODO COMPOSABLE why do i need to override the font weight to make it bold?
                     .copy(fontWeight = FontWeight(800)),
                 color = LocalPrimerColorTokens.current.primerColorTextPrimary,
             )
@@ -37,6 +37,7 @@ internal fun CheckoutAppBar(
                 IconButton(onClick = it) {
                     Icon(
                         painter = painterResource(id = R.drawable.ic_primer_chevron_left),
+                        // TODO COMPOSABLE content description
                         contentDescription = "Back",
                         tint = LocalPrimerColorTokens.current.primerColorTextPrimary,
                     )
@@ -47,6 +48,7 @@ internal fun CheckoutAppBar(
             onCancelClick?.let {
                 TextButton(onClick = it) {
                     Text(
+                        // TODO COMPOSABLE extract string resource
                         text = "Cancel",
                         style = LocalPrimerTypographyTokens.current.titleLarge.toTextStyle(),
                         color = LocalPrimerColorTokens.current.primerColorTextPrimary,

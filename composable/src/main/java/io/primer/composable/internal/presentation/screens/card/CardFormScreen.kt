@@ -12,11 +12,7 @@ import io.primer.composable.internal.presentation.theme.LocalPrimerSpacingTokens
 import io.primer.composable.scope.CardFormScope
 
 @Composable
-internal fun CardFormScope.CardFormScreen(
-    modifier: Modifier = Modifier,
-) {
-    val spacing = LocalPrimerSpacingTokens.current
-
+internal fun CardFormScope.CardFormScreen() {
     Column {
         CheckoutAppBar(
             title = "Pay with card",
@@ -24,8 +20,8 @@ internal fun CardFormScope.CardFormScreen(
             onCancelClick = { onCancel() },
         )
         Column(
-            modifier = modifier
-                .padding(spacing.large),
+            modifier = Modifier
+                .padding(LocalPrimerSpacingTokens.current.large),
         ) {
             CardDetailsForm()
             BillingAddressForm()

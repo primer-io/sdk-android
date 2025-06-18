@@ -34,9 +34,12 @@ internal fun Primer.Checkout(
     cardFormScreen: (@Composable CardFormScope.() -> Unit)?,
     successScreen: (@Composable PrimerCheckoutScope.() -> Unit)?,
 ) = with(viewModel<CheckoutViewModel>()) {
+
+    // TODO COMPOSABLE is this the correct place to initialise theme?
     PrimerTheme {
         val context = LocalContext.current
 
+        // TODO COMPOSABLE is this needed?
         DisposableEffect(clientToken) {
             initialize(context, clientToken, primerSettings)
             onDispose { onDismiss() }
@@ -44,6 +47,7 @@ internal fun Primer.Checkout(
 
         when (val state = state.collectAsStateWithLifecycle().value) {
             PrimerCheckoutScope.State.Dismissed -> Unit
+            // TODO COMPOSABLE why is this not shown?
             PrimerCheckoutScope.State.Initializing -> splashScreen?.invoke(this)
             is PrimerCheckoutScope.State.Error -> errorScreen?.invoke(this, "${state.exception.message}")
             PrimerCheckoutScope.State.Ready -> {
@@ -66,6 +70,7 @@ internal fun Primer.Checkout(
                         skipPartiallyExpanded = true,
                     )
 
+                    // TODO COMPOSABLE fix the weird top padding
                     ModalBottomSheet(
                         sheetState = sheetState,
                         onDismissRequest = ::onDismiss,

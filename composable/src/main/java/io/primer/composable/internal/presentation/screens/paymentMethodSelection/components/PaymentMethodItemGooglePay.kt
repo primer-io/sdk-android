@@ -13,6 +13,7 @@ internal fun PaymentMethodSelectionScope.PaymentMethodItemGooglePay(
     modifier: Modifier = Modifier,
     onPaymentMethodSelected: () -> Unit,
 ) {
+    // TODO COMPOSABLE need design
     PaymentMethodItem(
         borderColor = LocalPrimerColorTokens.current.primerColorBorderOutlinedDefault,
         backgroundColor = LocalPrimerColorTokens.current.primerColorBackground,

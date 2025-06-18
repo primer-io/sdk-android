@@ -18,17 +18,20 @@ internal fun PaymentMethodSelectionScope.PaymentMethodItemPaypal(
 ) {
     PaymentMethodItem(
         modifier = modifier,
+        // TODO COMPOSABLE move this somewhere in constants
         backgroundColor = Color(0xFFFFC439),
         onPaymentMethodSelected = onPaymentMethodSelected,
     ) {
         Row {
             Icon(
                 painter = painterResource(id = R.drawable.ic_primer_paypal_icon),
+                // TODO COMPOSABLE content description
                 contentDescription = null,
                 tint = Color.Unspecified,
             )
             Icon(
                 painter = painterResource(id = R.drawable.ic_primer_paypal_logo),
+                // TODO COMPOSABLE content description
                 contentDescription = null,
                 tint = Color.Unspecified,
                 modifier = Modifier.padding(start = LocalPrimerSpacingTokens.current.xsmall),

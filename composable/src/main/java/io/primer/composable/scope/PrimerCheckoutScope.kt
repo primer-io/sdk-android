@@ -4,6 +4,8 @@ import android.content.Context
 import io.primer.android.data.settings.PrimerSettings
 import kotlinx.coroutines.flow.StateFlow
 
+// TODO COMPOSABLE add access to sub scopes?
+
 interface PrimerCheckoutScope {
 
     val state: StateFlow<State>

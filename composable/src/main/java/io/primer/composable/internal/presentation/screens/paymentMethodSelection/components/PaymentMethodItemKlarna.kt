@@ -34,15 +34,18 @@ internal fun PaymentMethodSelectionScope.PaymentMethodItemKlarna(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
+                // TODO COMPOSABLE extract string resource
                 text = "Pay with",
                 style = LocalPrimerTypographyTokens.current.titleLarge.toTextStyle(),
                 color = LocalPrimerColorTokens.current.primerColorGray000,
                 modifier = Modifier.padding(end = LocalPrimerSpacingTokens.current.small),
             )
 
+            // TODO COMPOSABLE check if this is correct
             Box(
                 modifier = modifier
                     .background(
+                        // TODO COMPOSABLE move this somewhere in constants
                         color = Color(0xFFFFA8CD),
                         shape = RoundedCornerShape(LocalPrimerRadiusTokens.current.medium),
                     )
@@ -51,6 +54,7 @@ internal fun PaymentMethodSelectionScope.PaymentMethodItemKlarna(
             ) {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_primer_klarna_logo),
+                    // TODO COMPOSABLE content description
                     contentDescription = null,
                     tint = Color.Unspecified,
                 )

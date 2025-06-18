@@ -26,6 +26,8 @@ interface PaymentMethodSelectionScope {
 
     companion object {
 
+        // TODO COMPOSABLE see what components to expose
+
         @Composable
         fun PaymentMethodSelectionScope.PrimerPaymentMethodCard(
             modifier: Modifier = Modifier,
