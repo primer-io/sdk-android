@@ -1,23 +1,20 @@
 package io.primer.composable.internal.presentation.screens.paymentMethodSelection
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.Card
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import io.primer.composable.internal.domain.models.PrimerComposablePaymentMethod
 import io.primer.composable.internal.presentation.checkout.components.CheckoutAppBar
-import io.primer.composable.internal.presentation.components.SurchargeLabel
+import io.primer.composable.internal.presentation.screens.paymentMethodSelection.components.PaymentMethodSelector
+import io.primer.composable.internal.presentation.theme.LocalPrimerColorTokens
 import io.primer.composable.internal.presentation.theme.LocalPrimerSpacingTokens
+import io.primer.composable.internal.presentation.theme.LocalPrimerTypographyTokens
 import io.primer.composable.scope.PaymentMethodSelectionScope
 
 @Composable
@@ -43,45 +40,17 @@ internal fun PaymentMethodSelectionScope.PaymentMethodSelectionScreen(
             item {
                 Text(
                     text = "Choose payment method",
-                    style = MaterialTheme.typography.titleLarge,
+                    style = LocalPrimerTypographyTokens.current.titleLarge.toTextStyle(),
+                    color = LocalPrimerColorTokens.current.primerColorTextPrimary,
                 )
             }
 
-            items(paymentMethods) {
-                PaymentMethodItem(
-                    primerPaymentMethod = it,
-                    currency = currency,
+            items(paymentMethods) { primerMethod ->
+                PaymentMethodSelector(
+                    primerMethod = primerMethod,
+                    onPaymentMethodSelected = { onPaymentMethodSelected(primerMethod) }
                 )
             }
-        }
-    }
-}
-
-@Composable
-internal fun PaymentMethodSelectionScope.PaymentMethodItem(
-    modifier: Modifier = Modifier,
-    primerPaymentMethod: PrimerComposablePaymentMethod,
-    currency: java.util.Currency? = null,
-) {
-    val spacing = LocalPrimerSpacingTokens.current
-
-    Card(
-        modifier = modifier
-            .fillMaxWidth()
-            .clickable { onPaymentMethodSelected(primerPaymentMethod) },
-    ) {
-        Column(
-            modifier = Modifier.padding(spacing.large),
-        ) {
-            Text(
-                text = primerPaymentMethod.paymentMethodName ?: "",
-                style = MaterialTheme.typography.titleMedium,
-            )
-
-            SurchargeLabel(
-                surcharge = primerPaymentMethod.surcharge,
-                currency = currency,
-            )
         }
     }
 }

@@ -3,7 +3,7 @@ package io.primer.composable.scope
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import io.primer.composable.internal.domain.models.PrimerComposablePaymentMethod
-import io.primer.composable.internal.presentation.screens.paymentMethodSelection.PaymentMethodItem
+import io.primer.composable.internal.presentation.screens.paymentMethodSelection.components.PaymentMethodItemCard
 import kotlinx.coroutines.flow.StateFlow
 
 interface PaymentMethodSelectionScope {
@@ -20,16 +20,16 @@ interface PaymentMethodSelectionScope {
             val paymentMethods: List<PrimerComposablePaymentMethod>,
             val currency: java.util.Currency?,
         ) : State
+
         data class Error(val exception: Throwable) : State
     }
 
     companion object {
 
         @Composable
-        fun PaymentMethodSelectionScope.PrimerPaymentMethodItem(
+        fun PaymentMethodSelectionScope.PrimerPaymentMethodCard(
             modifier: Modifier = Modifier,
-            primerPaymentMethod: PrimerComposablePaymentMethod,
-            currency: java.util.Currency? = null,
-        ) = PaymentMethodItem(modifier, primerPaymentMethod, currency)
+            onPaymentMethodSelected: () -> Unit,
+        ) = PaymentMethodItemCard(modifier = modifier, onPaymentMethodSelected = onPaymentMethodSelected)
     }
 }

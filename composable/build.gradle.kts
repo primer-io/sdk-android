@@ -26,6 +26,11 @@ android {
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
     }
+    
+    buildFeatures {
+        compose = true
+        buildConfig = true
+    }
 }
 
 dependencies {
