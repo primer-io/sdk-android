@@ -25,10 +25,12 @@ internal fun PaymentMethodSelectionScope.PaymentMethodItemPaypal(
             Icon(
                 painter = painterResource(id = R.drawable.ic_primer_paypal_icon),
                 contentDescription = null,
+                tint = Color.Unspecified,
             )
             Icon(
                 painter = painterResource(id = R.drawable.ic_primer_paypal_logo),
                 contentDescription = null,
+                tint = Color.Unspecified,
                 modifier = Modifier.padding(start = LocalPrimerSpacingTokens.current.xsmall),
             )
         }
