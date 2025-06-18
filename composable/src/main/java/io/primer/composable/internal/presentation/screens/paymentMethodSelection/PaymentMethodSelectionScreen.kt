@@ -10,7 +10,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import java.text.NumberFormat
 import io.primer.composable.internal.presentation.checkout.components.CheckoutAppBar
 import io.primer.composable.internal.presentation.screens.paymentMethodSelection.components.PaymentMethodSelector
 import io.primer.composable.internal.presentation.theme.LocalPrimerColorTokens
@@ -25,22 +24,10 @@ internal fun PaymentMethodSelectionScope.PaymentMethodSelectionScreen(
     val state by state.collectAsStateWithLifecycle()
     val readyState = state as? PaymentMethodSelectionScope.State.Ready
     val paymentMethods = readyState?.paymentMethods ?: emptyList()
-    val currency = readyState?.currency
-    val totalAmount = readyState?.totalAmount ?: 0
-
-    fun formatAmount(amount: Int, currency: java.util.Currency?): String {
-        return if (currency != null) {
-            val formatter = NumberFormat.getCurrencyInstance()
-            formatter.currency = currency
-            formatter.format(amount / 100.0)
-        } else {
-            "Pay"
-        }
-    }
 
     Column {
         CheckoutAppBar(
-            title = if (readyState != null) "Pay ${formatAmount(totalAmount, currency)}" else "Select Payment Method",
+            title = readyState?.title ?: "Select Payment Method",
             onCancelClick = { onCancel() },
         )
 
