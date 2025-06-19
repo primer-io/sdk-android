@@ -2,6 +2,7 @@ package io.primer.composable.internal.scope
 
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -11,6 +12,7 @@ import io.primer.composable.internal.presentation.screens.loading.DefaultLoading
 import io.primer.composable.internal.presentation.screens.paymentMethodSelection.PaymentMethodSelectionViewModel
 import io.primer.composable.internal.presentation.screens.splash.DefaultSplashScreen
 import io.primer.composable.internal.presentation.screens.success.DefaultSuccessScreen
+import io.primer.composable.internal.presentation.theme.LocalPrimerColorTokens
 import io.primer.composable.scope.PrimerCardFormScope
 import io.primer.composable.scope.PrimerCheckoutScope
 import io.primer.composable.scope.PrimerPaymentMethodSelectionScope
@@ -19,10 +21,15 @@ internal abstract class CheckoutScopeDefaults : ViewModel(), PrimerCheckoutScope
 
     @OptIn(ExperimentalMaterial3Api::class)
     override var container: @Composable (content: @Composable () -> Unit) -> Unit = { content ->
-        // Default container implementation
-        ModalBottomSheet(onDismissRequest = ::onDismiss) {
-            content()
-        }
+        ModalBottomSheet(
+            sheetState = rememberModalBottomSheetState(
+                skipPartiallyExpanded = true,
+            ),
+            onDismissRequest = ::onDismiss,
+            dragHandle = {},
+            containerColor = LocalPrimerColorTokens.current.primerColorBackground,
+            content = { content() },
+        )
     }
 
     override var splashScreen: @Composable () -> Unit = {

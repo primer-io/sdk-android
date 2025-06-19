@@ -29,49 +29,7 @@ class ComposableCheckoutFragment : Fragment() {
                 clientToken?.let { token ->
                     with(Primer) {
                         configure(token)
-                        val scope = showCheckout()
-
-                        // Override container with custom implementation
-                        scope.container = { content ->
-                            // Custom container implementation
-                            content() // Contains navigation
-                        }
-                        
-                        // Override main screens  
-                        scope.splashScreen = {
-                            // Custom splash screen - 'this' is PrimerCheckoutScope
-                            // Custom implementation here
-                        }
-                        
-                        scope.loadingScreen = {
-                            // Custom loading screen
-                        }
-                        
-                        scope.successScreen = {
-                            // Custom success screen
-                        }
-                        
-                        scope.errorScreen = { message ->
-                            // Custom error screen with message
-                        }
-
-                        // Override nested scope screens using property access
-                        scope.cardForm().screen = {
-                            // Custom card form - access scope methods directly
-                            // onSubmit = scope.cardFormScope.onSubmit()
-                            // isValid = scope.cardFormScope.state.collectAsState().value.isSubmitEnabled
-                        }
-                        
-                        scope.paymentSelection().screen = {
-                            // Custom payment selection
-                            // onSelect = { method -> scope.paymentSelectionScope.onPaymentMethodSelected(method) }
-                        }
-                        
-                        // Override individual input components
-                        scope.cardForm().cardNumberInput = { modifier ->
-                            // Custom card number input
-                            // onValueChange = { scope.cardFormScope.updateCardNumber(it) }
-                        }
+                        showCheckout()
                     }
                 }
             }

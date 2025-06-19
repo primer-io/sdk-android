@@ -22,11 +22,11 @@ import io.primer.composable.internal.presentation.theme.LocalPrimerTypographyTok
 import io.primer.composable.scope.PrimerPaymentMethodSelectionScope
 
 @Composable
-internal fun DefaultPaymentMethodSelectionScreen() {
-    // TODO: Will be updated to use scope parameters in ScopeDefaults
-    // Temporarily simplified for compilation
-    Column {
-        Text("Payment Method Selection (Default)")
+internal fun PrimerPaymentMethodSelectionScope.DefaultPaymentMethodSelectionScreen() {
+    when (state.collectAsStateWithLifecycle().value) {
+        is PrimerPaymentMethodSelectionScope.State.Loading -> Loading()
+        is PrimerPaymentMethodSelectionScope.State.Ready -> Ready()
+        is PrimerPaymentMethodSelectionScope.State.Error -> Error()
     }
 }
 
