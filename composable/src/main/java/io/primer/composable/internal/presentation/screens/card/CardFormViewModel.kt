@@ -19,7 +19,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-internal class DefaultCardViewModel : DefaultCardFormScope(), DISdkComponent {
+internal class CardFormViewModel : DefaultCardFormScope(), DISdkComponent {
 
     private val getAvailableCardFieldsInteractor: GetRequiredFieldsInteractor by lazy { resolve() }
     private val setDataInteractor: SetCardDataInteractor by lazy { resolve() }

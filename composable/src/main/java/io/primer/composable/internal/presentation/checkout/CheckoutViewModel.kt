@@ -15,7 +15,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-internal class DefaultCheckoutViewModel : DefaultCheckoutScope(), DISdkComponent {
+internal class CheckoutViewModel : DefaultCheckoutScope(), DISdkComponent {
 
     private val _state =
         MutableStateFlow<PrimerCheckoutScope.State>(PrimerCheckoutScope.State.Initializing)

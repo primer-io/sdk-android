@@ -13,9 +13,10 @@ import io.primer.composable.scope.PrimerCheckoutScope
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-internal fun Primer.checkout(
+internal fun Primer.Checkout(
     modifier: Modifier = Modifier,
-): PrimerCheckoutScope = with(viewModel<DefaultCheckoutViewModel>()) {
+    scope: (PrimerCheckoutScope) -> Unit
+) = with(viewModel<CheckoutViewModel>()) {
 
     // TODO COMPOSABLE is this the correct place to initialise theme?
     PrimerTheme {
@@ -41,9 +42,9 @@ internal fun Primer.checkout(
                 container {
                     CheckoutNavHost(modifier = modifier)
                 }
+
+                scope(this)
             }
         }
     }
-
-    return this
 }

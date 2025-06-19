@@ -29,7 +29,9 @@ class ComposableCheckoutFragment : Fragment() {
                 clientToken?.let { token ->
                     with(Primer) {
                         configure(token)
-                        showCheckout()
+                        ComposableCheckout {
+
+                        }
                     }
                 }
             }
