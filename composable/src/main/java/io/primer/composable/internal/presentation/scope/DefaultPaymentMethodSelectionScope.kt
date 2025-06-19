@@ -1,4 +1,4 @@
-package io.primer.composable.internal.scope
+package io.primer.composable.internal.presentation.scope
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -7,7 +7,7 @@ import io.primer.composable.internal.presentation.screens.paymentMethodSelection
 import io.primer.composable.internal.presentation.screens.paymentMethodSelection.components.PaymentMethodItemCard
 import io.primer.composable.scope.PrimerPaymentMethodSelectionScope
 
-internal abstract class PaymentMethodSelectionScopeDefaults : ViewModel(), PrimerPaymentMethodSelectionScope {
+internal abstract class DefaultPaymentMethodSelectionScope : ViewModel(), PrimerPaymentMethodSelectionScope {
 
     override var screen: @Composable () -> Unit = {
         DefaultPaymentMethodSelectionScreen()

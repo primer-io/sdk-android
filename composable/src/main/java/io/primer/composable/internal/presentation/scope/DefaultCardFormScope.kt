@@ -1,4 +1,4 @@
-package io.primer.composable.internal.scope
+package io.primer.composable.internal.presentation.scope
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -24,80 +24,80 @@ import io.primer.composable.internal.presentation.screens.card.components.input.
 import io.primer.composable.internal.presentation.screens.card.components.input.StateInput
 import io.primer.composable.scope.PrimerCardFormScope
 
-internal abstract class CardFormScopeDefaults : ViewModel(), PrimerCardFormScope {
+internal abstract class DefaultCardFormScope : ViewModel(), PrimerCardFormScope {
 
     override var screen: @Composable () -> Unit = {
         DefaultCardFormScreen()
     }
-    
+
     override var submitButton: @Composable (modifier: Modifier, text: String) -> Unit = { modifier, text ->
         SubmitButton(modifier = modifier, text = text)
     }
-    
+
     override var cardNumberInput: @Composable (modifier: Modifier) -> Unit = { modifier ->
         CardNumberInput(modifier)
     }
-    
+
     override var cvvInput: @Composable (modifier: Modifier) -> Unit = { modifier ->
         CvvInput(modifier)
     }
-    
+
     override var expiryDateInput: @Composable (modifier: Modifier) -> Unit = { modifier ->
         ExpiryDateInput(modifier)
     }
-    
+
     override var cardholderNameInput: @Composable (modifier: Modifier) -> Unit = { modifier ->
         CardholderNameInput(modifier)
     }
-    
+
     override var postalCodeInput: @Composable (modifier: Modifier) -> Unit = { modifier ->
         PostalCodeInput(modifier)
     }
-    
+
     override var countryCodeInput: @Composable (modifier: Modifier) -> Unit = { modifier ->
         CountryCodeInput(modifier)
     }
-    
+
     override var cityInput: @Composable (modifier: Modifier) -> Unit = { modifier ->
         CityInput(modifier)
     }
-    
+
     override var stateInput: @Composable (modifier: Modifier) -> Unit = { modifier ->
         StateInput(modifier)
     }
-    
+
     override var addressLine1Input: @Composable (modifier: Modifier) -> Unit = { modifier ->
         AddressLine1Input(modifier)
     }
-    
+
     override var addressLine2Input: @Composable (modifier: Modifier) -> Unit = { modifier ->
         AddressLine2Input(modifier)
     }
-    
+
     override var phoneNumberInput: @Composable (modifier: Modifier) -> Unit = { modifier ->
         PhoneNumberInput(modifier)
     }
-    
+
     override var firstNameInput: @Composable (modifier: Modifier) -> Unit = { modifier ->
         FirstNameInput(modifier)
     }
-    
+
     override var lastNameInput: @Composable (modifier: Modifier) -> Unit = { modifier ->
         LastNameInput(modifier)
     }
-    
+
     override var retailOutletInput: @Composable (modifier: Modifier) -> Unit = { modifier ->
         RetailOutletInput(modifier)
     }
-    
+
     override var otpCodeInput: @Composable (modifier: Modifier) -> Unit = { modifier ->
         OtpCodeInput(modifier)
     }
-    
+
     override var cardDetails: @Composable (modifier: Modifier) -> Unit = { modifier ->
         CardDetailsForm(modifier)
     }
-    
+
     override var billingAddress: @Composable (modifier: Modifier) -> Unit = { modifier ->
         BillingAddressForm(modifier)
     }

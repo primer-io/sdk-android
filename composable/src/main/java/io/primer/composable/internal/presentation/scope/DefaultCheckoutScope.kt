@@ -1,4 +1,4 @@
-package io.primer.composable.internal.scope
+package io.primer.composable.internal.presentation.scope
 
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
@@ -6,10 +6,10 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
-import io.primer.composable.internal.presentation.screens.card.CardViewModel
+import io.primer.composable.internal.presentation.screens.card.DefaultCardViewModel
 import io.primer.composable.internal.presentation.screens.error.DefaultErrorScreen
 import io.primer.composable.internal.presentation.screens.loading.DefaultLoadingScreen
-import io.primer.composable.internal.presentation.screens.paymentMethodSelection.PaymentMethodSelectionViewModel
+import io.primer.composable.internal.presentation.screens.paymentMethodSelection.DefaultPaymentMethodSelectionViewModel
 import io.primer.composable.internal.presentation.screens.splash.DefaultSplashScreen
 import io.primer.composable.internal.presentation.screens.success.DefaultSuccessScreen
 import io.primer.composable.internal.presentation.theme.LocalPrimerColorTokens
@@ -17,7 +17,7 @@ import io.primer.composable.scope.PrimerCardFormScope
 import io.primer.composable.scope.PrimerCheckoutScope
 import io.primer.composable.scope.PrimerPaymentMethodSelectionScope
 
-internal abstract class CheckoutScopeDefaults : ViewModel(), PrimerCheckoutScope {
+internal abstract class DefaultCheckoutScope : ViewModel(), PrimerCheckoutScope {
 
     @OptIn(ExperimentalMaterial3Api::class)
     override var container: @Composable (content: @Composable () -> Unit) -> Unit = { content ->
@@ -49,8 +49,8 @@ internal abstract class CheckoutScopeDefaults : ViewModel(), PrimerCheckoutScope
     }
 
     override val cardForm: @Composable (() -> PrimerCardFormScope) =
-        { viewModel<CardViewModel>() }
+        { viewModel<DefaultCardViewModel>() }
 
     override val paymentSelection: @Composable (() -> PrimerPaymentMethodSelectionScope) =
-        { viewModel<PaymentMethodSelectionViewModel>() }
+        { viewModel<DefaultPaymentMethodSelectionViewModel>() }
 }

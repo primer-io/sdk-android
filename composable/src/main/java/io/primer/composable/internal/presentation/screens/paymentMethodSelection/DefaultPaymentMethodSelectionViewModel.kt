@@ -9,7 +9,7 @@ import io.primer.composable.internal.domain.models.PrimerComposablePaymentMethod
 import io.primer.composable.internal.presentation.checkout.CheckoutNavigator
 import io.primer.composable.internal.presentation.checkout.Screen
 import io.primer.composable.internal.presentation.utils.CurrencyFormatter
-import io.primer.composable.internal.scope.PaymentMethodSelectionScopeDefaults
+import io.primer.composable.internal.presentation.scope.DefaultPaymentMethodSelectionScope
 import io.primer.composable.scope.PrimerPaymentMethodSelectionScope
 import io.primer.ui.core.configuration.domain.model.BasicOrderInfoInteractor
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -17,7 +17,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-internal class PaymentMethodSelectionViewModel : PaymentMethodSelectionScopeDefaults(), DISdkComponent {
+internal class DefaultPaymentMethodSelectionViewModel : DefaultPaymentMethodSelectionScope(), DISdkComponent {
 
     private val getAvailablePaymentMethodsInteractor: GetAvailablePaymentMethodsInteractor by lazy { resolve() }
     private val basicOrderInfoInteractor: BasicOrderInfoInteractor by lazy { resolve() }

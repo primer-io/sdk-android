@@ -15,7 +15,7 @@ import io.primer.composable.scope.PrimerCheckoutScope
 @Composable
 internal fun Primer.checkout(
     modifier: Modifier = Modifier,
-): PrimerCheckoutScope = with(viewModel<CheckoutViewModel>()) {
+): PrimerCheckoutScope = with(viewModel<DefaultCheckoutViewModel>()) {
 
     // TODO COMPOSABLE is this the correct place to initialise theme?
     PrimerTheme {

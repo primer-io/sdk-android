@@ -1,4 +1,4 @@
-package io.primer.composable.internal.presentation.components
+package io.primer.composable.internal.presentation.screens.paymentMethodSelection.components
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
@@ -10,11 +10,12 @@ import androidx.compose.ui.text.font.FontWeight
 import io.primer.android.configuration.domain.model.Surcharge
 import io.primer.composable.internal.presentation.theme.LocalPrimerSpacingTokens
 import io.primer.ui.core.payment.domain.formatter.DefaultSurchargeFormatter
+import java.util.Currency
 
 @Composable
 internal fun SurchargeLabel(
     surcharge: Surcharge?,
-    currency: java.util.Currency?,
+    currency: Currency?,
     modifier: Modifier = Modifier,
 ) {
     if (surcharge != null && currency != null) {

@@ -11,7 +11,7 @@ import io.primer.composable.internal.domain.interactor.SetCardDataInteractor
 import io.primer.composable.internal.domain.interactor.SubmitPaymentInteractor
 import io.primer.composable.internal.presentation.checkout.CheckoutNavigator
 import io.primer.composable.internal.presentation.checkout.Screen
-import io.primer.composable.internal.scope.CardFormScopeDefaults
+import io.primer.composable.internal.presentation.scope.DefaultCardFormScope
 import io.primer.composable.scope.PrimerCardFormScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -19,7 +19,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-internal class CardViewModel : CardFormScopeDefaults(), DISdkComponent {
+internal class DefaultCardViewModel : DefaultCardFormScope(), DISdkComponent {
 
     private val getAvailableCardFieldsInteractor: GetRequiredFieldsInteractor by lazy { resolve() }
     private val setDataInteractor: SetCardDataInteractor by lazy { resolve() }
