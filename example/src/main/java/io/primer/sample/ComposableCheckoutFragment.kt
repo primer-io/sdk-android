@@ -9,8 +9,11 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.lifecycleScope
 import io.primer.composable.ComposableCheckout
+import io.primer.composable.scope.PrimerCheckoutScope
 import io.primer.sample.viewmodels.MainViewModel
+import kotlinx.coroutines.launch
 
 class ComposableCheckoutFragment : Fragment() {
 
@@ -30,7 +33,28 @@ class ComposableCheckoutFragment : Fragment() {
                     ComposableCheckout(
                         clientToken = token
                     ) {
+                        lifecycleScope.launch {
+                            it.state.collect { state ->
+                                when (state) {
+                                    PrimerCheckoutScope.State.Dismissed -> {
 
+                                    }
+                                    is PrimerCheckoutScope.State.Error -> {
+
+                                    }
+                                    PrimerCheckoutScope.State.Initializing -> {
+
+                                    }
+                                    PrimerCheckoutScope.State.Ready -> {
+
+                                    }
+                                }
+                            }
+                        }
+
+                        it.paymentMethodSelection.paymentMethodCard = { modifier, onPaymentMethodSelected ->
+
+                        }
                     }
                 }
             }

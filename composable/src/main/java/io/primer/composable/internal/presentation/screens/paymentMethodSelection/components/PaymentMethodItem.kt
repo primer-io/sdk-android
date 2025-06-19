@@ -29,7 +29,7 @@ internal fun PrimerPaymentMethodSelectionScope.PaymentMethodSelector(
     onPaymentMethodSelected: () -> Unit,
 ) {
     when (safeValueOf(primerMethod.paymentMethodType)) {
-        PaymentMethodType.PAYMENT_CARD -> PaymentMethodItemCard { onPaymentMethodSelected() }
+        PaymentMethodType.PAYMENT_CARD -> paymentMethodCard(Modifier,onPaymentMethodSelected)
 
         // TODO COMPOSABLE check which one to use
         PaymentMethodType.ADYEN_IDEAL,
