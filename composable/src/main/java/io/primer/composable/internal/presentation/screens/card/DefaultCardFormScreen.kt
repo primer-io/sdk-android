@@ -12,21 +12,20 @@ import io.primer.composable.internal.presentation.theme.LocalPrimerSpacingTokens
 import io.primer.composable.scope.PrimerCardFormScope
 
 @Composable
-internal fun DefaultCardFormScreen() {
+internal fun PrimerCardFormScope.DefaultCardFormScreen() {
     Column {
         CheckoutAppBar(
             title = "Pay with card",
-            onBackClick = { /* TODO: Will be handled by scope in ScopeDefaults */ },
-            onCancelClick = { /* TODO: Will be handled by scope in ScopeDefaults */ },
+            onBackClick = { onBack() },
+            onCancelClick = { onCancel() },
         )
         Column(
             modifier = Modifier
                 .padding(LocalPrimerSpacingTokens.current.large),
         ) {
-            // TODO: These will be updated to use scope parameters in ScopeDefaults
-            // CardDetailsForm()
-            // BillingAddressForm()
-            // SubmitButton(text = "Submit")
+             CardDetailsForm()
+             BillingAddressForm()
+             SubmitButton(text = "Submit")
         }
     }
 }

@@ -14,14 +14,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
-import io.primer.composable.internal.presentation.screens.card.components.input.AddressLine1Input
-import io.primer.composable.internal.presentation.screens.card.components.input.AddressLine2Input
-import io.primer.composable.internal.presentation.screens.card.components.input.CityInput
-import io.primer.composable.internal.presentation.screens.card.components.input.CountryCodeInput
-import io.primer.composable.internal.presentation.screens.card.components.input.FirstNameInput
-import io.primer.composable.internal.presentation.screens.card.components.input.LastNameInput
-import io.primer.composable.internal.presentation.screens.card.components.input.PostalCodeInput
-import io.primer.composable.internal.presentation.screens.card.components.input.StateInput
 import io.primer.composable.internal.presentation.theme.LocalPrimerSpacingTokens
 import io.primer.composable.scope.PrimerCardFormScope
 
@@ -47,9 +39,7 @@ internal fun PrimerCardFormScope.BillingAddressForm(
             modifier = Modifier.padding(bottom = spacing.large),
         )
 
-        CountryCodeInput(
-            modifier = Modifier.fillMaxWidth(),
-        )
+        countryCodeInput(Modifier.fillMaxWidth())
 
         Spacer(modifier = Modifier.height(spacing.medium))
 
@@ -57,25 +47,18 @@ internal fun PrimerCardFormScope.BillingAddressForm(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(spacing.medium),
         ) {
-            FirstNameInput(
-                modifier = Modifier.weight(1f),
-            )
-            LastNameInput(
-                modifier = Modifier.weight(1f),
-            )
+
+            firstNameInput(Modifier.weight(1f))
+            lastNameInput(Modifier.weight(1f))
         }
 
         Spacer(modifier = Modifier.height(spacing.medium))
 
-        AddressLine1Input(
-            modifier = Modifier.fillMaxWidth(),
-        )
+        addressLine1Input(Modifier.fillMaxWidth())
 
         Spacer(modifier = Modifier.height(spacing.medium))
 
-        AddressLine2Input(
-            modifier = Modifier.fillMaxWidth(),
-        )
+        addressLine2Input(Modifier.fillMaxWidth())
 
         Spacer(modifier = Modifier.height(spacing.medium))
 
@@ -83,19 +66,13 @@ internal fun PrimerCardFormScope.BillingAddressForm(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(spacing.medium),
         ) {
-            PostalCodeInput(
-                modifier = Modifier.weight(1f),
-            )
-            CityInput(
-                modifier = Modifier.weight(1f),
-            )
+            postalCodeInput(Modifier.weight(1f))
+            cityInput(Modifier.weight(1f))
         }
 
         Spacer(modifier = Modifier.height(spacing.medium))
 
-        StateInput(
-            modifier = Modifier.fillMaxWidth(),
-        )
+        stateInput(Modifier.fillMaxWidth())
 
         Spacer(modifier = Modifier.height(spacing.xlarge))
     }

@@ -52,13 +52,11 @@ internal fun PrimerCheckoutScope.CheckoutNavHost(
                 }
 
                 composable(Screen.PaymentsList.route) {
-                    // Access nested scope's property
-                    paymentSelectionScope.paymentSelectionScreen()
+                    paymentSelectionScope().paymentSelectionScreen()
                 }
 
                 composable(Screen.CardForm.route) {
-                    // Access nested scope's property  
-                    cardFormScope.cardFormScreen()
+                    cardFormScope().cardFormScreen()
                 }
             }
         }

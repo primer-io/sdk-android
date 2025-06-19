@@ -9,7 +9,6 @@ import io.primer.composable.scope.PrimerPaymentMethodSelectionScope
 
 internal abstract class PaymentMethodSelectionScopeDefaults : ViewModel(), PrimerPaymentMethodSelectionScope {
 
-    // Default composable implementations
     override var paymentSelectionScreen: @Composable () -> Unit = {
         DefaultPaymentMethodSelectionScreen()
     }
