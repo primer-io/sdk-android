@@ -7,14 +7,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import io.primer.composable.Primer
+import io.primer.android.data.settings.PrimerSettings
 import io.primer.composable.internal.presentation.theme.PrimerTheme
 import io.primer.composable.scope.PrimerCheckoutScope
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-internal fun Primer.Checkout(
+internal fun Checkout(
     modifier: Modifier = Modifier,
+    clientToken: String,
+    settings: PrimerSettings = PrimerSettings(),
     scope: (PrimerCheckoutScope) -> Unit
 ) = with(viewModel<CheckoutViewModel>()) {
 
@@ -23,7 +25,7 @@ internal fun Primer.Checkout(
         val context = LocalContext.current
 
         DisposableEffect(clientToken) {
-            initialize(context, clientToken, primerSettings)
+            initialize(context, clientToken, settings)
             onDispose { onDismiss() }
         }
 

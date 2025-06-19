@@ -9,7 +9,7 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import io.primer.composable.Primer
+import io.primer.composable.ComposableCheckout
 import io.primer.sample.viewmodels.MainViewModel
 
 class ComposableCheckoutFragment : Fragment() {
@@ -27,11 +27,10 @@ class ComposableCheckoutFragment : Fragment() {
             setContent {
                 val clientToken by viewModel.clientToken.observeAsState()
                 clientToken?.let { token ->
-                    with(Primer) {
-                        configure(token)
-                        ComposableCheckout {
+                    ComposableCheckout(
+                        clientToken = token
+                    ) {
 
-                        }
                     }
                 }
             }
