@@ -47,6 +47,7 @@ internal abstract class DefaultCheckoutScope : ViewModel(), PrimerCheckoutScope 
         DefaultErrorScreen(message = message)
     }
 
+    // TODO COMPOSABLE find a better way to initialise the viewmodel
     override val cardForm: PrimerCardFormScope by lazy { CardFormViewModel() }
 
     override val paymentMethodSelection: PrimerPaymentMethodSelectionScope by lazy { PaymentMethodSelectionViewModel() }
