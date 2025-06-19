@@ -10,22 +10,23 @@ import io.primer.composable.internal.domain.models.PrimerComposablePaymentMethod
 import io.primer.composable.internal.presentation.checkout.CheckoutNavigator
 import io.primer.composable.internal.presentation.checkout.Screen
 import io.primer.composable.internal.presentation.utils.CurrencyFormatter
-import io.primer.composable.scope.PaymentMethodSelectionScope
+import io.primer.composable.internal.scope.PaymentMethodSelectionScopeDefaults
+import io.primer.composable.scope.PrimerPaymentMethodSelectionScope
 import io.primer.ui.core.configuration.domain.model.BasicOrderInfoInteractor
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-class PaymentMethodSelectionViewModel : ViewModel(), PaymentMethodSelectionScope, DISdkComponent {
+class PaymentMethodSelectionViewModel : ViewModel(), PaymentMethodSelectionScopeDefaults(), DISdkComponent {
 
     private val getAvailablePaymentMethodsInteractor: GetAvailablePaymentMethodsInteractor by lazy { resolve() }
     private val basicOrderInfoInteractor: BasicOrderInfoInteractor by lazy { resolve() }
     private val checkoutNavigator: CheckoutNavigator by lazy { resolve() }
 
     private val _uiState =
-        MutableStateFlow<PaymentMethodSelectionScope.State>(PaymentMethodSelectionScope.State.Loading)
-    override val state: StateFlow<PaymentMethodSelectionScope.State> = _uiState.asStateFlow()
+        MutableStateFlow<PrimerPaymentMethodSelectionScope.State>(PrimerPaymentMethodSelectionScope.State.Loading)
+    override val state: StateFlow<PrimerPaymentMethodSelectionScope.State> = _uiState.asStateFlow()
 
     // TODO COMPOSABLE move this to a separate function in scope
     init { loadPaymentMethods() }
@@ -36,10 +37,10 @@ class PaymentMethodSelectionViewModel : ViewModel(), PaymentMethodSelectionScope
                 onSuccess = { methods ->
                     val orderInfo = basicOrderInfoInteractor(None)
                     val title = CurrencyFormatter.formatTitle(orderInfo.totalAmount, orderInfo.currencyCode)
-                    _uiState.value = PaymentMethodSelectionScope.State.Ready(methods, title)
+                    _uiState.value = PrimerPaymentMethodSelectionScope.State.Ready(methods, title)
                 },
                 onFailure = { error ->
-                    _uiState.value = PaymentMethodSelectionScope.State.Error(error)
+                    _uiState.value = PrimerPaymentMethodSelectionScope.State.Error(error)
                 },
             )
         }

@@ -9,13 +9,14 @@ import io.primer.android.core.di.DISdkContext
 import io.primer.android.data.settings.PrimerSettings
 import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.composable.internal.di.ComposableContainer
+import io.primer.composable.internal.scope.CheckoutScopeDefaults
 import io.primer.composable.scope.PrimerCheckoutScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-internal class CheckoutViewModel : ViewModel(), PrimerCheckoutScope, DISdkComponent {
+internal class CheckoutViewModel : ViewModel(), CheckoutScopeDefaults(), DISdkComponent {
 
     private val _state =
         MutableStateFlow<PrimerCheckoutScope.State>(PrimerCheckoutScope.State.Initializing)

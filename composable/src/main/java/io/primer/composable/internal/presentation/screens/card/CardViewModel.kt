@@ -12,14 +12,15 @@ import io.primer.composable.internal.domain.interactor.SetCardDataInteractor
 import io.primer.composable.internal.domain.interactor.SubmitPaymentInteractor
 import io.primer.composable.internal.presentation.checkout.CheckoutNavigator
 import io.primer.composable.internal.presentation.checkout.Screen
-import io.primer.composable.scope.CardFormScope
+import io.primer.composable.internal.scope.CardFormScopeDefaults
+import io.primer.composable.scope.PrimerCardFormScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-internal class CardViewModel : ViewModel(), CardFormScope, DISdkComponent {
+internal class CardViewModel : ViewModel(), CardFormScopeDefaults(), DISdkComponent {
 
     private val getAvailableCardFieldsInteractor: GetRequiredFieldsInteractor by lazy { resolve() }
     private val setDataInteractor: SetCardDataInteractor by lazy { resolve() }
@@ -29,14 +30,14 @@ internal class CardViewModel : ViewModel(), CardFormScope, DISdkComponent {
 
     private val logReporter: LogReporter by lazy { resolve() }
 
-    private val _uiState = MutableStateFlow<CardFormScope.State>(CardFormScope.State())
-    override val state: StateFlow<CardFormScope.State> = _uiState.asStateFlow()
+    private val _uiState = MutableStateFlow<PrimerCardFormScope.State>(PrimerCardFormScope.State())
+    override val state: StateFlow<PrimerCardFormScope.State> = _uiState.asStateFlow()
 
     init {
         viewModelScope.launch {
             val cardInputFields = getAvailableCardFieldsInteractor.getCardFields()
             val billingInputFields = getAvailableCardFieldsInteractor.getBillingFields()
-            _uiState.value = CardFormScope.State(cardInputFields, billingInputFields)
+            _uiState.value = PrimerCardFormScope.State(cardInputFields, billingInputFields)
         }
 
         viewModelScope.launch {
