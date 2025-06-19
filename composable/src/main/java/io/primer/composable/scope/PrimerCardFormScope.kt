@@ -42,7 +42,7 @@ interface PrimerCardFormScope {
         val isSubmitEnabled: Boolean = false,
     )
 
-    var cardFormScreen: @Composable () -> Unit
+    var screen: @Composable () -> Unit
     var submitButton: @Composable (modifier: Modifier, text: String) -> Unit
     var cardNumberInput: @Composable (modifier: Modifier) -> Unit
     var cvvInput: @Composable (modifier: Modifier) -> Unit

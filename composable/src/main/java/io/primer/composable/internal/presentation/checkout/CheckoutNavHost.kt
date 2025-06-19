@@ -52,11 +52,11 @@ internal fun PrimerCheckoutScope.CheckoutNavHost(
                 }
 
                 composable(Screen.PaymentsList.route) {
-                    paymentSelectionScope().paymentSelectionScreen()
+                    paymentSelection().screen()
                 }
 
                 composable(Screen.CardForm.route) {
-                    cardFormScope().cardFormScreen()
+                    cardForm().screen()
                 }
             }
         }

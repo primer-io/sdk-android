@@ -23,6 +23,6 @@ interface PrimerPaymentMethodSelectionScope {
         data class Error(val exception: Throwable) : State
     }
 
-    var paymentSelectionScreen: @Composable () -> Unit
+    var screen: @Composable () -> Unit
     var paymentMethodCard: @Composable (modifier: Modifier, onPaymentMethodSelected: () -> Unit) -> Unit
 }

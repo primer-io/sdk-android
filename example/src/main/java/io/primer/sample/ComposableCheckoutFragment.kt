@@ -56,19 +56,19 @@ class ComposableCheckoutFragment : Fragment() {
                         }
 
                         // Override nested scope screens using property access
-                        scope.cardFormScope().cardFormScreen = {
+                        scope.cardForm().screen = {
                             // Custom card form - access scope methods directly
                             // onSubmit = scope.cardFormScope.onSubmit()
                             // isValid = scope.cardFormScope.state.collectAsState().value.isSubmitEnabled
                         }
                         
-                        scope.paymentSelectionScope().paymentSelectionScreen = {
+                        scope.paymentSelection().screen = {
                             // Custom payment selection
                             // onSelect = { method -> scope.paymentSelectionScope.onPaymentMethodSelected(method) }
                         }
                         
                         // Override individual input components
-                        scope.cardFormScope().cardNumberInput = { modifier ->
+                        scope.cardForm().cardNumberInput = { modifier ->
                             // Custom card number input
                             // onValueChange = { scope.cardFormScope.updateCardNumber(it) }
                         }

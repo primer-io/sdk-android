@@ -41,9 +41,9 @@ internal abstract class CheckoutScopeDefaults : ViewModel(), PrimerCheckoutScope
         DefaultErrorScreen(message = message)
     }
 
-    override val cardFormScope: @Composable (() -> PrimerCardFormScope) =
+    override val cardForm: @Composable (() -> PrimerCardFormScope) =
         { viewModel<CardViewModel>() }
 
-    override val paymentSelectionScope: @Composable (() -> PrimerPaymentMethodSelectionScope) =
+    override val paymentSelection: @Composable (() -> PrimerPaymentMethodSelectionScope) =
         { viewModel<PaymentMethodSelectionViewModel>() }
 }

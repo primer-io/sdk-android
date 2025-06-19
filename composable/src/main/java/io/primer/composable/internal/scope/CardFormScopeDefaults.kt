@@ -26,7 +26,7 @@ import io.primer.composable.scope.PrimerCardFormScope
 
 internal abstract class CardFormScopeDefaults : ViewModel(), PrimerCardFormScope {
 
-    override var cardFormScreen: @Composable () -> Unit = {
+    override var screen: @Composable () -> Unit = {
         DefaultCardFormScreen()
     }
     

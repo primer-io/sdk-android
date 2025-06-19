@@ -13,8 +13,8 @@ interface PrimerCheckoutScope {
     var successScreen: @Composable () -> Unit
     var errorScreen: @Composable (message: String) -> Unit
 
-    val cardFormScope: @Composable () -> PrimerCardFormScope
-    val paymentSelectionScope: @Composable () -> PrimerPaymentMethodSelectionScope
+    val cardForm: @Composable () -> PrimerCardFormScope
+    val paymentSelection: @Composable () -> PrimerPaymentMethodSelectionScope
 
     fun onDismiss()
 
