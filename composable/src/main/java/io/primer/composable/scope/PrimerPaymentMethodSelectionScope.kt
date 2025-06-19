@@ -3,10 +3,9 @@ package io.primer.composable.scope
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import io.primer.composable.internal.domain.models.PrimerComposablePaymentMethod
-import io.primer.composable.internal.presentation.screens.paymentMethodSelection.components.PaymentMethodItemCard
 import kotlinx.coroutines.flow.StateFlow
 
-interface PaymentMethodSelectionScope {
+interface PrimerPaymentMethodSelectionScope {
 
     val state: StateFlow<State>
 
@@ -24,14 +23,7 @@ interface PaymentMethodSelectionScope {
         data class Error(val exception: Throwable) : State
     }
 
-    companion object {
-
-        // TODO COMPOSABLE see what components to expose
-
-        @Composable
-        fun PaymentMethodSelectionScope.PrimerPaymentMethodCard(
-            modifier: Modifier = Modifier,
-            onPaymentMethodSelected: () -> Unit,
-        ) = PaymentMethodItemCard(modifier = modifier, onPaymentMethodSelected = onPaymentMethodSelected)
-    }
+    // Non-nullable composable properties (replacing companion object extensions)
+    var PrimerPaymentSelectionScreen: @Composable () -> Unit
+    var PrimerPaymentMethodCard: @Composable (modifier: Modifier, onPaymentMethodSelected: () -> Unit) -> Unit
 }
