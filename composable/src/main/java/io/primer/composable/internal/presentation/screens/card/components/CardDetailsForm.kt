@@ -17,10 +17,10 @@ import io.primer.composable.internal.presentation.screens.card.components.input.
 import io.primer.composable.internal.presentation.screens.card.components.input.CvvInput
 import io.primer.composable.internal.presentation.screens.card.components.input.ExpiryDateInput
 import io.primer.composable.internal.presentation.theme.LocalPrimerSpacingTokens
-import io.primer.composable.scope.CardFormScope
+import io.primer.composable.scope.PrimerCardFormScope
 
 @Composable
-internal fun CardFormScope.CardDetailsForm(
+internal fun PrimerCardFormScope.CardDetailsForm(
     modifier: Modifier = Modifier,
 ) {
     Column(

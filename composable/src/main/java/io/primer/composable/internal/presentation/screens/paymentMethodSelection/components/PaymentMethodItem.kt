@@ -21,10 +21,10 @@ import io.primer.composable.internal.presentation.theme.LocalPrimerRadiusTokens
 import io.primer.composable.internal.presentation.theme.LocalPrimerSizeTokens
 import io.primer.composable.internal.presentation.theme.LocalPrimerSpacingTokens
 import io.primer.composable.internal.presentation.theme.LocalPrimerTypographyTokens
-import io.primer.composable.scope.PaymentMethodSelectionScope
+import io.primer.composable.scope.PrimerPaymentMethodSelectionScope
 
 @Composable
-internal fun PaymentMethodSelectionScope.PaymentMethodSelector(
+internal fun PrimerPaymentMethodSelectionScope.PaymentMethodSelector(
     primerMethod: io.primer.composable.internal.domain.models.PrimerComposablePaymentMethod,
     onPaymentMethodSelected: () -> Unit,
 ) {
@@ -60,7 +60,7 @@ internal fun PaymentMethodSelectionScope.PaymentMethodSelector(
 }
 
 @Composable
-internal fun PaymentMethodSelectionScope.PaymentMethodItem(
+internal fun PrimerPaymentMethodSelectionScope.PaymentMethodItem(
     modifier: Modifier = Modifier,
     borderColor: Color? = null,
     backgroundColor: Color = LocalPrimerColorTokens.current.primerColorBackground,

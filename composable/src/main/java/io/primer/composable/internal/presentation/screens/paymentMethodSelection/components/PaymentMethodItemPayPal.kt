@@ -9,10 +9,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import io.primer.composable.R
 import io.primer.composable.internal.presentation.theme.LocalPrimerSpacingTokens
-import io.primer.composable.scope.PaymentMethodSelectionScope
+import io.primer.composable.scope.PrimerPaymentMethodSelectionScope
 
 @Composable
-internal fun PaymentMethodSelectionScope.PaymentMethodItemPaypal(
+internal fun PrimerPaymentMethodSelectionScope.PaymentMethodItemPaypal(
     modifier: Modifier = Modifier,
     onPaymentMethodSelected: () -> Unit,
 ) {

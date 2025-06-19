@@ -13,8 +13,8 @@ import androidx.navigation.compose.rememberNavController
 import io.primer.android.core.di.DISdkContext
 import io.primer.composable.internal.presentation.screens.card.CardViewModel
 import io.primer.composable.internal.presentation.screens.paymentMethodSelection.PaymentMethodSelectionViewModel
-import io.primer.composable.scope.CardFormScope
-import io.primer.composable.scope.PaymentMethodSelectionScope
+import io.primer.composable.scope.PrimerCardFormScope
+import io.primer.composable.scope.PrimerPaymentMethodSelectionScope
 import io.primer.composable.scope.PrimerCheckoutScope
 
 internal val LocalNavController = staticCompositionLocalOf<NavHostController> {
@@ -28,8 +28,8 @@ internal fun PrimerCheckoutScope.CheckoutNavHost(
     loadingScreen: (@Composable PrimerCheckoutScope.() -> Unit),
     successScreen: (@Composable PrimerCheckoutScope.() -> Unit),
     errorScreen: (@Composable PrimerCheckoutScope.(message: String) -> Unit),
-    paymentSelectionScreen: (@Composable PaymentMethodSelectionScope.() -> Unit),
-    cardFormScopeScreen: (@Composable CardFormScope.() -> Unit),
+    paymentSelectionScreen: (@Composable PrimerPaymentMethodSelectionScope.() -> Unit),
+    cardFormScopeScreen: (@Composable PrimerCardFormScope.() -> Unit),
 ) {
     CompositionLocalProvider(
         LocalNavController provides rememberNavController(),

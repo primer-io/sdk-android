@@ -6,10 +6,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import io.primer.composable.R
-import io.primer.composable.scope.PaymentMethodSelectionScope
+import io.primer.composable.scope.PrimerPaymentMethodSelectionScope
 
 @Composable
-internal fun PaymentMethodSelectionScope.PaymentMethodItemIdeal(
+internal fun PrimerPaymentMethodSelectionScope.PaymentMethodItemIdeal(
     modifier: Modifier = Modifier,
     onPaymentMethodSelected: () -> Unit,
 ) {

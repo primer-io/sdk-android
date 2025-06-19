@@ -13,10 +13,10 @@ import io.primer.composable.internal.presentation.theme.LocalPrimerColorTokens
 import io.primer.composable.internal.presentation.theme.LocalPrimerSizeTokens
 import io.primer.composable.internal.presentation.theme.LocalPrimerSpacingTokens
 import io.primer.composable.internal.presentation.theme.LocalPrimerTypographyTokens
-import io.primer.composable.scope.PaymentMethodSelectionScope
+import io.primer.composable.scope.PrimerPaymentMethodSelectionScope
 
 @Composable
-internal fun PaymentMethodSelectionScope.PaymentMethodItemCard(
+internal fun PrimerPaymentMethodSelectionScope.PaymentMethodItemCard(
     modifier: Modifier = Modifier,
     onPaymentMethodSelected: () -> Unit,
 ) {

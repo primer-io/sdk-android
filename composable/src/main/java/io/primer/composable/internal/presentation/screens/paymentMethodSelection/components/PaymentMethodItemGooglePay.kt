@@ -6,10 +6,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.unit.sp
 import io.primer.composable.internal.presentation.theme.LocalPrimerColorTokens
-import io.primer.composable.scope.PaymentMethodSelectionScope
+import io.primer.composable.scope.PrimerPaymentMethodSelectionScope
 
 @Composable
-internal fun PaymentMethodSelectionScope.PaymentMethodItemGooglePay(
+internal fun PrimerPaymentMethodSelectionScope.PaymentMethodItemGooglePay(
     modifier: Modifier = Modifier,
     onPaymentMethodSelected: () -> Unit,
 ) {

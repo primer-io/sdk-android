@@ -19,7 +19,7 @@ import io.primer.composable.internal.presentation.theme.LocalPrimerColorTokens
 import io.primer.composable.internal.presentation.theme.LocalPrimerSizeTokens
 import io.primer.composable.internal.presentation.theme.LocalPrimerSpacingTokens
 import io.primer.composable.internal.presentation.theme.LocalPrimerTypographyTokens
-import io.primer.composable.scope.PaymentMethodSelectionScope
+import io.primer.composable.scope.PrimerPaymentMethodSelectionScope
 
 @Composable
 internal fun DefaultPaymentMethodSelectionScreen() {
@@ -32,7 +32,7 @@ internal fun DefaultPaymentMethodSelectionScreen() {
 
 // TODO COMPOSABLE missing design
 @Composable
-private fun PaymentMethodSelectionScope.Loading() {
+private fun PrimerPaymentMethodSelectionScope.Loading() {
     Box(
         modifier = Modifier
             .padding(100.dp),
@@ -43,9 +43,9 @@ private fun PaymentMethodSelectionScope.Loading() {
 }
 
 @Composable
-private fun PaymentMethodSelectionScope.Ready() {
+private fun PrimerPaymentMethodSelectionScope.Ready() {
 
-    val state = state.collectAsStateWithLifecycle().value as PaymentMethodSelectionScope.State.Ready
+    val state = state.collectAsStateWithLifecycle().value as PrimerPaymentMethodSelectionScope.State.Ready
 
     Column {
         CheckoutAppBar(
@@ -77,7 +77,7 @@ private fun PaymentMethodSelectionScope.Ready() {
 
 // TODO COMPOSABLE missing design
 @Composable
-private fun PaymentMethodSelectionScope.Error() {
+private fun PrimerPaymentMethodSelectionScope.Error() {
     Box(
         modifier = Modifier
             .padding(LocalPrimerSizeTokens.current.xxxlarge),

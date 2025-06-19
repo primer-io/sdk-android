@@ -18,8 +18,8 @@ import io.primer.composable.internal.presentation.screens.splash.SplashScreen
 import io.primer.composable.internal.presentation.screens.success.SuccessScreen
 import io.primer.composable.internal.presentation.theme.LocalPrimerColorTokens
 import io.primer.composable.internal.presentation.theme.PrimerTheme
-import io.primer.composable.scope.CardFormScope
-import io.primer.composable.scope.PaymentMethodSelectionScope
+import io.primer.composable.scope.PrimerCardFormScope
+import io.primer.composable.scope.PrimerPaymentMethodSelectionScope
 import io.primer.composable.scope.PrimerCheckoutScope
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -30,8 +30,8 @@ internal fun Primer.checkout(
     splashScreen: (@Composable PrimerCheckoutScope.() -> Unit)?,
     errorScreen: (@Composable PrimerCheckoutScope.(cause: String) -> Unit)?,
     loadingScreen: (@Composable PrimerCheckoutScope.() -> Unit)?,
-    paymentSelectionScreen: (@Composable PaymentMethodSelectionScope.() -> Unit)?,
-    cardFormScreen: (@Composable CardFormScope.() -> Unit)?,
+    paymentSelectionScreen: (@Composable PrimerPaymentMethodSelectionScope.() -> Unit)?,
+    cardFormScreen: (@Composable PrimerCardFormScope.() -> Unit)?,
     successScreen: (@Composable PrimerCheckoutScope.() -> Unit)?,
 ) : PrimerCheckoutScope = with(viewModel<CheckoutViewModel>()) {
 

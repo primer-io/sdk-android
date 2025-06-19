@@ -9,7 +9,7 @@ import io.primer.composable.internal.presentation.screens.card.components.Billin
 import io.primer.composable.internal.presentation.screens.card.components.CardDetailsForm
 import io.primer.composable.internal.presentation.screens.card.components.SubmitButton
 import io.primer.composable.internal.presentation.theme.LocalPrimerSpacingTokens
-import io.primer.composable.scope.CardFormScope
+import io.primer.composable.scope.PrimerCardFormScope
 
 @Composable
 internal fun DefaultCardFormScreen() {

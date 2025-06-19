@@ -7,10 +7,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import io.primer.composable.scope.CardFormScope
+import io.primer.composable.scope.PrimerCardFormScope
 
 @Composable
-internal fun CardFormScope.SubmitButton(
+internal fun PrimerCardFormScope.SubmitButton(
     modifier: Modifier = Modifier,
     text: String,
 ) {

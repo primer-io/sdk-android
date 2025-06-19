@@ -15,7 +15,7 @@ import io.primer.android.components.domain.inputs.models.PrimerInputElementType
 import io.primer.cardShared.CardNumberFormatter
 import io.primer.composable.internal.presentation.screens.card.components.input.transformations.CardNumberVisualTransformation
 import io.primer.composable.internal.presentation.screens.card.components.input.transformations.ExpiryDateVisualTransformation
-import io.primer.composable.scope.CardFormScope
+import io.primer.composable.scope.PrimerCardFormScope
 
 private object InputConfigs {
     fun label(type: PrimerInputElementType): String = when (type) {
@@ -82,7 +82,7 @@ private object InputConfigs {
 }
 
 @Composable
-private fun CardFormScope.Input(
+private fun PrimerCardFormScope.Input(
     modifier: Modifier = Modifier,
     type: PrimerInputElementType,
     onValueChange: (String) -> Unit,
@@ -137,7 +137,7 @@ private fun CardFormScope.Input(
 }
 
 @Composable
-internal fun CardFormScope.CardNumberInput(
+internal fun PrimerCardFormScope.CardNumberInput(
     modifier: Modifier = Modifier,
 ) {
     val state by state.collectAsState()
@@ -185,7 +185,7 @@ internal fun CardFormScope.CardNumberInput(
 }
 
 @Composable
-internal fun CardFormScope.CvvInput(
+internal fun PrimerCardFormScope.CvvInput(
     modifier: Modifier = Modifier,
 ) {
     val state by state.collectAsState()
@@ -233,53 +233,53 @@ internal fun CardFormScope.CvvInput(
 }
 
 @Composable
-internal fun CardFormScope.ExpiryDateInput(modifier: Modifier = Modifier) =
+internal fun PrimerCardFormScope.ExpiryDateInput(modifier: Modifier = Modifier) =
     Input(modifier, PrimerInputElementType.EXPIRY_DATE, ::updateExpiryDate)
 
 @Composable
-internal fun CardFormScope.CardholderNameInput(modifier: Modifier = Modifier) =
+internal fun PrimerCardFormScope.CardholderNameInput(modifier: Modifier = Modifier) =
     Input(modifier, PrimerInputElementType.CARDHOLDER_NAME, ::updateCardholderName)
 
 @Composable
-internal fun CardFormScope.PostalCodeInput(modifier: Modifier = Modifier) =
+internal fun PrimerCardFormScope.PostalCodeInput(modifier: Modifier = Modifier) =
     Input(modifier, PrimerInputElementType.POSTAL_CODE, ::updatePostalCode)
 
 @Composable
-internal fun CardFormScope.CountryCodeInput(modifier: Modifier = Modifier) =
+internal fun PrimerCardFormScope.CountryCodeInput(modifier: Modifier = Modifier) =
     Input(modifier, PrimerInputElementType.COUNTRY_CODE, ::updateCountryCode)
 
 @Composable
-internal fun CardFormScope.CityInput(modifier: Modifier = Modifier) =
+internal fun PrimerCardFormScope.CityInput(modifier: Modifier = Modifier) =
     Input(modifier, PrimerInputElementType.CITY, ::updateCity)
 
 @Composable
-internal fun CardFormScope.StateInput(modifier: Modifier = Modifier) =
+internal fun PrimerCardFormScope.StateInput(modifier: Modifier = Modifier) =
     Input(modifier, PrimerInputElementType.STATE, ::updateState)
 
 @Composable
-internal fun CardFormScope.AddressLine1Input(modifier: Modifier = Modifier) =
+internal fun PrimerCardFormScope.AddressLine1Input(modifier: Modifier = Modifier) =
     Input(modifier, PrimerInputElementType.ADDRESS_LINE_1, ::updateAddressLine1)
 
 @Composable
-internal fun CardFormScope.AddressLine2Input(modifier: Modifier = Modifier) =
+internal fun PrimerCardFormScope.AddressLine2Input(modifier: Modifier = Modifier) =
     Input(modifier, PrimerInputElementType.ADDRESS_LINE_2, ::updateAddressLine2)
 
 @Composable
-internal fun CardFormScope.PhoneNumberInput(modifier: Modifier = Modifier) =
+internal fun PrimerCardFormScope.PhoneNumberInput(modifier: Modifier = Modifier) =
     Input(modifier, PrimerInputElementType.PHONE_NUMBER, ::updatePhoneNumber)
 
 @Composable
-internal fun CardFormScope.FirstNameInput(modifier: Modifier = Modifier) =
+internal fun PrimerCardFormScope.FirstNameInput(modifier: Modifier = Modifier) =
     Input(modifier, PrimerInputElementType.FIRST_NAME, ::updateFirstName)
 
 @Composable
-internal fun CardFormScope.LastNameInput(modifier: Modifier = Modifier) =
+internal fun PrimerCardFormScope.LastNameInput(modifier: Modifier = Modifier) =
     Input(modifier, PrimerInputElementType.LAST_NAME, ::updateLastName)
 
 @Composable
-internal fun CardFormScope.RetailOutletInput(modifier: Modifier = Modifier) =
+internal fun PrimerCardFormScope.RetailOutletInput(modifier: Modifier = Modifier) =
     Input(modifier, PrimerInputElementType.RETAIL_OUTLET, ::updateRetailOutlet)
 
 @Composable
-internal fun CardFormScope.OtpCodeInput(modifier: Modifier = Modifier) =
+internal fun PrimerCardFormScope.OtpCodeInput(modifier: Modifier = Modifier) =
     Input(modifier, PrimerInputElementType.OTP_CODE, ::updateOtpCode)

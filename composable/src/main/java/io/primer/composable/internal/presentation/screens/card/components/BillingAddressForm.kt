@@ -23,10 +23,10 @@ import io.primer.composable.internal.presentation.screens.card.components.input.
 import io.primer.composable.internal.presentation.screens.card.components.input.PostalCodeInput
 import io.primer.composable.internal.presentation.screens.card.components.input.StateInput
 import io.primer.composable.internal.presentation.theme.LocalPrimerSpacingTokens
-import io.primer.composable.scope.CardFormScope
+import io.primer.composable.scope.PrimerCardFormScope
 
 @Composable
-internal fun CardFormScope.BillingAddressForm(
+internal fun PrimerCardFormScope.BillingAddressForm(
     modifier: Modifier = Modifier,
 ) {
     val state by state.collectAsState()

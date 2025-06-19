@@ -5,8 +5,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import io.primer.android.data.settings.PrimerSettings
 import io.primer.composable.internal.presentation.checkout.checkout
-import io.primer.composable.scope.CardFormScope
-import io.primer.composable.scope.PaymentMethodSelectionScope
+import io.primer.composable.scope.PrimerCardFormScope
+import io.primer.composable.scope.PrimerPaymentMethodSelectionScope
 import io.primer.composable.scope.PrimerCheckoutScope
 
 // TODO COMPOSABLE add kdocs
@@ -30,8 +30,8 @@ object Primer {
         container: (@Composable PrimerCheckoutScope.(content: @Composable () -> Unit) -> Unit)? = null,
         splashScreen: (@Composable PrimerCheckoutScope.() -> Unit)? = null,
         loadingScreen: (@Composable PrimerCheckoutScope.() -> Unit)? = null,
-        paymentSelectionScreen: (@Composable PaymentMethodSelectionScope.() -> Unit)? = null,
-        cardFormScreen: (@Composable CardFormScope.() -> Unit)? = null,
+        paymentSelectionScreen: (@Composable PrimerPaymentMethodSelectionScope.() -> Unit)? = null,
+        cardFormScreen: (@Composable PrimerCardFormScope.() -> Unit)? = null,
         successScreen: (@Composable PrimerCheckoutScope.() -> Unit)? = null,
         errorScreen: (@Composable PrimerCheckoutScope.(cause: String) -> Unit)? = null,
     ) = checkout(
