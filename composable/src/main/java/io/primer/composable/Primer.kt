@@ -27,21 +27,5 @@ object Primer {
     @Composable
     fun showCheckout(
         modifier: Modifier = Modifier,
-        container: (@Composable PrimerCheckoutScope.(content: @Composable () -> Unit) -> Unit)? = null,
-        splashScreen: (@Composable PrimerCheckoutScope.() -> Unit)? = null,
-        loadingScreen: (@Composable PrimerCheckoutScope.() -> Unit)? = null,
-        paymentSelectionScreen: (@Composable PrimerPaymentMethodSelectionScope.() -> Unit)? = null,
-        cardFormScreen: (@Composable PrimerCardFormScope.() -> Unit)? = null,
-        successScreen: (@Composable PrimerCheckoutScope.() -> Unit)? = null,
-        errorScreen: (@Composable PrimerCheckoutScope.(cause: String) -> Unit)? = null,
-    ) = checkout(
-        modifier = modifier,
-        container = container,
-        splashScreen = splashScreen,
-        loadingScreen = loadingScreen,
-        successScreen = successScreen,
-        errorScreen = errorScreen,
-        paymentSelectionScreen = paymentSelectionScreen,
-        cardFormScreen = cardFormScreen,
-    )
+    ): PrimerCheckoutScope = checkout(modifier = modifier)
 }
