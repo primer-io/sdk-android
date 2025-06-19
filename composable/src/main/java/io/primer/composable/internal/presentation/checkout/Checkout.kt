@@ -17,7 +17,7 @@ internal fun Checkout(
     modifier: Modifier = Modifier,
     clientToken: String,
     settings: PrimerSettings = PrimerSettings(),
-    scope: (PrimerCheckoutScope) -> Unit
+    scope: ((PrimerCheckoutScope) -> Unit)?
 ) = with(viewModel<CheckoutViewModel>()) {
 
     // TODO COMPOSABLE is this the correct place to initialise theme?
@@ -45,7 +45,7 @@ internal fun Checkout(
                     CheckoutNavHost(modifier = modifier)
                 }
 
-                scope(this)
+                scope?.invoke(this)
             }
         }
     }

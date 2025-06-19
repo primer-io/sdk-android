@@ -8,11 +8,11 @@ import io.primer.composable.scope.PrimerCheckoutScope
 
 // TODO COMPOSABLE add kdocs
 @Composable
-fun ComposableCheckout(
+fun PrimerCheckout(
     modifier: Modifier = Modifier,
     clientToken: String,
     settings: PrimerSettings = PrimerSettings(),
-    scope: (PrimerCheckoutScope) -> Unit,
+    scope: ((PrimerCheckoutScope) -> Unit)? = null,
 ) {
     Checkout(
         modifier = modifier,
