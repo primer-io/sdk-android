@@ -31,24 +31,46 @@ class ComposableCheckoutFragment : Fragment() {
                         configure(token)
                         val scope = showCheckout()
 
-                        scope.Container = {
-
+                        // Override container with custom implementation
+                        scope.Container = { content ->
+                            // Custom container implementation
+                            content() // Contains navigation
                         }
-
+                        
+                        // Override main screens  
                         scope.SplashScreen = {
-
+                            // Custom splash screen - 'this' is PrimerCheckoutScope
+                            // Custom implementation here
+                        }
+                        
+                        scope.LoadingScreen = {
+                            // Custom loading screen
+                        }
+                        
+                        scope.SuccessScreen = {
+                            // Custom success screen
+                        }
+                        
+                        scope.ErrorScreen = { message ->
+                            // Custom error screen with message
                         }
 
-                        scope.cardFormScope.let {
-                            it.CardFormScreen = {
-                                it.submit()
-                            }
+                        // Override nested scope screens using property access
+                        scope.cardFormScope.PrimerCardFormScreen = {
+                            // Custom card form - access scope methods directly
+                            // onSubmit = scope.cardFormScope.onSubmit()
+                            // isValid = scope.cardFormScope.state.collectAsState().value.isSubmitEnabled
                         }
-
-                        scope.someOtherScope.let {
-                            it.SomeOtherScreen = {
-                                it.foo()
-                            }
+                        
+                        scope.paymentSelectionScope.PrimerPaymentSelectionScreen = {
+                            // Custom payment selection
+                            // onSelect = { method -> scope.paymentSelectionScope.onPaymentMethodSelected(method) }
+                        }
+                        
+                        // Override individual input components
+                        scope.cardFormScope.PrimerCardNumberInput = { modifier ->
+                            // Custom card number input
+                            // onValueChange = { scope.cardFormScope.updateCardNumber(it) }
                         }
                     }
                 }
