@@ -21,7 +21,7 @@ import io.primer.composable.internal.presentation.theme.LocalPrimerSpacingTokens
 import io.primer.composable.scope.PrimerCheckoutScope
 
 @Composable
-internal fun PrimerCheckoutScope.SuccessScreen(
+internal fun DefaultSuccessScreen(
     modifier: Modifier = Modifier,
 ) {
     val spacing = LocalPrimerSpacingTokens.current

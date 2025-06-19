@@ -29,7 +29,27 @@ class ComposableCheckoutFragment : Fragment() {
                 clientToken?.let { token ->
                     with(Primer) {
                         configure(token)
-                        showCheckout()
+                        val scope = showCheckout()
+
+                        scope.Container = {
+
+                        }
+
+                        scope.SplashScreen = {
+
+                        }
+
+                        scope.cardFormScope.let {
+                            it.CardFormScreen = {
+                                it.submit()
+                            }
+                        }
+
+                        scope.someOtherScope.let {
+                            it.SomeOtherScreen = {
+                                it.foo()
+                            }
+                        }
                     }
                 }
             }

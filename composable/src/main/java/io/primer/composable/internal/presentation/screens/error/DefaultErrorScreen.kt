@@ -1,20 +1,26 @@
-package io.primer.composable.internal.presentation.screens.splash
+package io.primer.composable.internal.presentation.screens.error
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import io.primer.composable.scope.PrimerCheckoutScope
 
 @Composable
-internal fun PrimerCheckoutScope.SplashScreen(
+internal fun DefaultErrorScreen(
     modifier: Modifier = Modifier,
+    message: String = "Error",
 ) {
     Column(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        CircularProgressIndicator()
+        Text(
+            text = message,
+            color = MaterialTheme.colorScheme.error,
+            style = MaterialTheme.typography.bodyMedium,
+        )
     }
 }
