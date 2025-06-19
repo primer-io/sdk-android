@@ -24,7 +24,7 @@ import io.primer.composable.scope.PrimerCheckoutScope
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-internal fun Primer.Checkout(
+internal fun Primer.checkout(
     modifier: Modifier = Modifier,
     container: (@Composable PrimerCheckoutScope.(content: @Composable () -> Unit) -> Unit)?,
     splashScreen: (@Composable PrimerCheckoutScope.() -> Unit)?,
@@ -33,13 +33,12 @@ internal fun Primer.Checkout(
     paymentSelectionScreen: (@Composable PaymentMethodSelectionScope.() -> Unit)?,
     cardFormScreen: (@Composable CardFormScope.() -> Unit)?,
     successScreen: (@Composable PrimerCheckoutScope.() -> Unit)?,
-) = with(viewModel<CheckoutViewModel>()) {
+) : PrimerCheckoutScope = with(viewModel<CheckoutViewModel>()) {
 
     // TODO COMPOSABLE is this the correct place to initialise theme?
     PrimerTheme {
         val context = LocalContext.current
 
-        // TODO COMPOSABLE is this needed?
         DisposableEffect(clientToken) {
             initialize(context, clientToken, primerSettings)
             onDispose { onDismiss() }
@@ -82,4 +81,6 @@ internal fun Primer.Checkout(
             }
         }
     }
+
+    return this
 }

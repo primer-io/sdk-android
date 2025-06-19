@@ -1,7 +1,8 @@
 package io.primer.composable.scope
 
-import android.content.Context
-import io.primer.android.data.settings.PrimerSettings
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import io.primer.composable.internal.presentation.screens.splash.SplashScreen
 import kotlinx.coroutines.flow.StateFlow
 
 // TODO COMPOSABLE add access to sub scopes?
@@ -9,12 +10,6 @@ import kotlinx.coroutines.flow.StateFlow
 interface PrimerCheckoutScope {
 
     val state: StateFlow<State>
-
-    fun initialize(
-        context: Context,
-        clientToken: String,
-        primerSettings: PrimerSettings,
-    )
 
     fun onDismiss()
 
@@ -27,5 +22,15 @@ interface PrimerCheckoutScope {
         data object Dismissed : State
 
         data class Error(val exception: Throwable) : State
+    }
+
+    companion object {
+
+        @Composable
+        fun PrimerCheckoutScope.PrimerSplashScreen(
+            modifier: Modifier = Modifier,
+        ) {
+            SplashScreen(modifier)
+        }
     }
 }

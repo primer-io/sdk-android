@@ -22,7 +22,7 @@ internal class CheckoutViewModel : ViewModel(), PrimerCheckoutScope, DISdkCompon
     override val state: StateFlow<PrimerCheckoutScope.State> = _state.asStateFlow()
 
     @Synchronized
-    override fun initialize(
+    fun initialize(
         context: Context,
         clientToken: String,
         primerSettings: PrimerSettings,

@@ -5,9 +5,10 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import io.primer.composable.scope.PrimerCheckoutScope
 
 @Composable
-internal fun SplashScreen(
+internal fun PrimerCheckoutScope.SplashScreen(
     modifier: Modifier = Modifier,
 ) {
     Column(
