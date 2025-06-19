@@ -24,12 +24,6 @@ internal val LocalNavController = staticCompositionLocalOf<NavHostController> {
 @Composable
 internal fun PrimerCheckoutScope.CheckoutNavHost(
     modifier: Modifier = Modifier,
-    splashScreen: (@Composable PrimerCheckoutScope.() -> Unit),
-    loadingScreen: (@Composable PrimerCheckoutScope.() -> Unit),
-    successScreen: (@Composable PrimerCheckoutScope.() -> Unit),
-    errorScreen: (@Composable PrimerCheckoutScope.(message: String) -> Unit),
-    paymentSelectionScreen: (@Composable PrimerPaymentMethodSelectionScope.() -> Unit),
-    cardFormScopeScreen: (@Composable PrimerCardFormScope.() -> Unit),
 ) {
     CompositionLocalProvider(
         LocalNavController provides rememberNavController(),
@@ -44,30 +38,32 @@ internal fun PrimerCheckoutScope.CheckoutNavHost(
                 modifier = modifier.fillMaxWidth(),
             ) {
                 composable(Screen.Splash.route) {
-                    splashScreen()
+                    SplashScreen()
                 }
 
                 composable(Screen.Loading.route) {
-                    loadingScreen()
+                    LoadingScreen()
                 }
 
                 composable(Screen.Error.route) { backStackEntry ->
                     // Retrieve error from SavedStateHandle - set when navigating via:
                     // navController.currentBackStackEntry?.savedStateHandle?.set("error", primerError)
                     val error = backStackEntry.savedStateHandle.get<String>("error")
-                    error?.let { errorScreen(it) }
+                    error?.let { ErrorScreen(it) }
                 }
 
                 composable(Screen.Success.route) {
-                    successScreen()
+                    SuccessScreen()
                 }
 
                 composable(Screen.PaymentsList.route) {
-                    viewModel<PaymentMethodSelectionViewModel>().paymentSelectionScreen()
+                    // Access nested scope's property
+                    paymentSelectionScope.PrimerPaymentSelectionScreen()
                 }
 
                 composable(Screen.CardForm.route) {
-                    viewModel<CardViewModel>().cardFormScopeScreen()
+                    // Access nested scope's property  
+                    cardFormScope.PrimerCardFormScreen()
                 }
             }
         }

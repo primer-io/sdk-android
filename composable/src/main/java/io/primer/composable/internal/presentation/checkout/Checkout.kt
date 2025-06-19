@@ -47,37 +47,35 @@ internal fun Primer.checkout(
         when (val state = state.collectAsStateWithLifecycle().value) {
             PrimerCheckoutScope.State.Dismissed -> Unit
             // TODO COMPOSABLE why is this not shown?
-            PrimerCheckoutScope.State.Initializing -> splashScreen?.invoke(this)
-            is PrimerCheckoutScope.State.Error -> errorScreen?.invoke(this, "${state.exception.message}")
+            PrimerCheckoutScope.State.Initializing -> {
+                splashScreen?.let { SplashScreen = it }
+                SplashScreen()
+            }
+            is PrimerCheckoutScope.State.Error -> {
+                errorScreen?.let { ErrorScreen = it }
+                ErrorScreen("${state.exception.message}")
+            }
             PrimerCheckoutScope.State.Ready -> {
+                // Apply custom composables if provided
+                container?.let { Container = it }
+                splashScreen?.let { SplashScreen = it }
+                loadingScreen?.let { LoadingScreen = it }
+                successScreen?.let { SuccessScreen = it }
+                errorScreen?.let { ErrorScreen = it }
+                
+                // Apply nested scope composables if provided
+                paymentSelectionScreen?.let { screen -> 
+                    paymentSelectionScope.PrimerPaymentSelectionScreen = { screen.invoke(paymentSelectionScope) }
+                }
+                cardFormScreen?.let { screen -> 
+                    cardFormScope.PrimerCardFormScreen = { screen.invoke(cardFormScope) }
+                }
+
                 val content: @Composable () -> Unit = {
-                    CheckoutNavHost(
-                        modifier = modifier,
-                        splashScreen = { splashScreen?.invoke(this@with) ?: SplashScreen() },
-                        loadingScreen = { loadingScreen?.invoke(this@with) ?: LoadingScreen() },
-                        paymentSelectionScreen = {
-                            paymentSelectionScreen?.invoke(this) ?: PaymentMethodSelectionScreen()
-                        },
-                        cardFormScopeScreen = { cardFormScreen?.invoke(this) ?: CardFormScreen() },
-                        successScreen = { successScreen?.invoke(this@with) ?: SuccessScreen() },
-                        errorScreen = { errorScreen?.invoke(this@with, it) ?: ErrorScreen() },
-                    )
+                    CheckoutNavHost(modifier = modifier)
                 }
 
-                container?.invoke(this, content) ?: run {
-                    val sheetState = rememberModalBottomSheetState(
-                        skipPartiallyExpanded = true,
-                    )
-
-                    // TODO COMPOSABLE fix the weird top padding
-                    ModalBottomSheet(
-                        sheetState = sheetState,
-                        onDismissRequest = ::onDismiss,
-                        dragHandle = {},
-                        containerColor = LocalPrimerColorTokens.current.primerColorBackground,
-                        content = { content() },
-                    )
-                }
+                Container.invoke(this, content)
             }
         }
     }
