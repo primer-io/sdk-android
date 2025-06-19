@@ -15,7 +15,7 @@ import io.primer.composable.scope.PrimerCheckoutScope
 @Composable
 internal fun Primer.checkout(
     modifier: Modifier = Modifier,
-) : PrimerCheckoutScope = with(viewModel<CheckoutViewModel>()) {
+): PrimerCheckoutScope = with(viewModel<CheckoutViewModel>()) {
 
     // TODO COMPOSABLE is this the correct place to initialise theme?
     PrimerTheme {
@@ -30,17 +30,17 @@ internal fun Primer.checkout(
             PrimerCheckoutScope.State.Dismissed -> Unit
             // TODO COMPOSABLE why is this not shown?
             PrimerCheckoutScope.State.Initializing -> {
-                SplashScreen()
+                splashScreen()
             }
+
             is PrimerCheckoutScope.State.Error -> {
-                ErrorScreen("${state.exception.message}")
+                errorScreen("${state.exception.message}")
             }
+
             PrimerCheckoutScope.State.Ready -> {
-                val content: @Composable () -> Unit = {
+                container {
                     CheckoutNavHost(modifier = modifier)
                 }
-
-                Container.invoke(this, content)
             }
         }
     }

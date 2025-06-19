@@ -1,8 +1,5 @@
 package io.primer.composable.internal.presentation.screens.paymentMethodSelection
 
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import io.primer.android.core.di.DISdkComponent
 import io.primer.android.core.di.extensions.resolve
@@ -12,8 +9,7 @@ import io.primer.composable.internal.domain.models.PrimerComposablePaymentMethod
 import io.primer.composable.internal.presentation.checkout.CheckoutNavigator
 import io.primer.composable.internal.presentation.checkout.Screen
 import io.primer.composable.internal.presentation.utils.CurrencyFormatter
-import io.primer.composable.internal.presentation.screens.paymentMethodSelection.DefaultPaymentMethodSelectionScreen
-import io.primer.composable.internal.presentation.screens.paymentMethodSelection.components.PaymentMethodItemCard
+import io.primer.composable.internal.scope.PaymentMethodSelectionScopeDefaults
 import io.primer.composable.scope.PrimerPaymentMethodSelectionScope
 import io.primer.ui.core.configuration.domain.model.BasicOrderInfoInteractor
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -21,7 +17,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-class PaymentMethodSelectionViewModel : ViewModel(), PrimerPaymentMethodSelectionScope, DISdkComponent {
+internal class PaymentMethodSelectionViewModel : PaymentMethodSelectionScopeDefaults(), DISdkComponent {
 
     private val getAvailablePaymentMethodsInteractor: GetAvailablePaymentMethodsInteractor by lazy { resolve() }
     private val basicOrderInfoInteractor: BasicOrderInfoInteractor by lazy { resolve() }
@@ -30,15 +26,6 @@ class PaymentMethodSelectionViewModel : ViewModel(), PrimerPaymentMethodSelectio
     private val _uiState =
         MutableStateFlow<PrimerPaymentMethodSelectionScope.State>(PrimerPaymentMethodSelectionScope.State.Loading)
     override val state: StateFlow<PrimerPaymentMethodSelectionScope.State> = _uiState.asStateFlow()
-
-    // Default composable implementations (copied from PaymentMethodSelectionScopeDefaults)
-    override var PrimerPaymentSelectionScreen: @Composable () -> Unit = {
-        DefaultPaymentMethodSelectionScreen()
-    }
-    
-    override var PrimerPaymentMethodCard: @Composable (modifier: Modifier, onPaymentMethodSelected: () -> Unit) -> Unit = { modifier, onSelected ->
-        PaymentMethodItemCard(modifier = modifier, onPaymentMethodSelected = onSelected)
-    }
 
     // TODO COMPOSABLE move this to a separate function in scope
     init { loadPaymentMethods() }

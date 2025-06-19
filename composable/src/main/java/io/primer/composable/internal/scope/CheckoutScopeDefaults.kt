@@ -3,42 +3,38 @@ package io.primer.composable.internal.scope
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.lifecycle.ViewModel
 import io.primer.composable.internal.presentation.screens.error.DefaultErrorScreen
 import io.primer.composable.internal.presentation.screens.loading.DefaultLoadingScreen
 import io.primer.composable.internal.presentation.screens.splash.DefaultSplashScreen
 import io.primer.composable.internal.presentation.screens.success.DefaultSuccessScreen
-import io.primer.composable.internal.presentation.screens.card.CardViewModel
-import io.primer.composable.internal.presentation.screens.paymentMethodSelection.PaymentMethodSelectionViewModel
 import io.primer.composable.scope.PrimerCardFormScope
 import io.primer.composable.scope.PrimerCheckoutScope
 import io.primer.composable.scope.PrimerPaymentMethodSelectionScope
 
-internal abstract class CheckoutScopeDefaults : PrimerCheckoutScope {
-    
-    // Default composables with scope receiver
+internal abstract class CheckoutScopeDefaults : ViewModel(), PrimerCheckoutScope {
+
     @OptIn(ExperimentalMaterial3Api::class)
-    override var Container: @Composable PrimerCheckoutScope.(content: @Composable () -> Unit) -> Unit = { content ->
+    override var container: @Composable (content: @Composable () -> Unit) -> Unit = { content ->
         // Default container implementation
         ModalBottomSheet(onDismissRequest = ::onDismiss) {
             content()
         }
     }
     
-    override var SplashScreen: @Composable PrimerCheckoutScope.() -> Unit = {
+    override var splashScreen: @Composable () -> Unit = {
         DefaultSplashScreen()
     }
     
-    override var LoadingScreen: @Composable PrimerCheckoutScope.() -> Unit = {
+    override var loadingScreen: @Composable () -> Unit = {
         DefaultLoadingScreen()
     }
     
-    override var SuccessScreen: @Composable PrimerCheckoutScope.() -> Unit = {
+    override var successScreen: @Composable () -> Unit = {
         DefaultSuccessScreen()
     }
     
-    override var ErrorScreen: @Composable PrimerCheckoutScope.(message: String) -> Unit = { message ->
+    override var errorScreen: @Composable (message: String) -> Unit = { message ->
         DefaultErrorScreen(message = message)
     }
     

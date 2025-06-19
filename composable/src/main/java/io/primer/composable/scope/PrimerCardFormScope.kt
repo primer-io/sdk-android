@@ -42,24 +42,23 @@ interface PrimerCardFormScope {
         val isSubmitEnabled: Boolean = false,
     )
 
-    // Non-nullable composable properties (replacing companion object extensions)
-    var PrimerCardFormScreen: @Composable () -> Unit
-    var PrimerSubmitButton: @Composable (modifier: Modifier, text: String) -> Unit
-    var PrimerCardNumberInput: @Composable (modifier: Modifier) -> Unit
-    var PrimerCvvInput: @Composable (modifier: Modifier) -> Unit
-    var PrimerExpiryDateInput: @Composable (modifier: Modifier) -> Unit
-    var PrimerCardholderNameInput: @Composable (modifier: Modifier) -> Unit
-    var PrimerPostalCodeInput: @Composable (modifier: Modifier) -> Unit
-    var PrimerCountryCodeInput: @Composable (modifier: Modifier) -> Unit
-    var PrimerCityInput: @Composable (modifier: Modifier) -> Unit
-    var PrimerStateInput: @Composable (modifier: Modifier) -> Unit
-    var PrimerAddressLine1Input: @Composable (modifier: Modifier) -> Unit
-    var PrimerAddressLine2Input: @Composable (modifier: Modifier) -> Unit
-    var PrimerPhoneNumberInput: @Composable (modifier: Modifier) -> Unit
-    var PrimerFirstNameInput: @Composable (modifier: Modifier) -> Unit
-    var PrimerLastNameInput: @Composable (modifier: Modifier) -> Unit
-    var PrimerRetailOutletInput: @Composable (modifier: Modifier) -> Unit
-    var PrimerOtpCodeInput: @Composable (modifier: Modifier) -> Unit
-    var PrimerCardDetails: @Composable (modifier: Modifier) -> Unit
-    var PrimerBillingAddress: @Composable (modifier: Modifier) -> Unit
+    var cardFormScreen: @Composable () -> Unit
+    var submitButton: @Composable (modifier: Modifier, text: String) -> Unit
+    var cardNumberInput: @Composable (modifier: Modifier) -> Unit
+    var cvvInput: @Composable (modifier: Modifier) -> Unit
+    var expiryDateInput: @Composable (modifier: Modifier) -> Unit
+    var cardholderNameInput: @Composable (modifier: Modifier) -> Unit
+    var postalCodeInput: @Composable (modifier: Modifier) -> Unit
+    var countryCodeInput: @Composable (modifier: Modifier) -> Unit
+    var cityInput: @Composable (modifier: Modifier) -> Unit
+    var stateInput: @Composable (modifier: Modifier) -> Unit
+    var addressLine1Input: @Composable (modifier: Modifier) -> Unit
+    var addressLine2Input: @Composable (modifier: Modifier) -> Unit
+    var phoneNumberInput: @Composable (modifier: Modifier) -> Unit
+    var firstNameInput: @Composable (modifier: Modifier) -> Unit
+    var lastNameInput: @Composable (modifier: Modifier) -> Unit
+    var retailOutletInput: @Composable (modifier: Modifier) -> Unit
+    var otpCodeInput: @Composable (modifier: Modifier) -> Unit
+    var cardDetails: @Composable (modifier: Modifier) -> Unit
+    var billingAddress: @Composable (modifier: Modifier) -> Unit
 }

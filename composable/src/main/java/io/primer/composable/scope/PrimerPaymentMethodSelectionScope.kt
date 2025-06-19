@@ -23,7 +23,6 @@ interface PrimerPaymentMethodSelectionScope {
         data class Error(val exception: Throwable) : State
     }
 
-    // Non-nullable composable properties (replacing companion object extensions)
-    var PrimerPaymentSelectionScreen: @Composable () -> Unit
-    var PrimerPaymentMethodCard: @Composable (modifier: Modifier, onPaymentMethodSelected: () -> Unit) -> Unit
+    var paymentSelectionScreen: @Composable () -> Unit
+    var paymentMethodCard: @Composable (modifier: Modifier, onPaymentMethodSelected: () -> Unit) -> Unit
 }

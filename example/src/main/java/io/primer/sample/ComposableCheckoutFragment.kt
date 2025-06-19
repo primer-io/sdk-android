@@ -32,43 +32,43 @@ class ComposableCheckoutFragment : Fragment() {
                         val scope = showCheckout()
 
                         // Override container with custom implementation
-                        scope.Container = { content ->
+                        scope.container = { content ->
                             // Custom container implementation
                             content() // Contains navigation
                         }
                         
                         // Override main screens  
-                        scope.SplashScreen = {
+                        scope.splashScreen = {
                             // Custom splash screen - 'this' is PrimerCheckoutScope
                             // Custom implementation here
                         }
                         
-                        scope.LoadingScreen = {
+                        scope.loadingScreen = {
                             // Custom loading screen
                         }
                         
-                        scope.SuccessScreen = {
+                        scope.successScreen = {
                             // Custom success screen
                         }
                         
-                        scope.ErrorScreen = { message ->
+                        scope.errorScreen = { message ->
                             // Custom error screen with message
                         }
 
                         // Override nested scope screens using property access
-                        scope.cardFormScope.PrimerCardFormScreen = {
+                        scope.cardFormScope.cardFormScreen = {
                             // Custom card form - access scope methods directly
                             // onSubmit = scope.cardFormScope.onSubmit()
                             // isValid = scope.cardFormScope.state.collectAsState().value.isSubmitEnabled
                         }
                         
-                        scope.paymentSelectionScope.PrimerPaymentSelectionScreen = {
+                        scope.paymentSelectionScope.paymentSelectionScreen = {
                             // Custom payment selection
                             // onSelect = { method -> scope.paymentSelectionScope.onPaymentMethodSelected(method) }
                         }
                         
                         // Override individual input components
-                        scope.cardFormScope.PrimerCardNumberInput = { modifier ->
+                        scope.cardFormScope.cardNumberInput = { modifier ->
                             // Custom card number input
                             // onValueChange = { scope.cardFormScope.updateCardNumber(it) }
                         }
