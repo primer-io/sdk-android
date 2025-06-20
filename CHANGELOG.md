@@ -3,6 +3,7 @@
 ### Feat
 
 - kotlin 1.9.24 -> 2.0.21 (#982)
+- update 3DS SDK version to 1.6.2
 
 ### Refactor
 
