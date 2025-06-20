@@ -4,15 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.os.Build
 import com.netcetera.threeds.sdk.api.ThreeDS2Service
-import com.netcetera.threeds.sdk.api.configparameters.builder.SchemeConfiguration
-import com.netcetera.threeds.sdk.api.configparameters.builder.SchemeConfiguration.amexConfiguration
-import com.netcetera.threeds.sdk.api.configparameters.builder.SchemeConfiguration.cbConfiguration
-import com.netcetera.threeds.sdk.api.configparameters.builder.SchemeConfiguration.dinersSchemeConfiguration
-import com.netcetera.threeds.sdk.api.configparameters.builder.SchemeConfiguration.jcbConfiguration
-import com.netcetera.threeds.sdk.api.configparameters.builder.SchemeConfiguration.mastercardSchemeConfiguration
-import com.netcetera.threeds.sdk.api.configparameters.builder.SchemeConfiguration.newSchemeConfiguration
-import com.netcetera.threeds.sdk.api.configparameters.builder.SchemeConfiguration.unionSchemeConfiguration
-import com.netcetera.threeds.sdk.api.configparameters.builder.SchemeConfiguration.visaSchemeConfiguration
+import com.netcetera.threeds.sdk.api.configparameters.ConfigParameters
 import com.netcetera.threeds.sdk.api.exceptions.InvalidInputException
 import com.netcetera.threeds.sdk.api.security.Warning
 import com.netcetera.threeds.sdk.api.transaction.Transaction
@@ -29,7 +21,6 @@ import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
 import io.mockk.mockkObject
-import io.mockk.mockkStatic
 import io.mockk.slot
 import io.mockk.unmockkAll
 import io.mockk.verify
@@ -38,6 +29,7 @@ import io.primer.android.configuration.data.model.Environment
 import io.primer.android.configuration.data.model.ThreeDsSecureCertificateDataResponse
 import io.primer.android.core.InstantExecutorExtension
 import io.primer.android.core.utils.DeviceInfo
+import io.primer.android.threeds.data.configuration.NetceteraThreeDsConfigParametersProvider
 import io.primer.android.threeds.data.exception.ThreeDsChallengeCancelledException
 import io.primer.android.threeds.data.exception.ThreeDsChallengeTimedOutException
 import io.primer.android.threeds.data.exception.ThreeDsConfigurationException
@@ -64,6 +56,7 @@ import org.mockito.Mockito
 import org.mockito.Mockito.mock
 import java.util.Locale
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 @ExtendWith(InstantExecutorExtension::class, MockKExtension::class)
 @ExperimentalCoroutinesApi
@@ -84,6 +77,9 @@ internal class NetceteraThreeDsServiceRepositoryTest {
     @RelaxedMockK
     lateinit var mockAuthResponse: BeginAuthResponse
 
+    @RelaxedMockK
+    lateinit var mockConfigurationProvider: NetceteraThreeDsConfigParametersProvider
+
     private val mockThreeDsAppURL = "https://mock.threeds.app/url"
     private val mockInitProtocolVersion = "2.1.0"
 
@@ -93,7 +89,11 @@ internal class NetceteraThreeDsServiceRepositoryTest {
     fun setUp() {
         MockKAnnotations.init(this, relaxed = true)
         mockkObject(DeviceInfo)
-        repository = NetceteraThreeDsServiceRepository(context = context, lazyOf(threeDS2Service))
+        repository = NetceteraThreeDsServiceRepository(
+            context = context,
+            configurationProvider = mockConfigurationProvider,
+            lazyOf(threeDS2Service),
+        )
     }
 
     @AfterEach
@@ -176,7 +176,18 @@ internal class NetceteraThreeDsServiceRepositoryTest {
     @Test
     fun `initializeProvider should normalize Locale`() =
         runTest {
-            val keysParams = mockk<ThreeDsKeysParams>(relaxed = true)
+            val keysParams = ThreeDsKeysParams(
+                environment = Environment.DEV,
+                apiKey = "testApiKey",
+                threeDsCertificates = listOf(
+                    ThreeDsSecureCertificateDataResponse(
+                        cardNetwork = "OTHER",
+                        rootCertificate = "cert",
+                        encryptionKey = "key",
+                    ),
+                ),
+            )
+
             every { DeviceInfo.isSdkVersionAtLeast(Build.VERSION_CODES.O) } returns true
             val locale =
                 Locale.Builder()
@@ -549,58 +560,29 @@ internal class NetceteraThreeDsServiceRepositoryTest {
             }
         }
 
-    @ParameterizedTest
-    @MethodSource("schemeConfigurations")
-    fun `initializeProvider should use correct scheme configuration`(
-        cardNetwork: String,
-        schemeFunction: () -> SchemeConfiguration.Builder,
-    ) = runTest {
-        mockkStatic("com.netcetera.threeds.sdk.api.configparameters.builder.SchemeConfiguration")
-        val schemeConfig = mockk<SchemeConfiguration.Builder>()
-        every { schemeFunction.invoke() } returns schemeConfig
-        repository.initializeProvider(
-            false,
-            Locale.US,
-            ThreeDsKeysParams(
-                environment = Environment.DEV,
-                apiKey = "testKey",
-                threeDsCertificates =
-                listOf(
-                    ThreeDsSecureCertificateDataResponse(
-                        cardNetwork = cardNetwork,
-                        rootCertificate = "testCertificate",
-                        encryptionKey = "testEncryption",
-                    ),
+    @Test
+    fun `initializeProvider should use configuration provided`() = runTest {
+        every { mockConfigurationProvider.createConfigParameters(any()) } returns mockk<ConfigParameters>()
+
+        val keys = ThreeDsKeysParams(
+            environment = Environment.DEV,
+            apiKey = "testKey",
+            threeDsCertificates = listOf(
+                ThreeDsSecureCertificateDataResponse(
+                    cardNetwork = "TEST_NETWORK",
+                    rootCertificate = "testCertificate",
+                    encryptionKey = "testEncryption",
                 ),
             ),
         )
-        verify { schemeFunction.invoke() }
+        val result = repository.initializeProvider(
+            false,
+            Locale.US,
+            keys,
+        )
+        verify { mockConfigurationProvider.createConfigParameters(keys) }
+        assertTrue(result.isSuccess)
     }
-
-    @Test
-    fun `initializeProvider should use newSchemeConfiguration when card network name isn't found`() =
-        runTest {
-            mockkStatic("com.netcetera.threeds.sdk.api.configparameters.builder.SchemeConfiguration")
-            val schemeConfig = mockk<SchemeConfiguration.Builder>()
-            every { newSchemeConfiguration(any()) } returns schemeConfig
-            repository.initializeProvider(
-                false,
-                Locale.US,
-                ThreeDsKeysParams(
-                    environment = Environment.DEV,
-                    apiKey = "testKey",
-                    threeDsCertificates =
-                    listOf(
-                        ThreeDsSecureCertificateDataResponse(
-                            cardNetwork = "OTHER",
-                            rootCertificate = "testCertificate",
-                            encryptionKey = "testEncryption",
-                        ),
-                    ),
-                ),
-            )
-            verify { newSchemeConfiguration(any()) }
-        }
 
     private companion object {
         @JvmStatic
@@ -617,22 +599,10 @@ internal class NetceteraThreeDsServiceRepositoryTest {
                 Arguments.of(CardNetwork.Type.UNIONPAY, DsRidValues.UNION, Environment.SANDBOX),
                 Arguments.of(
                     CardNetwork.Type.OTHER,
-                    NetceteraThreeDsServiceRepository.TEST_SCHEME_ID,
+                    NetceteraThreeDsConfigParametersProvider.TEST_SCHEME_ID,
                     Environment.SANDBOX,
                 ),
             )
         }
-
-        @JvmStatic
-        fun schemeConfigurations() =
-            listOf(
-                Arguments.of("VISA", ::visaSchemeConfiguration),
-                Arguments.of("MASTERCARD", ::mastercardSchemeConfiguration),
-                Arguments.of("AMEX", ::amexConfiguration),
-                Arguments.of("DINERS_CLUB", ::dinersSchemeConfiguration),
-                Arguments.of("UNIONPAY", ::unionSchemeConfiguration),
-                Arguments.of("JCB", ::jcbConfiguration),
-                Arguments.of("CARTES_BANCAIRES", ::cbConfiguration),
-            )
     }
 }
