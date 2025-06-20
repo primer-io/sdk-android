@@ -5,10 +5,10 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.ViewModel
-import io.primer.composable.internal.presentation.screens.card.CardFormViewModel
+import io.primer.android.core.di.DISdkComponent
+import io.primer.android.core.di.extensions.resolve
 import io.primer.composable.internal.presentation.screens.error.DefaultErrorScreen
 import io.primer.composable.internal.presentation.screens.loading.DefaultLoadingScreen
-import io.primer.composable.internal.presentation.screens.paymentMethodSelection.PaymentMethodSelectionViewModel
 import io.primer.composable.internal.presentation.screens.splash.DefaultSplashScreen
 import io.primer.composable.internal.presentation.screens.success.DefaultSuccessScreen
 import io.primer.composable.internal.presentation.theme.LocalPrimerColorTokens
@@ -16,7 +16,7 @@ import io.primer.composable.scope.PrimerCardFormScope
 import io.primer.composable.scope.PrimerCheckoutScope
 import io.primer.composable.scope.PrimerPaymentMethodSelectionScope
 
-internal abstract class DefaultCheckoutScope : ViewModel(), PrimerCheckoutScope {
+internal abstract class DefaultCheckoutScope : ViewModel(), PrimerCheckoutScope, DISdkComponent {
 
     @OptIn(ExperimentalMaterial3Api::class)
     override var container: @Composable (content: @Composable () -> Unit) -> Unit = { content ->
@@ -47,8 +47,7 @@ internal abstract class DefaultCheckoutScope : ViewModel(), PrimerCheckoutScope 
         DefaultErrorScreen(message = message)
     }
 
-    // TODO COMPOSABLE find a better way to initialise the viewmodel
-    override val cardForm: PrimerCardFormScope by lazy { CardFormViewModel() }
+    override val cardForm: PrimerCardFormScope by lazy { resolve() }
 
-    override val paymentMethodSelection: PrimerPaymentMethodSelectionScope by lazy { PaymentMethodSelectionViewModel() }
+    override val paymentMethodSelection: PrimerPaymentMethodSelectionScope by lazy { resolve() }
 }
