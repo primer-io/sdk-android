@@ -5,6 +5,7 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -24,13 +25,14 @@ import io.primer.android.components.domain.inputs.models.PrimerInputElementType
 import io.primer.android.configuration.data.model.CardNetwork
 import io.primer.android.displayMetadata.domain.model.ImageColor
 import io.primer.cardShared.CardNumberFormatter
+import io.primer.composable.R
 import io.primer.composable.internal.presentation.screens.card.components.input.transformations.CardNumberVisualTransformation
 import io.primer.composable.internal.presentation.screens.card.components.input.transformations.ExpiryDateVisualTransformation
 import io.primer.composable.scope.PrimerCardFormScope
 
 private object InputConfigs {
     fun label(type: PrimerInputElementType): String = when (type) {
-        PrimerInputElementType.CARDHOLDER_NAME -> "Cardholder Name"
+        PrimerInputElementType.CARDHOLDER_NAME -> "Name on card"
         PrimerInputElementType.EXPIRY_DATE -> "Expiry Date"
         PrimerInputElementType.POSTAL_CODE -> "Postal Code"
         PrimerInputElementType.COUNTRY_CODE -> "Country Code"
@@ -47,7 +49,7 @@ private object InputConfigs {
     }
 
     fun placeholder(type: PrimerInputElementType): String = when (type) {
-        PrimerInputElementType.CARDHOLDER_NAME -> "John Doe"
+        PrimerInputElementType.CARDHOLDER_NAME -> "Full name"
         PrimerInputElementType.EXPIRY_DATE -> "MM/YYYY"
         PrimerInputElementType.POSTAL_CODE -> "12345"
         PrimerInputElementType.COUNTRY_CODE -> "US"
@@ -90,6 +92,11 @@ private object InputConfigs {
         PrimerInputElementType.EXPIRY_DATE, PrimerInputElementType.OTP_CODE -> "0123456789"
         else -> null
     }
+
+    fun trailingIcon(type: PrimerInputElementType): Int? = when (type) {
+        PrimerInputElementType.EXPIRY_DATE -> R.drawable.ic_primer_card_expiry_date
+        else -> null
+    }
 }
 
 @Composable
@@ -105,6 +112,7 @@ internal fun CardNetworkIcon(
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun PrimerCardFormScope.Input(
     modifier: Modifier = Modifier,
@@ -155,6 +163,14 @@ private fun PrimerCardFormScope.Input(
                 )
             }
         },
+        trailingIcon = {
+            InputConfigs.trailingIcon(type)?.let {
+                Icon(
+                    painter = painterResource(id = it),
+                    contentDescription = "Trailing"
+                )
+            }
+        },
         visualTransformation = InputConfigs.visualTransformation(type),
         keyboardOptions = InputConfigs.keyboardOptions(type),
     )
@@ -191,7 +207,7 @@ internal fun PrimerCardFormScope.CardNumberInput(
         value = value,
         onValueChange = processedOnValueChange,
         label = { Text("Card Number") },
-        placeholder = { Text("1234 5678 9012 3456") },
+        placeholder = { Text("1234 1234 1234 1234") },
         modifier = modifier.fillMaxWidth(),
         singleLine = true,
         isError = error != null,
@@ -203,11 +219,7 @@ internal fun PrimerCardFormScope.CardNumberInput(
                 )
             }
         },
-        trailingIcon = {
-            state.detectedCardNetwork?.let { network ->
-                CardNetworkIcon(cardNetwork = network)
-            }
-        },
+        trailingIcon = { CardNetworkIcon(cardNetwork = state.detectedCardNetwork) },
         visualTransformation = CardNumberVisualTransformation(),
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
     )
@@ -257,6 +269,12 @@ internal fun PrimerCardFormScope.CvvInput(
                 )
             }
         },
+        trailingIcon = {
+            Icon(
+                painter = painterResource(id = R.drawable.ic_primer_card_cvv),
+                contentDescription = "Trailing"
+            )
+        },
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
     )
 }
@@ -278,7 +296,7 @@ internal fun PrimerCardFormScope.CountryCodeInput(modifier: Modifier = Modifier)
     val state by state.collectAsState()
 
     // Check if this field should be shown
-    val isFieldRequired = PrimerInputElementType.COUNTRY_CODE in state.cardFields || 
+    val isFieldRequired = PrimerInputElementType.COUNTRY_CODE in state.cardFields ||
         PrimerInputElementType.COUNTRY_CODE in state.billingFields
     if (!isFieldRequired) return
 
