@@ -9,7 +9,7 @@ private const val MONTH_LENGTH = 2
 
 /**
  * Simple visual transformation for expiry dates
- * Adds "/" after 2 characters: MM/YYYY
+ * Adds "/" after 2 characters: MM/YY
  */
 internal class ExpiryDateVisualTransformation : VisualTransformation {
     override fun filter(text: AnnotatedString): TransformedText {

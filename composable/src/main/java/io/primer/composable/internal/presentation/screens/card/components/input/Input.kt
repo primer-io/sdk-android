@@ -50,7 +50,7 @@ private object InputConfigs {
 
     fun placeholder(type: PrimerInputElementType): String = when (type) {
         PrimerInputElementType.CARDHOLDER_NAME -> "Full name"
-        PrimerInputElementType.EXPIRY_DATE -> "MM/YYYY"
+        PrimerInputElementType.EXPIRY_DATE -> "MM/YY"
         PrimerInputElementType.POSTAL_CODE -> "12345"
         PrimerInputElementType.COUNTRY_CODE -> "US"
         PrimerInputElementType.CITY -> "New York"
@@ -84,7 +84,7 @@ private object InputConfigs {
     }
 
     fun maxLength(type: PrimerInputElementType): Int? = when (type) {
-        PrimerInputElementType.EXPIRY_DATE -> 6
+        PrimerInputElementType.EXPIRY_DATE -> 4
         else -> null
     }
 

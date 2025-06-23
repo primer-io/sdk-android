@@ -56,6 +56,24 @@ class SetCardDataInteractor : DISdkComponent {
     private fun formatExpiryDate(input: String): String {
         if (input.isEmpty()) return input
 
+        // Handle MM/YY format (4 characters) - convert to MM/YYYY
+        if (input.length == 4 && !input.contains("/")) {
+            val month = input.take(MONTH_LENGTH)
+            val year = "20${input.drop(MONTH_LENGTH)}"
+            return "$month/$year"
+        }
+
+        // Handle already formatted MM/YY (with slash) - convert to MM/YYYY
+        if (input.contains("/")) {
+            val parts = input.split("/")
+            if (parts.size == 2 && parts[0].length == 2 && parts[1].length == 2) {
+                return "${parts[0]}/20${parts[1]}"
+            }
+            // If already MM/YYYY format, return as is
+            return input
+        }
+
+        // Handle MM/YYYY format (6 characters) - add slash
         return when {
             input.length <= MONTH_LENGTH -> input
             input.length == FULL_EXPIRY_LENGTH -> "${input.take(MONTH_LENGTH)}/${input.drop(MONTH_LENGTH)}"
