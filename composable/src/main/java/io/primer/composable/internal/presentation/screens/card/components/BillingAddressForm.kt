@@ -23,7 +23,7 @@ internal fun PrimerCardFormScope.BillingAddressForm(
 ) {
     val state by state.collectAsState()
     val billingInputFields = state.billingFields
-//    if (billingInputFields.isEmpty()) return
+    if (billingInputFields.isEmpty()) return
 
     val spacing = LocalPrimerSpacingTokens.current
 

@@ -115,7 +115,7 @@ private fun PrimerCardFormScope.Input(
 
     // Check if this field should be shown
     val isFieldRequired = type in state.cardFields || type in state.billingFields
-//    if (!isFieldRequired) return
+    if (!isFieldRequired) return
 
     val value = state.inputFields[type] ?: ""
     val error = state.fieldErrors.find { it.inputElementType == type }
@@ -169,7 +169,7 @@ internal fun PrimerCardFormScope.CardNumberInput(
     // Check if this field should be shown
     val isFieldRequired = PrimerInputElementType.CARD_NUMBER in state.cardFields ||
         PrimerInputElementType.CARD_NUMBER in state.billingFields
-//    if (!isFieldRequired) return
+    if (!isFieldRequired) return
 
     val value = state.inputFields[PrimerInputElementType.CARD_NUMBER] ?: ""
     val error = state.fieldErrors.find { it.inputElementType == PrimerInputElementType.CARD_NUMBER }
@@ -222,7 +222,7 @@ internal fun PrimerCardFormScope.CvvInput(
     // Check if this field should be shown
     val isFieldRequired =
         PrimerInputElementType.CVV in state.cardFields || PrimerInputElementType.CVV in state.billingFields
-//    if (!isFieldRequired) return
+    if (!isFieldRequired) return
 
     val value = state.inputFields[PrimerInputElementType.CVV] ?: ""
     val error = state.fieldErrors.find { it.inputElementType == PrimerInputElementType.CVV }
@@ -280,7 +280,7 @@ internal fun PrimerCardFormScope.CountryCodeInput(modifier: Modifier = Modifier)
     // Check if this field should be shown
     val isFieldRequired = PrimerInputElementType.COUNTRY_CODE in state.cardFields || 
         PrimerInputElementType.COUNTRY_CODE in state.billingFields
-//    if (!isFieldRequired) return
+    if (!isFieldRequired) return
 
     val selectedCountry = state.selectedCountry
     val error = state.fieldErrors.find { it.inputElementType == PrimerInputElementType.COUNTRY_CODE }
