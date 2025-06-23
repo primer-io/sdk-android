@@ -28,6 +28,9 @@ android {
 dependencies {
 
     implementation(project(":headless-core"))
+    implementation(project(":client-session-actions"))
+    implementation(project(":configuration"))
+    implementation(project(":arch-core"))
     implementation(libs.android.ktx)
     implementation(libs.android.appcompat)
     implementation(libs.android.material)

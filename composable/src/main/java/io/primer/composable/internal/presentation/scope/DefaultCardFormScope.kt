@@ -23,8 +23,13 @@ import io.primer.composable.internal.presentation.screens.card.components.input.
 import io.primer.composable.internal.presentation.screens.card.components.input.RetailOutletInput
 import io.primer.composable.internal.presentation.screens.card.components.input.StateInput
 import io.primer.composable.scope.PrimerCardFormScope
+import io.primer.composable.scope.PrimerSelectCountryScope
+import io.primer.android.core.di.DISdkComponent
+import io.primer.android.core.di.extensions.resolve
 
-internal abstract class DefaultCardFormScope : ViewModel(), PrimerCardFormScope {
+internal abstract class DefaultCardFormScope : ViewModel(), PrimerCardFormScope, DISdkComponent {
+
+    override val selectCountry: PrimerSelectCountryScope by lazy { resolve() }
 
     override var screen: @Composable () -> Unit = {
         DefaultCardFormScreen()

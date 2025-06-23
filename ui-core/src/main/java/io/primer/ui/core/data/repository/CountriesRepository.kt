@@ -1,10 +1,10 @@
-package io.primer.android.domain.helper
+package io.primer.ui.core.data.repository
 
 import io.primer.android.clientSessionActions.domain.models.PrimerCountry
 import io.primer.android.clientSessionActions.domain.models.PrimerPhoneCode
 import io.primer.android.configuration.data.model.CountryCode
 
-internal interface CountriesRepository {
+interface CountriesRepository {
     suspend fun getCountries(): List<PrimerCountry>
 
     suspend fun getCountryByCode(code: CountryCode): PrimerCountry

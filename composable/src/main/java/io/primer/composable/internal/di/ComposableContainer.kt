@@ -21,9 +21,12 @@ import io.primer.composable.internal.domain.repositories.RawDataManagerRepositor
 import io.primer.composable.internal.presentation.checkout.CheckoutNavigator
 import io.primer.composable.internal.presentation.screens.card.CardFormViewModel
 import io.primer.composable.internal.presentation.screens.paymentMethodSelection.PaymentMethodSelectionViewModel
+import io.primer.composable.internal.presentation.screens.country.SelectCountryViewModel
 import io.primer.composable.scope.PrimerCardFormScope
 import io.primer.composable.scope.PrimerPaymentMethodSelectionScope
+import io.primer.composable.scope.PrimerSelectCountryScope
 import io.primer.ui.core.configuration.domain.model.BasicOrderInfoInteractor
+import io.primer.ui.core.data.repository.CountriesDataRepository
 import io.primer.ui.core.payment.domain.interactor.SurchargeInteractor
 
 internal class ComposableContainer(
@@ -89,12 +92,20 @@ internal class ComposableContainer(
             CheckoutNavigator()
         }
 
+        registerSingleton {
+            CountriesDataRepository(sdk().resolve())
+        }
+
         registerSingleton<PrimerCardFormScope> {
             CardFormViewModel()
         }
 
         registerSingleton<PrimerPaymentMethodSelectionScope> {
             PaymentMethodSelectionViewModel()
+        }
+
+        registerSingleton<PrimerSelectCountryScope> {
+            SelectCountryViewModel()
         }
     }
 }

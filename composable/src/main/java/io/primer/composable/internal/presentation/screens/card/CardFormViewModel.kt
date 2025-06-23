@@ -9,6 +9,8 @@ import io.primer.composable.internal.domain.interactor.GetRequiredFieldsInteract
 import io.primer.composable.internal.domain.interactor.GetValidationStateInteractor
 import io.primer.composable.internal.domain.interactor.SetCardDataInteractor
 import io.primer.composable.internal.domain.interactor.SubmitPaymentInteractor
+import io.primer.android.clientSessionActions.domain.models.PrimerCountry
+import io.primer.android.configuration.data.model.CountryCode
 import io.primer.composable.internal.presentation.checkout.CheckoutNavigator
 import io.primer.composable.internal.presentation.checkout.Screen
 import io.primer.composable.internal.presentation.scope.DefaultCardFormScope
@@ -16,6 +18,7 @@ import io.primer.composable.scope.PrimerCardFormScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -61,6 +64,23 @@ internal class CardFormViewModel : DefaultCardFormScope(), DISdkComponent {
                     it.copy(isSubmitEnabled = isAllowed)
                 }
             }
+        }
+
+        // Listen for country selection results
+        viewModelScope.launch {
+            checkoutNavigator.observeNavigationResult<Pair<String, String>>("selected_country")
+                .filterNotNull()
+                .collect { (countryCode, countryName) ->
+                    updateCountryCode(countryCode)
+                    _uiState.update { currentState ->
+                        currentState.copy(
+                            selectedCountry = PrimerCountry(
+                                name = countryName,
+                                code = CountryCode.safeValueOf(countryCode)
+                            )
+                        )
+                    }
+                }
         }
     }
 
@@ -159,6 +179,12 @@ internal class CardFormViewModel : DefaultCardFormScope(), DISdkComponent {
     override fun onCancel() {
         viewModelScope.launch {
             checkoutNavigator.dismiss()
+        }
+    }
+
+    override fun navigateToCountrySelection() {
+        viewModelScope.launch {
+            checkoutNavigator.navigateTo(Screen.SelectCountry)
         }
     }
 }

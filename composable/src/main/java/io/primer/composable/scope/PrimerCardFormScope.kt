@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.StateFlow
 interface PrimerCardFormScope {
 
     val state: StateFlow<State>
+    val selectCountry: PrimerSelectCountryScope
 
     fun updateCardNumber(cardNumber: String)
     fun updateCvv(cvv: String)
@@ -33,6 +34,8 @@ interface PrimerCardFormScope {
 
     fun onCancel()
 
+    fun navigateToCountrySelection()
+
     data class State(
         val cardFields: List<PrimerInputElementType> = emptyList(),
         val billingFields: List<PrimerInputElementType> = emptyList(),
@@ -40,6 +43,7 @@ interface PrimerCardFormScope {
         val inputFields: Map<PrimerInputElementType, String> = emptyMap(),
         val isLoading: Boolean = false,
         val isSubmitEnabled: Boolean = false,
+        val selectedCountry: io.primer.android.clientSessionActions.domain.models.PrimerCountry? = null,
     )
 
     var screen: @Composable () -> Unit

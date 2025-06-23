@@ -1,8 +1,7 @@
-package io.primer.android.domain.helper
+package io.primer.ui.core.data.repository
 
 import android.content.Context
 import android.util.Log
-import io.primer.android.R
 import io.primer.android.clientSessionActions.domain.models.PrimerCountriesCodeInfo
 import io.primer.android.clientSessionActions.domain.models.PrimerCountry
 import io.primer.android.clientSessionActions.domain.models.PrimerPhoneCode
@@ -13,7 +12,7 @@ import org.json.JSONArray
 import org.json.JSONObject
 import java.io.IOException
 
-internal class CountriesDataRepository(private val context: Context) :
+class CountriesDataRepository(private val context: Context) :
     CountriesRepository {
     private val countries = mutableListOf<PrimerCountry>()
     private val phoneCodes = mutableListOf<PrimerPhoneCode>()
@@ -25,7 +24,7 @@ internal class CountriesDataRepository(private val context: Context) :
     private suspend fun loadCountries(fromCache: Boolean = false) {
         if (!fromCache || countries.isEmpty()) {
             val dataJson =
-                context.resources?.openRawResource(R.raw.primer_codes_countries)
+                context.resources?.openRawResource(context.resources.getIdentifier("primer_codes_countries", "raw", context.packageName))
                     ?.readBytes()
                     ?.decodeToString().orEmpty()
             if (dataJson.isNotBlank()) {
@@ -70,7 +69,7 @@ internal class CountriesDataRepository(private val context: Context) :
     private fun loadPhoneCodes(fromCache: Boolean = false) {
         if (!fromCache || phoneCodes.isEmpty()) {
             val dataJson =
-                context.resources?.openRawResource(R.raw.primer_phone_number_country_codes)
+                context.resources?.openRawResource(context.resources.getIdentifier("primer_phone_number_country_codes", "raw", context.packageName))
                     ?.readBytes()
                     ?.decodeToString().orEmpty()
             if (dataJson.isNotBlank()) {

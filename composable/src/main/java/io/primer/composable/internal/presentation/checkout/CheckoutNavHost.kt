@@ -58,6 +58,12 @@ internal fun PrimerCheckoutScope.CheckoutNavHost(
                 composable(Screen.CardForm.route) {
                     cardForm.screen()
                 }
+
+                composable(Screen.SelectCountry.route) {
+                    with(cardForm.selectCountry) {
+                        screen()
+                    }
+                }
             }
         }
     }
@@ -68,6 +74,7 @@ internal sealed class Screen(val route: String) {
     data object Loading : Screen("loading")
     data object PaymentsList : Screen("payments_list")
     data object CardForm : Screen("card_form")
+    data object SelectCountry : Screen("select_country")
     data object Success : Screen("success")
     data object Error : Screen("error")
 }

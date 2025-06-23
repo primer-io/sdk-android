@@ -10,7 +10,7 @@ import io.primer.android.configuration.data.model.CountryCode
 import io.primer.android.data.payments.forms.models.ButtonType
 import io.primer.android.data.payments.forms.models.FormType
 import io.primer.android.data.payments.forms.models.helper.DialCodeCountryPrefix
-import io.primer.android.domain.helper.CountriesRepository
+import io.primer.ui.core.data.repository.CountriesRepository
 import io.primer.android.paymentmethods.common.data.model.PaymentMethodType
 import io.primer.android.ui.settings.PrimerTheme
 import kotlinx.coroutines.flow.first

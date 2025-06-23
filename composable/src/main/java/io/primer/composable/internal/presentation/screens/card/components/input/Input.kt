@@ -1,13 +1,17 @@
 package io.primer.composable.internal.presentation.screens.card.components.input
 
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.VisualTransformation
@@ -91,7 +95,7 @@ private fun PrimerCardFormScope.Input(
 
     // Check if this field should be shown
     val isFieldRequired = type in state.cardFields || type in state.billingFields
-    if (!isFieldRequired) return
+//    if (!isFieldRequired) return
 
     val value = state.inputFields[type] ?: ""
     val error = state.fieldErrors.find { it.inputElementType == type }
@@ -145,7 +149,7 @@ internal fun PrimerCardFormScope.CardNumberInput(
     // Check if this field should be shown
     val isFieldRequired = PrimerInputElementType.CARD_NUMBER in state.cardFields ||
         PrimerInputElementType.CARD_NUMBER in state.billingFields
-    if (!isFieldRequired) return
+//    if (!isFieldRequired) return
 
     val value = state.inputFields[PrimerInputElementType.CARD_NUMBER] ?: ""
     val error = state.fieldErrors.find { it.inputElementType == PrimerInputElementType.CARD_NUMBER }
@@ -193,7 +197,7 @@ internal fun PrimerCardFormScope.CvvInput(
     // Check if this field should be shown
     val isFieldRequired =
         PrimerInputElementType.CVV in state.cardFields || PrimerInputElementType.CVV in state.billingFields
-    if (!isFieldRequired) return
+//    if (!isFieldRequired) return
 
     val value = state.inputFields[PrimerInputElementType.CVV] ?: ""
     val error = state.fieldErrors.find { it.inputElementType == PrimerInputElementType.CVV }
@@ -245,8 +249,46 @@ internal fun PrimerCardFormScope.PostalCodeInput(modifier: Modifier = Modifier) 
     Input(modifier, PrimerInputElementType.POSTAL_CODE, ::updatePostalCode)
 
 @Composable
-internal fun PrimerCardFormScope.CountryCodeInput(modifier: Modifier = Modifier) =
-    Input(modifier, PrimerInputElementType.COUNTRY_CODE, ::updateCountryCode)
+internal fun PrimerCardFormScope.CountryCodeInput(modifier: Modifier = Modifier) {
+    val state by state.collectAsState()
+
+    // Check if this field should be shown
+    val isFieldRequired = PrimerInputElementType.COUNTRY_CODE in state.cardFields || 
+        PrimerInputElementType.COUNTRY_CODE in state.billingFields
+//    if (!isFieldRequired) return
+
+    val selectedCountry = state.selectedCountry
+    val error = state.fieldErrors.find { it.inputElementType == PrimerInputElementType.COUNTRY_CODE }
+
+    OutlinedTextField(
+        value = selectedCountry?.name ?: "",
+        onValueChange = { },
+        readOnly = true,
+        enabled = false,
+        label = { Text("Country") },
+        modifier = modifier
+            .fillMaxWidth()
+            .clickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = null
+            ) { navigateToCountrySelection() },
+        singleLine = true,
+        isError = error != null,
+        supportingText = {
+            error?.let {
+                Text(
+                    text = it.description,
+                    color = MaterialTheme.colorScheme.error,
+                )
+            }
+        },
+        colors = OutlinedTextFieldDefaults.colors(
+            disabledTextColor = MaterialTheme.colorScheme.onSurface,
+            disabledBorderColor = MaterialTheme.colorScheme.outline,
+            disabledLabelColor = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+    )
+}
 
 @Composable
 internal fun PrimerCardFormScope.CityInput(modifier: Modifier = Modifier) =
