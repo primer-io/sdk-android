@@ -3,6 +3,8 @@ package io.primer.composable.internal.presentation.scope
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.ViewModel
+import io.primer.android.core.di.DISdkComponent
+import io.primer.android.core.di.extensions.resolve
 import io.primer.composable.internal.presentation.screens.card.DefaultCardFormScreen
 import io.primer.composable.internal.presentation.screens.card.components.BillingAddressForm
 import io.primer.composable.internal.presentation.screens.card.components.CardDetailsForm
@@ -24,8 +26,6 @@ import io.primer.composable.internal.presentation.screens.card.components.input.
 import io.primer.composable.internal.presentation.screens.card.components.input.StateInput
 import io.primer.composable.scope.PrimerCardFormScope
 import io.primer.composable.scope.PrimerSelectCountryScope
-import io.primer.android.core.di.DISdkComponent
-import io.primer.android.core.di.extensions.resolve
 
 internal abstract class DefaultCardFormScope : ViewModel(), PrimerCardFormScope, DISdkComponent {
 

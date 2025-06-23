@@ -66,6 +66,14 @@ internal class CardFormViewModel : DefaultCardFormScope(), DISdkComponent {
             }
         }
 
+        viewModelScope.launch {
+            setDataInteractor.detectedCardNetwork.collect { detectedNetwork ->
+                _uiState.update {
+                    it.copy(detectedCardNetwork = detectedNetwork)
+                }
+            }
+        }
+
         // Listen for country selection results
         viewModelScope.launch {
             checkoutNavigator.observeNavigationResult<Pair<String, String>>("selected_country")

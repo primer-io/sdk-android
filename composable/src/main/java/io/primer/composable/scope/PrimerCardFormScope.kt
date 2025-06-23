@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import io.primer.android.components.domain.error.PrimerInputValidationError
 import io.primer.android.components.domain.inputs.models.PrimerInputElementType
+import io.primer.android.configuration.data.model.CardNetwork
 import kotlinx.coroutines.flow.StateFlow
 
 interface PrimerCardFormScope {
@@ -44,6 +45,7 @@ interface PrimerCardFormScope {
         val isLoading: Boolean = false,
         val isSubmitEnabled: Boolean = false,
         val selectedCountry: io.primer.android.clientSessionActions.domain.models.PrimerCountry? = null,
+        val detectedCardNetwork: CardNetwork.Type? = null,
     )
 
     var screen: @Composable () -> Unit
