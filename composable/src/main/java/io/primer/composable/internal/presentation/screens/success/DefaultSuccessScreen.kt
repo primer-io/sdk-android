@@ -13,21 +13,22 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
 import io.primer.composable.R
 import io.primer.composable.internal.presentation.theme.LocalPrimerColorTokens
 import io.primer.composable.internal.presentation.theme.LocalPrimerSizeTokens
+import io.primer.composable.internal.presentation.theme.LocalPrimerSpacingTokens
 
 @Composable
 internal fun DefaultSuccessScreen(
     modifier: Modifier = Modifier,
 ) {
+    val spacing = LocalPrimerSpacingTokens.current
     val sizes = LocalPrimerSizeTokens.current
     val colorTokens = LocalPrimerColorTokens.current
 
     Column(
         modifier = modifier
-            .padding(56.dp),
+            .padding(sizes.xxxlarge),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Icon(
@@ -36,7 +37,7 @@ internal fun DefaultSuccessScreen(
             tint = Color.Unspecified
         )
 
-        Spacer(modifier = Modifier.height(sizes.xxxlarge))
+        Spacer(modifier = Modifier.height(spacing.small))
 
         Text(
             text = "Payment successful",
@@ -45,7 +46,7 @@ internal fun DefaultSuccessScreen(
             textAlign = TextAlign.Center,
         )
 
-        Spacer(modifier = Modifier.height(sizes.xxxlarge))
+        Spacer(modifier = Modifier.height(spacing.xsmall))
 
         Text(
             text = "You'll be redirected to the order confirmation page soon.",
