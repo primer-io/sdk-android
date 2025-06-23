@@ -45,7 +45,7 @@ interface PrimerCardFormScope {
         val isLoading: Boolean = false,
         val isSubmitEnabled: Boolean = false,
         val selectedCountry: io.primer.android.clientSessionActions.domain.models.PrimerCountry? = null,
-        val detectedCardNetwork: CardNetwork.Type? = null,
+        val detectedCardNetwork: CardNetwork.Type = CardNetwork.Type.OTHER,
     )
 
     var screen: @Composable () -> Unit

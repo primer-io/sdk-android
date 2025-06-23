@@ -20,8 +20,8 @@ class SetCardDataInteractor : DISdkComponent {
     private val _inputData = MutableStateFlow<MutableMap<PrimerInputElementType, String>>(mutableMapOf())
     val inputData: Flow<Map<PrimerInputElementType, String>> = _inputData.asStateFlow()
 
-    private val _detectedCardNetwork = MutableStateFlow<CardNetwork.Type?>(null)
-    val detectedCardNetwork: Flow<CardNetwork.Type?> = _detectedCardNetwork.asStateFlow()
+    private val _detectedCardNetwork = MutableStateFlow<CardNetwork.Type>(CardNetwork.Type.OTHER)
+    val detectedCardNetwork: Flow<CardNetwork.Type> = _detectedCardNetwork.asStateFlow()
 
     fun updateInput(input: String, type: PrimerInputElementType) {
         _inputData.update { it.toMutableMap().apply { this[type] = input } }
@@ -36,21 +36,12 @@ class SetCardDataInteractor : DISdkComponent {
     }
 
     private fun updateDetectedCardNetwork(cardNumber: String) {
-        if (cardNumber.isEmpty()) {
-            _detectedCardNetwork.value = null
-            return
-        }
-        
         try {
             val formatter = CardNumberFormatter.fromString(cardNumber)
             val detectedNetwork = formatter.getCardType()
-            _detectedCardNetwork.value = if (detectedNetwork != CardNetwork.Type.OTHER) {
-                detectedNetwork
-            } else {
-                null
-            }
+            _detectedCardNetwork.value = detectedNetwork
         } catch (e: Exception) {
-            _detectedCardNetwork.value = null
+            _detectedCardNetwork.value = CardNetwork.Type.OTHER
         }
     }
 
