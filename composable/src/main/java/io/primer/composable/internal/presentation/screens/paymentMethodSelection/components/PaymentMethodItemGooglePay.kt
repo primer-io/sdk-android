@@ -1,10 +1,12 @@
 package io.primer.composable.internal.presentation.screens.paymentMethodSelection.components
 
-import androidx.compose.material3.Text
+import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontStyle
-import androidx.compose.ui.unit.sp
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
+import io.primer.composable.R
 import io.primer.composable.internal.presentation.theme.LocalPrimerColorTokens
 import io.primer.composable.scope.PrimerPaymentMethodSelectionScope
 
@@ -13,16 +15,16 @@ internal fun PrimerPaymentMethodSelectionScope.PaymentMethodItemGooglePay(
     modifier: Modifier = Modifier,
     onPaymentMethodSelected: () -> Unit,
 ) {
-    // TODO COMPOSABLE need design
     PaymentMethodItem(
-        borderColor = LocalPrimerColorTokens.current.primerColorBorderOutlinedDefault,
-        backgroundColor = LocalPrimerColorTokens.current.primerColorBackground,
+        borderRadius = Int.MAX_VALUE.dp,
+        backgroundColor = LocalPrimerColorTokens.current.primerColorGray900,
         onPaymentMethodSelected = onPaymentMethodSelected,
     ) {
-        Text(
-            text = "*insert google pay design*",
-            fontSize = 10.sp,
-            fontStyle = FontStyle.Italic
+        Icon(
+            painter = painterResource(id = R.drawable.ic_primer_google_pay),
+            // TODO COMPOSABLE content description
+            contentDescription = null,
+            tint = Color.Unspecified,
         )
     }
 }

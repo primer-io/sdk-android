@@ -13,6 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import io.primer.android.paymentmethods.common.data.model.PaymentMethodType
 import io.primer.android.paymentmethods.common.data.model.PaymentMethodType.Companion.safeValueOf
@@ -63,6 +64,7 @@ internal fun PrimerPaymentMethodSelectionScope.PaymentMethodSelector(
 internal fun PrimerPaymentMethodSelectionScope.PaymentMethodItem(
     modifier: Modifier = Modifier,
     borderColor: Color? = null,
+    borderRadius: Dp = LocalPrimerRadiusTokens.current.medium,
     backgroundColor: Color = LocalPrimerColorTokens.current.primerColorBackground,
     onPaymentMethodSelected: () -> Unit,
     content: @Composable () -> Unit,
@@ -73,14 +75,14 @@ internal fun PrimerPaymentMethodSelectionScope.PaymentMethodItem(
             .height(LocalPrimerSizeTokens.current.xxlarge)
             .background(
                 color = backgroundColor,
-                shape = RoundedCornerShape(LocalPrimerRadiusTokens.current.medium),
+                shape = RoundedCornerShape(borderRadius),
             )
             .then(
                 borderColor?.let {
                     Modifier.border(
                         width = 1.dp,
                         color = it,
-                        shape = RoundedCornerShape(LocalPrimerRadiusTokens.current.medium),
+                        shape = RoundedCornerShape(borderRadius),
                     )
                 } ?: Modifier,
             )
