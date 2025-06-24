@@ -8,6 +8,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -17,14 +18,23 @@ import io.primer.composable.R
 import io.primer.composable.internal.presentation.theme.LocalPrimerColorTokens
 import io.primer.composable.internal.presentation.theme.LocalPrimerSizeTokens
 import io.primer.composable.internal.presentation.theme.LocalPrimerSpacingTokens
+import kotlinx.coroutines.delay
 
 @Composable
 internal fun DefaultSuccessScreen(
     modifier: Modifier = Modifier,
+    onDismiss: (() -> Unit)? = null,
 ) {
     val spacing = LocalPrimerSpacingTokens.current
     val sizes = LocalPrimerSizeTokens.current
     val colorTokens = LocalPrimerColorTokens.current
+
+    LaunchedEffect(onDismiss) {
+        if (onDismiss != null) {
+            delay(3000)
+            onDismiss()
+        }
+    }
 
     Column(
         modifier = modifier

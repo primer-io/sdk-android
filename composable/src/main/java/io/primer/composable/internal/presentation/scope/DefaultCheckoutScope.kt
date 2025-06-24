@@ -45,7 +45,13 @@ internal abstract class DefaultCheckoutScope : ViewModel(), PrimerCheckoutScope,
     }
 
     override var successScreen: @Composable () -> Unit = {
-        DefaultSuccessScreen()
+        DefaultSuccessScreen(
+            onDismiss = {
+                viewModelScope.launch {
+                    checkoutNavigator.dismiss()
+                }
+            }
+        )
     }
 
     override var errorScreen: @Composable (message: String) -> Unit = { message ->
