@@ -5,7 +5,7 @@
     <string name="primer_components_select_country">Select Country</string>
     
     <!-- Button Text -->
-    <string name="submit">Submit</string>
+    <string name="primer_components_submit">Submit</string>
     <string name="retry">Retry</string>
     <string name="cancel">Cancel</string>
     <string name="choose_other_payment_methods">Choose other payment methods</string>
