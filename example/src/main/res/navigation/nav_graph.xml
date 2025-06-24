@@ -117,7 +117,7 @@
 
         <action
             android:id="@+id/action_FirstFragment_to_ComponentsFragment"
-            app:destination="@id/ComposableCheckoutFragment"
+            app:destination="@id/ComponentsCheckoutFragment"
             app:enterAnim="@anim/nav_default_enter_anim"
             app:exitAnim="@anim/nav_default_exit_anim"
             app:popEnterAnim="@anim/nav_default_pop_enter_anim"
@@ -207,9 +207,9 @@
     </fragment>
 
     <fragment
-        android:id="@+id/ComposableCheckoutFragment"
-        android:name="io.primer.sample.ComposableCheckoutFragment"
-        android:label="Composable Checkout">
+        android:id="@+id/ComponentsCheckoutFragment"
+        android:name="io.primer.sample.ComponentsCheckoutFragment"
+        android:label="Components Checkout">
     </fragment>
     
     <fragment

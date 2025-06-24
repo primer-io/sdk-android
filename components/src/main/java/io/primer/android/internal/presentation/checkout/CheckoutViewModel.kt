@@ -7,7 +7,7 @@ import io.primer.android.core.di.DISdkComponent
 import io.primer.android.core.di.DISdkContext
 import io.primer.android.data.settings.PrimerSettings
 import io.primer.android.data.settings.internal.PrimerConfig
-import io.primer.android.internal.di.ComposableContainer
+import io.primer.android.internal.di.ComponentsContainer
 import io.primer.android.internal.presentation.scope.DefaultCheckoutScope
 import io.primer.android.scope.PrimerCheckoutScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -37,7 +37,7 @@ internal class CheckoutViewModel : DefaultCheckoutScope(), DISdkComponent {
                     context = context,
                 )
                 DISdkContext.componentsSdkContainer?.apply {
-                    registerContainer(ComposableContainer { DISdkContext.container() })
+                    registerContainer(ComponentsContainer { DISdkContext.container() })
                 }
                 _state.value = PrimerCheckoutScope.State.Ready
             }.onFailure {

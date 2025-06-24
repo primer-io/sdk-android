@@ -29,7 +29,7 @@ import io.primer.android.scope.PrimerCardFormScope
 import io.primer.android.scope.PrimerPaymentMethodSelectionScope
 import io.primer.android.scope.PrimerSelectCountryScope
 
-internal class ComposableContainer(
+internal class ComponentsContainer(
     @Suppress(
         "UNUSED_PARAMETER",
     ) private val sdk: () -> SdkContainer,
