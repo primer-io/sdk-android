@@ -22,7 +22,7 @@ internal fun PrimerCardFormScope.DefaultCardFormScreen() {
         )
         Column(
             modifier = Modifier
-                .padding(LocalPrimerSpacingTokens.current.large),
+                .padding(horizontal = LocalPrimerSpacingTokens.current.large),
         ) {
             CardDetailsForm()
             BillingAddressForm()
