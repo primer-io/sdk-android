@@ -30,7 +30,6 @@ interface PrimerCardFormScope {
 
     fun onSubmit()
 
-    // TODO COMPOSABLE maybe this can be removed and trigger OS back button
     fun onBack()
 
     fun onCancel()
