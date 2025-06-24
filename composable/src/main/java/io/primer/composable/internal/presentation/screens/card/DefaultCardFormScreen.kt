@@ -1,6 +1,8 @@
 package io.primer.composable.internal.presentation.screens.card
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -22,8 +24,9 @@ internal fun PrimerCardFormScope.DefaultCardFormScreen() {
             modifier = Modifier
                 .padding(LocalPrimerSpacingTokens.current.large),
         ) {
-             CardDetailsForm()
-             BillingAddressForm()
+            CardDetailsForm()
+            BillingAddressForm()
+            Spacer(modifier = Modifier.height(LocalPrimerSpacingTokens.current.xsmall))
             submitButton(Modifier, "Submit")
         }
     }
