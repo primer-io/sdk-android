@@ -34,7 +34,7 @@ internal fun PrimerPaymentMethodSelectionScope.DefaultPaymentMethodSelectionScre
     }
 }
 
-// TODO COMPOSABLE missing design
+// TODO missing design
 @Composable
 private fun PrimerPaymentMethodSelectionScope.Loading() {
     Box(
@@ -78,7 +78,7 @@ private fun PrimerPaymentMethodSelectionScope.Ready() {
     }
 }
 
-// TODO COMPOSABLE missing design
+// TODO missing design
 @Composable
 private fun PrimerPaymentMethodSelectionScope.Error() {
     Box(

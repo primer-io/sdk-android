@@ -6,7 +6,7 @@ import io.primer.android.data.settings.PrimerSettings
 import io.primer.composable.internal.presentation.checkout.Checkout
 import io.primer.composable.scope.PrimerCheckoutScope
 
-// TODO COMPOSABLE add kdocs
+// TODO add kdocs
 @Composable
 fun PrimerCheckout(
     modifier: Modifier = Modifier,

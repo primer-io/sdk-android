@@ -47,7 +47,7 @@ internal class PaymentMethodSelectionViewModel : DefaultPaymentMethodSelectionSc
         viewModelScope.launch {
             when (paymentMethod) {
                 PaymentMethodType.PAYMENT_CARD.name -> checkoutNavigator.navigateTo(Screen.CardForm)
-                // TODO COMPOSABLE add rest of screens
+                // TODO add rest of screens
             }
         }
     }
