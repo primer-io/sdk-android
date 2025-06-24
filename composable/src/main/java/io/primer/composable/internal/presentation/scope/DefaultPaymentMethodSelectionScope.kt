@@ -13,7 +13,7 @@ internal abstract class DefaultPaymentMethodSelectionScope : ViewModel(), Primer
         DefaultPaymentMethodSelectionScreen()
     }
 
-    override var paymentMethodCard: @Composable (modifier: Modifier, onPaymentMethodSelected: () -> Unit) -> Unit =
+    override var paymentMethodCard: @Composable (modifier: Modifier, onPaymentMethodSelected: (String) -> Unit) -> Unit =
         { modifier, onSelected ->
             PaymentMethodItemCard(modifier = modifier, onPaymentMethodSelected = onSelected)
         }

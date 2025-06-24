@@ -9,7 +9,7 @@ interface PrimerPaymentMethodSelectionScope {
 
     val state: StateFlow<State>
 
-    fun onPaymentMethodSelected(paymentMethod: PrimerComposablePaymentMethod)
+    fun onPaymentMethodSelected(paymentMethod: String)
 
     fun onCancel()
 
@@ -24,5 +24,5 @@ interface PrimerPaymentMethodSelectionScope {
     }
 
     var screen: @Composable () -> Unit
-    var paymentMethodCard: @Composable (modifier: Modifier, onPaymentMethodSelected: () -> Unit) -> Unit
+    var paymentMethodCard: @Composable (modifier: Modifier, onPaymentMethodSelected: (String) -> Unit) -> Unit
 }

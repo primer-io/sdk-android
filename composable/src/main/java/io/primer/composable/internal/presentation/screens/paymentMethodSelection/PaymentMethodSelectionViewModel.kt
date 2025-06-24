@@ -4,8 +4,8 @@ import androidx.lifecycle.viewModelScope
 import io.primer.android.core.di.DISdkComponent
 import io.primer.android.core.di.extensions.resolve
 import io.primer.android.core.domain.None
+import io.primer.android.paymentmethods.common.data.model.PaymentMethodType
 import io.primer.composable.internal.domain.interactor.GetAvailablePaymentMethodsInteractor
-import io.primer.composable.internal.domain.models.PrimerComposablePaymentMethod
 import io.primer.composable.internal.presentation.checkout.CheckoutNavigator
 import io.primer.composable.internal.presentation.checkout.Screen
 import io.primer.composable.internal.presentation.scope.DefaultPaymentMethodSelectionScope
@@ -45,10 +45,12 @@ internal class PaymentMethodSelectionViewModel : DefaultPaymentMethodSelectionSc
         }
     }
 
-    override fun onPaymentMethodSelected(paymentMethod: PrimerComposablePaymentMethod) {
+    override fun onPaymentMethodSelected(paymentMethod: String) {
         viewModelScope.launch {
-            // TODO COMPOSABLE make it dynamic
-            checkoutNavigator.navigateTo(Screen.CardForm)
+            when (paymentMethod) {
+                PaymentMethodType.PAYMENT_CARD.name -> checkoutNavigator.navigateTo(Screen.CardForm)
+                // TODO COMPOSABLE add rest of screens
+            }
         }
     }
 

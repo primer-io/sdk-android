@@ -8,6 +8,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import io.primer.android.paymentmethods.common.data.model.PaymentMethodType
 import io.primer.composable.R
 import io.primer.composable.internal.presentation.theme.LocalPrimerColorTokens
 import io.primer.composable.internal.presentation.theme.LocalPrimerSizeTokens
@@ -18,12 +19,12 @@ import io.primer.composable.scope.PrimerPaymentMethodSelectionScope
 @Composable
 internal fun PrimerPaymentMethodSelectionScope.PaymentMethodItemCard(
     modifier: Modifier = Modifier,
-    onPaymentMethodSelected: () -> Unit,
+    onPaymentMethodSelected: (String) -> Unit,
 ) {
     PaymentMethodItem(
         modifier = modifier,
         borderColor = LocalPrimerColorTokens.current.primerColorBorderOutlinedDefault,
-        onPaymentMethodSelected = onPaymentMethodSelected,
+        onPaymentMethodSelected = { onPaymentMethodSelected(PaymentMethodType.PAYMENT_CARD.name) },
     ) {
         Row {
             Icon(

@@ -68,7 +68,7 @@ private fun PrimerPaymentMethodSelectionScope.Ready() {
             items(state.paymentMethods) { primerMethod ->
                 PaymentMethodSelector(
                     primerMethod = primerMethod,
-                    onPaymentMethodSelected = { onPaymentMethodSelected(primerMethod) },
+                    onPaymentMethodSelected = ::onPaymentMethodSelected,
                 )
             }
         }
