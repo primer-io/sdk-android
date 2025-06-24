@@ -10,7 +10,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import io.primer.composable.R
 import io.primer.composable.internal.presentation.theme.LocalPrimerColorTokens
 import io.primer.composable.internal.presentation.theme.LocalPrimerTypographyTokens
@@ -27,9 +26,7 @@ internal fun CheckoutAppBar(
         title = {
             Text(
                 text = title,
-                style = LocalPrimerTypographyTokens.current.titleXlarge.toTextStyle()
-                    // TODO COMPOSABLE why do i need to override the font weight to make it bold?
-                    .copy(fontWeight = FontWeight(800)),
+                style = LocalPrimerTypographyTokens.current.titleXlarge.toTextStyle(),
                 color = LocalPrimerColorTokens.current.primerColorTextPrimary,
             )
         },

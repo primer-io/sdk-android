@@ -6,7 +6,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.res.stringResource
+import io.primer.composable.R
 import io.primer.composable.internal.presentation.components.PrimerButton
 import io.primer.composable.internal.presentation.theme.LocalPrimerColorTokens
 import io.primer.composable.internal.presentation.theme.LocalPrimerTypographyTokens
@@ -26,8 +27,8 @@ internal fun PrimerCardFormScope.SubmitButton(
         enabled = currentState.isSubmitEnabled,
     ) {
         Text(
-            text = if (currentState.isLoading) "Loading..." else text,
-            style = LocalPrimerTypographyTokens.current.titleLarge.toTextStyle().copy(fontWeight = FontWeight(550)),
+            text = if (currentState.isLoading) stringResource(R.string.primer_components_checkout_loading) else text,
+            style = LocalPrimerTypographyTokens.current.titleLarge.toTextStyle(),
             color = LocalPrimerColorTokens.current.primerColorBackground,
         )
     }
