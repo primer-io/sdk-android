@@ -11,40 +11,40 @@
     <string name="primer_components_error_choose_oher_payment_methods">Choose other payment methods</string>
     
     <!-- Form Field Labels -->
-    <string name="name_on_card">Name on card</string>
-    <string name="expiry_date">Expiry Date</string>
-    <string name="postal_code">Postal Code</string>
-    <string name="country_code">Country Code</string>
-    <string name="city">City</string>
-    <string name="state">State</string>
-    <string name="address_line_1">Address Line 1</string>
-    <string name="address_line_2">Address Line 2</string>
-    <string name="phone_number">Phone Number</string>
-    <string name="first_name">First Name</string>
-    <string name="last_name">Last Name</string>
-    <string name="retail_outlet">Retail Outlet</string>
-    <string name="otp_code">OTP Code</string>
-    <string name="card_number">Card Number</string>
-    <string name="cvv">CVV</string>
-    <string name="country">Country</string>
-    <string name="field">Field</string>
+    <string name="primer_components_card_form_name_on_card">Name on card</string>
+    <string name="primer_components_card_form_expiry_date">Expiry Date</string>
+    <string name="primer_components_card_form_postal_code">Postal Code</string>
+    <string name="primer_components_card_form_country_code">Country Code</string>
+    <string name="primer_components_card_form_city">City</string>
+    <string name="primer_components_card_form_state">State</string>
+    <string name="primer_components_card_form_address_line_1">Address Line 1</string>
+    <string name="primer_components_card_form_address_line_2">Address Line 2</string>
+    <string name="primer_components_card_form_phone_number">Phone Number</string>
+    <string name="primer_components_card_form_first_name">First Name</string>
+    <string name="primer_components_card_form_last_name">Last Name</string>
+    <string name="primer_components_card_form_retail_outlet">Retail Outlet</string>
+    <string name="primer_components_card_form_otp_code">OTP Code</string>
+    <string name="primer_components_card_form_card_number">Card Number</string>
+    <string name="primer_components_card_form_cvv">CVV</string>
+    <string name="primer_components_card_form_country">Country</string>
+    <string name="primer_components_card_form_field">Field</string>
     
     <!-- Form Field Placeholders -->
-    <string name="placeholder_full_name">Full name</string>
-    <string name="placeholder_expiry_date">MM/YY</string>
-    <string name="placeholder_postal_code">12345</string>
-    <string name="placeholder_country_code">US</string>
-    <string name="placeholder_city">New York</string>
-    <string name="placeholder_state">NY</string>
-    <string name="placeholder_address_line_1">123 Main Street</string>
-    <string name="placeholder_address_line_2">Apt 4B</string>
-    <string name="placeholder_phone_number">+1 (555) 123–4567</string>
-    <string name="placeholder_first_name">John</string>
-    <string name="placeholder_last_name">Doe</string>
-    <string name="placeholder_retail_outlet">Select outlet</string>
-    <string name="placeholder_otp_code">123456</string>
-    <string name="placeholder_card_number">1234 1234 1234 1234</string>
-    <string name="placeholder_search_countries">Search countries…</string>
+    <string name="primer_components_card_form_placeholder_full_name">Full name</string>
+    <string name="primer_components_card_form_placeholder_expiry_date">MM/YY</string>
+    <string name="primer_components_card_form_placeholder_postal_code">12345</string>
+    <string name="primer_components_card_form_placeholder_country_code">US</string>
+    <string name="primer_components_card_form_placeholder_city">New York</string>
+    <string name="primer_components_card_form_placeholder_state">NY</string>
+    <string name="primer_components_card_form_placeholder_address_line_1">123 Main Street</string>
+    <string name="primer_components_card_form_placeholder_address_line_2">Apt 4B</string>
+    <string name="primer_components_card_form_placeholder_phone_number">+1 (555) 123–4567</string>
+    <string name="primer_components_card_form_placeholder_first_name">John</string>
+    <string name="primer_components_card_form_placeholder_last_name">Doe</string>
+    <string name="primer_components_card_form_placeholder_retail_outlet">Select outlet</string>
+    <string name="primer_components_card_form_placeholder_otp_code">123456</string>
+    <string name="primer_components_card_form_placeholder_card_number">1234 1234 1234 1234</string>
+    <string name="primer_components_card_form_placeholder_search_countries">Search countries…</string>
     
     <!-- Error Messages -->
     <string name="payment_failed">Payment failed</string>

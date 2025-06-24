@@ -36,19 +36,19 @@ import io.primer.composable.scope.PrimerCardFormScope
 private fun getInputLabel(type: PrimerInputElementType): String {
     val context = LocalContext.current
     return when (type) {
-        PrimerInputElementType.CARDHOLDER_NAME -> context.getString(R.string.name_on_card)
-        PrimerInputElementType.EXPIRY_DATE -> context.getString(R.string.expiry_date)
-        PrimerInputElementType.POSTAL_CODE -> context.getString(R.string.postal_code)
-        PrimerInputElementType.COUNTRY_CODE -> context.getString(R.string.country_code)
-        PrimerInputElementType.CITY -> context.getString(R.string.city)
-        PrimerInputElementType.STATE -> context.getString(R.string.state)
-        PrimerInputElementType.ADDRESS_LINE_1 -> context.getString(R.string.address_line_1)
-        PrimerInputElementType.ADDRESS_LINE_2 -> context.getString(R.string.address_line_2)
-        PrimerInputElementType.PHONE_NUMBER -> context.getString(R.string.phone_number)
-        PrimerInputElementType.FIRST_NAME -> context.getString(R.string.first_name)
-        PrimerInputElementType.LAST_NAME -> context.getString(R.string.last_name)
-        PrimerInputElementType.RETAIL_OUTLET -> context.getString(R.string.retail_outlet)
-        PrimerInputElementType.OTP_CODE -> context.getString(R.string.otp_code)
+        PrimerInputElementType.CARDHOLDER_NAME -> context.getString(R.string.primer_components_card_form_name_on_card)
+        PrimerInputElementType.EXPIRY_DATE -> context.getString(R.string.primer_components_card_form_expiry_date)
+        PrimerInputElementType.POSTAL_CODE -> context.getString(R.string.primer_components_card_form_postal_code)
+        PrimerInputElementType.COUNTRY_CODE -> context.getString(R.string.primer_components_card_form_country_code)
+        PrimerInputElementType.CITY -> context.getString(R.string.primer_components_card_form_city)
+        PrimerInputElementType.STATE -> context.getString(R.string.primer_components_card_form_state)
+        PrimerInputElementType.ADDRESS_LINE_1 -> context.getString(R.string.primer_components_card_form_address_line_1)
+        PrimerInputElementType.ADDRESS_LINE_2 -> context.getString(R.string.primer_components_card_form_address_line_2)
+        PrimerInputElementType.PHONE_NUMBER -> context.getString(R.string.primer_components_card_form_phone_number)
+        PrimerInputElementType.FIRST_NAME -> context.getString(R.string.primer_components_card_form_first_name)
+        PrimerInputElementType.LAST_NAME -> context.getString(R.string.primer_components_card_form_last_name)
+        PrimerInputElementType.RETAIL_OUTLET -> context.getString(R.string.primer_components_card_form_retail_outlet)
+        PrimerInputElementType.OTP_CODE -> context.getString(R.string.primer_components_card_form_otp_code)
         else -> type.field
     }
 }
@@ -57,19 +57,19 @@ private fun getInputLabel(type: PrimerInputElementType): String {
 private fun getInputPlaceholder(type: PrimerInputElementType): String {
     val context = LocalContext.current
     return when (type) {
-        PrimerInputElementType.CARDHOLDER_NAME -> context.getString(R.string.placeholder_full_name)
-        PrimerInputElementType.EXPIRY_DATE -> context.getString(R.string.placeholder_expiry_date)
-        PrimerInputElementType.POSTAL_CODE -> context.getString(R.string.placeholder_postal_code)
-        PrimerInputElementType.COUNTRY_CODE -> context.getString(R.string.placeholder_country_code)
-        PrimerInputElementType.CITY -> context.getString(R.string.placeholder_city)
-        PrimerInputElementType.STATE -> context.getString(R.string.placeholder_state)
-        PrimerInputElementType.ADDRESS_LINE_1 -> context.getString(R.string.placeholder_address_line_1)
-        PrimerInputElementType.ADDRESS_LINE_2 -> context.getString(R.string.placeholder_address_line_2)
-        PrimerInputElementType.PHONE_NUMBER -> context.getString(R.string.placeholder_phone_number)
-        PrimerInputElementType.FIRST_NAME -> context.getString(R.string.placeholder_first_name)
-        PrimerInputElementType.LAST_NAME -> context.getString(R.string.placeholder_last_name)
-        PrimerInputElementType.RETAIL_OUTLET -> context.getString(R.string.placeholder_retail_outlet)
-        PrimerInputElementType.OTP_CODE -> context.getString(R.string.placeholder_otp_code)
+        PrimerInputElementType.CARDHOLDER_NAME -> context.getString(R.string.primer_components_card_form_placeholder_full_name)
+        PrimerInputElementType.EXPIRY_DATE -> context.getString(R.string.primer_components_card_form_placeholder_expiry_date)
+        PrimerInputElementType.POSTAL_CODE -> context.getString(R.string.primer_components_card_form_placeholder_postal_code)
+        PrimerInputElementType.COUNTRY_CODE -> context.getString(R.string.primer_components_card_form_placeholder_country_code)
+        PrimerInputElementType.CITY -> context.getString(R.string.primer_components_card_form_placeholder_city)
+        PrimerInputElementType.STATE -> context.getString(R.string.primer_components_card_form_placeholder_state)
+        PrimerInputElementType.ADDRESS_LINE_1 -> context.getString(R.string.primer_components_card_form_placeholder_address_line_1)
+        PrimerInputElementType.ADDRESS_LINE_2 -> context.getString(R.string.primer_components_card_form_placeholder_address_line_2)
+        PrimerInputElementType.PHONE_NUMBER -> context.getString(R.string.primer_components_card_form_placeholder_phone_number)
+        PrimerInputElementType.FIRST_NAME -> context.getString(R.string.primer_components_card_form_placeholder_first_name)
+        PrimerInputElementType.LAST_NAME -> context.getString(R.string.primer_components_card_form_placeholder_last_name)
+        PrimerInputElementType.RETAIL_OUTLET -> context.getString(R.string.primer_components_card_form_placeholder_retail_outlet)
+        PrimerInputElementType.OTP_CODE -> context.getString(R.string.primer_components_card_form_placeholder_otp_code)
         else -> ""
     }
 }
@@ -122,7 +122,7 @@ private fun resolveErrorMessage(error: SyncValidationError?): String? {
         val fieldName = try {
             context.getString(error.fieldId)
         } catch (e: Exception) {
-            context.getString(R.string.field) // Fallback if fieldId resource doesn't exist
+            context.getString(R.string.primer_components_card_form_field) // Fallback if fieldId resource doesn't exist
         }
         context.getString(formatId, fieldName)
     } ?: error.errorResId?.let { resId ->
@@ -231,8 +231,8 @@ internal fun PrimerCardFormScope.CardNumberInput(
     PrimerInput(
         value = value,
         onValueChange = processedOnValueChange,
-        label = stringResource(R.string.card_number),
-        placeholder = stringResource(R.string.placeholder_card_number),
+        label = stringResource(R.string.primer_components_card_form_card_number),
+        placeholder = stringResource(R.string.primer_components_card_form_placeholder_card_number),
         modifier = modifier.fillMaxWidth(),
         error = resolveErrorMessage(error),
         trailingIcon = { CardNetworkIcon(cardNetwork = state.detectedCardNetwork) },
@@ -272,7 +272,7 @@ internal fun PrimerCardFormScope.CvvInput(
     PrimerInput(
         value = value,
         onValueChange = processedOnValueChange,
-        label = stringResource(R.string.cvv),
+        label = stringResource(R.string.primer_components_card_form_cvv),
         placeholder = "1".repeat(cvvLength),
         modifier = modifier.fillMaxWidth(),
         error = resolveErrorMessage(error),
@@ -315,7 +315,7 @@ internal fun PrimerCardFormScope.CountryCodeInput(modifier: Modifier = Modifier)
         onValueChange = { },
         readOnly = true,
         enabled = false,
-        label = stringResource(R.string.country),
+        label = stringResource(R.string.primer_components_card_form_country),
         modifier = modifier
             .fillMaxWidth()
             .clickable(
