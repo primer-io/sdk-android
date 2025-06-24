@@ -44,7 +44,7 @@ internal fun PrimerCheckoutScope.CheckoutNavHost(
                     // Retrieve error from SavedStateHandle - set when navigating via:
                     // navController.currentBackStackEntry?.savedStateHandle?.set("error", primerError)
                     val error = backStackEntry.savedStateHandle.get<String>("error")
-                    error?.let { errorScreen(it) }
+                    errorScreen(error ?: "There was a network issue.")
                 }
 
                 composable(Screen.Success.route) {
