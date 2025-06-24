@@ -65,11 +65,10 @@
     <string name="primer_components_checkout_loading">Loading</string>
     
     <!-- Content Descriptions -->
-    <string name="content_description_back">Back</string>
-    <string name="content_description_error">Error</string>
-    <string name="content_description_payment_successful">Payment successful</string>
-    <string name="content_description_search">Search</string>
-    <string name="content_description_trailing">Trailing</string>
-    <string name="content_description_card_network">Card network: %1$s</string>
+    <string name="primer_components_content_description_back">Back</string>
+    <string name="primer_components_content_description_error">Error</string>
+    <string name="primer_components_content_description_payment_successful">Payment successful</string>
+    <string name="primer_components_content_description_search">Search</string>
+    <string name="primer_components_content_description_card_network">Card network: %1$s</string>
 
 </resources>

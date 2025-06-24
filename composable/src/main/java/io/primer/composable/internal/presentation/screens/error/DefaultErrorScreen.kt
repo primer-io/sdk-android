@@ -46,7 +46,7 @@ internal fun DefaultErrorScreen(
         // Error icon
         Icon(
             painter = painterResource(id = R.drawable.ic_primer_checkout_error),
-            contentDescription = stringResource(R.string.content_description_error),
+            contentDescription = stringResource(R.string.primer_components_content_description_error),
             tint = Color.Unspecified,
         )
         

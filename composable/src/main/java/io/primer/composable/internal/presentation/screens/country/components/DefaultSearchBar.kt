@@ -27,7 +27,7 @@ internal fun DefaultSearchBar(
         onValueChange = onQueryChange,
         placeholder = { Text(placeholder) },
         leadingIcon = { 
-            Icon(Icons.Default.Search, contentDescription = stringResource(R.string.content_description_search)) 
+            Icon(Icons.Default.Search, contentDescription = stringResource(R.string.primer_components_content_description_search))
         },
         singleLine = true,
         modifier = modifier

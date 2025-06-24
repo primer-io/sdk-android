@@ -140,7 +140,7 @@ internal fun CardNetworkIcon(
     val context = LocalContext.current
     Icon(
         painter = painterResource(id = cardNetwork.getCardImageAsset(ImageColor.COLORED)),
-        contentDescription = context.getString(R.string.content_description_card_network, cardNetwork.name),
+        contentDescription = context.getString(R.string.primer_components_content_description_card_network, cardNetwork.name),
         modifier = modifier.size(20.dp),
         tint = androidx.compose.ui.graphics.Color.Unspecified
     )
@@ -279,7 +279,7 @@ internal fun PrimerCardFormScope.CvvInput(
         trailingIcon = {
             Icon(
                 painter = painterResource(id = R.drawable.ic_primer_card_cvv),
-                contentDescription = stringResource(R.string.content_description_trailing)
+                contentDescription = null
             )
         },
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),

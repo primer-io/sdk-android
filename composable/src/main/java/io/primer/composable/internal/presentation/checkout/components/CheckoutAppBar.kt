@@ -38,7 +38,7 @@ internal fun CheckoutAppBar(
                 IconButton(onClick = it) {
                     Icon(
                         painter = painterResource(id = R.drawable.ic_primer_chevron_left),
-                        contentDescription = stringResource(R.string.content_description_back),
+                        contentDescription = stringResource(R.string.primer_components_content_description_back),
                         tint = LocalPrimerColorTokens.current.primerColorTextPrimary,
                     )
                 }
