@@ -54,7 +54,7 @@ internal fun DefaultErrorScreen(
         
         // Error title
         Text(
-            text = title ?: stringResource(R.string.payment_failed),
+            text = title ?: stringResource(R.string.primer_components_checkout_failed_title),
             color = colorTokens.primerColorTextPrimary,
             style = MaterialTheme.typography.headlineSmall,
             textAlign = TextAlign.Center,
@@ -64,7 +64,7 @@ internal fun DefaultErrorScreen(
         
         // Error message
         Text(
-            text = message ?: stringResource(R.string.default_error_message),
+            text = message ?: stringResource(R.string.primer_components_checkout_failed_description),
             color = colorTokens.primerColorTextSecondary,
             style = MaterialTheme.typography.bodyMedium,
             textAlign = TextAlign.Center,

@@ -47,13 +47,13 @@
     <string name="primer_components_card_form_placeholder_search_countries">Search countries…</string>
     
     <!-- Error Messages -->
-    <string name="payment_failed">Payment failed</string>
-    <string name="default_error_message">There was a network issue.</string>
-    <string name="error_loading_payment_methods">Error loading payment methods</string>
+    <string name="primer_components_checkout_failed_title">Payment failed</string>
+    <string name="primer_components_checkout_failed_description">There was a network issue.</string>
+    <string name="primer_components_payment_methods_error">Error loading payment methods</string>
     
     <!-- Success Messages -->
-    <string name="payment_successful">Payment successful</string>
-    <string name="payment_success_description">You'll be redirected to the order confirmation page soon.</string>
+    <string name="primer_components_checkout_success_title">Payment successful</string>
+    <string name="primer_components_checkout_success_description">You'll be redirected to the order confirmation page soon.</string>
     
     <!-- Payment Method Selection -->
     <string name="choose_payment_method">Choose payment method</string>

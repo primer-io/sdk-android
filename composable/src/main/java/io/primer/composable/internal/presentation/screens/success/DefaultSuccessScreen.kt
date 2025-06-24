@@ -51,7 +51,7 @@ internal fun DefaultSuccessScreen(
         Spacer(modifier = Modifier.height(spacing.small))
 
         Text(
-            text = stringResource(R.string.payment_successful),
+            text = stringResource(R.string.primer_components_checkout_success_title),
             style = MaterialTheme.typography.headlineSmall,
             color = colorTokens.primerColorTextPrimary,
             textAlign = TextAlign.Center,
@@ -60,7 +60,7 @@ internal fun DefaultSuccessScreen(
         Spacer(modifier = Modifier.height(spacing.xsmall))
 
         Text(
-            text = stringResource(R.string.payment_success_description),
+            text = stringResource(R.string.primer_components_checkout_success_description),
             style = MaterialTheme.typography.bodyMedium,
             color = colorTokens.primerColorTextSecondary,
             textAlign = TextAlign.Center,

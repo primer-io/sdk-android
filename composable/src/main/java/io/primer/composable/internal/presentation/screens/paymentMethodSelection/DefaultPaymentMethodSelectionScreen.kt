@@ -87,7 +87,7 @@ private fun PrimerPaymentMethodSelectionScope.Error() {
         contentAlignment = Alignment.Center
     ) {
         Text(
-            text = stringResource(R.string.error_loading_payment_methods),
+            text = stringResource(R.string.primer_components_payment_methods_error),
             style = LocalPrimerTypographyTokens.current.bodyLarge.toTextStyle(),
             color = LocalPrimerColorTokens.current.primerColorTextPrimary,
         )
