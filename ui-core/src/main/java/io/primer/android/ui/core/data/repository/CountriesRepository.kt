@@ -1,4 +1,4 @@
-package io.primer.ui.core.data.repository
+package io.primer.android.ui.core.data.repository
 
 import io.primer.android.clientSessionActions.domain.models.PrimerCountry
 import io.primer.android.clientSessionActions.domain.models.PrimerPhoneCode

@@ -54,13 +54,13 @@ import io.primer.android.ui.fragments.base.BaseFragment
 import io.primer.android.ui.fragments.country.SelectCountryFragment
 import io.primer.android.ui.settings.PrimerTheme
 import io.primer.android.ui.utils.setMarginBottomForError
-import io.primer.android.uicore.model.SyncValidationError
+import io.primer.android.ui.core.model.SyncValidationError
 import io.primer.android.utils.hideKeyboard
 import io.primer.android.viewmodel.CardNetworksState
 import io.primer.android.viewmodel.CardViewModel
 import io.primer.android.viewmodel.TokenizationStatus
 import io.primer.cardShared.extension.isCardHolderNameEnabled
-import io.primer.ui.core.assets.AssetsManager
+import io.primer.android.ui.core.assets.AssetsManager
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine

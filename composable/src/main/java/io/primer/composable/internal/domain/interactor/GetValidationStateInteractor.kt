@@ -5,8 +5,8 @@ import io.primer.android.components.domain.inputs.models.PrimerInputElementType
 import io.primer.android.configuration.data.model.CardNetwork
 import io.primer.android.core.di.DISdkComponent
 import io.primer.android.core.di.extensions.resolve
-import io.primer.android.uicore.domain.helper.toSyncValidationError
-import io.primer.android.uicore.model.SyncValidationError
+import io.primer.android.ui.core.domain.helper.toSyncValidationError
+import io.primer.android.ui.core.model.SyncValidationError
 import io.primer.composable.internal.domain.repositories.RawDataManagerRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine

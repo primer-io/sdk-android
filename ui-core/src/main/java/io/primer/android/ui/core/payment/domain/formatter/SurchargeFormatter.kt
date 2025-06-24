@@ -1,4 +1,4 @@
-package io.primer.ui.core.payment.domain.formatter
+package io.primer.android.ui.core.payment.domain.formatter
 
 import io.primer.android.configuration.domain.model.Surcharge
 import java.text.NumberFormat

@@ -5,6 +5,9 @@ import io.primer.android.components.manager.raw.PrimerHeadlessUniversalCheckoutR
 import io.primer.android.core.di.DependencyContainer
 import io.primer.android.core.di.SdkContainer
 import io.primer.android.paymentmethods.common.data.model.PaymentMethodType
+import io.primer.android.ui.core.configuration.domain.model.BasicOrderInfoInteractor
+import io.primer.android.ui.core.data.repository.CountriesDataRepository
+import io.primer.android.ui.core.payment.domain.interactor.SurchargeInteractor
 import io.primer.composable.internal.data.mappers.PaymentMethodMapper
 import io.primer.composable.internal.data.mappers.PaymentMethodMapperImpl
 import io.primer.composable.internal.data.repositories.HeadlessRepositoryImpl
@@ -25,9 +28,6 @@ import io.primer.composable.internal.presentation.screens.paymentMethodSelection
 import io.primer.composable.scope.PrimerCardFormScope
 import io.primer.composable.scope.PrimerPaymentMethodSelectionScope
 import io.primer.composable.scope.PrimerSelectCountryScope
-import io.primer.ui.core.configuration.domain.model.BasicOrderInfoInteractor
-import io.primer.ui.core.data.repository.CountriesDataRepository
-import io.primer.ui.core.payment.domain.interactor.SurchargeInteractor
 
 internal class ComposableContainer(
     @Suppress(

@@ -2,8 +2,8 @@ package io.primer.composable.scope
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import io.primer.android.ui.core.configuration.domain.model.BasicOrderInfo
 import io.primer.composable.internal.domain.models.PrimerComposablePaymentMethod
-import io.primer.ui.core.configuration.domain.model.BasicOrderInfo
 import kotlinx.coroutines.flow.StateFlow
 
 interface PrimerPaymentMethodSelectionScope {

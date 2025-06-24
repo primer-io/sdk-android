@@ -7,7 +7,7 @@ apply("$rootDir/tooling/android-common.gradle")
 
 
 android {
-    namespace = "io.primer.ui_core"
+    namespace = "io.primer.android.ui.core"
     compileSdk = 34
 
     defaultConfig {

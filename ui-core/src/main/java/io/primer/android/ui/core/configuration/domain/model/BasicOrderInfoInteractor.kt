@@ -1,4 +1,4 @@
-package io.primer.ui.core.configuration.domain.model
+package io.primer.android.ui.core.configuration.domain.model
 
 import io.primer.android.configuration.domain.repository.ConfigurationRepository
 import io.primer.android.core.domain.BaseInteractor

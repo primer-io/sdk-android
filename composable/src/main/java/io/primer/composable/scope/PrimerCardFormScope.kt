@@ -4,7 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import io.primer.android.components.domain.inputs.models.PrimerInputElementType
 import io.primer.android.configuration.data.model.CardNetwork
-import io.primer.android.uicore.model.SyncValidationError
+import io.primer.android.ui.core.model.SyncValidationError
 import kotlinx.coroutines.flow.StateFlow
 
 interface PrimerCardFormScope {

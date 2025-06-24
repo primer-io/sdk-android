@@ -3,10 +3,10 @@ package io.primer.composable.internal.presentation.screens.country
 import androidx.lifecycle.viewModelScope
 import io.primer.android.core.di.DISdkComponent
 import io.primer.android.core.di.extensions.resolve
+import io.primer.android.ui.core.data.repository.CountriesDataRepository
 import io.primer.composable.internal.presentation.checkout.CheckoutNavigator
 import io.primer.composable.internal.presentation.scope.DefaultSelectCountryScope
 import io.primer.composable.scope.PrimerSelectCountryScope
-import io.primer.ui.core.data.repository.CountriesDataRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow

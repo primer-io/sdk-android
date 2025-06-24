@@ -19,7 +19,7 @@ import io.primer.android.paymentMethods.core.ui.descriptors.PrimerDropInPaymentM
 import io.primer.android.payments.core.helpers.CheckoutErrorHandler
 import io.primer.android.payments.core.helpers.PollingStartHandler
 import io.primer.android.surcharge.domain.SurchargeInteractor
-import io.primer.ui.core.configuration.domain.model.BasicOrderInfoInteractor
+import io.primer.android.ui.core.configuration.domain.model.BasicOrderInfoInteractor
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 @OptIn(ExperimentalCoroutinesApi::class)

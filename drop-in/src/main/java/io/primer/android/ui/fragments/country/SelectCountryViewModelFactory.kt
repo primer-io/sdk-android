@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.CreationExtras
 import io.primer.android.analytics.domain.AnalyticsInteractor
-import io.primer.ui.core.data.repository.CountriesRepository
+import io.primer.android.ui.core.data.repository.CountriesRepository
 
 internal class SelectCountryViewModelFactory(
     private val countriesRepository: CountriesRepository,

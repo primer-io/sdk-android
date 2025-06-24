@@ -1,4 +1,4 @@
-package io.primer.ui.core.data.repository
+package io.primer.android.ui.core.data.repository
 
 import android.content.Context
 import android.util.Log

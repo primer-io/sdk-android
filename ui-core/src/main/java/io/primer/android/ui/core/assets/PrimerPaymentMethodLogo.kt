@@ -1,4 +1,4 @@
-package io.primer.ui.core.assets
+package io.primer.android.ui.core.assets
 
 import io.primer.android.components.ui.assets.PrimerAsset
 import io.primer.android.displayMetadata.domain.model.ImageColor

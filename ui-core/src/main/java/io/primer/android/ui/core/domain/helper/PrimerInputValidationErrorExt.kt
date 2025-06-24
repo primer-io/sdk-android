@@ -1,9 +1,9 @@
-package io.primer.android.uicore.domain.helper
+package io.primer.android.ui.core.domain.helper
 
 import io.primer.android.components.domain.core.models.card.PrimerCardData
 import io.primer.android.components.domain.error.PrimerInputValidationError
-import io.primer.android.uicore.model.SyncValidationError
-import io.primer.ui_core.R
+import io.primer.android.ui.core.R
+import io.primer.android.ui.core.model.SyncValidationError
 
 @Suppress("LongMethod")
 fun PrimerInputValidationError.toSyncValidationError(cardData: PrimerCardData?) =

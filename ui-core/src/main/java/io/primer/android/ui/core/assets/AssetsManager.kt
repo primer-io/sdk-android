@@ -1,4 +1,4 @@
-package io.primer.ui.core.assets
+package io.primer.android.ui.core.assets
 
 import android.content.Context
 import android.graphics.drawable.Drawable

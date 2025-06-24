@@ -1,8 +1,8 @@
 package io.primer.composable.internal.presentation.utils
 
 import android.content.Context
+import io.primer.android.ui.core.configuration.domain.model.BasicOrderInfo
 import io.primer.composable.R
-import io.primer.ui.core.configuration.domain.model.BasicOrderInfo
 import java.text.NumberFormat
 import java.util.Currency
 

@@ -22,7 +22,7 @@ import io.primer.android.ui.extensions.autoCleaned
 import io.primer.android.ui.extensions.getParentDialogOrNull
 import io.primer.android.ui.extensions.popBackStackToRoot
 import io.primer.android.ui.fragments.base.BaseFragment
-import io.primer.ui.core.assets.AssetsManager
+import io.primer.android.ui.core.assets.AssetsManager
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 @ExperimentalCoroutinesApi

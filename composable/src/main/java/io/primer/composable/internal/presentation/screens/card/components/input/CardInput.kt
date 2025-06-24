@@ -24,7 +24,7 @@ import io.primer.android.components.assets.ui.getCardImageAsset
 import io.primer.android.components.domain.inputs.models.PrimerInputElementType
 import io.primer.android.configuration.data.model.CardNetwork
 import io.primer.android.displayMetadata.domain.model.ImageColor
-import io.primer.android.uicore.model.SyncValidationError
+import io.primer.android.ui.core.model.SyncValidationError
 import io.primer.cardShared.CardNumberFormatter
 import io.primer.composable.R
 import io.primer.composable.internal.presentation.components.PrimerInput

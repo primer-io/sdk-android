@@ -3,9 +3,9 @@ package io.primer.composable.internal.domain.interactor
 import io.primer.android.core.di.DISdkComponent
 import io.primer.android.core.di.extensions.resolve
 import io.primer.android.core.domain.None
+import io.primer.android.ui.core.payment.domain.interactor.SurchargeInteractor
 import io.primer.composable.internal.data.mappers.PaymentMethodMapper
 import io.primer.composable.internal.domain.repositories.HeadlessRepository
-import io.primer.ui.core.payment.domain.interactor.SurchargeInteractor
 
 internal class GetAvailablePaymentMethodsInteractor : DISdkComponent {
 

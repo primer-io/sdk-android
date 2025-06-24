@@ -1,4 +1,4 @@
-package io.primer.android.uicore.model
+package io.primer.android.ui.core.model
 
 import androidx.annotation.StringRes
 import io.primer.android.components.domain.inputs.models.PrimerInputElementType

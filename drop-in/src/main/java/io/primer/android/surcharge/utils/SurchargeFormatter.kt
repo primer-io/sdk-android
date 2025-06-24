@@ -9,7 +9,7 @@ import io.primer.android.currencyformat.domain.FormatAmountToCurrencyInteractor
 import io.primer.android.data.settings.internal.MonetaryAmount
 import io.primer.android.domain.tokenization.models.PrimerVaultedPaymentMethod
 import io.primer.android.surcharge.domain.SurchargeInteractor
-import io.primer.ui.core.payment.domain.interactor.SurchargeCalculationInteractor
+import io.primer.android.ui.core.payment.domain.interactor.SurchargeCalculationInteractor
 import java.util.Currency
 
 internal class SurchargeFormatter(

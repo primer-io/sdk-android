@@ -1,6 +1,6 @@
 package io.primer.android.data.payments.forms.datasource
 
-import io.primer.ui.core.data.repository.CountriesRepository
+import io.primer.android.ui.core.data.repository.CountriesRepository
 import io.primer.android.paymentmethods.common.data.model.PaymentMethodType
 import io.primer.android.ui.settings.PrimerTheme
 

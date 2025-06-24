@@ -1,4 +1,4 @@
-package io.primer.ui.core.payment.domain.interactor
+package io.primer.android.ui.core.payment.domain.interactor
 
 import io.primer.android.configuration.domain.model.Surcharge
 import io.primer.android.domain.tokenization.models.PrimerVaultedPaymentMethod
