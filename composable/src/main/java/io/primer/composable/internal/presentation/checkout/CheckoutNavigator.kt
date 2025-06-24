@@ -3,16 +3,15 @@ package io.primer.composable.internal.presentation.checkout
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.staticCompositionLocalOf
-import androidx.navigation.NavController
 import io.primer.composable.internal.presentation.checkout.CheckoutNavigator.NavigationEvent
 import io.primer.composable.internal.presentation.checkout.CheckoutNavigator.NavigationEvent.Dismiss
 import io.primer.composable.scope.PrimerCheckoutScope
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.map
 
 // TODO COMPOSABLE make this more compact or smaller
@@ -38,6 +37,14 @@ internal class CheckoutNavigator {
 
     suspend fun navigateToError(errorMessage: String) {
         _navigationEvents.emit(NavigationEvent.NavigateToError(errorMessage))
+    }
+
+    suspend fun navigateToSuccess() {
+        _navigationEvents.emit(NavigationEvent.NavigateToSuccess)
+    }
+
+    suspend fun navigateToPaymentMethodsList() {
+        _navigationEvents.emit(NavigationEvent.NavigateToPaymentMethodsList)
     }
 
     suspend fun dismiss() {
@@ -69,8 +76,10 @@ internal class CheckoutNavigator {
 
     internal sealed class NavigationEvent {
         data class NavigateTo(val screen: Screen) : NavigationEvent()
+        object NavigateToPaymentMethodsList : NavigationEvent()
         object NavigateBack : NavigationEvent()
         data class NavigateToError(val errorMessage: String) : NavigationEvent()
+        object NavigateToSuccess : NavigationEvent()
         data class NavigateBackWithResult<T>(val resultKey: String, val result: T) : NavigationEvent()
         object Dismiss : NavigationEvent()
     }
@@ -88,9 +97,21 @@ internal fun PrimerCheckoutScope.CheckoutNavigator(
             when (event) {
                 is NavigationEvent.NavigateTo -> navController.navigate(event.screen.route)
                 NavigationEvent.NavigateBack -> navController.popBackStack()
+                NavigationEvent.NavigateToPaymentMethodsList -> {
+                    navController.navigate(Screen.PaymentsList.route) {
+                        popUpTo(0)
+                    }
+                }
                 is NavigationEvent.NavigateToError -> {
                     navController.currentBackStackEntry?.savedStateHandle?.set("error", event.errorMessage)
                     navController.navigate(Screen.Error.route)
+                }
+                NavigationEvent.NavigateToSuccess -> {
+                    navController.navigate(Screen.Success.route) {
+                        popUpTo(Screen.PaymentsList.route) {
+                            inclusive = false
+                        }
+                    }
                 }
                 is NavigationEvent.NavigateBackWithResult<*> -> {
                     checkoutNavigator.setResult(event.resultKey, event.result)

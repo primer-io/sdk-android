@@ -160,16 +160,19 @@ internal class CardFormViewModel : DefaultCardFormScope(), DISdkComponent {
                 result.fold(
                     onSuccess = { checkoutData ->
                         logReporter.debug("Payment completed successfully")
-                        checkoutNavigator.navigateTo(Screen.Success)
+                        _uiState.value = _uiState.value.copy(isLoading = false, isSubmitEnabled = true)
+                        checkoutNavigator.navigateToSuccess()
                     },
                     onFailure = { error ->
                         logReporter.error("Payment failed: ${error.message}")
-                        checkoutNavigator.navigateTo(Screen.Error)
+                        _uiState.value = _uiState.value.copy(isLoading = false, isSubmitEnabled = true)
+                        checkoutNavigator.navigateToError(error.message ?: "Payment failed")
                     },
                 )
             } catch (e: Exception) {
                 logReporter.error("Payment submission failed: ${e.message}")
-                checkoutNavigator.navigateTo(Screen.Error)
+                _uiState.value = _uiState.value.copy(isLoading = false, isSubmitEnabled = true)
+                checkoutNavigator.navigateToError(e.message ?: "Payment submission failed")
             }
         }
     }
