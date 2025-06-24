@@ -20,7 +20,6 @@ internal fun Checkout(
     scope: ((PrimerCheckoutScope) -> Unit)?
 ) = with(viewModel<CheckoutViewModel>()) {
 
-    // TODO COMPOSABLE is this the correct place to initialise theme?
     PrimerTheme {
         val context = LocalContext.current
 
