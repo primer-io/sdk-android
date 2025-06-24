@@ -14,6 +14,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.VisualTransformation
@@ -22,6 +23,7 @@ import io.primer.android.components.assets.ui.getCardImageAsset
 import io.primer.android.components.domain.inputs.models.PrimerInputElementType
 import io.primer.android.configuration.data.model.CardNetwork
 import io.primer.android.displayMetadata.domain.model.ImageColor
+import io.primer.android.uicore.model.SyncValidationError
 import io.primer.cardShared.CardNumberFormatter
 import io.primer.composable.R
 import io.primer.composable.internal.presentation.components.PrimerInput
@@ -99,6 +101,27 @@ private object InputConfigs {
 }
 
 @Composable
+private fun resolveErrorMessage(error: SyncValidationError?): String? {
+    if (error == null) return null
+    
+    val context = LocalContext.current
+    
+    return error.errorFormatId?.let { formatId ->
+        // Try to get the field name string resource
+        val fieldName = try {
+            context.getString(error.fieldId)
+        } catch (e: Exception) {
+            "Field" // Fallback if fieldId resource doesn't exist
+        }
+        context.getString(formatId, fieldName)
+    } ?: error.errorResId?.let { resId ->
+        context.getString(resId)
+    }
+    // If neither errorFormatId nor errorResId are available, fall back to errorId
+    ?: error.errorId
+}
+
+@Composable
 internal fun CardNetworkIcon(
     cardNetwork: CardNetwork.Type,
     modifier: Modifier = Modifier,
@@ -152,7 +175,7 @@ private fun PrimerCardFormScope.CardInput(
         label = InputConfigs.label(type),
         placeholder = InputConfigs.placeholder(type),
         modifier = modifier.fillMaxWidth(),
-        error = error?.description,
+        error = resolveErrorMessage(error),
         trailingIcon = {
             InputConfigs.trailingIcon(type)?.let {
                 Icon(
@@ -199,7 +222,7 @@ internal fun PrimerCardFormScope.CardNumberInput(
         label = "Card Number",
         placeholder = "1234 1234 1234 1234",
         modifier = modifier.fillMaxWidth(),
-        error = error?.description,
+        error = resolveErrorMessage(error),
         trailingIcon = { CardNetworkIcon(cardNetwork = state.detectedCardNetwork) },
         visualTransformation = CardNumberVisualTransformation(),
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
@@ -240,7 +263,7 @@ internal fun PrimerCardFormScope.CvvInput(
         label = "CVV",
         placeholder = "1".repeat(cvvLength),
         modifier = modifier.fillMaxWidth(),
-        error = error?.description,
+        error = resolveErrorMessage(error),
         trailingIcon = {
             Icon(
                 painter = painterResource(id = R.drawable.ic_primer_card_cvv),
@@ -287,7 +310,7 @@ internal fun PrimerCardFormScope.CountryCodeInput(modifier: Modifier = Modifier)
                 interactionSource = remember { MutableInteractionSource() },
                 indication = null
             ) { navigateToCountrySelection() },
-        error = error?.description,
+        error = resolveErrorMessage(error),
         colors = OutlinedTextFieldDefaults.colors(
             disabledTextColor = MaterialTheme.colorScheme.onSurface,
             disabledBorderColor = MaterialTheme.colorScheme.outline,

@@ -1,12 +1,12 @@
-package io.primer.android.domain.helper
+package io.primer.android.uicore.domain.helper
 
-import io.primer.android.R
 import io.primer.android.components.domain.core.models.card.PrimerCardData
 import io.primer.android.components.domain.error.PrimerInputValidationError
-import io.primer.android.model.SyncValidationError
+import io.primer.android.uicore.model.SyncValidationError
+import io.primer.ui_core.R
 
 @Suppress("LongMethod")
-internal fun PrimerInputValidationError.toSyncValidationError(cardData: PrimerCardData?) =
+fun PrimerInputValidationError.toSyncValidationError(cardData: PrimerCardData?) =
     when (errorId) {
         "invalid-card-number" ->
             SyncValidationError(

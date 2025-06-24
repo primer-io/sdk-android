@@ -14,9 +14,9 @@ import io.primer.android.components.manager.raw.PrimerHeadlessUniversalCheckoutR
 import io.primer.android.components.manager.raw.PrimerHeadlessUniversalCheckoutRawDataManagerInterface
 import io.primer.android.components.manager.raw.PrimerHeadlessUniversalCheckoutRawDataManagerListener
 import io.primer.android.configuration.data.model.CardNetwork
-import io.primer.android.domain.helper.toSyncValidationError
-import io.primer.android.model.SyncValidationError
 import io.primer.android.paymentmethods.common.data.model.PaymentMethodType
+import io.primer.android.uicore.domain.helper.toSyncValidationError
+import io.primer.android.uicore.model.SyncValidationError
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update

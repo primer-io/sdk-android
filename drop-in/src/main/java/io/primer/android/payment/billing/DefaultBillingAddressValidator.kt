@@ -2,7 +2,7 @@ package io.primer.android.payment.billing
 
 import io.primer.android.R
 import io.primer.android.components.domain.inputs.models.PrimerInputElementType
-import io.primer.android.model.SyncValidationError
+import io.primer.android.uicore.model.SyncValidationError
 
 internal class DefaultBillingAddressValidator : BillingAddressValidator {
     override fun validate(

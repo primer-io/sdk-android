@@ -2,9 +2,9 @@ package io.primer.composable.scope
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import io.primer.android.components.domain.error.PrimerInputValidationError
 import io.primer.android.components.domain.inputs.models.PrimerInputElementType
 import io.primer.android.configuration.data.model.CardNetwork
+import io.primer.android.uicore.model.SyncValidationError
 import kotlinx.coroutines.flow.StateFlow
 
 interface PrimerCardFormScope {
@@ -40,7 +40,7 @@ interface PrimerCardFormScope {
     data class State(
         val cardFields: List<PrimerInputElementType> = emptyList(),
         val billingFields: List<PrimerInputElementType> = emptyList(),
-        val fieldErrors: List<PrimerInputValidationError> = emptyList(),
+        val fieldErrors: List<SyncValidationError> = emptyList(),
         val inputFields: Map<PrimerInputElementType, String> = emptyMap(),
         val isLoading: Boolean = false,
         val isSubmitEnabled: Boolean = false,

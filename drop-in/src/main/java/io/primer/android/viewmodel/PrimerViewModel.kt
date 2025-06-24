@@ -43,7 +43,7 @@ import io.primer.android.data.settings.internal.MonetaryAmount
 import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.domain.tokenization.models.PrimerVaultedPaymentMethod
 import io.primer.android.errors.domain.ErrorMapperRegistry
-import io.primer.android.model.SyncValidationError
+import io.primer.android.uicore.model.SyncValidationError
 import io.primer.android.payment.billing.BillingAddressValidator
 import io.primer.android.payment.config.toImageDisplayMetadata
 import io.primer.android.payment.config.toTextDisplayMetadata

@@ -1,9 +1,9 @@
-package io.primer.android.model
+package io.primer.android.uicore.model
 
 import androidx.annotation.StringRes
 import io.primer.android.components.domain.inputs.models.PrimerInputElementType
 
-internal data class SyncValidationError(
+data class SyncValidationError(
     val inputElementType: PrimerInputElementType,
     val errorId: String,
     val fieldId: Int,

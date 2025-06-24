@@ -42,7 +42,6 @@ import io.primer.android.configuration.extension.sanitizedCardNumber
 import io.primer.android.core.di.extensions.inject
 import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.databinding.PrimerFragmentCardFormBinding
-import io.primer.android.model.SyncValidationError
 import io.primer.android.payment.NewFragmentBehaviour
 import io.primer.android.paymentmethods.common.data.model.PaymentMethodType
 import io.primer.android.ui.FieldFocuser
@@ -55,6 +54,7 @@ import io.primer.android.ui.fragments.base.BaseFragment
 import io.primer.android.ui.fragments.country.SelectCountryFragment
 import io.primer.android.ui.settings.PrimerTheme
 import io.primer.android.ui.utils.setMarginBottomForError
+import io.primer.android.uicore.model.SyncValidationError
 import io.primer.android.utils.hideKeyboard
 import io.primer.android.viewmodel.CardNetworksState
 import io.primer.android.viewmodel.CardViewModel
@@ -694,7 +694,7 @@ internal class CardFormFragment : BaseFragment() {
             requireContext()
                 .let { context ->
                     input.error = error.errorFormatId?.let {
-                        context.getString(error.errorFormatId, context.getString(error.fieldId))
+                        context.getString(it, context.getString(error.fieldId))
                     } ?: error.errorResId?.let { context.getString(it) }
                     primerViewModel.addAnalyticsEvent(
                         MessageAnalyticsParams(

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Field names -->
+    <string name="card_holder_name">Cardholder name</string>
+    <string name="card_number">Card number</string>
+    <string name="card_expiry">Expiry date</string>
+    <string name="card_cvv">CVV</string>
+    
+    <!-- Error messages -->
+    <string name="form_error_required">%1$s is required</string>
+    <string name="form_error_invalid">%1$s is invalid</string>
+    <string name="form_error_card_type_not_supported">Unsupported card type</string>
+    <string name="form_error_card_holder_name_length">Name must have between 2 and 45 characters</string>
+</resources>
