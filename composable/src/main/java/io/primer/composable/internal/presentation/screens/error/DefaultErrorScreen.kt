@@ -80,7 +80,7 @@ internal fun DefaultErrorScreen(
                 backgroundColor = colorTokens.primerColorBrand,
             ) {
                 Text(
-                    text = stringResource(R.string.retry),
+                    text = stringResource(R.string.primer_components_card_form_submit),
                     style = LocalPrimerTypographyTokens.current.titleLarge.toTextStyle(),
                     color = LocalPrimerColorTokens.current.primerColorBackground,
                 )

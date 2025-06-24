@@ -6,7 +6,7 @@
     
     <!-- Button Text -->
     <string name="primer_components_submit">Submit</string>
-    <string name="retry">Retry</string>
+    <string name="primer_components_card_form_submit">Retry</string>
     <string name="cancel">Cancel</string>
     <string name="choose_other_payment_methods">Choose other payment methods</string>
     
