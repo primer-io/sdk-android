@@ -42,7 +42,6 @@ internal fun PrimerPaymentMethodSelectionScope.PaymentMethodItemKlarna(
                 modifier = Modifier.padding(end = LocalPrimerSpacingTokens.current.small),
             )
 
-            // TODO COMPOSABLE check if this is correct
             Box(
                 modifier = modifier
                     .background(
