@@ -8,7 +8,7 @@
     <string name="primer_components_submit">Submit</string>
     <string name="primer_components_card_form_submit">Retry</string>
     <string name="primer_components_checkout_cancel">Cancel</string>
-    <string name="choose_other_payment_methods">Choose other payment methods</string>
+    <string name="primer_components_error_choose_oher_payment_methods">Choose other payment methods</string>
     
     <!-- Form Field Labels -->
     <string name="name_on_card">Name on card</string>
