@@ -42,7 +42,6 @@ interface PrimerCardFormScope {
         val fieldErrors: List<SyncValidationError> = emptyList(),
         val inputFields: Map<PrimerInputElementType, String> = emptyMap(),
         val isLoading: Boolean = false,
-        val isSubmitEnabled: Boolean = false,
         val selectedCountry: io.primer.android.clientSessionActions.domain.models.PrimerCountry? = null,
         val detectedCardNetwork: CardNetwork.Type = CardNetwork.Type.OTHER,
     )

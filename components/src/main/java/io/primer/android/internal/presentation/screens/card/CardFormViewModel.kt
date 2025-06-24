@@ -19,6 +19,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -58,13 +59,6 @@ internal class CardFormViewModel : DefaultCardFormScope(), DISdkComponent {
             }
         }
 
-        viewModelScope.launch {
-            getValidationStateInteractor.isSubmitAllowed.collect { isAllowed ->
-                _uiState.update {
-                    it.copy(isSubmitEnabled = isAllowed)
-                }
-            }
-        }
 
         viewModelScope.launch {
             setDataInteractor.detectedCardNetwork.collect { detectedNetwork ->
@@ -154,24 +148,39 @@ internal class CardFormViewModel : DefaultCardFormScope(), DISdkComponent {
 
     override fun onSubmit() {
         viewModelScope.launch {
-            _uiState.value = _uiState.value.copy(isLoading = true, isSubmitEnabled = false)
+            // Mark all required fields as dirty to trigger validation errors
+            val allRequiredFields = getAvailableCardFieldsInteractor.getCardFields() + 
+                                   getAvailableCardFieldsInteractor.getBillingFields()
+            allRequiredFields.forEach { field ->
+                setDataInteractor.markFieldAsDirty(field)
+            }
+
+            // Check if all validation passes before proceeding
+            val isValidationPassed = getValidationStateInteractor.isSubmitAllowed.first()
+
+            if (!isValidationPassed) {
+                logReporter.debug("Validation failed, not proceeding with submission")
+                return@launch
+            }
+
+            _uiState.value = _uiState.value.copy(isLoading = true)
             try {
                 val result = submitPaymentInteractor(_uiState.value.inputFields)
                 result.fold(
                     onSuccess = { checkoutData ->
                         logReporter.debug("Payment completed successfully")
-                        _uiState.value = _uiState.value.copy(isLoading = false, isSubmitEnabled = true)
+                        _uiState.value = _uiState.value.copy(isLoading = false)
                         checkoutNavigator.navigateToSuccess()
                     },
                     onFailure = { error ->
                         logReporter.error("Payment failed: ${error.message}")
-                        _uiState.value = _uiState.value.copy(isLoading = false, isSubmitEnabled = true)
+                        _uiState.value = _uiState.value.copy(isLoading = false)
                         checkoutNavigator.navigateToError(error.message ?: "Payment failed")
                     },
                 )
             } catch (e: Exception) {
                 logReporter.error("Payment submission failed: ${e.message}")
-                _uiState.value = _uiState.value.copy(isLoading = false, isSubmitEnabled = true)
+                _uiState.value = _uiState.value.copy(isLoading = false)
                 checkoutNavigator.navigateToError(e.message ?: "Payment submission failed")
             }
         }

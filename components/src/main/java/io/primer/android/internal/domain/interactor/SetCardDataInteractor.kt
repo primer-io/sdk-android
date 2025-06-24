@@ -35,6 +35,12 @@ class SetCardDataInteractor : DISdkComponent {
         rawDataManagerRepository.setData(buildPrimerCardData())
     }
 
+    fun markFieldAsDirty(type: PrimerInputElementType) {
+        trackDirtyFieldsInteractor.markFieldAsDirty(type)
+        // Trigger validation by setting the current data
+        rawDataManagerRepository.setData(buildPrimerCardData())
+    }
+
     private fun updateDetectedCardNetwork(cardNumber: String) {
         try {
             val formatter = CardNumberFormatter.fromString(cardNumber)

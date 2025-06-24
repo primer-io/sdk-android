@@ -24,7 +24,7 @@ internal fun PrimerCardFormScope.SubmitButton(
         onClick = { onSubmit() },
         modifier = modifier.fillMaxWidth(),
         backgroundColor = LocalPrimerColorTokens.current.primerColorBrand,
-        enabled = currentState.isSubmitEnabled,
+        enabled = !currentState.isLoading,
     ) {
         Text(
             text = if (currentState.isLoading) stringResource(R.string.primer_components_checkout_loading) else text,
