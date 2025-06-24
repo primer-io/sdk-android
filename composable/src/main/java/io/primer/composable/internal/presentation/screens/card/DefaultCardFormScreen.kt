@@ -18,7 +18,7 @@ import io.primer.composable.scope.PrimerCardFormScope
 internal fun PrimerCardFormScope.DefaultCardFormScreen() {
     Column {
         CheckoutAppBar(
-            title = stringResource(R.string.pay_with_card),
+            title = stringResource(R.string.primer_components_pay_with_card),
             onBackClick = { onBack() },
             onCancelClick = { onCancel() },
         )

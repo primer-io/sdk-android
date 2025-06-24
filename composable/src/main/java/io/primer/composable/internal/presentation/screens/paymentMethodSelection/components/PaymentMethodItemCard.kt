@@ -36,7 +36,7 @@ internal fun PrimerPaymentMethodSelectionScope.PaymentMethodItemCard(
                 modifier = Modifier.size(LocalPrimerSizeTokens.current.medium),
             )
             Text(
-                text = stringResource(R.string.pay_with_card),
+                text = stringResource(R.string.primer_components_pay_with_card),
                 style = LocalPrimerTypographyTokens.current.titleLarge.toTextStyle(),
                 color = LocalPrimerColorTokens.current.primerColorTextPrimary,
                 modifier = Modifier.padding(start = LocalPrimerSpacingTokens.current.small),
