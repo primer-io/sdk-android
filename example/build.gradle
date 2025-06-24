@@ -101,7 +101,7 @@ dependencies {
     implementation libs.primer.ipay88
     implementation libs.primer.nol.pay
     implementation libs.primer.stripe
-    implementation project(':composable')
+    implementation project(':components')
     implementation libs.androidx.runtime.livedata
     implementation(libs.androidx.material3)
 

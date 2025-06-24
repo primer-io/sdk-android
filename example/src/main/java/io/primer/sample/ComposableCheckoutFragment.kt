@@ -9,7 +9,7 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import io.primer.composable.PrimerCheckout
+import io.primer.android.PrimerCheckout
 import io.primer.sample.viewmodels.MainViewModel
 
 class ComposableCheckoutFragment : Fragment() {
