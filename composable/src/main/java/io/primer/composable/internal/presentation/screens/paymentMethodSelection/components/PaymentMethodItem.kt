@@ -1,25 +1,16 @@
 package io.primer.composable.internal.presentation.screens.paymentMethodSelection.components
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
 import io.primer.android.paymentmethods.common.data.model.PaymentMethodType
 import io.primer.android.paymentmethods.common.data.model.PaymentMethodType.Companion.safeValueOf
+import io.primer.composable.internal.presentation.components.PrimerButton
 import io.primer.composable.internal.presentation.theme.LocalPrimerColorTokens
 import io.primer.composable.internal.presentation.theme.LocalPrimerRadiusTokens
-import io.primer.composable.internal.presentation.theme.LocalPrimerSizeTokens
 import io.primer.composable.internal.presentation.theme.LocalPrimerSpacingTokens
 import io.primer.composable.internal.presentation.theme.LocalPrimerTypographyTokens
 import io.primer.composable.scope.PrimerPaymentMethodSelectionScope
@@ -69,24 +60,11 @@ internal fun PrimerPaymentMethodSelectionScope.PaymentMethodItem(
     onPaymentMethodSelected: () -> Unit,
     content: @Composable () -> Unit,
 ) {
-    Box(
-        modifier = modifier
-            .fillMaxWidth()
-            .height(LocalPrimerSizeTokens.current.xxlarge)
-            .background(
-                color = backgroundColor,
-                shape = RoundedCornerShape(borderRadius),
-            )
-            .then(
-                borderColor?.let {
-                    Modifier.border(
-                        width = 1.dp,
-                        color = it,
-                        shape = RoundedCornerShape(borderRadius),
-                    )
-                } ?: Modifier,
-            )
-            .clickable { onPaymentMethodSelected() },
-        contentAlignment = Alignment.Center,
+    PrimerButton(
+        modifier = modifier,
+        borderColor = borderColor,
+        borderRadius = borderRadius,
+        backgroundColor = backgroundColor,
+        onClick = onPaymentMethodSelected
     ) { content() }
 }

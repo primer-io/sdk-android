@@ -8,9 +8,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -26,6 +24,7 @@ import io.primer.android.configuration.data.model.CardNetwork
 import io.primer.android.displayMetadata.domain.model.ImageColor
 import io.primer.cardShared.CardNumberFormatter
 import io.primer.composable.R
+import io.primer.composable.internal.presentation.components.PrimerInput
 import io.primer.composable.internal.presentation.screens.card.components.input.transformations.CardNumberVisualTransformation
 import io.primer.composable.internal.presentation.screens.card.components.input.transformations.ExpiryDateVisualTransformation
 import io.primer.composable.scope.PrimerCardFormScope
@@ -114,7 +113,7 @@ internal fun CardNetworkIcon(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun PrimerCardFormScope.Input(
+private fun PrimerCardFormScope.CardInput(
     modifier: Modifier = Modifier,
     type: PrimerInputElementType,
     onValueChange: (String) -> Unit,
@@ -147,27 +146,18 @@ private fun PrimerCardFormScope.Input(
         onValueChange(processedValue)
     }
 
-    OutlinedTextField(
+    PrimerInput(
         value = value,
         onValueChange = processedOnValueChange,
-        label = { Text(InputConfigs.label(type)) },
-        placeholder = { Text(InputConfigs.placeholder(type)) },
+        label = InputConfigs.label(type),
+        placeholder = InputConfigs.placeholder(type),
         modifier = modifier.fillMaxWidth(),
-        singleLine = true,
-        isError = error != null,
-        supportingText = {
-            error?.let {
-                Text(
-                    text = it.description,
-                    color = MaterialTheme.colorScheme.error,
-                )
-            }
-        },
+        error = error?.description,
         trailingIcon = {
             InputConfigs.trailingIcon(type)?.let {
                 Icon(
                     painter = painterResource(id = it),
-                    contentDescription = "Trailing"
+                    contentDescription = null
                 )
             }
         },
@@ -203,22 +193,13 @@ internal fun PrimerCardFormScope.CardNumberInput(
         updateCardNumber(processedValue)
     }
 
-    OutlinedTextField(
+    PrimerInput(
         value = value,
         onValueChange = processedOnValueChange,
-        label = { Text("Card Number") },
-        placeholder = { Text("1234 1234 1234 1234") },
+        label = "Card Number",
+        placeholder = "1234 1234 1234 1234",
         modifier = modifier.fillMaxWidth(),
-        singleLine = true,
-        isError = error != null,
-        supportingText = {
-            error?.let {
-                Text(
-                    text = it.description,
-                    color = MaterialTheme.colorScheme.error,
-                )
-            }
-        },
+        error = error?.description,
         trailingIcon = { CardNetworkIcon(cardNetwork = state.detectedCardNetwork) },
         visualTransformation = CardNumberVisualTransformation(),
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
@@ -253,22 +234,13 @@ internal fun PrimerCardFormScope.CvvInput(
         updateCvv(processedValue)
     }
 
-    OutlinedTextField(
+    PrimerInput(
         value = value,
         onValueChange = processedOnValueChange,
-        label = { Text("CVV") },
-        placeholder = { Text("1".repeat(cvvLength)) },
+        label = "CVV",
+        placeholder = "1".repeat(cvvLength),
         modifier = modifier.fillMaxWidth(),
-        singleLine = true,
-        isError = error != null,
-        supportingText = {
-            error?.let {
-                Text(
-                    text = it.description,
-                    color = MaterialTheme.colorScheme.error,
-                )
-            }
-        },
+        error = error?.description,
         trailingIcon = {
             Icon(
                 painter = painterResource(id = R.drawable.ic_primer_card_cvv),
@@ -281,15 +253,15 @@ internal fun PrimerCardFormScope.CvvInput(
 
 @Composable
 internal fun PrimerCardFormScope.ExpiryDateInput(modifier: Modifier = Modifier) =
-    Input(modifier, PrimerInputElementType.EXPIRY_DATE, ::updateExpiryDate)
+    CardInput(modifier, PrimerInputElementType.EXPIRY_DATE, ::updateExpiryDate)
 
 @Composable
 internal fun PrimerCardFormScope.CardholderNameInput(modifier: Modifier = Modifier) =
-    Input(modifier, PrimerInputElementType.CARDHOLDER_NAME, ::updateCardholderName)
+    CardInput(modifier, PrimerInputElementType.CARDHOLDER_NAME, ::updateCardholderName)
 
 @Composable
 internal fun PrimerCardFormScope.PostalCodeInput(modifier: Modifier = Modifier) =
-    Input(modifier, PrimerInputElementType.POSTAL_CODE, ::updatePostalCode)
+    CardInput(modifier, PrimerInputElementType.POSTAL_CODE, ::updatePostalCode)
 
 @Composable
 internal fun PrimerCardFormScope.CountryCodeInput(modifier: Modifier = Modifier) {
@@ -303,28 +275,19 @@ internal fun PrimerCardFormScope.CountryCodeInput(modifier: Modifier = Modifier)
     val selectedCountry = state.selectedCountry
     val error = state.fieldErrors.find { it.inputElementType == PrimerInputElementType.COUNTRY_CODE }
 
-    OutlinedTextField(
+    PrimerInput(
         value = selectedCountry?.name ?: "",
         onValueChange = { },
         readOnly = true,
         enabled = false,
-        label = { Text("Country") },
+        label = "Country",
         modifier = modifier
             .fillMaxWidth()
             .clickable(
                 interactionSource = remember { MutableInteractionSource() },
                 indication = null
             ) { navigateToCountrySelection() },
-        singleLine = true,
-        isError = error != null,
-        supportingText = {
-            error?.let {
-                Text(
-                    text = it.description,
-                    color = MaterialTheme.colorScheme.error,
-                )
-            }
-        },
+        error = error?.description,
         colors = OutlinedTextFieldDefaults.colors(
             disabledTextColor = MaterialTheme.colorScheme.onSurface,
             disabledBorderColor = MaterialTheme.colorScheme.outline,
@@ -335,36 +298,36 @@ internal fun PrimerCardFormScope.CountryCodeInput(modifier: Modifier = Modifier)
 
 @Composable
 internal fun PrimerCardFormScope.CityInput(modifier: Modifier = Modifier) =
-    Input(modifier, PrimerInputElementType.CITY, ::updateCity)
+    CardInput(modifier, PrimerInputElementType.CITY, ::updateCity)
 
 @Composable
 internal fun PrimerCardFormScope.StateInput(modifier: Modifier = Modifier) =
-    Input(modifier, PrimerInputElementType.STATE, ::updateState)
+    CardInput(modifier, PrimerInputElementType.STATE, ::updateState)
 
 @Composable
 internal fun PrimerCardFormScope.AddressLine1Input(modifier: Modifier = Modifier) =
-    Input(modifier, PrimerInputElementType.ADDRESS_LINE_1, ::updateAddressLine1)
+    CardInput(modifier, PrimerInputElementType.ADDRESS_LINE_1, ::updateAddressLine1)
 
 @Composable
 internal fun PrimerCardFormScope.AddressLine2Input(modifier: Modifier = Modifier) =
-    Input(modifier, PrimerInputElementType.ADDRESS_LINE_2, ::updateAddressLine2)
+    CardInput(modifier, PrimerInputElementType.ADDRESS_LINE_2, ::updateAddressLine2)
 
 @Composable
 internal fun PrimerCardFormScope.PhoneNumberInput(modifier: Modifier = Modifier) =
-    Input(modifier, PrimerInputElementType.PHONE_NUMBER, ::updatePhoneNumber)
+    CardInput(modifier, PrimerInputElementType.PHONE_NUMBER, ::updatePhoneNumber)
 
 @Composable
 internal fun PrimerCardFormScope.FirstNameInput(modifier: Modifier = Modifier) =
-    Input(modifier, PrimerInputElementType.FIRST_NAME, ::updateFirstName)
+    CardInput(modifier, PrimerInputElementType.FIRST_NAME, ::updateFirstName)
 
 @Composable
 internal fun PrimerCardFormScope.LastNameInput(modifier: Modifier = Modifier) =
-    Input(modifier, PrimerInputElementType.LAST_NAME, ::updateLastName)
+    CardInput(modifier, PrimerInputElementType.LAST_NAME, ::updateLastName)
 
 @Composable
 internal fun PrimerCardFormScope.RetailOutletInput(modifier: Modifier = Modifier) =
-    Input(modifier, PrimerInputElementType.RETAIL_OUTLET, ::updateRetailOutlet)
+    CardInput(modifier, PrimerInputElementType.RETAIL_OUTLET, ::updateRetailOutlet)
 
 @Composable
 internal fun PrimerCardFormScope.OtpCodeInput(modifier: Modifier = Modifier) =
-    Input(modifier, PrimerInputElementType.OTP_CODE, ::updateOtpCode)
+    CardInput(modifier, PrimerInputElementType.OTP_CODE, ::updateOtpCode)
