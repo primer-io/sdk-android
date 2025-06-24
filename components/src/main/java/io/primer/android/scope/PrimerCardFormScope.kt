@@ -2,6 +2,7 @@ package io.primer.android.scope
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import io.primer.android.components.domain.core.models.card.PrimerCardNetwork
 import io.primer.android.components.domain.inputs.models.PrimerInputElementType
 import io.primer.android.configuration.data.model.CardNetwork
 import io.primer.android.ui.core.model.SyncValidationError
@@ -36,6 +37,8 @@ interface PrimerCardFormScope {
 
     fun navigateToCountrySelection()
 
+    fun selectCardNetwork(network: CardNetwork.Type)
+
     data class State(
         val cardFields: List<PrimerInputElementType> = emptyList(),
         val billingFields: List<PrimerInputElementType> = emptyList(),
@@ -44,6 +47,9 @@ interface PrimerCardFormScope {
         val isLoading: Boolean = false,
         val selectedCountry: io.primer.android.clientSessionActions.domain.models.PrimerCountry? = null,
         val detectedCardNetwork: CardNetwork.Type = CardNetwork.Type.OTHER,
+        val availableNetworks: List<PrimerCardNetwork> = emptyList(),
+        val selectedNetwork: CardNetwork.Type? = null,
+        val preferredNetwork: CardNetwork.Type? = null,
     )
 
     var screen: @Composable () -> Unit
@@ -65,4 +71,10 @@ interface PrimerCardFormScope {
     var otpCodeInput: @Composable (modifier: Modifier) -> Unit
     var cardDetails: @Composable (modifier: Modifier) -> Unit
     var billingAddress: @Composable (modifier: Modifier) -> Unit
+    var cardNetworkSelector: @Composable (
+        modifier: Modifier,
+        networks: List<PrimerCardNetwork>,
+        selectedNetwork: CardNetwork.Type?,
+        onNetworkSelected: (CardNetwork.Type) -> Unit
+    ) -> Unit
 }

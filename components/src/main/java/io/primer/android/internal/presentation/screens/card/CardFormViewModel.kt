@@ -3,6 +3,7 @@ package io.primer.android.internal.presentation.screens.card
 import androidx.lifecycle.viewModelScope
 import io.primer.android.clientSessionActions.domain.models.PrimerCountry
 import io.primer.android.components.domain.inputs.models.PrimerInputElementType
+import io.primer.android.configuration.data.model.CardNetwork
 import io.primer.android.configuration.data.model.CountryCode
 import io.primer.android.core.di.DISdkComponent
 import io.primer.android.core.di.extensions.resolve
@@ -64,6 +65,30 @@ internal class CardFormViewModel : DefaultCardFormScope(), DISdkComponent {
             setDataInteractor.detectedCardNetwork.collect { detectedNetwork ->
                 _uiState.update {
                     it.copy(detectedCardNetwork = detectedNetwork)
+                }
+            }
+        }
+
+        viewModelScope.launch {
+            setDataInteractor.availableNetworks.collect { networks ->
+                _uiState.update {
+                    it.copy(availableNetworks = networks)
+                }
+            }
+        }
+
+        viewModelScope.launch {
+            setDataInteractor.selectedNetwork.collect { selectedNetwork ->
+                _uiState.update {
+                    it.copy(selectedNetwork = selectedNetwork)
+                }
+            }
+        }
+
+        viewModelScope.launch {
+            setDataInteractor.preferredNetwork.collect { preferredNetwork ->
+                _uiState.update {
+                    it.copy(preferredNetwork = preferredNetwork)
                 }
             }
         }
@@ -202,5 +227,9 @@ internal class CardFormViewModel : DefaultCardFormScope(), DISdkComponent {
         viewModelScope.launch {
             checkoutNavigator.navigateTo(Screen.SelectCountry)
         }
+    }
+
+    override fun selectCardNetwork(network: CardNetwork.Type) {
+        setDataInteractor.selectNetwork(network)
     }
 }

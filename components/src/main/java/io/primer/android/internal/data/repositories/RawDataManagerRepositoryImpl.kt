@@ -1,6 +1,7 @@
 package io.primer.android.internal.data.repositories
 
 import io.primer.android.components.domain.core.models.card.PrimerCardData
+import io.primer.android.components.domain.core.models.metadata.PrimerPaymentMethodMetadataState
 import io.primer.android.components.domain.error.PrimerInputValidationError
 import io.primer.android.components.domain.inputs.models.PrimerInputElementType
 import io.primer.android.components.manager.raw.PrimerHeadlessUniversalCheckoutRawDataManagerInterface
@@ -29,6 +30,33 @@ class RawDataManagerRepositoryImpl(
                 errors: List<PrimerInputValidationError>,
             ) {
                 trySend(errors)
+            }
+
+            override fun onMetadataStateChanged(metadataState: PrimerPaymentMethodMetadataState) {
+                // Handled in separate flow
+            }
+        })
+
+        awaitClose {
+            cardManager.cleanup()
+        }
+    }.shareIn(
+        scope = CoroutineScope(Dispatchers.Main),
+        started = SharingStarted.Lazily,
+        replay = 1,
+    )
+
+    override val metadataState: Flow<PrimerPaymentMethodMetadataState> = callbackFlow {
+        cardManager.setListener(object : PrimerHeadlessUniversalCheckoutRawDataManagerListener {
+            override fun onValidationChanged(
+                isValid: Boolean,
+                errors: List<PrimerInputValidationError>,
+            ) {
+                // Handled in separate flow
+            }
+
+            override fun onMetadataStateChanged(metadataState: PrimerPaymentMethodMetadataState) {
+                trySend(metadataState)
             }
         })
 

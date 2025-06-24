@@ -8,6 +8,7 @@ import io.primer.android.core.di.extensions.resolve
 import io.primer.android.internal.presentation.screens.card.DefaultCardFormScreen
 import io.primer.android.internal.presentation.screens.card.components.BillingAddressForm
 import io.primer.android.internal.presentation.screens.card.components.CardDetailsForm
+import io.primer.android.internal.presentation.screens.card.components.CardNetworkSelector
 import io.primer.android.internal.presentation.screens.card.components.SubmitButton
 import io.primer.android.internal.presentation.screens.card.components.input.AddressLine1Input
 import io.primer.android.internal.presentation.screens.card.components.input.AddressLine2Input
@@ -105,5 +106,19 @@ internal abstract class DefaultCardFormScope : ViewModel(), PrimerCardFormScope,
 
     override var billingAddress: @Composable (modifier: Modifier) -> Unit = { modifier ->
         BillingAddressForm(modifier)
+    }
+
+    override var cardNetworkSelector: @Composable (
+        modifier: Modifier,
+        networks: List<io.primer.android.components.domain.core.models.card.PrimerCardNetwork>,
+        selectedNetwork: io.primer.android.configuration.data.model.CardNetwork.Type?,
+        onNetworkSelected: (io.primer.android.configuration.data.model.CardNetwork.Type) -> Unit
+    ) -> Unit = { modifier, networks, selectedNetwork, onNetworkSelected ->
+        CardNetworkSelector(
+            modifier = modifier,
+            networks = networks,
+            selectedNetwork = selectedNetwork,
+            onNetworkSelected = onNetworkSelected
+        )
     }
 }
