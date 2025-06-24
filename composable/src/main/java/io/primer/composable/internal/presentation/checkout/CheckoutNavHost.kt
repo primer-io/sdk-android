@@ -9,6 +9,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import io.primer.android.core.di.DISdkContext
 import io.primer.composable.scope.PrimerCheckoutScope
 
 internal val LocalNavController = staticCompositionLocalOf<NavHostController> {
@@ -21,7 +22,7 @@ internal fun PrimerCheckoutScope.CheckoutNavHost(
 ) {
     CompositionLocalProvider(
         LocalNavController provides rememberNavController(),
-        LocalCheckoutNavigator provides CheckoutNavigator(),
+        LocalCheckoutNavigator provides DISdkContext.componentsSdkContainer?.resolve<CheckoutNavigator>()!!,
     ) {
         CheckoutNavigator {
             NavHost(

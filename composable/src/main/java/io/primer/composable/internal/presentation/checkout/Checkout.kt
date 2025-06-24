@@ -37,7 +37,7 @@ internal fun Checkout(
             onDispose { onDismiss() }
         }
 
-        container { CheckoutNavHost(modifier = modifier) }
+        this@with.container { CheckoutNavHost(modifier = modifier) }
 
     }
 }

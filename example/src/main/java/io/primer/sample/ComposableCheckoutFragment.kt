@@ -28,7 +28,7 @@ class ComposableCheckoutFragment : Fragment() {
                 val clientToken by viewModel.clientToken.observeAsState()
                 clientToken?.let { token ->
                     PrimerCheckout(clientToken = token)
-//                    PrimerCheckout(clientToken = token) {
+//                    {
 //
 //                        // State observation
 //                        lifecycleScope.launch {
@@ -37,12 +37,15 @@ class ComposableCheckoutFragment : Fragment() {
 //                                    is PrimerCheckoutScope.State.Initializing -> {
 //                                        // Handle initializing
 //                                    }
+//
 //                                    is PrimerCheckoutScope.State.Ready -> {
 //                                        // Handle ready
 //                                    }
+//
 //                                    is PrimerCheckoutScope.State.Dismissed -> {
 //                                        // Handle dismissed
 //                                    }
+//
 //                                    is PrimerCheckoutScope.State.Error -> {
 //                                        // Handle error
 //                                    }
