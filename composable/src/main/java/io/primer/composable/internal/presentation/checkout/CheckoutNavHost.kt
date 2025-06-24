@@ -9,7 +9,6 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import io.primer.android.core.di.DISdkContext
 import io.primer.composable.scope.PrimerCheckoutScope
 
 internal val LocalNavController = staticCompositionLocalOf<NavHostController> {
@@ -18,17 +17,15 @@ internal val LocalNavController = staticCompositionLocalOf<NavHostController> {
 
 @Composable
 internal fun PrimerCheckoutScope.CheckoutNavHost(
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     CompositionLocalProvider(
         LocalNavController provides rememberNavController(),
-        LocalCheckoutNavigator provides DISdkContext.componentsSdkContainer?.resolve<CheckoutNavigator>()!!,
+        LocalCheckoutNavigator provides CheckoutNavigator(),
     ) {
-        val navController = LocalNavController.current
-
         CheckoutNavigator {
             NavHost(
-                navController = navController,
+                navController = LocalNavController.current,
                 startDestination = Screen.PaymentsList.route,
                 modifier = modifier.fillMaxWidth(),
             ) {
@@ -60,9 +57,7 @@ internal fun PrimerCheckoutScope.CheckoutNavHost(
                 }
 
                 composable(Screen.SelectCountry.route) {
-                    with(cardForm.selectCountry) {
-                        screen()
-                    }
+                    cardForm.selectCountry.screen()
                 }
             }
         }

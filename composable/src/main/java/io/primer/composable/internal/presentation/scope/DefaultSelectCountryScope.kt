@@ -10,7 +10,7 @@ import io.primer.composable.scope.PrimerSelectCountryScope
 
 internal abstract class DefaultSelectCountryScope : ViewModel(), PrimerSelectCountryScope {
 
-    override var screen: @Composable PrimerSelectCountryScope.() -> Unit = {
+    override var screen: @Composable () -> Unit = {
         DefaultSelectCountryScreen()
     }
 

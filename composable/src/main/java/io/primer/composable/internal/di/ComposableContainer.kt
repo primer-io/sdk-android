@@ -18,10 +18,9 @@ import io.primer.composable.internal.domain.interactor.TrackDirtyFieldsInteracto
 import io.primer.composable.internal.domain.interactor.ValidateBillingAddressInteractor
 import io.primer.composable.internal.domain.repositories.HeadlessRepository
 import io.primer.composable.internal.domain.repositories.RawDataManagerRepository
-import io.primer.composable.internal.presentation.checkout.CheckoutNavigator
 import io.primer.composable.internal.presentation.screens.card.CardFormViewModel
-import io.primer.composable.internal.presentation.screens.paymentMethodSelection.PaymentMethodSelectionViewModel
 import io.primer.composable.internal.presentation.screens.country.SelectCountryViewModel
+import io.primer.composable.internal.presentation.screens.paymentMethodSelection.PaymentMethodSelectionViewModel
 import io.primer.composable.scope.PrimerCardFormScope
 import io.primer.composable.scope.PrimerPaymentMethodSelectionScope
 import io.primer.composable.scope.PrimerSelectCountryScope
@@ -86,10 +85,6 @@ internal class ComposableContainer(
 
         registerSingleton {
             SubmitPaymentInteractor()
-        }
-
-        registerSingleton {
-            CheckoutNavigator()
         }
 
         registerSingleton {

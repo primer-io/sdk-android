@@ -1,7 +1,6 @@
 package io.primer.composable.scope
 
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
 import io.primer.android.clientSessionActions.domain.models.PrimerCountry
 import kotlinx.coroutines.flow.StateFlow
 
@@ -21,7 +20,7 @@ interface PrimerSelectCountryScope {
     )
 
     // UI Customization
-    var screen: @Composable PrimerSelectCountryScope.() -> Unit
+    var screen: @Composable () -> Unit
     var searchBar: @Composable (query: String, onQueryChange: (String) -> Unit, placeholder: String) -> Unit
     var countryItem: @Composable (country: PrimerCountry, onSelect: () -> Unit) -> Unit
 }

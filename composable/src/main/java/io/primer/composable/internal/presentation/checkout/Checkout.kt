@@ -3,6 +3,7 @@ package io.primer.composable.internal.presentation.checkout
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -17,35 +18,26 @@ internal fun Checkout(
     modifier: Modifier = Modifier,
     clientToken: String,
     settings: PrimerSettings = PrimerSettings(),
-    scope: ((PrimerCheckoutScope) -> Unit)?
+    scope: ((PrimerCheckoutScope) -> Unit)? = null,
 ) = with(viewModel<CheckoutViewModel>()) {
 
     PrimerTheme {
         val context = LocalContext.current
+
+        scope?.let {
+            val state by state.collectAsStateWithLifecycle()
+            if (state is PrimerCheckoutScope.State.Ready) {
+                it.invoke(this)
+            }
+        }
+
 
         DisposableEffect(clientToken) {
             initialize(context, clientToken, settings)
             onDispose { onDismiss() }
         }
 
-        when (val state = state.collectAsStateWithLifecycle().value) {
-            PrimerCheckoutScope.State.Dismissed -> Unit
-            // TODO COMPOSABLE why is this not shown?
-            PrimerCheckoutScope.State.Initializing -> {
-                splashScreen()
-            }
+        container { CheckoutNavHost(modifier = modifier) }
 
-            is PrimerCheckoutScope.State.Error -> {
-                errorScreen("${state.exception.message}")
-            }
-
-            PrimerCheckoutScope.State.Ready -> {
-                container {
-                    CheckoutNavHost(modifier = modifier)
-                }
-
-                scope?.invoke(this)
-            }
-        }
     }
 }

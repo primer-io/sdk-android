@@ -27,7 +27,7 @@ import io.primer.composable.scope.PrimerCheckoutScope
  *                 content()
  *             }
  *         }
- *         
+ *
  *         // Monitor checkout state
  *         LaunchedEffect(Unit) {
  *             checkoutScope.state.collect { state ->
