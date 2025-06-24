@@ -62,7 +62,7 @@
     <string name="primer_components_payment_method_selection_pay_amount">Pay %1$s</string>
 
     <!-- Loading States -->
-    <string name="loading">Loading</string>
+    <string name="primer_components_checkout_loading">Loading</string>
     
     <!-- Content Descriptions -->
     <string name="content_description_back">Back</string>

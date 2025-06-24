@@ -25,7 +25,7 @@ internal fun DefaultLoadingScreen(
     ) {
         CircularProgressIndicator()
         Text(
-            text = text ?: stringResource(R.string.loading),
+            text = text ?: stringResource(R.string.primer_components_checkout_loading),
             style = MaterialTheme.typography.bodyMedium,
             modifier = Modifier.padding(top = spacing.small),
         )
