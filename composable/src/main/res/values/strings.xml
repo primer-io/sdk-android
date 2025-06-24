@@ -53,7 +53,7 @@
     
     <!-- Success Messages -->
     <string name="primer_components_checkout_success_title">Payment successful</string>
-    <string name="primer_components_checkout_success_description">You'll be redirected to the order confirmation page soon.</string>
+    <string name="primer_components_checkout_success_description">You\'ll be redirected to the order confirmation page soon.</string>
     
     <!-- Payment Method Selection -->
     <string name="primer_components_payment_method_selection_description">Choose payment method</string>

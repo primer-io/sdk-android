@@ -18,14 +18,7 @@ internal fun PrimerPaymentMethodSelectionScope.PaymentMethodSelector(
 ) {
     when (safeValueOf(primerMethod.paymentMethodType)) {
         PaymentMethodType.PAYMENT_CARD -> paymentMethodCard(Modifier, onPaymentMethodSelected)
-
-        // TODO COMPOSABLE check which one to use
-        PaymentMethodType.ADYEN_IDEAL,
-        PaymentMethodType.BUCKAROO_IDEAL,
-        PaymentMethodType.MOLLIE_IDEAL,
-        PaymentMethodType.PAY_NL_IDEAL,
-            -> PaymentMethodItemIdeal { onPaymentMethodSelected(PaymentMethodType.ADYEN_IDEAL.name) }
-
+        PaymentMethodType.ADYEN_IDEAL -> PaymentMethodItemIdeal { onPaymentMethodSelected(PaymentMethodType.ADYEN_IDEAL.name) }
         PaymentMethodType.GOOGLE_PAY -> PaymentMethodItemGooglePay { onPaymentMethodSelected(PaymentMethodType.GOOGLE_PAY.name) }
         PaymentMethodType.KLARNA -> PaymentMethodItemKlarna { onPaymentMethodSelected(PaymentMethodType.KLARNA.name) }
         PaymentMethodType.PAYPAL -> PaymentMethodItemPaypal { onPaymentMethodSelected(PaymentMethodType.PAYPAL.name) }
