@@ -25,13 +25,11 @@ internal fun PrimerPaymentMethodSelectionScope.PaymentMethodItemPaypal(
         Row {
             Icon(
                 painter = painterResource(id = R.drawable.ic_primer_paypal_icon),
-                // TODO COMPOSABLE content description
                 contentDescription = null,
                 tint = Color.Unspecified,
             )
             Icon(
                 painter = painterResource(id = R.drawable.ic_primer_paypal_logo),
-                // TODO COMPOSABLE content description
                 contentDescription = null,
                 tint = Color.Unspecified,
                 modifier = Modifier.padding(start = LocalPrimerSpacingTokens.current.xsmall),

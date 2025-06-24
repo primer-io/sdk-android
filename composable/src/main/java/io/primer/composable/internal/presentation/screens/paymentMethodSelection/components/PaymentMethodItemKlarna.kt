@@ -54,7 +54,6 @@ internal fun PrimerPaymentMethodSelectionScope.PaymentMethodItemKlarna(
             ) {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_primer_klarna_logo),
-                    // TODO COMPOSABLE content description
                     contentDescription = null,
                     tint = Color.Unspecified,
                 )

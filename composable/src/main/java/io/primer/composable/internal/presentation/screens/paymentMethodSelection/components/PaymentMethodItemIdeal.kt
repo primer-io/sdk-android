@@ -21,7 +21,6 @@ internal fun PrimerPaymentMethodSelectionScope.PaymentMethodItemIdeal(
     ) {
         Icon(
             painter = painterResource(id = R.drawable.ic_primer_ideal_logo),
-            // TODO COMPOSABLE content description
             contentDescription = null,
             tint = Color.Unspecified,
         )

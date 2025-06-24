@@ -30,7 +30,6 @@ internal fun PrimerPaymentMethodSelectionScope.PaymentMethodItemCard(
         Row {
             Icon(
                 painter = painterResource(id = R.drawable.ic_primer_credit_card),
-                // TODO COMPOSABLE content description
                 contentDescription = null,
                 tint = LocalPrimerColorTokens.current.primerColorTextPrimary,
                 modifier = Modifier.size(LocalPrimerSizeTokens.current.medium),

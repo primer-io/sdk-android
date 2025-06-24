@@ -22,7 +22,6 @@ internal fun PrimerPaymentMethodSelectionScope.PaymentMethodItemGooglePay(
     ) {
         Icon(
             painter = painterResource(id = R.drawable.ic_primer_google_pay),
-            // TODO COMPOSABLE content description
             contentDescription = null,
             tint = Color.Unspecified,
         )
