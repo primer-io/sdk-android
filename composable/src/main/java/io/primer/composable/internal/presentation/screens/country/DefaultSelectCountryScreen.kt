@@ -24,7 +24,7 @@ internal fun PrimerSelectCountryScope.DefaultSelectCountryScreen() {
         modifier = Modifier.fillMaxSize()
     ) {
         CheckoutAppBar(
-            title = stringResource(R.string.select_country),
+            title = stringResource(R.string.primer_components_select_country),
             onBackClick = { onCancel() }
         )
         

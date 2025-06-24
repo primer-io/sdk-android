@@ -2,7 +2,7 @@
 <resources>
     <!-- App Bar Titles -->
     <string name="primer_components_pay_with_card">Pay with card</string>
-    <string name="select_country">Select Country</string>
+    <string name="primer_components_select_country">Select Country</string>
     
     <!-- Button Text -->
     <string name="submit">Submit</string>
