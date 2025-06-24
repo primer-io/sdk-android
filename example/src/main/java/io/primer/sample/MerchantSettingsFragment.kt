@@ -58,6 +58,7 @@ class MerchantSettingsFragment : Fragment() {
         configureCustomerIdTextField()
         configureCountryTextField()
         configureAmountTextField()
+        configureSurchargeTextField()
         configurePaymentHandlingViews()
         configureSdkUiSettingsViews()
         configureCVVRecaptureViews()
@@ -234,6 +235,22 @@ class MerchantSettingsFragment : Fragment() {
             onFocusChangeListener =
                 HideKeyboardFocusChangeListener(R.id.metadataTextField, activity)
             addTextChangedListener { viewModel.setMetadata(it.toString()) }
+        }
+    }
+
+    private fun configureSurchargeTextField() {
+        binding.surchargeTextField.apply {
+            setText(viewModel.surcharge.value?.toString() ?: "0")
+            onFocusChangeListener = HideKeyboardFocusChangeListener(R.id.surchargeTextField, activity)
+            doAfterTextChanged {
+                val cleanString = it.toString().replace("[^\\d]".toRegex(), "")
+                try {
+                    viewModel.setSurcharge(cleanString.toIntOrNull() ?: 0)
+                } catch (e: NumberFormatException) {
+                    viewModel.setSurcharge(0)
+                    error = "Invalid surcharge amount."
+                }
+            }
         }
     }
 

@@ -21,6 +21,7 @@
     <string name="metadata">Metadata format: \'TEST_CASE:SOME_APM\'</string>
     <string name="country">Country</string>
     <string name="amount">Amount</string>
+    <string name="surcharge">Surcharge</string>
     <string name="currency">Currency</string>
     <string name="environment">Environment</string>
     <string name="checkout_vaulting_type">Checkout vaulting</string>

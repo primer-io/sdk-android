@@ -37,7 +37,8 @@ interface ClientSession : ExampleAppRequestBody {
                 metadata: String?,
                 captureVaultedCardCvv: Boolean,
                 vaultOnSuccess: Boolean?,
-                vaultOnAgreement: Boolean?
+                vaultOnAgreement: Boolean?,
+                surcharge: Int = 0
             ): Request {
                 var metadataMap: MutableMap<String, Any>? = null
                 if (!metadata.isNullOrEmpty() && metadata.contains(":")) {
@@ -105,37 +106,37 @@ interface ClientSession : ExampleAppRequestBody {
                         options = PaymentMethodOptionGroup(
                             PAYPAL = PaymentMethodOption(
                                 surcharge = SurchargeOption(
-                                    amount = 0,
+                                    amount = surcharge,
                                 )
                             ),
                             GOOGLE_PAY = PaymentMethodOption(
                                 surcharge = SurchargeOption(
-                                    amount = 0,
+                                    amount = surcharge,
                                 )
                             ),
                             ADYEN_SOFORT = PaymentMethodOption(
                                 surcharge = SurchargeOption(
-                                    amount = 150,
+                                    amount = surcharge,
                                 )
                             ),
                             ADYEN_IDEAL = PaymentMethodOption(
                                 surcharge = SurchargeOption(
-                                    amount = 3000,
+                                    amount = surcharge,
                                 )
                             ),
                             ADYEN_GIROPAY = PaymentMethodOption(
                                 surcharge = SurchargeOption(
-                                    amount = 130,
+                                    amount = surcharge,
                                 )
                             ),
                             ADYEN_TRUSTLY = PaymentMethodOption(
                                 surcharge = SurchargeOption(
-                                    amount = 140,
+                                    amount = surcharge,
                                 )
                             ),
                             KLARNA = PaymentMethodOption(
                                 surcharge = SurchargeOption(
-                                    amount = 140,
+                                    amount = surcharge,
                                 ),
                                 extraMerchantData = JSONObject(
                                     """
@@ -155,12 +156,12 @@ interface ClientSession : ExampleAppRequestBody {
                                 networks = NetworkOptionGroup(
                                     JCB = NetworkOption(
                                         surcharge = SurchargeOption(
-                                            amount = 0,
+                                            amount = surcharge,
                                         )
                                     ),
                                     VISA = NetworkOption(
                                         surcharge = SurchargeOption(
-                                            amount = 120,
+                                            amount = surcharge,
                                         )
                                     ),
                                 ),
