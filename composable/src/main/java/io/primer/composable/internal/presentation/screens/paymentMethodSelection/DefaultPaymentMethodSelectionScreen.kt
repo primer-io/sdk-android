@@ -62,7 +62,7 @@ private fun PrimerPaymentMethodSelectionScope.Ready() {
         ) {
             item {
                 Text(
-                    text = stringResource(R.string.choose_payment_method),
+                    text = stringResource(R.string.primer_components_payment_method_selection_description),
                     style = LocalPrimerTypographyTokens.current.titleLarge.toTextStyle(),
                     color = LocalPrimerColorTokens.current.primerColorTextPrimary,
                 )

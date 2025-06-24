@@ -35,7 +35,7 @@ internal fun PrimerPaymentMethodSelectionScope.PaymentMethodItemKlarna(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = stringResource(R.string.pay_with),
+                text = stringResource(R.string.primer_components_payment_method_selection_klarna_pay_with),
                 style = LocalPrimerTypographyTokens.current.titleLarge.toTextStyle(),
                 color = LocalPrimerColorTokens.current.primerColorGray000,
                 modifier = Modifier.padding(end = LocalPrimerSpacingTokens.current.small),
