@@ -48,7 +48,7 @@ internal fun CheckoutAppBar(
             onCancelClick?.let {
                 TextButton(onClick = it) {
                     Text(
-                        text = stringResource(R.string.cancel),
+                        text = stringResource(R.string.primer_components_checkout_cancel),
                         style = LocalPrimerTypographyTokens.current.titleLarge.toTextStyle(),
                         color = LocalPrimerColorTokens.current.primerColorTextPrimary,
                     )
