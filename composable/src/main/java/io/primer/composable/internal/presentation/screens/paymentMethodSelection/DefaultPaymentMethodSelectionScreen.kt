@@ -11,14 +11,18 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import io.primer.composable.R
 import io.primer.composable.internal.presentation.checkout.components.CheckoutAppBar
 import io.primer.composable.internal.presentation.screens.paymentMethodSelection.components.PaymentMethodSelector
 import io.primer.composable.internal.presentation.theme.LocalPrimerColorTokens
 import io.primer.composable.internal.presentation.theme.LocalPrimerSizeTokens
 import io.primer.composable.internal.presentation.theme.LocalPrimerSpacingTokens
 import io.primer.composable.internal.presentation.theme.LocalPrimerTypographyTokens
+import io.primer.composable.internal.presentation.utils.CurrencyFormatter
 import io.primer.composable.scope.PrimerPaymentMethodSelectionScope
 
 @Composable
@@ -49,7 +53,7 @@ private fun PrimerPaymentMethodSelectionScope.Ready() {
 
     Column {
         CheckoutAppBar(
-            title = state.title,
+            title = CurrencyFormatter.formatTitle(LocalContext.current, state.orderInfo),
             onCancelClick = { onCancel() },
         )
         LazyColumn(
@@ -58,8 +62,7 @@ private fun PrimerPaymentMethodSelectionScope.Ready() {
         ) {
             item {
                 Text(
-                    // TODO COMPOSABLE extract string resource
-                    text = "Choose payment method",
+                    text = stringResource(R.string.choose_payment_method),
                     style = LocalPrimerTypographyTokens.current.titleLarge.toTextStyle(),
                     color = LocalPrimerColorTokens.current.primerColorTextPrimary,
                 )
@@ -84,8 +87,7 @@ private fun PrimerPaymentMethodSelectionScope.Error() {
         contentAlignment = Alignment.Center
     ) {
         Text(
-            // TODO COMPOSABLE extract string resource
-            text = "Error loading payment methods",
+            text = stringResource(R.string.error_loading_payment_methods),
             style = LocalPrimerTypographyTokens.current.bodyLarge.toTextStyle(),
             color = LocalPrimerColorTokens.current.primerColorTextPrimary,
         )

@@ -16,6 +16,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
@@ -31,40 +32,50 @@ import io.primer.composable.internal.presentation.screens.card.components.input.
 import io.primer.composable.internal.presentation.screens.card.components.input.transformations.ExpiryDateVisualTransformation
 import io.primer.composable.scope.PrimerCardFormScope
 
-private object InputConfigs {
-    fun label(type: PrimerInputElementType): String = when (type) {
-        PrimerInputElementType.CARDHOLDER_NAME -> "Name on card"
-        PrimerInputElementType.EXPIRY_DATE -> "Expiry Date"
-        PrimerInputElementType.POSTAL_CODE -> "Postal Code"
-        PrimerInputElementType.COUNTRY_CODE -> "Country Code"
-        PrimerInputElementType.CITY -> "City"
-        PrimerInputElementType.STATE -> "State"
-        PrimerInputElementType.ADDRESS_LINE_1 -> "Address Line 1"
-        PrimerInputElementType.ADDRESS_LINE_2 -> "Address Line 2"
-        PrimerInputElementType.PHONE_NUMBER -> "Phone Number"
-        PrimerInputElementType.FIRST_NAME -> "First Name"
-        PrimerInputElementType.LAST_NAME -> "Last Name"
-        PrimerInputElementType.RETAIL_OUTLET -> "Retail Outlet"
-        PrimerInputElementType.OTP_CODE -> "OTP Code"
+@Composable
+private fun getInputLabel(type: PrimerInputElementType): String {
+    val context = LocalContext.current
+    return when (type) {
+        PrimerInputElementType.CARDHOLDER_NAME -> context.getString(R.string.name_on_card)
+        PrimerInputElementType.EXPIRY_DATE -> context.getString(R.string.expiry_date)
+        PrimerInputElementType.POSTAL_CODE -> context.getString(R.string.postal_code)
+        PrimerInputElementType.COUNTRY_CODE -> context.getString(R.string.country_code)
+        PrimerInputElementType.CITY -> context.getString(R.string.city)
+        PrimerInputElementType.STATE -> context.getString(R.string.state)
+        PrimerInputElementType.ADDRESS_LINE_1 -> context.getString(R.string.address_line_1)
+        PrimerInputElementType.ADDRESS_LINE_2 -> context.getString(R.string.address_line_2)
+        PrimerInputElementType.PHONE_NUMBER -> context.getString(R.string.phone_number)
+        PrimerInputElementType.FIRST_NAME -> context.getString(R.string.first_name)
+        PrimerInputElementType.LAST_NAME -> context.getString(R.string.last_name)
+        PrimerInputElementType.RETAIL_OUTLET -> context.getString(R.string.retail_outlet)
+        PrimerInputElementType.OTP_CODE -> context.getString(R.string.otp_code)
         else -> type.field
     }
+}
 
-    fun placeholder(type: PrimerInputElementType): String = when (type) {
-        PrimerInputElementType.CARDHOLDER_NAME -> "Full name"
-        PrimerInputElementType.EXPIRY_DATE -> "MM/YY"
-        PrimerInputElementType.POSTAL_CODE -> "12345"
-        PrimerInputElementType.COUNTRY_CODE -> "US"
-        PrimerInputElementType.CITY -> "New York"
-        PrimerInputElementType.STATE -> "NY"
-        PrimerInputElementType.ADDRESS_LINE_1 -> "123 Main Street"
-        PrimerInputElementType.ADDRESS_LINE_2 -> "Apt 4B"
-        PrimerInputElementType.PHONE_NUMBER -> "+1 (555) 123-4567"
-        PrimerInputElementType.FIRST_NAME -> "John"
-        PrimerInputElementType.LAST_NAME -> "Doe"
-        PrimerInputElementType.RETAIL_OUTLET -> "Select outlet"
-        PrimerInputElementType.OTP_CODE -> "123456"
+@Composable
+private fun getInputPlaceholder(type: PrimerInputElementType): String {
+    val context = LocalContext.current
+    return when (type) {
+        PrimerInputElementType.CARDHOLDER_NAME -> context.getString(R.string.placeholder_full_name)
+        PrimerInputElementType.EXPIRY_DATE -> context.getString(R.string.placeholder_expiry_date)
+        PrimerInputElementType.POSTAL_CODE -> context.getString(R.string.placeholder_postal_code)
+        PrimerInputElementType.COUNTRY_CODE -> context.getString(R.string.placeholder_country_code)
+        PrimerInputElementType.CITY -> context.getString(R.string.placeholder_city)
+        PrimerInputElementType.STATE -> context.getString(R.string.placeholder_state)
+        PrimerInputElementType.ADDRESS_LINE_1 -> context.getString(R.string.placeholder_address_line_1)
+        PrimerInputElementType.ADDRESS_LINE_2 -> context.getString(R.string.placeholder_address_line_2)
+        PrimerInputElementType.PHONE_NUMBER -> context.getString(R.string.placeholder_phone_number)
+        PrimerInputElementType.FIRST_NAME -> context.getString(R.string.placeholder_first_name)
+        PrimerInputElementType.LAST_NAME -> context.getString(R.string.placeholder_last_name)
+        PrimerInputElementType.RETAIL_OUTLET -> context.getString(R.string.placeholder_retail_outlet)
+        PrimerInputElementType.OTP_CODE -> context.getString(R.string.placeholder_otp_code)
         else -> ""
     }
+}
+
+private object InputConfigs {
+
 
     fun keyboardOptions(type: PrimerInputElementType): KeyboardOptions = when (type) {
         PrimerInputElementType.EXPIRY_DATE, PrimerInputElementType.OTP_CODE ->
@@ -111,7 +122,7 @@ private fun resolveErrorMessage(error: SyncValidationError?): String? {
         val fieldName = try {
             context.getString(error.fieldId)
         } catch (e: Exception) {
-            "Field" // Fallback if fieldId resource doesn't exist
+            context.getString(R.string.field) // Fallback if fieldId resource doesn't exist
         }
         context.getString(formatId, fieldName)
     } ?: error.errorResId?.let { resId ->
@@ -126,9 +137,10 @@ internal fun CardNetworkIcon(
     cardNetwork: CardNetwork.Type,
     modifier: Modifier = Modifier,
 ) {
+    val context = LocalContext.current
     Icon(
         painter = painterResource(id = cardNetwork.getCardImageAsset(ImageColor.COLORED)),
-        contentDescription = "Card network: ${cardNetwork.name}",
+        contentDescription = context.getString(R.string.content_description_card_network, cardNetwork.name),
         modifier = modifier.size(20.dp),
         tint = androidx.compose.ui.graphics.Color.Unspecified
     )
@@ -172,8 +184,8 @@ private fun PrimerCardFormScope.CardInput(
     PrimerInput(
         value = value,
         onValueChange = processedOnValueChange,
-        label = InputConfigs.label(type),
-        placeholder = InputConfigs.placeholder(type),
+        label = getInputLabel(type),
+        placeholder = getInputPlaceholder(type),
         modifier = modifier.fillMaxWidth(),
         error = resolveErrorMessage(error),
         trailingIcon = {
@@ -219,8 +231,8 @@ internal fun PrimerCardFormScope.CardNumberInput(
     PrimerInput(
         value = value,
         onValueChange = processedOnValueChange,
-        label = "Card Number",
-        placeholder = "1234 1234 1234 1234",
+        label = stringResource(R.string.card_number),
+        placeholder = stringResource(R.string.placeholder_card_number),
         modifier = modifier.fillMaxWidth(),
         error = resolveErrorMessage(error),
         trailingIcon = { CardNetworkIcon(cardNetwork = state.detectedCardNetwork) },
@@ -260,14 +272,14 @@ internal fun PrimerCardFormScope.CvvInput(
     PrimerInput(
         value = value,
         onValueChange = processedOnValueChange,
-        label = "CVV",
+        label = stringResource(R.string.cvv),
         placeholder = "1".repeat(cvvLength),
         modifier = modifier.fillMaxWidth(),
         error = resolveErrorMessage(error),
         trailingIcon = {
             Icon(
                 painter = painterResource(id = R.drawable.ic_primer_card_cvv),
-                contentDescription = "Trailing"
+                contentDescription = stringResource(R.string.content_description_trailing)
             )
         },
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
@@ -303,7 +315,7 @@ internal fun PrimerCardFormScope.CountryCodeInput(modifier: Modifier = Modifier)
         onValueChange = { },
         readOnly = true,
         enabled = false,
-        label = "Country",
+        label = stringResource(R.string.country),
         modifier = modifier
             .fillMaxWidth()
             .clickable(

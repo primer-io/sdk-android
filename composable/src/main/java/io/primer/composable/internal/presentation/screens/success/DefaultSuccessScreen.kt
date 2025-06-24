@@ -13,6 +13,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import io.primer.composable.R
 import io.primer.composable.internal.presentation.theme.LocalPrimerColorTokens
@@ -43,14 +44,14 @@ internal fun DefaultSuccessScreen(
     ) {
         Icon(
             painter = painterResource(R.drawable.ic_primer_success),
-            contentDescription = "Payment successful",
+            contentDescription = stringResource(R.string.content_description_payment_successful),
             tint = Color.Unspecified
         )
 
         Spacer(modifier = Modifier.height(spacing.small))
 
         Text(
-            text = "Payment successful",
+            text = stringResource(R.string.payment_successful),
             style = MaterialTheme.typography.headlineSmall,
             color = colorTokens.primerColorTextPrimary,
             textAlign = TextAlign.Center,
@@ -59,7 +60,7 @@ internal fun DefaultSuccessScreen(
         Spacer(modifier = Modifier.height(spacing.xsmall))
 
         Text(
-            text = "You'll be redirected to the order confirmation page soon.",
+            text = stringResource(R.string.payment_success_description),
             style = MaterialTheme.typography.bodyMedium,
             color = colorTokens.primerColorTextSecondary,
             textAlign = TextAlign.Center,

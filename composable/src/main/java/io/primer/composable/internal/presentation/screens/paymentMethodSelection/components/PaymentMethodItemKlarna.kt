@@ -12,6 +12,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import io.primer.composable.R
 import io.primer.composable.internal.presentation.theme.LocalPrimerColorTokens
 import io.primer.composable.internal.presentation.theme.LocalPrimerRadiusTokens
@@ -34,8 +35,7 @@ internal fun PrimerPaymentMethodSelectionScope.PaymentMethodItemKlarna(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                // TODO COMPOSABLE extract string resource
-                text = "Pay with",
+                text = stringResource(R.string.pay_with),
                 style = LocalPrimerTypographyTokens.current.titleLarge.toTextStyle(),
                 color = LocalPrimerColorTokens.current.primerColorGray000,
                 modifier = Modifier.padding(end = LocalPrimerSpacingTokens.current.small),

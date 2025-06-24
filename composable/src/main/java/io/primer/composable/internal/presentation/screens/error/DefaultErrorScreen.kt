@@ -14,6 +14,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import io.primer.composable.R
 import io.primer.composable.internal.presentation.components.PrimerButton
@@ -25,8 +26,8 @@ import io.primer.composable.internal.presentation.theme.LocalPrimerTypographyTok
 @Composable
 internal fun DefaultErrorScreen(
     modifier: Modifier = Modifier,
-    title: String = "Payment failed",
-    message: String = "There was a network issue.",
+    title: String? = null,
+    message: String? = null,
     onRetryClick: (() -> Unit)? = null,
     onOtherPaymentMethodClick: (() -> Unit)? = null,
 ) {
@@ -45,7 +46,7 @@ internal fun DefaultErrorScreen(
         // Error icon
         Icon(
             painter = painterResource(id = R.drawable.ic_primer_checkout_error),
-            contentDescription = "Error",
+            contentDescription = stringResource(R.string.content_description_error),
             tint = Color.Unspecified,
         )
         
@@ -53,7 +54,7 @@ internal fun DefaultErrorScreen(
         
         // Error title
         Text(
-            text = title,
+            text = title ?: stringResource(R.string.payment_failed),
             color = colorTokens.primerColorTextPrimary,
             style = MaterialTheme.typography.headlineSmall,
             textAlign = TextAlign.Center,
@@ -63,7 +64,7 @@ internal fun DefaultErrorScreen(
         
         // Error message
         Text(
-            text = message,
+            text = message ?: stringResource(R.string.default_error_message),
             color = colorTokens.primerColorTextSecondary,
             style = MaterialTheme.typography.bodyMedium,
             textAlign = TextAlign.Center,
@@ -79,8 +80,7 @@ internal fun DefaultErrorScreen(
                 backgroundColor = colorTokens.primerColorBrand,
             ) {
                 Text(
-                    // TODO COMPOSABLE extract string resource
-                    text = "Retry",
+                    text = stringResource(R.string.retry),
                     style = LocalPrimerTypographyTokens.current.titleLarge.toTextStyle(),
                     color = LocalPrimerColorTokens.current.primerColorBackground,
                 )
@@ -98,8 +98,7 @@ internal fun DefaultErrorScreen(
                 borderColor = LocalPrimerColorTokens.current.primerColorBorderOutlinedDefault,
             ) {
                 Text(
-                    // TODO COMPOSABLE extract string resource
-                    text = "Choose other payment methods",
+                    text = stringResource(R.string.choose_other_payment_methods),
                     style = LocalPrimerTypographyTokens.current.titleLarge.toTextStyle(),
                     color = LocalPrimerColorTokens.current.primerColorTextPrimary,
                 )

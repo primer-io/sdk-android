@@ -1,5 +1,8 @@
 package io.primer.composable.internal.presentation.utils
 
+import android.content.Context
+import io.primer.composable.R
+import io.primer.ui.core.configuration.domain.model.BasicOrderInfo
 import java.text.NumberFormat
 import java.util.Currency
 
@@ -12,11 +15,16 @@ object CurrencyFormatter {
             formatter.currency = currency
             formatter.format(amountInCents / 100.0)
         } catch (e: Exception) {
-            "Pay"
+            ""
         }
     }
     
-    fun formatTitle(amountInCents: Int, currencyCode: String): String {
-        return "Pay ${formatAmount(amountInCents, currencyCode)}"
+    fun formatTitle(context: Context, orderInfo: BasicOrderInfo): String {
+        val amount = formatAmount(orderInfo.totalAmount, orderInfo.currencyCode)
+        return if (amount.isNotEmpty()) {
+            context.getString(R.string.pay_amount, amount)
+        } else {
+            context.getString(R.string.pay)
+        }
     }
 }

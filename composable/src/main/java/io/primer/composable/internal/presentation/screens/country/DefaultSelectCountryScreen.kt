@@ -11,6 +11,8 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import io.primer.composable.R
 import io.primer.composable.internal.presentation.checkout.components.CheckoutAppBar
 import io.primer.composable.scope.PrimerSelectCountryScope
 
@@ -22,11 +24,11 @@ internal fun PrimerSelectCountryScope.DefaultSelectCountryScreen() {
         modifier = Modifier.fillMaxSize()
     ) {
         CheckoutAppBar(
-            title = "Select Country",
+            title = stringResource(R.string.select_country),
             onBackClick = { onCancel() }
         )
         
-        searchBar(state.searchQuery, { query -> onSearch(query) }, "Search countries...")
+        searchBar(state.searchQuery, { query -> onSearch(query) }, stringResource(R.string.placeholder_search_countries))
         
         if (state.isLoading) {
             CircularProgressIndicator(

@@ -9,6 +9,8 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import io.primer.composable.R
 import io.primer.composable.internal.presentation.theme.LocalPrimerSpacingTokens
 
 @Composable
@@ -25,7 +27,7 @@ internal fun DefaultSearchBar(
         onValueChange = onQueryChange,
         placeholder = { Text(placeholder) },
         leadingIcon = { 
-            Icon(Icons.Default.Search, contentDescription = "Search") 
+            Icon(Icons.Default.Search, contentDescription = stringResource(R.string.content_description_search)) 
         },
         singleLine = true,
         modifier = modifier

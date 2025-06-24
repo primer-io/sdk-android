@@ -9,7 +9,6 @@ import io.primer.composable.internal.domain.interactor.GetAvailablePaymentMethod
 import io.primer.composable.internal.presentation.checkout.CheckoutNavigator
 import io.primer.composable.internal.presentation.checkout.Screen
 import io.primer.composable.internal.presentation.scope.DefaultPaymentMethodSelectionScope
-import io.primer.composable.internal.presentation.utils.CurrencyFormatter
 import io.primer.composable.scope.PrimerPaymentMethodSelectionScope
 import io.primer.ui.core.configuration.domain.model.BasicOrderInfoInteractor
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -35,8 +34,7 @@ internal class PaymentMethodSelectionViewModel : DefaultPaymentMethodSelectionSc
             getAvailablePaymentMethodsInteractor().fold(
                 onSuccess = { methods ->
                     val orderInfo = basicOrderInfoInteractor(None)
-                    val title = CurrencyFormatter.formatTitle(orderInfo.totalAmount, orderInfo.currencyCode)
-                    _uiState.value = PrimerPaymentMethodSelectionScope.State.Ready(methods, title)
+                    _uiState.value = PrimerPaymentMethodSelectionScope.State.Ready(methods, orderInfo)
                 },
                 onFailure = { error ->
                     _uiState.value = PrimerPaymentMethodSelectionScope.State.Error(error)

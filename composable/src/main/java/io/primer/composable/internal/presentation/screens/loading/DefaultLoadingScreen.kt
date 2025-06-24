@@ -8,13 +8,14 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import io.primer.composable.R
 import io.primer.composable.internal.presentation.theme.LocalPrimerSpacingTokens
-import io.primer.composable.scope.PrimerCheckoutScope
 
 @Composable
 internal fun DefaultLoadingScreen(
     modifier: Modifier = Modifier,
-    text: String = "Loading",
+    text: String? = null,
 ) {
     val spacing = LocalPrimerSpacingTokens.current
 
@@ -24,7 +25,7 @@ internal fun DefaultLoadingScreen(
     ) {
         CircularProgressIndicator()
         Text(
-            text = text,
+            text = text ?: stringResource(R.string.loading),
             style = MaterialTheme.typography.bodyMedium,
             modifier = Modifier.padding(top = spacing.small),
         )

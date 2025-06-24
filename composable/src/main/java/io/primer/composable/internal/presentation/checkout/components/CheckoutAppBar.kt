@@ -9,6 +9,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import io.primer.composable.R
 import io.primer.composable.internal.presentation.theme.LocalPrimerColorTokens
@@ -37,8 +38,7 @@ internal fun CheckoutAppBar(
                 IconButton(onClick = it) {
                     Icon(
                         painter = painterResource(id = R.drawable.ic_primer_chevron_left),
-                        // TODO COMPOSABLE content description
-                        contentDescription = "Back",
+                        contentDescription = stringResource(R.string.content_description_back),
                         tint = LocalPrimerColorTokens.current.primerColorTextPrimary,
                     )
                 }
@@ -48,8 +48,7 @@ internal fun CheckoutAppBar(
             onCancelClick?.let {
                 TextButton(onClick = it) {
                     Text(
-                        // TODO COMPOSABLE extract string resource
-                        text = "Cancel",
+                        text = stringResource(R.string.cancel),
                         style = LocalPrimerTypographyTokens.current.titleLarge.toTextStyle(),
                         color = LocalPrimerColorTokens.current.primerColorTextPrimary,
                     )
