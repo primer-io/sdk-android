@@ -26,7 +26,6 @@ internal class PaymentMethodSelectionViewModel : DefaultPaymentMethodSelectionSc
         MutableStateFlow<PrimerPaymentMethodSelectionScope.State>(PrimerPaymentMethodSelectionScope.State.Loading)
     override val state: StateFlow<PrimerPaymentMethodSelectionScope.State> = _uiState.asStateFlow()
 
-    // TODO COMPOSABLE move this to a separate function in scope
     init { loadPaymentMethods() }
 
     private fun loadPaymentMethods() {
