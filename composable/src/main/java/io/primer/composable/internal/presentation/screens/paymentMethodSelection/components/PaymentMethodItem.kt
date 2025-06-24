@@ -23,7 +23,7 @@ internal fun PrimerPaymentMethodSelectionScope.PaymentMethodSelector(
         PaymentMethodType.KLARNA -> PaymentMethodItemKlarna { onPaymentMethodSelected(PaymentMethodType.KLARNA.name) }
         PaymentMethodType.PAYPAL -> PaymentMethodItemPaypal { onPaymentMethodSelected(PaymentMethodType.PAYPAL.name) }
         else -> {
-            // TODO COMPOSABLE Handle other payment methods
+            // TODO Handle other payment methods
         }
     }
 }

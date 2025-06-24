@@ -6,6 +6,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import io.primer.composable.R
+import io.primer.composable.internal.presentation.constants.PaymentMethodColors
 import io.primer.composable.scope.PrimerPaymentMethodSelectionScope
 
 @Composable
@@ -15,8 +16,7 @@ internal fun PrimerPaymentMethodSelectionScope.PaymentMethodItemIdeal(
 ) {
     PaymentMethodItem(
         modifier = modifier,
-        // TODO COMPOSABLE move this somewhere in constants
-        backgroundColor = Color(0xFFCC0066),
+        backgroundColor = PaymentMethodColors.idealPink,
         onPaymentMethodSelected = onPaymentMethodSelected,
     ) {
         Icon(

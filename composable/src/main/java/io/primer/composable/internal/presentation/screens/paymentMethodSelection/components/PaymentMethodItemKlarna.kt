@@ -14,6 +14,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import io.primer.composable.R
+import io.primer.composable.internal.presentation.constants.PaymentMethodColors
 import io.primer.composable.internal.presentation.theme.LocalPrimerColorTokens
 import io.primer.composable.internal.presentation.theme.LocalPrimerRadiusTokens
 import io.primer.composable.internal.presentation.theme.LocalPrimerSpacingTokens
@@ -45,8 +46,7 @@ internal fun PrimerPaymentMethodSelectionScope.PaymentMethodItemKlarna(
             Box(
                 modifier = modifier
                     .background(
-                        // TODO COMPOSABLE move this somewhere in constants
-                        color = Color(0xFFFFA8CD),
+                        color = PaymentMethodColors.klarnaPink,
                         shape = RoundedCornerShape(LocalPrimerRadiusTokens.current.medium),
                     )
                     .padding(LocalPrimerSpacingTokens.current.small),

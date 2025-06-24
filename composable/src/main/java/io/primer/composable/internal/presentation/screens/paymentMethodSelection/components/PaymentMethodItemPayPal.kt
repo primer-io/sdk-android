@@ -8,6 +8,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import io.primer.composable.R
+import io.primer.composable.internal.presentation.constants.PaymentMethodColors
 import io.primer.composable.internal.presentation.theme.LocalPrimerSpacingTokens
 import io.primer.composable.scope.PrimerPaymentMethodSelectionScope
 
@@ -18,8 +19,7 @@ internal fun PrimerPaymentMethodSelectionScope.PaymentMethodItemPaypal(
 ) {
     PaymentMethodItem(
         modifier = modifier,
-        // TODO COMPOSABLE move this somewhere in constants
-        backgroundColor = Color(0xFFFFC439),
+        backgroundColor = PaymentMethodColors.paypalYellow,
         onPaymentMethodSelected = onPaymentMethodSelected,
     ) {
         Row {
