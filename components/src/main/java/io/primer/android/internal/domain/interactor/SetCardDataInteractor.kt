@@ -1,19 +1,14 @@
 package io.primer.android.internal.domain.interactor
 
 import io.primer.android.components.domain.core.models.card.PrimerCardData
-import io.primer.android.components.domain.core.models.card.PrimerCardMetadataState
-import io.primer.android.components.domain.core.models.card.PrimerCardNetwork
 import io.primer.android.components.domain.inputs.models.PrimerInputElementType
 import io.primer.android.configuration.data.model.CardNetwork
 import io.primer.android.core.di.DISdkComponent
 import io.primer.android.core.di.extensions.resolve
 import io.primer.android.internal.domain.repositories.RawDataManagerRepository
-import io.primer.cardShared.CardNumberFormatter
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.filterIsInstance
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 
 class SetCardDataInteractor : DISdkComponent {
@@ -24,60 +19,22 @@ class SetCardDataInteractor : DISdkComponent {
     private val _inputData = MutableStateFlow<MutableMap<PrimerInputElementType, String>>(mutableMapOf())
     val inputData: Flow<Map<PrimerInputElementType, String>> = _inputData.asStateFlow()
 
-    private val _detectedCardNetwork = MutableStateFlow<CardNetwork.Type>(CardNetwork.Type.OTHER)
-    val detectedCardNetwork: Flow<CardNetwork.Type> = _detectedCardNetwork.asStateFlow()
-
-    private val _selectedNetwork = MutableStateFlow<CardNetwork.Type?>(null)
-    val selectedNetwork: Flow<CardNetwork.Type?> = _selectedNetwork.asStateFlow()
-
-    val availableNetworks: Flow<List<PrimerCardNetwork>> = rawDataManagerRepository.metadataState
-        .filterIsInstance<PrimerCardMetadataState.Fetched>()
-        .map { metadataState ->
-            val metadata = metadataState.cardNumberEntryMetadata
-            val selectableNetworks = metadata.selectableCardNetworks?.items
-            val detectedNetwork = metadata.detectedCardNetworks.preferred
-                ?: metadata.detectedCardNetworks.items.firstOrNull()
-
-            selectableNetworks ?: listOfNotNull(detectedNetwork)
-        }
-
-    val preferredNetwork: Flow<CardNetwork.Type?> = rawDataManagerRepository.metadataState
-        .filterIsInstance<PrimerCardMetadataState.Fetched>()
-        .map { metadataState ->
-            metadataState.cardNumberEntryMetadata.selectableCardNetworks?.preferred?.network
-        }
+    private val _cardNetwork = MutableStateFlow<CardNetwork.Type?>(null)
 
     fun updateInput(input: String, type: PrimerInputElementType) {
         _inputData.update { it.toMutableMap().apply { this[type] = input } }
         trackDirtyFieldsInteractor.markFieldAsDirty(type)
-        
-        // Detect card network when card number changes
-        if (type == PrimerInputElementType.CARD_NUMBER) {
-            updateDetectedCardNetwork(input)
-        }
-        
         rawDataManagerRepository.setData(buildPrimerCardData())
     }
 
     fun markFieldAsDirty(type: PrimerInputElementType) {
         trackDirtyFieldsInteractor.markFieldAsDirty(type)
-        // Trigger validation by setting the current data
         rawDataManagerRepository.setData(buildPrimerCardData())
     }
 
-    fun selectNetwork(network: CardNetwork.Type) {
-        _selectedNetwork.value = network
+    fun updateCardNetwork(network: CardNetwork.Type?) {
+        _cardNetwork.value = network
         rawDataManagerRepository.setData(buildPrimerCardData())
-    }
-
-    private fun updateDetectedCardNetwork(cardNumber: String) {
-        try {
-            val formatter = CardNumberFormatter.fromString(cardNumber)
-            val detectedNetwork = formatter.getCardType()
-            _detectedCardNetwork.value = detectedNetwork
-        } catch (e: Exception) {
-            _detectedCardNetwork.value = CardNetwork.Type.OTHER
-        }
     }
 
     private fun buildPrimerCardData() = PrimerCardData(
@@ -85,7 +42,7 @@ class SetCardDataInteractor : DISdkComponent {
         expiryDate = formatExpiryDate(_inputData.value[PrimerInputElementType.EXPIRY_DATE] ?: ""),
         cvv = _inputData.value[PrimerInputElementType.CVV] ?: "",
         cardHolderName = _inputData.value[PrimerInputElementType.CARDHOLDER_NAME]?.takeIf { it.isNotEmpty() },
-        cardNetwork = _selectedNetwork.value ?: _detectedCardNetwork.value,
+        cardNetwork = _cardNetwork.value ?: CardNetwork.Type.OTHER,
     )
 
     private fun formatExpiryDate(input: String): String {

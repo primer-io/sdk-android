@@ -12,6 +12,7 @@ import io.primer.android.internal.data.mappers.PaymentMethodMapper
 import io.primer.android.internal.data.mappers.PaymentMethodMapperImpl
 import io.primer.android.internal.data.repositories.HeadlessRepositoryImpl
 import io.primer.android.internal.data.repositories.RawDataManagerRepositoryImpl
+import io.primer.android.internal.domain.interactor.CardNetworkInteractor
 import io.primer.android.internal.domain.interactor.GetAvailablePaymentMethodsInteractor
 import io.primer.android.internal.domain.interactor.GetRequiredFieldsInteractor
 import io.primer.android.internal.domain.interactor.GetValidationStateInteractor
@@ -70,6 +71,10 @@ internal class ComponentsContainer(
 
         registerSingleton {
             TrackDirtyFieldsInteractor()
+        }
+
+        registerSingleton {
+            CardNetworkInteractor()
         }
 
         registerSingleton {
