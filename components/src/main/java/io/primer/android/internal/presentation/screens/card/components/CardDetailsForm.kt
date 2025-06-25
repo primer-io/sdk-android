@@ -19,29 +19,10 @@ import io.primer.android.internal.presentation.theme.LocalPrimerSpacingTokens
 internal fun PrimerCardFormScope.CardDetailsForm(
     modifier: Modifier = Modifier,
 ) {
-    val uiState by state.collectAsState()
-    
     Column(
         modifier = modifier.fillMaxWidth(),
     ) {
-        // Card number input with network selector overlay
-        Box(
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            cardNumberInput(Modifier.fillMaxWidth())
-            
-            // Show network selector when networks are available
-            if (uiState.availableNetworks.isNotEmpty()) {
-                cardNetworkSelector(
-                    Modifier
-                        .align(Alignment.CenterEnd)
-                        .padding(end = 12.dp),
-                    uiState.availableNetworks,
-                    uiState.selectedNetwork,
-                    ::selectCardNetwork
-                )
-            }
-        }
+        cardNumberInput(Modifier.fillMaxWidth())
 
         Row(
             modifier = Modifier.fillMaxWidth(),

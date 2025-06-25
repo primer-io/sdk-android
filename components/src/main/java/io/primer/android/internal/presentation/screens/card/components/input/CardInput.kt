@@ -236,7 +236,18 @@ internal fun PrimerCardFormScope.CardNumberInput(
         placeholder = stringResource(R.string.primer_components_card_form_placeholder_card_number),
         modifier = modifier.fillMaxWidth(),
         error = resolveErrorMessage(error),
-        trailingIcon = { CardNetworkIcon(cardNetwork = state.detectedCardNetwork) },
+        trailingIcon = {
+            if (state.availableNetworks.isNotEmpty()) {
+                cardNetworkSelector(
+                    Modifier,
+                    state.availableNetworks,
+                    state.selectedNetwork,
+                    ::selectCardNetwork
+                )
+            } else {
+                CardNetworkIcon(cardNetwork = state.detectedCardNetwork)
+            }
+        },
         visualTransformation = CardNumberVisualTransformation(),
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
     )
