@@ -1,4 +1,4 @@
-package io.primer.android.internal.domain.usecases
+package io.primer.android.internal.domain.usecase
 
 import io.primer.android.clientSessionActions.domain.ActionInteractor
 import io.primer.android.clientSessionActions.domain.models.ActionUpdateBillingAddressParams
@@ -7,7 +7,6 @@ import io.primer.android.components.domain.inputs.models.PrimerInputElementType
 import io.primer.android.core.di.DISdkComponent
 import io.primer.android.core.di.extensions.resolve
 import io.primer.android.domain.PrimerCheckoutData
-import io.primer.android.internal.domain.models.CardFormData
 import io.primer.android.internal.domain.repositories.HeadlessRepository
 import io.primer.android.internal.domain.repositories.RawDataManagerRepository
 import kotlinx.coroutines.flow.first
@@ -18,7 +17,7 @@ internal class SubmitCardPaymentUseCase : DISdkComponent {
     private val headlessRepository: HeadlessRepository by lazy { resolve() }
     private val actionInteractor: ActionInteractor by lazy { resolve() }
 
-    suspend operator fun invoke(formData: CardFormData): Result<PrimerCheckoutData> {
+    suspend operator fun invoke(formData: Map<PrimerInputElementType, String>): Result<PrimerCheckoutData> {
         // Validate billing address if any billing fields are filled
         validateBillingAddress(formData).fold(
             onSuccess = {
@@ -37,18 +36,21 @@ internal class SubmitCardPaymentUseCase : DISdkComponent {
         return headlessRepository.paymentResults.first()
     }
 
-    private suspend fun validateBillingAddress(formData: CardFormData): Result<Unit> {
+    private suspend fun validateBillingAddress(formData: Map<PrimerInputElementType, String>): Result<Unit> {
         // Check if any billing fields are filled
-        val hasBillingData = listOf(
-            formData.firstName,
-            formData.lastName,
-            formData.addressLine1,
-            formData.addressLine2,
-            formData.city,
-            formData.postalCode,
-            formData.countryCode,
-            formData.state
-        ).any { it.isNotBlank() }
+        val billingFields = listOf(
+            PrimerInputElementType.FIRST_NAME,
+            PrimerInputElementType.LAST_NAME,
+            PrimerInputElementType.ADDRESS_LINE_1,
+            PrimerInputElementType.ADDRESS_LINE_2,
+            PrimerInputElementType.CITY,
+            PrimerInputElementType.POSTAL_CODE,
+            PrimerInputElementType.COUNTRY_CODE,
+            PrimerInputElementType.STATE
+        )
+        val hasBillingData = billingFields.any { field ->
+            formData[field]?.isNotBlank() == true
+        }
 
         if (!hasBillingData) {
             return Result.success(Unit)
@@ -56,14 +58,14 @@ internal class SubmitCardPaymentUseCase : DISdkComponent {
 
         return try {
             val action = ActionUpdateBillingAddressParams(
-                firstName = formData.firstName.takeIf { it.isNotBlank() },
-                lastName = formData.lastName.takeIf { it.isNotBlank() },
-                addressLine1 = formData.addressLine1.takeIf { it.isNotBlank() },
-                addressLine2 = formData.addressLine2.takeIf { it.isNotBlank() },
-                city = formData.city.takeIf { it.isNotBlank() },
-                postalCode = formData.postalCode.takeIf { it.isNotBlank() },
-                countryCode = formData.countryCode.takeIf { it.isNotBlank() },
-                state = formData.state.takeIf { it.isNotBlank() }
+                firstName = formData[PrimerInputElementType.FIRST_NAME]?.takeIf { it.isNotBlank() },
+                lastName = formData[PrimerInputElementType.LAST_NAME]?.takeIf { it.isNotBlank() },
+                addressLine1 = formData[PrimerInputElementType.ADDRESS_LINE_1]?.takeIf { it.isNotBlank() },
+                addressLine2 = formData[PrimerInputElementType.ADDRESS_LINE_2]?.takeIf { it.isNotBlank() },
+                city = formData[PrimerInputElementType.CITY]?.takeIf { it.isNotBlank() },
+                postalCode = formData[PrimerInputElementType.POSTAL_CODE]?.takeIf { it.isNotBlank() },
+                countryCode = formData[PrimerInputElementType.COUNTRY_CODE]?.takeIf { it.isNotBlank() },
+                state = formData[PrimerInputElementType.STATE]?.takeIf { it.isNotBlank() }
             )
 
             actionInteractor(MultipleActionUpdateParams(listOf(action)))

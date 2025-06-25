@@ -1,4 +1,4 @@
-package io.primer.android.internal.domain.interactor
+package io.primer.android.internal.domain.usecase
 
 import io.primer.android.components.domain.core.models.card.PrimerCardMetadataState
 import io.primer.android.components.domain.core.models.card.PrimerCardNetwork
@@ -13,15 +13,15 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.map
 
-class CardNetworkInteractor : DISdkComponent {
+internal class CardNetworkUseCase : DISdkComponent {
 
     private val rawDataManagerRepository: RawDataManagerRepository by lazy { resolve() }
 
-    private val _detectedCardNetwork = MutableStateFlow<CardNetwork.Type>(CardNetwork.Type.OTHER)
+    private val _detectedCardNetwork = MutableStateFlow(CardNetwork.Type.OTHER)
     val detectedCardNetwork: Flow<CardNetwork.Type> = _detectedCardNetwork.asStateFlow()
 
-    private val _selectedNetwork = MutableStateFlow<CardNetwork.Type?>(null)
-    val selectedNetwork: Flow<CardNetwork.Type?> = _selectedNetwork.asStateFlow()
+    private val _selectedCardNetwork = MutableStateFlow<CardNetwork.Type?>(null)
+    val selectedCardNetwork: Flow<CardNetwork.Type?> = _selectedCardNetwork.asStateFlow()
 
     val availableNetworks: Flow<List<PrimerCardNetwork>> = rawDataManagerRepository.metadataState
         .filterIsInstance<PrimerCardMetadataState.Fetched>()
@@ -40,21 +40,16 @@ class CardNetworkInteractor : DISdkComponent {
             metadataState.cardNumberEntryMetadata.selectableCardNetworks?.preferred?.network
         }
 
-    fun updateDetectedCardNetwork(cardNumber: String) {
+    fun detectCardNetwork(cardNumber: String) {
         try {
             val formatter = CardNumberFormatter.fromString(cardNumber)
-            val detectedNetwork = formatter.getCardType()
-            _detectedCardNetwork.value = detectedNetwork
-        } catch (e: Exception) {
+            _detectedCardNetwork.value = formatter.getCardType()
+        } catch (_: Exception) {
             _detectedCardNetwork.value = CardNetwork.Type.OTHER
         }
     }
 
-    fun selectNetwork(network: CardNetwork.Type) {
-        _selectedNetwork.value = network
-    }
-
-    fun getCardNetwork(): CardNetwork.Type {
-        return _selectedNetwork.value ?: _detectedCardNetwork.value
+    fun selectCardNetwork(network: CardNetwork.Type) {
+        _selectedCardNetwork.value = network
     }
 }

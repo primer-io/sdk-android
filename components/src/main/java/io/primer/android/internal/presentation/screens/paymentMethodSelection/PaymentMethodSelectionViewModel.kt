@@ -6,7 +6,7 @@ import io.primer.android.core.di.extensions.resolve
 import io.primer.android.core.domain.None
 import io.primer.android.paymentmethods.common.data.model.PaymentMethodType
 import io.primer.android.ui.core.configuration.domain.model.BasicOrderInfoInteractor
-import io.primer.android.internal.domain.interactor.GetAvailablePaymentMethodsInteractor
+import io.primer.android.internal.domain.usecase.GetAvailablePaymentMethodsUseCase
 import io.primer.android.internal.presentation.checkout.CheckoutNavigator
 import io.primer.android.internal.presentation.checkout.Screen
 import io.primer.android.internal.presentation.scope.DefaultPaymentMethodSelectionScope
@@ -18,7 +18,7 @@ import kotlinx.coroutines.launch
 
 internal class PaymentMethodSelectionViewModel : DefaultPaymentMethodSelectionScope(), DISdkComponent {
 
-    private val getAvailablePaymentMethodsInteractor: GetAvailablePaymentMethodsInteractor by lazy { resolve() }
+    private val getAvailablePaymentMethodsUseCase: GetAvailablePaymentMethodsUseCase by lazy { resolve() }
     private val basicOrderInfoInteractor: BasicOrderInfoInteractor by lazy { resolve() }
     private val checkoutNavigator: CheckoutNavigator by lazy { resolve() }
 
@@ -30,7 +30,7 @@ internal class PaymentMethodSelectionViewModel : DefaultPaymentMethodSelectionSc
 
     private fun loadPaymentMethods() {
         viewModelScope.launch {
-            getAvailablePaymentMethodsInteractor().fold(
+            getAvailablePaymentMethodsUseCase().fold(
                 onSuccess = { methods ->
                     val orderInfo = basicOrderInfoInteractor(None)
                     _uiState.value = PrimerPaymentMethodSelectionScope.State.Ready(methods, orderInfo)

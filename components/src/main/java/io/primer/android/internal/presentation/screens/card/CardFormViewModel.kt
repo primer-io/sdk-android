@@ -8,8 +8,9 @@ import io.primer.android.configuration.data.model.CountryCode
 import io.primer.android.core.di.DISdkComponent
 import io.primer.android.core.di.extensions.resolve
 import io.primer.android.core.logging.internal.LogReporter
-import io.primer.android.internal.domain.usecases.ManageCardFormUseCase
-import io.primer.android.internal.domain.usecases.SubmitCardPaymentUseCase
+import io.primer.android.internal.domain.usecase.CardFieldsUseCase
+import io.primer.android.internal.domain.usecase.CardNetworkUseCase
+import io.primer.android.internal.domain.usecase.SubmitCardPaymentUseCase
 import io.primer.android.internal.presentation.checkout.CheckoutNavigator
 import io.primer.android.internal.presentation.checkout.Screen
 import io.primer.android.internal.presentation.scope.DefaultCardFormScope
@@ -27,7 +28,8 @@ import kotlinx.coroutines.launch
 
 internal class CardFormViewModel : DefaultCardFormScope(), DISdkComponent {
 
-    private val manageCardFormUseCase: ManageCardFormUseCase by lazy { resolve() }
+    private val cardFieldsUseCase: CardFieldsUseCase by lazy { resolve() }
+    private val cardNetworkUseCase: CardNetworkUseCase by lazy { resolve() }
     private val submitCardPaymentUseCase: SubmitCardPaymentUseCase by lazy { resolve() }
     private val checkoutNavigator: CheckoutNavigator by lazy { resolve() }
     private val logReporter: LogReporter by lazy { resolve() }
@@ -38,20 +40,20 @@ internal class CardFormViewModel : DefaultCardFormScope(), DISdkComponent {
     init {
         // Initialize required fields
         viewModelScope.launch {
-            val cardFields = manageCardFormUseCase.getCardFields()
-            val billingFields = manageCardFormUseCase.getBillingFields()
+            val cardFields = cardFieldsUseCase.getCardFields()
+            val billingFields = cardFieldsUseCase.getBillingFields()
             _uiState.value = PrimerCardFormScope.State(cardFields, billingFields)
         }
 
         // Collect form data
-        manageCardFormUseCase.formData
+        cardFieldsUseCase.formData
             .onEach { formData ->
-                _uiState.update { it.copy(inputFields = formData.toMap()) }
+                _uiState.update { it.copy(inputFields = formData) }
             }
             .launchIn(viewModelScope)
 
         // Collect validation errors
-        manageCardFormUseCase.validationErrors
+        cardFieldsUseCase.validationErrors
             .onEach { errors ->
                 _uiState.update { it.copy(fieldErrors = errors) }
             }
@@ -59,11 +61,14 @@ internal class CardFormViewModel : DefaultCardFormScope(), DISdkComponent {
 
         // Collect card network states
         combine(
-            manageCardFormUseCase.detectedCardNetwork,
-            manageCardFormUseCase.selectedCardNetwork,
-            manageCardFormUseCase.availableNetworks,
-            manageCardFormUseCase.preferredNetwork
+            cardNetworkUseCase.detectedCardNetwork,
+            cardNetworkUseCase.selectedCardNetwork,
+            cardNetworkUseCase.availableNetworks,
+            cardNetworkUseCase.preferredNetwork
         ) { detectedNetwork, selectedNetwork, availableNetworks, preferredNetwork ->
+            val effectiveNetwork = selectedNetwork ?: detectedNetwork
+            cardFieldsUseCase.updateCardNetwork(effectiveNetwork)
+            
             _uiState.update { currentState ->
                 currentState.copy(
                     detectedCardNetwork = detectedNetwork,
@@ -78,7 +83,7 @@ internal class CardFormViewModel : DefaultCardFormScope(), DISdkComponent {
         checkoutNavigator.observeNavigationResult<Pair<String, String>>("selected_country")
             .filterNotNull()
             .onEach { (countryCode, countryName) ->
-                manageCardFormUseCase.updateField(PrimerInputElementType.COUNTRY_CODE, countryCode)
+                cardFieldsUseCase.updateField(PrimerInputElementType.COUNTRY_CODE, countryCode)
                 _uiState.update { currentState ->
                     currentState.copy(
                         selectedCountry = PrimerCountry(
@@ -91,58 +96,60 @@ internal class CardFormViewModel : DefaultCardFormScope(), DISdkComponent {
             .launchIn(viewModelScope)
     }
 
-    override fun updateCardNumber(cardNumber: String) =
-        manageCardFormUseCase.updateField(PrimerInputElementType.CARD_NUMBER, cardNumber)
+    override fun updateCardNumber(cardNumber: String) {
+        cardFieldsUseCase.updateField(PrimerInputElementType.CARD_NUMBER, cardNumber)
+        cardNetworkUseCase.detectCardNetwork(cardNumber)
+    }
 
     override fun updateCvv(cvv: String) =
-        manageCardFormUseCase.updateField(PrimerInputElementType.CVV, cvv)
+        cardFieldsUseCase.updateField(PrimerInputElementType.CVV, cvv)
 
     override fun updateExpiryDate(expiryDate: String) =
-        manageCardFormUseCase.updateField(PrimerInputElementType.EXPIRY_DATE, expiryDate)
+        cardFieldsUseCase.updateField(PrimerInputElementType.EXPIRY_DATE, expiryDate)
 
     override fun updateCardholderName(cardholderName: String) =
-        manageCardFormUseCase.updateField(PrimerInputElementType.CARDHOLDER_NAME, cardholderName)
+        cardFieldsUseCase.updateField(PrimerInputElementType.CARDHOLDER_NAME, cardholderName)
 
     override fun updatePostalCode(postalCode: String) =
-        manageCardFormUseCase.updateField(PrimerInputElementType.POSTAL_CODE, postalCode)
+        cardFieldsUseCase.updateField(PrimerInputElementType.POSTAL_CODE, postalCode)
 
     override fun updateCountryCode(countryCode: String) =
-        manageCardFormUseCase.updateField(PrimerInputElementType.COUNTRY_CODE, countryCode)
+        cardFieldsUseCase.updateField(PrimerInputElementType.COUNTRY_CODE, countryCode)
 
     override fun updateCity(city: String) =
-        manageCardFormUseCase.updateField(PrimerInputElementType.CITY, city)
+        cardFieldsUseCase.updateField(PrimerInputElementType.CITY, city)
 
     override fun updateState(state: String) =
-        manageCardFormUseCase.updateField(PrimerInputElementType.STATE, state)
+        cardFieldsUseCase.updateField(PrimerInputElementType.STATE, state)
 
     override fun updateAddressLine1(addressLine1: String) =
-        manageCardFormUseCase.updateField(PrimerInputElementType.ADDRESS_LINE_1, addressLine1)
+        cardFieldsUseCase.updateField(PrimerInputElementType.ADDRESS_LINE_1, addressLine1)
 
     override fun updateAddressLine2(addressLine2: String) =
-        manageCardFormUseCase.updateField(PrimerInputElementType.ADDRESS_LINE_2, addressLine2)
+        cardFieldsUseCase.updateField(PrimerInputElementType.ADDRESS_LINE_2, addressLine2)
 
     override fun updatePhoneNumber(phoneNumber: String) =
-        manageCardFormUseCase.updateField(PrimerInputElementType.PHONE_NUMBER, phoneNumber)
+        cardFieldsUseCase.updateField(PrimerInputElementType.PHONE_NUMBER, phoneNumber)
 
     override fun updateFirstName(firstName: String) =
-        manageCardFormUseCase.updateField(PrimerInputElementType.FIRST_NAME, firstName)
+        cardFieldsUseCase.updateField(PrimerInputElementType.FIRST_NAME, firstName)
 
     override fun updateLastName(lastName: String) =
-        manageCardFormUseCase.updateField(PrimerInputElementType.LAST_NAME, lastName)
+        cardFieldsUseCase.updateField(PrimerInputElementType.LAST_NAME, lastName)
 
     override fun updateRetailOutlet(retailOutlet: String) =
-        manageCardFormUseCase.updateField(PrimerInputElementType.RETAIL_OUTLET, retailOutlet)
+        cardFieldsUseCase.updateField(PrimerInputElementType.RETAIL_OUTLET, retailOutlet)
 
     override fun updateOtpCode(otpCode: String) =
-        manageCardFormUseCase.updateField(PrimerInputElementType.OTP_CODE, otpCode)
+        cardFieldsUseCase.updateField(PrimerInputElementType.OTP_CODE, otpCode)
 
     override fun onSubmit() {
         viewModelScope.launch {
             // Mark all required fields as dirty to trigger validation errors
-            manageCardFormUseCase.markAllFieldsAsDirty()
+            cardFieldsUseCase.markAllFieldsAsDirty()
 
             // Check if all validation passes before proceeding
-            val isValidationPassed = manageCardFormUseCase.isSubmitAllowed.first()
+            val isValidationPassed = cardFieldsUseCase.isSubmitAllowed.first()
             if (!isValidationPassed) {
                 logReporter.debug("Validation failed, not proceeding with submission")
                 return@launch
@@ -150,7 +157,7 @@ internal class CardFormViewModel : DefaultCardFormScope(), DISdkComponent {
 
             _uiState.update { it.copy(isLoading = true) }
             
-            submitCardPaymentUseCase(manageCardFormUseCase.formData.first())
+            submitCardPaymentUseCase(cardFieldsUseCase.formData.first())
                 .fold(
                     onSuccess = {
                         logReporter.debug("Payment completed successfully")
@@ -185,5 +192,5 @@ internal class CardFormViewModel : DefaultCardFormScope(), DISdkComponent {
     }
 
     override fun selectCardNetwork(network: CardNetwork.Type) =
-        manageCardFormUseCase.selectCardNetwork(network)
+        cardNetworkUseCase.selectCardNetwork(network)
 }

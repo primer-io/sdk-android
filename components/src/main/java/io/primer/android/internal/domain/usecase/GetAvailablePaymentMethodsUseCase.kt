@@ -1,13 +1,13 @@
-package io.primer.android.internal.domain.interactor
+package io.primer.android.internal.domain.usecase
 
 import io.primer.android.core.di.DISdkComponent
 import io.primer.android.core.di.extensions.resolve
 import io.primer.android.core.domain.None
-import io.primer.android.ui.core.payment.domain.interactor.SurchargeInteractor
 import io.primer.android.internal.data.mappers.PaymentMethodMapper
 import io.primer.android.internal.domain.repositories.HeadlessRepository
+import io.primer.android.ui.core.payment.domain.interactor.SurchargeInteractor
 
-internal class GetAvailablePaymentMethodsInteractor : DISdkComponent {
+internal class GetAvailablePaymentMethodsUseCase : DISdkComponent {
 
     private val headlessRepository: HeadlessRepository by lazy { resolve() }
     private val paymentMethodMapper: PaymentMethodMapper by lazy { resolve() }
