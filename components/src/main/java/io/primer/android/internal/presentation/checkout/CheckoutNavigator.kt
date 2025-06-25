@@ -71,9 +71,7 @@ internal fun PrimerCheckoutScope.CheckoutNavigator(
                     navController.navigate(Screen.Error.route)
                 }
                 NavigationEvent.NavigateToSuccess -> {
-                    navController.navigate(Screen.Success.route) {
-                        popUpTo(Screen.PaymentsList.route) { inclusive = false }
-                    }
+                    navController.navigate(Screen.Success.route) { popUpTo(0) }
                 }
                 is NavigationEvent.NavigateBackWithResult<*> -> {
                     checkoutNavigator.setResult(event.resultKey, event.result)

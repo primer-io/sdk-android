@@ -2,6 +2,7 @@ package io.primer.android.scope
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import io.primer.android.clientSessionActions.domain.models.PrimerCountry
 import io.primer.android.components.domain.core.models.card.PrimerCardNetwork
 import io.primer.android.components.domain.inputs.models.PrimerInputElementType
 import io.primer.android.configuration.data.model.CardNetwork
@@ -43,13 +44,13 @@ interface PrimerCardFormScope {
         val cardFields: List<PrimerInputElementType> = emptyList(),
         val billingFields: List<PrimerInputElementType> = emptyList(),
         val fieldErrors: List<SyncValidationError> = emptyList(),
-        val inputFields: Map<PrimerInputElementType, String> = emptyMap(),
+        val data: Map<PrimerInputElementType, String> = emptyMap(),
         val isLoading: Boolean = false,
-        val selectedCountry: io.primer.android.clientSessionActions.domain.models.PrimerCountry? = null,
+        val selectedCountry: PrimerCountry? = null,
         val detectedCardNetwork: CardNetwork.Type = CardNetwork.Type.OTHER,
-        val availableNetworks: List<PrimerCardNetwork> = emptyList(),
         val selectedNetwork: CardNetwork.Type? = null,
         val preferredNetwork: CardNetwork.Type? = null,
+        val availableNetworks: List<PrimerCardNetwork> = emptyList(),
     )
 
     var screen: @Composable () -> Unit

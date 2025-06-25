@@ -23,115 +23,99 @@ internal class CardFieldsUseCase : DISdkComponent {
     val formData: Flow<Map<PrimerInputElementType, String>> = _formData.asStateFlow()
     
     private val _cardNetwork = MutableStateFlow(CardNetwork.Type.OTHER)
-    private val _dirtyFields = MutableStateFlow<Set<PrimerInputElementType>>(emptySet())
+    private val _submitAttempted = MutableStateFlow(false)
 
     val validationErrors: Flow<List<SyncValidationError>> = 
         combine(
             rawDataManagerRepository.validationState.onStart { emit(emptyList()) },
-            _dirtyFields,
             formData,
-            _cardNetwork
-        ) { errors, dirtyFields, formData, network ->
-            val primerCardData = formData.toPrimerCardData(network)
-            errors.map { it.toSyncValidationError(primerCardData) }
-                .filter { error -> error.inputElementType in dirtyFields }
+            _cardNetwork,
+            _submitAttempted
+        ) { errors, data, network, submitAttempted ->
+            if (submitAttempted) {
+                val primerCardData = data.toPrimerCardData(network)
+                errors.map { it.toSyncValidationError(primerCardData) }
+            } else {
+                emptyList()
+            }
         }
 
     val isSubmitAllowed: Flow<Boolean> = 
         combine(
             rawDataManagerRepository.validationState.onStart { emit(emptyList()) },
-            _dirtyFields
-        ) { errors, dirtyFields ->
+            formData
+        ) { errors, data ->
             val requiredFields = rawDataManagerRepository.getRequiredInputElementTypes()
-            val allRequiredFieldsTouched = requiredFields.all { it in dirtyFields }
-            allRequiredFieldsTouched && errors.isEmpty()
+            val hasAllRequiredFields = requiredFields.all { field -> 
+                data[field]?.isNotBlank() == true 
+            }
+            hasAllRequiredFields && errors.isEmpty()
         }
 
     fun updateField(field: PrimerInputElementType, value: String) {
-        _formData.update { currentData -> 
-            if (value.isEmpty()) {
-                currentData - field
-            } else {
-                currentData + (field to value)
-            }
-        }
-        _dirtyFields.update { it + field }
-        rawDataManagerRepository.setData(_formData.value.toPrimerCardData(_cardNetwork.value))
+        _formData.update { it + (field to value) }
+        updateRepository()
     }
 
     fun updateCardNetwork(network: CardNetwork.Type) {
         _cardNetwork.value = network
-        rawDataManagerRepository.setData(_formData.value.toPrimerCardData(_cardNetwork.value))
+        updateRepository()
     }
 
-    fun markAllFieldsAsDirty() {
-        val allFields = rawDataManagerRepository.getRequiredInputElementTypes()
-        _dirtyFields.value = allFields.toSet()
-        rawDataManagerRepository.setData(_formData.value.toPrimerCardData(_cardNetwork.value))
+    fun markSubmitAttempted() {
+        _submitAttempted.value = true
+        updateRepository()
     }
 
     fun getCardFields(): List<PrimerInputElementType> =
-        rawDataManagerRepository.getRequiredInputElementTypes().filter { field ->
-            field in listOf(
-                PrimerInputElementType.CARD_NUMBER,
-                PrimerInputElementType.CVV,
-                PrimerInputElementType.EXPIRY_DATE,
-                PrimerInputElementType.CARDHOLDER_NAME
-            )
-        }
+        rawDataManagerRepository.getRequiredInputElementTypes().filter { it in CARD_FIELDS }
 
     fun getBillingFields(): List<PrimerInputElementType> =
-        rawDataManagerRepository.getRequiredInputElementTypes().filter { field ->
-            field in listOf(
-                PrimerInputElementType.POSTAL_CODE,
-                PrimerInputElementType.COUNTRY_CODE,
-                PrimerInputElementType.CITY,
-                PrimerInputElementType.STATE,
-                PrimerInputElementType.ADDRESS_LINE_1,
-                PrimerInputElementType.ADDRESS_LINE_2,
-                PrimerInputElementType.FIRST_NAME,
-                PrimerInputElementType.LAST_NAME
-            )
-        }
+        rawDataManagerRepository.getRequiredInputElementTypes().filter { it in BILLING_FIELDS }
+
+    private fun updateRepository() = 
+        rawDataManagerRepository.setData(_formData.value.toPrimerCardData(_cardNetwork.value))
 
     private fun Map<PrimerInputElementType, String>.toPrimerCardData(
         cardNetwork: CardNetwork.Type = CardNetwork.Type.OTHER
-    ): PrimerCardData {
-        return PrimerCardData(
-            cardNumber = get(PrimerInputElementType.CARD_NUMBER) ?: "",
-            expiryDate = formatExpiryDate(get(PrimerInputElementType.EXPIRY_DATE) ?: ""),
-            cvv = get(PrimerInputElementType.CVV) ?: "",
-            cardHolderName = get(PrimerInputElementType.CARDHOLDER_NAME)?.takeIf { it.isNotEmpty() },
-            cardNetwork = cardNetwork
-        )
+    ): PrimerCardData = PrimerCardData(
+        cardNumber = get(PrimerInputElementType.CARD_NUMBER) ?: "",
+        expiryDate = get(PrimerInputElementType.EXPIRY_DATE)?.formatExpiryDate() ?: "",
+        cvv = get(PrimerInputElementType.CVV) ?: "",
+        cardHolderName = get(PrimerInputElementType.CARDHOLDER_NAME)?.takeIf { it.isNotEmpty() },
+        cardNetwork = cardNetwork
+    )
+
+    private fun String.formatExpiryDate(): String = when {
+        isEmpty() || length <= 2 -> this
+        length == 4 && !contains("/") -> "${take(2)}/20${drop(2)}"
+        contains("/") -> split("/").let { parts ->
+            if (parts.size == 2 && parts[0].length == 2 && parts[1].length == 2) {
+                "${parts[0]}/20${parts[1]}"
+            } else this
+        }
+        length == 6 -> "${take(2)}/${drop(2)}"
+        else -> this
     }
 
-    private fun formatExpiryDate(input: String): String {
-        if (input.isEmpty()) return input
-
-        // Handle MM/YY format (4 characters) - convert to MM/YYYY
-        if (input.length == 4 && !input.contains("/")) {
-            val month = input.take(2)
-            val year = "20${input.drop(2)}"
-            return "$month/$year"
-        }
-
-        // Handle already formatted MM/YY (with slash) - convert to MM/YYYY
-        if (input.contains("/")) {
-            val parts = input.split("/")
-            if (parts.size == 2 && parts[0].length == 2 && parts[1].length == 2) {
-                return "${parts[0]}/20${parts[1]}"
-            }
-            // If already MM/YYYY format, return as is
-            return input
-        }
-
-        // Handle MM/YYYY format (6 characters) - add slash
-        return when {
-            input.length <= 2 -> input
-            input.length == 6 -> "${input.take(2)}/${input.drop(2)}"
-            else -> input // Return as-is for incomplete input
-        }
+    companion object {
+        private val CARD_FIELDS = setOf(
+            PrimerInputElementType.CARD_NUMBER,
+            PrimerInputElementType.CVV,
+            PrimerInputElementType.EXPIRY_DATE,
+            PrimerInputElementType.CARDHOLDER_NAME
+        )
+        
+        private val BILLING_FIELDS = setOf(
+            PrimerInputElementType.POSTAL_CODE,
+            PrimerInputElementType.COUNTRY_CODE,
+            PrimerInputElementType.CITY,
+            PrimerInputElementType.STATE,
+            PrimerInputElementType.ADDRESS_LINE_1,
+            PrimerInputElementType.ADDRESS_LINE_2,
+            PrimerInputElementType.FIRST_NAME,
+            PrimerInputElementType.LAST_NAME
+        )
     }
 
 }

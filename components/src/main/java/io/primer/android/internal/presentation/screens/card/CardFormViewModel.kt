@@ -48,7 +48,7 @@ internal class CardFormViewModel : DefaultCardFormScope(), DISdkComponent {
         // Collect form data
         cardFieldsUseCase.formData
             .onEach { formData ->
-                _uiState.update { it.copy(inputFields = formData) }
+                _uiState.update { it.copy(data = formData) }
             }
             .launchIn(viewModelScope)
 
@@ -145,10 +145,8 @@ internal class CardFormViewModel : DefaultCardFormScope(), DISdkComponent {
 
     override fun onSubmit() {
         viewModelScope.launch {
-            // Mark all required fields as dirty to trigger validation errors
-            cardFieldsUseCase.markAllFieldsAsDirty()
 
-            // Check if all validation passes before proceeding
+            cardFieldsUseCase.markSubmitAttempted()
             val isValidationPassed = cardFieldsUseCase.isSubmitAllowed.first()
             if (!isValidationPassed) {
                 logReporter.debug("Validation failed, not proceeding with submission")

@@ -21,6 +21,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
+import io.primer.android.components.R
 import io.primer.android.components.assets.ui.getCardImageAsset
 import io.primer.android.components.domain.inputs.models.PrimerInputElementType
 import io.primer.android.configuration.data.model.CardNetwork
@@ -31,7 +32,6 @@ import io.primer.android.internal.presentation.screens.card.components.input.tra
 import io.primer.android.scope.PrimerCardFormScope
 import io.primer.android.ui.core.model.SyncValidationError
 import io.primer.cardShared.CardNumberFormatter
-import io.primer.android.components.R
 
 @Composable
 private fun getInputLabel(type: PrimerInputElementType): String {
@@ -160,7 +160,7 @@ private fun PrimerCardFormScope.CardInput(
     val isFieldRequired = type in state.cardFields || type in state.billingFields
     if (!isFieldRequired) return
 
-    val value = state.inputFields[type] ?: ""
+    val value = state.data[type] ?: ""
     val error = state.fieldErrors.find { it.inputElementType == type }
 
     // Apply essential input filtering while letting validation framework provide feedback
@@ -213,7 +213,7 @@ internal fun PrimerCardFormScope.CardNumberInput(
         PrimerInputElementType.CARD_NUMBER in state.billingFields
     if (!isFieldRequired) return
 
-    val value = state.inputFields[PrimerInputElementType.CARD_NUMBER] ?: ""
+    val value = state.data[PrimerInputElementType.CARD_NUMBER] ?: ""
     val error = state.fieldErrors.find { it.inputElementType == PrimerInputElementType.CARD_NUMBER }
     val formatter = CardNumberFormatter.fromString(value)
 
@@ -264,9 +264,9 @@ internal fun PrimerCardFormScope.CvvInput(
         PrimerInputElementType.CVV in state.cardFields || PrimerInputElementType.CVV in state.billingFields
     if (!isFieldRequired) return
 
-    val value = state.inputFields[PrimerInputElementType.CVV] ?: ""
+    val value = state.data[PrimerInputElementType.CVV] ?: ""
     val error = state.fieldErrors.find { it.inputElementType == PrimerInputElementType.CVV }
-    val cardNumber = state.inputFields[PrimerInputElementType.CARD_NUMBER] ?: ""
+    val cardNumber = state.data[PrimerInputElementType.CARD_NUMBER] ?: ""
     val formatter = CardNumberFormatter.fromString(cardNumber)
     val cvvLength = formatter.getCvvLength()
 
