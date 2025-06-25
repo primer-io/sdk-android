@@ -161,7 +161,7 @@ private fun PrimerCardFormScope.CardInput(
     if (!isFieldRequired) return
 
     val value = state.data[type] ?: ""
-    val error = state.fieldErrors.find { it.inputElementType == type }
+    val error = state.fieldErrors?.find { it.inputElementType == type }
 
     // Apply essential input filtering while letting validation framework provide feedback
     val processedOnValueChange: (String) -> Unit = { newValue ->
@@ -214,7 +214,7 @@ internal fun PrimerCardFormScope.CardNumberInput(
     if (!isFieldRequired) return
 
     val value = state.data[PrimerInputElementType.CARD_NUMBER] ?: ""
-    val error = state.fieldErrors.find { it.inputElementType == PrimerInputElementType.CARD_NUMBER }
+    val error = state.fieldErrors?.find { it.inputElementType == PrimerInputElementType.CARD_NUMBER }
     val formatter = CardNumberFormatter.fromString(value)
 
     // Apply essential input filtering for card numbers
@@ -245,7 +245,7 @@ internal fun PrimerCardFormScope.CardNumberInput(
                     ::selectCardNetwork
                 )
             } else {
-                CardNetworkIcon(cardNetwork = state.detectedCardNetwork)
+                CardNetworkIcon(cardNetwork = state.selectedNetwork)
             }
         },
         visualTransformation = CardNumberVisualTransformation(),
@@ -265,7 +265,7 @@ internal fun PrimerCardFormScope.CvvInput(
     if (!isFieldRequired) return
 
     val value = state.data[PrimerInputElementType.CVV] ?: ""
-    val error = state.fieldErrors.find { it.inputElementType == PrimerInputElementType.CVV }
+    val error = state.fieldErrors?.find { it.inputElementType == PrimerInputElementType.CVV }
     val cardNumber = state.data[PrimerInputElementType.CARD_NUMBER] ?: ""
     val formatter = CardNumberFormatter.fromString(cardNumber)
     val cvvLength = formatter.getCvvLength()
@@ -320,7 +320,7 @@ internal fun PrimerCardFormScope.CountryCodeInput(modifier: Modifier = Modifier)
     if (!isFieldRequired) return
 
     val selectedCountry = state.selectedCountry
-    val error = state.fieldErrors.find { it.inputElementType == PrimerInputElementType.COUNTRY_CODE }
+    val error = state.fieldErrors?.find { it.inputElementType == PrimerInputElementType.COUNTRY_CODE }
 
     PrimerInput(
         value = selectedCountry?.name ?: "",

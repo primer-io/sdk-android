@@ -43,13 +43,11 @@ interface PrimerCardFormScope {
     data class State(
         val cardFields: List<PrimerInputElementType> = emptyList(),
         val billingFields: List<PrimerInputElementType> = emptyList(),
-        val fieldErrors: List<SyncValidationError> = emptyList(),
+        val fieldErrors: List<SyncValidationError>? = emptyList(),
         val data: Map<PrimerInputElementType, String> = emptyMap(),
         val isLoading: Boolean = false,
         val selectedCountry: PrimerCountry? = null,
-        val detectedCardNetwork: CardNetwork.Type = CardNetwork.Type.OTHER,
-        val selectedNetwork: CardNetwork.Type? = null,
-        val preferredNetwork: CardNetwork.Type? = null,
+        val selectedNetwork: CardNetwork.Type = CardNetwork.Type.OTHER,
         val availableNetworks: List<PrimerCardNetwork> = emptyList(),
     )
 

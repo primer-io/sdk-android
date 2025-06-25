@@ -9,7 +9,7 @@ import io.primer.android.internal.domain.repositories.RawDataManagerRepository
 import io.primer.cardShared.CardNumberFormatter
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.map
 
@@ -18,10 +18,12 @@ internal class CardNetworkUseCase : DISdkComponent {
     private val rawDataManagerRepository: RawDataManagerRepository by lazy { resolve() }
 
     private val _detectedCardNetwork = MutableStateFlow(CardNetwork.Type.OTHER)
-    val detectedCardNetwork: Flow<CardNetwork.Type> = _detectedCardNetwork.asStateFlow()
-
     private val _selectedCardNetwork = MutableStateFlow<CardNetwork.Type?>(null)
-    val selectedCardNetwork: Flow<CardNetwork.Type?> = _selectedCardNetwork.asStateFlow()
+
+    val currentCardNetwork: Flow<CardNetwork.Type> = combine(
+        _detectedCardNetwork,
+        _selectedCardNetwork
+    ) { detected, selected -> selected ?: detected }
 
     val availableNetworks: Flow<List<PrimerCardNetwork>> = rawDataManagerRepository.metadataState
         .filterIsInstance<PrimerCardMetadataState.Fetched>()
@@ -32,12 +34,6 @@ internal class CardNetworkUseCase : DISdkComponent {
                 ?: metadata.detectedCardNetworks.items.firstOrNull()
 
             selectableNetworks ?: listOfNotNull(detectedNetwork)
-        }
-
-    val preferredNetwork: Flow<CardNetwork.Type?> = rawDataManagerRepository.metadataState
-        .filterIsInstance<PrimerCardMetadataState.Fetched>()
-        .map { metadataState ->
-            metadataState.cardNumberEntryMetadata.selectableCardNetworks?.preferred?.network
         }
 
     fun detectCardNetwork(cardNumber: String) {

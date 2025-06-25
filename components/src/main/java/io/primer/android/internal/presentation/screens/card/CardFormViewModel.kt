@@ -61,20 +61,15 @@ internal class CardFormViewModel : DefaultCardFormScope(), DISdkComponent {
 
         // Collect card network states
         combine(
-            cardNetworkUseCase.detectedCardNetwork,
-            cardNetworkUseCase.selectedCardNetwork,
-            cardNetworkUseCase.availableNetworks,
-            cardNetworkUseCase.preferredNetwork
-        ) { detectedNetwork, selectedNetwork, availableNetworks, preferredNetwork ->
-            val effectiveNetwork = selectedNetwork ?: detectedNetwork
-            cardFieldsUseCase.updateCardNetwork(effectiveNetwork)
+            cardNetworkUseCase.currentCardNetwork,
+            cardNetworkUseCase.availableNetworks
+        ) { selectedNetwork, availableNetworks ->
+            cardFieldsUseCase.updateCardNetwork(selectedNetwork)
             
             _uiState.update { currentState ->
                 currentState.copy(
-                    detectedCardNetwork = detectedNetwork,
                     selectedNetwork = selectedNetwork,
-                    availableNetworks = availableNetworks,
-                    preferredNetwork = preferredNetwork
+                    availableNetworks = availableNetworks
                 )
             }
         }.launchIn(viewModelScope)
@@ -145,16 +140,14 @@ internal class CardFormViewModel : DefaultCardFormScope(), DISdkComponent {
 
     override fun onSubmit() {
         viewModelScope.launch {
-
             cardFieldsUseCase.markSubmitAttempted()
-            val isValidationPassed = cardFieldsUseCase.isSubmitAllowed.first()
-            if (!isValidationPassed) {
+            if (!cardFieldsUseCase.isSubmitAllowed()) {
                 logReporter.debug("Validation failed, not proceeding with submission")
                 return@launch
             }
 
             _uiState.update { it.copy(isLoading = true) }
-            
+
             submitCardPaymentUseCase(cardFieldsUseCase.formData.first())
                 .fold(
                     onSuccess = {
