@@ -9,8 +9,11 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.lifecycleScope
 import io.primer.android.PrimerCheckout
+import io.primer.android.scope.PrimerCheckoutScope
 import io.primer.sample.viewmodels.MainViewModel
+import kotlinx.coroutines.launch
 
 class ComponentsCheckoutFragment : Fragment() {
 
@@ -28,31 +31,17 @@ class ComponentsCheckoutFragment : Fragment() {
                 val clientToken by viewModel.clientToken.observeAsState()
                 clientToken?.let { token ->
                     PrimerCheckout(clientToken = token)
-//                    {
-//
-//                        // State observation
-//                        lifecycleScope.launch {
-//                            it.state.collect { state ->
-//                                when (state) {
-//                                    is PrimerCheckoutScope.State.Initializing -> {
-//                                        // Handle initializing
-//                                    }
-//
-//                                    is PrimerCheckoutScope.State.Ready -> {
-//                                        // Handle ready
-//                                    }
-//
-//                                    is PrimerCheckoutScope.State.Dismissed -> {
-//                                        // Handle dismissed
-//                                    }
-//
-//                                    is PrimerCheckoutScope.State.Error -> {
-//                                        // Handle error
-//                                    }
-//                                }
-//                            }
-//                        }
-//
+                    {
+
+                        // State observation
+                        lifecycleScope.launch {
+                            it.state.collect { state ->
+                                if (state is PrimerCheckoutScope.State.Dismissed) {
+                                    activity?.onBackPressedDispatcher?.onBackPressed()
+                                }
+                            }
+                        }
+
 //                        //Checkout customization
 //                        it.container = { content ->
 //                            content()
@@ -68,7 +57,7 @@ class ComponentsCheckoutFragment : Fragment() {
 //                                Text(text = text)
 //                            }
 //                        }
-//                    }
+                    }
                 }
             }
         }

@@ -108,7 +108,7 @@ internal abstract class DefaultCardFormScope : ViewModel(), PrimerCardFormScope,
         BillingAddressForm(modifier)
     }
 
-    override var cardnetwork: @Composable (modifier: Modifier) -> Unit = { modifier ->
+    override var cardNetwork: @Composable (modifier: Modifier) -> Unit = { modifier ->
         CardNetwork(modifier = modifier)
     }
 }

@@ -70,5 +70,5 @@ interface PrimerCardFormScope {
     var otpCodeInput: @Composable (modifier: Modifier) -> Unit
     var cardDetails: @Composable (modifier: Modifier) -> Unit
     var billingAddress: @Composable (modifier: Modifier) -> Unit
-    var cardnetwork: @Composable (modifier: Modifier) -> Unit
+    var cardNetwork: @Composable (modifier: Modifier) -> Unit
 }

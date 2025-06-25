@@ -83,6 +83,7 @@ private fun PrimerCardFormScope.CardNetworkSelector(
         }
 
         DropdownMenu(
+            containerColor = LocalPrimerColorTokens.current.primerColorBackground,
             expanded = expanded,
             onDismissRequest = { expanded = false }
         ) {
