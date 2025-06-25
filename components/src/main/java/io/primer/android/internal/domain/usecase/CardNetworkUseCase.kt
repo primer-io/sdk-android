@@ -19,30 +19,39 @@ internal class CardNetworkUseCase : DISdkComponent {
 
     private val _detectedCardNetwork = MutableStateFlow(CardNetwork.Type.OTHER)
     private val _selectedCardNetwork = MutableStateFlow<CardNetwork.Type?>(null)
+    private val _shouldClearNetworks = MutableStateFlow(false)
 
     val currentCardNetwork: Flow<CardNetwork.Type> = combine(
         _detectedCardNetwork,
         _selectedCardNetwork
     ) { detected, selected -> selected ?: detected }
 
-    val availableNetworks: Flow<List<PrimerCardNetwork>> = rawDataManagerRepository.metadataState
-        .filterIsInstance<PrimerCardMetadataState.Fetched>()
-        .map { metadataState ->
-            val metadata = metadataState.cardNumberEntryMetadata
-            val selectableNetworks = metadata.selectableCardNetworks?.items
-            val detectedNetwork = metadata.detectedCardNetworks.preferred
-                ?: metadata.detectedCardNetworks.items.firstOrNull()
+    val availableNetworks: Flow<List<PrimerCardNetwork>> = combine(
+        _shouldClearNetworks,
+        rawDataManagerRepository.metadataState
+            .filterIsInstance<PrimerCardMetadataState.Fetched>()
+            .map { metadataState ->
+                val metadata = metadataState.cardNumberEntryMetadata
+                val selectableNetworks = metadata.selectableCardNetworks?.items
+                val detectedNetwork = metadata.detectedCardNetworks.preferred
+                    ?: metadata.detectedCardNetworks.items.firstOrNull()
 
-            selectableNetworks ?: listOfNotNull(detectedNetwork)
-        }
+                selectableNetworks ?: listOfNotNull(detectedNetwork)
+            }
+    ) { shouldClear, networks ->
+        if (shouldClear) emptyList() else networks
+    }
 
     fun detectCardNetwork(cardNumber: String) {
-        if (cardNumber.isEmpty()) {
-            _detectedCardNetwork.value = CardNetwork.Type.OTHER
-        } else {
-            val formatter = CardNumberFormatter.fromString(cardNumber)
-            _detectedCardNetwork.value = formatter.getCardType()
-        }
+        val formatter = CardNumberFormatter.fromString(cardNumber)
+        _detectedCardNetwork.value = formatter.getCardType()
+        _shouldClearNetworks.value = false
+    }
+
+    fun clear() {
+        _selectedCardNetwork.value = null
+        _detectedCardNetwork.value = CardNetwork.Type.OTHER
+        _shouldClearNetworks.value = true
     }
 
     fun selectCardNetwork(network: CardNetwork.Type) {

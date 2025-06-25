@@ -18,7 +18,6 @@ import io.primer.android.scope.PrimerCardFormScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
@@ -59,20 +58,29 @@ internal class CardFormViewModel : DefaultCardFormScope(), DISdkComponent {
             }
             .launchIn(viewModelScope)
 
-        // Collect card network states
-        combine(
-            cardNetworkUseCase.currentCardNetwork,
-            cardNetworkUseCase.availableNetworks
-        ) { currentCardNetwork, availableNetworks ->
-            cardFieldsUseCase.updateCardNetwork(currentCardNetwork)
-            
-            _uiState.update { currentState ->
-                currentState.copy(
-                    selectedNetwork = currentCardNetwork,
-                    availableNetworks = availableNetworks
-                )
+        // Collect current card network immediately
+        cardNetworkUseCase.currentCardNetwork
+            .onEach { currentCardNetwork ->
+                cardFieldsUseCase.updateCardNetwork(currentCardNetwork)
+                
+                _uiState.update { currentState ->
+                    currentState.copy(
+                        selectedNetwork = currentCardNetwork
+                    )
+                }
             }
-        }.launchIn(viewModelScope)
+            .launchIn(viewModelScope)
+        
+        // Collect available networks separately (slower)
+        cardNetworkUseCase.availableNetworks
+            .onEach { availableNetworks ->
+                _uiState.update { currentState ->
+                    currentState.copy(
+                        availableNetworks = availableNetworks
+                    )
+                }
+            }
+            .launchIn(viewModelScope)
 
         // Listen for country selection results
         checkoutNavigator.observeNavigationResult<Pair<String, String>>("selected_country")
@@ -92,6 +100,10 @@ internal class CardFormViewModel : DefaultCardFormScope(), DISdkComponent {
     }
 
     override fun updateCardNumber(cardNumber: String) {
+        if (cardNumber.isEmpty()) {
+            cardNetworkUseCase.clear()
+
+        }
         cardFieldsUseCase.updateField(PrimerInputElementType.CARD_NUMBER, cardNumber)
         cardNetworkUseCase.detectCardNetwork(cardNumber)
     }

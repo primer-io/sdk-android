@@ -72,8 +72,4 @@ internal class CardFieldsUseCase : DISdkComponent {
     private fun updateRepository() = 
         rawDataManagerRepository.setData(_formData.value.toPrimerCardData(_cardNetwork.value))
 
-    companion object {
-
-    }
-
 }
