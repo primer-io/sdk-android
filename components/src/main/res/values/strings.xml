@@ -70,5 +70,6 @@
     <string name="primer_components_content_description_payment_successful">Payment successful</string>
     <string name="primer_components_content_description_search">Search</string>
     <string name="primer_components_content_description_card_network">Card network: %1$s</string>
+    <string name="primer_components_content_description_select_network">Select network</string>
 
 </resources>

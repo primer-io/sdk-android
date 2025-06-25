@@ -37,11 +37,11 @@ internal class CardNetworkUseCase : DISdkComponent {
         }
 
     fun detectCardNetwork(cardNumber: String) {
-        try {
+        if (cardNumber.isEmpty()) {
+            _detectedCardNetwork.value = CardNetwork.Type.OTHER
+        } else {
             val formatter = CardNumberFormatter.fromString(cardNumber)
             _detectedCardNetwork.value = formatter.getCardType()
-        } catch (_: Exception) {
-            _detectedCardNetwork.value = CardNetwork.Type.OTHER
         }
     }
 

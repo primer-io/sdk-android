@@ -3,7 +3,6 @@ package io.primer.android.internal.presentation.screens.card.components.input
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -14,18 +13,13 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.unit.dp
 import io.primer.android.components.R
-import io.primer.android.components.assets.ui.getCardImageAsset
 import io.primer.android.components.domain.inputs.models.PrimerInputElementType
-import io.primer.android.configuration.data.model.CardNetwork
-import io.primer.android.displayMetadata.domain.model.ImageColor
 import io.primer.android.internal.presentation.components.PrimerInput
 import io.primer.android.internal.presentation.screens.card.components.input.transformations.CardNumberVisualTransformation
 import io.primer.android.internal.presentation.screens.card.components.input.transformations.ExpiryDateVisualTransformation
@@ -133,20 +127,6 @@ private fun resolveErrorMessage(error: SyncValidationError?): String? {
     ?: error.errorId
 }
 
-@Composable
-internal fun CardNetworkIcon(
-    cardNetwork: CardNetwork.Type,
-    modifier: Modifier = Modifier,
-) {
-    val context = LocalContext.current
-    Icon(
-        painter = painterResource(id = cardNetwork.getCardImageAsset(ImageColor.COLORED)),
-        contentDescription = context.getString(R.string.primer_components_content_description_card_network, cardNetwork.name),
-        modifier = modifier.size(20.dp),
-        tint = Color.Unspecified
-    )
-}
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun PrimerCardFormScope.CardInput(
@@ -236,18 +216,7 @@ internal fun PrimerCardFormScope.CardNumberInput(
         placeholder = stringResource(R.string.primer_components_card_form_placeholder_card_number),
         modifier = modifier.fillMaxWidth(),
         error = resolveErrorMessage(error),
-        trailingIcon = {
-            if (state.availableNetworks.isNotEmpty()) {
-                cardNetworkSelector(
-                    Modifier,
-                    state.availableNetworks,
-                    state.selectedNetwork,
-                    ::selectCardNetwork
-                )
-            } else {
-                CardNetworkIcon(cardNetwork = state.selectedNetwork)
-            }
-        },
+        trailingIcon = { cardnetwork(modifier) },
         visualTransformation = CardNumberVisualTransformation(),
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
     )

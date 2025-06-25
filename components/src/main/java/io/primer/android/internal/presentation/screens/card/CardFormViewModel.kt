@@ -63,12 +63,12 @@ internal class CardFormViewModel : DefaultCardFormScope(), DISdkComponent {
         combine(
             cardNetworkUseCase.currentCardNetwork,
             cardNetworkUseCase.availableNetworks
-        ) { selectedNetwork, availableNetworks ->
-            cardFieldsUseCase.updateCardNetwork(selectedNetwork)
+        ) { currentCardNetwork, availableNetworks ->
+            cardFieldsUseCase.updateCardNetwork(currentCardNetwork)
             
             _uiState.update { currentState ->
                 currentState.copy(
-                    selectedNetwork = selectedNetwork,
+                    selectedNetwork = currentCardNetwork,
                     availableNetworks = availableNetworks
                 )
             }

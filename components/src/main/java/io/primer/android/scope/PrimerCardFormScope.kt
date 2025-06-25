@@ -70,10 +70,5 @@ interface PrimerCardFormScope {
     var otpCodeInput: @Composable (modifier: Modifier) -> Unit
     var cardDetails: @Composable (modifier: Modifier) -> Unit
     var billingAddress: @Composable (modifier: Modifier) -> Unit
-    var cardNetworkSelector: @Composable (
-        modifier: Modifier,
-        networks: List<PrimerCardNetwork>,
-        selectedNetwork: CardNetwork.Type?,
-        onNetworkSelected: (CardNetwork.Type) -> Unit
-    ) -> Unit
+    var cardnetwork: @Composable (modifier: Modifier) -> Unit
 }
