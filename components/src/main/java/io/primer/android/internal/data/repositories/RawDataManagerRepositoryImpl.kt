@@ -14,60 +14,54 @@ import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.filterIsInstance
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.shareIn
 
 class RawDataManagerRepositoryImpl(
     private val cardManager: PrimerHeadlessUniversalCheckoutRawDataManagerInterface,
 ) : RawDataManagerRepository, DISdkComponent {
 
+    private sealed class RawDataManagerEvent {
+        data class ValidationChanged(val isValid: Boolean, val errors: List<PrimerInputValidationError>) : RawDataManagerEvent()
+        data class MetadataChanged(val state: PrimerPaymentMethodMetadataState) : RawDataManagerEvent()
+    }
+
+    private val events = callbackFlow {
+        val listener = object : PrimerHeadlessUniversalCheckoutRawDataManagerListener {
+            override fun onValidationChanged(
+                isValid: Boolean,
+                errors: List<PrimerInputValidationError>,
+            ) {
+                trySend(RawDataManagerEvent.ValidationChanged(isValid, errors))
+            }
+
+            override fun onMetadataStateChanged(metadataState: PrimerPaymentMethodMetadataState) {
+                trySend(RawDataManagerEvent.MetadataChanged(metadataState))
+            }
+        }
+        
+        cardManager.setListener(listener)
+        
+        awaitClose {
+            cardManager.cleanup()
+        }
+    }.shareIn(
+        scope = CoroutineScope(Dispatchers.Main),
+        started = SharingStarted.Lazily,
+        replay = 1
+    )
+
     override fun getRequiredInputElementTypes(): List<PrimerInputElementType> =
         cardManager.getRequiredInputElementTypes()
 
-    override val validationState: Flow<List<PrimerInputValidationError>> = callbackFlow {
-        cardManager.setListener(object : PrimerHeadlessUniversalCheckoutRawDataManagerListener {
-            override fun onValidationChanged(
-                isValid: Boolean,
-                errors: List<PrimerInputValidationError>,
-            ) {
-                trySend(errors)
-            }
+    override val validationState: Flow<List<PrimerInputValidationError>> = events
+        .filterIsInstance<RawDataManagerEvent.ValidationChanged>()
+        .map { it.errors }
 
-            override fun onMetadataStateChanged(metadataState: PrimerPaymentMethodMetadataState) {
-                // Handled in separate flow
-            }
-        })
-
-        awaitClose {
-            cardManager.cleanup()
-        }
-    }.shareIn(
-        scope = CoroutineScope(Dispatchers.Main),
-        started = SharingStarted.Lazily,
-        replay = 1,
-    )
-
-    override val metadataState: Flow<PrimerPaymentMethodMetadataState> = callbackFlow {
-        cardManager.setListener(object : PrimerHeadlessUniversalCheckoutRawDataManagerListener {
-            override fun onValidationChanged(
-                isValid: Boolean,
-                errors: List<PrimerInputValidationError>,
-            ) {
-                // Handled in separate flow
-            }
-
-            override fun onMetadataStateChanged(metadataState: PrimerPaymentMethodMetadataState) {
-                trySend(metadataState)
-            }
-        })
-
-        awaitClose {
-            cardManager.cleanup()
-        }
-    }.shareIn(
-        scope = CoroutineScope(Dispatchers.Main),
-        started = SharingStarted.Lazily,
-        replay = 1,
-    )
+    override val metadataState: Flow<PrimerPaymentMethodMetadataState> = events
+        .filterIsInstance<RawDataManagerEvent.MetadataChanged>()
+        .map { it.state }
 
     override fun setData(data: PrimerCardData) = cardManager.setRawData(data)
 

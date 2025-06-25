@@ -12,14 +12,9 @@ import io.primer.android.internal.data.mappers.PaymentMethodMapper
 import io.primer.android.internal.data.mappers.PaymentMethodMapperImpl
 import io.primer.android.internal.data.repositories.HeadlessRepositoryImpl
 import io.primer.android.internal.data.repositories.RawDataManagerRepositoryImpl
-import io.primer.android.internal.domain.interactor.CardNetworkInteractor
 import io.primer.android.internal.domain.interactor.GetAvailablePaymentMethodsInteractor
-import io.primer.android.internal.domain.interactor.GetRequiredFieldsInteractor
-import io.primer.android.internal.domain.interactor.GetValidationStateInteractor
-import io.primer.android.internal.domain.interactor.SetCardDataInteractor
-import io.primer.android.internal.domain.interactor.SubmitPaymentInteractor
-import io.primer.android.internal.domain.interactor.TrackDirtyFieldsInteractor
-import io.primer.android.internal.domain.interactor.ValidateBillingAddressInteractor
+import io.primer.android.internal.domain.usecases.ManageCardFormUseCase
+import io.primer.android.internal.domain.usecases.SubmitCardPaymentUseCase
 import io.primer.android.internal.domain.repositories.HeadlessRepository
 import io.primer.android.internal.domain.repositories.RawDataManagerRepository
 import io.primer.android.internal.presentation.checkout.CheckoutNavigator
@@ -66,31 +61,11 @@ internal class ComponentsContainer(
         }
 
         registerSingleton {
-            GetRequiredFieldsInteractor()
+            ManageCardFormUseCase()
         }
 
         registerSingleton {
-            TrackDirtyFieldsInteractor()
-        }
-
-        registerSingleton {
-            CardNetworkInteractor()
-        }
-
-        registerSingleton {
-            SetCardDataInteractor()
-        }
-
-        registerSingleton {
-            GetValidationStateInteractor()
-        }
-
-        registerSingleton {
-            ValidateBillingAddressInteractor()
-        }
-
-        registerSingleton {
-            SubmitPaymentInteractor()
+            SubmitCardPaymentUseCase()
         }
 
         registerSingleton {
