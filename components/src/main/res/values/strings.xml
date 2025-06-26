@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- App Bar Titles -->
-    <string name="primer_components_pay_with_card">Pay with card</string>
+    <string name="primer_components_select_payment_method_card">Pay with card</string>
+    <string name="primer_components_select_payment_method_coming_soon">🚧 Coming soon</string>
     <string name="primer_components_select_country">Select Country</string>
     
     <!-- Button Text -->

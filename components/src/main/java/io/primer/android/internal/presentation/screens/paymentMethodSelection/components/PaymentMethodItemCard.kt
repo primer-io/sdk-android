@@ -9,13 +9,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import io.primer.android.components.R
 import io.primer.android.internal.presentation.theme.LocalPrimerColorTokens
 import io.primer.android.internal.presentation.theme.LocalPrimerSizeTokens
 import io.primer.android.internal.presentation.theme.LocalPrimerSpacingTokens
 import io.primer.android.internal.presentation.theme.LocalPrimerTypographyTokens
 import io.primer.android.paymentmethods.common.data.model.PaymentMethodType
 import io.primer.android.scope.PrimerPaymentMethodSelectionScope
-import io.primer.android.components.R
 
 @Composable
 internal fun PrimerPaymentMethodSelectionScope.PaymentMethodItemCard(
@@ -35,7 +35,7 @@ internal fun PrimerPaymentMethodSelectionScope.PaymentMethodItemCard(
                 modifier = Modifier.size(LocalPrimerSizeTokens.current.medium),
             )
             Text(
-                text = stringResource(R.string.primer_components_pay_with_card),
+                text = stringResource(R.string.primer_components_select_payment_method_card),
                 style = LocalPrimerTypographyTokens.current.titleLarge.toTextStyle(),
                 color = LocalPrimerColorTokens.current.primerColorTextPrimary,
                 modifier = Modifier.padding(start = LocalPrimerSpacingTokens.current.small),

@@ -6,11 +6,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import io.primer.android.internal.domain.models.PrimerComposablePaymentMethod
 import io.primer.android.internal.presentation.components.PrimerButton
+import io.primer.android.internal.presentation.theme.LocalPrimerColorTokens
+import io.primer.android.internal.presentation.theme.LocalPrimerRadiusTokens
 import io.primer.android.paymentmethods.common.data.model.PaymentMethodType
 import io.primer.android.paymentmethods.common.data.model.PaymentMethodType.Companion.safeValueOf
 import io.primer.android.scope.PrimerPaymentMethodSelectionScope
-import io.primer.android.internal.presentation.theme.LocalPrimerColorTokens
-import io.primer.android.internal.presentation.theme.LocalPrimerRadiusTokens
 
 @Composable
 internal fun PrimerPaymentMethodSelectionScope.PaymentMethodSelector(
@@ -23,9 +23,7 @@ internal fun PrimerPaymentMethodSelectionScope.PaymentMethodSelector(
         PaymentMethodType.GOOGLE_PAY -> PaymentMethodItemGooglePay { onPaymentMethodSelected(PaymentMethodType.GOOGLE_PAY.name) }
         PaymentMethodType.KLARNA -> PaymentMethodItemKlarna { onPaymentMethodSelected(PaymentMethodType.KLARNA.name) }
         PaymentMethodType.PAYPAL -> PaymentMethodItemPaypal { onPaymentMethodSelected(PaymentMethodType.PAYPAL.name) }
-        else -> {
-            // TODO Handle other payment methods
-        }
+        else -> { PaymentMethodItemComingSoon {  } }
     }
 }
 
