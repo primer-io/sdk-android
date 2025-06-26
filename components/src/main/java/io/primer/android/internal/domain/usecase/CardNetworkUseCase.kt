@@ -19,15 +19,13 @@ internal class CardNetworkUseCase : DISdkComponent {
 
     private val _detectedCardNetwork = MutableStateFlow(CardNetwork.Type.OTHER)
     private val _selectedCardNetwork = MutableStateFlow<CardNetwork.Type?>(null)
-    private val _shouldClearNetworks = MutableStateFlow(false)
 
     val currentCardNetwork: Flow<CardNetwork.Type> = combine(
         _detectedCardNetwork,
         _selectedCardNetwork
     ) { detected, selected -> selected ?: detected }
 
-    val availableNetworks: Flow<List<PrimerCardNetwork>> = combine(
-        _shouldClearNetworks,
+    val availableNetworks: Flow<List<PrimerCardNetwork>> = 
         rawDataManagerRepository.metadataState
             .filterIsInstance<PrimerCardMetadataState.Fetched>()
             .map { metadataState ->
@@ -36,25 +34,23 @@ internal class CardNetworkUseCase : DISdkComponent {
                 val detectedNetwork = metadata.detectedCardNetworks.preferred
                     ?: metadata.detectedCardNetworks.items.firstOrNull()
 
-                selectableNetworks ?: listOfNotNull(detectedNetwork)
+                val networks = selectableNetworks ?: listOfNotNull(detectedNetwork)
+                
+                if (_selectedCardNetwork.value !in networks.map { it.network }) {
+                    _selectedCardNetwork.value = null
+                }
+                
+                networks
             }
-    ) { shouldClear, networks ->
-        if (_selectedCardNetwork.value !in networks.map { it.network }) {
-            _selectedCardNetwork.value = null
-        }
-        if (shouldClear) emptyList() else networks
-    }
 
     fun detectCardNetwork(cardNumber: String) {
         val formatter = CardNumberFormatter.fromString(cardNumber)
         _detectedCardNetwork.value = formatter.getCardType()
-        _shouldClearNetworks.value = false
     }
 
     fun clear() {
         _selectedCardNetwork.value = null
         _detectedCardNetwork.value = CardNetwork.Type.OTHER
-        _shouldClearNetworks.value = true
     }
 
     fun selectCardNetwork(network: CardNetwork.Type) {
