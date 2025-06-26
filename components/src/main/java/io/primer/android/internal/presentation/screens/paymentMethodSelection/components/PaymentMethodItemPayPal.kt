@@ -10,17 +10,17 @@ import androidx.compose.ui.res.painterResource
 import io.primer.android.components.R
 import io.primer.android.internal.presentation.constants.PaymentMethodColors
 import io.primer.android.internal.presentation.theme.LocalPrimerSpacingTokens
+import io.primer.android.paymentmethods.common.data.model.PaymentMethodType
 import io.primer.android.scope.PrimerPaymentMethodSelectionScope
 
 @Composable
 internal fun PrimerPaymentMethodSelectionScope.PaymentMethodItemPaypal(
-    modifier: Modifier = Modifier,
-    onPaymentMethodSelected: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     PaymentMethodItem(
         modifier = modifier,
         backgroundColor = PaymentMethodColors.paypalYellow,
-        onPaymentMethodSelected = onPaymentMethodSelected,
+        onPaymentMethodSelected = { onPaymentMethodSelected(PaymentMethodType.PAYPAL.name) },
     ) {
         Row {
             Icon(

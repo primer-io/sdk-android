@@ -1,7 +1,6 @@
 package io.primer.android.internal.di
 
 import io.primer.android.components.PrimerHeadlessUniversalCheckout
-import io.primer.android.components.manager.raw.PrimerHeadlessUniversalCheckoutRawDataManager
 import io.primer.android.core.di.DependencyContainer
 import io.primer.android.core.di.SdkContainer
 import io.primer.android.internal.data.mappers.PaymentMethodMapper
@@ -13,12 +12,12 @@ import io.primer.android.internal.domain.repositories.RawDataManagerRepository
 import io.primer.android.internal.domain.usecase.CardFieldsUseCase
 import io.primer.android.internal.domain.usecase.CardNetworkUseCase
 import io.primer.android.internal.domain.usecase.GetAvailablePaymentMethodsUseCase
+import io.primer.android.internal.domain.usecase.InitCardManagerUseCase
 import io.primer.android.internal.domain.usecase.SubmitCardPaymentUseCase
 import io.primer.android.internal.presentation.checkout.CheckoutNavigator
 import io.primer.android.internal.presentation.screens.card.CardFormViewModel
 import io.primer.android.internal.presentation.screens.country.SelectCountryViewModel
 import io.primer.android.internal.presentation.screens.paymentMethodSelection.PaymentMethodSelectionViewModel
-import io.primer.android.paymentmethods.common.data.model.PaymentMethodType
 import io.primer.android.scope.PrimerCardFormScope
 import io.primer.android.scope.PrimerPaymentMethodSelectionScope
 import io.primer.android.scope.PrimerSelectCountryScope
@@ -50,11 +49,7 @@ internal class ComponentsContainer(
         }
 
         registerSingleton<RawDataManagerRepository> {
-            RawDataManagerRepositoryImpl(
-                PrimerHeadlessUniversalCheckoutRawDataManager.newInstance(
-                    PaymentMethodType.PAYMENT_CARD.name,
-                ),
-            )
+            RawDataManagerRepositoryImpl()
         }
 
         registerSingleton {
@@ -71,6 +66,10 @@ internal class ComponentsContainer(
 
         registerSingleton {
             SubmitCardPaymentUseCase()
+        }
+
+        registerSingleton {
+            InitCardManagerUseCase()
         }
 
         registerSingleton {

@@ -7,17 +7,17 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import io.primer.android.components.R
 import io.primer.android.internal.presentation.constants.PaymentMethodColors
+import io.primer.android.paymentmethods.common.data.model.PaymentMethodType
 import io.primer.android.scope.PrimerPaymentMethodSelectionScope
 
 @Composable
 internal fun PrimerPaymentMethodSelectionScope.PaymentMethodItemIdeal(
-    modifier: Modifier = Modifier,
-    onPaymentMethodSelected: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     PaymentMethodItem(
         modifier = modifier,
         backgroundColor = PaymentMethodColors.idealPink,
-        onPaymentMethodSelected = onPaymentMethodSelected,
+        onPaymentMethodSelected = { onPaymentMethodSelected(PaymentMethodType.ADYEN_IDEAL.name,) },
     ) {
         Icon(
             painter = painterResource(id = R.drawable.ic_primer_ideal_logo),

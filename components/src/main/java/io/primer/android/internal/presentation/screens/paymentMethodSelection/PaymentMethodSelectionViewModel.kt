@@ -45,8 +45,10 @@ internal class PaymentMethodSelectionViewModel : DefaultPaymentMethodSelectionSc
     override fun onPaymentMethodSelected(paymentMethod: String) {
         viewModelScope.launch {
             when (paymentMethod) {
-                PaymentMethodType.PAYMENT_CARD.name -> checkoutNavigator.navigateTo(Screen.CardForm)
-                // TODO add rest of screens
+                // TODO add rest of payment methods
+                PaymentMethodType.PAYMENT_CARD.name -> {
+                    checkoutNavigator.navigateTo(Screen.CardForm)
+                }
             }
         }
     }

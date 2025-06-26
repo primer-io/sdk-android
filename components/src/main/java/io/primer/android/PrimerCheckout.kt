@@ -2,6 +2,7 @@ package io.primer.android
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import io.primer.android.core.ExperimentalPrimerApi
 import io.primer.android.data.settings.PrimerSettings
 import io.primer.android.internal.presentation.checkout.Checkout
 import io.primer.android.scope.PrimerCheckoutScope
@@ -47,20 +48,21 @@ import io.primer.android.scope.PrimerCheckoutScope
  *
  * @param modifier Modifier to apply to the checkout container
  * @param clientToken The client token obtained from your backend, containing checkout configuration
- * @param settings SDK configuration settings including API environment, logging level, etc.
+ * @param primerSettings SDK configuration settings including API environment, logging level, etc.
  * @param scope Optional lambda providing access to [PrimerCheckoutScope] for customization and state monitoring
  */
+@ExperimentalPrimerApi
 @Composable
 fun PrimerCheckout(
     modifier: Modifier = Modifier,
     clientToken: String,
-    settings: PrimerSettings = PrimerSettings(),
+    primerSettings: PrimerSettings = PrimerSettings(),
     scope: ((PrimerCheckoutScope) -> Unit)? = null,
 ) {
     Checkout(
         modifier = modifier,
         clientToken = clientToken,
-        settings = settings,
+        primerSettings = primerSettings,
         scope = scope,
     )
 }

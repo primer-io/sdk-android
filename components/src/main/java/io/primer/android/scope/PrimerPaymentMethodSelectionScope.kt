@@ -25,5 +25,5 @@ interface PrimerPaymentMethodSelectionScope {
     }
 
     var screen: @Composable () -> Unit
-    var paymentMethodCard: @Composable (modifier: Modifier, onPaymentMethodSelected: (String) -> Unit) -> Unit
+    var paymentMethodCard: @Composable (modifier: Modifier) -> Unit
 }

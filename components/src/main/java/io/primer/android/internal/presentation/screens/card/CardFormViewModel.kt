@@ -10,6 +10,7 @@ import io.primer.android.core.di.extensions.resolve
 import io.primer.android.core.logging.internal.LogReporter
 import io.primer.android.internal.domain.usecase.CardFieldsUseCase
 import io.primer.android.internal.domain.usecase.CardNetworkUseCase
+import io.primer.android.internal.domain.usecase.InitCardManagerUseCase
 import io.primer.android.internal.domain.usecase.SubmitCardPaymentUseCase
 import io.primer.android.internal.presentation.checkout.CheckoutNavigator
 import io.primer.android.internal.presentation.checkout.Screen
@@ -30,15 +31,17 @@ internal class CardFormViewModel : DefaultCardFormScope(), DISdkComponent {
     private val cardFieldsUseCase: CardFieldsUseCase by lazy { resolve() }
     private val cardNetworkUseCase: CardNetworkUseCase by lazy { resolve() }
     private val submitCardPaymentUseCase: SubmitCardPaymentUseCase by lazy { resolve() }
+    private val initCardManagerUseCase: InitCardManagerUseCase by lazy { resolve() }
     private val checkoutNavigator: CheckoutNavigator by lazy { resolve() }
     private val logReporter: LogReporter by lazy { resolve() }
 
     private val _uiState = MutableStateFlow<PrimerCardFormScope.State>(PrimerCardFormScope.State())
     override val state: StateFlow<PrimerCardFormScope.State> = _uiState.asStateFlow()
 
-    init {
+    override fun init() {
         // Initialize required fields
         viewModelScope.launch {
+            initCardManagerUseCase()
             val cardFields = cardFieldsUseCase.getCardFields()
             val billingFields = cardFieldsUseCase.getBillingFields()
             _uiState.value = PrimerCardFormScope.State(cardFields, billingFields)

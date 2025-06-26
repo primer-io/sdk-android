@@ -19,17 +19,17 @@ import io.primer.android.internal.presentation.theme.LocalPrimerColorTokens
 import io.primer.android.internal.presentation.theme.LocalPrimerRadiusTokens
 import io.primer.android.internal.presentation.theme.LocalPrimerSpacingTokens
 import io.primer.android.internal.presentation.theme.LocalPrimerTypographyTokens
+import io.primer.android.paymentmethods.common.data.model.PaymentMethodType
 import io.primer.android.scope.PrimerPaymentMethodSelectionScope
 
 @Composable
 internal fun PrimerPaymentMethodSelectionScope.PaymentMethodItemKlarna(
-    modifier: Modifier = Modifier,
-    onPaymentMethodSelected: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     PaymentMethodItem(
         modifier = modifier,
         backgroundColor = LocalPrimerColorTokens.current.primerColorGray900,
-        onPaymentMethodSelected = onPaymentMethodSelected,
+        onPaymentMethodSelected = { onPaymentMethodSelected(PaymentMethodType.KLARNA.name) },
     ) {
         Row(
             modifier = modifier,

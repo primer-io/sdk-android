@@ -4,10 +4,12 @@ import io.primer.android.components.domain.core.models.card.PrimerCardData
 import io.primer.android.components.domain.core.models.metadata.PrimerPaymentMethodMetadataState
 import io.primer.android.components.domain.error.PrimerInputValidationError
 import io.primer.android.components.domain.inputs.models.PrimerInputElementType
+import io.primer.android.components.manager.raw.PrimerHeadlessUniversalCheckoutRawDataManager
 import io.primer.android.components.manager.raw.PrimerHeadlessUniversalCheckoutRawDataManagerInterface
 import io.primer.android.components.manager.raw.PrimerHeadlessUniversalCheckoutRawDataManagerListener
 import io.primer.android.core.di.DISdkComponent
 import io.primer.android.internal.domain.repositories.RawDataManagerRepository
+import io.primer.android.paymentmethods.common.data.model.PaymentMethodType
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.awaitClose
@@ -18,9 +20,13 @@ import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.shareIn
 
-class RawDataManagerRepositoryImpl(
-    private val cardManager: PrimerHeadlessUniversalCheckoutRawDataManagerInterface,
-) : RawDataManagerRepository, DISdkComponent {
+class RawDataManagerRepositoryImpl() : RawDataManagerRepository, DISdkComponent {
+
+    private lateinit var cardManager: PrimerHeadlessUniversalCheckoutRawDataManagerInterface
+
+    override fun init() {
+        cardManager = PrimerHeadlessUniversalCheckoutRawDataManager.newInstance(PaymentMethodType.PAYMENT_CARD.name)
+    }
 
     private sealed class RawDataManagerEvent {
         data class ValidationChanged(
@@ -55,8 +61,9 @@ class RawDataManagerRepositoryImpl(
         replay = 1,
     )
 
-    override fun getRequiredInputElementTypes(): List<PrimerInputElementType> =
-        cardManager.getRequiredInputElementTypes()
+    override fun getRequiredInputElementTypes(): List<PrimerInputElementType> {
+        return cardManager.getRequiredInputElementTypes()
+    }
 
     override val validationState: Flow<List<PrimerInputValidationError>> = events
         .filterIsInstance<RawDataManagerEvent.ValidationChanged>()

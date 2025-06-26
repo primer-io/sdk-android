@@ -18,20 +18,14 @@ internal fun PrimerPaymentMethodSelectionScope.PaymentMethodSelector(
     onPaymentMethodSelected: (String) -> Unit,
 ) {
     when (safeValueOf(primerMethod.paymentMethodType)) {
-        PaymentMethodType.PAYMENT_CARD -> paymentMethodCard(Modifier, onPaymentMethodSelected)
-        PaymentMethodType.ADYEN_IDEAL -> PaymentMethodItemIdeal {
-            onPaymentMethodSelected(
-                PaymentMethodType.ADYEN_IDEAL.name,
-            )
+        PaymentMethodType.PAYMENT_CARD -> paymentMethodCard(Modifier)
+        PaymentMethodType.ADYEN_IDEAL -> PaymentMethodItemIdeal()
+        PaymentMethodType.GOOGLE_PAY -> PaymentMethodItemGooglePay()
+        PaymentMethodType.KLARNA -> PaymentMethodItemKlarna()
+        PaymentMethodType.PAYPAL -> PaymentMethodItemPaypal()
+        else -> {
+            PaymentMethodItemComingSoon { }
         }
-        PaymentMethodType.GOOGLE_PAY -> PaymentMethodItemGooglePay {
-            onPaymentMethodSelected(
-                PaymentMethodType.GOOGLE_PAY.name,
-            )
-        }
-        PaymentMethodType.KLARNA -> PaymentMethodItemKlarna { onPaymentMethodSelected(PaymentMethodType.KLARNA.name) }
-        PaymentMethodType.PAYPAL -> PaymentMethodItemPaypal { onPaymentMethodSelected(PaymentMethodType.PAYPAL.name) }
-        else -> { PaymentMethodItemComingSoon { } }
     }
 }
 

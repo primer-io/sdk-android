@@ -22,6 +22,8 @@ import kotlinx.coroutines.launch
 internal abstract class DefaultCheckoutScope : ViewModel(), PrimerCheckoutScope, DISdkComponent {
 
     private val checkoutNavigator: CheckoutNavigator by lazy { resolve() }
+    override val cardForm: PrimerCardFormScope by lazy { resolve() }
+    override val paymentMethodSelection: PrimerPaymentMethodSelectionScope by lazy { resolve() }
 
     @OptIn(ExperimentalMaterial3Api::class)
     override var container: @Composable (content: @Composable () -> Unit) -> Unit = { content ->
@@ -71,7 +73,4 @@ internal abstract class DefaultCheckoutScope : ViewModel(), PrimerCheckoutScope,
         )
     }
 
-    override val cardForm: PrimerCardFormScope by lazy { resolve() }
-
-    override val paymentMethodSelection: PrimerPaymentMethodSelectionScope by lazy { resolve() }
 }

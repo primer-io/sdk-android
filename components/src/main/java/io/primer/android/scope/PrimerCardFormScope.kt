@@ -14,6 +14,8 @@ interface PrimerCardFormScope {
     val state: StateFlow<State>
     val selectCountry: PrimerSelectCountryScope
 
+    fun init()
+
     fun updateCardNumber(cardNumber: String)
     fun updateCvv(cvv: String)
     fun updateExpiryDate(expiryDate: String)

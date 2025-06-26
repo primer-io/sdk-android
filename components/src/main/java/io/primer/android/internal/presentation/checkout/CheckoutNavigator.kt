@@ -22,16 +22,20 @@ internal class CheckoutNavigator {
 
     private val _savedStateResults = MutableStateFlow<Map<String, Any?>>(emptyMap())
 
-    private suspend fun navigate(event: NavigationEvent) = _navigationEvents.emit(event)
+    suspend fun navigateTo(screen: Screen) = _navigationEvents.emit(NavigationEvent.NavigateTo(screen))
 
-    suspend fun navigateTo(screen: Screen) = navigate(NavigationEvent.NavigateTo(screen))
-    suspend fun navigateBack() = navigate(NavigationEvent.NavigateBack)
-    suspend fun navigateToError(errorMessage: String) = navigate(NavigationEvent.NavigateToError(errorMessage))
-    suspend fun navigateToSuccess() = navigate(NavigationEvent.NavigateToSuccess)
-    suspend fun navigateToPaymentMethodsList() = navigate(NavigationEvent.NavigateToPaymentMethodsList)
-    suspend fun dismiss() = navigate(NavigationEvent.Dismiss)
+    suspend fun navigateBack() = _navigationEvents.emit(NavigationEvent.NavigateBack)
+
+    suspend fun navigateToError(errorMessage: String) = _navigationEvents.emit(NavigationEvent.NavigateToError(errorMessage))
+
+    suspend fun navigateToSuccess() = _navigationEvents.emit(NavigationEvent.NavigateToSuccess)
+
+    suspend fun navigateToPaymentMethodsList() = _navigationEvents.emit(NavigationEvent.NavigateToPaymentMethodsList)
+
+    suspend fun dismiss() = _navigationEvents.emit(NavigationEvent.Dismiss)
+
     suspend fun <T> navigateBackWithResult(resultKey: String, result: T) =
-        navigate(NavigationEvent.NavigateBackWithResult(resultKey, result))
+        _navigationEvents.emit(NavigationEvent.NavigateBackWithResult(resultKey, result))
 
     fun <T> observeNavigationResult(resultKey: String): Flow<T?> =
         _savedStateResults.map {
