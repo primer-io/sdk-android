@@ -4,9 +4,11 @@ package io.primer.android.internal.tokens
 
 // Auto-generated file. Do not modify!
 
+import androidx.compose.ui.text.ExperimentalTextApi
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontVariation
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import io.primer.android.components.R
@@ -66,9 +68,16 @@ data class TypographyStyle(
         )
     }
 
+    @OptIn(ExperimentalTextApi::class)
     private fun getFontFamily(fontName: String): FontFamily {
         return when (fontName.lowercase()) {
-            "inter" -> FontFamily(Font(R.font.inter)) // Add more fonts here if needed
+            "inter" -> FontFamily(
+                Font(
+                    R.font.inter, variationSettings = FontVariation.Settings(
+                        FontVariation.weight(550),
+                    )
+                )
+            ) // Add more fonts here if needed
             else -> FontFamily.Default
         }
     }

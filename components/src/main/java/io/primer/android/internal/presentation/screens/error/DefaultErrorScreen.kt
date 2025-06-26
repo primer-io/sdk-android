@@ -80,7 +80,7 @@ internal fun DefaultErrorScreen(
                 backgroundColor = colorTokens.primerColorBrand,
             ) {
                 Text(
-                    text = stringResource(R.string.primer_components_card_form_submit),
+                    text = stringResource(R.string.primer_components_checkout_retry),
                     style = LocalPrimerTypographyTokens.current.titleLarge.toTextStyle(),
                     color = LocalPrimerColorTokens.current.primerColorBackground,
                 )
@@ -98,7 +98,7 @@ internal fun DefaultErrorScreen(
                 borderColor = LocalPrimerColorTokens.current.primerColorBorderOutlinedDefault,
             ) {
                 Text(
-                    text = stringResource(R.string.primer_components_error_choose_oher_payment_methods),
+                    text = stringResource(R.string.primer_components_checkout_other_payment_methods),
                     style = LocalPrimerTypographyTokens.current.titleLarge.toTextStyle(),
                     color = LocalPrimerColorTokens.current.primerColorTextPrimary,
                 )

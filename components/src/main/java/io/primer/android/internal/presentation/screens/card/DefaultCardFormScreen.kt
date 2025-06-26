@@ -29,7 +29,7 @@ internal fun PrimerCardFormScope.DefaultCardFormScreen() {
             CardDetailsForm()
             BillingAddressForm()
             Spacer(modifier = Modifier.height(LocalPrimerSpacingTokens.current.xsmall))
-            submitButton(Modifier, stringResource(R.string.primer_components_submit))
+            submitButton(Modifier, stringResource(R.string.primer_components_card_form_pay))
         }
     }
 }
