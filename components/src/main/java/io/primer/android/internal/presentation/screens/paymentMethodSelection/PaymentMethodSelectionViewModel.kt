@@ -4,13 +4,13 @@ import androidx.lifecycle.viewModelScope
 import io.primer.android.core.di.DISdkComponent
 import io.primer.android.core.di.extensions.resolve
 import io.primer.android.core.domain.None
-import io.primer.android.paymentmethods.common.data.model.PaymentMethodType
-import io.primer.android.ui.core.configuration.domain.model.BasicOrderInfoInteractor
 import io.primer.android.internal.domain.usecase.GetAvailablePaymentMethodsUseCase
 import io.primer.android.internal.presentation.checkout.CheckoutNavigator
 import io.primer.android.internal.presentation.checkout.Screen
 import io.primer.android.internal.presentation.scope.DefaultPaymentMethodSelectionScope
+import io.primer.android.paymentmethods.common.data.model.PaymentMethodType
 import io.primer.android.scope.PrimerPaymentMethodSelectionScope
+import io.primer.android.ui.core.configuration.domain.model.BasicOrderInfoInteractor
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow

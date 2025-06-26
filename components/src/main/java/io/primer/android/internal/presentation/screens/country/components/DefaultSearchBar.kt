@@ -18,20 +18,20 @@ internal fun DefaultSearchBar(
     query: String,
     onQueryChange: (String) -> Unit,
     placeholder: String,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val spacing = LocalPrimerSpacingTokens.current
-    
+
     OutlinedTextField(
         value = query,
         onValueChange = onQueryChange,
         placeholder = { Text(placeholder) },
-        leadingIcon = { 
+        leadingIcon = {
             Icon(Icons.Default.Search, contentDescription = stringResource(R.string.primer_components_content_description_search))
         },
         singleLine = true,
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = spacing.medium, vertical = spacing.small)
+            .padding(horizontal = spacing.medium, vertical = spacing.small),
     )
 }

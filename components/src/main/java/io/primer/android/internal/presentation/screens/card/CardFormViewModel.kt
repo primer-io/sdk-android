@@ -62,21 +62,21 @@ internal class CardFormViewModel : DefaultCardFormScope(), DISdkComponent {
         cardNetworkUseCase.currentCardNetwork
             .onEach { currentCardNetwork ->
                 cardFieldsUseCase.updateCardNetwork(currentCardNetwork)
-                
+
                 _uiState.update { currentState ->
                     currentState.copy(
-                        selectedNetwork = currentCardNetwork
+                        selectedNetwork = currentCardNetwork,
                     )
                 }
             }
             .launchIn(viewModelScope)
-        
+
         // Collect available networks separately (slower)
         cardNetworkUseCase.availableNetworks
             .onEach { availableNetworks ->
                 _uiState.update { currentState ->
                     currentState.copy(
-                        availableNetworks = availableNetworks
+                        availableNetworks = availableNetworks,
                     )
                 }
             }
@@ -91,8 +91,8 @@ internal class CardFormViewModel : DefaultCardFormScope(), DISdkComponent {
                     currentState.copy(
                         selectedCountry = PrimerCountry(
                             name = countryName,
-                            code = CountryCode.safeValueOf(countryCode)
-                        )
+                            code = CountryCode.safeValueOf(countryCode),
+                        ),
                     )
                 }
             }
@@ -102,7 +102,6 @@ internal class CardFormViewModel : DefaultCardFormScope(), DISdkComponent {
     override fun updateCardNumber(cardNumber: String) {
         if (cardNumber.isEmpty()) {
             cardNetworkUseCase.clear()
-
         }
         cardFieldsUseCase.updateField(PrimerInputElementType.CARD_NUMBER, cardNumber)
         cardNetworkUseCase.detectCardNetwork(cardNumber)
@@ -171,7 +170,7 @@ internal class CardFormViewModel : DefaultCardFormScope(), DISdkComponent {
                         logReporter.error("Payment failed: ${error.message}")
                         _uiState.update { it.copy(isLoading = false) }
                         checkoutNavigator.navigateToError(error.message ?: "Payment failed")
-                    }
+                    },
                 )
         }
     }

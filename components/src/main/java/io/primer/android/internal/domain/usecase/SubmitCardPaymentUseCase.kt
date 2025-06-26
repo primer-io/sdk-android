@@ -1,5 +1,6 @@
 package io.primer.android.internal.domain.usecase
 
+import io.primer.android.clientSessionActions.di.ActionsContainer
 import io.primer.android.clientSessionActions.domain.ActionInteractor
 import io.primer.android.clientSessionActions.domain.models.ActionUpdateBillingAddressParams
 import io.primer.android.clientSessionActions.domain.models.MultipleActionUpdateParams
@@ -15,7 +16,7 @@ internal class SubmitCardPaymentUseCase : DISdkComponent {
 
     private val rawDataManagerRepository: RawDataManagerRepository by lazy { resolve() }
     private val headlessRepository: HeadlessRepository by lazy { resolve() }
-    private val actionInteractor: ActionInteractor by lazy { resolve() }
+    private val actionInteractor: ActionInteractor by lazy { resolve(ActionsContainer.ACTION_INTERACTOR_DI_KEY) }
 
     suspend operator fun invoke(formData: Map<PrimerInputElementType, String>): Result<PrimerCheckoutData> {
         // Validate billing address if any billing fields are filled
@@ -27,9 +28,9 @@ internal class SubmitCardPaymentUseCase : DISdkComponent {
             onFailure = { error ->
                 // Billing address validation failed
                 return Result.failure(
-                    Exception("Billing address validation failed: ${error.message}")
+                    Exception("Billing address validation failed: ${error.message}"),
                 )
-            }
+            },
         )
 
         // Wait for the result from the headless repository
@@ -46,7 +47,7 @@ internal class SubmitCardPaymentUseCase : DISdkComponent {
             PrimerInputElementType.CITY,
             PrimerInputElementType.POSTAL_CODE,
             PrimerInputElementType.COUNTRY_CODE,
-            PrimerInputElementType.STATE
+            PrimerInputElementType.STATE,
         )
         val hasBillingData = billingFields.any { field ->
             formData[field]?.isNotBlank() == true
@@ -65,13 +66,13 @@ internal class SubmitCardPaymentUseCase : DISdkComponent {
                 city = formData[PrimerInputElementType.CITY]?.takeIf { it.isNotBlank() },
                 postalCode = formData[PrimerInputElementType.POSTAL_CODE]?.takeIf { it.isNotBlank() },
                 countryCode = formData[PrimerInputElementType.COUNTRY_CODE]?.takeIf { it.isNotBlank() },
-                state = formData[PrimerInputElementType.STATE]?.takeIf { it.isNotBlank() }
+                state = formData[PrimerInputElementType.STATE]?.takeIf { it.isNotBlank() },
             )
 
             actionInteractor(MultipleActionUpdateParams(listOf(action)))
                 .fold(
                     onSuccess = { Result.success(Unit) },
-                    onFailure = { Result.failure(it) }
+                    onFailure = { Result.failure(it) },
                 )
         } catch (e: Exception) {
             Result.failure(e)

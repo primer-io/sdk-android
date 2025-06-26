@@ -41,7 +41,6 @@ internal fun DefaultErrorScreen(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
-
         Spacer(modifier = Modifier.height(sizeTokens.xxxlarge))
         // Error icon
         Icon(
@@ -49,9 +48,9 @@ internal fun DefaultErrorScreen(
             contentDescription = stringResource(R.string.primer_components_content_description_error),
             tint = Color.Unspecified,
         )
-        
+
         Spacer(modifier = Modifier.height(spacingTokens.small))
-        
+
         // Error title
         Text(
             text = title ?: stringResource(R.string.primer_components_checkout_failed_title),
@@ -59,9 +58,9 @@ internal fun DefaultErrorScreen(
             style = MaterialTheme.typography.headlineSmall,
             textAlign = TextAlign.Center,
         )
-        
+
         Spacer(modifier = Modifier.height(spacingTokens.xsmall))
-        
+
         // Error message
         Text(
             text = message ?: stringResource(R.string.primer_components_checkout_failed_description),
@@ -69,9 +68,9 @@ internal fun DefaultErrorScreen(
             style = MaterialTheme.typography.bodyMedium,
             textAlign = TextAlign.Center,
         )
-        
+
         Spacer(modifier = Modifier.height(sizeTokens.xxxlarge))
-        
+
         // Retry button
         if (onRetryClick != null) {
             PrimerButton(
@@ -85,10 +84,10 @@ internal fun DefaultErrorScreen(
                     color = LocalPrimerColorTokens.current.primerColorBackground,
                 )
             }
-            
+
             Spacer(modifier = Modifier.height(spacingTokens.small))
         }
-        
+
         // Choose other payment method link
         if (onOtherPaymentMethodClick != null) {
             PrimerButton(

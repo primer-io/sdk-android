@@ -6,9 +6,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import io.primer.android.scope.PrimerPaymentMethodSelectionScope
 import io.primer.android.components.R
 import io.primer.android.internal.presentation.theme.LocalPrimerColorTokens
+import io.primer.android.scope.PrimerPaymentMethodSelectionScope
 
 @Composable
 internal fun PrimerPaymentMethodSelectionScope.PaymentMethodItemGooglePay(

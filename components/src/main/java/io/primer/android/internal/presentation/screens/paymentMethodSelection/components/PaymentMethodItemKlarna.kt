@@ -13,13 +13,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import io.primer.android.internal.presentation.constants.PaymentMethodColors
-import io.primer.android.scope.PrimerPaymentMethodSelectionScope
 import io.primer.android.components.R
+import io.primer.android.internal.presentation.constants.PaymentMethodColors
 import io.primer.android.internal.presentation.theme.LocalPrimerColorTokens
 import io.primer.android.internal.presentation.theme.LocalPrimerRadiusTokens
 import io.primer.android.internal.presentation.theme.LocalPrimerSpacingTokens
 import io.primer.android.internal.presentation.theme.LocalPrimerTypographyTokens
+import io.primer.android.scope.PrimerPaymentMethodSelectionScope
 
 @Composable
 internal fun PrimerPaymentMethodSelectionScope.PaymentMethodItemKlarna(
@@ -33,7 +33,7 @@ internal fun PrimerPaymentMethodSelectionScope.PaymentMethodItemKlarna(
     ) {
         Row(
             modifier = modifier,
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
                 text = stringResource(R.string.primer_components_payment_method_selection_klarna_pay_with),

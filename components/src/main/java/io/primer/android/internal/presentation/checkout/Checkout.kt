@@ -20,7 +20,6 @@ internal fun Checkout(
     settings: PrimerSettings = PrimerSettings(),
     scope: ((PrimerCheckoutScope) -> Unit)? = null,
 ) = with(viewModel<CheckoutViewModel>()) {
-
     PrimerTheme {
         val context = LocalContext.current
 
@@ -31,13 +30,11 @@ internal fun Checkout(
             }
         }
 
-
         DisposableEffect(clientToken) {
             initialize(context, clientToken, settings)
             onDispose { onDismiss() }
         }
 
         this@with.container { CheckoutNavHost(modifier = modifier) }
-
     }
 }

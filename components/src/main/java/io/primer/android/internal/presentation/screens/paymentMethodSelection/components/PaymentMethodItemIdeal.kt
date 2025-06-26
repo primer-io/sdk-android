@@ -5,9 +5,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import io.primer.android.components.R
 import io.primer.android.internal.presentation.constants.PaymentMethodColors
 import io.primer.android.scope.PrimerPaymentMethodSelectionScope
-import io.primer.android.components.R
 
 @Composable
 internal fun PrimerPaymentMethodSelectionScope.PaymentMethodItemIdeal(

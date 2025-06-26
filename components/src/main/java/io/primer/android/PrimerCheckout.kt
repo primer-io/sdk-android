@@ -61,6 +61,6 @@ fun PrimerCheckout(
         modifier = modifier,
         clientToken = clientToken,
         settings = settings,
-        scope = scope
+        scope = scope,
     )
 }

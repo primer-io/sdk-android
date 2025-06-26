@@ -8,8 +8,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import io.primer.android.configuration.domain.model.Surcharge
-import io.primer.android.ui.core.payment.domain.formatter.DefaultSurchargeFormatter
 import io.primer.android.internal.presentation.theme.LocalPrimerSpacingTokens
+import io.primer.android.ui.core.payment.domain.formatter.DefaultSurchargeFormatter
 import java.util.Currency
 
 @Composable

@@ -29,10 +29,9 @@ import io.primer.android.displayMetadata.domain.model.ImageColor
 import io.primer.android.internal.presentation.theme.LocalPrimerColorTokens
 import io.primer.android.scope.PrimerCardFormScope
 
-//TODO check this
+// TODO check this
 @Composable
 internal fun PrimerCardFormScope.CardNetwork(modifier: Modifier = Modifier) {
-
     val state by state.collectAsStateWithLifecycle()
     val networks = state.availableNetworks
 
@@ -45,19 +44,18 @@ internal fun PrimerCardFormScope.CardNetwork(modifier: Modifier = Modifier) {
 
 @Composable
 internal fun PrimerCardFormScope.CardNetworkIcon() {
-
     val state by state.collectAsStateWithLifecycle()
 
     Icon(
         painter = painterResource(id = state.selectedNetwork.getCardImageAsset(ImageColor.COLORED)),
         contentDescription = state.selectedNetwork.name,
-        tint = Color.Unspecified
+        tint = Color.Unspecified,
     )
 }
 
 @Composable
 private fun PrimerCardFormScope.CardNetworkSelector(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val state by state.collectAsStateWithLifecycle()
     val networks = state.availableNetworks
@@ -71,20 +69,20 @@ private fun PrimerCardFormScope.CardNetworkSelector(
                 .clickable { expanded = true }
                 .padding(horizontal = 12.dp, vertical = 8.dp), // Larger touch area
             horizontalArrangement = Arrangement.spacedBy(4.dp),
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             CardNetworkIcon()
             Icon(
                 painter = painterResource(R.drawable.ic_primer_chevron_down),
                 contentDescription = stringResource(R.string.primer_components_content_description_select_network),
-                tint = LocalPrimerColorTokens.current.primerColorIconPrimary
+                tint = LocalPrimerColorTokens.current.primerColorIconPrimary,
             )
         }
 
         DropdownMenu(
             containerColor = LocalPrimerColorTokens.current.primerColorBackground,
             expanded = expanded,
-            onDismissRequest = { expanded = false }
+            onDismissRequest = { expanded = false },
         ) {
             networks.forEachIndexed { index, network ->
                 DropdownMenuItem(
@@ -97,7 +95,7 @@ private fun PrimerCardFormScope.CardNetworkSelector(
                             Icon(
                                 painter = painterResource(R.drawable.ic_primer_check),
                                 contentDescription = "Selected",
-                                tint = LocalPrimerColorTokens.current.primerColorIconPrimary
+                                tint = LocalPrimerColorTokens.current.primerColorIconPrimary,
                             )
                         }
                     },
@@ -105,9 +103,9 @@ private fun PrimerCardFormScope.CardNetworkSelector(
                         Text(
                             text = network.displayName,
                             style = MaterialTheme.typography.bodyMedium,
-                            color = LocalPrimerColorTokens.current.primerColorTextPrimary
+                            color = LocalPrimerColorTokens.current.primerColorTextPrimary,
                         )
-                    }
+                    },
                 )
                 if (index < networks.size - 1) { HorizontalDivider() }
             }

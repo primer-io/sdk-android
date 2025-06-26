@@ -31,7 +31,6 @@ val LocalPrimerSpacingTokens = staticCompositionLocalOf<SpacingTokens> {
     error("No PrimerSpacingTokens provided")
 }
 
-//TODO handle font weight correctly
 val LocalPrimerTypographyTokens = staticCompositionLocalOf<TypographyTokens> {
     error("No PrimerTypographyTokens provided")
 }

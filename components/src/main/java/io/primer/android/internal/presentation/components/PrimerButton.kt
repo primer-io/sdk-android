@@ -33,7 +33,7 @@ fun PrimerButton(
         enabled = enabled,
         shape = RoundedCornerShape(borderRadius),
         colors = ButtonDefaults.buttonColors(
-            containerColor = backgroundColor
+            containerColor = backgroundColor,
         ),
         border = borderColor?.let {
             BorderStroke(width = 1.dp, color = it)

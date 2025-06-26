@@ -3,10 +3,10 @@ package io.primer.android.internal.presentation.screens.country
 import androidx.lifecycle.viewModelScope
 import io.primer.android.core.di.DISdkComponent
 import io.primer.android.core.di.extensions.resolve
-import io.primer.android.ui.core.data.repository.CountriesDataRepository
 import io.primer.android.internal.presentation.checkout.CheckoutNavigator
 import io.primer.android.internal.presentation.scope.DefaultSelectCountryScope
 import io.primer.android.scope.PrimerSelectCountryScope
+import io.primer.android.ui.core.data.repository.CountriesDataRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -49,7 +49,7 @@ internal class SelectCountryViewModel : DefaultSelectCountryScope(), DISdkCompon
                     it.copy(
                         countries = countries,
                         filteredCountries = countries,
-                        isLoading = false
+                        isLoading = false,
                     )
                 }
             } catch (e: Exception) {

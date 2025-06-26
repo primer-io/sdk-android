@@ -22,10 +22,10 @@ internal class CardNetworkUseCase : DISdkComponent {
 
     val currentCardNetwork: Flow<CardNetwork.Type> = combine(
         _detectedCardNetwork,
-        _selectedCardNetwork
+        _selectedCardNetwork,
     ) { detected, selected -> selected ?: detected }
 
-    val availableNetworks: Flow<List<PrimerCardNetwork>> = 
+    val availableNetworks: Flow<List<PrimerCardNetwork>> =
         rawDataManagerRepository.metadataState
             .filterIsInstance<PrimerCardMetadataState.Fetched>()
             .map { metadataState ->
@@ -35,11 +35,11 @@ internal class CardNetworkUseCase : DISdkComponent {
                     ?: metadata.detectedCardNetworks.items.firstOrNull()
 
                 val networks = selectableNetworks ?: listOfNotNull(detectedNetwork)
-                
+
                 if (_selectedCardNetwork.value !in networks.map { it.network }) {
                     _selectedCardNetwork.value = null
                 }
-                
+
                 networks
             }
 

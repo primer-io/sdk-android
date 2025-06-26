@@ -16,7 +16,7 @@ interface PrimerSelectCountryScope {
         val countries: List<PrimerCountry> = emptyList(),
         val filteredCountries: List<PrimerCountry> = emptyList(),
         val searchQuery: String = "",
-        val isLoading: Boolean = false
+        val isLoading: Boolean = false,
     )
 
     // UI Customization

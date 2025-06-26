@@ -23,7 +23,10 @@ class RawDataManagerRepositoryImpl(
 ) : RawDataManagerRepository, DISdkComponent {
 
     private sealed class RawDataManagerEvent {
-        data class ValidationChanged(val isValid: Boolean, val errors: List<PrimerInputValidationError>) : RawDataManagerEvent()
+        data class ValidationChanged(
+            val isValid: Boolean,
+            val errors: List<PrimerInputValidationError>,
+        ) : RawDataManagerEvent()
         data class MetadataChanged(val state: PrimerPaymentMethodMetadataState) : RawDataManagerEvent()
     }
 
@@ -40,16 +43,16 @@ class RawDataManagerRepositoryImpl(
                 trySend(RawDataManagerEvent.MetadataChanged(metadataState))
             }
         }
-        
+
         cardManager.setListener(listener)
-        
+
         awaitClose {
             cardManager.cleanup()
         }
     }.shareIn(
         scope = CoroutineScope(Dispatchers.Main),
         started = SharingStarted.Lazily,
-        replay = 1
+        replay = 1,
     )
 
     override fun getRequiredInputElementTypes(): List<PrimerInputElementType> =

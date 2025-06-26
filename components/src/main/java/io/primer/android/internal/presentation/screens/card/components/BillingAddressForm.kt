@@ -8,8 +8,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import io.primer.android.scope.PrimerCardFormScope
 import io.primer.android.internal.presentation.theme.LocalPrimerSpacingTokens
+import io.primer.android.scope.PrimerCardFormScope
 
 @Composable
 internal fun PrimerCardFormScope.BillingAddressForm(
@@ -30,7 +30,6 @@ internal fun PrimerCardFormScope.BillingAddressForm(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(spacing.large),
         ) {
-
             firstNameInput(Modifier.weight(1f))
             lastNameInput(Modifier.weight(1f))
         }

@@ -40,7 +40,7 @@ private fun PrimerPaymentMethodSelectionScope.Loading() {
     Box(
         modifier = Modifier
             .padding(100.dp),
-        contentAlignment = Alignment.Center
+        contentAlignment = Alignment.Center,
     ) {
         CircularProgressIndicator()
     }
@@ -48,7 +48,6 @@ private fun PrimerPaymentMethodSelectionScope.Loading() {
 
 @Composable
 private fun PrimerPaymentMethodSelectionScope.Ready() {
-
     val state = state.collectAsStateWithLifecycle().value as PrimerPaymentMethodSelectionScope.State.Ready
 
     Column {
@@ -84,7 +83,7 @@ private fun PrimerPaymentMethodSelectionScope.Error() {
     Box(
         modifier = Modifier
             .padding(LocalPrimerSizeTokens.current.xxxlarge),
-        contentAlignment = Alignment.Center
+        contentAlignment = Alignment.Center,
     ) {
         Text(
             text = stringResource(R.string.primer_components_payment_methods_error),

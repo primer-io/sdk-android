@@ -45,7 +45,7 @@ internal fun DefaultSuccessScreen(
         Icon(
             painter = painterResource(R.drawable.ic_primer_success),
             contentDescription = stringResource(R.string.primer_components_content_description_payment_successful),
-            tint = Color.Unspecified
+            tint = Color.Unspecified,
         )
 
         Spacer(modifier = Modifier.height(spacing.small))

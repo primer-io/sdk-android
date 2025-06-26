@@ -50,7 +50,7 @@ internal abstract class DefaultCheckoutScope : ViewModel(), PrimerCheckoutScope,
                 viewModelScope.launch {
                     checkoutNavigator.dismiss()
                 }
-            }
+            },
         )
     }
 
@@ -67,7 +67,7 @@ internal abstract class DefaultCheckoutScope : ViewModel(), PrimerCheckoutScope,
                 viewModelScope.launch {
                     checkoutNavigator.navigateToPaymentMethodsList()
                 }
-            }
+            },
         )
     }
 

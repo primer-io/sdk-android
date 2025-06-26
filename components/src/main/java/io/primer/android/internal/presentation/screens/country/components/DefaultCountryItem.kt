@@ -17,21 +17,21 @@ import io.primer.android.internal.presentation.theme.LocalPrimerSpacingTokens
 internal fun DefaultCountryItem(
     country: PrimerCountry,
     onSelect: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val spacing = LocalPrimerSpacingTokens.current
 
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .clickable { onSelect() }
+            .clickable { onSelect() },
     ) {
         Text(
             modifier = Modifier.padding(horizontal = spacing.medium, vertical = spacing.medium),
             text = country.name,
             style = MaterialTheme.typography.bodyLarge.copy(
-                fontWeight = FontWeight.Medium
-            )
+                fontWeight = FontWeight.Medium,
+            ),
         )
         HorizontalDivider()
     }

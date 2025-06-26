@@ -8,7 +8,7 @@ internal val CARD_FIELDS = setOf(
     PrimerInputElementType.CARD_NUMBER,
     PrimerInputElementType.CVV,
     PrimerInputElementType.EXPIRY_DATE,
-    PrimerInputElementType.CARDHOLDER_NAME
+    PrimerInputElementType.CARDHOLDER_NAME,
 )
 
 internal val BILLING_FIELDS = setOf(
@@ -19,17 +19,17 @@ internal val BILLING_FIELDS = setOf(
     PrimerInputElementType.ADDRESS_LINE_1,
     PrimerInputElementType.ADDRESS_LINE_2,
     PrimerInputElementType.FIRST_NAME,
-    PrimerInputElementType.LAST_NAME
+    PrimerInputElementType.LAST_NAME,
 )
 
 internal fun Map<PrimerInputElementType, String>.toPrimerCardData(
-    cardNetwork: CardNetwork.Type = CardNetwork.Type.OTHER
+    cardNetwork: CardNetwork.Type = CardNetwork.Type.OTHER,
 ): PrimerCardData = PrimerCardData(
     cardNumber = get(PrimerInputElementType.CARD_NUMBER) ?: "",
     expiryDate = get(PrimerInputElementType.EXPIRY_DATE)?.formatExpiryDate() ?: "",
     cvv = get(PrimerInputElementType.CVV) ?: "",
     cardHolderName = get(PrimerInputElementType.CARDHOLDER_NAME)?.takeIf { it.isNotEmpty() },
-    cardNetwork = cardNetwork
+    cardNetwork = cardNetwork,
 )
 
 internal fun String.formatExpiryDate(): String = when {
@@ -38,7 +38,9 @@ internal fun String.formatExpiryDate(): String = when {
     contains("/") -> split("/").let { parts ->
         if (parts.size == 2 && parts[0].length == 2 && parts[1].length == 2) {
             "${parts[0]}/20${parts[1]}"
-        } else this
+        } else {
+            this
+        }
     }
     length == 6 -> "${take(2)}/${drop(2)}"
     else -> this

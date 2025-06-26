@@ -19,11 +19,19 @@ internal fun PrimerPaymentMethodSelectionScope.PaymentMethodSelector(
 ) {
     when (safeValueOf(primerMethod.paymentMethodType)) {
         PaymentMethodType.PAYMENT_CARD -> paymentMethodCard(Modifier, onPaymentMethodSelected)
-        PaymentMethodType.ADYEN_IDEAL -> PaymentMethodItemIdeal { onPaymentMethodSelected(PaymentMethodType.ADYEN_IDEAL.name) }
-        PaymentMethodType.GOOGLE_PAY -> PaymentMethodItemGooglePay { onPaymentMethodSelected(PaymentMethodType.GOOGLE_PAY.name) }
+        PaymentMethodType.ADYEN_IDEAL -> PaymentMethodItemIdeal {
+            onPaymentMethodSelected(
+                PaymentMethodType.ADYEN_IDEAL.name,
+            )
+        }
+        PaymentMethodType.GOOGLE_PAY -> PaymentMethodItemGooglePay {
+            onPaymentMethodSelected(
+                PaymentMethodType.GOOGLE_PAY.name,
+            )
+        }
         PaymentMethodType.KLARNA -> PaymentMethodItemKlarna { onPaymentMethodSelected(PaymentMethodType.KLARNA.name) }
         PaymentMethodType.PAYPAL -> PaymentMethodItemPaypal { onPaymentMethodSelected(PaymentMethodType.PAYPAL.name) }
-        else -> { PaymentMethodItemComingSoon {  } }
+        else -> { PaymentMethodItemComingSoon { } }
     }
 }
 
@@ -41,6 +49,6 @@ internal fun PrimerPaymentMethodSelectionScope.PaymentMethodItem(
         borderColor = borderColor,
         borderRadius = borderRadius,
         backgroundColor = backgroundColor,
-        onClick = onPaymentMethodSelected
+        onClick = onPaymentMethodSelected,
     ) { content() }
 }

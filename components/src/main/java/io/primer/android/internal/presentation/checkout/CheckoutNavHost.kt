@@ -18,7 +18,7 @@ internal val LocalNavController = staticCompositionLocalOf<NavHostController> {
 
 @Composable
 internal fun PrimerCheckoutScope.CheckoutNavHost(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     CompositionLocalProvider(
         LocalNavController provides rememberNavController(),

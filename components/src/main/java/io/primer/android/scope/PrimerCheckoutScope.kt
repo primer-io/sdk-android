@@ -9,7 +9,7 @@ interface PrimerCheckoutScope {
 
     var container: @Composable (content: @Composable () -> Unit) -> Unit
 
-    //TODO COMPOSABLE move these screens inside container
+    // TODO COMPOSABLE move these screens inside container
     var splashScreen: @Composable () -> Unit
     var loadingScreen: @Composable () -> Unit
     var successScreen: @Composable () -> Unit

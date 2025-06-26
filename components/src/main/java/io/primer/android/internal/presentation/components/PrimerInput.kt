@@ -22,9 +22,9 @@ fun PrimerInput(
     trailingIcon: @Composable (() -> Unit)? = null,
     visualTransformation: VisualTransformation = VisualTransformation.None,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
-    readOnly : Boolean = false,
-    enabled : Boolean = true,
-    colors : TextFieldColors = OutlinedTextFieldDefaults.colors()
+    readOnly: Boolean = false,
+    enabled: Boolean = true,
+    colors: TextFieldColors = OutlinedTextFieldDefaults.colors(),
 ) {
     OutlinedTextField(
         value = value,
@@ -47,6 +47,6 @@ fun PrimerInput(
         keyboardOptions = keyboardOptions,
         enabled = enabled,
         readOnly = readOnly,
-        colors = colors
+        colors = colors,
     )
 }

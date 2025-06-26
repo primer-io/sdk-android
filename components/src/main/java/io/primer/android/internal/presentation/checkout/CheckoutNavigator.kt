@@ -19,22 +19,26 @@ internal val LocalCheckoutNavigator = staticCompositionLocalOf<CheckoutNavigator
 internal class CheckoutNavigator {
     private val _navigationEvents = MutableSharedFlow<NavigationEvent>()
     val navigationEvents = _navigationEvents.asSharedFlow()
-    
+
     private val _savedStateResults = MutableStateFlow<Map<String, Any?>>(emptyMap())
 
     private suspend fun navigate(event: NavigationEvent) = _navigationEvents.emit(event)
-    
+
     suspend fun navigateTo(screen: Screen) = navigate(NavigationEvent.NavigateTo(screen))
     suspend fun navigateBack() = navigate(NavigationEvent.NavigateBack)
     suspend fun navigateToError(errorMessage: String) = navigate(NavigationEvent.NavigateToError(errorMessage))
     suspend fun navigateToSuccess() = navigate(NavigationEvent.NavigateToSuccess)
     suspend fun navigateToPaymentMethodsList() = navigate(NavigationEvent.NavigateToPaymentMethodsList)
     suspend fun dismiss() = navigate(NavigationEvent.Dismiss)
-    suspend fun <T> navigateBackWithResult(resultKey: String, result: T) = 
+    suspend fun <T> navigateBackWithResult(resultKey: String, result: T) =
         navigate(NavigationEvent.NavigateBackWithResult(resultKey, result))
 
-    fun <T> observeNavigationResult(resultKey: String): Flow<T?> = 
-        _savedStateResults.map { @Suppress("UNCHECKED_CAST") it[resultKey] as? T }
+    fun <T> observeNavigationResult(resultKey: String): Flow<T?> =
+        _savedStateResults.map {
+            @Suppress("UNCHECKED_CAST")
+            it[resultKey]
+                as? T
+        }
 
     internal fun setResult(resultKey: String, result: Any?) {
         _savedStateResults.value += (resultKey to result)
