@@ -39,6 +39,9 @@ internal class CardNetworkUseCase : DISdkComponent {
                 selectableNetworks ?: listOfNotNull(detectedNetwork)
             }
     ) { shouldClear, networks ->
+        if (_selectedCardNetwork.value !in networks.map { it.network }) {
+            _selectedCardNetwork.value = null
+        }
         if (shouldClear) emptyList() else networks
     }
 
