@@ -5,10 +5,9 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -87,16 +86,16 @@ private fun PrimerCardFormScope.CardNetworkSelector(
             expanded = expanded,
             onDismissRequest = { expanded = false }
         ) {
-            networks.forEach {
+            networks.forEachIndexed { index, network ->
                 DropdownMenuItem(
                     onClick = {
                         expanded = false
-                        selectCardNetwork(it.network)
+                        selectCardNetwork(network.network)
                     },
                     leadingIcon = {
-                        if (it.network == selectedNetwork) {
+                        if (network.network == selectedNetwork) {
                             Icon(
-                                imageVector = Icons.Default.Check,
+                                painter = painterResource(R.drawable.ic_primer_check),
                                 contentDescription = "Selected",
                                 tint = LocalPrimerColorTokens.current.primerColorIconPrimary
                             )
@@ -104,12 +103,13 @@ private fun PrimerCardFormScope.CardNetworkSelector(
                     },
                     text = {
                         Text(
-                            text = it.displayName,
+                            text = network.displayName,
                             style = MaterialTheme.typography.bodyMedium,
                             color = LocalPrimerColorTokens.current.primerColorTextPrimary
                         )
                     }
                 )
+                if (index < networks.size - 1) { HorizontalDivider() }
             }
         }
     }
