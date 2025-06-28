@@ -3,7 +3,6 @@ package io.primer.android.surcharge.utils
 import android.content.Context
 import io.primer.android.R
 import io.primer.android.components.currencyformat.domain.models.FormatCurrencyParams
-import io.primer.android.configuration.domain.model.Surcharge
 import io.primer.android.core.domain.None
 import io.primer.android.currencyformat.domain.FormatAmountToCurrencyInteractor
 import io.primer.android.data.settings.internal.MonetaryAmount
@@ -22,7 +21,7 @@ internal class SurchargeFormatter(
     fun getSurchargeForSavedPaymentMethod(token: PrimerVaultedPaymentMethod?): Int {
         return surchargeCalculationInteractor.getSurchargeForSavedPaymentMethod(
             token = token,
-            surcharges = surchargeInteractor(None)
+            surcharges = surchargeInteractor(None),
         )
     }
 
@@ -33,7 +32,7 @@ internal class SurchargeFormatter(
         return surchargeCalculationInteractor.getSurchargeForPaymentMethodType(
             type = type,
             network = network,
-            surcharges = surchargeInteractor(None)
+            surcharges = surchargeInteractor(None),
         )
     }
 

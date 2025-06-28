@@ -12,12 +12,12 @@ import io.primer.android.scope.PrimerPaymentMethodSelectionScope
 
 @Composable
 internal fun PrimerPaymentMethodSelectionScope.PaymentMethodItemIdeal(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     PaymentMethodItem(
         modifier = modifier,
         backgroundColor = PaymentMethodColors.idealPink,
-        onPaymentMethodSelected = { onPaymentMethodSelected(PaymentMethodType.ADYEN_IDEAL.name,) },
+        onPaymentMethodSelected = { onPaymentMethodSelected(PaymentMethodType.ADYEN_IDEAL.name) },
     ) {
         Icon(
             painter = painterResource(id = R.drawable.ic_primer_ideal_logo),

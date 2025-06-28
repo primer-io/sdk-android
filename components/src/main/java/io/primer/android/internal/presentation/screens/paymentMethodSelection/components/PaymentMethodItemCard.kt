@@ -19,7 +19,7 @@ import io.primer.android.scope.PrimerPaymentMethodSelectionScope
 
 @Composable
 internal fun PrimerPaymentMethodSelectionScope.PaymentMethodItemCard(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     PaymentMethodItem(
         modifier = modifier,

@@ -17,7 +17,6 @@ import io.primer.android.scope.PrimerCardFormScope
 
 @Composable
 internal fun PrimerCardFormScope.DefaultCardFormScreen() {
-
     LaunchedEffect(this) { init() }
 
     Column {

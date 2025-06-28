@@ -7,10 +7,10 @@ import io.primer.android.analytics.domain.AnalyticsInteractor
 import io.primer.android.clientSessionActions.domain.models.PrimerCountry
 import io.primer.android.clientSessionActions.domain.models.PrimerPhoneCode
 import io.primer.android.configuration.data.model.CountryCode
-import io.primer.android.ui.core.data.repository.CountriesRepository
 import io.primer.android.domain.helper.mapCountryToCountryItem
 import io.primer.android.domain.helper.mapPhoneCodesToCountryItem
 import io.primer.android.presentation.base.BaseViewModel
+import io.primer.android.ui.core.data.repository.CountriesRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext

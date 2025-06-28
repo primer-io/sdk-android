@@ -8,9 +8,9 @@ import io.primer.android.ui.core.payment.domain.interactor.SurchargeInteractor a
 
 internal class SurchargeInteractor(private val configurationRepository: ConfigurationRepository) :
     BaseInteractor<Map<String, Surcharge>, None>() {
-    
+
     private val uiCoreSurchargeInteractor = UiCoreSurchargeInteractor(configurationRepository)
-    
+
     override fun execute(params: None): Map<String, Surcharge> {
         return uiCoreSurchargeInteractor.execute(params)
     }

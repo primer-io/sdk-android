@@ -8,7 +8,7 @@ import java.util.concurrent.ConcurrentHashMap
 enum class SdkType {
     HEADLESS,
     DROP_IN,
-    COMPONENTS
+    COMPONENTS,
 }
 
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
@@ -16,12 +16,13 @@ object DISdkContext {
     private val merged: SdkContainer by lazy { SdkContainer() }
 
     var sdkType: SdkType = SdkType.HEADLESS
+
     @Volatile
     var dropInSdkContainer: SdkContainer? = null
 
     @Volatile
     var headlessSdkContainer: SdkContainer? = null
-  
+
     @Volatile
     var componentsSdkContainer: SdkContainer? = null
 

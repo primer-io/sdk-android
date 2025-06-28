@@ -26,7 +26,9 @@ internal class CheckoutNavigator {
 
     suspend fun navigateBack() = _navigationEvents.emit(NavigationEvent.NavigateBack)
 
-    suspend fun navigateToError(errorMessage: String) = _navigationEvents.emit(NavigationEvent.NavigateToError(errorMessage))
+    suspend fun navigateToError(errorMessage: String) = _navigationEvents.emit(
+        NavigationEvent.NavigateToError(errorMessage),
+    )
 
     suspend fun navigateToSuccess() = _navigationEvents.emit(NavigationEvent.NavigateToSuccess)
 

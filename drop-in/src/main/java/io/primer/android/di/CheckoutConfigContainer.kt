@@ -23,12 +23,12 @@ import io.primer.android.payments.core.helpers.CheckoutExitHandler
 import io.primer.android.payments.core.helpers.ManualFlowSuccessHandler
 import io.primer.android.presentation.base.BaseViewModelFactory
 import io.primer.android.surcharge.domain.SurchargeInteractor
-import io.primer.android.ui.utils.DefaultCheckoutExitHandler
-import io.primer.android.ui.utils.DropInManualFlowSuccessHandler
-import io.primer.android.viewmodel.PrimerViewModelFactory
 import io.primer.android.ui.core.assets.AssetsManager
 import io.primer.android.ui.core.assets.DefaultPrimerAssetsManager
 import io.primer.android.ui.core.configuration.domain.model.BasicOrderInfoInteractor
+import io.primer.android.ui.utils.DefaultCheckoutExitHandler
+import io.primer.android.ui.utils.DropInManualFlowSuccessHandler
+import io.primer.android.viewmodel.PrimerViewModelFactory
 
 @Suppress("LongMethod")
 internal class CheckoutConfigContainer(private val sdk: () -> SdkContainer) : DependencyContainer() {

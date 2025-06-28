@@ -15,7 +15,7 @@ internal fun PrimerPaymentMethodSelectionScope.PaymentMethodItemGooglePay() {
     PaymentMethodItem(
         borderRadius = Int.MAX_VALUE.dp,
         backgroundColor = LocalPrimerColorTokens.current.primerColorGray900,
-        onPaymentMethodSelected = { onPaymentMethodSelected(PaymentMethodType.GOOGLE_PAY.name,) },
+        onPaymentMethodSelected = { onPaymentMethodSelected(PaymentMethodType.GOOGLE_PAY.name) },
     ) {
         Icon(
             painter = painterResource(id = R.drawable.ic_primer_google_pay),

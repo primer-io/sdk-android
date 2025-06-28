@@ -43,7 +43,6 @@ import io.primer.android.data.settings.internal.MonetaryAmount
 import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.domain.tokenization.models.PrimerVaultedPaymentMethod
 import io.primer.android.errors.domain.ErrorMapperRegistry
-import io.primer.android.ui.core.model.SyncValidationError
 import io.primer.android.payment.billing.BillingAddressValidator
 import io.primer.android.payment.config.toImageDisplayMetadata
 import io.primer.android.payment.config.toTextDisplayMetadata
@@ -64,9 +63,10 @@ import io.primer.android.presentation.base.BaseViewModel
 import io.primer.android.surcharge.domain.SurchargeInteractor
 import io.primer.android.surcharge.utils.SurchargeFormatter
 import io.primer.android.ui.PaymentMethodButtonGroupFactory
+import io.primer.android.ui.core.configuration.domain.model.BasicOrderInfoInteractor
+import io.primer.android.ui.core.model.SyncValidationError
 import io.primer.android.utils.orNull
 import io.primer.android.vault.implementation.vaultedMethods.domain.PrimerVaultedPaymentMethodAdditionalData
-import io.primer.android.ui.core.configuration.domain.model.BasicOrderInfoInteractor
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.flow.collectLatest

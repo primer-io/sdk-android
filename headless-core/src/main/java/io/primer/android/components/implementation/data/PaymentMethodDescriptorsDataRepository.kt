@@ -98,7 +98,7 @@ internal class PaymentMethodDescriptorsDataRepository(
                 listOfNotNull(
                     DISdkContext.headlessSdkContainer,
                     DISdkContext.dropInSdkContainer,
-                    DISdkContext.componentsSdkContainer
+                    DISdkContext.componentsSdkContainer,
                 ),
             )
 

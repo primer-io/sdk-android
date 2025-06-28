@@ -72,5 +72,4 @@ internal abstract class DefaultCheckoutScope : ViewModel(), PrimerCheckoutScope,
             },
         )
     }
-
 }

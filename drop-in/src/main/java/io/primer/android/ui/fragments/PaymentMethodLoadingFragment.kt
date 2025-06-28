@@ -18,11 +18,11 @@ import io.primer.android.core.di.extensions.inject
 import io.primer.android.databinding.PrimerFragmentPaymentMethodLoadingBinding
 import io.primer.android.displayMetadata.domain.model.ImageColor
 import io.primer.android.paymentMethods.core.ui.descriptors.PaymentMethodDropInDescriptor
+import io.primer.android.ui.core.assets.AssetsManager
 import io.primer.android.ui.extensions.autoCleaned
 import io.primer.android.ui.extensions.getParentDialogOrNull
 import io.primer.android.ui.extensions.popBackStackToRoot
 import io.primer.android.ui.fragments.base.BaseFragment
-import io.primer.android.ui.core.assets.AssetsManager
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 @ExperimentalCoroutinesApi

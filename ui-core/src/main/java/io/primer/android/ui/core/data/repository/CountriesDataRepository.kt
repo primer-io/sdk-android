@@ -24,7 +24,9 @@ class CountriesDataRepository(private val context: Context) :
     private suspend fun loadCountries(fromCache: Boolean = false) {
         if (!fromCache || countries.isEmpty()) {
             val dataJson =
-                context.resources?.openRawResource(context.resources.getIdentifier("primer_codes_countries", "raw", context.packageName))
+                context.resources?.openRawResource(
+                    context.resources.getIdentifier("primer_codes_countries", "raw", context.packageName),
+                )
                     ?.readBytes()
                     ?.decodeToString().orEmpty()
             if (dataJson.isNotBlank()) {
@@ -69,7 +71,9 @@ class CountriesDataRepository(private val context: Context) :
     private fun loadPhoneCodes(fromCache: Boolean = false) {
         if (!fromCache || phoneCodes.isEmpty()) {
             val dataJson =
-                context.resources?.openRawResource(context.resources.getIdentifier("primer_phone_number_country_codes", "raw", context.packageName))
+                context.resources?.openRawResource(
+                    context.resources.getIdentifier("primer_phone_number_country_codes", "raw", context.packageName),
+                )
                     ?.readBytes()
                     ?.decodeToString().orEmpty()
             if (dataJson.isNotBlank()) {

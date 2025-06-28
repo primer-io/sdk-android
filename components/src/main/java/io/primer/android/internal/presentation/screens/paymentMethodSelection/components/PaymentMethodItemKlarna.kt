@@ -24,7 +24,7 @@ import io.primer.android.scope.PrimerPaymentMethodSelectionScope
 
 @Composable
 internal fun PrimerPaymentMethodSelectionScope.PaymentMethodItemKlarna(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     PaymentMethodItem(
         modifier = modifier,

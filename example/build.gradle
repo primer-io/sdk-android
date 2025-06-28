@@ -15,10 +15,10 @@ repositories {
 }
 
 android {
+    compileSdk 35
 
     defaultConfig {
         applicationId "io.primer.sample"
-        compileSdk 35
         minSdkVersion 21
         targetSdkVersion 35
         versionCode 4
@@ -103,7 +103,11 @@ dependencies {
     implementation libs.primer.stripe
     implementation project(':components')
     implementation libs.androidx.runtime.livedata
-    implementation(libs.androidx.material3)
+    
+    def composeBom = platform("androidx.compose:compose-bom:2024.10.01")
+    implementation composeBom
+    androidTestImplementation composeBom
+    implementation libs.androidx.material3
 
     debugImplementation "com.squareup.leakcanary:leakcanary-android:2.14"
     testImplementation "junit:junit:4.13.2"
