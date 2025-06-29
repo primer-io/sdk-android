@@ -29,6 +29,7 @@ class ClientSessionRepository(
         captureVaultedCardCvv: Boolean,
         vaultOnSuccess: Boolean? = null,
         vaultOnAgreement: Boolean? = null,
+        surcharge: Int = 0,
         callback: (token: String?) -> Unit,
     ) {
         val body = ClientSession.Request.build(
@@ -40,7 +41,8 @@ class ClientSessionRepository(
             metadata = metadata,
             captureVaultedCardCvv = captureVaultedCardCvv,
             vaultOnSuccess = vaultOnSuccess,
-            vaultOnAgreement = vaultOnAgreement
+            vaultOnAgreement = vaultOnAgreement,
+            surcharge = surcharge
         )
         val request = HttpRequestUtil.generateRequest(
             body,

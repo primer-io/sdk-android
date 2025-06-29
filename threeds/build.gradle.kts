@@ -30,3 +30,9 @@ dependencies {
     testImplementation(project(":arch-core"))
     testImplementation(libs.mockwebserver)
 }
+
+repositories {
+    google()
+    mavenCentral()
+    mavenLocal()
+}

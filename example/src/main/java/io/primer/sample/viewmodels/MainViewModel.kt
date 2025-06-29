@@ -125,6 +125,10 @@ class MainViewModel(
     val amountStringified: String get() = String.format(Locale.US, "%.2f", _amount.value!!.toDouble() / 100)
     fun setAmount(amount: Int): Unit = _amount.postValue(amount)
 
+    private val _surcharge: MutableLiveData<Int> = MutableLiveData<Int>(0)
+    val surcharge: LiveData<Int> = _surcharge
+    fun setSurcharge(surcharge: Int): Unit = _surcharge.postValue(surcharge)
+
     private val _descriptor = MutableLiveData("Purchase: Item-123")
     val descriptor: LiveData<String> = _descriptor
     fun setDescriptor(descriptor: String) = _descriptor.postValue(descriptor)
@@ -250,7 +254,8 @@ class MainViewModel(
         metadata = metadata.value,
         vaultOnSuccess = vaultOnSuccess,
         vaultOnAgreement = vaultOnAgreement,
-        captureVaultedCardCvv = _captureVaultedCardCvv.value ?: false
+        captureVaultedCardCvv = _captureVaultedCardCvv.value ?: false,
+        surcharge = _surcharge.value ?: 0
     ) { t ->
         viewModelScope.launch {
             withContext(Dispatchers.Main) {

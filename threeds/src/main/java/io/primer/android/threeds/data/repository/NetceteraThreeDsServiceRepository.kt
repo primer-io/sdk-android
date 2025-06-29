@@ -4,15 +4,6 @@ import android.app.Activity
 import android.content.Context
 import com.netcetera.threeds.sdk.ThreeDS2ServiceInstance
 import com.netcetera.threeds.sdk.api.ThreeDS2Service
-import com.netcetera.threeds.sdk.api.configparameters.builder.ConfigurationBuilder
-import com.netcetera.threeds.sdk.api.configparameters.builder.SchemeConfiguration.amexConfiguration
-import com.netcetera.threeds.sdk.api.configparameters.builder.SchemeConfiguration.cbConfiguration
-import com.netcetera.threeds.sdk.api.configparameters.builder.SchemeConfiguration.dinersSchemeConfiguration
-import com.netcetera.threeds.sdk.api.configparameters.builder.SchemeConfiguration.jcbConfiguration
-import com.netcetera.threeds.sdk.api.configparameters.builder.SchemeConfiguration.mastercardSchemeConfiguration
-import com.netcetera.threeds.sdk.api.configparameters.builder.SchemeConfiguration.newSchemeConfiguration
-import com.netcetera.threeds.sdk.api.configparameters.builder.SchemeConfiguration.unionSchemeConfiguration
-import com.netcetera.threeds.sdk.api.configparameters.builder.SchemeConfiguration.visaSchemeConfiguration
 import com.netcetera.threeds.sdk.api.transaction.Transaction
 import com.netcetera.threeds.sdk.api.transaction.challenge.ChallengeParameters
 import com.netcetera.threeds.sdk.api.transaction.challenge.ChallengeStatusReceiver
@@ -25,6 +16,7 @@ import io.primer.android.configuration.data.model.CardNetwork
 import io.primer.android.configuration.data.model.Environment
 import io.primer.android.core.extensions.runSuspendCatching
 import io.primer.android.threeds.BuildConfig
+import io.primer.android.threeds.data.configuration.NetceteraThreeDsConfigParametersProvider
 import io.primer.android.threeds.data.exception.ThreeDsChallengeCancelledException
 import io.primer.android.threeds.data.exception.ThreeDsChallengeTimedOutException
 import io.primer.android.threeds.data.exception.ThreeDsConfigurationException
@@ -40,7 +32,6 @@ import io.primer.android.threeds.domain.models.ThreeDsKeysParams
 import io.primer.android.threeds.domain.repository.ThreeDsServiceRepository
 import io.primer.android.threeds.extensions.toNormalizedLocale
 import io.primer.android.threeds.helpers.ProtocolVersion
-import io.primer.android.threeds.main.R
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.awaitClose
@@ -53,6 +44,8 @@ import kotlin.coroutines.coroutineContext
 @ExperimentalCoroutinesApi
 internal class NetceteraThreeDsServiceRepository(
     private val context: Context,
+    private val configurationProvider: NetceteraThreeDsConfigParametersProvider =
+        NetceteraThreeDsConfigParametersProvider(),
     threeDS2ServiceLazy: Lazy<ThreeDS2Service> = lazy { ThreeDS2ServiceInstance.get() },
 ) : ThreeDsServiceRepository {
     private val threeDS2Service: ThreeDS2Service by threeDS2ServiceLazy
@@ -87,46 +80,10 @@ internal class NetceteraThreeDsServiceRepository(
                 )
             }
 
-            val configurationBuilder =
-                ConfigurationBuilder()
-                    .apiKey(threeDsKeysParams.apiKey)
-
-            threeDsKeysParams.let { (environment, _, threeDsSecureCertificates) ->
-                if (environment != Environment.PRODUCTION) {
-                    threeDsSecureCertificates?.forEach { certificate ->
-                        val scheme =
-                            when (certificate.cardNetwork.uppercase()) {
-                                // Choose specialized scheme constructor if available
-                                CardNetwork.Type.MASTERCARD.name -> mastercardSchemeConfiguration()
-                                CardNetwork.Type.VISA.name -> visaSchemeConfiguration()
-                                CardNetwork.Type.AMEX.name -> amexConfiguration()
-                                CardNetwork.Type.DINERS_CLUB.name -> dinersSchemeConfiguration()
-                                CardNetwork.Type.UNIONPAY.name -> unionSchemeConfiguration()
-                                CardNetwork.Type.JCB.name -> jcbConfiguration()
-                                CardNetwork.Type.CARTES_BANCAIRES.name -> cbConfiguration()
-                                else -> {
-                                    // Fallback to default scheme constructor if no specialized API exists
-                                    newSchemeConfiguration(TEST_SCHEME_NAME)
-                                        .logo(R.drawable.ds_logo_visa.toString())
-                                        .logoDark(R.drawable.ds_logo_visa.toString())
-                                        .ids(listOf(TEST_SCHEME_ID))
-                                }
-                            }
-
-                        configurationBuilder.configureScheme(
-                            scheme
-                                .encryptionPublicKey(certificate.encryptionKey)
-                                .rootPublicKey(certificate.rootCertificate)
-                                .build(),
-                        )
-                    }
-                }
-            }
-
             try {
                 threeDS2Service.initialize(
                     context,
-                    configurationBuilder.build(),
+                    configurationProvider.createConfigParameters(threeDsKeysParams),
                     locale.toNormalizedLocale(),
                     emptyMap<UiCustomization.UiCustomizationType, UiCustomization>(),
                 )
@@ -302,15 +259,12 @@ internal class NetceteraThreeDsServiceRepository(
                     threeDsSdkProvider = ThreeDsSdkProvider.NETCETERA.name,
                 )
 
-                false -> TEST_SCHEME_ID
+                false -> NetceteraThreeDsConfigParametersProvider.TEST_SCHEME_ID
             }
     }
 
     internal companion object {
-        private const val TEST_SCHEME_NAME = "test_schema"
         private const val CHALLENGE_TIMEOUT_IN_MINUTES = 60
-
-        const val TEST_SCHEME_ID = "A999999999"
 
         const val KEYS_CONFIG_ERROR = "3DS Config threeDsCertificates are missing."
         const val API_KEY_CONFIG_ERROR = "3DS Config apiKey is missing."

@@ -1,3 +1,14 @@
+## 2.41.0 (2025-06-20)
+
+### Feat
+
+- kotlin 1.9.24 -> 2.0.21 (#982)
+- update 3DS SDK version to 1.6.2
+
+### Refactor
+
+- use ktx functions (#980)
+
 ## 2.40.1 (2025-06-10)
 
 ### Fix

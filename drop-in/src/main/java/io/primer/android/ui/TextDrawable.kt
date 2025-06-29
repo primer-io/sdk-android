@@ -10,6 +10,7 @@ import android.graphics.RectF
 import android.graphics.drawable.Drawable
 import android.util.TypedValue
 import android.util.TypedValue.COMPLEX_UNIT_SP
+import androidx.core.graphics.withTranslation
 import io.primer.android.R
 
 internal class TextDrawable(private val res: Resources, private val text: String) : Drawable() {
@@ -22,23 +23,20 @@ internal class TextDrawable(private val res: Resources, private val text: String
 
     override fun draw(canvas: Canvas) {
         drawCircle(canvas)
-        val count = canvas.save()
-        canvas.translate(bounds.left.toFloat(), bounds.top.toFloat())
-
-        // draw text
-        val width: Int = bounds.width()
-        val height: Int = bounds.height()
-        val fontSize =
-            TypedValue.applyDimension(COMPLEX_UNIT_SP, DEFAULT_TEXT_SIZE, res.displayMetrics)
-        mPaint.textSize = fontSize
-        canvas.drawText(
-            text,
-            (width / 2).toFloat(),
-            height / 2 - (mPaint.descent() + mPaint.ascent()) / 2,
-            mPaint,
-        )
-
-        canvas.restoreToCount(count)
+        canvas.withTranslation(bounds.left.toFloat(), bounds.top.toFloat()) {
+            // draw text
+            val width: Int = bounds.width()
+            val height: Int = bounds.height()
+            val fontSize =
+                TypedValue.applyDimension(COMPLEX_UNIT_SP, DEFAULT_TEXT_SIZE, res.displayMetrics)
+            mPaint.textSize = fontSize
+            canvas.drawText(
+                text,
+                (width / 2).toFloat(),
+                height / 2 - (mPaint.descent() + mPaint.ascent()) / 2,
+                mPaint,
+            )
+        }
     }
 
     private fun drawCircle(canvas: Canvas) {

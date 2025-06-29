@@ -2,8 +2,8 @@ package io.primer.android.payment.utils
 
 import android.content.Context
 import android.content.res.ColorStateList
-import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
+import androidx.core.graphics.toColorInt
 import io.primer.android.payment.config.BaseDisplayMetadata
 import io.primer.android.ui.settings.PrimerTheme
 import io.primer.android.utils.dPtoPx
@@ -45,7 +45,7 @@ internal object ButtonViewHelper {
             contentDrawable.setStroke(
                 it,
                 displayMetadata.borderColor?.let {
-                    ColorStateList.valueOf(Color.parseColor(it))
+                    ColorStateList.valueOf(it.toColorInt())
                 } ?: ColorStateList.valueOf(
                     border.defaultColor.getColor(
                         context,
@@ -55,7 +55,7 @@ internal object ButtonViewHelper {
             )
         }
         displayMetadata.backgroundColor?.let {
-            contentDrawable.setColor(Color.parseColor(it))
+            contentDrawable.setColor(it.toColorInt())
         }
         val cornerRadiusByTheme = primerTheme.paymentMethodButton.cornerRadius.getDimension(context)
         contentDrawable.cornerRadius = cornerRadiusByTheme

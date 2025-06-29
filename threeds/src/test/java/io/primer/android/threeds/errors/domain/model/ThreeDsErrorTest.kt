@@ -9,7 +9,6 @@ import io.primer.android.analytics.domain.models.ThreeDsProtocolFailureContextPa
 import io.primer.android.analytics.domain.models.ThreeDsRuntimeFailureContextParams
 import io.primer.android.configuration.data.model.CardNetwork
 import io.primer.android.threeds.data.models.postAuth.ThreeDsSdkProvider
-import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.TestInstance.Lifecycle
 import org.junit.jupiter.params.ParameterizedTest
@@ -17,6 +16,8 @@ import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
 import java.util.UUID
 import java.util.stream.Stream
+import kotlin.test.assertEquals
+import kotlin.test.assertNull
 
 @TestInstance(Lifecycle.PER_CLASS)
 internal class ThreeDsErrorTest {

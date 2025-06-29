@@ -19,7 +19,7 @@ import io.primer.android.paymentMethods.sofort.TestSofortDropInPaymentMethodDesc
 import io.primer.android.paymentMethods.stripe.ach.descriptors.StripeAchDropInDescriptor
 import io.primer.android.paymentmethods.common.data.model.PaymentMethodType
 
-internal interface PaymentMethodMapping {
+internal fun interface PaymentMethodMapping {
     fun getPaymentMethodDescriptorFor(
         paymentMethodType: String,
         paymentMethodName: String?,

@@ -1,5 +1,5 @@
 package io.primer.android.ui.base.recyclerview
 
-internal interface BaseAdapterItem {
+internal fun interface BaseAdapterItem {
     fun getType(): Int
 }

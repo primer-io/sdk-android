@@ -30,7 +30,7 @@ internal data class ClientSessionActionsDataRequest(
         }
     }
 
-    private interface ActionParams {
+    private fun interface ActionParams {
         fun toJSONObject(): JSONObject
     }
 
@@ -190,7 +190,7 @@ internal data class BinData(
 
         @JvmField
         internal val deserializer =
-            JSONObjectDeserializer<BinData> { t ->
+            JSONObjectDeserializer { t ->
                 BinData(
                     t.optNullableString(NETWORK_FIELD),
                 )

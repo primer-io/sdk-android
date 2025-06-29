@@ -2,11 +2,11 @@ package io.primer.android.components.ui.views
 
 import android.content.Context
 import android.content.res.ColorStateList
-import android.graphics.Color
 import android.graphics.drawable.RippleDrawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.graphics.toColorInt
 import io.primer.android.components.ui.assets.PrimerPaymentMethodAsset
 import io.primer.android.configuration.data.model.IconPosition
 import io.primer.android.databinding.PrimerPaymentMethodTextButtonBinding
@@ -39,7 +39,7 @@ internal class DynamicPaymentMethodTextViewCreator(
             }
             paymentMethodParent.contentDescription = displayMetadata.name
             paymentMethodButtonText.text = displayMetadata.text
-            paymentMethodButtonText.setTextColor(Color.parseColor(displayMetadata.textColor))
+            displayMetadata.textColor?.let { color -> paymentMethodButtonText.setTextColor(color.toColorInt()) }
             val paymentMethodLogo =
                 displayMetadata.imageColor?.let { imageColor ->
                     paymentMethodAsset.paymentMethodLogo.get(

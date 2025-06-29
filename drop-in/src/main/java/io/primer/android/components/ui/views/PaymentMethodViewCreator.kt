@@ -4,14 +4,9 @@ import android.content.Context
 import android.view.View
 import android.view.ViewGroup
 
-internal interface PaymentMethodViewCreator {
+internal fun interface PaymentMethodViewCreator {
     fun create(
         context: Context,
         container: ViewGroup?,
     ): View
-
-    companion object {
-        const val DEFAULT_EXPORTED_ICON_SCALE = 3.0f
-        const val DEFAULT_EXPORTED_ICON_MAX_HEIGHT = 48.0f
-    }
 }

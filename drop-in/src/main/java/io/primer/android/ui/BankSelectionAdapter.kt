@@ -16,7 +16,7 @@ import io.primer.android.ui.base.recyclerview.BaseViewHolder
 import io.primer.android.ui.extensions.setCompoundDrawablesWithIntrinsicBoundsTinted
 import io.primer.android.ui.settings.PrimerTheme
 
-internal interface BankSelectionAdapterListener {
+internal fun interface BankSelectionAdapterListener {
     fun onBankSelected(issuerId: String)
 }
 
