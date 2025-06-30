@@ -73,4 +73,9 @@
     <string name="primer_components_content_description_card_network">Card network: %1$s</string>
     <string name="primer_components_content_description_select_network">Select network</string>
 
+    <!-- Surcharge Section Headers -->
+    <string name="primer_components_surcharge_no_additional_fee">No additional fee</string>
+    <string name="primer_components_surcharge_additional_fees">Additional fees may apply</string>
+    <string name="primer_components_surcharge_fee">Surcharge fee</string>
+
 </resources>

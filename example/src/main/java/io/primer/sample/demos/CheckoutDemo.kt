@@ -13,11 +13,11 @@ sealed class CheckoutDemo(
 
         fun CheckoutDemo.getBackground(): Color =
             when (customizationLevel) {
-                1 -> Color(0xFF8BC34A) // Light Green
-                2 -> Color(0xFFFFEB3B) // Light Blue
-                3 -> Color(0xFFFFC107) // Light Orange
-                4 -> Color(0xFFFF9800) // Light Purple
-                5 -> Color(0xFFFF5722) // Light Red
+                1 -> Color(0xFF8BC34A)
+                2 -> Color(0xFFFFEB3B)
+                3 -> Color(0xFFFFC107)
+                4 -> Color(0xFFFF9800)
+                5 -> Color(0xFFFF5722)
                 else -> Color.Black
             }
     }

@@ -25,7 +25,9 @@ class ComponentsCheckoutFragment : Fragment() {
         return ComposeView(requireContext()).apply {
             setContent {
                 val clientToken by viewModel.clientToken.observeAsState()
-                CheckoutComponentsSelection(clientToken)
+                CheckoutComponentsSelection(clientToken) {
+                    requireActivity().onBackPressedDispatcher.onBackPressed()
+                }
             }
         }
     }

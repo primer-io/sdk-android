@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -17,7 +16,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import io.primer.android.components.R
 import io.primer.android.internal.presentation.checkout.components.CheckoutAppBar
-import io.primer.android.internal.presentation.screens.paymentMethodSelection.components.PaymentMethodSelector
+import io.primer.android.internal.presentation.screens.paymentMethodSelection.components.surcharge.paymentMethodsList
 import io.primer.android.internal.presentation.theme.LocalPrimerColorTokens
 import io.primer.android.internal.presentation.theme.LocalPrimerSizeTokens
 import io.primer.android.internal.presentation.theme.LocalPrimerSpacingTokens
@@ -67,15 +66,11 @@ private fun PrimerPaymentMethodSelectionScope.Ready() {
                 )
             }
 
-            items(state.paymentMethods) { primerMethod ->
-                PaymentMethodSelector(
-                    primerMethod = primerMethod,
-                    onPaymentMethodSelected = ::onPaymentMethodSelected,
-                )
-            }
+            paymentMethodsList(state.paymentMethods, this@Ready)
         }
     }
 }
+
 
 // TODO missing design
 @Composable

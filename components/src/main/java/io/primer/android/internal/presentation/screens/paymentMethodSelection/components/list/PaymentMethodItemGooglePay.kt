@@ -1,4 +1,4 @@
-package io.primer.android.internal.presentation.screens.paymentMethodSelection.components
+package io.primer.android.internal.presentation.screens.paymentMethodSelection.components.list
 
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable

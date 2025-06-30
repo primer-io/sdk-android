@@ -16,6 +16,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -26,6 +27,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import io.primer.android.PrimerCheckout
 import io.primer.android.core.ExperimentalPrimerApi
+import io.primer.android.scope.PrimerCheckoutScope
 import io.primer.sample.demos.ButtonedInputFieldsDemo
 import io.primer.sample.demos.CheckoutDemo
 import io.primer.sample.demos.CheckoutDemo.Companion.getBackground
@@ -41,8 +43,19 @@ import io.primer.sample.demos.SubmitOverrideDemo
 
 @OptIn(ExperimentalPrimerApi::class)
 @Composable
-fun CheckoutComponentsSelection(clientToken: String?) {
+fun CheckoutComponentsSelection(clientToken: String?, onBackPress: () -> Unit) {
     var selectedDemo by remember { mutableStateOf<CheckoutDemo?>(null) }
+    var checkoutScope by remember { mutableStateOf<PrimerCheckoutScope?>(null) }
+
+    checkoutScope?.let { scope ->
+        LaunchedEffect(scope) {
+            scope.state.collect { state ->
+                if (state is PrimerCheckoutScope.State.Dismissed) {
+                    onBackPress()
+                }
+            }
+        }
+    }
 
     when (val current = selectedDemo) {
         null -> DemoSelectionGrid(
@@ -53,7 +66,10 @@ fun CheckoutComponentsSelection(clientToken: String?) {
             clientToken?.let {
                 PrimerCheckout(
                     clientToken = it,
-                    scope = current.render
+                    scope = { scope ->
+                        checkoutScope = scope
+                        current.render(scope)
+                    }
                 )
             }
         }

@@ -1,4 +1,4 @@
-package io.primer.android.internal.presentation.screens.paymentMethodSelection.components
+package io.primer.android.internal.presentation.screens.paymentMethodSelection.components.list
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box

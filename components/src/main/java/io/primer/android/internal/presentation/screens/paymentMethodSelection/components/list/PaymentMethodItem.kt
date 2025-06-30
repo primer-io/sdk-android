@@ -1,4 +1,4 @@
-package io.primer.android.internal.presentation.screens.paymentMethodSelection.components
+package io.primer.android.internal.presentation.screens.paymentMethodSelection.components.list
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -14,18 +14,15 @@ import io.primer.android.scope.PrimerPaymentMethodSelectionScope
 
 @Composable
 internal fun PrimerPaymentMethodSelectionScope.PaymentMethodSelector(
-    primerMethod: PrimerComposablePaymentMethod,
-    onPaymentMethodSelected: (String) -> Unit,
+    primerMethod: PrimerComposablePaymentMethod
 ) {
     when (safeValueOf(primerMethod.paymentMethodType)) {
-        PaymentMethodType.PAYMENT_CARD -> paymentMethodCard(Modifier)
+        PaymentMethodType.PAYMENT_CARD -> PaymentMethodItemCard()
         PaymentMethodType.ADYEN_IDEAL -> PaymentMethodItemIdeal()
         PaymentMethodType.GOOGLE_PAY -> PaymentMethodItemGooglePay()
         PaymentMethodType.KLARNA -> PaymentMethodItemKlarna()
         PaymentMethodType.PAYPAL -> PaymentMethodItemPaypal()
-        else -> {
-            PaymentMethodItemComingSoon { }
-        }
+        else -> { PaymentMethodItemComingSoon { } }
     }
 }
 
