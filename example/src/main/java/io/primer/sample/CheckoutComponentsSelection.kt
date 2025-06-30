@@ -5,15 +5,13 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Card
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.ListItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -21,7 +19,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
@@ -83,55 +80,37 @@ private fun DemoSelectionGrid(
     val demos = remember { getAllDemos() }
 
     LazyVerticalGrid(
-        columns = GridCells.Adaptive(minSize = 320.dp)
+        columns = GridCells.Adaptive(minSize = 320.dp),
+
     ) {
-        items(demos) {
-            DemoCard(
-                demo = it,
-                onClick = { onDemoSelected(it) }
+
+        items(demos) { demo ->
+            ListItem(
+                modifier = Modifier.clickable { onDemoSelected(demo) },
+                headlineContent = { Text(text = demo.title) },
+                leadingContent = { Text(text = "${demo.customizationLevel}/5") },
+                trailingContent = { CustomizationIndicator(demo = demo) },
+                supportingContent = { Text(text = demo.description) }
             )
-        }
-    }
-}
 
-@Composable
-private fun DemoCard(
-    demo: CheckoutDemo,
-    onClick: () -> Unit
-) {
-
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp)
-            .clickable { onClick() },
-    ) {
-        Column(
-            modifier = Modifier
-                .padding(8.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            Text(text = demo.title)
-            CustomizationIndicator(demo = demo)
+            HorizontalDivider()
         }
     }
 }
 
 @Composable
 private fun CustomizationIndicator(demo: CheckoutDemo) {
-    Row(
-        horizontalArrangement = Arrangement.spacedBy(2.dp),
-        verticalAlignment = Alignment.CenterVertically
+    Column(
+        verticalArrangement = Arrangement.spacedBy(2.dp),
     ) {
-        Text(text = "Customization Level:")
-        repeat(5) { index ->
+        (4 downTo 0).forEach { index ->
             Box(
                 modifier = Modifier
-                    .size(width = 30.dp, height = 12.dp)
+                    .size(width = 32.dp, height = 8.dp)
                     .clip(RoundedCornerShape(2.dp))
                     .background(
                         if (index < demo.customizationLevel) demo.getBackground()
-                        else demo.getBackground().copy(alpha = 0.5f)
+                        else demo.getBackground().copy(alpha = 0.3f)
                     )
             )
         }

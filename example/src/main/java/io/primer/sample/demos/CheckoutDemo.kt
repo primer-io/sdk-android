@@ -13,7 +13,7 @@ sealed class CheckoutDemo(
 
         fun CheckoutDemo.getBackground(): Color =
             when (customizationLevel) {
-                1 -> Color(0xFF8BC34A)
+                0, 1 -> Color(0xFF8BC34A)
                 2 -> Color(0xFFFFEB3B)
                 3 -> Color(0xFFFFC107)
                 4 -> Color(0xFFFF9800)
