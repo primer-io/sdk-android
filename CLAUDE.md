@@ -300,18 +300,37 @@ Claude Code has access to Jira via MCP (Model Context Protocol) integration with
 
 #### Creating Tickets from Planning Documents
 ```kotlin
-// Example: Create ticket from planning document
+// Example: Create ticket from planning document with all fields
 mcp__atlassian__createJiraIssue(
     cloudId = "fede99c7-8c04-47a5-bda6-cefae2e9b1b9",
     projectKey = "ACC",
     issueTypeName = "Task",
     summary = "[Android SDK] Feature Implementation",
-    description = "Structured description with acceptance criteria",
+    description = "Structured description with context and files to modify",
     assignee_account_id = "712020:f0d41e97-a9b5-4beb-955c-ff1649fcea27",
     additional_fields = {
         "components": [{"name": "Checkout Android SDK"}],
-        "customfield_10517": {"value": "Experience"}
+        "customfield_10517": {"value": "Experience"},
+        "customfield_10014": "ACC-4906",  // Epic link
+        "customfield_10034": 8,  // Story points
+        "customfield_10079": {  // Acceptance criteria
+            "type": "doc",
+            "version": 1,
+            "content": [{
+                "type": "bulletList",
+                "content": [
+                    {"type": "listItem", "content": [{"type": "paragraph", "content": [{"type": "text", "text": "First acceptance criterion"}]}]},
+                    {"type": "listItem", "content": [{"type": "paragraph", "content": [{"type": "text", "text": "Second acceptance criterion"}]}]}
+                ]
+            }]
+        }
     }
+)
+
+// Then add to sprint
+mcp__atlassian__editJiraIssue(
+    issueIdOrKey = "ACC-XXXX",
+    fields = {"customfield_10020": 1877}  // Sprint ID
 )
 ```
 
@@ -320,6 +339,15 @@ mcp__atlassian__createJiraIssue(
 - **Acceptance Team**: Required custom field (customfield_10517)
   - Common values: "Experience", "Platform", "Security"
 - **Assignee**: Use account ID format for assignment
+
+#### Complete Field Mapping
+- **Story Points**: `customfield_10034` (integer value)
+- **Acceptance Criteria**: `customfield_10079` (structured document with bullet list format)
+- **Epic Link**: `customfield_10014` (string with epic key, e.g., "ACC-4906")
+- **Sprint**: `customfield_10020` (integer with sprint ID)
+- **Components**: `components` (array with name objects: `[{"name": "Checkout Android SDK"}]`)
+- **Acceptance Team**: `customfield_10517` (object with value: `{"value": "Experience"}`)
+- **Assignee**: `assignee_account_id` (string with account ID format)
 
 #### Sprint Assignment
 ```kotlin
