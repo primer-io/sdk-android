@@ -351,6 +351,13 @@ mcp__atlassian__editJiraIssue(
 
 #### Sprint Assignment
 ```kotlin
+// Get current active sprint
+mcp__atlassian__searchJiraIssuesUsingJql(
+    jql = "project = ACC AND sprint in openSprints() ORDER BY updated DESC",
+    maxResults = 1,
+    fields = ["customfield_10020"]
+)
+
 // Add ticket to active sprint
 mcp__atlassian__editJiraIssue(
     issueIdOrKey = "ACC-XXXX",
