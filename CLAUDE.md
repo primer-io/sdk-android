@@ -277,3 +277,137 @@ PrimerSettings.httpConfig = PrimerHttpConfig.builder()
     .retryPolicy(customRetryPolicy)
     .build()
 ```
+
+## Jira MCP Integration
+
+### Overview
+Claude Code has access to Jira via MCP (Model Context Protocol) integration with full read/write capabilities for project management automation.
+
+### Available Capabilities
+- **Project & Issue Management**: List projects, search issues, get detailed issue information
+- **Issue Operations**: Create, edit, update, transition, and link issues
+- **Sprint Management**: Add issues to sprints, view sprint information
+- **Advanced Search**: Use JQL (Jira Query Language) for complex queries
+- **Comments & Collaboration**: Add comments, view discussions
+
+### Connection Details
+- **Atlassian Cloud**: primerapi.atlassian.net
+- **User**: Darius Partene (darius@primer.io)
+- **Projects**: 17 accessible projects including ACC (Acceptance)
+- **Permissions**: Full read/write access with create capabilities
+
+### Common Usage Patterns
+
+#### Creating Tickets from Planning Documents
+```kotlin
+// Example: Create ticket from planning document
+mcp__atlassian__createJiraIssue(
+    cloudId = "fede99c7-8c04-47a5-bda6-cefae2e9b1b9",
+    projectKey = "ACC",
+    issueTypeName = "Task",
+    summary = "[Android SDK] Feature Implementation",
+    description = "Structured description with acceptance criteria",
+    assignee_account_id = "712020:f0d41e97-a9b5-4beb-955c-ff1649fcea27",
+    additional_fields = {
+        "components": [{"name": "Checkout Android SDK"}],
+        "customfield_10517": {"value": "Experience"}
+    }
+)
+```
+
+#### Required Fields for ACC Project
+- **Components**: Must specify component (e.g., "Checkout Android SDK")
+- **Acceptance Team**: Required custom field (customfield_10517)
+  - Common values: "Experience", "Platform", "Security"
+- **Assignee**: Use account ID format for assignment
+
+#### Sprint Assignment
+```kotlin
+// Add ticket to active sprint
+mcp__atlassian__editJiraIssue(
+    issueIdOrKey = "ACC-XXXX",
+    fields = {
+        "customfield_10020": 1877  // Sprint ID - simple number format
+    }
+)
+```
+
+#### Searching Issues
+```kotlin
+// Search using JQL
+mcp__atlassian__searchJiraIssuesUsingJql(
+    jql = "project = ACC AND (summary ~ android OR description ~ android) ORDER BY updated DESC",
+    maxResults = 10
+)
+```
+
+### Board Integration
+- **Team Expérience Board**: https://primerapi.atlassian.net/jira/software/c/projects/ACC/boards/469
+- **Active Sprint**: "Exp Sprint 1" (ID: 1877)
+- **Sprint Assignment**: Use customfield_10020 with sprint ID as integer
+
+### Ticket Template (Based on ACC-5686)
+```markdown
+**Epic**: [Epic Name]
+**Story Points**: [Number]
+**Priority**: [High/Medium/Low]
+**Time Estimate**: [X weeks traditional → Y weeks with Claude Code]
+
+## Description
+[Clear description of the work]
+
+## Acceptance Criteria
+- [ ] Criterion 1
+- [ ] Criterion 2
+- [ ] Criterion 3
+
+## Current Status
+[Current state/baseline]
+
+## Files to Modify
+- `/path/to/file1.kt`
+- `/path/to/file2.kt`
+
+## Related
+[References to planning documents, other tickets, etc.]
+
+🤖 Created automatically from planning document via Jira MCP integration.
+```
+
+### Common JQL Queries for Android SDK
+```sql
+-- Find Android-related tickets
+project = ACC AND (summary ~ android OR description ~ android OR components = "Checkout Android SDK")
+
+-- Find tickets in current sprint
+project = ACC AND sprint in openSprints()
+
+-- Find my assigned tickets
+project = ACC AND assignee = currentUser()
+
+-- Find tickets by component
+project = ACC AND component = "Checkout Android SDK"
+
+-- Find tickets by acceptance team
+project = ACC AND "Acceptance Team" = "Experience"
+```
+
+### Integration Workflows
+1. **Planning → Tickets**: Auto-create structured tickets from planning documents
+2. **Code → Updates**: Link commits to tickets for progress tracking
+3. **Sprint Management**: Programmatically manage sprint assignments
+4. **Cross-Platform Sync**: Coordinate Android/iOS ticket dependencies
+5. **Reporting**: Generate project insights from ticket data
+
+### Error Handling
+- **Bad Request**: Usually missing required fields (components, acceptance team)
+- **Sprint Assignment**: Use simple integer format for sprint ID
+- **Field Validation**: Check required fields via getJiraProjectIssueTypesMetadata
+
+### Best Practices
+- Always include structured acceptance criteria
+- Reference planning documents in ticket descriptions
+- Use consistent tagging (e.g., "[Android SDK]" prefix)
+- Include file paths for development context
+- Add time estimates for planning accuracy
+- Use the 🤖 marker for automated ticket creation
