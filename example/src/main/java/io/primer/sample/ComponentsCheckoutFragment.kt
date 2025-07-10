@@ -9,12 +9,14 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import io.primer.android.core.ExperimentalPrimerApi
 import io.primer.sample.viewmodels.MainViewModel
 
 class ComponentsCheckoutFragment : Fragment() {
 
     private val viewModel: MainViewModel by activityViewModels()
 
+    @OptIn(ExperimentalPrimerApi::class)
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?

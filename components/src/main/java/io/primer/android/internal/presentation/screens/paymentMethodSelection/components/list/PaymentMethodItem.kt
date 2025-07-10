@@ -17,7 +17,7 @@ internal fun PrimerPaymentMethodSelectionScope.PaymentMethodSelector(
     primerMethod: PrimerComposablePaymentMethod
 ) {
     when (safeValueOf(primerMethod.paymentMethodType)) {
-        PaymentMethodType.PAYMENT_CARD -> PaymentMethodItemCard()
+        PaymentMethodType.PAYMENT_CARD -> paymentMethodCard(Modifier)
         PaymentMethodType.ADYEN_IDEAL -> PaymentMethodItemIdeal()
         PaymentMethodType.GOOGLE_PAY -> PaymentMethodItemGooglePay()
         PaymentMethodType.KLARNA -> PaymentMethodItemKlarna()
@@ -27,7 +27,7 @@ internal fun PrimerPaymentMethodSelectionScope.PaymentMethodSelector(
 }
 
 @Composable
-internal fun PrimerPaymentMethodSelectionScope.PaymentMethodItem(
+internal fun PaymentMethodItem(
     modifier: Modifier = Modifier,
     borderColor: Color? = null,
     borderRadius: Dp = LocalPrimerRadiusTokens.current.medium,
