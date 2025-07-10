@@ -15,10 +15,13 @@
 
 <br/>
 
-[![Maven Central](https://img.shields.io/maven-central/v/io.primer/android.svg?label=Maven%20Central)](https://search.maven.org/search?q=g:%22io.primer%22%20AND%20a:%22android%22) [![CircleCI](https://circleci.com/gh/primer-io/primer-sdk-android.svg?style=svg&circle-token=fdbf8380fcad091297915de921787f7297946cd3)](https://app.circleci.com/pipelines/github/primer-io/primer-sdk-android)
+<p align="center">
+  <a href="https://android-arsenal.com/api?level=24"><img alt="API" src="https://img.shields.io/badge/API-21%2B-brightgreen.svg?style=flat"/></a>
+  <a href="https://search.maven.org/search?q=g:%22io.primer%22%20AND%20a:%22android%22"><img src="https://img.shields.io/maven-central/v/io.primer/android"/></a>
+  <a href="LICENSE.md"><img src="https://img.shields.io/github/license/primer-io/sdk-android"/></a>
+</p>
 
 <br/>
-
 # 💪 Features of the Android SDK
 
 <p>💳 &nbsp; Create great payment experiences with our highly customizable Universal Checkout</p>
@@ -58,8 +61,8 @@ Take a look at our [Quick Start Guide](https://primer.io/docs/get-started/androi
 
 Add the following to your `app/build.gradle` file:
 
-Using [bill of materials (BOM)][https://docs.gradle.org/6.2/userguide/platforms.html#sub:bom_import] available 
-to help you keep Primer artifacts up to date and be sure about version compatibility.
+Using [bill of materials (BOM)](https://docs.gradle.org/6.2/userguide/platforms.html#sub:bom_import)
+available to help you keep Primer artifacts up to date and be sure about version compatibility.
 
 ```kotlin{:copy}
 repositories {
@@ -158,9 +161,15 @@ The payment’s data will be returned on `onCheckoutCompleted(checkoutData)`.
 
 To run the example, simply press the play button from Android Studio to launch on a virtual device.
 
-## Debugging
-Logcat has a habit of misbehaving, so you might need to attach the debugger and set breakpoints to find out what's really going on.
+# ProGuard
+
+If you use ProGuard or R8, you do not need to manually add any rules, as they are automatically embedded in the artifacts.
+Please let us know if you find any issues.
 
 # Contributing guidelines:
 
-[Contributing doc](Contributing.md)
+[Contributing doc](CONTRIBUTING.md)
+
+# License
+
+This repository is available under the [BSD-3](LICENSE.md).
