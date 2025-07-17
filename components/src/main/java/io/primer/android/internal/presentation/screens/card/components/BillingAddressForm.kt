@@ -1,9 +1,11 @@
 package io.primer.android.internal.presentation.screens.card.components
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -19,33 +21,33 @@ internal fun PrimerCardFormScope.BillingAddressForm(
     val billingInputFields = state.billingFields
     if (billingInputFields.isEmpty()) return
 
-    val spacing = LocalPrimerSpacingTokens.current
+    val spacingSmall = LocalPrimerSpacingTokens.current.small
 
     Column(
         modifier = modifier.fillMaxWidth(),
     ) {
         countryCodeInput(Modifier.fillMaxWidth())
-
+        Spacer(modifier = Modifier.height(spacingSmall))
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(spacing.large),
         ) {
             firstNameInput(Modifier.weight(1f))
+            Spacer(modifier = Modifier.width(spacingSmall))
             lastNameInput(Modifier.weight(1f))
         }
-
+        Spacer(modifier = Modifier.height(spacingSmall))
         addressLine1Input(Modifier.fillMaxWidth())
-
+        Spacer(modifier = Modifier.height(spacingSmall))
         addressLine2Input(Modifier.fillMaxWidth())
-
+        Spacer(modifier = Modifier.height(spacingSmall))
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(spacing.large),
         ) {
             postalCodeInput(Modifier.weight(1f))
+            Spacer(modifier = Modifier.width(spacingSmall))
             cityInput(Modifier.weight(1f))
         }
-
+        Spacer(modifier = Modifier.height(spacingSmall))
         stateInput(Modifier.fillMaxWidth())
     }
 }

@@ -1,19 +1,16 @@
 package io.primer.android.internal.presentation.scope
 
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import io.primer.android.core.di.DISdkComponent
 import io.primer.android.core.di.extensions.resolve
 import io.primer.android.internal.presentation.checkout.CheckoutNavigator
-import io.primer.android.internal.presentation.screens.error.DefaultErrorScreen
-import io.primer.android.internal.presentation.screens.loading.DefaultLoadingScreen
-import io.primer.android.internal.presentation.screens.splash.DefaultSplashScreen
-import io.primer.android.internal.presentation.screens.success.DefaultSuccessScreen
-import io.primer.android.internal.presentation.theme.LocalPrimerColorTokens
+import io.primer.android.internal.presentation.checkout.components.CheckoutBottomSheet
+import io.primer.android.internal.presentation.checkout.components.DefaultErrorScreen
+import io.primer.android.internal.presentation.checkout.components.DefaultLoadingScreen
+import io.primer.android.internal.presentation.checkout.components.DefaultSplashScreen
+import io.primer.android.internal.presentation.checkout.components.DefaultSuccessScreen
 import io.primer.android.scope.PrimerCardFormScope
 import io.primer.android.scope.PrimerCheckoutScope
 import io.primer.android.scope.PrimerPaymentMethodSelectionScope
@@ -25,16 +22,10 @@ internal abstract class DefaultCheckoutScope : ViewModel(), PrimerCheckoutScope,
     override val cardForm: PrimerCardFormScope by lazy { resolve() }
     override val paymentMethodSelection: PrimerPaymentMethodSelectionScope by lazy { resolve() }
 
-    @OptIn(ExperimentalMaterial3Api::class)
     override var container: @Composable (content: @Composable () -> Unit) -> Unit = { content ->
-        ModalBottomSheet(
-            sheetState = rememberModalBottomSheetState(
-                skipPartiallyExpanded = true,
-            ),
-            onDismissRequest = ::onDismiss,
-            dragHandle = {},
-            containerColor = LocalPrimerColorTokens.current.primerColorBackground,
-            content = { content() },
+        CheckoutBottomSheet(
+            onDismiss = ::onDismiss,
+            content = content
         )
     }
 

@@ -27,7 +27,7 @@ internal fun PrimerCheckoutScope.CheckoutNavHost(
         CheckoutNavigator {
             NavHost(
                 navController = LocalNavController.current,
-                startDestination = Screen.PaymentsList.route,
+                startDestination = Screen.Splash.route,
                 modifier = modifier.fillMaxWidth(),
             ) {
                 composable(Screen.Splash.route) {

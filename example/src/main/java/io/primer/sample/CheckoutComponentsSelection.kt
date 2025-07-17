@@ -24,6 +24,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import io.primer.android.PrimerCheckout
 import io.primer.android.core.ExperimentalPrimerApi
+import io.primer.android.data.settings.PrimerDebugOptions
+import io.primer.android.data.settings.PrimerSettings
 import io.primer.android.scope.PrimerCheckoutScope
 import io.primer.sample.demos.ButtonedInputFieldsDemo
 import io.primer.sample.demos.CheckoutDemo
@@ -63,6 +65,10 @@ fun CheckoutComponentsSelection(clientToken: String?, onBackPress: () -> Unit) {
             clientToken?.let {
                 PrimerCheckout(
                     clientToken = it,
+                    primerSettings = PrimerSettings(
+                        debugOptions =
+                            PrimerDebugOptions(false)
+                    ),
                     scope = { scope ->
                         checkoutScope = scope
                         current.render(scope)

@@ -23,6 +23,7 @@ import io.primer.android.components.domain.inputs.models.PrimerInputElementType
 import io.primer.android.internal.presentation.components.PrimerInput
 import io.primer.android.internal.presentation.screens.card.components.input.transformations.CardNumberVisualTransformation
 import io.primer.android.internal.presentation.screens.card.components.input.transformations.ExpiryDateVisualTransformation
+import io.primer.android.internal.presentation.theme.LocalPrimerColorTokens
 import io.primer.android.scope.PrimerCardFormScope
 import io.primer.android.ui.core.model.SyncValidationError
 import io.primer.cardShared.CardNumberFormatter
@@ -324,6 +325,8 @@ internal fun PrimerCardFormScope.CountryCodeInput(modifier: Modifier = Modifier)
             ) { navigateToCountrySelection() },
         error = resolveErrorMessage(error),
         colors = OutlinedTextFieldDefaults.colors(
+            focusedBorderColor = LocalPrimerColorTokens.current.primerColorBorderOutlinedFocus,
+            unfocusedBorderColor = LocalPrimerColorTokens.current.primerColorBorderOutlinedDefault,
             disabledTextColor = MaterialTheme.colorScheme.onSurface,
             disabledBorderColor = MaterialTheme.colorScheme.outline,
             disabledLabelColor = MaterialTheme.colorScheme.onSurfaceVariant,

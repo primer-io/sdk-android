@@ -1,4 +1,4 @@
-package io.primer.android.internal.presentation.screens.error
+package io.primer.android.internal.presentation.checkout.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

@@ -9,16 +9,18 @@ import io.primer.android.internal.data.repositories.HeadlessRepositoryImpl
 import io.primer.android.internal.data.repositories.RawDataManagerRepositoryImpl
 import io.primer.android.internal.domain.repositories.HeadlessRepository
 import io.primer.android.internal.domain.repositories.RawDataManagerRepository
+import io.primer.android.internal.domain.usecase.AvailablePaymentMethodsUseCase
 import io.primer.android.internal.domain.usecase.CardFieldsUseCase
 import io.primer.android.internal.domain.usecase.CardNetworkUseCase
-import io.primer.android.internal.domain.usecase.GetAvailablePaymentMethodsUseCase
 import io.primer.android.internal.domain.usecase.InitCardManagerUseCase
 import io.primer.android.internal.domain.usecase.SubmitCardPaymentUseCase
 import io.primer.android.internal.presentation.checkout.CheckoutNavigator
+import io.primer.android.internal.presentation.checkout.CheckoutViewModel
 import io.primer.android.internal.presentation.screens.card.CardFormViewModel
 import io.primer.android.internal.presentation.screens.country.SelectCountryViewModel
 import io.primer.android.internal.presentation.screens.paymentMethodSelection.PaymentMethodSelectionViewModel
 import io.primer.android.scope.PrimerCardFormScope
+import io.primer.android.scope.PrimerCheckoutScope
 import io.primer.android.scope.PrimerPaymentMethodSelectionScope
 import io.primer.android.scope.PrimerSelectCountryScope
 import io.primer.android.ui.core.configuration.domain.model.BasicOrderInfoInteractor
@@ -53,7 +55,7 @@ internal class ComponentsContainer(
         }
 
         registerSingleton {
-            GetAvailablePaymentMethodsUseCase()
+            AvailablePaymentMethodsUseCase()
         }
 
         registerSingleton {
@@ -78,6 +80,10 @@ internal class ComponentsContainer(
 
         registerSingleton {
             CountriesDataRepository(sdk().resolve())
+        }
+
+        registerSingleton<PrimerCheckoutScope> {
+            CheckoutViewModel()
         }
 
         registerSingleton<PrimerCardFormScope> {

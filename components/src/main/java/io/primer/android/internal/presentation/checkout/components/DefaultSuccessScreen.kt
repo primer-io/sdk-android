@@ -1,4 +1,4 @@
-package io.primer.android.internal.presentation.screens.success
+package io.primer.android.internal.presentation.checkout.components
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer

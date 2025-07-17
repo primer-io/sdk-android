@@ -48,6 +48,8 @@
     <string name="primer_components_card_form_placeholder_search_countries">Search countries…</string>
     
     <!-- Error Messages -->
+    <string name="primer_components_checkout_splash_title">Loading your secure checkout</string>
+    <string name="primer_checkout_splash_subtitle">This won’t take long</string>
     <string name="primer_components_checkout_failed_title">Payment failed</string>
     <string name="primer_components_checkout_failed_description">There was a network issue.</string>
     <string name="primer_components_payment_methods_error">Error loading payment methods</string>

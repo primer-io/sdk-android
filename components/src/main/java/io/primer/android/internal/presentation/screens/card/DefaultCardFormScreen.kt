@@ -10,8 +10,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import io.primer.android.components.R
 import io.primer.android.internal.presentation.checkout.components.CheckoutAppBar
-import io.primer.android.internal.presentation.screens.card.components.BillingAddressForm
-import io.primer.android.internal.presentation.screens.card.components.CardDetailsForm
 import io.primer.android.internal.presentation.theme.LocalPrimerSpacingTokens
 import io.primer.android.scope.PrimerCardFormScope
 
@@ -29,8 +27,8 @@ internal fun PrimerCardFormScope.DefaultCardFormScreen() {
             modifier = Modifier
                 .padding(horizontal = LocalPrimerSpacingTokens.current.large),
         ) {
-            CardDetailsForm()
-            BillingAddressForm()
+            cardDetails(Modifier)
+            billingAddress(Modifier)
             Spacer(modifier = Modifier.height(LocalPrimerSpacingTokens.current.xsmall))
             submitButton(Modifier, stringResource(R.string.primer_components_card_form_pay))
         }

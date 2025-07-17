@@ -35,27 +35,15 @@ interface PrimerPaymentMethodSelectionScope {
      */
     sealed interface State {
         /**
-         * Loading state while payment methods are being fetched and prepared.
-         */
-        data object Loading : State
-
-        /**
          * Ready state with available payment methods and order information.
          *
          * @param paymentMethods List of available payment methods for selection
          * @param orderInfo Basic order information including amount and currency
          */
         data class Ready(
-            val paymentMethods: List<PrimerComposablePaymentMethod>,
-            val orderInfo: BasicOrderInfo,
+            val paymentMethods: List<PrimerComposablePaymentMethod> = listOf(),
+            val orderInfo: BasicOrderInfo = BasicOrderInfo(0, ""),
         ) : State
-
-        /**
-         * Error state when payment method loading or selection fails.
-         *
-         * @param exception The throwable that caused the error state
-         */
-        data class Error(val exception: Throwable) : State
     }
 
     /**

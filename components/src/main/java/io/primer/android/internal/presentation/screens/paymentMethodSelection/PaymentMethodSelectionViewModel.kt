@@ -4,7 +4,7 @@ import androidx.lifecycle.viewModelScope
 import io.primer.android.core.di.DISdkComponent
 import io.primer.android.core.di.extensions.resolve
 import io.primer.android.core.domain.None
-import io.primer.android.internal.domain.usecase.GetAvailablePaymentMethodsUseCase
+import io.primer.android.internal.domain.usecase.AvailablePaymentMethodsUseCase
 import io.primer.android.internal.presentation.checkout.CheckoutNavigator
 import io.primer.android.internal.presentation.checkout.Screen
 import io.primer.android.internal.presentation.scope.DefaultPaymentMethodSelectionScope
@@ -18,28 +18,24 @@ import kotlinx.coroutines.launch
 
 internal class PaymentMethodSelectionViewModel : DefaultPaymentMethodSelectionScope(), DISdkComponent {
 
-    private val getAvailablePaymentMethodsUseCase: GetAvailablePaymentMethodsUseCase by lazy { resolve() }
     private val basicOrderInfoInteractor: BasicOrderInfoInteractor by lazy { resolve() }
     private val checkoutNavigator: CheckoutNavigator by lazy { resolve() }
+    private val availablePaymentMethodsUseCase: AvailablePaymentMethodsUseCase by lazy { resolve() }
 
     private val _uiState =
-        MutableStateFlow<PrimerPaymentMethodSelectionScope.State>(PrimerPaymentMethodSelectionScope.State.Loading)
+        MutableStateFlow<PrimerPaymentMethodSelectionScope.State>(PrimerPaymentMethodSelectionScope.State.Ready())
     override val state: StateFlow<PrimerPaymentMethodSelectionScope.State> = _uiState.asStateFlow()
 
-    init { loadPaymentMethods() }
+    init {
+        loadPaymentMethods()
+    }
 
     private fun loadPaymentMethods() {
-        viewModelScope.launch {
-            getAvailablePaymentMethodsUseCase().fold(
-                onSuccess = { methods ->
-                    val orderInfo = basicOrderInfoInteractor(None)
-                    _uiState.value = PrimerPaymentMethodSelectionScope.State.Ready(methods, orderInfo)
-                },
-                onFailure = { error ->
-                    _uiState.value = PrimerPaymentMethodSelectionScope.State.Error(error)
-                },
-            )
-        }
+        val orderInfo = basicOrderInfoInteractor(None)
+        _uiState.value = PrimerPaymentMethodSelectionScope.State.Ready(
+            availablePaymentMethodsUseCase.cache,
+            orderInfo
+        )
     }
 
     override fun onPaymentMethodSelected(paymentMethod: String) {
