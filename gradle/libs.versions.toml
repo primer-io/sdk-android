@@ -85,7 +85,7 @@ arch-core = { group = "androidx.arch.core", name = "core-testing", version.ref =
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-test-ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "androidx-test-ext-junit" }
 espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espresso-core" }
-androidx-lifecycle-process = { group = "androidx.lifecycle", name = "lifecycle-process", version = "2.8.7" }
+androidx-lifecycle-process = { group = "androidx.lifecycle", name = "lifecycle-process", version = "2.9.2" }
 androidx-activity-ktx = { group = "androidx.activity", name = "activity-ktx", version.ref = "activityKtx" }
 androidx-browser = { module = "androidx.browser:browser", version.ref = "browser" }
 
