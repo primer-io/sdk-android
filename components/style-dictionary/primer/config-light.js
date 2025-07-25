@@ -15,7 +15,7 @@ export default {
   platforms: {
     android: {
       transformGroup: 'primer-android-compose',
-      buildPath: '../src/main/java/io/primer/composable/internal/tokens/',
+      buildPath: '../src/main/java/io/primer/android/internal/tokens/',
       files: [
         lightColorsConfig,
         radiusConfig,

@@ -9,7 +9,7 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.navigation.fragment.findNavController
+import androidx.navigation.findNavController
 import io.primer.android.core.ExperimentalPrimerApi
 import io.primer.sample.viewmodels.MainViewModel
 

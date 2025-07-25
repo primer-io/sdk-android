@@ -10,7 +10,7 @@ StyleDictionary.registerFormat({
 
     return `@file:Suppress("ALL")
 
-package io.primer.composable.internal.tokens
+package io.primer.android.internal.tokens
 
 // Auto-generated file. Do not modify!
 

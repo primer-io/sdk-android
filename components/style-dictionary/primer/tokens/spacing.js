@@ -5,7 +5,7 @@ StyleDictionary.registerFormat({
   name: 'primer/android/compose/spacing',
   format: ({ dictionary }) =>
     generateKotlinDataClass(
-      'io.primer.composable.internal.tokens',
+      'io.primer.android.internal.tokens',
       'import androidx.compose.ui.unit.Dp\nimport androidx.compose.ui.unit.dp',
       'SpacingTokens',
       processDpTokens(dictionary, token => token.path[1] === 'space', 'primer.space.base')

@@ -8,7 +8,7 @@ import androidx.compose.ui.text.ExperimentalTextApi
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.font.FontVariation
 import androidx.compose.ui.unit.sp
 import io.primer.android.components.R
 
@@ -59,19 +59,23 @@ data class TypographyStyle(
 ) {
     fun toTextStyle(): TextStyle {
         return TextStyle(
-            fontFamily = getFontFamily(font),
+            fontFamily = getFontFamily(font, weight),
             fontSize = size.sp,
-            fontWeight = FontWeight(weight),
             letterSpacing = letterSpacing.sp,
             lineHeight = lineHeight.sp
         )
     }
 
     @OptIn(ExperimentalTextApi::class)
-    private fun getFontFamily(fontName: String): FontFamily {
+    private fun getFontFamily(fontName: String, weight: Int): FontFamily {
         return when (fontName.lowercase()) {
             "inter" -> FontFamily(
-                Font(R.font.inter)
+                Font(
+                    resId = R.font.inter,
+                    variationSettings = FontVariation.Settings(
+                        FontVariation.weight(weight),
+                    )
+                )
             ) // Add more fonts here if needed
             else -> FontFamily.Default
         }
