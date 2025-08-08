@@ -30,7 +30,7 @@ private const val OVERLAY_ALPHA = 0.5f
 internal fun CheckoutBottomSheet(
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier,
-    content: @Composable () -> Unit,
+    navHost: @Composable () -> Unit,
 ) {
     var isVisible by remember { mutableStateOf(false) }
     
@@ -61,7 +61,7 @@ internal fun CheckoutBottomSheet(
                 )
                 .background(LocalPrimerColorTokens.current.primerColorBackground)
         ) { 
-            content() 
+            navHost()
         }
     }
 }

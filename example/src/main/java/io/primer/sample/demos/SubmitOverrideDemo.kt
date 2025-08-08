@@ -18,9 +18,10 @@ object SubmitOverrideDemo : CheckoutDemo(
     description = "Replace submit button with a full-width floating action button with enhanced styling",
     customizationLevel = 2,
     render = {
-        cardForm.submitButton = { modifier, text ->
+
+        components.cardForm.submitButton = { modifier, text ->
             ExtendedFloatingActionButton(
-                onClick = { cardForm.onSubmit() },
+                onClick = { onSubmit() },
                 modifier = modifier
                     .fillMaxWidth(),
                 containerColor = Color(0xFF4CAF50),

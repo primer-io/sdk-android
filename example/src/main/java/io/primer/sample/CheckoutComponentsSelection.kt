@@ -36,9 +36,11 @@ import io.primer.sample.demos.CustomSuccessDemo
 import io.primer.sample.demos.DatePickerExpiryDemo
 import io.primer.sample.demos.FullscreenDemo
 import io.primer.sample.demos.HorizontalPaymentMethodsDemo
+import io.primer.sample.demos.MixedScopesDemo
 import io.primer.sample.demos.PrimerDemo
 import io.primer.sample.demos.SingleInputFieldDemo
 import io.primer.sample.demos.SubmitOverrideDemo
+import io.primer.sample.demos.ThreeTabsDemo
 
 @OptIn(ExperimentalPrimerApi::class)
 @Composable
@@ -69,9 +71,9 @@ fun CheckoutComponentsSelection(clientToken: String?, onBackPress: () -> Unit) {
                         debugOptions =
                             PrimerDebugOptions(false)
                     ),
-                    scope = { scope ->
-                        checkoutScope = scope
-                        current.render(scope)
+                    scope = {
+                        checkoutScope = this
+                        current.render(this)
                     }
                 )
             }
@@ -132,7 +134,9 @@ private fun getAllDemos(): List<CheckoutDemo> = listOf(
     SubmitOverrideDemo,
     HorizontalPaymentMethodsDemo,
     DatePickerExpiryDemo,
+    MixedScopesDemo,
     CustomCardFormLayoutDemo,
     SingleInputFieldDemo,
-    ButtonedInputFieldsDemo
+    ButtonedInputFieldsDemo,
+    ThreeTabsDemo
 )

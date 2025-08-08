@@ -10,6 +10,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -22,18 +23,19 @@ import io.primer.android.internal.presentation.theme.LocalPrimerColorTokens
 import io.primer.android.internal.presentation.theme.LocalPrimerSizeTokens
 import io.primer.android.internal.presentation.theme.LocalPrimerSpacingTokens
 import io.primer.android.internal.presentation.theme.LocalPrimerTypographyTokens
+import io.primer.android.scope.PrimerCheckoutScope
+import kotlinx.coroutines.launch
 
 @Composable
-internal fun DefaultErrorScreen(
+internal fun PrimerCheckoutScope.DefaultErrorScreen(
     modifier: Modifier = Modifier,
     title: String? = null,
     message: String? = null,
-    onRetryClick: (() -> Unit)? = null,
-    onOtherPaymentMethodClick: (() -> Unit)? = null,
 ) {
     val colorTokens = LocalPrimerColorTokens.current
     val spacingTokens = LocalPrimerSpacingTokens.current
     val sizeTokens = LocalPrimerSizeTokens.current
+    val coroutineScope = rememberCoroutineScope()
 
     Column(
         modifier = modifier
@@ -71,37 +73,39 @@ internal fun DefaultErrorScreen(
 
         Spacer(modifier = Modifier.height(sizeTokens.xxxlarge))
 
-        // Retry button
-        if (onRetryClick != null) {
-            PrimerButton(
-                onClick = onRetryClick,
-                modifier = Modifier.fillMaxWidth(),
-                backgroundColor = colorTokens.primerColorBrand,
-            ) {
-                Text(
-                    text = stringResource(R.string.primer_components_checkout_retry),
-                    style = LocalPrimerTypographyTokens.current.titleLarge.toTextStyle(),
-                    color = LocalPrimerColorTokens.current.primerColorBackground,
-                )
-            }
-
-            Spacer(modifier = Modifier.height(spacingTokens.small))
+        PrimerButton(
+            onClick = {
+                coroutineScope.launch {
+                    onRetry()
+                }
+            },
+            modifier = Modifier.fillMaxWidth(),
+            backgroundColor = colorTokens.primerColorBrand,
+        ) {
+            Text(
+                text = stringResource(R.string.primer_components_checkout_retry),
+                style = LocalPrimerTypographyTokens.current.titleLarge.toTextStyle(),
+                color = LocalPrimerColorTokens.current.primerColorBackground,
+            )
         }
 
-        // Choose other payment method link
-        if (onOtherPaymentMethodClick != null) {
-            PrimerButton(
-                onClick = onOtherPaymentMethodClick,
-                modifier = Modifier.fillMaxWidth(),
-                backgroundColor = Color.Transparent,
-                borderColor = LocalPrimerColorTokens.current.primerColorBorderOutlinedDefault,
-            ) {
-                Text(
-                    text = stringResource(R.string.primer_components_checkout_other_payment_methods),
-                    style = LocalPrimerTypographyTokens.current.titleLarge.toTextStyle(),
-                    color = LocalPrimerColorTokens.current.primerColorTextPrimary,
-                )
-            }
+        Spacer(modifier = Modifier.height(spacingTokens.small))
+
+        PrimerButton(
+            onClick = {
+                coroutineScope.launch {
+                    onOtherPaymentMethods()
+                }
+            },
+            modifier = Modifier.fillMaxWidth(),
+            backgroundColor = Color.Transparent,
+            borderColor = LocalPrimerColorTokens.current.primerColorBorderOutlinedDefault,
+        ) {
+            Text(
+                text = stringResource(R.string.primer_components_checkout_other_payment_methods),
+                style = LocalPrimerTypographyTokens.current.titleLarge.toTextStyle(),
+                color = LocalPrimerColorTokens.current.primerColorTextPrimary,
+            )
         }
     }
 }

@@ -1,6 +1,10 @@
 package io.primer.android.internal.di
 
+import io.primer.android.components.PrimerCardFormComponents
+import io.primer.android.components.PrimerCheckoutComponents
 import io.primer.android.components.PrimerHeadlessUniversalCheckout
+import io.primer.android.components.PrimerPaymentMethodSelectionComponents
+import io.primer.android.components.PrimerSelectCountryComponents
 import io.primer.android.core.di.DependencyContainer
 import io.primer.android.core.di.SdkContainer
 import io.primer.android.internal.data.mappers.PaymentMethodMapper
@@ -15,14 +19,10 @@ import io.primer.android.internal.domain.usecase.CardNetworkUseCase
 import io.primer.android.internal.domain.usecase.InitCardManagerUseCase
 import io.primer.android.internal.domain.usecase.SubmitCardPaymentUseCase
 import io.primer.android.internal.presentation.checkout.CheckoutNavigator
-import io.primer.android.internal.presentation.checkout.CheckoutViewModel
-import io.primer.android.internal.presentation.screens.card.CardFormViewModel
-import io.primer.android.internal.presentation.screens.country.SelectCountryViewModel
-import io.primer.android.internal.presentation.screens.paymentMethodSelection.PaymentMethodSelectionViewModel
-import io.primer.android.scope.PrimerCardFormScope
-import io.primer.android.scope.PrimerCheckoutScope
-import io.primer.android.scope.PrimerPaymentMethodSelectionScope
-import io.primer.android.scope.PrimerSelectCountryScope
+import io.primer.android.internal.presentation.checkout.CheckoutViewModelFactory
+import io.primer.android.internal.presentation.screens.card.CardFormViewModelFactory
+import io.primer.android.internal.presentation.screens.country.SelectCountryViewModelFactory
+import io.primer.android.internal.presentation.screens.paymentMethodSelection.PaymentMethodSelectionViewModelFactory
 import io.primer.android.ui.core.configuration.domain.model.BasicOrderInfoInteractor
 import io.primer.android.ui.core.data.repository.CountriesDataRepository
 import io.primer.android.ui.core.payment.domain.interactor.SurchargeInteractor
@@ -82,20 +82,36 @@ internal class ComponentsContainer(
             CountriesDataRepository(sdk().resolve())
         }
 
-        registerSingleton<PrimerCheckoutScope> {
-            CheckoutViewModel()
+        registerFactory {
+            CheckoutViewModelFactory()
         }
 
-        registerSingleton<PrimerCardFormScope> {
-            CardFormViewModel()
+        registerSingleton {
+            PrimerCheckoutComponents()
         }
 
-        registerSingleton<PrimerPaymentMethodSelectionScope> {
-            PaymentMethodSelectionViewModel()
+        registerFactory {
+            CardFormViewModelFactory()
         }
 
-        registerSingleton<PrimerSelectCountryScope> {
-            SelectCountryViewModel()
+        registerSingleton {
+            PrimerCardFormComponents()
+        }
+
+        registerFactory {
+            PaymentMethodSelectionViewModelFactory()
+        }
+
+        registerSingleton {
+            PrimerPaymentMethodSelectionComponents()
+        }
+
+        registerFactory {
+            SelectCountryViewModelFactory()
+        }
+
+        registerSingleton {
+            PrimerSelectCountryComponents()
         }
     }
 }

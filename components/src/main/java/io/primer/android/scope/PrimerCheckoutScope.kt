@@ -1,13 +1,18 @@
 package io.primer.android.scope
 
-import androidx.compose.runtime.Composable
+import io.primer.android.components.PrimerCheckoutComponents
+import io.primer.android.core.di.DISdkComponent
+import io.primer.android.core.di.extensions.resolve
 import kotlinx.coroutines.flow.StateFlow
 
 /**
  * Defines the scope for Primer's checkout flow, providing access to state management,
  * UI customization, and nested component scopes.
  */
-interface PrimerCheckoutScope {
+interface PrimerCheckoutScope: DISdkComponent {
+
+    val components: PrimerCheckoutComponents
+        get() = resolve()
 
     /**
      * StateFlow representing the current state of the checkout process.
@@ -16,56 +21,14 @@ interface PrimerCheckoutScope {
     val state: StateFlow<State>
 
     /**
-     * Composable container that wraps the entire checkout UI.
-     * Allows customization of the checkout's root container layout.
-     *
-     * @param content The checkout content to be wrapped by this container
-     */
-    var container: @Composable (content: @Composable () -> Unit) -> Unit
-
-    /**
-     * Composable function for displaying the splash screen during checkout initialization.
-     * Shown while the SDK prepares payment methods and configuration.
-     */
-    var splashScreen: @Composable () -> Unit
-
-    /**
-     * Composable function for displaying loading states during payment processing.
-     * Shown during network requests, payment validation, and processing steps.
-     */
-    var loadingScreen: @Composable () -> Unit
-
-    /**
-     * Composable function for displaying successful payment completion.
-     * Shown when payment has been successfully processed and completed.
-     */
-    var successScreen: @Composable () -> Unit
-
-    /**
-     * Composable function for displaying error states with custom messaging.
-     * Shown when errors occur during the checkout process.
-     *
-     * @param message Error message to display to the user
-     */
-    var errorScreen: @Composable (message: String) -> Unit
-
-    /**
-     * Scope for card form functionality, providing access to card input components
-     * and validation within the checkout flow.
-     */
-    val cardForm: PrimerCardFormScope
-
-    /**
-     * Scope for payment method selection, providing access to payment method
-     * listing and selection components within the checkout flow.
-     */
-    val paymentMethodSelection: PrimerPaymentMethodSelectionScope
-
-    /**
      * Dismisses the checkout flow and cleans up associated resources.
      * Should be called when the user cancels or exits the checkout process.
      */
     fun onDismiss()
+
+    suspend fun onRetry()
+
+    suspend fun onOtherPaymentMethods()
 
     /**
      * Represents the various states of the checkout process.
@@ -77,6 +40,12 @@ interface PrimerCheckoutScope {
          * Payment methods are being loaded and validated.
          */
         data object Initializing : State
+
+        /**
+         * Ready state when checkout has finished loading.
+         * Payment methods are available.
+         */
+        data object Ready : State
 
         /**
          * State indicating the checkout has been dismissed by the user

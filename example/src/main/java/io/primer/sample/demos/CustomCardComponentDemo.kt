@@ -27,7 +27,8 @@ object CustomCardComponentDemo : CheckoutDemo(
     description = "Replace payment method cards with progress bars that auto-complete and trigger selection",
     customizationLevel = 2,
     render = {
-        paymentMethodSelection.paymentMethodCard = { modifier ->
+
+        components.paymentMethodSelection.paymentMethodCard = { modifier ->
             var progress by remember { mutableFloatStateOf(0f) }
 
             Card(
@@ -67,7 +68,7 @@ object CustomCardComponentDemo : CheckoutDemo(
             }
 
             if (progress >= 1f) {
-                paymentMethodSelection.onPaymentMethodSelected(PaymentMethodType.PAYMENT_CARD.name)
+                onPaymentMethodSelected(PaymentMethodType.PAYMENT_CARD.name)
             }
         }
     }

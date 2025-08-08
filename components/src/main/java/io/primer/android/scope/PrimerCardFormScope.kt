@@ -1,11 +1,12 @@
 package io.primer.android.scope
 
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
 import io.primer.android.clientSessionActions.domain.models.PrimerCountry
+import io.primer.android.components.PrimerCardFormComponents
 import io.primer.android.components.domain.core.models.card.PrimerCardNetwork
 import io.primer.android.components.domain.inputs.models.PrimerInputElementType
 import io.primer.android.configuration.data.model.CardNetwork
+import io.primer.android.core.di.DISdkComponent
+import io.primer.android.core.di.extensions.resolve
 import io.primer.android.ui.core.model.SyncValidationError
 import kotlinx.coroutines.flow.StateFlow
 
@@ -13,25 +14,16 @@ import kotlinx.coroutines.flow.StateFlow
  * Defines the scope for Primer's card form functionality, providing state management,
  * field updates, and UI customization for card payment input.
  */
-interface PrimerCardFormScope {
+interface PrimerCardFormScope: DISdkComponent {
+
+    val components: PrimerCardFormComponents
+        get() = resolve()
 
     /**
      * StateFlow representing the current state of the card form, including field data,
      * validation errors, loading states, and selected options.
      */
     val state: StateFlow<State>
-
-    /**
-     * Scope for country selection functionality within the card form.
-     * Used for billing address country selection.
-     */
-    val selectCountry: PrimerSelectCountryScope
-
-    /**
-     * Initializes the card form with configuration and prepares it for user input.
-     * Should be called before displaying the form to the user.
-     */
-    fun init()
 
     /**
      * Updates the card number field value and triggers validation.
@@ -189,143 +181,4 @@ interface PrimerCardFormScope {
         val selectedNetwork: CardNetwork.Type = CardNetwork.Type.OTHER,
         val availableNetworks: List<PrimerCardNetwork> = emptyList(),
     )
-
-    /**
-     * Composable function for the entire card form screen layout.
-     */
-    var screen: @Composable () -> Unit
-
-    /**
-     * Composable function for the submit button with customizable styling and text.
-     *
-     * @param modifier Modifier for styling the button
-     * @param text Text to display on the button
-     */
-    var submitButton: @Composable (modifier: Modifier, text: String) -> Unit
-
-    /**
-     * Composable function for the card number input field with validation.
-     *
-     * @param modifier Modifier for styling the input field
-     */
-    var cardNumberInput: @Composable (modifier: Modifier) -> Unit
-
-    /**
-     * Composable function for the CVV input field with validation.
-     *
-     * @param modifier Modifier for styling the input field
-     */
-    var cvvInput: @Composable (modifier: Modifier) -> Unit
-
-    /**
-     * Composable function for the expiry date input field with validation.
-     *
-     * @param modifier Modifier for styling the input field
-     */
-    var expiryDateInput: @Composable (modifier: Modifier) -> Unit
-
-    /**
-     * Composable function for the cardholder name input field with validation.
-     *
-     * @param modifier Modifier for styling the input field
-     */
-    var cardholderNameInput: @Composable (modifier: Modifier) -> Unit
-
-    /**
-     * Composable function for the postal code input field with validation.
-     *
-     * @param modifier Modifier for styling the input field
-     */
-    var postalCodeInput: @Composable (modifier: Modifier) -> Unit
-
-    /**
-     * Composable function for the country code input field with validation.
-     *
-     * @param modifier Modifier for styling the input field
-     */
-    var countryCodeInput: @Composable (modifier: Modifier) -> Unit
-
-    /**
-     * Composable function for the city input field with validation.
-     *
-     * @param modifier Modifier for styling the input field
-     */
-    var cityInput: @Composable (modifier: Modifier) -> Unit
-
-    /**
-     * Composable function for the state/province input field with validation.
-     *
-     * @param modifier Modifier for styling the input field
-     */
-    var stateInput: @Composable (modifier: Modifier) -> Unit
-
-    /**
-     * Composable function for the first address line input field with validation.
-     *
-     * @param modifier Modifier for styling the input field
-     */
-    var addressLine1Input: @Composable (modifier: Modifier) -> Unit
-
-    /**
-     * Composable function for the second address line input field with validation.
-     *
-     * @param modifier Modifier for styling the input field
-     */
-    var addressLine2Input: @Composable (modifier: Modifier) -> Unit
-
-    /**
-     * Composable function for the phone number input field with validation.
-     *
-     * @param modifier Modifier for styling the input field
-     */
-    var phoneNumberInput: @Composable (modifier: Modifier) -> Unit
-
-    /**
-     * Composable function for the first name input field with validation.
-     *
-     * @param modifier Modifier for styling the input field
-     */
-    var firstNameInput: @Composable (modifier: Modifier) -> Unit
-
-    /**
-     * Composable function for the last name input field with validation.
-     *
-     * @param modifier Modifier for styling the input field
-     */
-    var lastNameInput: @Composable (modifier: Modifier) -> Unit
-
-    /**
-     * Composable function for the retail outlet input field with validation.
-     *
-     * @param modifier Modifier for styling the input field
-     */
-    var retailOutletInput: @Composable (modifier: Modifier) -> Unit
-
-    /**
-     * Composable function for the OTP code input field with validation.
-     *
-     * @param modifier Modifier for styling the input field
-     */
-    var otpCodeInput: @Composable (modifier: Modifier) -> Unit
-
-    /**
-     * Composable function for displaying grouped card details section.
-     *
-     * @param modifier Modifier for styling the section
-     */
-    var cardDetails: @Composable (modifier: Modifier) -> Unit
-
-    /**
-     * Composable function for displaying grouped billing address section.
-     *
-     * @param modifier Modifier for styling the section
-     */
-    var billingAddress: @Composable (modifier: Modifier) -> Unit
-
-    /**
-     * Composable function for displaying card network selection interface.
-     *
-     * @param modifier Modifier for styling the network selector
-     */
-    var cardNetwork: @Composable (modifier: Modifier) -> Unit
 }

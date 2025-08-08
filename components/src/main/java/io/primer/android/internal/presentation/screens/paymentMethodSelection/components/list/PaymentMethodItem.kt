@@ -16,14 +16,17 @@ import io.primer.android.scope.PrimerPaymentMethodSelectionScope
 internal fun PrimerPaymentMethodSelectionScope.PaymentMethodSelector(
     primerMethod: PrimerComposablePaymentMethod
 ) {
-    when (safeValueOf(primerMethod.paymentMethodType)) {
-        PaymentMethodType.PAYMENT_CARD -> paymentMethodCard(Modifier)
-        PaymentMethodType.ADYEN_IDEAL -> PaymentMethodItemIdeal()
-        PaymentMethodType.GOOGLE_PAY -> PaymentMethodItemGooglePay()
-        PaymentMethodType.KLARNA -> PaymentMethodItemKlarna()
-        PaymentMethodType.PAYPAL -> PaymentMethodItemPaypal()
-        else -> { PaymentMethodItemComingSoon { } }
+    with(components) {
+        when (safeValueOf(primerMethod.paymentMethodType)) {
+            PaymentMethodType.PAYMENT_CARD -> paymentMethodCard(Modifier)
+            PaymentMethodType.ADYEN_IDEAL -> PaymentMethodItemIdeal()
+            PaymentMethodType.GOOGLE_PAY -> PaymentMethodItemGooglePay()
+            PaymentMethodType.KLARNA -> PaymentMethodItemKlarna()
+            PaymentMethodType.PAYPAL -> PaymentMethodItemPaypal()
+            else -> { PaymentMethodItemComingSoon { } }
+        }
     }
+
 }
 
 @Composable

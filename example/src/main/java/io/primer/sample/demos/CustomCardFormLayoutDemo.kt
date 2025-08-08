@@ -15,7 +15,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -24,7 +23,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
-import io.primer.android.scope.PrimerPaymentMethodSelectionScope
 
 object CustomCardFormLayoutDemo : CheckoutDemo(
     title = "Custom Card Form Layout",
@@ -32,15 +30,11 @@ object CustomCardFormLayoutDemo : CheckoutDemo(
     customizationLevel = 4,
     render = {
         // Override individual input components with custom styling
-        cardForm.screen = {
 
-            val selectionState by paymentMethodSelection.state.collectAsState()
+        components.cardForm.screen = {
+
             var selectedLayout by remember { mutableStateOf("Column") }
             val layoutOptions = listOf("Column", "Row", "Grid 2x2")
-
-            if (selectionState is PrimerPaymentMethodSelectionScope.State.Ready) {
-                cardForm.init()
-            }
 
             Column(
                 modifier = Modifier
@@ -54,7 +48,7 @@ object CustomCardFormLayoutDemo : CheckoutDemo(
                     style = MaterialTheme.typography.titleMedium,
                     modifier = Modifier.padding(bottom = 8.dp)
                 )
-                
+
                 Column(modifier = Modifier.selectableGroup()) {
                     layoutOptions.forEach { option ->
                         Row(
@@ -85,35 +79,53 @@ object CustomCardFormLayoutDemo : CheckoutDemo(
                 when (selectedLayout) {
                     "Column" -> {
                         Column {
-                            cardForm.cardNumberInput(Modifier)
-                            cardForm.expiryDateInput(Modifier)
-                            cardForm.cvvInput(Modifier)
-                            cardForm.cardholderNameInput(Modifier)
-                            cardForm.submitButton(Modifier, "Submit")
+                            with(components) {
+                                cardNumberInput(Modifier)
+                                expiryDateInput(Modifier)
+                                cvvInput(Modifier)
+                                cardholderNameInput(Modifier)
+                                submitButton(Modifier, "Submit")
+                            }
                         }
                     }
+
                     "Row" -> {
                         Row(
                             modifier = Modifier.horizontalScroll(rememberScrollState())
                         ) {
-                            cardForm.cardNumberInput(Modifier.width(200.dp).height(50.dp))
-                            cardForm.expiryDateInput(Modifier.width(200.dp).height(50.dp))
-                            cardForm.cvvInput(Modifier.width(200.dp).height(50.dp))
-                            cardForm.cardholderNameInput(Modifier.width(200.dp).height(50.dp))
-                            cardForm.submitButton(Modifier.width(200.dp).height(50.dp), "Submit")
+                            with(components) {
+                                cardNumberInput(Modifier
+                                    .width(200.dp)
+                                    .height(50.dp))
+                                expiryDateInput(Modifier
+                                    .width(200.dp)
+                                    .height(50.dp))
+                                cvvInput(Modifier
+                                    .width(200.dp)
+                                    .height(50.dp))
+                                cardholderNameInput(Modifier
+                                    .width(200.dp)
+                                    .height(50.dp))
+                                submitButton(Modifier
+                                    .width(200.dp)
+                                    .height(50.dp), "Submit")
+                            }
                         }
                     }
+
                     "Grid 2x2" -> {
                         Column {
-                            Row {
-                                cardForm.cardNumberInput(Modifier.weight(1f))
-                                cardForm.expiryDateInput(Modifier.weight(1f))
+                            with(components) {
+                                Row {
+                                    cardNumberInput(Modifier.weight(1f))
+                                    expiryDateInput(Modifier.weight(1f))
+                                }
+                                Row {
+                                    cvvInput(Modifier.weight(1f))
+                                    cardholderNameInput(Modifier.weight(1f))
+                                }
+                                submitButton(Modifier.fillMaxWidth(), "Submit")
                             }
-                            Row {
-                                cardForm.cvvInput(Modifier.weight(1f))
-                                cardForm.cardholderNameInput(Modifier.weight(1f))
-                            }
-                            cardForm.submitButton(Modifier.fillMaxWidth(), "Submit")
                         }
                     }
                 }

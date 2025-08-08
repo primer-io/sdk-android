@@ -26,28 +26,30 @@ internal fun PrimerCardFormScope.BillingAddressForm(
     Column(
         modifier = modifier.fillMaxWidth(),
     ) {
-        countryCodeInput(Modifier.fillMaxWidth())
-        Spacer(modifier = Modifier.height(spacingSmall))
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-        ) {
-            firstNameInput(Modifier.weight(1f))
-            Spacer(modifier = Modifier.width(spacingSmall))
-            lastNameInput(Modifier.weight(1f))
+        with(components) {
+            countryCodeInput( Modifier.fillMaxWidth())
+            Spacer(modifier = Modifier.height(spacingSmall))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                firstNameInput(Modifier.weight(1f))
+                Spacer(modifier = Modifier.width(spacingSmall))
+                lastNameInput(Modifier.weight(1f))
+            }
+            Spacer(modifier = Modifier.height(spacingSmall))
+            addressLine1Input(Modifier.fillMaxWidth())
+            Spacer(modifier = Modifier.height(spacingSmall))
+            addressLine2Input(Modifier.fillMaxWidth())
+            Spacer(modifier = Modifier.height(spacingSmall))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                postalCodeInput(Modifier.weight(1f))
+                Spacer(modifier = Modifier.width(spacingSmall))
+                cityInput(Modifier.weight(1f))
+            }
+            Spacer(modifier = Modifier.height(spacingSmall))
+            stateInput(Modifier.fillMaxWidth())
         }
-        Spacer(modifier = Modifier.height(spacingSmall))
-        addressLine1Input(Modifier.fillMaxWidth())
-        Spacer(modifier = Modifier.height(spacingSmall))
-        addressLine2Input(Modifier.fillMaxWidth())
-        Spacer(modifier = Modifier.height(spacingSmall))
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-        ) {
-            postalCodeInput(Modifier.weight(1f))
-            Spacer(modifier = Modifier.width(spacingSmall))
-            cityInput(Modifier.weight(1f))
-        }
-        Spacer(modifier = Modifier.height(spacingSmall))
-        stateInput(Modifier.fillMaxWidth())
     }
 }

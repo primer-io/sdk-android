@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import io.primer.android.components.R
@@ -15,7 +14,6 @@ import io.primer.android.scope.PrimerCardFormScope
 
 @Composable
 internal fun PrimerCardFormScope.DefaultCardFormScreen() {
-    LaunchedEffect(this) { init() }
 
     Column {
         CheckoutAppBar(
@@ -27,10 +25,12 @@ internal fun PrimerCardFormScope.DefaultCardFormScreen() {
             modifier = Modifier
                 .padding(horizontal = LocalPrimerSpacingTokens.current.large),
         ) {
-            cardDetails(Modifier)
-            billingAddress(Modifier)
-            Spacer(modifier = Modifier.height(LocalPrimerSpacingTokens.current.xsmall))
-            submitButton(Modifier, stringResource(R.string.primer_components_card_form_pay))
+            with(components) {
+                cardDetails(Modifier)
+                billingAddress(Modifier)
+                Spacer(modifier = Modifier.height(LocalPrimerSpacingTokens.current.xsmall))
+                submitButton(Modifier, stringResource(R.string.primer_components_card_form_pay))
+            }
         }
     }
 }

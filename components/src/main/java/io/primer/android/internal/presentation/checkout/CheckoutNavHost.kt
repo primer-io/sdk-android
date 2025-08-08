@@ -31,34 +31,42 @@ internal fun PrimerCheckoutScope.CheckoutNavHost(
                 modifier = modifier.fillMaxWidth(),
             ) {
                 composable(Screen.Splash.route) {
-                    splashScreen()
+                    with(components) {
+                        splashScreen()
+                    }
                 }
 
                 composable(Screen.Loading.route) {
-                    loadingScreen()
+                    with(components) {
+                        loadingScreen()
+                    }
                 }
 
                 composable(Screen.Error.route) { backStackEntry ->
                     // Retrieve error from SavedStateHandle - set when navigating via:
                     // navController.currentBackStackEntry?.savedStateHandle?.set("error", primerError)
                     val error = backStackEntry.savedStateHandle.get<String>("error")
-                    errorScreen(error ?: "There was a network issue.")
+                    with(components) {
+                        errorScreen(error ?: "There was a network issue.")
+                    }
                 }
 
                 composable(Screen.Success.route) {
-                    successScreen()
+                    with(components) {
+                        successScreen()
+                    }
                 }
 
                 composable(Screen.PaymentsList.route) {
-                    paymentMethodSelection.screen()
+                    components.paymentMethodSelection.Screen()
                 }
 
                 composable(Screen.CardForm.route) {
-                    cardForm.screen()
+                    components.cardForm.Screen()
                 }
 
                 composable(Screen.SelectCountry.route) {
-                    cardForm.selectCountry.screen()
+                    components.cardForm.selectCountry.Screen()
                 }
             }
         }

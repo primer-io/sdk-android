@@ -29,7 +29,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import io.primer.android.components.domain.inputs.models.PrimerInputElementType
-import io.primer.android.scope.PrimerPaymentMethodSelectionScope
 
 object SingleInputFieldDemo : CheckoutDemo(
     title = "Single Input Field View",
@@ -37,10 +36,10 @@ object SingleInputFieldDemo : CheckoutDemo(
     customizationLevel = 4,
     render = {
 
-        cardForm.submitButton = { modifier, text ->
+        components.cardForm.submitButton = { modifier, text ->
             IconButton(
                 // TODO somehow it's not triggering submit because it's stuck at isSubmitAllowed rawDataManagerRepository.validationState.first()
-                onClick = { cardForm.onSubmit() }
+                onClick = { onSubmit() }
             ) {
                 Icon(
                     Icons.Default.Check,
@@ -49,97 +48,94 @@ object SingleInputFieldDemo : CheckoutDemo(
                 )
             }
         }
-        cardForm.screen = {
+        components.cardForm.screen = {
 
-            val selectionState by paymentMethodSelection.state.collectAsState()
-            val cardFormState by cardForm.state.collectAsState()
+            val cardFormState by state.collectAsState()
 
-            if (selectionState is PrimerPaymentMethodSelectionScope.State.Ready) {
-                cardForm.init()
+            if (cardFormState.cardFields.isNotEmpty()) {
+                var currentFieldIndex by remember { mutableIntStateOf(0) }
 
-                if (cardFormState.cardFields.isNotEmpty()) {
-                    var currentFieldIndex by remember { mutableIntStateOf(0) }
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    Text(
+                        text = "Step ${currentFieldIndex + 1} of ${cardFormState.cardFields.size}",
+                        color = Color.Gray,
+                        fontSize = 14.sp,
+                        modifier = Modifier.padding(bottom = 24.dp)
+                    )
 
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp),
-                        verticalArrangement = Arrangement.Center
-                    ) {
-                        Text(
-                            text = "Step ${currentFieldIndex + 1} of ${cardFormState.cardFields.size}",
-                            color = Color.Gray,
-                            fontSize = 14.sp,
-                            modifier = Modifier.padding(bottom = 24.dp)
-                        )
-
+                    with(components) {
                         when (cardFormState.cardFields[currentFieldIndex]) {
-                            PrimerInputElementType.CARD_NUMBER -> cardForm.cardNumberInput(Modifier.fillMaxWidth())
-                            PrimerInputElementType.CVV -> cardForm.cvvInput(Modifier.fillMaxWidth())
-                            PrimerInputElementType.EXPIRY_DATE -> cardForm.expiryDateInput(Modifier.fillMaxWidth())
-                            PrimerInputElementType.CARDHOLDER_NAME -> cardForm.cardholderNameInput(Modifier.fillMaxWidth())
-                            PrimerInputElementType.POSTAL_CODE -> cardForm.postalCodeInput(Modifier.fillMaxWidth())
-                            PrimerInputElementType.COUNTRY_CODE -> cardForm.countryCodeInput(Modifier.fillMaxWidth())
-                            PrimerInputElementType.CITY -> cardForm.cityInput(Modifier.fillMaxWidth())
-                            PrimerInputElementType.STATE -> cardForm.stateInput(Modifier.fillMaxWidth())
-                            PrimerInputElementType.ADDRESS_LINE_1 -> cardForm.addressLine1Input(Modifier.fillMaxWidth())
-                            PrimerInputElementType.ADDRESS_LINE_2 -> cardForm.addressLine2Input(Modifier.fillMaxWidth())
-                            PrimerInputElementType.PHONE_NUMBER -> cardForm.phoneNumberInput(Modifier.fillMaxWidth())
-                            PrimerInputElementType.FIRST_NAME -> cardForm.firstNameInput(Modifier.fillMaxWidth())
-                            PrimerInputElementType.LAST_NAME -> cardForm.lastNameInput(Modifier.fillMaxWidth())
-                            PrimerInputElementType.RETAIL_OUTLET -> cardForm.retailOutletInput(Modifier.fillMaxWidth())
-                            PrimerInputElementType.OTP_CODE -> cardForm.otpCodeInput(Modifier.fillMaxWidth())
+                            PrimerInputElementType.CARD_NUMBER -> cardNumberInput(Modifier.fillMaxWidth())
+                            PrimerInputElementType.CVV -> cvvInput(Modifier.fillMaxWidth())
+                            PrimerInputElementType.EXPIRY_DATE -> expiryDateInput(Modifier.fillMaxWidth())
+                            PrimerInputElementType.CARDHOLDER_NAME -> cardholderNameInput(Modifier.fillMaxWidth())
+                            PrimerInputElementType.POSTAL_CODE -> postalCodeInput(Modifier.fillMaxWidth())
+                            PrimerInputElementType.COUNTRY_CODE -> countryCodeInput(Modifier.fillMaxWidth())
+                            PrimerInputElementType.CITY -> cityInput(Modifier.fillMaxWidth())
+                            PrimerInputElementType.STATE -> stateInput(Modifier.fillMaxWidth())
+                            PrimerInputElementType.ADDRESS_LINE_1 -> addressLine1Input(Modifier.fillMaxWidth())
+                            PrimerInputElementType.ADDRESS_LINE_2 -> addressLine2Input(Modifier.fillMaxWidth())
+                            PrimerInputElementType.PHONE_NUMBER -> phoneNumberInput(Modifier.fillMaxWidth())
+                            PrimerInputElementType.FIRST_NAME -> firstNameInput(Modifier.fillMaxWidth())
+                            PrimerInputElementType.LAST_NAME -> lastNameInput(Modifier.fillMaxWidth())
                             else -> Unit
                         }
+                    }
 
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(top = 32.dp),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 32.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        IconButton(
+                            onClick = {
+                                if (currentFieldIndex > 0) currentFieldIndex--
+                            },
+                            enabled = currentFieldIndex > 0
                         ) {
-                            IconButton(
-                                onClick = {
-                                    if (currentFieldIndex > 0) currentFieldIndex--
-                                },
-                                enabled = currentFieldIndex > 0
-                            ) {
-                                Icon(
-                                    Icons.AutoMirrored.Filled.ArrowBack,
-                                    contentDescription = "Previous",
-                                    tint = if (currentFieldIndex > 0)
-                                        MaterialTheme.colorScheme.primary else Color.Gray
+                            Icon(
+                                Icons.AutoMirrored.Filled.ArrowBack,
+                                contentDescription = "Previous",
+                                tint = if (currentFieldIndex > 0)
+                                    MaterialTheme.colorScheme.primary else Color.Gray
+                            )
+                        }
+
+                        Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                            cardFormState.cardFields.indices.forEach { index ->
+                                Box(
+                                    modifier = Modifier
+                                        .size(8.dp)
+                                        .clip(CircleShape)
+                                        .background(
+                                            if (index == currentFieldIndex)
+                                                MaterialTheme.colorScheme.primary
+                                            else Color.LightGray
+                                        )
                                 )
                             }
+                        }
 
-                            Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-                                cardFormState.cardFields.indices.forEach { index ->
-                                    Box(
-                                        modifier = Modifier
-                                            .size(8.dp)
-                                            .clip(CircleShape)
-                                            .background(
-                                                if (index == currentFieldIndex)
-                                                    MaterialTheme.colorScheme.primary
-                                                else Color.LightGray
-                                            )
-                                    )
-                                }
+                        if (currentFieldIndex < cardFormState.cardFields.size - 1) {
+                            IconButton(
+                                onClick = { currentFieldIndex++ }
+                            ) {
+                                Icon(
+                                    Icons.AutoMirrored.Filled.ArrowForward,
+                                    contentDescription = "Next",
+                                    tint = MaterialTheme.colorScheme.primary
+                                )
                             }
-
-                            if (currentFieldIndex < cardFormState.cardFields.size - 1) {
-                                IconButton(
-                                    onClick = { currentFieldIndex++ }
-                                ) {
-                                    Icon(
-                                        Icons.AutoMirrored.Filled.ArrowForward,
-                                        contentDescription = "Next",
-                                        tint = MaterialTheme.colorScheme.primary
-                                    )
-                                }
-                            } else {
-                                cardForm.submitButton(Modifier, "Submit")
+                        } else {
+                            with(components) {
+                                submitButton(Modifier, "Submit")
                             }
                         }
                     }

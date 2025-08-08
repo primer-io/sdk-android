@@ -6,8 +6,6 @@ object FullscreenDemo : CheckoutDemo(
     description = "Override container to display checkout in fullscreen",
     customizationLevel = 1,
     render = {
-        container = { content ->
-            content()
-        }
+        components.container = { it() }
     }
 )

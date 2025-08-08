@@ -21,7 +21,7 @@ import io.primer.android.scope.PrimerPaymentMethodSelectionScope
 
 @Composable
 internal fun PrimerPaymentMethodSelectionScope.DefaultPaymentMethodSelectionScreen() {
-    val state = state.collectAsStateWithLifecycle().value as PrimerPaymentMethodSelectionScope.State.Ready
+    val state = state.collectAsStateWithLifecycle().value
 
     Column {
         CheckoutAppBar(

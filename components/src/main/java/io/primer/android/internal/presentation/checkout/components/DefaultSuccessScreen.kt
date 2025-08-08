@@ -19,22 +19,20 @@ import io.primer.android.components.R
 import io.primer.android.internal.presentation.theme.LocalPrimerColorTokens
 import io.primer.android.internal.presentation.theme.LocalPrimerSizeTokens
 import io.primer.android.internal.presentation.theme.LocalPrimerSpacingTokens
+import io.primer.android.scope.PrimerCheckoutScope
 import kotlinx.coroutines.delay
 
 @Composable
-internal fun DefaultSuccessScreen(
-    modifier: Modifier = Modifier,
-    onDismiss: (() -> Unit)? = null,
+internal fun PrimerCheckoutScope.DefaultSuccessScreen(
+    modifier: Modifier = Modifier
 ) {
     val spacing = LocalPrimerSpacingTokens.current
     val sizes = LocalPrimerSizeTokens.current
     val colorTokens = LocalPrimerColorTokens.current
 
-    LaunchedEffect(onDismiss) {
-        if (onDismiss != null) {
-            delay(3000)
-            onDismiss()
-        }
+    LaunchedEffect(this) {
+        delay(3000)
+        onDismiss()
     }
 
     Column(

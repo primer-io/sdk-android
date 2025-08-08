@@ -19,17 +19,19 @@ internal fun PrimerCardFormScope.CardDetailsForm(
     Column(
         modifier = modifier.fillMaxWidth(),
     ) {
-        cardNumberInput(Modifier.fillMaxWidth())
-        Spacer(modifier = Modifier.height(spacingSmall))
-        Row(
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            expiryDateInput(Modifier.weight(1f))
-            Spacer(modifier = Modifier.width(spacingSmall))
-            cvvInput(Modifier.weight(1f))
+        with(components) {
+            cardNumberInput(Modifier.fillMaxWidth())
+            Spacer(modifier = Modifier.height(spacingSmall))
+            Row(
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                expiryDateInput(Modifier.weight(1f))
+                Spacer(modifier = Modifier.width(spacingSmall))
+                cvvInput(Modifier.weight(1f))
+            }
+            Spacer(modifier = Modifier.height(spacingSmall))
+            cardholderNameInput(Modifier.fillMaxWidth())
+            Spacer(modifier = Modifier.height(spacingSmall))
         }
-        Spacer(modifier = Modifier.height(spacingSmall))
-        cardholderNameInput(Modifier.fillMaxWidth())
-        Spacer(modifier = Modifier.height(spacingSmall))
     }
 }

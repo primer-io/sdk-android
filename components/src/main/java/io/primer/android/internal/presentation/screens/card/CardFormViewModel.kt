@@ -1,12 +1,11 @@
 package io.primer.android.internal.presentation.screens.card
 
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import io.primer.android.clientSessionActions.domain.models.PrimerCountry
 import io.primer.android.components.domain.inputs.models.PrimerInputElementType
 import io.primer.android.configuration.data.model.CardNetwork
 import io.primer.android.configuration.data.model.CountryCode
-import io.primer.android.core.di.DISdkComponent
-import io.primer.android.core.di.extensions.resolve
 import io.primer.android.core.logging.internal.LogReporter
 import io.primer.android.internal.domain.usecase.CardFieldsUseCase
 import io.primer.android.internal.domain.usecase.CardNetworkUseCase
@@ -14,7 +13,6 @@ import io.primer.android.internal.domain.usecase.InitCardManagerUseCase
 import io.primer.android.internal.domain.usecase.SubmitCardPaymentUseCase
 import io.primer.android.internal.presentation.checkout.CheckoutNavigator
 import io.primer.android.internal.presentation.checkout.Screen
-import io.primer.android.internal.presentation.scope.DefaultCardFormScope
 import io.primer.android.scope.PrimerCardFormScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -26,19 +24,19 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-internal class CardFormViewModel : DefaultCardFormScope(), DISdkComponent {
+internal class CardFormViewModel(
+    private val cardFieldsUseCase: CardFieldsUseCase,
+    private val cardNetworkUseCase: CardNetworkUseCase,
+    private val submitCardPaymentUseCase: SubmitCardPaymentUseCase,
+    private val initCardManagerUseCase: InitCardManagerUseCase,
+    private val checkoutNavigator: CheckoutNavigator,
+    private val logReporter: LogReporter,
+) : ViewModel(), PrimerCardFormScope {
 
-    private val cardFieldsUseCase: CardFieldsUseCase by lazy { resolve() }
-    private val cardNetworkUseCase: CardNetworkUseCase by lazy { resolve() }
-    private val submitCardPaymentUseCase: SubmitCardPaymentUseCase by lazy { resolve() }
-    private val initCardManagerUseCase: InitCardManagerUseCase by lazy { resolve() }
-    private val checkoutNavigator: CheckoutNavigator by lazy { resolve() }
-    private val logReporter: LogReporter by lazy { resolve() }
-
-    private val _uiState = MutableStateFlow<PrimerCardFormScope.State>(PrimerCardFormScope.State())
+    private val _uiState = MutableStateFlow(PrimerCardFormScope.State())
     override val state: StateFlow<PrimerCardFormScope.State> = _uiState.asStateFlow()
 
-    override fun init() {
+    init {
         // Initialize required fields
         viewModelScope.launch {
             initCardManagerUseCase()

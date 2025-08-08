@@ -1,10 +1,8 @@
 package io.primer.android.internal.presentation.screens.country
 
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import io.primer.android.core.di.DISdkComponent
-import io.primer.android.core.di.extensions.resolve
 import io.primer.android.internal.presentation.checkout.CheckoutNavigator
-import io.primer.android.internal.presentation.scope.DefaultSelectCountryScope
 import io.primer.android.scope.PrimerSelectCountryScope
 import io.primer.android.ui.core.data.repository.CountriesDataRepository
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -13,10 +11,10 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-internal class SelectCountryViewModel : DefaultSelectCountryScope(), DISdkComponent {
-
-    private val countriesRepository: CountriesDataRepository by lazy { resolve() }
-    private val checkoutNavigator: CheckoutNavigator by lazy { resolve() }
+internal class SelectCountryViewModel(
+    private val countriesRepository: CountriesDataRepository,
+    private val checkoutNavigator: CheckoutNavigator,
+) : ViewModel(), PrimerSelectCountryScope {
 
     private val _state = MutableStateFlow(PrimerSelectCountryScope.State())
     override val state: StateFlow<PrimerSelectCountryScope.State> = _state.asStateFlow()

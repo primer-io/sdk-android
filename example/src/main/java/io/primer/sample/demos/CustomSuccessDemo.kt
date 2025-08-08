@@ -26,7 +26,8 @@ object CustomSuccessDemo : CheckoutDemo(
     description = "Override success screen with a dialog featuring confetti animation and celebration",
     customizationLevel = 1,
     render = {
-        successScreen = {
+
+        components.successScreen = {
             Dialog(onDismissRequest = { onDismiss() }) {
                 Card(
                     colors = CardDefaults.cardColors(
@@ -67,5 +68,4 @@ object CustomSuccessDemo : CheckoutDemo(
                 }
             }
         }
-    }
-)
+    })

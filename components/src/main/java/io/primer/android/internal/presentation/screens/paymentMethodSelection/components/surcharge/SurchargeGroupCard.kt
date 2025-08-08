@@ -98,7 +98,7 @@ private fun PrimerPaymentMethodSelectionScope.SurchargeHeader(value: Int) {
 @Composable
 private fun PrimerPaymentMethodSelectionScope.formatSurcharge(value: Int): String {
     val state by state.collectAsState()
-    return (state as? PrimerPaymentMethodSelectionScope.State.Ready)?.orderInfo?.currencyCode?.let {
+    return state.orderInfo.currencyCode.let {
         "+ ${CurrencyFormatter.formatAmount(value, it)}"
-    } ?: ""
+    }
 }

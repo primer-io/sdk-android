@@ -1,7 +1,8 @@
 package io.primer.android.scope
 
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
+import io.primer.android.components.PrimerPaymentMethodSelectionComponents
+import io.primer.android.core.di.DISdkComponent
+import io.primer.android.core.di.extensions.resolve
 import io.primer.android.internal.domain.models.PrimerComposablePaymentMethod
 import io.primer.android.ui.core.configuration.domain.model.BasicOrderInfo
 import kotlinx.coroutines.flow.StateFlow
@@ -10,7 +11,10 @@ import kotlinx.coroutines.flow.StateFlow
  * Defines the scope for Primer's payment method selection functionality,
  * providing state management and UI customization for choosing payment methods.
  */
-interface PrimerPaymentMethodSelectionScope {
+interface PrimerPaymentMethodSelectionScope : DISdkComponent {
+
+    val components: PrimerPaymentMethodSelectionComponents
+        get() = resolve()
 
     /**
      * StateFlow representing the current state of payment method selection,
@@ -33,28 +37,9 @@ interface PrimerPaymentMethodSelectionScope {
     /**
      * Represents the various states of payment method selection.
      */
-    sealed interface State {
-        /**
-         * Ready state with available payment methods and order information.
-         *
-         * @param paymentMethods List of available payment methods for selection
-         * @param orderInfo Basic order information including amount and currency
-         */
-        data class Ready(
-            val paymentMethods: List<PrimerComposablePaymentMethod> = listOf(),
-            val orderInfo: BasicOrderInfo = BasicOrderInfo(0, ""),
-        ) : State
-    }
+    data class State(
+        val paymentMethods: List<PrimerComposablePaymentMethod> = listOf(),
+        val orderInfo: BasicOrderInfo = BasicOrderInfo(0, ""),
+    )
 
-    /**
-     * Composable function for the entire payment method selection screen layout.
-     */
-    var screen: @Composable () -> Unit
-
-    /**
-     * Composable function for the card button.
-     *
-     * @param modifier Modifier for styling the payment method card
-     */
-    var paymentMethodCard: @Composable (modifier: Modifier) -> Unit
 }

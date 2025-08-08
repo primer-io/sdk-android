@@ -31,7 +31,8 @@ object DatePickerExpiryDemo : CheckoutDemo(
     description = "Override expiry date input with an elegant button that opens a material date picker dialog",
     customizationLevel = 3,
     render = {
-        cardForm.expiryDateInput = { modifier ->
+
+        components.cardForm.expiryDateInput = { modifier ->
             var showDatePicker by remember { mutableStateOf(false) }
             var selectedDate by remember { mutableStateOf("") }
             val datePickerState = rememberDatePickerState()

@@ -28,11 +28,14 @@ internal fun PrimerSelectCountryScope.DefaultSelectCountryScreen() {
             onBackClick = { onCancel() },
         )
 
-        searchBar(
-            state.searchQuery,
-            { query -> onSearch(query) },
-            stringResource(R.string.primer_components_card_form_placeholder_search_countries),
-        )
+        with(components) {
+            searchBar(
+                state.searchQuery,
+                { query -> onSearch(query) },
+                stringResource(R.string.primer_components_card_form_placeholder_search_countries),
+            )
+        }
+
 
         if (state.isLoading) {
             CircularProgressIndicator(
@@ -43,7 +46,11 @@ internal fun PrimerSelectCountryScope.DefaultSelectCountryScreen() {
                 modifier = Modifier.fillMaxWidth(),
             ) {
                 items(state.filteredCountries) { country ->
-                    countryItem(country) { onCountrySelected(country.code.name, country.name) }
+                    with(components) {
+                        countryItem(country) {
+                            onCountrySelected(country.code.name, country.name)
+                        }
+                    }
                 }
             }
         }

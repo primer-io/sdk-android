@@ -26,7 +26,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import io.primer.android.components.domain.inputs.models.PrimerInputElementType
-import io.primer.android.scope.PrimerPaymentMethodSelectionScope
 
 // Level 5 - Advanced UI Patterns
 object ButtonedInputFieldsDemo : CheckoutDemo(
@@ -36,60 +35,65 @@ object ButtonedInputFieldsDemo : CheckoutDemo(
     render = {
 
         // Card Details
-        cardForm.cardNumberInput = {
-            val state by cardForm.state.collectAsState()
+
+        components.cardForm.cardNumberInput = {
+            val state by state.collectAsState()
             InputDialog(
                 title = "Card Number",
                 value = state.data[PrimerInputElementType.CARD_NUMBER] ?: "",
-                onValueChange = { cardForm.updateCardNumber(it) },
+                onValueChange = { updateCardNumber(it) },
+            )
+        }
+        components.cardForm.cardNumberInput = {
+            val state by state.collectAsState()
+            InputDialog(
+                title = "Card Number",
+                value = state.data[PrimerInputElementType.CARD_NUMBER] ?: "",
+                onValueChange = { updateCardNumber(it) },
             )
         }
 
-        cardForm.expiryDateInput = {
-            val state by cardForm.state.collectAsState()
+        components.cardForm.expiryDateInput = {
+            val state by state.collectAsState()
             InputDialog(
                 title = "Expiry Date",
                 value = state.data[PrimerInputElementType.EXPIRY_DATE] ?: "",
-                onValueChange = { cardForm.updateExpiryDate(it) },
+                onValueChange = { updateExpiryDate(it) },
                 placeholder = "MM/YY"
             )
         }
 
-        cardForm.cvvInput = {
-            val state by cardForm.state.collectAsState()
+        components.cardForm.cvvInput = {
+            val state by state.collectAsState()
             InputDialog(
                 title = "CVV",
                 value = state.data[PrimerInputElementType.CVV] ?: "",
-                onValueChange = { cardForm.updateCvv(it) },
+                onValueChange = { updateCvv(it) },
                 placeholder = "123"
             )
         }
 
-        cardForm.cardholderNameInput = {
-            val state by cardForm.state.collectAsState()
+        components.cardForm.cardholderNameInput = { modifier ->
+            val state by state.collectAsState()
             InputDialog(
                 title = "Cardholder Name",
                 value = state.data[PrimerInputElementType.CARDHOLDER_NAME] ?: "",
-                onValueChange = { cardForm.updateCardholderName(it) },
+                onValueChange = { updateCardholderName(it) },
             )
         }
 
-        cardForm.screen = {
-
-            val selectionState by paymentMethodSelection.state.collectAsState()
-            if (selectionState is PrimerPaymentMethodSelectionScope.State.Ready) {
-                cardForm.init()
-            }
-
+        components.cardForm.screen = {
             Column(modifier = Modifier.padding(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                cardForm.cardNumberInput(Modifier)
-                cardForm.expiryDateInput(Modifier)
-                cardForm.cvvInput(Modifier)
-                cardForm.cardholderNameInput(Modifier)
-                cardForm.submitButton(Modifier, "Submit")
+                with(components) {
+                    cardNumberInput(Modifier)
+                    expiryDateInput(Modifier)
+                    cvvInput(Modifier)
+                    cardholderNameInput(Modifier)
+                    submitButton(Modifier, "Submit")
+                }
             }
-
         }
+
     }
 )
 

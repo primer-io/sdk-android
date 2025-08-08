@@ -1,20 +1,18 @@
 package io.primer.android.internal.presentation.checkout
 
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import io.primer.android.core.di.DISdkComponent
-import io.primer.android.core.di.extensions.resolve
 import io.primer.android.internal.domain.usecase.AvailablePaymentMethodsUseCase
-import io.primer.android.internal.presentation.scope.DefaultCheckoutScope
 import io.primer.android.scope.PrimerCheckoutScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-internal class CheckoutViewModel : DefaultCheckoutScope(), DISdkComponent {
-
-    private val availablePaymentMethodsUseCase: AvailablePaymentMethodsUseCase by lazy { resolve() }
-    private val checkoutNavigator: CheckoutNavigator by lazy { resolve() }
+internal class CheckoutViewModel(
+    private val availablePaymentMethodsUseCase: AvailablePaymentMethodsUseCase,
+    private val checkoutNavigator: CheckoutNavigator,
+) : ViewModel(), PrimerCheckoutScope {
 
     private val _state =
         MutableStateFlow<PrimerCheckoutScope.State>(PrimerCheckoutScope.State.Initializing)
@@ -27,13 +25,27 @@ internal class CheckoutViewModel : DefaultCheckoutScope(), DISdkComponent {
     private fun loadPaymentMethods() {
         viewModelScope.launch {
             availablePaymentMethodsUseCase().fold(
-                onSuccess = { checkoutNavigator.navigateToPaymentMethodsList() },
-                onFailure = { checkoutNavigator.navigateToError(it.message ?: "Failed to load payment methods") }
+                onSuccess = {
+                    _state.value = PrimerCheckoutScope.State.Ready
+                    checkoutNavigator.navigateToPaymentMethodsList()
+                },
+                onFailure = {
+                    _state.value = PrimerCheckoutScope.State.Error(it)
+                    checkoutNavigator.navigateToError(it.message ?: "Failed to load payment methods")
+                }
             )
         }
     }
 
     override fun onDismiss() {
         _state.value = PrimerCheckoutScope.State.Dismissed
+    }
+
+    override suspend fun onOtherPaymentMethods() {
+        checkoutNavigator.navigateToPaymentMethodsList()
+    }
+
+    override suspend fun onRetry() {
+        checkoutNavigator.navigateBack()
     }
 }

@@ -1,14 +1,19 @@
 package io.primer.android.scope
 
-import androidx.compose.runtime.Composable
 import io.primer.android.clientSessionActions.domain.models.PrimerCountry
+import io.primer.android.components.PrimerSelectCountryComponents
+import io.primer.android.core.di.DISdkComponent
+import io.primer.android.core.di.extensions.resolve
 import kotlinx.coroutines.flow.StateFlow
 
 /**
  * Defines the scope for Primer's country selection functionality,
  * providing state management, search capabilities, and UI customization for country picker.
  */
-interface PrimerSelectCountryScope {
+interface PrimerSelectCountryScope : DISdkComponent {
+
+    val components: PrimerSelectCountryComponents
+        get() = resolve()
 
     /**
      * StateFlow representing the current state of country selection,
@@ -51,26 +56,4 @@ interface PrimerSelectCountryScope {
         val searchQuery: String = "",
         val isLoading: Boolean = false,
     )
-
-    /**
-     * Composable function for the entire country selection screen layout.
-     */
-    var screen: @Composable () -> Unit
-
-    /**
-     * Composable function for the search bar with customizable styling and behavior.
-     *
-     * @param query Current search query
-     * @param onQueryChange Callback for search query changes
-     * @param placeholder Placeholder text for the search input
-     */
-    var searchBar: @Composable (query: String, onQueryChange: (String) -> Unit, placeholder: String) -> Unit
-
-    /**
-     * Composable function for individual country list items with selection handling.
-     *
-     * @param country The country to display
-     * @param onSelect Callback for when this country item is selected
-     */
-    var countryItem: @Composable (country: PrimerCountry, onSelect: () -> Unit) -> Unit
 }
