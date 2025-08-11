@@ -7,9 +7,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import io.primer.android.LocalPrimerTheme
 import io.primer.android.components.R
 import io.primer.android.internal.presentation.constants.PaymentMethodColors
-import io.primer.android.internal.presentation.theme.LocalPrimerSpacingTokens
 import io.primer.android.paymentmethods.common.data.model.PaymentMethodType
 import io.primer.android.scope.PrimerPaymentMethodSelectionScope
 
@@ -32,7 +32,7 @@ internal fun PrimerPaymentMethodSelectionScope.PaymentMethodItemPaypal(
                 painter = painterResource(id = R.drawable.ic_primer_paypal_logo),
                 contentDescription = null,
                 tint = Color.Unspecified,
-                modifier = Modifier.padding(start = LocalPrimerSpacingTokens.current.xsmall),
+                modifier = Modifier.padding(start = LocalPrimerTheme.current.spacingTokens.xsmall),
             )
         }
     }

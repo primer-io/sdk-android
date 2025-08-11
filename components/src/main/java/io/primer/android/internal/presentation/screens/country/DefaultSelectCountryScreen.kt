@@ -36,7 +36,6 @@ internal fun PrimerSelectCountryScope.DefaultSelectCountryScreen() {
             )
         }
 
-
         if (state.isLoading) {
             CircularProgressIndicator(
                 modifier = Modifier.align(Alignment.CenterHorizontally),

@@ -27,7 +27,7 @@ class PrimerCheckoutComponents : DISdkComponent {
     var container: @Composable PrimerCheckoutScope.(content: @Composable () -> Unit) -> Unit = { content ->
         CheckoutBottomSheet(
             onDismiss = ::onDismiss,
-            navHost = { content() }
+            navHost = { content() },
         )
     }
 
@@ -38,7 +38,6 @@ class PrimerCheckoutComponents : DISdkComponent {
     var splashScreen: @Composable PrimerCheckoutScope.() -> Unit = {
         DefaultSplashScreen()
     }
-
 
     /**
      * Composable function for displaying loading states during payment processing.
@@ -68,5 +67,4 @@ class PrimerCheckoutComponents : DISdkComponent {
             message = message,
         )
     }
-
 }

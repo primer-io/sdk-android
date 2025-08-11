@@ -9,16 +9,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import io.primer.android.LocalPrimerTheme
 import io.primer.android.components.R
-import io.primer.android.internal.presentation.theme.LocalPrimerSpacingTokens
 
 @Composable
 internal fun DefaultLoadingScreen(
     modifier: Modifier = Modifier,
     text: String? = null,
 ) {
-    val spacing = LocalPrimerSpacingTokens.current
-
     Column(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -27,7 +25,7 @@ internal fun DefaultLoadingScreen(
         Text(
             text = text ?: stringResource(R.string.primer_components_checkout_loading),
             style = MaterialTheme.typography.bodyMedium,
-            modifier = Modifier.padding(top = spacing.small),
+            modifier = Modifier.padding(top = LocalPrimerTheme.current.spacingTokens.small),
         )
     }
 }

@@ -13,12 +13,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import io.primer.android.LocalPrimerTheme
 import io.primer.android.components.R
 import io.primer.android.internal.presentation.constants.PaymentMethodColors
-import io.primer.android.internal.presentation.theme.LocalPrimerColorTokens
-import io.primer.android.internal.presentation.theme.LocalPrimerRadiusTokens
-import io.primer.android.internal.presentation.theme.LocalPrimerSpacingTokens
-import io.primer.android.internal.presentation.theme.LocalPrimerTypographyTokens
 import io.primer.android.paymentmethods.common.data.model.PaymentMethodType
 import io.primer.android.scope.PrimerPaymentMethodSelectionScope
 
@@ -28,7 +25,7 @@ internal fun PrimerPaymentMethodSelectionScope.PaymentMethodItemKlarna(
 ) {
     PaymentMethodItem(
         modifier = modifier,
-        backgroundColor = LocalPrimerColorTokens.current.primerColorGray900,
+        backgroundColor = LocalPrimerTheme.current.colorTokens().primerColorGray900,
         onPaymentMethodSelected = { onPaymentMethodSelected(PaymentMethodType.KLARNA.name) },
     ) {
         Row(
@@ -37,18 +34,18 @@ internal fun PrimerPaymentMethodSelectionScope.PaymentMethodItemKlarna(
         ) {
             Text(
                 text = stringResource(R.string.primer_components_payment_method_selection_klarna_pay_with),
-                style = LocalPrimerTypographyTokens.current.titleLarge.toTextStyle(),
-                color = LocalPrimerColorTokens.current.primerColorGray000,
-                modifier = Modifier.padding(end = LocalPrimerSpacingTokens.current.small),
+                style = LocalPrimerTheme.current.typographyTokens.titleLarge.toTextStyle(),
+                color = LocalPrimerTheme.current.colorTokens().primerColorGray000,
+                modifier = Modifier.padding(end = LocalPrimerTheme.current.spacingTokens.small),
             )
 
             Box(
                 modifier = modifier
                     .background(
                         color = PaymentMethodColors.klarnaPink,
-                        shape = RoundedCornerShape(LocalPrimerRadiusTokens.current.medium),
+                        shape = RoundedCornerShape(LocalPrimerTheme.current.radiusTokens.medium),
                     )
-                    .padding(LocalPrimerSpacingTokens.current.small),
+                    .padding(LocalPrimerTheme.current.spacingTokens.small),
                 contentAlignment = Alignment.Center,
             ) {
                 Icon(

@@ -8,14 +8,14 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import io.primer.android.internal.presentation.theme.LocalPrimerSpacingTokens
+import io.primer.android.LocalPrimerTheme
 import io.primer.android.scope.PrimerCardFormScope
 
 @Composable
 internal fun PrimerCardFormScope.CardDetailsForm(
     modifier: Modifier = Modifier,
 ) {
-    val spacingSmall = LocalPrimerSpacingTokens.current.small
+    val spacingSmall = LocalPrimerTheme.current.spacingTokens.small
     Column(
         modifier = modifier.fillMaxWidth(),
     ) {
@@ -23,7 +23,7 @@ internal fun PrimerCardFormScope.CardDetailsForm(
             cardNumberInput(Modifier.fillMaxWidth())
             Spacer(modifier = Modifier.height(spacingSmall))
             Row(
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
             ) {
                 expiryDateInput(Modifier.weight(1f))
                 Spacer(modifier = Modifier.width(spacingSmall))

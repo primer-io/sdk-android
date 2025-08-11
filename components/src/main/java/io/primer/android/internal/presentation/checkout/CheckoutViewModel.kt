@@ -32,7 +32,7 @@ internal class CheckoutViewModel(
                 onFailure = {
                     _state.value = PrimerCheckoutScope.State.Error(it)
                     checkoutNavigator.navigateToError(it.message ?: "Failed to load payment methods")
-                }
+                },
             )
         }
     }

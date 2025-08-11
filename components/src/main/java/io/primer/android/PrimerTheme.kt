@@ -1,4 +1,4 @@
-package io.primer.android.internal.presentation.theme
+package io.primer.android
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
@@ -6,7 +6,6 @@ import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.staticCompositionLocalOf
 import io.primer.android.internal.tokens.DarkColorTokens
 import io.primer.android.internal.tokens.LightColorTokens
@@ -15,24 +14,26 @@ import io.primer.android.internal.tokens.SizeTokens
 import io.primer.android.internal.tokens.SpacingTokens
 import io.primer.android.internal.tokens.TypographyTokens
 
-val LocalPrimerColorTokens = staticCompositionLocalOf<LightColorTokens> {
-    error("No PrimerColorTokens provided")
+data class PrimerTheme(
+    val lightColorTokens: LightColorTokens = LightColorTokens(),
+    val darkColorTokens: DarkColorTokens = DarkColorTokens(),
+    val radiusTokens: RadiusTokens = RadiusTokens(),
+    val sizeTokens: SizeTokens = SizeTokens(),
+    val spacingTokens: SpacingTokens = SpacingTokens(),
+    val typographyTokens: TypographyTokens = TypographyTokens(),
+) {
+    @Composable
+    fun colorTokens(): LightColorTokens {
+        return if (isSystemInDarkTheme()) {
+            darkColorTokens
+        } else {
+            lightColorTokens
+        }
+    }
 }
 
-val LocalPrimerRadiusTokens = staticCompositionLocalOf<RadiusTokens> {
-    error("No PrimerRadiusTokens provided")
-}
-
-val LocalPrimerSizeTokens = staticCompositionLocalOf<SizeTokens> {
-    error("No PrimerSizeTokens provided")
-}
-
-val LocalPrimerSpacingTokens = staticCompositionLocalOf<SpacingTokens> {
-    error("No PrimerSpacingTokens provided")
-}
-
-val LocalPrimerTypographyTokens = staticCompositionLocalOf<TypographyTokens> {
-    error("No PrimerTypographyTokens provided")
+internal val LocalPrimerTheme = staticCompositionLocalOf {
+    PrimerTheme()
 }
 
 private fun createDarkColorScheme(colorTokens: DarkColorTokens) = darkColorScheme(
@@ -80,29 +81,17 @@ private fun createLightColorScheme(colorTokens: LightColorTokens) = lightColorSc
 @Composable
 internal fun PrimerTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
+    theme: PrimerTheme,
     content: @Composable () -> Unit,
 ) {
-    val (colorTokens, colorScheme) = remember(darkTheme) {
-        if (darkTheme) {
-            val tokens = DarkColorTokens()
-            tokens to createDarkColorScheme(tokens)
-        } else {
-            val tokens = LightColorTokens()
-            tokens to createLightColorScheme(tokens)
-        }
+    val colorScheme = if (darkTheme) {
+        createDarkColorScheme(theme.darkColorTokens)
+    } else {
+        createLightColorScheme(theme.lightColorTokens)
     }
 
-    val sizeTokens = remember { SizeTokens() }
-    val spacingTokens = remember { SpacingTokens() }
-    val radiusTokens = remember { RadiusTokens() }
-    val typographyTokens = remember { TypographyTokens() }
-
     CompositionLocalProvider(
-        LocalPrimerColorTokens provides colorTokens,
-        LocalPrimerSizeTokens provides sizeTokens,
-        LocalPrimerSpacingTokens provides spacingTokens,
-        LocalPrimerRadiusTokens provides radiusTokens,
-        LocalPrimerTypographyTokens provides typographyTokens,
+        LocalPrimerTheme provides theme,
     ) {
         MaterialTheme(
             colorScheme = colorScheme,

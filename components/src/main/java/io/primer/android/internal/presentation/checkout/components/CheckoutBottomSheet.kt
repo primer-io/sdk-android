@@ -20,8 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import io.primer.android.internal.presentation.theme.LocalPrimerColorTokens
-import io.primer.android.internal.presentation.theme.LocalPrimerRadiusTokens
+import io.primer.android.LocalPrimerTheme
 
 private const val ANIMATION_DURATION_MS = 300
 private const val OVERLAY_ALPHA = 0.5f
@@ -33,20 +32,20 @@ internal fun CheckoutBottomSheet(
     navHost: @Composable () -> Unit,
 ) {
     var isVisible by remember { mutableStateOf(false) }
-    
+
     LaunchedEffect(Unit) { isVisible = true }
-    
+
     val slideOffset by animateFloatAsState(
         targetValue = if (isVisible) 0f else 1f,
         animationSpec = tween(ANIMATION_DURATION_MS),
-        label = "slideOffset"
+        label = "slideOffset",
     )
-    
+
     Box(
         modifier = modifier
             .fillMaxSize()
             .background(Color.Black.copy(alpha = OVERLAY_ALPHA))
-            .clickable { onDismiss() }
+            .clickable { onDismiss() },
     ) {
         Box(
             modifier = Modifier
@@ -55,12 +54,12 @@ internal fun CheckoutBottomSheet(
                 .offset(y = (slideOffset * 1000).dp)
                 .clip(
                     RoundedCornerShape(
-                        topEnd = LocalPrimerRadiusTokens.current.large,
-                        topStart = LocalPrimerRadiusTokens.current.large
-                    )
+                        topEnd = LocalPrimerTheme.current.radiusTokens.large,
+                        topStart = LocalPrimerTheme.current.radiusTokens.large,
+                    ),
                 )
-                .background(LocalPrimerColorTokens.current.primerColorBackground)
-        ) { 
+                .background(LocalPrimerTheme.current.colorTokens().primerColorBackground),
+        ) {
             navHost()
         }
     }

@@ -11,16 +11,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import io.primer.android.internal.presentation.theme.LocalPrimerColorTokens
-import io.primer.android.internal.presentation.theme.LocalPrimerRadiusTokens
-import io.primer.android.internal.presentation.theme.LocalPrimerSizeTokens
+import io.primer.android.LocalPrimerTheme
 
 @Composable
 fun PrimerButton(
     modifier: Modifier = Modifier,
     borderColor: Color? = null,
-    borderRadius: Dp = LocalPrimerRadiusTokens.current.medium,
-    backgroundColor: Color = LocalPrimerColorTokens.current.primerColorBackground,
+    borderRadius: Dp = LocalPrimerTheme.current.radiusTokens.medium,
+    backgroundColor: Color = LocalPrimerTheme.current.colorTokens().primerColorBackground,
     onClick: () -> Unit,
     enabled: Boolean = true,
     content: @Composable () -> Unit,
@@ -29,7 +27,7 @@ fun PrimerButton(
         onClick = onClick,
         modifier = modifier
             .fillMaxWidth()
-            .height(LocalPrimerSizeTokens.current.xxlarge),
+            .height(LocalPrimerTheme.current.sizeTokens.xxlarge),
         enabled = enabled,
         shape = RoundedCornerShape(borderRadius),
         colors = ButtonDefaults.buttonColors(

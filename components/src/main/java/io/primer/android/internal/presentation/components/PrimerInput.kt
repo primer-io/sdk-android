@@ -13,10 +13,7 @@ import androidx.compose.material3.TextFieldColors
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.VisualTransformation
-import io.primer.android.internal.presentation.theme.LocalPrimerColorTokens
-import io.primer.android.internal.presentation.theme.LocalPrimerRadiusTokens
-import io.primer.android.internal.presentation.theme.LocalPrimerSpacingTokens
-import io.primer.android.internal.presentation.theme.LocalPrimerTypographyTokens
+import io.primer.android.LocalPrimerTheme
 
 @Composable
 fun PrimerInput(
@@ -32,21 +29,20 @@ fun PrimerInput(
     readOnly: Boolean = false,
     enabled: Boolean = true,
     colors: TextFieldColors = OutlinedTextFieldDefaults.colors(
-        focusedBorderColor = LocalPrimerColorTokens.current.primerColorBorderOutlinedFocus,
-        unfocusedBorderColor = LocalPrimerColorTokens.current.primerColorBorderOutlinedDefault,
+        focusedBorderColor = LocalPrimerTheme.current.colorTokens().primerColorBorderOutlinedFocus,
+        unfocusedBorderColor = LocalPrimerTheme.current.colorTokens().primerColorBorderOutlinedDefault,
     ),
 ) {
-
     Column(
-        modifier = modifier.fillMaxWidth()
+        modifier = modifier.fillMaxWidth(),
     ) {
         Text(
             text = label,
-            style = LocalPrimerTypographyTokens.current.bodySmall.toTextStyle(),
-            color = LocalPrimerColorTokens.current.primerColorTextPrimary
+            style = LocalPrimerTheme.current.typographyTokens.bodySmall.toTextStyle(),
+            color = LocalPrimerTheme.current.colorTokens().primerColorTextPrimary,
         )
 
-        Spacer(modifier = Modifier.height(LocalPrimerSpacingTokens.current.xsmall))
+        Spacer(modifier = Modifier.height(LocalPrimerTheme.current.spacingTokens.xsmall))
 
         OutlinedTextField(
             value = value,
@@ -60,19 +56,18 @@ fun PrimerInput(
             keyboardOptions = keyboardOptions,
             enabled = enabled,
             readOnly = readOnly,
-            shape = RoundedCornerShape(LocalPrimerRadiusTokens.current.small),
+            shape = RoundedCornerShape(LocalPrimerTheme.current.radiusTokens.small),
             colors = colors,
         )
 
         error?.let {
-            Spacer(modifier = Modifier.height(LocalPrimerSpacingTokens.current.xsmall))
+            Spacer(modifier = Modifier.height(LocalPrimerTheme.current.spacingTokens.xsmall))
             Text(
                 text = it,
-                style = LocalPrimerTypographyTokens.current.bodySmall.toTextStyle(),
-                color = LocalPrimerColorTokens.current.primerColorTextNegative,
+                style = LocalPrimerTheme.current.typographyTokens.bodySmall.toTextStyle(),
+                color = LocalPrimerTheme.current.colorTokens().primerColorTextNegative,
             )
-            Spacer(modifier = Modifier.height(LocalPrimerSpacingTokens.current.xsmall))
+            Spacer(modifier = Modifier.height(LocalPrimerTheme.current.spacingTokens.xsmall))
         }
     }
-
 }

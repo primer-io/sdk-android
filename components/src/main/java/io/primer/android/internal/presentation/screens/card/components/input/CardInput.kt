@@ -18,12 +18,12 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.VisualTransformation
+import io.primer.android.LocalPrimerTheme
 import io.primer.android.components.R
 import io.primer.android.components.domain.inputs.models.PrimerInputElementType
 import io.primer.android.internal.presentation.components.PrimerInput
 import io.primer.android.internal.presentation.screens.card.components.input.transformations.CardNumberVisualTransformation
 import io.primer.android.internal.presentation.screens.card.components.input.transformations.ExpiryDateVisualTransformation
-import io.primer.android.internal.presentation.theme.LocalPrimerColorTokens
 import io.primer.android.scope.PrimerCardFormScope
 import io.primer.android.ui.core.model.SyncValidationError
 import io.primer.cardShared.CardNumberFormatter
@@ -325,8 +325,8 @@ internal fun PrimerCardFormScope.CountryCodeInput(modifier: Modifier = Modifier)
             ) { navigateToCountrySelection() },
         error = resolveErrorMessage(error),
         colors = OutlinedTextFieldDefaults.colors(
-            focusedBorderColor = LocalPrimerColorTokens.current.primerColorBorderOutlinedFocus,
-            unfocusedBorderColor = LocalPrimerColorTokens.current.primerColorBorderOutlinedDefault,
+            focusedBorderColor = LocalPrimerTheme.current.colorTokens().primerColorBorderOutlinedFocus,
+            unfocusedBorderColor = LocalPrimerTheme.current.colorTokens().primerColorBorderOutlinedDefault,
             disabledTextColor = MaterialTheme.colorScheme.onSurface,
             disabledBorderColor = MaterialTheme.colorScheme.outline,
             disabledLabelColor = MaterialTheme.colorScheme.onSurfaceVariant,

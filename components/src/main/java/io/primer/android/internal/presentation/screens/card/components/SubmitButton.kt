@@ -7,10 +7,9 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import io.primer.android.LocalPrimerTheme
 import io.primer.android.components.R
 import io.primer.android.internal.presentation.components.PrimerButton
-import io.primer.android.internal.presentation.theme.LocalPrimerColorTokens
-import io.primer.android.internal.presentation.theme.LocalPrimerTypographyTokens
 import io.primer.android.scope.PrimerCardFormScope
 
 @Composable
@@ -23,13 +22,13 @@ internal fun PrimerCardFormScope.SubmitButton(
     PrimerButton(
         onClick = { onSubmit() },
         modifier = modifier.fillMaxWidth(),
-        backgroundColor = LocalPrimerColorTokens.current.primerColorBrand,
+        backgroundColor = LocalPrimerTheme.current.colorTokens().primerColorBrand,
         enabled = !currentState.isLoading,
     ) {
         Text(
             text = if (currentState.isLoading) stringResource(R.string.primer_components_checkout_loading) else text,
-            style = LocalPrimerTypographyTokens.current.titleLarge.toTextStyle(),
-            color = LocalPrimerColorTokens.current.primerColorBackground,
+            style = LocalPrimerTheme.current.typographyTokens.titleLarge.toTextStyle(),
+            color = LocalPrimerTheme.current.colorTokens().primerColorBackground,
         )
     }
 }

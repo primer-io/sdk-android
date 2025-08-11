@@ -27,6 +27,7 @@ import io.primer.android.core.ExperimentalPrimerApi
 import io.primer.android.data.settings.PrimerDebugOptions
 import io.primer.android.data.settings.PrimerSettings
 import io.primer.android.scope.PrimerCheckoutScope
+import io.primer.sample.demos.BoldTypographyThemeDemo
 import io.primer.sample.demos.ButtonedInputFieldsDemo
 import io.primer.sample.demos.CheckoutDemo
 import io.primer.sample.demos.CheckoutDemo.Companion.getBackground
@@ -35,10 +36,18 @@ import io.primer.sample.demos.CustomCardFormLayoutDemo
 import io.primer.sample.demos.CustomSuccessDemo
 import io.primer.sample.demos.DatePickerExpiryDemo
 import io.primer.sample.demos.FullscreenDemo
+import io.primer.sample.demos.GreenThemeDemo
 import io.primer.sample.demos.HorizontalPaymentMethodsDemo
+import io.primer.sample.demos.LargeSizesThemeDemo
+import io.primer.sample.demos.LargeTypographyThemeDemo
 import io.primer.sample.demos.MixedScopesDemo
+import io.primer.sample.demos.NoRadiusThemeDemo
 import io.primer.sample.demos.PrimerDemo
+import io.primer.sample.demos.PurpleThemeDemo
+import io.primer.sample.demos.RedThemeDemo
+import io.primer.sample.demos.RegularTypographyThemeDemo
 import io.primer.sample.demos.SingleInputFieldDemo
+import io.primer.sample.demos.SmallSizesThemeDemo
 import io.primer.sample.demos.SubmitOverrideDemo
 import io.primer.sample.demos.ThreeTabsDemo
 
@@ -67,6 +76,7 @@ fun CheckoutComponentsSelection(clientToken: String?, onBackPress: () -> Unit) {
             clientToken?.let {
                 PrimerCheckout(
                     clientToken = it,
+                    primerTheme = current.theme,
                     primerSettings = PrimerSettings(
                         debugOptions =
                             PrimerDebugOptions(false)
@@ -128,6 +138,17 @@ private fun CustomizationIndicator(demo: CheckoutDemo) {
 
 private fun getAllDemos(): List<CheckoutDemo> = listOf(
     PrimerDemo,
+    // Theme Demos
+    RedThemeDemo,
+    GreenThemeDemo,
+    PurpleThemeDemo,
+    NoRadiusThemeDemo,
+    SmallSizesThemeDemo,
+    LargeSizesThemeDemo,
+    RegularTypographyThemeDemo,
+    BoldTypographyThemeDemo,
+    LargeTypographyThemeDemo,
+    // Other Demos
     FullscreenDemo,
     CustomSuccessDemo,
     CustomCardComponentDemo,

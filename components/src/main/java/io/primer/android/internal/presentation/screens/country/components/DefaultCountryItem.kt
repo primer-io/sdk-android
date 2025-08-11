@@ -10,8 +10,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import io.primer.android.LocalPrimerTheme
 import io.primer.android.clientSessionActions.domain.models.PrimerCountry
-import io.primer.android.internal.presentation.theme.LocalPrimerSpacingTokens
 
 @Composable
 internal fun DefaultCountryItem(
@@ -19,7 +19,7 @@ internal fun DefaultCountryItem(
     onSelect: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val spacing = LocalPrimerSpacingTokens.current
+    val spacing = LocalPrimerTheme.current.spacingTokens
 
     Column(
         modifier = modifier

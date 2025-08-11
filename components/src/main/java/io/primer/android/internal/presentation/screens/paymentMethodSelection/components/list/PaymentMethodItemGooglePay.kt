@@ -5,8 +5,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import io.primer.android.LocalPrimerTheme
 import io.primer.android.components.R
-import io.primer.android.internal.presentation.theme.LocalPrimerColorTokens
 import io.primer.android.paymentmethods.common.data.model.PaymentMethodType
 import io.primer.android.scope.PrimerPaymentMethodSelectionScope
 
@@ -14,7 +14,7 @@ import io.primer.android.scope.PrimerPaymentMethodSelectionScope
 internal fun PrimerPaymentMethodSelectionScope.PaymentMethodItemGooglePay() {
     PaymentMethodItem(
         borderRadius = Int.MAX_VALUE.dp,
-        backgroundColor = LocalPrimerColorTokens.current.primerColorGray900,
+        backgroundColor = LocalPrimerTheme.current.colorTokens().primerColorGray900,
         onPaymentMethodSelected = { onPaymentMethodSelected(PaymentMethodType.GOOGLE_PAY.name) },
     ) {
         Icon(

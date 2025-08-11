@@ -15,34 +15,31 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import io.primer.android.LocalPrimerTheme
 import io.primer.android.components.R
 import io.primer.android.internal.domain.models.PrimerComposablePaymentMethod
 import io.primer.android.internal.domain.utils.UNKNOWN_SURCHARGE
 import io.primer.android.internal.presentation.screens.paymentMethodSelection.components.list.PaymentMethodSelector
-import io.primer.android.internal.presentation.theme.LocalPrimerColorTokens
-import io.primer.android.internal.presentation.theme.LocalPrimerSizeTokens
-import io.primer.android.internal.presentation.theme.LocalPrimerSpacingTokens
-import io.primer.android.internal.presentation.theme.LocalPrimerTypographyTokens
 import io.primer.android.internal.presentation.utils.CurrencyFormatter
 import io.primer.android.scope.PrimerPaymentMethodSelectionScope
 
 @Composable
 fun PrimerPaymentMethodSelectionScope.SurchargeGroupCard(
     value: Int,
-    paymentMethods: List<PrimerComposablePaymentMethod>
+    paymentMethods: List<PrimerComposablePaymentMethod>,
 ) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = LocalPrimerSpacingTokens.current.xsmall),
-        shape = RoundedCornerShape(LocalPrimerSizeTokens.current.small),
+            .padding(vertical = LocalPrimerTheme.current.spacingTokens.xsmall),
+        shape = RoundedCornerShape(LocalPrimerTheme.current.sizeTokens.small),
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(LocalPrimerColorTokens.current.primerColorGray100)
-                .padding(LocalPrimerSpacingTokens.current.small),
-            verticalArrangement = Arrangement.spacedBy(LocalPrimerSpacingTokens.current.small)
+                .background(LocalPrimerTheme.current.colorTokens().primerColorGray100)
+                .padding(LocalPrimerTheme.current.spacingTokens.small),
+            verticalArrangement = Arrangement.spacedBy(LocalPrimerTheme.current.spacingTokens.small),
         ) {
             SurchargeHeader(value = value)
             paymentMethods.forEach { paymentMethod ->
@@ -58,37 +55,37 @@ private fun PrimerPaymentMethodSelectionScope.SurchargeHeader(value: Int) {
         0 -> {
             Text(
                 text = stringResource(R.string.primer_components_surcharge_no_additional_fee),
-                style = LocalPrimerTypographyTokens.current.bodyMedium.toTextStyle(),
-                color = LocalPrimerColorTokens.current.primerColorGray900,
+                style = LocalPrimerTheme.current.typographyTokens.bodyMedium.toTextStyle(),
+                color = LocalPrimerTheme.current.colorTokens().primerColorGray900,
                 textAlign = TextAlign.End,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
             )
         }
 
         UNKNOWN_SURCHARGE -> {
             Text(
                 text = stringResource(R.string.primer_components_surcharge_additional_fees),
-                style = LocalPrimerTypographyTokens.current.bodyMedium.toTextStyle(),
-                color = LocalPrimerColorTokens.current.primerColorGray900,
+                style = LocalPrimerTheme.current.typographyTokens.bodyMedium.toTextStyle(),
+                color = LocalPrimerTheme.current.colorTokens().primerColorGray900,
                 textAlign = TextAlign.End,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
             )
         }
 
         else -> {
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
+                horizontalArrangement = Arrangement.SpaceBetween,
             ) {
                 Text(
                     text = stringResource(R.string.primer_components_surcharge_fee),
-                    style = LocalPrimerTypographyTokens.current.bodyMedium.toTextStyle(),
-                    color = LocalPrimerColorTokens.current.primerColorTextSecondary
+                    style = LocalPrimerTheme.current.typographyTokens.bodyMedium.toTextStyle(),
+                    color = LocalPrimerTheme.current.colorTokens().primerColorTextSecondary,
                 )
                 Text(
                     text = formatSurcharge(value),
-                    style = LocalPrimerTypographyTokens.current.bodyMedium.toTextStyle(),
-                    color = LocalPrimerColorTokens.current.primerColorGray900
+                    style = LocalPrimerTheme.current.typographyTokens.bodyMedium.toTextStyle(),
+                    color = LocalPrimerTheme.current.colorTokens().primerColorGray900,
                 )
             }
         }

@@ -10,8 +10,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import io.primer.android.LocalPrimerTheme
 import io.primer.android.components.R
-import io.primer.android.internal.presentation.theme.LocalPrimerSpacingTokens
 
 @Composable
 internal fun DefaultSearchBar(
@@ -20,7 +20,7 @@ internal fun DefaultSearchBar(
     placeholder: String,
     modifier: Modifier = Modifier,
 ) {
-    val spacing = LocalPrimerSpacingTokens.current
+    val spacing = LocalPrimerTheme.current.spacingTokens
 
     OutlinedTextField(
         value = query,

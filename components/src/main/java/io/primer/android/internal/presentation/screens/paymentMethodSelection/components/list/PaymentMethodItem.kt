@@ -4,17 +4,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
+import io.primer.android.LocalPrimerTheme
 import io.primer.android.internal.domain.models.PrimerComposablePaymentMethod
 import io.primer.android.internal.presentation.components.PrimerButton
-import io.primer.android.internal.presentation.theme.LocalPrimerColorTokens
-import io.primer.android.internal.presentation.theme.LocalPrimerRadiusTokens
 import io.primer.android.paymentmethods.common.data.model.PaymentMethodType
 import io.primer.android.paymentmethods.common.data.model.PaymentMethodType.Companion.safeValueOf
 import io.primer.android.scope.PrimerPaymentMethodSelectionScope
 
 @Composable
 internal fun PrimerPaymentMethodSelectionScope.PaymentMethodSelector(
-    primerMethod: PrimerComposablePaymentMethod
+    primerMethod: PrimerComposablePaymentMethod,
 ) {
     with(components) {
         when (safeValueOf(primerMethod.paymentMethodType)) {
@@ -26,15 +25,14 @@ internal fun PrimerPaymentMethodSelectionScope.PaymentMethodSelector(
             else -> { PaymentMethodItemComingSoon { } }
         }
     }
-
 }
 
 @Composable
 internal fun PaymentMethodItem(
     modifier: Modifier = Modifier,
     borderColor: Color? = null,
-    borderRadius: Dp = LocalPrimerRadiusTokens.current.medium,
-    backgroundColor: Color = LocalPrimerColorTokens.current.primerColorBackground,
+    borderRadius: Dp = LocalPrimerTheme.current.radiusTokens.medium,
+    backgroundColor: Color = LocalPrimerTheme.current.colorTokens().primerColorBackground,
     onPaymentMethodSelected: () -> Unit,
     content: @Composable () -> Unit,
 ) {

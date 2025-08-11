@@ -23,10 +23,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import io.primer.android.LocalPrimerTheme
 import io.primer.android.components.R
 import io.primer.android.components.assets.ui.getCardImageAsset
 import io.primer.android.displayMetadata.domain.model.ImageColor
-import io.primer.android.internal.presentation.theme.LocalPrimerColorTokens
 import io.primer.android.scope.PrimerCardFormScope
 
 // TODO check this
@@ -75,12 +75,12 @@ private fun PrimerCardFormScope.CardNetworkSelector(
             Icon(
                 painter = painterResource(R.drawable.ic_primer_chevron_down),
                 contentDescription = stringResource(R.string.primer_components_content_description_select_network),
-                tint = LocalPrimerColorTokens.current.primerColorIconPrimary,
+                tint = LocalPrimerTheme.current.colorTokens().primerColorIconPrimary,
             )
         }
 
         DropdownMenu(
-            containerColor = LocalPrimerColorTokens.current.primerColorBackground,
+            containerColor = LocalPrimerTheme.current.colorTokens().primerColorBackground,
             expanded = expanded,
             onDismissRequest = { expanded = false },
         ) {
@@ -95,7 +95,7 @@ private fun PrimerCardFormScope.CardNetworkSelector(
                             Icon(
                                 painter = painterResource(R.drawable.ic_primer_check),
                                 contentDescription = "Selected",
-                                tint = LocalPrimerColorTokens.current.primerColorIconPrimary,
+                                tint = LocalPrimerTheme.current.colorTokens().primerColorIconPrimary,
                             )
                         }
                     },
@@ -103,7 +103,7 @@ private fun PrimerCardFormScope.CardNetworkSelector(
                         Text(
                             text = network.displayName,
                             style = MaterialTheme.typography.bodyMedium,
-                            color = LocalPrimerColorTokens.current.primerColorTextPrimary,
+                            color = LocalPrimerTheme.current.colorTokens().primerColorTextPrimary,
                         )
                     },
                 )

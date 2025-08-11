@@ -11,7 +11,7 @@ import io.primer.android.internal.presentation.screens.paymentMethodSelection.Pa
 import io.primer.android.internal.presentation.screens.paymentMethodSelection.components.list.PaymentMethodItemCard
 import io.primer.android.scope.PrimerPaymentMethodSelectionScope
 
-class PrimerPaymentMethodSelectionComponents: DISdkComponent {
+class PrimerPaymentMethodSelectionComponents : DISdkComponent {
 
     @Composable
     fun Screen() {
@@ -33,5 +33,4 @@ class PrimerPaymentMethodSelectionComponents: DISdkComponent {
     var paymentMethodCard: @Composable PrimerPaymentMethodSelectionScope.(modifier: Modifier) -> Unit = {
         PaymentMethodItemCard(it)
     }
-
 }

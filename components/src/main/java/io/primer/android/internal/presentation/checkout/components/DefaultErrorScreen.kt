@@ -17,12 +17,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import io.primer.android.LocalPrimerTheme
 import io.primer.android.components.R
 import io.primer.android.internal.presentation.components.PrimerButton
-import io.primer.android.internal.presentation.theme.LocalPrimerColorTokens
-import io.primer.android.internal.presentation.theme.LocalPrimerSizeTokens
-import io.primer.android.internal.presentation.theme.LocalPrimerSpacingTokens
-import io.primer.android.internal.presentation.theme.LocalPrimerTypographyTokens
 import io.primer.android.scope.PrimerCheckoutScope
 import kotlinx.coroutines.launch
 
@@ -32,9 +29,9 @@ internal fun PrimerCheckoutScope.DefaultErrorScreen(
     title: String? = null,
     message: String? = null,
 ) {
-    val colorTokens = LocalPrimerColorTokens.current
-    val spacingTokens = LocalPrimerSpacingTokens.current
-    val sizeTokens = LocalPrimerSizeTokens.current
+    val colorTokens = LocalPrimerTheme.current.colorTokens()
+    val spacingTokens = LocalPrimerTheme.current.spacingTokens
+    val sizeTokens = LocalPrimerTheme.current.sizeTokens
     val coroutineScope = rememberCoroutineScope()
 
     Column(
@@ -84,8 +81,8 @@ internal fun PrimerCheckoutScope.DefaultErrorScreen(
         ) {
             Text(
                 text = stringResource(R.string.primer_components_checkout_retry),
-                style = LocalPrimerTypographyTokens.current.titleLarge.toTextStyle(),
-                color = LocalPrimerColorTokens.current.primerColorBackground,
+                style = LocalPrimerTheme.current.typographyTokens.titleLarge.toTextStyle(),
+                color = LocalPrimerTheme.current.colorTokens().primerColorBackground,
             )
         }
 
@@ -99,12 +96,12 @@ internal fun PrimerCheckoutScope.DefaultErrorScreen(
             },
             modifier = Modifier.fillMaxWidth(),
             backgroundColor = Color.Transparent,
-            borderColor = LocalPrimerColorTokens.current.primerColorBorderOutlinedDefault,
+            borderColor = LocalPrimerTheme.current.colorTokens().primerColorBorderOutlinedDefault,
         ) {
             Text(
                 text = stringResource(R.string.primer_components_checkout_other_payment_methods),
-                style = LocalPrimerTypographyTokens.current.titleLarge.toTextStyle(),
-                color = LocalPrimerColorTokens.current.primerColorTextPrimary,
+                style = LocalPrimerTheme.current.typographyTokens.titleLarge.toTextStyle(),
+                color = LocalPrimerTheme.current.colorTokens().primerColorTextPrimary,
             )
         }
     }

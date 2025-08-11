@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.StateFlow
  * Defines the scope for Primer's checkout flow, providing access to state management,
  * UI customization, and nested component scopes.
  */
-interface PrimerCheckoutScope: DISdkComponent {
+interface PrimerCheckoutScope : DISdkComponent {
 
     val components: PrimerCheckoutComponents
         get() = resolve()

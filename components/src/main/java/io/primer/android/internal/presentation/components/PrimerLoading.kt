@@ -9,24 +9,23 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
-import io.primer.android.internal.presentation.theme.LocalPrimerSizeTokens
-import io.primer.android.internal.presentation.theme.LocalPrimerSpacingTokens
+import io.primer.android.LocalPrimerTheme
 
 @Composable
 internal fun PrimerLoading(
-    size: Dp = LocalPrimerSizeTokens.current.xxxlarge,
-    padding: Dp = LocalPrimerSpacingTokens.current.xsmall,
-    strokeWidth: Dp = LocalPrimerSpacingTokens.current.xsmall
+    size: Dp = LocalPrimerTheme.current.sizeTokens.xxxlarge,
+    padding: Dp = LocalPrimerTheme.current.spacingTokens.xsmall,
+    strokeWidth: Dp = LocalPrimerTheme.current.spacingTokens.xsmall,
 ) {
     Box(
         modifier = Modifier
             .size(size)
             .padding(padding),
-        contentAlignment = Alignment.Center
+        contentAlignment = Alignment.Center,
     ) {
         CircularProgressIndicator(
             modifier = Modifier.fillMaxSize(),
-            strokeWidth = strokeWidth
+            strokeWidth = strokeWidth,
         )
     }
 }

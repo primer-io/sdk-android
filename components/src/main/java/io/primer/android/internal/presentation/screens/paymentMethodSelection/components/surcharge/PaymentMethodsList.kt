@@ -9,7 +9,7 @@ import io.primer.android.scope.PrimerPaymentMethodSelectionScope
 
 fun LazyListScope.paymentMethodsList(
     paymentMethods: List<PrimerComposablePaymentMethod>,
-    scope: PrimerPaymentMethodSelectionScope
+    scope: PrimerPaymentMethodSelectionScope,
 ) {
     val groupedPaymentMethods = paymentMethods.groupBy { it.surcharge?.getValue() ?: 0 }
 
@@ -26,7 +26,7 @@ fun LazyListScope.paymentMethodsList(
                 with(scope) {
                     SurchargeGroupCard(
                         value = value,
-                        paymentMethods = methods
+                        paymentMethods = methods,
                     )
                 }
             }

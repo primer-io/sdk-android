@@ -7,14 +7,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import io.primer.android.LocalPrimerTheme
 import io.primer.android.components.R
 import io.primer.android.internal.presentation.checkout.components.CheckoutAppBar
-import io.primer.android.internal.presentation.theme.LocalPrimerSpacingTokens
 import io.primer.android.scope.PrimerCardFormScope
 
 @Composable
 internal fun PrimerCardFormScope.DefaultCardFormScreen() {
-
     Column {
         CheckoutAppBar(
             title = stringResource(R.string.primer_components_select_payment_method_card),
@@ -23,12 +22,16 @@ internal fun PrimerCardFormScope.DefaultCardFormScreen() {
         )
         Column(
             modifier = Modifier
-                .padding(horizontal = LocalPrimerSpacingTokens.current.large),
+                .padding(
+                    start = LocalPrimerTheme.current.spacingTokens.large,
+                    end = LocalPrimerTheme.current.spacingTokens.large,
+                    bottom = LocalPrimerTheme.current.spacingTokens.large,
+                ),
         ) {
             with(components) {
                 cardDetails(Modifier)
                 billingAddress(Modifier)
-                Spacer(modifier = Modifier.height(LocalPrimerSpacingTokens.current.xsmall))
+                Spacer(modifier = Modifier.height(LocalPrimerTheme.current.spacingTokens.xsmall))
                 submitButton(Modifier, stringResource(R.string.primer_components_card_form_pay))
             }
         }

@@ -10,7 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import io.primer.android.internal.presentation.theme.LocalPrimerSpacingTokens
+import io.primer.android.LocalPrimerTheme
 import io.primer.android.scope.PrimerCardFormScope
 
 @Composable
@@ -21,13 +21,13 @@ internal fun PrimerCardFormScope.BillingAddressForm(
     val billingInputFields = state.billingFields
     if (billingInputFields.isEmpty()) return
 
-    val spacingSmall = LocalPrimerSpacingTokens.current.small
+    val spacingSmall = LocalPrimerTheme.current.spacingTokens.small
 
     Column(
         modifier = modifier.fillMaxWidth(),
     ) {
         with(components) {
-            countryCodeInput( Modifier.fillMaxWidth())
+            countryCodeInput(Modifier.fillMaxWidth())
             Spacer(modifier = Modifier.height(spacingSmall))
             Row(
                 modifier = Modifier.fillMaxWidth(),

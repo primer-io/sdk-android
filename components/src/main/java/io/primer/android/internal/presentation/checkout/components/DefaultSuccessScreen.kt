@@ -15,20 +15,18 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import io.primer.android.LocalPrimerTheme
 import io.primer.android.components.R
-import io.primer.android.internal.presentation.theme.LocalPrimerColorTokens
-import io.primer.android.internal.presentation.theme.LocalPrimerSizeTokens
-import io.primer.android.internal.presentation.theme.LocalPrimerSpacingTokens
 import io.primer.android.scope.PrimerCheckoutScope
 import kotlinx.coroutines.delay
 
 @Composable
 internal fun PrimerCheckoutScope.DefaultSuccessScreen(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
-    val spacing = LocalPrimerSpacingTokens.current
-    val sizes = LocalPrimerSizeTokens.current
-    val colorTokens = LocalPrimerColorTokens.current
+    val spacing = LocalPrimerTheme.current.spacingTokens
+    val sizes = LocalPrimerTheme.current.sizeTokens
+    val colorTokens = LocalPrimerTheme.current.colorTokens()
 
     LaunchedEffect(this) {
         delay(3000)

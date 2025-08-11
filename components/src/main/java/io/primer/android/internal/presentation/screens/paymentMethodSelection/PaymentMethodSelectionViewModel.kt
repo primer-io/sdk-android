@@ -31,7 +31,7 @@ internal class PaymentMethodSelectionViewModel(
         val orderInfo = basicOrderInfoInteractor(None)
         _uiState.value = PrimerPaymentMethodSelectionScope.State(
             availablePaymentMethodsUseCase.cache,
-            orderInfo
+            orderInfo,
         )
     }
 

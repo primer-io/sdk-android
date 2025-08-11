@@ -41,5 +41,4 @@ interface PrimerPaymentMethodSelectionScope : DISdkComponent {
         val paymentMethods: List<PrimerComposablePaymentMethod> = listOf(),
         val orderInfo: BasicOrderInfo = BasicOrderInfo(0, ""),
     )
-
 }

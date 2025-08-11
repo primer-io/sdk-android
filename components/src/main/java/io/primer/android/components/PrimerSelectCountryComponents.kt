@@ -33,7 +33,11 @@ class PrimerSelectCountryComponents : DISdkComponent {
      * @param onQueryChange Callback for search query changes
      * @param placeholder Placeholder text for the search input
      */
-    var searchBar: @Composable PrimerSelectCountryScope.(query: String, onQueryChange: (String) -> Unit, placeholder: String) -> Unit =
+    var searchBar: @Composable PrimerSelectCountryScope.(
+        query: String,
+        onQueryChange: (String) -> Unit,
+        placeholder: String,
+    ) -> Unit =
         { query, onQueryChange, placeholder ->
             DefaultSearchBar(query = query, onQueryChange = onQueryChange, placeholder = placeholder)
         }
@@ -48,5 +52,4 @@ class PrimerSelectCountryComponents : DISdkComponent {
         { country, onSelect ->
             DefaultCountryItem(country = country, onSelect = onSelect)
         }
-
 }

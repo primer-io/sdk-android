@@ -10,11 +10,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import io.primer.android.LocalPrimerTheme
 import io.primer.android.components.R
 import io.primer.android.internal.presentation.components.PrimerLoading
-import io.primer.android.internal.presentation.theme.LocalPrimerColorTokens
-import io.primer.android.internal.presentation.theme.LocalPrimerSpacingTokens
-import io.primer.android.internal.presentation.theme.LocalPrimerTypographyTokens
 
 @Composable
 internal fun DefaultSplashScreen() {
@@ -25,20 +23,20 @@ internal fun DefaultSplashScreen() {
     ) {
         PrimerLoading()
 
-        Spacer(modifier = Modifier.height(LocalPrimerSpacingTokens.current.small))
+        Spacer(modifier = Modifier.height(LocalPrimerTheme.current.spacingTokens.small))
 
         Text(
             text = stringResource(R.string.primer_components_checkout_splash_title),
-            color = LocalPrimerColorTokens.current.primerColorTextPrimary,
-            style = LocalPrimerTypographyTokens.current.bodyLarge.toTextStyle()
+            color = LocalPrimerTheme.current.colorTokens().primerColorTextPrimary,
+            style = LocalPrimerTheme.current.typographyTokens.bodyLarge.toTextStyle(),
         )
 
-        Spacer(modifier = Modifier.height(LocalPrimerSpacingTokens.current.xsmall))
+        Spacer(modifier = Modifier.height(LocalPrimerTheme.current.spacingTokens.xsmall))
 
         Text(
             text = stringResource(R.string.primer_checkout_splash_subtitle),
-            color = LocalPrimerColorTokens.current.primerColorTextSecondary,
-            style = LocalPrimerTypographyTokens.current.bodyMedium.toTextStyle()
+            color = LocalPrimerTheme.current.colorTokens().primerColorTextSecondary,
+            style = LocalPrimerTheme.current.typographyTokens.bodyMedium.toTextStyle(),
         )
     }
 }
