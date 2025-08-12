@@ -2,13 +2,16 @@ package io.primer.android.internal.presentation.screens.paymentMethodSelection
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import io.primer.android.components.currencyformat.domain.models.FormatCurrencyParams
 import io.primer.android.core.domain.None
+import io.primer.android.data.settings.internal.MonetaryAmount
 import io.primer.android.internal.domain.usecase.AvailablePaymentMethodsUseCase
 import io.primer.android.internal.presentation.checkout.CheckoutNavigator
 import io.primer.android.internal.presentation.checkout.Screen
 import io.primer.android.paymentmethods.common.data.model.PaymentMethodType
 import io.primer.android.scope.PrimerPaymentMethodSelectionScope
 import io.primer.android.ui.core.configuration.domain.model.BasicOrderInfoInteractor
+import io.primer.android.ui.core.domain.FormatAmountToCurrencyInteractor
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -18,6 +21,7 @@ internal class PaymentMethodSelectionViewModel(
     private val basicOrderInfoInteractor: BasicOrderInfoInteractor,
     private val checkoutNavigator: CheckoutNavigator,
     private val availablePaymentMethodsUseCase: AvailablePaymentMethodsUseCase,
+    private val formatAmountToCurrencyInteractor: FormatAmountToCurrencyInteractor,
 ) : ViewModel(), PrimerPaymentMethodSelectionScope {
 
     private val _uiState = MutableStateFlow(PrimerPaymentMethodSelectionScope.State())
@@ -29,10 +33,39 @@ internal class PaymentMethodSelectionViewModel(
 
     private fun loadPaymentMethods() {
         val orderInfo = basicOrderInfoInteractor(None)
+
         _uiState.value = PrimerPaymentMethodSelectionScope.State(
-            availablePaymentMethodsUseCase.cache,
-            orderInfo,
+            paymentMethods = availablePaymentMethodsUseCase.cache,
+            orderInfo = orderInfo,
         )
+    }
+
+    private fun formatAmount(amountInCents: Int, currencyCode: String): String {
+        val monetaryAmount = MonetaryAmount.create(
+            currency = currencyCode,
+            value = amountInCents,
+        )
+
+        return monetaryAmount?.let {
+            formatAmountToCurrencyInteractor.execute(
+                FormatCurrencyParams(amount = it),
+            )
+        } ?: ""
+    }
+
+    override fun formatTitleAmount(): String {
+        val orderInfo = _uiState.value.orderInfo
+        return formatAmount(orderInfo.totalAmount, orderInfo.currencyCode)
+    }
+
+    override fun formatSurchargeAmount(amountInCents: Int): String {
+        val orderInfo = _uiState.value.orderInfo
+        val formattedAmount = formatAmount(amountInCents, orderInfo.currencyCode)
+        return if (formattedAmount.isNotEmpty()) {
+            "+ $formattedAmount"
+        } else {
+            ""
+        }
     }
 
     override fun onPaymentMethodSelected(paymentMethod: String) {

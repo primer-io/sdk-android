@@ -13,6 +13,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import io.primer.android.LocalPrimerTheme
 
+@Suppress("LongParameterList")
 @Composable
 fun PrimerButton(
     modifier: Modifier = Modifier,

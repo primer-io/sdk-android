@@ -5,6 +5,7 @@ import io.primer.android.components.PrimerCheckoutComponents
 import io.primer.android.components.PrimerHeadlessUniversalCheckout
 import io.primer.android.components.PrimerPaymentMethodSelectionComponents
 import io.primer.android.components.PrimerSelectCountryComponents
+import io.primer.android.configuration.di.ConfigurationCoreContainer
 import io.primer.android.core.di.DependencyContainer
 import io.primer.android.core.di.SdkContainer
 import io.primer.android.internal.data.mappers.PaymentMethodMapper
@@ -25,6 +26,7 @@ import io.primer.android.internal.presentation.screens.country.SelectCountryView
 import io.primer.android.internal.presentation.screens.paymentMethodSelection.PaymentMethodSelectionViewModelFactory
 import io.primer.android.ui.core.configuration.domain.model.BasicOrderInfoInteractor
 import io.primer.android.ui.core.data.repository.CountriesDataRepository
+import io.primer.android.ui.core.domain.FormatAmountToCurrencyInteractor
 import io.primer.android.ui.core.payment.domain.interactor.SurchargeInteractor
 
 internal class ComponentsContainer(
@@ -34,6 +36,13 @@ internal class ComponentsContainer(
 ) : DependencyContainer() {
 
     override fun registerInitialDependencies() {
+        registerRepositories()
+        registerInteractors()
+        registerUseCases()
+        registerComponents()
+    }
+
+    private fun registerRepositories() {
         registerSingleton<PaymentMethodMapper> {
             PaymentMethodMapperImpl()
         }
@@ -42,6 +51,16 @@ internal class ComponentsContainer(
             HeadlessRepositoryImpl(PrimerHeadlessUniversalCheckout.current)
         }
 
+        registerSingleton<RawDataManagerRepository> {
+            RawDataManagerRepositoryImpl()
+        }
+
+        registerSingleton {
+            CountriesDataRepository(sdk().resolve())
+        }
+    }
+
+    private fun registerInteractors() {
         registerSingleton {
             SurchargeInteractor(sdk().resolve())
         }
@@ -50,16 +69,25 @@ internal class ComponentsContainer(
             BasicOrderInfoInteractor(sdk().resolve())
         }
 
-        registerSingleton<RawDataManagerRepository> {
-            RawDataManagerRepositoryImpl()
+        registerSingleton {
+            FormatAmountToCurrencyInteractor(
+                currencyFormatRepository = sdk().resolve(),
+                settings = sdk().resolve(),
+            )
         }
+    }
 
+    private fun registerUseCases() {
         registerSingleton {
             AvailablePaymentMethodsUseCase()
         }
 
         registerSingleton {
-            CardFieldsUseCase()
+            CardFieldsUseCase(
+                rawDataManagerRepository = resolve(),
+                configurationInteractor = resolve(ConfigurationCoreContainer.CONFIGURATION_INTERACTOR_DI_KEY),
+                logReporter = resolve(),
+            )
         }
 
         registerSingleton {
@@ -73,13 +101,18 @@ internal class ComponentsContainer(
         registerSingleton {
             InitCardManagerUseCase()
         }
+    }
 
+    private fun registerComponents() {
+        registerCheckoutComponents()
+        registerCardFormComponents()
+        registerPaymentMethodSelectionComponents()
+        registerCountrySelectionComponents()
+    }
+
+    private fun registerCheckoutComponents() {
         registerSingleton {
             CheckoutNavigator()
-        }
-
-        registerSingleton {
-            CountriesDataRepository(sdk().resolve())
         }
 
         registerFactory {
@@ -89,7 +122,9 @@ internal class ComponentsContainer(
         registerSingleton {
             PrimerCheckoutComponents()
         }
+    }
 
+    private fun registerCardFormComponents() {
         registerFactory {
             CardFormViewModelFactory()
         }
@@ -97,7 +132,9 @@ internal class ComponentsContainer(
         registerSingleton {
             PrimerCardFormComponents()
         }
+    }
 
+    private fun registerPaymentMethodSelectionComponents() {
         registerFactory {
             PaymentMethodSelectionViewModelFactory()
         }
@@ -105,7 +142,9 @@ internal class ComponentsContainer(
         registerSingleton {
             PrimerPaymentMethodSelectionComponents()
         }
+    }
 
+    private fun registerCountrySelectionComponents() {
         registerFactory {
             SelectCountryViewModelFactory()
         }

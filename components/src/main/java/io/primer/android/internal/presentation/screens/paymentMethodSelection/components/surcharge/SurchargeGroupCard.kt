@@ -10,8 +10,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -20,7 +18,6 @@ import io.primer.android.components.R
 import io.primer.android.internal.domain.models.PrimerComposablePaymentMethod
 import io.primer.android.internal.domain.utils.UNKNOWN_SURCHARGE
 import io.primer.android.internal.presentation.screens.paymentMethodSelection.components.list.PaymentMethodSelector
-import io.primer.android.internal.presentation.utils.CurrencyFormatter
 import io.primer.android.scope.PrimerPaymentMethodSelectionScope
 
 @Composable
@@ -83,19 +80,11 @@ private fun PrimerPaymentMethodSelectionScope.SurchargeHeader(value: Int) {
                     color = LocalPrimerTheme.current.colorTokens().primerColorTextSecondary,
                 )
                 Text(
-                    text = formatSurcharge(value),
+                    text = formatSurchargeAmount(value),
                     style = LocalPrimerTheme.current.typographyTokens.bodyMedium.toTextStyle(),
                     color = LocalPrimerTheme.current.colorTokens().primerColorGray900,
                 )
             }
         }
-    }
-}
-
-@Composable
-private fun PrimerPaymentMethodSelectionScope.formatSurcharge(value: Int): String {
-    val state by state.collectAsState()
-    return state.orderInfo.currencyCode.let {
-        "+ ${CurrencyFormatter.formatAmount(value, it)}"
     }
 }

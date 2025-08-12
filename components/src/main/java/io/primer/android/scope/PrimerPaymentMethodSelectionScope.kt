@@ -35,6 +35,16 @@ interface PrimerPaymentMethodSelectionScope : DISdkComponent {
     fun onCancel()
 
     /**
+     * Formats the title amount for display.
+     */
+    fun formatTitleAmount(): String
+
+    /**
+     * Formats a surcharge amount for display.
+     */
+    fun formatSurchargeAmount(amountInCents: Int): String
+
+    /**
      * Represents the various states of payment method selection.
      */
     data class State(

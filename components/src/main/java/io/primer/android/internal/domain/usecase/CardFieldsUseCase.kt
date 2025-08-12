@@ -3,14 +3,13 @@ package io.primer.android.internal.domain.usecase
 import io.primer.android.components.domain.inputs.models.PrimerInputElementType
 import io.primer.android.components.domain.inputs.models.isEnabled
 import io.primer.android.configuration.data.model.CardNetwork
-import io.primer.android.configuration.di.ConfigurationCoreContainer
 import io.primer.android.configuration.domain.CachePolicy
 import io.primer.android.configuration.domain.ConfigurationInteractor
 import io.primer.android.configuration.domain.model.CheckoutModule
 import io.primer.android.configuration.domain.model.ConfigurationParams
 import io.primer.android.configuration.domain.model.findFirstInstance
 import io.primer.android.core.di.DISdkComponent
-import io.primer.android.core.di.extensions.resolve
+import io.primer.android.core.logging.internal.LogReporter
 import io.primer.android.internal.domain.repositories.RawDataManagerRepository
 import io.primer.android.internal.presentation.utils.BILLING_FIELDS
 import io.primer.android.internal.presentation.utils.CARD_FIELDS
@@ -26,12 +25,11 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.runBlocking
 
-internal class CardFieldsUseCase : DISdkComponent {
-
-    private val rawDataManagerRepository: RawDataManagerRepository by lazy { resolve() }
-    private val configurationInteractor: ConfigurationInteractor by lazy {
-        resolve(ConfigurationCoreContainer.CONFIGURATION_INTERACTOR_DI_KEY)
-    }
+internal class CardFieldsUseCase(
+    private val rawDataManagerRepository: RawDataManagerRepository,
+    private val configurationInteractor: ConfigurationInteractor,
+    private val logReporter: LogReporter,
+) : DISdkComponent {
 
     private val _formData = MutableStateFlow<Map<PrimerInputElementType, String>>(emptyMap())
     val formData: Flow<Map<PrimerInputElementType, String>> = _formData.asStateFlow()
@@ -83,8 +81,8 @@ internal class CardFieldsUseCase : DISdkComponent {
             val billingAddress = configuration.checkoutModules.findFirstInstance<CheckoutModule.BillingAddress>()
             val billingAddressOptions = billingAddress?.options
             BILLING_FIELDS.filter { billingAddressOptions.isEnabled(it) }
-        } catch (e: Exception) {
-            e.printStackTrace()
+        } catch (ignored: Exception) {
+            logReporter.error("Failed to getBillingFields: ${ignored.message}")
             emptyList()
         }
     }

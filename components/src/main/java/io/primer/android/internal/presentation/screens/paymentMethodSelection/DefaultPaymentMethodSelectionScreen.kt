@@ -15,16 +15,23 @@ import io.primer.android.LocalPrimerTheme
 import io.primer.android.components.R
 import io.primer.android.internal.presentation.checkout.components.CheckoutAppBar
 import io.primer.android.internal.presentation.screens.paymentMethodSelection.components.surcharge.paymentMethodsList
-import io.primer.android.internal.presentation.utils.CurrencyFormatter
 import io.primer.android.scope.PrimerPaymentMethodSelectionScope
 
 @Composable
 internal fun PrimerPaymentMethodSelectionScope.DefaultPaymentMethodSelectionScreen() {
     val state = state.collectAsStateWithLifecycle().value
+    val context = LocalContext.current
+
+    val formattedAmount = formatTitleAmount()
+    val title = if (formattedAmount.isNotEmpty()) {
+        context.getString(R.string.primer_components_payment_method_selection_pay_amount, formattedAmount)
+    } else {
+        context.getString(R.string.primer_components_payment_method_selection_pay)
+    }
 
     Column {
         CheckoutAppBar(
-            title = CurrencyFormatter.formatTitle(LocalContext.current, state.orderInfo),
+            title = title,
             onCancelClick = { onCancel() },
         )
         LazyColumn(

@@ -1,4 +1,4 @@
-package io.primer.android.currencyformat.domain
+package io.primer.android.ui.core.domain
 
 import io.primer.android.components.currencyformat.domain.models.FormatCurrencyParams
 import io.primer.android.components.currencyformat.domain.repository.CurrencyFormatRepository
@@ -8,7 +8,7 @@ import io.primer.android.payments.core.utils.PaymentUtils.minorToAmount
 import java.text.NumberFormat
 import java.util.Currency
 
-internal class FormatAmountToCurrencyInteractor(
+class FormatAmountToCurrencyInteractor(
     private val currencyFormatRepository: CurrencyFormatRepository,
     private val settings: PrimerSettings,
 ) : BaseInteractor<String, FormatCurrencyParams>() {

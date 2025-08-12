@@ -85,7 +85,7 @@ internal class SessionCompleteFragment : BaseFragment(), DISdkComponent {
         return binding.root
     }
 
-    @Suppress("LongMethod", "CyclomaticComplexMethod")
+    @Suppress("LongMethod", "CyclomaticComplexMethod", "NestedBlockDepth")
     override fun onViewCreated(
         view: View,
         savedInstanceState: Bundle?,

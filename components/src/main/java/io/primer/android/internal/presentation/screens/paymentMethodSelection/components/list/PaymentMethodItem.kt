@@ -27,6 +27,7 @@ internal fun PrimerPaymentMethodSelectionScope.PaymentMethodSelector(
     }
 }
 
+@Suppress("LongParameterList")
 @Composable
 internal fun PaymentMethodItem(
     modifier: Modifier = Modifier,

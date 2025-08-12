@@ -13,6 +13,7 @@ internal class PaymentMethodSelectionViewModelFactory : ViewModelProvider.Factor
                 basicOrderInfoInteractor = resolve(),
                 checkoutNavigator = resolve(),
                 availablePaymentMethodsUseCase = resolve(),
+                formatAmountToCurrencyInteractor = resolve(),
             ) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")

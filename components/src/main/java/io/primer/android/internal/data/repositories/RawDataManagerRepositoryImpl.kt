@@ -20,7 +20,7 @@ import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.shareIn
 
-class RawDataManagerRepositoryImpl() : RawDataManagerRepository, DISdkComponent {
+class RawDataManagerRepositoryImpl : RawDataManagerRepository, DISdkComponent {
 
     private lateinit var cardManager: PrimerHeadlessUniversalCheckoutRawDataManagerInterface
 

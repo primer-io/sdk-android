@@ -15,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.VisualTransformation
 import io.primer.android.LocalPrimerTheme
 
+@Suppress("LongParameterList")
 @Composable
 fun PrimerInput(
     modifier: Modifier = Modifier,

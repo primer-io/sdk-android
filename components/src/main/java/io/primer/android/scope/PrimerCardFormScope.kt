@@ -14,6 +14,7 @@ import kotlinx.coroutines.flow.StateFlow
  * Defines the scope for Primer's card form functionality, providing state management,
  * field updates, and UI customization for card payment input.
  */
+@Suppress("TooManyFunctions")
 interface PrimerCardFormScope : DISdkComponent {
 
     val components: PrimerCardFormComponents

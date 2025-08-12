@@ -29,10 +29,8 @@ internal fun PrimerCheckoutScope.DefaultErrorScreen(
     title: String? = null,
     message: String? = null,
 ) {
-    val colorTokens = LocalPrimerTheme.current.colorTokens()
     val spacingTokens = LocalPrimerTheme.current.spacingTokens
     val sizeTokens = LocalPrimerTheme.current.sizeTokens
-    val coroutineScope = rememberCoroutineScope()
 
     Column(
         modifier = modifier
@@ -41,68 +39,92 @@ internal fun PrimerCheckoutScope.DefaultErrorScreen(
         verticalArrangement = Arrangement.Center,
     ) {
         Spacer(modifier = Modifier.height(sizeTokens.xxxlarge))
-        // Error icon
-        Icon(
-            painter = painterResource(id = R.drawable.ic_primer_checkout_error),
-            contentDescription = stringResource(R.string.primer_components_content_description_error),
-            tint = Color.Unspecified,
-        )
+
+        ErrorIconSection()
 
         Spacer(modifier = Modifier.height(spacingTokens.small))
 
-        // Error title
-        Text(
-            text = title ?: stringResource(R.string.primer_components_checkout_failed_title),
-            color = colorTokens.primerColorTextPrimary,
-            style = MaterialTheme.typography.headlineSmall,
-            textAlign = TextAlign.Center,
-        )
-
-        Spacer(modifier = Modifier.height(spacingTokens.xsmall))
-
-        // Error message
-        Text(
-            text = message ?: stringResource(R.string.primer_components_checkout_failed_description),
-            color = colorTokens.primerColorTextSecondary,
-            style = MaterialTheme.typography.bodyMedium,
-            textAlign = TextAlign.Center,
-        )
+        ErrorTextSection(title = title, message = message)
 
         Spacer(modifier = Modifier.height(sizeTokens.xxxlarge))
 
-        PrimerButton(
-            onClick = {
-                coroutineScope.launch {
-                    onRetry()
-                }
-            },
-            modifier = Modifier.fillMaxWidth(),
-            backgroundColor = colorTokens.primerColorBrand,
-        ) {
-            Text(
-                text = stringResource(R.string.primer_components_checkout_retry),
-                style = LocalPrimerTheme.current.typographyTokens.titleLarge.toTextStyle(),
-                color = LocalPrimerTheme.current.colorTokens().primerColorBackground,
-            )
-        }
+        ErrorActionButtons()
+    }
+}
 
-        Spacer(modifier = Modifier.height(spacingTokens.small))
+@Composable
+private fun ErrorIconSection() {
+    Icon(
+        painter = painterResource(id = R.drawable.ic_primer_checkout_error),
+        contentDescription = stringResource(R.string.primer_components_content_description_error),
+        tint = Color.Unspecified,
+    )
+}
 
-        PrimerButton(
-            onClick = {
-                coroutineScope.launch {
-                    onOtherPaymentMethods()
-                }
-            },
-            modifier = Modifier.fillMaxWidth(),
-            backgroundColor = Color.Transparent,
-            borderColor = LocalPrimerTheme.current.colorTokens().primerColorBorderOutlinedDefault,
-        ) {
-            Text(
-                text = stringResource(R.string.primer_components_checkout_other_payment_methods),
-                style = LocalPrimerTheme.current.typographyTokens.titleLarge.toTextStyle(),
-                color = LocalPrimerTheme.current.colorTokens().primerColorTextPrimary,
-            )
-        }
+@Composable
+private fun ErrorTextSection(
+    title: String?,
+    message: String?,
+) {
+    val colorTokens = LocalPrimerTheme.current.colorTokens()
+    val spacingTokens = LocalPrimerTheme.current.spacingTokens
+
+    Text(
+        text = title ?: stringResource(R.string.primer_components_checkout_failed_title),
+        color = colorTokens.primerColorTextPrimary,
+        style = MaterialTheme.typography.headlineSmall,
+        textAlign = TextAlign.Center,
+    )
+
+    Spacer(modifier = Modifier.height(spacingTokens.xsmall))
+
+    Text(
+        text = message ?: stringResource(R.string.primer_components_checkout_failed_description),
+        color = colorTokens.primerColorTextSecondary,
+        style = MaterialTheme.typography.bodyMedium,
+        textAlign = TextAlign.Center,
+    )
+}
+
+@Composable
+private fun PrimerCheckoutScope.ErrorActionButtons() {
+    val colorTokens = LocalPrimerTheme.current.colorTokens()
+    val spacingTokens = LocalPrimerTheme.current.spacingTokens
+    val titleLarge = LocalPrimerTheme.current.typographyTokens.titleLarge.toTextStyle()
+    val coroutineScope = rememberCoroutineScope()
+
+    PrimerButton(
+        onClick = {
+            coroutineScope.launch {
+                onRetry()
+            }
+        },
+        modifier = Modifier.fillMaxWidth(),
+        backgroundColor = colorTokens.primerColorBrand,
+    ) {
+        Text(
+            text = stringResource(R.string.primer_components_checkout_retry),
+            style = titleLarge,
+            color = colorTokens.primerColorBackground,
+        )
+    }
+
+    Spacer(modifier = Modifier.height(spacingTokens.small))
+
+    PrimerButton(
+        onClick = {
+            coroutineScope.launch {
+                onOtherPaymentMethods()
+            }
+        },
+        modifier = Modifier.fillMaxWidth(),
+        backgroundColor = Color.Transparent,
+        borderColor = colorTokens.primerColorBorderOutlinedDefault,
+    ) {
+        Text(
+            text = stringResource(R.string.primer_components_checkout_other_payment_methods),
+            style = titleLarge,
+            color = colorTokens.primerColorTextPrimary,
+        )
     }
 }

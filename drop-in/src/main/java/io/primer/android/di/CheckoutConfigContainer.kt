@@ -7,7 +7,6 @@ import io.primer.android.components.ui.views.PrimerPaymentMethodViewFactory
 import io.primer.android.configuration.di.ConfigurationCoreContainer
 import io.primer.android.core.di.DependencyContainer
 import io.primer.android.core.di.SdkContainer
-import io.primer.android.currencyformat.domain.FormatAmountToCurrencyInteractor
 import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.payment.billing.BillingAddressValidator
 import io.primer.android.payment.billing.DefaultBillingAddressValidator
@@ -26,6 +25,7 @@ import io.primer.android.surcharge.domain.SurchargeInteractor
 import io.primer.android.ui.core.assets.AssetsManager
 import io.primer.android.ui.core.assets.DefaultPrimerAssetsManager
 import io.primer.android.ui.core.configuration.domain.model.BasicOrderInfoInteractor
+import io.primer.android.ui.core.domain.FormatAmountToCurrencyInteractor
 import io.primer.android.ui.utils.DefaultCheckoutExitHandler
 import io.primer.android.ui.utils.DropInManualFlowSuccessHandler
 import io.primer.android.viewmodel.PrimerViewModelFactory

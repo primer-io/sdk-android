@@ -31,7 +31,7 @@ import io.primer.android.scope.PrimerCardFormScope
 
 // TODO check this
 @Composable
-internal fun PrimerCardFormScope.CardNetwork(modifier: Modifier = Modifier) {
+internal fun PrimerCardFormScope.CardNetwork() {
     val state by state.collectAsStateWithLifecycle()
     val networks = state.availableNetworks
 

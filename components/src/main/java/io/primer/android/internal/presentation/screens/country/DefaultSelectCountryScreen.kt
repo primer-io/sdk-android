@@ -7,18 +7,18 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import io.primer.android.components.R
 import io.primer.android.internal.presentation.checkout.components.CheckoutAppBar
 import io.primer.android.scope.PrimerSelectCountryScope
 
 @Composable
 internal fun PrimerSelectCountryScope.DefaultSelectCountryScreen() {
-    val state by state.collectAsState()
+    val state by state.collectAsStateWithLifecycle()
 
     Column(
         modifier = Modifier.fillMaxSize(),

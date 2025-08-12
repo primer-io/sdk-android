@@ -36,7 +36,7 @@ import io.primer.android.ui.fragments.forms.binding.BaseFormBinding
 import io.primer.android.ui.fragments.forms.binding.toBaseFormBinding
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
-@Suppress("NestedBlockDepth")
+@Suppress("NestedBlockDepth", "TooManyFunctions")
 @ExperimentalCoroutinesApi
 internal class DynamicFormFragment : BaseFormFragment(), PrimerHeadlessUniversalCheckoutRawDataManagerListener {
     private val localConfig: PrimerConfig by inject()

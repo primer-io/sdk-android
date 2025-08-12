@@ -2,6 +2,7 @@ package io.primer.android.internal.presentation.screens.country
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import io.primer.android.core.logging.internal.LogReporter
 import io.primer.android.internal.presentation.checkout.CheckoutNavigator
 import io.primer.android.scope.PrimerSelectCountryScope
 import io.primer.android.ui.core.data.repository.CountriesDataRepository
@@ -14,6 +15,7 @@ import kotlinx.coroutines.launch
 internal class SelectCountryViewModel(
     private val countriesRepository: CountriesDataRepository,
     private val checkoutNavigator: CheckoutNavigator,
+    private val logReporter: LogReporter,
 ) : ViewModel(), PrimerSelectCountryScope {
 
     private val _state = MutableStateFlow(PrimerSelectCountryScope.State())
@@ -50,7 +52,8 @@ internal class SelectCountryViewModel(
                         isLoading = false,
                     )
                 }
-            } catch (e: Exception) {
+            } catch (ignored: Exception) {
+                logReporter.error("Failed to load countries: ${ignored.message}")
                 _state.update { it.copy(isLoading = false) }
             }
         }

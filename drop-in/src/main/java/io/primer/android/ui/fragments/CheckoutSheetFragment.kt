@@ -29,7 +29,7 @@ import io.primer.android.viewmodel.PrimerViewModelFactory
 import io.primer.android.viewmodel.ViewStatus
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
-@Suppress("NestedBlockDepth")
+@Suppress("NestedBlockDepth", "TooManyFunctions")
 @ExperimentalCoroutinesApi
 internal class CheckoutSheetFragment :
     BottomSheetDialogFragment(),

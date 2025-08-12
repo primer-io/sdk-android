@@ -14,7 +14,6 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -25,6 +24,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import io.primer.android.components.domain.inputs.models.PrimerInputElementType
 
 // Level 5 - Advanced UI Patterns
@@ -37,7 +37,7 @@ object ButtonedInputFieldsDemo : CheckoutDemo(
         // Card Details
 
         components.cardForm.cardNumberInput = {
-            val state by state.collectAsState()
+            val state by state.collectAsStateWithLifecycle()
             InputDialog(
                 title = "Card Number",
                 value = state.data[PrimerInputElementType.CARD_NUMBER] ?: "",
@@ -45,7 +45,7 @@ object ButtonedInputFieldsDemo : CheckoutDemo(
             )
         }
         components.cardForm.cardNumberInput = {
-            val state by state.collectAsState()
+            val state by state.collectAsStateWithLifecycle()
             InputDialog(
                 title = "Card Number",
                 value = state.data[PrimerInputElementType.CARD_NUMBER] ?: "",
@@ -54,7 +54,7 @@ object ButtonedInputFieldsDemo : CheckoutDemo(
         }
 
         components.cardForm.expiryDateInput = {
-            val state by state.collectAsState()
+            val state by state.collectAsStateWithLifecycle()
             InputDialog(
                 title = "Expiry Date",
                 value = state.data[PrimerInputElementType.EXPIRY_DATE] ?: "",
@@ -64,7 +64,7 @@ object ButtonedInputFieldsDemo : CheckoutDemo(
         }
 
         components.cardForm.cvvInput = {
-            val state by state.collectAsState()
+            val state by state.collectAsStateWithLifecycle()
             InputDialog(
                 title = "CVV",
                 value = state.data[PrimerInputElementType.CVV] ?: "",
@@ -74,7 +74,7 @@ object ButtonedInputFieldsDemo : CheckoutDemo(
         }
 
         components.cardForm.cardholderNameInput = { modifier ->
-            val state by state.collectAsState()
+            val state by state.collectAsStateWithLifecycle()
             InputDialog(
                 title = "Cardholder Name",
                 value = state.data[PrimerInputElementType.CARDHOLDER_NAME] ?: "",

@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModelProvider
 import io.primer.android.core.di.DISdkComponent
 import io.primer.android.core.di.extensions.resolve
 
-internal class CardFormViewModelFactory() : ViewModelProvider.Factory, DISdkComponent {
+internal class CardFormViewModelFactory : ViewModelProvider.Factory, DISdkComponent {
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(CardFormViewModel::class.java)) {

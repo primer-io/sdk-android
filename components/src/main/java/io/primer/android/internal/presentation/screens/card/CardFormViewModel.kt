@@ -24,6 +24,7 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
+@Suppress("TooManyFunctions")
 internal class CardFormViewModel(
     private val cardFieldsUseCase: CardFieldsUseCase,
     private val cardNetworkUseCase: CardNetworkUseCase,

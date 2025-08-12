@@ -89,8 +89,12 @@ internal class PaymentMethodButtonGroupFactory(
         val paymentMethodType = descriptor.paymentMethodType
 
         return when (val surcharge = surcharges[paymentMethodType]) {
-            is Surcharge.CardNetworksSurcharge -> if (surcharge.surcharges.any { it.value != 0 }) KEY_SURCHARGING_BOX else 0
-            is Surcharge.PaymentMethodSurcharge -> surcharge.amount
+            is Surcharge.CardNetworksSurcharge -> {
+                if (surcharge.surcharges.any { it.value != 0 }) KEY_SURCHARGING_BOX else 0
+            }
+            is Surcharge.PaymentMethodSurcharge -> {
+                surcharge.amount
+            }
             null -> 0
         }
     }

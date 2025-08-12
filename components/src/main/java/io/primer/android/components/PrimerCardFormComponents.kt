@@ -195,6 +195,6 @@ class PrimerCardFormComponents : DISdkComponent {
      * @param modifier Modifier for styling the network selector
      */
     var cardNetwork: @Composable PrimerCardFormScope.(modifier: Modifier) -> Unit = {
-        CardNetwork(it)
+        CardNetwork()
     }
 }

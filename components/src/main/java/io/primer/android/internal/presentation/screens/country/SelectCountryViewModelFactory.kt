@@ -12,6 +12,7 @@ internal class SelectCountryViewModelFactory : ViewModelProvider.Factory, DISdkC
             return SelectCountryViewModel(
                 countriesRepository = resolve(),
                 checkoutNavigator = resolve(),
+                logReporter = resolve(),
             ) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")

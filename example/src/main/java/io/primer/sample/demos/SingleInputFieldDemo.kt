@@ -17,7 +17,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
@@ -28,6 +27,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import io.primer.android.components.domain.inputs.models.PrimerInputElementType
 
 object SingleInputFieldDemo : CheckoutDemo(
@@ -50,7 +50,7 @@ object SingleInputFieldDemo : CheckoutDemo(
         }
         components.cardForm.screen = {
 
-            val cardFormState by state.collectAsState()
+            val cardFormState by state.collectAsStateWithLifecycle()
 
             if (cardFormState.cardFields.isNotEmpty()) {
                 var currentFieldIndex by remember { mutableIntStateOf(0) }

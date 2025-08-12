@@ -32,6 +32,7 @@ internal fun Map<PrimerInputElementType, String>.toPrimerCardData(
     cardNetwork = cardNetwork,
 )
 
+@Suppress("MagicNumber")
 internal fun String.formatExpiryDate(): String = when {
     isEmpty() || length <= 2 -> this
     length == 4 && !contains("/") -> "${take(2)}/20${drop(2)}"

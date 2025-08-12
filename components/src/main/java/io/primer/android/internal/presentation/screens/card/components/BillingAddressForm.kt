@@ -7,9 +7,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import io.primer.android.LocalPrimerTheme
 import io.primer.android.scope.PrimerCardFormScope
 
@@ -17,7 +17,7 @@ import io.primer.android.scope.PrimerCardFormScope
 internal fun PrimerCardFormScope.BillingAddressForm(
     modifier: Modifier = Modifier,
 ) {
-    val state by state.collectAsState()
+    val state by state.collectAsStateWithLifecycle()
     val billingInputFields = state.billingFields
     if (billingInputFields.isEmpty()) return
 

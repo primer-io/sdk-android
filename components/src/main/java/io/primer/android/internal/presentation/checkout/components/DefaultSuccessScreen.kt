@@ -20,6 +20,8 @@ import io.primer.android.components.R
 import io.primer.android.scope.PrimerCheckoutScope
 import kotlinx.coroutines.delay
 
+private const val DEFAULT_AUTO_DISMISS = 3000L
+
 @Composable
 internal fun PrimerCheckoutScope.DefaultSuccessScreen(
     modifier: Modifier = Modifier,
@@ -29,7 +31,7 @@ internal fun PrimerCheckoutScope.DefaultSuccessScreen(
     val colorTokens = LocalPrimerTheme.current.colorTokens()
 
     LaunchedEffect(this) {
-        delay(3000)
+        delay(DEFAULT_AUTO_DISMISS)
         onDismiss()
     }
 

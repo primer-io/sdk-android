@@ -57,25 +57,21 @@ internal class SubmitCardPaymentUseCase : DISdkComponent {
             return Result.success(Unit)
         }
 
-        return try {
-            val action = ActionUpdateBillingAddressParams(
-                firstName = formData[PrimerInputElementType.FIRST_NAME]?.takeIf { it.isNotBlank() },
-                lastName = formData[PrimerInputElementType.LAST_NAME]?.takeIf { it.isNotBlank() },
-                addressLine1 = formData[PrimerInputElementType.ADDRESS_LINE_1]?.takeIf { it.isNotBlank() },
-                addressLine2 = formData[PrimerInputElementType.ADDRESS_LINE_2]?.takeIf { it.isNotBlank() },
-                city = formData[PrimerInputElementType.CITY]?.takeIf { it.isNotBlank() },
-                postalCode = formData[PrimerInputElementType.POSTAL_CODE]?.takeIf { it.isNotBlank() },
-                countryCode = formData[PrimerInputElementType.COUNTRY_CODE]?.takeIf { it.isNotBlank() },
-                state = formData[PrimerInputElementType.STATE]?.takeIf { it.isNotBlank() },
-            )
+        val action = ActionUpdateBillingAddressParams(
+            firstName = formData[PrimerInputElementType.FIRST_NAME]?.takeIf { it.isNotBlank() },
+            lastName = formData[PrimerInputElementType.LAST_NAME]?.takeIf { it.isNotBlank() },
+            addressLine1 = formData[PrimerInputElementType.ADDRESS_LINE_1]?.takeIf { it.isNotBlank() },
+            addressLine2 = formData[PrimerInputElementType.ADDRESS_LINE_2]?.takeIf { it.isNotBlank() },
+            city = formData[PrimerInputElementType.CITY]?.takeIf { it.isNotBlank() },
+            postalCode = formData[PrimerInputElementType.POSTAL_CODE]?.takeIf { it.isNotBlank() },
+            countryCode = formData[PrimerInputElementType.COUNTRY_CODE]?.takeIf { it.isNotBlank() },
+            state = formData[PrimerInputElementType.STATE]?.takeIf { it.isNotBlank() },
+        )
 
-            actionInteractor(MultipleActionUpdateParams(listOf(action)))
-                .fold(
-                    onSuccess = { Result.success(Unit) },
-                    onFailure = { Result.failure(it) },
-                )
-        } catch (e: Exception) {
-            Result.failure(e)
-        }
+        return actionInteractor(MultipleActionUpdateParams(listOf(action)))
+            .fold(
+                onSuccess = { Result.success(Unit) },
+                onFailure = { Result.failure(it) },
+            )
     }
 }
