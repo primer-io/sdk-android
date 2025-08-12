@@ -4,8 +4,8 @@ coroutines = "1.8.0"
 ktx = "1.16.0"
 appcompat = "1.7.1"
 fragment = "1.8.8"
-constraint-layout = "2.1.4"
 lifecycleViewmodelCompose = "2.7.1"
+constraint-layout = "2.2.1"
 material = "1.12.0"
 startup = "1.2.0"
 lifecycle = "2.9.1"
@@ -21,7 +21,7 @@ primer-ipay88 = "1.0.3"
 primer-nol-pay = "1.0.2"
 primer-stripe = "1.1.2"
 
-junit5 = "5.13.1"
+junit5 = "5.13.3"
 androidJunit5TestRunner = "1.12.0.0"
 mockk = "1.14.2"
 json = "20250107"
@@ -90,7 +90,7 @@ arch-core = { group = "androidx.arch.core", name = "core-testing", version.ref =
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-test-ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "androidx-test-ext-junit" }
 espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espresso-core" }
-androidx-lifecycle-process = { group = "androidx.lifecycle", name = "lifecycle-process", version = "2.8.7" }
+androidx-lifecycle-process = { group = "androidx.lifecycle", name = "lifecycle-process", version = "2.9.2" }
 androidx-activity-ktx = { group = "androidx.activity", name = "activity-ktx", version.ref = "activityKtx" }
 androidx-browser = { module = "androidx.browser:browser", version.ref = "browser" }
 androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" }
