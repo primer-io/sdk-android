@@ -20,17 +20,6 @@ plugins {
     id 'com.savvasdalkitsis.module-dependency-graph' version '0.12'
 }
 
-// todo remove me
-allprojects {
-    configurations.all {
-        resolutionStrategy {
-            dependencySubstitution {
-                substitute module("io.primer.android:ui-core") using project(':ui-core')
-            }
-        }
-    }
-}
-
 subprojects { subproject ->
     afterEvaluate {
         def androidLibraryPluginName = 'com.android.library'
