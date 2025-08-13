@@ -20,23 +20,15 @@ plugins {
     id 'com.savvasdalkitsis.module-dependency-graph' version '0.12'
 }
 
-// todo remove me
-allprojects {
-    configurations.all {
-        resolutionStrategy {
-            dependencySubstitution {
-                substitute module("io.primer.android:ui-core") using project(':ui-core')
-            }
-        }
-    }
-}
-
 subprojects { subproject ->
     afterEvaluate {
         def androidLibraryPluginName = 'com.android.library'
         if (subproject.plugins.hasPlugin(androidLibraryPluginName)) {
-            subproject.apply {
-                from("$rootDir/tooling/publish.gradle")
+            // Exclude ui-core from Maven publishing
+            if (subproject.name != 'ui-core') {
+                subproject.apply {
+                    from("$rootDir/tooling/publish.gradle")
+                }
             }
             subproject.apply {
                 from("$rootDir/tooling/coverage/kover.gradle")
