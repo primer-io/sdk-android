@@ -35,6 +35,7 @@ internal class SurchargeFormatterTest {
 
     @Test
     fun `getSurchargeForSavedPaymentMethod returns 0 if token is null`() {
+        every { surchargeInteractor(None) } returns emptyMap()
         val result = surchargeFormatter.getSurchargeForSavedPaymentMethod(token = null)
         assertEquals(0, result)
     }

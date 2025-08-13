@@ -6,10 +6,11 @@ import io.primer.android.R
 import io.primer.android.components.domain.core.models.card.PrimerCardData
 import io.primer.android.components.domain.error.PrimerInputValidationError
 import io.primer.android.components.domain.inputs.models.PrimerInputElementType
+import io.primer.android.ui.core.domain.helper.toSyncValidationError
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
 
 class PrimerInputValidationErrorExtKtTest {
     private lateinit var primerCardData: PrimerCardData
@@ -226,7 +227,7 @@ class PrimerInputValidationErrorExtKtTest {
                 errorId = "unsupported-error-id",
             )
 
-        assertThrows<IllegalStateException> {
+        assertThrows(IllegalStateException::class.java) {
             error.toSyncValidationError(primerCardData)
         }
     }
