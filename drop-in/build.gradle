@@ -53,7 +53,7 @@ dependencies {
     implementation libs.android.lifecycle.viewmodel.ktx
 
     api project(':headless-core')
-    api project(':ui-core')
+    implementation project(':ui-core')
     implementation project(':headless-vault-manager')
     implementation project(':primer-sandbox-processor')
 }
