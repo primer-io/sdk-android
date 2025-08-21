@@ -1,3 +1,10 @@
+## 2.41.1 (2025-08-21)
+
+### Fix
+
+- improvements to 3DS flow (#1018)
+- Make surcharge configurable in example app and default 0 (#992)
+
 ## 2.41.0 (2025-06-20)
 
 ### Feat
