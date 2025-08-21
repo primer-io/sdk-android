@@ -162,7 +162,11 @@ class CardComponentTest {
         val resumeToken = "resumeToken"
         val params =
             mockk<PaymentMethodLauncherParams> {
-                every { initialLauncherParams } returns ThreeDsInitialLauncherParams(listOf("2.1.0"))
+                every { initialLauncherParams } returns ThreeDsInitialLauncherParams(
+                    supportedThreeDsProtocolVersions = listOf("2.1.0"),
+                    paymentMethodToken = "token",
+                    cardNetwork = CardNetwork.Type.VISA,
+                )
             }
         val intent =
             mockk<Intent> {
@@ -286,7 +290,11 @@ class CardComponentTest {
         // Given
         every { mockConfigurationDelegate.isMockedFlow() } returns false
         val paymentMethodType = "CARD"
-        val threeDsInitialLauncherParams = ThreeDsInitialLauncherParams(listOf("2.0.0", "2.1.0"))
+        val threeDsInitialLauncherParams = ThreeDsInitialLauncherParams(
+            supportedThreeDsProtocolVersions = listOf("2.0.0", "2.1.0"),
+            paymentMethodToken = "token",
+            cardNetwork = CardNetwork.Type.VISA,
+        )
         val params =
             PaymentMethodLauncherParams(
                 paymentMethodType = paymentMethodType,
@@ -313,7 +321,11 @@ class CardComponentTest {
         // Given
         every { mockConfigurationDelegate.isMockedFlow() } returns true
         val paymentMethodType = "CARD"
-        val threeDsInitialLauncherParams = ThreeDsInitialLauncherParams(listOf("2.0.0", "2.1.0"))
+        val threeDsInitialLauncherParams = ThreeDsInitialLauncherParams(
+            supportedThreeDsProtocolVersions = listOf("2.0.0", "2.1.0"),
+            paymentMethodToken = "token",
+            cardNetwork = CardNetwork.Type.VISA,
+        )
         val params =
             PaymentMethodLauncherParams(
                 paymentMethodType = paymentMethodType,

@@ -65,7 +65,11 @@ class ThreeDsActivity : BaseCheckoutActivity() {
 
     private fun setupObservers() {
         viewModel.threeDsInitEvent.observe(this) {
-            viewModel.performAuthorization(supportedThreeDsProtocolVersions = getSupportedThreeDsProtocolVersion())
+            viewModel.performAuthorization(
+                supportedThreeDsProtocolVersions = getSupportedThreeDsProtocolVersion(),
+                paymentMethodToken = getPaymentMethodToken(),
+                cardNetwork = getCardNetwork(),
+            )
         }
 
         viewModel.challengeRequiredEvent.observe(this) { challengeRequiredData ->
@@ -88,6 +92,7 @@ class ThreeDsActivity : BaseCheckoutActivity() {
                 throwable = throwable,
                 resumeToken = viewModel.challengeRequiredEvent.value?.authData?.resumeToken,
                 supportedThreeDsProtocolVersions = getSupportedThreeDsProtocolVersion(),
+                paymentMethodToken = getPaymentMethodToken(),
             )
         }
 
@@ -115,6 +120,16 @@ class ThreeDsActivity : BaseCheckoutActivity() {
         intent.getSerializableCompat<ThreeDsActivityLauncherParams>(
             INTENT_PARAMS_EXTRA_KEY,
         )?.supportedThreeDsProtocolVersions.orEmpty()
+
+    private fun getPaymentMethodToken() =
+        intent.getSerializableCompat<ThreeDsActivityLauncherParams>(
+            INTENT_PARAMS_EXTRA_KEY,
+        )?.paymentMethodToken
+
+    private fun getCardNetwork() =
+        intent.getSerializableCompat<ThreeDsActivityLauncherParams>(
+            INTENT_PARAMS_EXTRA_KEY,
+        )?.cardNetwork
 
     companion object {
         const val INTENT_PARAMS_EXTRA_KEY = "INTENT_PARAMS_EXTRA"
