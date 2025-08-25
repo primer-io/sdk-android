@@ -13,7 +13,6 @@ internal class CardFormViewModelFactory : ViewModelProvider.Factory, DISdkCompon
                 cardFieldsUseCase = resolve(),
                 cardNetworkUseCase = resolve(),
                 submitCardPaymentUseCase = resolve(),
-                initCardManagerUseCase = resolve(),
                 checkoutNavigator = resolve(),
                 logReporter = resolve(),
             ) as T

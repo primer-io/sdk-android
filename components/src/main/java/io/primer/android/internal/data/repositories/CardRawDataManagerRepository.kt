@@ -7,7 +7,6 @@ import io.primer.android.components.domain.inputs.models.PrimerInputElementType
 import io.primer.android.components.manager.raw.PrimerHeadlessUniversalCheckoutRawDataManager
 import io.primer.android.components.manager.raw.PrimerHeadlessUniversalCheckoutRawDataManagerInterface
 import io.primer.android.components.manager.raw.PrimerHeadlessUniversalCheckoutRawDataManagerListener
-import io.primer.android.core.di.DISdkComponent
 import io.primer.android.internal.domain.repositories.RawDataManagerRepository
 import io.primer.android.paymentmethods.common.data.model.PaymentMethodType
 import kotlinx.coroutines.CoroutineScope
@@ -20,13 +19,10 @@ import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.shareIn
 
-class RawDataManagerRepositoryImpl : RawDataManagerRepository, DISdkComponent {
-
-    private lateinit var cardManager: PrimerHeadlessUniversalCheckoutRawDataManagerInterface
-
-    override fun init() {
-        cardManager = PrimerHeadlessUniversalCheckoutRawDataManager.newInstance(PaymentMethodType.PAYMENT_CARD.name)
-    }
+class CardRawDataManagerRepository(
+    private val cardManager: PrimerHeadlessUniversalCheckoutRawDataManagerInterface =
+        PrimerHeadlessUniversalCheckoutRawDataManager.newInstance(PaymentMethodType.PAYMENT_CARD.name)
+) : RawDataManagerRepository {
 
     private sealed class RawDataManagerEvent {
         data class ValidationChanged(

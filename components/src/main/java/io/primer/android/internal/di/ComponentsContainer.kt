@@ -1,5 +1,6 @@
 package io.primer.android.internal.di
 
+import io.primer.android.clientSessionActions.di.ActionsContainer
 import io.primer.android.components.PrimerCardFormComponents
 import io.primer.android.components.PrimerCheckoutComponents
 import io.primer.android.components.PrimerHeadlessUniversalCheckout
@@ -10,14 +11,13 @@ import io.primer.android.core.di.DependencyContainer
 import io.primer.android.core.di.SdkContainer
 import io.primer.android.internal.data.mappers.PaymentMethodMapper
 import io.primer.android.internal.data.mappers.PaymentMethodMapperImpl
+import io.primer.android.internal.data.repositories.CardRawDataManagerRepository
 import io.primer.android.internal.data.repositories.HeadlessRepositoryImpl
-import io.primer.android.internal.data.repositories.RawDataManagerRepositoryImpl
 import io.primer.android.internal.domain.repositories.HeadlessRepository
 import io.primer.android.internal.domain.repositories.RawDataManagerRepository
 import io.primer.android.internal.domain.usecase.AvailablePaymentMethodsUseCase
 import io.primer.android.internal.domain.usecase.CardFieldsUseCase
 import io.primer.android.internal.domain.usecase.CardNetworkUseCase
-import io.primer.android.internal.domain.usecase.InitCardManagerUseCase
 import io.primer.android.internal.domain.usecase.SubmitCardPaymentUseCase
 import io.primer.android.internal.presentation.checkout.CheckoutNavigator
 import io.primer.android.internal.presentation.checkout.CheckoutViewModelFactory
@@ -51,8 +51,8 @@ internal class ComponentsContainer(
             HeadlessRepositoryImpl(PrimerHeadlessUniversalCheckout.current)
         }
 
-        registerSingleton<RawDataManagerRepository> {
-            RawDataManagerRepositoryImpl()
+        registerSingleton<RawDataManagerRepository>(CARD_RAW_DATA_MANAGER_REPOSITORY_DI_KEY) {
+            CardRawDataManagerRepository()
         }
 
         registerSingleton {
@@ -79,27 +79,31 @@ internal class ComponentsContainer(
 
     private fun registerUseCases() {
         registerSingleton {
-            AvailablePaymentMethodsUseCase()
+            AvailablePaymentMethodsUseCase(
+                headlessRepository = resolve(),
+                paymentMethodMapper = resolve(),
+                surchargeInteractor = sdk().resolve()
+            )
         }
 
         registerSingleton {
             CardFieldsUseCase(
-                rawDataManagerRepository = resolve(),
-                configurationInteractor = resolve(ConfigurationCoreContainer.CONFIGURATION_INTERACTOR_DI_KEY),
+                rawDataManagerRepository = resolve(CARD_RAW_DATA_MANAGER_REPOSITORY_DI_KEY),
+                configurationInteractor = sdk().resolve(ConfigurationCoreContainer.CONFIGURATION_INTERACTOR_DI_KEY),
                 logReporter = resolve(),
             )
         }
 
         registerSingleton {
-            CardNetworkUseCase()
+            CardNetworkUseCase(rawDataManagerRepository = resolve(CARD_RAW_DATA_MANAGER_REPOSITORY_DI_KEY))
         }
 
         registerSingleton {
-            SubmitCardPaymentUseCase()
-        }
-
-        registerSingleton {
-            InitCardManagerUseCase()
+            SubmitCardPaymentUseCase(
+                rawDataManagerRepository = resolve(CARD_RAW_DATA_MANAGER_REPOSITORY_DI_KEY),
+                headlessRepository = resolve(),
+                actionInteractor = sdk().resolve(ActionsContainer.ACTION_INTERACTOR_DI_KEY)
+            )
         }
     }
 
@@ -152,5 +156,9 @@ internal class ComponentsContainer(
         registerSingleton {
             PrimerSelectCountryComponents()
         }
+    }
+
+    companion object {
+        const val CARD_RAW_DATA_MANAGER_REPOSITORY_DI_KEY = "CARD_RAW_DATA_MANAGER_REPOSITORY"
     }
 }

@@ -8,11 +8,11 @@ import io.primer.android.internal.domain.models.PrimerComposablePaymentMethod
 import io.primer.android.internal.domain.repositories.HeadlessRepository
 import io.primer.android.ui.core.payment.domain.interactor.SurchargeInteractor
 
-internal class AvailablePaymentMethodsUseCase : DISdkComponent {
-
-    private val headlessRepository: HeadlessRepository by lazy { resolve() }
-    private val paymentMethodMapper: PaymentMethodMapper by lazy { resolve() }
-    private val surchargeInteractor: SurchargeInteractor by lazy { resolve() }
+internal class AvailablePaymentMethodsUseCase(
+    private val headlessRepository: HeadlessRepository,
+    private val paymentMethodMapper: PaymentMethodMapper,
+    private val surchargeInteractor: SurchargeInteractor,
+) : DISdkComponent {
 
     var cache: List<PrimerComposablePaymentMethod> = emptyList()
         private set

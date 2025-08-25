@@ -8,8 +8,6 @@ import kotlinx.coroutines.flow.Flow
 
 internal interface RawDataManagerRepository {
 
-    fun init()
-
     fun getRequiredInputElementTypes(): List<PrimerInputElementType>
 
     val validationState: Flow<List<PrimerInputValidationError>>

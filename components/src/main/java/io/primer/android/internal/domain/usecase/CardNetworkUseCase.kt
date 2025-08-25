@@ -3,8 +3,6 @@ package io.primer.android.internal.domain.usecase
 import io.primer.android.components.domain.core.models.card.PrimerCardMetadataState
 import io.primer.android.components.domain.core.models.card.PrimerCardNetwork
 import io.primer.android.configuration.data.model.CardNetwork
-import io.primer.android.core.di.DISdkComponent
-import io.primer.android.core.di.extensions.resolve
 import io.primer.android.internal.domain.repositories.RawDataManagerRepository
 import io.primer.cardShared.CardNumberFormatter
 import kotlinx.coroutines.flow.Flow
@@ -13,9 +11,9 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.map
 
-internal class CardNetworkUseCase : DISdkComponent {
-
-    private val rawDataManagerRepository: RawDataManagerRepository by lazy { resolve() }
+internal class CardNetworkUseCase(
+    private val rawDataManagerRepository: RawDataManagerRepository
+) {
 
     private val _detectedCardNetwork = MutableStateFlow(CardNetwork.Type.OTHER)
     private val _selectedCardNetwork = MutableStateFlow<CardNetwork.Type?>(null)

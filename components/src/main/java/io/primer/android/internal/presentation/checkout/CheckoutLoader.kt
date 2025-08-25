@@ -41,6 +41,7 @@ internal fun CheckoutLoader(
 
         onDispose {
             isInitialized = false
+            DISdkContext.componentsSdkContainer?.unregisterContainer<ComponentsContainer>()
             DISdkContext.componentsSdkContainer?.clear()
             DISdkContext.componentsSdkContainer = null
         }

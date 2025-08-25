@@ -1,22 +1,19 @@
 package io.primer.android.internal.domain.usecase
 
-import io.primer.android.clientSessionActions.di.ActionsContainer
 import io.primer.android.clientSessionActions.domain.ActionInteractor
 import io.primer.android.clientSessionActions.domain.models.ActionUpdateBillingAddressParams
 import io.primer.android.clientSessionActions.domain.models.MultipleActionUpdateParams
 import io.primer.android.components.domain.inputs.models.PrimerInputElementType
-import io.primer.android.core.di.DISdkComponent
-import io.primer.android.core.di.extensions.resolve
 import io.primer.android.domain.PrimerCheckoutData
 import io.primer.android.internal.domain.repositories.HeadlessRepository
 import io.primer.android.internal.domain.repositories.RawDataManagerRepository
 import kotlinx.coroutines.flow.first
 
-internal class SubmitCardPaymentUseCase : DISdkComponent {
-
-    private val rawDataManagerRepository: RawDataManagerRepository by lazy { resolve() }
-    private val headlessRepository: HeadlessRepository by lazy { resolve() }
-    private val actionInteractor: ActionInteractor by lazy { resolve(ActionsContainer.ACTION_INTERACTOR_DI_KEY) }
+internal class SubmitCardPaymentUseCase(
+    private val rawDataManagerRepository: RawDataManagerRepository,
+    private val headlessRepository: HeadlessRepository,
+    private val actionInteractor: ActionInteractor,
+) {
 
     suspend operator fun invoke(formData: Map<PrimerInputElementType, String>): Result<PrimerCheckoutData> {
         // Validate billing address if any billing fields are filled

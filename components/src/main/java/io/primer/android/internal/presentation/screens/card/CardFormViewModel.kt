@@ -9,7 +9,6 @@ import io.primer.android.configuration.data.model.CountryCode
 import io.primer.android.core.logging.internal.LogReporter
 import io.primer.android.internal.domain.usecase.CardFieldsUseCase
 import io.primer.android.internal.domain.usecase.CardNetworkUseCase
-import io.primer.android.internal.domain.usecase.InitCardManagerUseCase
 import io.primer.android.internal.domain.usecase.SubmitCardPaymentUseCase
 import io.primer.android.internal.presentation.checkout.CheckoutNavigator
 import io.primer.android.internal.presentation.checkout.Screen
@@ -29,7 +28,6 @@ internal class CardFormViewModel(
     private val cardFieldsUseCase: CardFieldsUseCase,
     private val cardNetworkUseCase: CardNetworkUseCase,
     private val submitCardPaymentUseCase: SubmitCardPaymentUseCase,
-    private val initCardManagerUseCase: InitCardManagerUseCase,
     private val checkoutNavigator: CheckoutNavigator,
     private val logReporter: LogReporter,
 ) : ViewModel(), PrimerCardFormScope {
@@ -40,7 +38,6 @@ internal class CardFormViewModel(
     init {
         // Initialize required fields
         viewModelScope.launch {
-            initCardManagerUseCase()
             val cardFields = cardFieldsUseCase.getCardFields()
             val billingFields = cardFieldsUseCase.getBillingFields()
             _uiState.value = PrimerCardFormScope.State(cardFields, billingFields)

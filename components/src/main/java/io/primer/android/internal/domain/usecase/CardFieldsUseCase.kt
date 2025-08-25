@@ -23,13 +23,12 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.runBlocking
 
 internal class CardFieldsUseCase(
     private val rawDataManagerRepository: RawDataManagerRepository,
     private val configurationInteractor: ConfigurationInteractor,
     private val logReporter: LogReporter,
-) : DISdkComponent {
+    ) : DISdkComponent {
 
     private val _formData = MutableStateFlow<Map<PrimerInputElementType, String>>(emptyMap())
     val formData: Flow<Map<PrimerInputElementType, String>> = _formData.asStateFlow()
@@ -75,8 +74,8 @@ internal class CardFieldsUseCase(
     fun getCardFields(): List<PrimerInputElementType> =
         rawDataManagerRepository.getRequiredInputElementTypes().filter { it in CARD_FIELDS }
 
-    fun getBillingFields(): List<PrimerInputElementType> = runBlocking {
-        try {
+    suspend fun getBillingFields(): List<PrimerInputElementType> {
+        return try {
             val configuration = configurationInteractor(ConfigurationParams(CachePolicy.ForceCache)).getOrThrow()
             val billingAddress = configuration.checkoutModules.findFirstInstance<CheckoutModule.BillingAddress>()
             val billingAddressOptions = billingAddress?.options

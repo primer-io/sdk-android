@@ -7,6 +7,61 @@ import io.primer.android.core.di.DISdkComponent
 import io.primer.android.core.di.DependencyContainer
 import io.primer.android.core.di.SdkContainer
 
+/**
+ * Extension functions for [DISdkComponent] providing convenient dependency resolution methods.
+ *
+ * ## Dependency Resolution Patterns
+ *
+ * This file provides two primary patterns for dependency resolution in the SDK:
+ *
+ * ### 1. `resolve()` - Component-level resolution (this file)
+ * Used by classes implementing [DISdkComponent] such as:
+ * - Component factories and providers
+ * - Public API scopes (PrimerCheckoutScope, PrimerCardFormScope, etc.)
+ * - ViewModels and UI components
+ *
+ * ```kotlin
+ * class PaymentComponent : DISdkComponent {
+ *     companion object : DISdkComponent {
+ *         fun create(): PaymentComponent = PaymentComponent(
+ *             tokenizationDelegate = resolve(),    // Resolves from DI graph
+ *             paymentDelegate = resolve()          // Extension resolves automatically
+ *         )
+ *     }
+ * }
+ * ```
+ *
+ * ### 2. `sdk().resolve()` - Container-level resolution (in DependencyContainer)
+ * Used within [DependencyContainer] implementations to access global SDK dependencies:
+ *
+ * ```kotlin
+ * class PaymentMethodContainer(
+ *     private val sdk: () -> SdkContainer,
+ * ) : DependencyContainer() {
+ *     override fun registerInitialDependencies() {
+ *         registerFactory {
+ *             PaymentService(
+ *                 httpClient = sdk().resolve(),       // Global HTTP client
+ *                 analytics = sdk().resolve(),        // Global analytics
+ *                 settings = sdk().resolve(),         // Global settings
+ *                 localMapper = resolve()             // Local to this container
+ *             )
+ *         }
+ *     }
+ * }
+ * ```
+ *
+ * ## Resolution Chain
+ * - `resolve()` delegates to `getSdkContainer().resolve()`
+ * - `sdk().resolve()` directly accesses the global SDK container
+ * - Both patterns provide type-safe dependency resolution with compile-time checking
+ *
+ * ## Usage Guidelines
+ * - Use `resolve()` in [DISdkComponent] implementations for clean, extension-based resolution
+ * - Use `sdk().resolve()` in [DependencyContainer] subclasses for explicit SDK dependency access
+ * - Both patterns support named resolution with optional `name` parameters
+ */
+
 inline fun <reified T : Any> DISdkComponent.inject(): Lazy<T> {
     return lazy(LazyThreadSafetyMode.SYNCHRONIZED) { getSdkContainer().resolve() }
 }
