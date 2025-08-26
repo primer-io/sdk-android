@@ -1,5 +1,6 @@
 package io.primer.android.internal.di
 
+import android.content.Context
 import io.primer.android.clientSessionActions.di.ActionsContainer
 import io.primer.android.components.PrimerCardFormComponents
 import io.primer.android.components.PrimerCheckoutComponents
@@ -28,6 +29,7 @@ import io.primer.android.ui.core.configuration.domain.model.BasicOrderInfoIntera
 import io.primer.android.ui.core.data.repository.CountriesDataRepository
 import io.primer.android.ui.core.domain.FormatAmountToCurrencyInteractor
 import io.primer.android.ui.core.payment.domain.interactor.SurchargeInteractor
+import java.lang.ref.WeakReference
 
 internal class ComponentsContainer(
     @Suppress(
@@ -48,7 +50,11 @@ internal class ComponentsContainer(
         }
 
         registerSingleton<HeadlessRepository> {
-            HeadlessRepositoryImpl(PrimerHeadlessUniversalCheckout.current)
+            HeadlessRepositoryImpl(
+                headless = PrimerHeadlessUniversalCheckout.current,
+                context = WeakReference<Context>(sdk().resolve()),
+                primerConfig = sdk().resolve(),
+            )
         }
 
         registerSingleton<RawDataManagerRepository>(CARD_RAW_DATA_MANAGER_REPOSITORY_DI_KEY) {

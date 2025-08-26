@@ -5,6 +5,8 @@
 # IntelliJ
 *.iml
 .idea/
+.idea/inspectionProfiles/
+.idea/inspectionProfiles/Project_Default.xml
 .bundle/
 .DS_Store
 /build
