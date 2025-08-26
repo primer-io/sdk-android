@@ -82,7 +82,7 @@ internal class ComponentsContainer(
             AvailablePaymentMethodsUseCase(
                 headlessRepository = resolve(),
                 paymentMethodMapper = resolve(),
-                surchargeInteractor = sdk().resolve()
+                surchargeInteractor = sdk().resolve(),
             )
         }
 
@@ -90,7 +90,7 @@ internal class ComponentsContainer(
             CardFieldsUseCase(
                 rawDataManagerRepository = resolve(CARD_RAW_DATA_MANAGER_REPOSITORY_DI_KEY),
                 configurationInteractor = sdk().resolve(ConfigurationCoreContainer.CONFIGURATION_INTERACTOR_DI_KEY),
-                logReporter = resolve(),
+                logReporter = sdk().resolve(),
             )
         }
 
@@ -102,7 +102,7 @@ internal class ComponentsContainer(
             SubmitCardPaymentUseCase(
                 rawDataManagerRepository = resolve(CARD_RAW_DATA_MANAGER_REPOSITORY_DI_KEY),
                 headlessRepository = resolve(),
-                actionInteractor = sdk().resolve(ActionsContainer.ACTION_INTERACTOR_DI_KEY)
+                actionInteractor = sdk().resolve(ActionsContainer.ACTION_INTERACTOR_DI_KEY),
             )
         }
     }

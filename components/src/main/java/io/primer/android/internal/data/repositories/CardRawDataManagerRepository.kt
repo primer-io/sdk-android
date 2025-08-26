@@ -21,7 +21,7 @@ import kotlinx.coroutines.flow.shareIn
 
 class CardRawDataManagerRepository(
     private val cardManager: PrimerHeadlessUniversalCheckoutRawDataManagerInterface =
-        PrimerHeadlessUniversalCheckoutRawDataManager.newInstance(PaymentMethodType.PAYMENT_CARD.name)
+        PrimerHeadlessUniversalCheckoutRawDataManager.newInstance(PaymentMethodType.PAYMENT_CARD.name),
 ) : RawDataManagerRepository {
 
     private sealed class RawDataManagerEvent {

@@ -8,7 +8,6 @@ import io.primer.android.configuration.domain.ConfigurationInteractor
 import io.primer.android.configuration.domain.model.CheckoutModule
 import io.primer.android.configuration.domain.model.ConfigurationParams
 import io.primer.android.configuration.domain.model.findFirstInstance
-import io.primer.android.core.di.DISdkComponent
 import io.primer.android.core.logging.internal.LogReporter
 import io.primer.android.internal.domain.repositories.RawDataManagerRepository
 import io.primer.android.internal.presentation.utils.BILLING_FIELDS
@@ -28,7 +27,7 @@ internal class CardFieldsUseCase(
     private val rawDataManagerRepository: RawDataManagerRepository,
     private val configurationInteractor: ConfigurationInteractor,
     private val logReporter: LogReporter,
-    ) : DISdkComponent {
+) {
 
     private val _formData = MutableStateFlow<Map<PrimerInputElementType, String>>(emptyMap())
     val formData: Flow<Map<PrimerInputElementType, String>> = _formData.asStateFlow()

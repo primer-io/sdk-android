@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.map
 
 internal class CardNetworkUseCase(
-    private val rawDataManagerRepository: RawDataManagerRepository
+    rawDataManagerRepository: RawDataManagerRepository,
 ) {
 
     private val _detectedCardNetwork = MutableStateFlow(CardNetwork.Type.OTHER)
