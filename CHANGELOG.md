@@ -1,3 +1,9 @@
+## 2.42.0 (2025-08-26)
+
+### Feat
+
+- pick correct Klarna theme, update wrapper to 1.2.0 (#1025)
+
 ## 2.41.1 (2025-08-21)
 
 ### Fix
