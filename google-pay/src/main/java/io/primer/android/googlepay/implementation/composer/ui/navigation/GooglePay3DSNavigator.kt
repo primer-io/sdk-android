@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import androidx.activity.result.ActivityResultLauncher
 import io.primer.android.PrimerSessionIntent
+import io.primer.android.configuration.data.model.CardNetwork
 import io.primer.android.paymentmethods.core.ui.navigation.NavigationParams
 import io.primer.android.threeds.ui.ThreeDsActivity
 import io.primer.android.threeds.ui.launcher.ThreeDsActivityLauncherParams
@@ -13,6 +14,8 @@ import io.primer.paymentMethodCoreUi.core.ui.navigation.launchers.PaymentMethodR
 internal data class GooglePayNative3DSActivityLauncherParams(
     override val paymentMethodType: String,
     val supportedThreeDsVersions: List<String>,
+    val paymentMethodToken: String,
+    val cardNetwork: CardNetwork.Type,
 ) : PaymentMethodRedirectLauncherParams(
     paymentMethodType,
     PrimerSessionIntent.CHECKOUT,
@@ -39,6 +42,8 @@ internal data class GooglePay3DSNavigator(
                 params =
                 ThreeDsActivityLauncherParams(
                     supportedThreeDsProtocolVersions = params.supportedThreeDsVersions,
+                    paymentMethodToken = params.paymentMethodToken,
+                    cardNetwork = params.cardNetwork,
                 ),
             ),
         )

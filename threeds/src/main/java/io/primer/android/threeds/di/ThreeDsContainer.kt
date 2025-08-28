@@ -66,7 +66,6 @@ internal class ThreeDsContainer(
                 threeDsLibraryVersionValidator = resolve(),
                 threeDsServiceRepository = resolve(),
                 threeDsRepository = resolve(),
-                tokenizedPaymentMethodRepository = sdk.resolve(),
                 threeDsAppUrlRepository = resolve(),
                 threeDsConfigurationRepository = resolve(),
                 errorMapperRegistry = sdk.resolve(),

@@ -159,6 +159,8 @@ internal class GooglePayComponent(
                                 GooglePayNative3DSActivityLauncherParams(
                                     paymentMethodType = paymentMethodType,
                                     supportedThreeDsVersions = initialLaunchEvents.supportedThreeDsProtocolVersions,
+                                    paymentMethodToken = initialLaunchEvents.paymentMethodToken,
+                                    cardNetwork = initialLaunchEvents.cardNetwork,
                                 ),
                             )
                         },

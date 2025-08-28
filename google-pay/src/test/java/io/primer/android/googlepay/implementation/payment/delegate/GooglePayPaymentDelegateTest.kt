@@ -4,6 +4,7 @@ import io.mockk.coEvery
 import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
 import io.primer.android.PrimerSessionIntent
+import io.primer.android.configuration.data.model.CardNetwork
 import io.primer.android.core.InstantExecutorExtension
 import io.primer.android.errors.domain.BaseErrorResolver
 import io.primer.android.googlepay.implementation.payment.resume.handler.GooglePayResumeDecision
@@ -57,7 +58,11 @@ internal class GooglePayPaymentDelegateTest {
         runTest {
             // Given
             val clientToken = "testClientToken"
-            val decision = GooglePayResumeDecision.GooglePayNative3dsResumeDecision(listOf("1.0", "2.0"))
+            val decision = GooglePayResumeDecision.GooglePayNative3dsResumeDecision(
+                supportedThreeDsProtocolVersions = listOf("2.1.0", "2.2.0"),
+                paymentMethodToken = "token",
+                cardNetwork = CardNetwork.Type.MASTERCARD,
+            )
             coEvery { resumeHandler.continueWithNewClientToken(clientToken) } returns Result.success(decision)
 
             launch {
@@ -73,6 +78,8 @@ internal class GooglePayPaymentDelegateTest {
                             initialLauncherParams =
                             ThreeDsInitialLauncherParams(
                                 supportedThreeDsProtocolVersions = decision.supportedThreeDsProtocolVersions,
+                                paymentMethodToken = decision.paymentMethodToken,
+                                cardNetwork = decision.cardNetwork,
                             ),
                         ),
                     )

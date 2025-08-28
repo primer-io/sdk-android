@@ -13,6 +13,7 @@ import io.primer.android.PrimerSessionIntent
 import io.primer.android.card.implementation.payment.delegate.CardPaymentDelegate
 import io.primer.android.card.implementation.payment.delegate.ProcessorThreeDsInitialLauncherParams
 import io.primer.android.card.implementation.payment.delegate.ThreeDsInitialLauncherParams
+import io.primer.android.configuration.data.model.CardNetwork
 import io.primer.android.core.InstantExecutorExtension
 import io.primer.android.core.extensions.getSerializableCompat
 import io.primer.android.core.toListDuring
@@ -139,7 +140,11 @@ internal class VaultedCardComponentTest {
     @Test
     fun `handleActivityStartEvent() should emit Navigate event for ThreeDsInitialLauncherParams`() {
         // Given
-        val threeDsInitialLauncherParams = ThreeDsInitialLauncherParams(listOf("2.0.0", "2.1.0"))
+        val threeDsInitialLauncherParams = ThreeDsInitialLauncherParams(
+            supportedThreeDsProtocolVersions = listOf("2.0.0", "2.1.0"),
+            paymentMethodToken = "token",
+            cardNetwork = CardNetwork.Type.VISA,
+        )
         val params =
             PaymentMethodLauncherParams(
                 paymentMethodType = paymentMethodType,

@@ -20,6 +20,7 @@ import io.primer.android.PrimerSessionIntent
 import io.primer.android.clientSessionActions.domain.ActionInteractor
 import io.primer.android.clientSessionActions.domain.models.ActionUpdateShippingOptionIdParams
 import io.primer.android.clientSessionActions.domain.models.MultipleActionUpdateParams
+import io.primer.android.configuration.data.model.CardNetwork
 import io.primer.android.configuration.mock.presentation.MockConfigurationDelegate
 import io.primer.android.core.InstantExecutorExtension
 import io.primer.android.core.di.DISdkContext
@@ -246,7 +247,11 @@ internal class GooglePayComponentTest {
     fun `handleActivityStartEvent() should emit Navigate event for ThreeDsInitialLauncherParams when not in mocked flow`() {
         // Given
         every { mockConfigurationDelegate.isMockedFlow() } returns false
-        val threeDsInitialLauncherParams = ThreeDsInitialLauncherParams(listOf("2.0.0", "2.1.0"))
+        val threeDsInitialLauncherParams = ThreeDsInitialLauncherParams(
+            supportedThreeDsProtocolVersions = listOf("2.1.0", "2.2.0"),
+            paymentMethodToken = "token",
+            cardNetwork = CardNetwork.Type.MASTERCARD,
+        )
         val params =
             PaymentMethodLauncherParams(
                 paymentMethodType = "GOOGLE_PAY",
@@ -272,7 +277,11 @@ internal class GooglePayComponentTest {
     fun `handleActivityStartEvent() should emit Navigate event for ThreeDsInitialLauncherParams when in mocked flow`() {
         // Given
         every { mockConfigurationDelegate.isMockedFlow() } returns true
-        val threeDsInitialLauncherParams = ThreeDsInitialLauncherParams(listOf("2.0.0", "2.1.0"))
+        val threeDsInitialLauncherParams = ThreeDsInitialLauncherParams(
+            supportedThreeDsProtocolVersions = listOf("2.1.0", "2.2.0"),
+            paymentMethodToken = "token",
+            cardNetwork = CardNetwork.Type.MASTERCARD,
+        )
         val params =
             PaymentMethodLauncherParams(
                 paymentMethodType = "GOOGLE_PAY",

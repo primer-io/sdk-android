@@ -15,6 +15,7 @@ import io.mockk.mockk
 import io.mockk.mockkStatic
 import io.mockk.unmockkStatic
 import io.primer.android.PrimerSessionIntent
+import io.primer.android.configuration.data.model.CardNetwork
 import io.primer.android.core.InstantExecutorExtension
 import io.primer.android.core.extensions.getSerializableCompat
 import io.primer.android.core.toListDuring
@@ -150,7 +151,11 @@ internal class VaultedGooglePayComponentTest {
     @Test
     fun `handleActivityStartEvent() should emit Navigate event for ThreeDsInitialLauncherParams`() {
         // Given
-        val threeDsInitialLauncherParams = ThreeDsInitialLauncherParams(listOf("2.0.0", "2.1.0"))
+        val threeDsInitialLauncherParams = ThreeDsInitialLauncherParams(
+            supportedThreeDsProtocolVersions = listOf("2.1.0", "2.2.0"),
+            paymentMethodToken = "token",
+            cardNetwork = CardNetwork.Type.MASTERCARD,
+        )
         val params =
             PaymentMethodLauncherParams(
                 paymentMethodType = "GOOGLE_PAY",

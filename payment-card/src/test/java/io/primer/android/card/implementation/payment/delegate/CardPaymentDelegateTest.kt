@@ -6,6 +6,7 @@ import io.mockk.mockk
 import io.primer.android.PrimerSessionIntent
 import io.primer.android.card.implementation.payment.resume.handler.CardResumeDecision
 import io.primer.android.card.implementation.payment.resume.handler.CardResumeHandler
+import io.primer.android.configuration.data.model.CardNetwork
 import io.primer.android.core.InstantExecutorExtension
 import io.primer.android.errors.domain.BaseErrorResolver
 import io.primer.android.paymentmethods.common.data.model.PaymentMethodType
@@ -57,7 +58,11 @@ internal class CardPaymentDelegateTest {
         runTest {
             // Given
             val clientToken = "testClientToken"
-            val decision = CardResumeDecision.CardNative3dsResumeDecision(listOf("1.0", "2.0"))
+            val decision = CardResumeDecision.CardNative3dsResumeDecision(
+                supportedThreeDsProtocolVersions = listOf("2.0.0", "2.1.0"),
+                paymentMethodToken = "token",
+                cardNetwork = CardNetwork.Type.VISA,
+            )
             coEvery { resumeHandler.continueWithNewClientToken(clientToken) } returns Result.success(decision)
 
             launch {
@@ -73,6 +78,8 @@ internal class CardPaymentDelegateTest {
                             initialLauncherParams =
                             ThreeDsInitialLauncherParams(
                                 supportedThreeDsProtocolVersions = decision.supportedThreeDsProtocolVersions,
+                                paymentMethodToken = decision.paymentMethodToken,
+                                cardNetwork = decision.cardNetwork,
                             ),
                         ),
                     )

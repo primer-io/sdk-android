@@ -187,6 +187,8 @@ internal class CardComponent(
                                 CardNative3DSActivityLauncherParams(
                                     paymentMethodType = paymentMethodType,
                                     supportedThreeDsVersions = initialLaunchEvents.supportedThreeDsProtocolVersions,
+                                    paymentMethodToken = initialLaunchEvents.paymentMethodToken,
+                                    cardNetwork = initialLaunchEvents.cardNetwork,
                                 ),
                             )
                         },

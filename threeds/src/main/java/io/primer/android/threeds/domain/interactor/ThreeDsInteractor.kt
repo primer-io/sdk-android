@@ -8,10 +8,10 @@ import io.primer.android.analytics.domain.models.MessageAnalyticsParams
 import io.primer.android.analytics.domain.repository.AnalyticsRepository
 import io.primer.android.configuration.data.model.CardNetwork
 import io.primer.android.core.extensions.flatMap
+import io.primer.android.core.extensions.onError
 import io.primer.android.core.logging.internal.LogReporter
 import io.primer.android.domain.error.models.PrimerError
 import io.primer.android.errors.domain.ErrorMapperRegistry
-import io.primer.android.payments.core.tokenization.domain.repository.TokenizedPaymentMethodRepository
 import io.primer.android.threeds.BuildConfig
 import io.primer.android.threeds.data.models.auth.BeginAuthResponse
 import io.primer.android.threeds.data.models.postAuth.PostAuthResponse
@@ -39,9 +39,15 @@ import kotlinx.coroutines.withContext
 internal interface ThreeDsInteractor {
     suspend fun initialize(threeDsInitParams: ThreeDsInitParams): Result<Unit>
 
-    suspend fun authenticateSdk(supportedThreeDsProtocolVersions: List<String>): Result<Transaction>
+    suspend fun authenticateSdk(
+        supportedThreeDsProtocolVersions: List<String>,
+        cardNetwork: CardNetwork.Type,
+    ): Result<Transaction>
 
-    suspend fun beginRemoteAuth(threeDsParams: BaseThreeDsParams): Result<BeginAuthResponse>
+    suspend fun beginRemoteAuth(
+        threeDsParams: BaseThreeDsParams,
+        paymentMethodToken: String,
+    ): Result<BeginAuthResponse>
 
     fun performChallenge(
         activity: Activity,
@@ -57,6 +63,7 @@ internal interface ThreeDsInteractor {
     suspend fun continueRemoteAuthWithException(
         throwable: Throwable,
         supportedThreeDsProtocolVersions: List<String>,
+        paymentMethodToken: String,
     ): Result<PostAuthResponse>
 
     fun cleanup()
@@ -68,7 +75,6 @@ internal class DefaultThreeDsInteractor(
     private val threeDsLibraryVersionValidator: ThreeDsLibraryVersionValidator,
     private val threeDsServiceRepository: ThreeDsServiceRepository,
     private val threeDsRepository: ThreeDsRepository,
-    private val tokenizedPaymentMethodRepository: TokenizedPaymentMethodRepository,
     private val threeDsAppUrlRepository: ThreeDsAppUrlRepository,
     private val threeDsConfigurationRepository: ThreeDsConfigurationRepository,
     private val errorMapperRegistry: ErrorMapperRegistry,
@@ -107,26 +113,29 @@ internal class DefaultThreeDsInteractor(
             }
         }
 
-    override suspend fun authenticateSdk(supportedThreeDsProtocolVersions: List<String>) =
+    override suspend fun authenticateSdk(
+        supportedThreeDsProtocolVersions: List<String>,
+        cardNetwork: CardNetwork.Type,
+    ) =
         withContext(dispatcher) {
             threeDsConfigurationRepository.getPreAuthConfiguration(supportedThreeDsProtocolVersions)
                 .flatMap { authParams ->
                     threeDsServiceRepository.performProviderAuth(
-                        CardNetwork.Type.valueOrNull(
-                            tokenizedPaymentMethodRepository.getPaymentMethod().paymentInstrumentData
-                                ?.binData?.network.orEmpty().uppercase(),
-                        ) ?: CardNetwork.Type.OTHER,
+                        cardNetwork = cardNetwork,
                         authParams.protocolVersions.max(),
                         authParams.environment,
                     )
                 }
         }
 
-    override suspend fun beginRemoteAuth(threeDsParams: BaseThreeDsParams) =
+    override suspend fun beginRemoteAuth(
+        threeDsParams: BaseThreeDsParams,
+        paymentMethodToken: String,
+    ) =
         withContext(dispatcher) {
             threeDsRepository.begin3DSAuth(
-                tokenizedPaymentMethodRepository.getPaymentMethod().token,
-                threeDsParams,
+                token = paymentMethodToken,
+                threeDsParams = threeDsParams,
             )
         }
 
@@ -172,14 +181,15 @@ internal class DefaultThreeDsInteractor(
     override suspend fun continueRemoteAuthWithException(
         throwable: Throwable,
         supportedThreeDsProtocolVersions: List<String>,
+        paymentMethodToken: String,
     ) = withContext(dispatcher) {
         threeDsConfigurationRepository.getPreAuthConfiguration(supportedThreeDsProtocolVersions)
             .flatMap { params ->
                 threeDsRepository.continue3DSAuth(
-                    tokenizedPaymentMethodRepository.getPaymentMethod().token,
-                    FailureThreeDsContinueAuthParams(
+                    token = paymentMethodToken,
+                    continueAuthParams = FailureThreeDsContinueAuthParams(
                         threeDsSdkVersion = threeDsServiceRepository.threeDsSdkVersion,
-                        initProtocolVersion = params.protocolVersions.max().versionNumber,
+                        initProtocolVersion = params.protocolVersions.maxOrNull()?.versionNumber,
                         error =
                         errorMapperRegistry.getPrimerError(throwable).also { error ->
                             logAnalytics(error)
@@ -190,6 +200,8 @@ internal class DefaultThreeDsInteractor(
                         },
                     ),
                 )
+            }.onError { throwable ->
+                logAnalytics(error = errorMapperRegistry.getPrimerError(throwable))
             }
     }
 

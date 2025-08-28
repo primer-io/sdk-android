@@ -7,8 +7,10 @@ import io.primer.android.card.implementation.payment.resume.clientToken.data.Car
 import io.primer.android.card.implementation.payment.resume.clientToken.domain.model.Card3DSClientToken
 import io.primer.android.clientToken.core.token.domain.repository.ClientTokenRepository
 import io.primer.android.clientToken.core.validation.domain.repository.ValidateClientTokenRepository
+import io.primer.android.configuration.data.model.CardNetwork
 import io.primer.android.paymentmethods.common.data.model.ClientTokenIntent
 import io.primer.android.payments.core.helpers.CheckoutAdditionalInfoHandler
+import io.primer.android.payments.core.tokenization.domain.repository.TokenizedPaymentMethodRepository
 import io.primer.android.processor3ds.domain.model.Processor3DS
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.AfterEach
@@ -21,13 +23,14 @@ class CardResumeHandlerTest {
     private val validateClientTokenRepository = mockk<ValidateClientTokenRepository>()
     private val clientTokenRepository = mockk<ClientTokenRepository>()
     private val checkoutAdditionalInfoHandler = mockk<CheckoutAdditionalInfoHandler>()
-
+    private val tokenizedPaymentMethodRepository = mockk<TokenizedPaymentMethodRepository>()
     private val handler =
         CardResumeHandler(
             clientTokenParser,
             validateClientTokenRepository,
             clientTokenRepository,
             checkoutAdditionalInfoHandler,
+            tokenizedPaymentMethodRepository,
         )
 
     @AfterEach
@@ -41,16 +44,27 @@ class CardResumeHandlerTest {
         val clientToken =
             Card3DSClientToken.CardNative3DSClientToken(
                 clientTokenIntent = ClientTokenIntent.`3DS_AUTHENTICATION`.name,
-                supportedThreeDsProtocolVersions = listOf("1.0", "2.0"),
+                supportedThreeDsProtocolVersions = listOf("2.1.0", "2.2.0"),
             )
         every { clientTokenParser.parseClientToken(any()) } returns clientToken
-
+        every { tokenizedPaymentMethodRepository.getPaymentMethod() } returns mockk {
+            every { token } returns "token"
+            every { paymentInstrumentData } returns mockk {
+                every { binData } returns mockk {
+                    every { network } returns "MASTERCARD"
+                }
+            }
+        }
         runTest {
             // When
             val decision = handler.getResumeDecision(clientToken)
 
             // Then
-            val expected = CardResumeDecision.CardNative3dsResumeDecision(listOf("1.0", "2.0"))
+            val expected = CardResumeDecision.CardNative3dsResumeDecision(
+                supportedThreeDsProtocolVersions = listOf("2.1.0", "2.2.0"),
+                paymentMethodToken = "token",
+                cardNetwork = CardNetwork.Type.MASTERCARD,
+            )
             assertEquals(expected, decision)
         }
     }

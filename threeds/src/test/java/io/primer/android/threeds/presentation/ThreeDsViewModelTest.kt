@@ -13,6 +13,7 @@ import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
 import io.mockk.verify
 import io.primer.android.analytics.domain.AnalyticsInteractor
+import io.primer.android.configuration.data.model.CardNetwork
 import io.primer.android.core.InstantExecutorExtension
 import io.primer.android.data.settings.PrimerSettings
 import io.primer.android.payments.core.tokenization.data.model.ResponseCode
@@ -92,14 +93,18 @@ class ThreeDsViewModelTest {
         val supportedProtocolVersions = listOf(ProtocolVersion.V_210.versionNumber)
 
         coEvery {
-            threeDsInteractor.authenticateSdk(any())
+            threeDsInteractor.authenticateSdk(any(), any())
         }.returns(Result.failure(exception))
 
         runTest {
-            viewModel.performAuthorization(supportedProtocolVersions)
+            viewModel.performAuthorization(
+                supportedThreeDsProtocolVersions = supportedProtocolVersions,
+                paymentMethodToken = PAYMENT_METHOD_TOKEN,
+                cardNetwork = CardNetwork.Type.MASTERCARD,
+            )
         }
 
-        coVerify { threeDsInteractor.authenticateSdk(any()) }
+        coVerify { threeDsInteractor.authenticateSdk(any(), any()) }
 
         observer.assertValue(exception)
     }
@@ -117,19 +122,23 @@ class ThreeDsViewModelTest {
         `when`(requestParameters.messageVersion).thenReturn(ProtocolVersion.V_210.versionNumber)
         every { transaction.authenticationRequestParameters }.returns(requestParameters)
         coEvery {
-            threeDsInteractor.authenticateSdk(any())
+            threeDsInteractor.authenticateSdk(supportedThreeDsProtocolVersions = any(), cardNetwork = any())
         }.returns(Result.success(transaction))
 
         coEvery {
-            threeDsInteractor.beginRemoteAuth(any())
+            threeDsInteractor.beginRemoteAuth(threeDsParams = any(), paymentMethodToken = any())
         }.returns(Result.failure(exception))
 
         runTest {
-            viewModel.performAuthorization(supportedProtocolVersions)
+            viewModel.performAuthorization(
+                supportedThreeDsProtocolVersions = supportedProtocolVersions,
+                paymentMethodToken = PAYMENT_METHOD_TOKEN,
+                cardNetwork = CardNetwork.Type.MASTERCARD,
+            )
         }
 
-        coVerify { threeDsInteractor.authenticateSdk(any()) }
-        coVerify { threeDsInteractor.beginRemoteAuth(any()) }
+        coVerify { threeDsInteractor.authenticateSdk(any(), any()) }
+        coVerify { threeDsInteractor.beginRemoteAuth(any(), any()) }
 
         observer.assertValue(exception)
     }
@@ -148,19 +157,23 @@ class ThreeDsViewModelTest {
         every { transaction.authenticationRequestParameters }.returns(requestParameters)
         every { authResponse.authentication.responseCode }.returns(ResponseCode.CHALLENGE)
         coEvery {
-            threeDsInteractor.authenticateSdk(any())
+            threeDsInteractor.authenticateSdk(any(), any())
         }.returns(Result.success(transaction))
 
         coEvery {
-            threeDsInteractor.beginRemoteAuth(any())
+            threeDsInteractor.beginRemoteAuth(any(), any())
         }.returns(Result.success(authResponse))
 
         runTest {
-            viewModel.performAuthorization(supportedProtocolVersions)
+            viewModel.performAuthorization(
+                supportedThreeDsProtocolVersions = supportedProtocolVersions,
+                paymentMethodToken = PAYMENT_METHOD_TOKEN,
+                cardNetwork = CardNetwork.Type.MASTERCARD,
+            )
         }
 
-        coVerify { threeDsInteractor.authenticateSdk(any()) }
-        coVerify { threeDsInteractor.beginRemoteAuth(any()) }
+        coVerify { threeDsInteractor.authenticateSdk(any(), any()) }
+        coVerify { threeDsInteractor.beginRemoteAuth(any(), any()) }
 
         assertEquals(transaction, observer.value().transaction)
         assertEquals(authResponse, observer.value().authData)
@@ -180,19 +193,23 @@ class ThreeDsViewModelTest {
         val supportedProtocolVersions = listOf(ProtocolVersion.V_210.versionNumber)
 
         coEvery {
-            threeDsInteractor.authenticateSdk(any())
+            threeDsInteractor.authenticateSdk(any(), any())
         }.returns(Result.success(transaction))
 
         coEvery {
-            threeDsInteractor.beginRemoteAuth(any())
+            threeDsInteractor.beginRemoteAuth(any(), any())
         }.returns(Result.success(authResponse))
 
         runTest {
-            viewModel.performAuthorization(supportedProtocolVersions)
+            viewModel.performAuthorization(
+                supportedThreeDsProtocolVersions = supportedProtocolVersions,
+                paymentMethodToken = PAYMENT_METHOD_TOKEN,
+                cardNetwork = CardNetwork.Type.MASTERCARD,
+            )
         }
 
-        coVerify { threeDsInteractor.authenticateSdk(any()) }
-        coVerify { threeDsInteractor.beginRemoteAuth(any()) }
+        coVerify { threeDsInteractor.authenticateSdk(any(), any()) }
+        coVerify { threeDsInteractor.beginRemoteAuth(any(), any()) }
 
         assertEquals(authResponse.resumeToken, observer.value())
     }
@@ -316,18 +333,19 @@ class ThreeDsViewModelTest {
 
         val observer = viewModel.threeDsFinishedEvent.test()
         coEvery {
-            threeDsInteractor.continueRemoteAuthWithException(any(), any())
+            threeDsInteractor.continueRemoteAuthWithException(any(), any(), any())
         }.returns(Result.success(response))
 
         runTest {
             viewModel.continueRemoteAuthWithException(
                 Exception(),
-                "resume_token",
+                RESUME_TOKEN,
                 listOf(ProtocolVersion.V_210.versionNumber),
+                PAYMENT_METHOD_TOKEN,
             )
         }
 
-        coVerify { threeDsInteractor.continueRemoteAuthWithException(any(), any()) }
+        coVerify { threeDsInteractor.continueRemoteAuthWithException(any(), any(), any()) }
 
         assertEquals(response.resumeToken, observer.value())
     }
@@ -338,20 +356,21 @@ class ThreeDsViewModelTest {
 
         val observer = viewModel.threeDsFinishedEvent.test()
         coEvery {
-            threeDsInteractor.continueRemoteAuthWithException(any(), any())
+            threeDsInteractor.continueRemoteAuthWithException(any(), any(), any())
         }.returns(Result.failure(exception))
 
         runTest {
             viewModel.continueRemoteAuthWithException(
                 Exception(),
-                "resume_token",
+                RESUME_TOKEN,
                 listOf(ProtocolVersion.V_210.versionNumber),
+                PAYMENT_METHOD_TOKEN,
             )
         }
 
-        coVerify { threeDsInteractor.continueRemoteAuthWithException(any(), any()) }
+        coVerify { threeDsInteractor.continueRemoteAuthWithException(any(), any(), any()) }
 
-        assertEquals("resume_token", observer.value())
+        assertEquals(RESUME_TOKEN, observer.value())
     }
 
     @Test
@@ -361,5 +380,11 @@ class ThreeDsViewModelTest {
         }
 
         verify { threeDsInteractor.cleanup() }
+    }
+
+    private companion object {
+
+        const val PAYMENT_METHOD_TOKEN = "token"
+        const val RESUME_TOKEN = "resume_token"
     }
 }

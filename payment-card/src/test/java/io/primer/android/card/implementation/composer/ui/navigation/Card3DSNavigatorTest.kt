@@ -12,6 +12,7 @@ import io.mockk.runs
 import io.mockk.slot
 import io.mockk.unmockkAll
 import io.mockk.verify
+import io.primer.android.configuration.data.model.CardNetwork
 import io.primer.android.paymentmethods.core.ui.navigation.NavigationParams
 import io.primer.android.threeds.ui.ThreeDsActivity
 import io.primer.android.threeds.ui.launcher.ThreeDsActivityLauncherParams
@@ -45,6 +46,8 @@ internal class Card3DSNavigatorTest {
             CardNative3DSActivityLauncherParams(
                 paymentMethodType = "card",
                 supportedThreeDsVersions = listOf("2.0.0", "2.1.0"),
+                paymentMethodToken = "token",
+                cardNetwork = CardNetwork.Type.VISA,
             )
         val intent = mockk<Intent>()
         every {
@@ -53,6 +56,8 @@ internal class Card3DSNavigatorTest {
                 params =
                 ThreeDsActivityLauncherParams(
                     supportedThreeDsProtocolVersions = threeDsParams.supportedThreeDsVersions,
+                    paymentMethodToken = threeDsParams.paymentMethodToken,
+                    cardNetwork = threeDsParams.cardNetwork,
                 ),
             )
         } returns intent
@@ -74,10 +79,14 @@ internal class Card3DSNavigatorTest {
             CardNative3DSActivityLauncherParams(
                 paymentMethodType = "card",
                 supportedThreeDsVersions = listOf("2.0.0", "2.1.0"),
+                paymentMethodToken = "token",
+                cardNetwork = CardNetwork.Type.VISA,
             )
         val threeDsLauncherParams =
             ThreeDsActivityLauncherParams(
                 supportedThreeDsProtocolVersions = params.supportedThreeDsVersions,
+                paymentMethodToken = "token",
+                cardNetwork = CardNetwork.Type.VISA,
             )
         val expectedIntent = mockk<Intent>(relaxed = true)
 
@@ -116,6 +125,8 @@ internal class Card3DSNavigatorTest {
             CardNative3DSActivityLauncherParams(
                 paymentMethodType = "card",
                 supportedThreeDsVersions = listOf("2.0.0", "2.1.0"),
+                paymentMethodToken = "token",
+                cardNetwork = CardNetwork.Type.VISA,
             )
 
         // Act

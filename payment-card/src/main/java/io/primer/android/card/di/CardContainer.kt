@@ -153,6 +153,7 @@ internal class CardContainer(
                 validateClientTokenRepository = sdk().resolve(),
                 clientTokenRepository = sdk().resolve(),
                 checkoutAdditionalInfoHandler = sdk().resolve(),
+                tokenizedPaymentMethodRepository = sdk().resolve(),
             )
         }
     }

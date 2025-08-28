@@ -1,6 +1,7 @@
 package io.primer.android.googlepay.implementation.payment.delegate
 
 import io.primer.android.PrimerSessionIntent
+import io.primer.android.configuration.data.model.CardNetwork
 import io.primer.android.core.extensions.mapSuspendCatching
 import io.primer.android.domain.payments.create.model.Payment
 import io.primer.android.errors.domain.BaseErrorResolver
@@ -22,6 +23,8 @@ import kotlinx.coroutines.flow.SharedFlow
 
 internal data class ThreeDsInitialLauncherParams(
     val supportedThreeDsProtocolVersions: List<String>,
+    val paymentMethodToken: String,
+    val cardNetwork: CardNetwork.Type,
 ) : InitialLauncherParams
 
 internal data class ProcessorThreeDsInitialLauncherParams(
@@ -60,6 +63,8 @@ internal class GooglePayPaymentDelegate(
                                 sessionIntent = PrimerSessionIntent.CHECKOUT,
                                 ThreeDsInitialLauncherParams(
                                     supportedThreeDsProtocolVersions = decision.supportedThreeDsProtocolVersions,
+                                    paymentMethodToken = decision.paymentMethodToken,
+                                    cardNetwork = decision.cardNetwork,
                                 ),
                             ),
                         ),

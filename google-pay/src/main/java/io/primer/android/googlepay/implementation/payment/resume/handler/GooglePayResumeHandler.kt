@@ -2,16 +2,22 @@ package io.primer.android.googlepay.implementation.payment.resume.handler
 
 import io.primer.android.clientToken.core.token.domain.repository.ClientTokenRepository
 import io.primer.android.clientToken.core.validation.domain.repository.ValidateClientTokenRepository
+import io.primer.android.configuration.data.model.CardNetwork
 import io.primer.android.googlepay.implementation.payment.resume.clientToken.data.GooglePayClientTokenParser
 import io.primer.android.googlepay.implementation.payment.resume.clientToken.domain.model.GooglePayClientToken
 import io.primer.android.paymentmethods.common.data.model.ClientTokenIntent
 import io.primer.android.paymentmethods.core.payment.resume.clientToken.domain.model.PaymentMethodResumeDecision
 import io.primer.android.paymentmethods.core.payment.resume.handler.domain.PrimerResumeDecisionHandlerV2
 import io.primer.android.payments.core.helpers.CheckoutAdditionalInfoHandler
+import io.primer.android.payments.core.tokenization.domain.repository.TokenizedPaymentMethodRepository
 import io.primer.android.processor3ds.domain.model.Processor3DS
 
 internal sealed interface GooglePayResumeDecision : PaymentMethodResumeDecision {
-    data class GooglePayNative3dsResumeDecision(val supportedThreeDsProtocolVersions: List<String>) :
+    data class GooglePayNative3dsResumeDecision(
+        val supportedThreeDsProtocolVersions: List<String>,
+        val paymentMethodToken: String,
+        val cardNetwork: CardNetwork.Type,
+    ) :
         GooglePayResumeDecision
 
     data class GooglePayProcessor3dsResumeDecision(val processor3DS: Processor3DS) : GooglePayResumeDecision
@@ -22,6 +28,7 @@ internal class GooglePayResumeHandler(
     validateClientTokenRepository: ValidateClientTokenRepository,
     clientTokenRepository: ClientTokenRepository,
     checkoutAdditionalInfoHandler: CheckoutAdditionalInfoHandler,
+    private val tokenizedPaymentMethodRepository: TokenizedPaymentMethodRepository,
 ) : PrimerResumeDecisionHandlerV2<GooglePayResumeDecision, GooglePayClientToken>(
     clientTokenRepository = clientTokenRepository,
     validateClientTokenRepository = validateClientTokenRepository,
@@ -36,6 +43,11 @@ internal class GooglePayResumeHandler(
             is GooglePayClientToken.GooglePayNative3DSClientToken ->
                 GooglePayResumeDecision.GooglePayNative3dsResumeDecision(
                     supportedThreeDsProtocolVersions = clientToken.supportedThreeDsProtocolVersions,
+                    paymentMethodToken = tokenizedPaymentMethodRepository.getPaymentMethod().token,
+                    cardNetwork = CardNetwork.Type.valueOrNull(
+                        tokenizedPaymentMethodRepository.getPaymentMethod().paymentInstrumentData
+                            ?.binData?.network.orEmpty().uppercase(),
+                    ) ?: CardNetwork.Type.OTHER,
                 )
 
             is GooglePayClientToken.GooglePayProcessor3DSClientToken ->

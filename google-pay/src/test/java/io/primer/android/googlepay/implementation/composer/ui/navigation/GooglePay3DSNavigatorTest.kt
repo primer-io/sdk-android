@@ -10,6 +10,7 @@ import io.mockk.mockk
 import io.mockk.mockkObject
 import io.mockk.slot
 import io.mockk.verify
+import io.primer.android.configuration.data.model.CardNetwork
 import io.primer.android.paymentmethods.core.ui.navigation.NavigationParams
 import io.primer.android.threeds.ui.ThreeDsActivity
 import org.junit.jupiter.api.BeforeEach
@@ -36,11 +37,13 @@ internal class GooglePay3DSNavigatorTest {
     @Test
     fun `navigate() should launch ThreeDsActivity with correct parameters`() {
         // Given
-        val supportedThreeDsVersions = listOf("1.0", "2.0", "2.1")
+        val supportedThreeDsVersions = listOf("1.0.0", "2.1.0", "2.2.0")
         val params =
             GooglePayNative3DSActivityLauncherParams(
                 paymentMethodType = "google_pay",
                 supportedThreeDsVersions = supportedThreeDsVersions,
+                paymentMethodToken = "token",
+                cardNetwork = CardNetwork.Type.MASTERCARD,
             )
         val expectedIntent = mockk<Intent>()
         every { ThreeDsActivity.Companion.getLaunchIntent(any(), any()) } returns expectedIntent
@@ -64,6 +67,8 @@ internal class GooglePay3DSNavigatorTest {
             GooglePayNative3DSActivityLauncherParams(
                 paymentMethodType = "google_pay",
                 supportedThreeDsVersions = emptyList(),
+                paymentMethodToken = "token",
+                cardNetwork = CardNetwork.Type.MASTERCARD,
             )
 
         // When

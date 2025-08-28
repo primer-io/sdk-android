@@ -1,5 +1,6 @@
 package io.primer.android.core.extensions
 
+import androidx.annotation.RestrictTo
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -9,6 +10,7 @@ import kotlin.time.Duration.Companion.milliseconds
 
 val DEFAULT_DEBOUNCE_INTERVAL_IN_MILLIS: Duration = 275.milliseconds
 
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 fun <T> CoroutineScope.debounce(
     debounceInterval: Duration = DEFAULT_DEBOUNCE_INTERVAL_IN_MILLIS,
     action: suspend CoroutineScope.(T) -> Unit,
@@ -24,6 +26,7 @@ fun <T> CoroutineScope.debounce(
     }
 }
 
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 internal fun <T> CoroutineScope.cancellable(
     predicate: (T) -> Boolean,
     action: suspend CoroutineScope.(T) -> Unit,

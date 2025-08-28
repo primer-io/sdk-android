@@ -14,6 +14,7 @@ import io.primer.android.analytics.data.models.Place
 import io.primer.android.analytics.domain.AnalyticsInteractor
 import io.primer.android.analytics.domain.models.BaseAnalyticsParams
 import io.primer.android.analytics.domain.models.UIAnalyticsParams
+import io.primer.android.configuration.data.model.CardNetwork
 import io.primer.android.data.settings.PrimerSettings
 import io.primer.android.payments.core.tokenization.data.model.ResponseCode
 import io.primer.android.threeds.data.models.auth.BeginAuthResponse
@@ -43,8 +44,7 @@ internal class ThreeDsViewModel(
     val threeDsErrorEvent: LiveData<Throwable> = _threeDsErrorEvent
 
     private val _challengeRequiredEvent = MutableLiveData<ThreeDsEventData.ChallengeRequiredData>()
-    val challengeRequiredEvent: LiveData<ThreeDsEventData.ChallengeRequiredData> =
-        _challengeRequiredEvent
+    val challengeRequiredEvent: LiveData<ThreeDsEventData.ChallengeRequiredData> = _challengeRequiredEvent
 
     private val _threeDsFinishedEvent = MutableLiveData<String>()
     val threeDsFinishedEvent: LiveData<String> = _threeDsFinishedEvent
@@ -64,35 +64,41 @@ internal class ThreeDsViewModel(
         }
     }
 
-    fun performAuthorization(supportedThreeDsProtocolVersions: List<String>) {
+    fun performAuthorization(
+        supportedThreeDsProtocolVersions: List<String>,
+        paymentMethodToken: String?,
+        cardNetwork: CardNetwork.Type?,
+    ) {
         runIfChallengeNotInProgress {
             viewModelScope.launch {
-                threeDsInteractor.authenticateSdk(supportedThreeDsProtocolVersions = supportedThreeDsProtocolVersions)
-                    .onFailure { throwable ->
+                threeDsInteractor.authenticateSdk(
+                    supportedThreeDsProtocolVersions = supportedThreeDsProtocolVersions,
+                    cardNetwork = requireNotNull(cardNetwork),
+                ).onFailure { throwable ->
+                    _threeDsErrorEvent.postValue(throwable)
+                }.onSuccess { transaction ->
+                    threeDsInteractor.beginRemoteAuth(
+                        getThreeDsParams(transaction.authenticationRequestParameters),
+                        paymentMethodToken = requireNotNull(paymentMethodToken),
+                    ).onFailure { throwable ->
                         _threeDsErrorEvent.postValue(throwable)
-                    }.onSuccess { transaction ->
-                        threeDsInteractor.beginRemoteAuth(
-                            getThreeDsParams(transaction.authenticationRequestParameters),
-                        ).onFailure { throwable ->
-                            _threeDsErrorEvent.postValue(throwable)
-                            transaction.close()
-                        }.onSuccess { result ->
-                            when (result.authentication.responseCode) {
-                                ResponseCode.CHALLENGE ->
-                                    _challengeRequiredEvent.postValue(
-                                        ThreeDsEventData.ChallengeRequiredData(
-                                            transaction,
-                                            result,
-                                        ),
-                                    )
+                        transaction.close()
+                    }.onSuccess { result ->
+                        when (result.authentication.responseCode) {
+                            ResponseCode.CHALLENGE -> _challengeRequiredEvent.postValue(
+                                ThreeDsEventData.ChallengeRequiredData(
+                                    transaction,
+                                    result,
+                                ),
+                            )
 
-                                else -> {
-                                    _threeDsFinishedEvent.postValue(result.resumeToken)
-                                    transaction.close()
-                                }
+                            else -> {
+                                _threeDsFinishedEvent.postValue(result.resumeToken)
+                                transaction.close()
                             }
                         }
                     }
+                }
             }
         }
     }
@@ -129,13 +135,11 @@ internal class ThreeDsViewModel(
             threeDsInteractor.continueRemoteAuth(
                 challengeStatusData = challengeStatusData,
                 supportedThreeDsProtocolVersions = supportedThreeDsProtocolVersions,
-            )
-                .onFailure { throwable ->
-                    _threeDsErrorEvent.postValue(throwable)
-                }
-                .onSuccess { response ->
-                    _threeDsFinishedEvent.postValue(response.resumeToken)
-                }
+            ).onFailure { throwable ->
+                _threeDsErrorEvent.postValue(throwable)
+            }.onSuccess { response ->
+                _threeDsFinishedEvent.postValue(response.resumeToken)
+            }
         }
     }
 
@@ -143,17 +147,18 @@ internal class ThreeDsViewModel(
         throwable: Throwable,
         resumeToken: String?,
         supportedThreeDsProtocolVersions: List<String>,
+        paymentMethodToken: String?,
     ) {
         viewModelScope.launch {
             threeDsInteractor.continueRemoteAuthWithException(
                 throwable = throwable,
                 supportedThreeDsProtocolVersions = supportedThreeDsProtocolVersions,
+                paymentMethodToken = requireNotNull(paymentMethodToken),
             ).onFailure {
                 _threeDsFinishedEvent.postValue(resumeToken.orEmpty())
+            }.onSuccess { response ->
+                _threeDsFinishedEvent.postValue(response.resumeToken)
             }
-                .onSuccess { response ->
-                    _threeDsFinishedEvent.postValue(response.resumeToken)
-                }
         }
     }
 
@@ -163,10 +168,9 @@ internal class ThreeDsViewModel(
         threeDsInteractor.cleanup()
     }
 
-    fun addAnalyticsEvent(params: BaseAnalyticsParams) =
-        viewModelScope.launch {
-            analyticsInteractor(params)
-        }
+    fun addAnalyticsEvent(params: BaseAnalyticsParams) = viewModelScope.launch {
+        analyticsInteractor(params)
+    }
 
     sealed class ThreeDsEventData {
         class ChallengeRequiredData(
@@ -175,33 +179,29 @@ internal class ThreeDsViewModel(
         )
     }
 
-    private fun getThreeDsParams(authenticationRequestParameters: AuthenticationRequestParameters) =
-        run {
-            ThreeDsCheckoutParams(
-                authenticationRequestParameters,
-            )
-        }
-
-    private fun logThreeDsScreenPresented() =
-        addAnalyticsEvent(
-            UIAnalyticsParams(
-                AnalyticsAction.PRESENT,
-                ObjectType.`3RD_PARTY_VIEW`,
-                Place.`3DS_VIEW`,
-            ),
+    private fun getThreeDsParams(authenticationRequestParameters: AuthenticationRequestParameters) = run {
+        ThreeDsCheckoutParams(
+            authenticationRequestParameters,
         )
+    }
 
-    private fun logThreeDsScreenDismissed() =
-        addAnalyticsEvent(
-            UIAnalyticsParams(
-                AnalyticsAction.DISMISS,
-                ObjectType.`3RD_PARTY_VIEW`,
-                Place.`3DS_VIEW`,
-            ),
-        )
+    private fun logThreeDsScreenPresented() = addAnalyticsEvent(
+        UIAnalyticsParams(
+            AnalyticsAction.PRESENT,
+            ObjectType.`3RD_PARTY_VIEW`,
+            Place.`3DS_VIEW`,
+        ),
+    )
 
-    private fun runIfChallengeNotInProgress(block: () -> Unit) =
-        challengeInProgress.takeIf { it.not() }?.run {
-            block()
-        }
+    private fun logThreeDsScreenDismissed() = addAnalyticsEvent(
+        UIAnalyticsParams(
+            AnalyticsAction.DISMISS,
+            ObjectType.`3RD_PARTY_VIEW`,
+            Place.`3DS_VIEW`,
+        ),
+    )
+
+    private fun runIfChallengeNotInProgress(block: () -> Unit) = challengeInProgress.takeIf { it.not() }?.run {
+        block()
+    }
 }
