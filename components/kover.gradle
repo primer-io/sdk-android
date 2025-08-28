@@ -1,0 +1,82 @@
+apply plugin: 'org.jetbrains.kotlinx.kover'
+
+kover {
+    reports {
+        filters {
+            excludes {
+                // Exclude all presentation/UI layer
+                packages(
+                    "*.presentation.*",
+                    "*.presentation.screens.*",
+                    "*.presentation.components.*",
+                    "*.presentation.checkout.*",
+                    "*.presentation.theme.*",
+                    "*.presentation.utils.*",
+                    "*.presentation.constants.*"
+                )
+                
+                // Exclude DI containers
+                packages("*.di.*")
+                
+                // Exclude Compose-specific packages
+                packages(
+                    "*.compose.*",
+                    "*.ui.*",
+                    "*.widgets.*",
+                    "*.views.*"
+                )
+                
+                // Exclude data sources (framework-specific)
+                packages("*.data.datasource.*")
+                
+                // Exclude generated tokens
+                packages("io.primer.android.internal.tokens*")
+                
+                // Exclude components package itself
+                packages("io.primer.android.components*")
+                
+                classes(
+                    // Exclude all UI-related classes
+                    "*Screen*",
+                    "*ViewModel*",
+                    "*ViewModelFactory*",
+                    "*Fragment*",
+                    "*Activity*",
+                    "*Composable*",
+                    "*Preview*",
+                    "*Theme*",
+                    "*Colors*",
+                    "*Typography*",
+                    "*Shapes*",
+                    
+                    // Exclude UI components
+                    "*Button*",
+                    "*Card*",
+                    "*Input*",
+                    "*Form*",
+                    "*Dialog*",
+                    "*Sheet*",
+                    "*Loading*",
+                    "*Item*",
+                    "*Bar*",
+                    
+                    // Exclude navigation
+                    "*Navigation*",
+                    "*NavHost*",
+                    "*NavController*",
+                    "*Route*",
+                    
+                    // Exclude generated classes
+                    "*BuildConfig*",
+                    "*ComposerProviderFactory*",
+                    
+                    // Exclude modules
+                    "*Module*",
+                    
+                    // Exclude PrimerCheckout classes
+                    "*PrimerCheckout*"
+                )
+            }
+        }
+    }
+}
