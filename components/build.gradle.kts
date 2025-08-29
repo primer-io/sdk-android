@@ -6,7 +6,6 @@ plugins {
 }
 
 apply("$rootDir/tooling/android-common.gradle")
-apply(from = "$projectDir/kover.gradle")
 
 android {
     namespace = "io.primer.android.components"

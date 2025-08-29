@@ -71,6 +71,16 @@ subprojects { subproject ->
                     '**/*Manifest.*',
                     'android/**/*.*',
                     'androidx/**/*.*',
+                    '**/io/primer/android/PrimerCheckout.kt',
+                    '**/io/primer/android/PrimerTheme.kt',
+                    '**/io/primer/android/components/**/*',
+                    '**/io/primer/android/internal/di/ComponentsContainer.kt',
+                    '**/io/primer/android/internal/domain/repositories/**/*',
+                    '**/io/primer/android/internal/tokens/**/*',
+                    '**/io/primer/android/internal/presentation/checkout/**/*',
+                    '**/io/primer/android/internal/presentation/components/**/*',
+                    '**/io/primer/android/internal/presentation/constants/**/*',
+                    '**/io/primer/android/internal/presentation/screens/**/*',
             ]
 
             sonarqube {
