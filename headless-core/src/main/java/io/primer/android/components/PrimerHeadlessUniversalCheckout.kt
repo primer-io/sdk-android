@@ -85,7 +85,12 @@ class PrimerHeadlessUniversalCheckout private constructor() :
 
     override fun cleanup(cleanClientSessionCache: Boolean) {
         headlessUniversalCheckoutDelegate?.addAnalyticsEvent(
-            SdkFunctionParams(HeadlessUniversalCheckoutAnalyticsConstants.CLEANUP_METHOD),
+            SdkFunctionParams(
+                name = HeadlessUniversalCheckoutAnalyticsConstants.CLEANUP_METHOD,
+                params = mapOf(
+                    HeadlessUniversalCheckoutAnalyticsConstants.CLEAN_CLIENT_SESSION_CACHE to cleanClientSessionCache,
+                ),
+            ),
         )
         headlessUniversalCheckoutDelegate?.clear(exception = null, cleanClientSessionCache = cleanClientSessionCache)
         headlessUniversalCheckoutDelegate = null

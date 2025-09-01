@@ -22,8 +22,8 @@ import io.primer.android.analytics.infrastructure.datasource.BatteryStatusDataSo
 import io.primer.android.analytics.infrastructure.datasource.DeviceIdDataSource
 import io.primer.android.analytics.infrastructure.datasource.FileAnalyticsDataSource
 import io.primer.android.analytics.infrastructure.datasource.MetaDataSource
-import io.primer.android.analytics.infrastructure.datasource.NetworkTypeDataSource
 import io.primer.android.analytics.infrastructure.datasource.ScreenSizeDataSource
+import io.primer.android.analytics.infrastructure.datasource.connectivity.ConnectivityProvider
 import io.primer.android.analytics.infrastructure.datasource.connectivity.UncaughtHandlerDataSource
 import io.primer.android.analytics.infrastructure.files.AnalyticsFileProvider
 import io.primer.android.analytics.utils.Constants
@@ -46,7 +46,11 @@ class AnalyticsContainer(private val sdk: () -> SdkContainer) : DependencyContai
             CheckoutSessionIdDataSource()
         }
 
-        val interceptor = HttpAnalyticsInterceptor()
+        registerSingleton {
+            ConnectivityProvider.createProvider(context = sdk().resolve())
+        }
+
+        val interceptor = HttpAnalyticsInterceptor(connectivityProvider = resolve())
 
         registerSingleton(HTTP_INTERCEPTOR_DI_KEY) { interceptor }
         registerSingleton<Interceptor>(HTTP_INTERCEPTOR_DI_KEY) { interceptor }
@@ -128,7 +132,6 @@ class AnalyticsContainer(private val sdk: () -> SdkContainer) : DependencyContai
                 batteryLevelDataSource = BatteryLevelDataSource(sdk().resolve()),
                 batteryStatusDataSource = BatteryStatusDataSource(sdk().resolve()),
                 deviceIdDataSource = DeviceIdDataSource(sdk().resolve()),
-                networkTypeDataSource = NetworkTypeDataSource(sdk().resolve()),
                 uncaughtHandlerDataSource =
                 UncaughtHandlerDataSource().also {
                     Thread.setDefaultUncaughtExceptionHandler(it)

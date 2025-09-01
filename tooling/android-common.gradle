@@ -17,6 +17,7 @@ android {
 
     buildTypes.forEach {
         it.buildConfigField("String", "SDK_VERSION_STRING", "\"${project.findProperty("VERSION_NAME")}\"")
+        it.buildConfigField("String", "SDK_GROUP_ID", "\"${project.findProperty("GROUP")}\"")
     }
 
     buildFeatures {
