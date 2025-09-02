@@ -1,3 +1,9 @@
+## 2.42.1 (2025-09-02)
+
+### Fix
+
+- expand network calls context with network type, remove network change events (#1034)
+
 ## 2.42.0 (2025-08-26)
 
 ### Feat
