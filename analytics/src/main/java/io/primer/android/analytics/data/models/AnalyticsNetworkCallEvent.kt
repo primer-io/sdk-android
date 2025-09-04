@@ -75,6 +75,7 @@ internal data class NetworkCallProperties(
     val id: String,
     val url: String,
     val method: String,
+    val networkType: NetworkType,
     val responseCode: Int? = null,
     val errorBody: String? = null,
     val duration: Long? = null,
@@ -87,6 +88,7 @@ internal data class NetworkCallProperties(
         private const val RESPONSE_CODE_FIELD = "responseCode"
         private const val ERROR_BODY_FIELD = "errorBody"
         private const val DURATION = "duration"
+        private const val NETWORK_TYPE = "networkType"
 
         @JvmField
         val serializer =
@@ -96,6 +98,7 @@ internal data class NetworkCallProperties(
                     put(ID_FIELD, t.id)
                     put(URL_FIELD, t.url)
                     put(METHOD_FIELD, t.method)
+                    put(NETWORK_TYPE, t.networkType.name)
                     putOpt(RESPONSE_CODE_FIELD, t.responseCode)
                     putOpt(ERROR_BODY_FIELD, t.errorBody)
                     putOpt(DURATION, t.duration)
@@ -104,15 +107,16 @@ internal data class NetworkCallProperties(
 
         @JvmField
         val deserializer =
-            JSONObjectDeserializer<NetworkCallProperties> { t ->
+            JSONObjectDeserializer { t ->
                 NetworkCallProperties(
-                    NetworkCallType.valueOf(t.getString(NETWORK_CALL_TYPE_FIELD)),
-                    t.getString(ID_FIELD),
-                    t.getString(URL_FIELD),
-                    t.getString(METHOD_FIELD),
-                    t.optNullableInt(RESPONSE_CODE_FIELD),
-                    t.optNullableString(ERROR_BODY_FIELD),
-                    t.optNullableInt(DURATION)?.toLong(),
+                    callType = NetworkCallType.valueOf(t.getString(NETWORK_CALL_TYPE_FIELD)),
+                    id = t.getString(ID_FIELD),
+                    url = t.getString(URL_FIELD),
+                    method = t.getString(METHOD_FIELD),
+                    networkType = NetworkType.valueOf(t.getString(NETWORK_TYPE)),
+                    responseCode = t.optNullableInt(RESPONSE_CODE_FIELD),
+                    errorBody = t.optNullableString(ERROR_BODY_FIELD),
+                    duration = t.optNullableInt(DURATION)?.toLong(),
                 )
             }
     }

@@ -4,10 +4,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.viewmodel.CreationExtras
+import com.klarna.mobile.sdk.api.KlarnaTheme
 import com.klarna.mobile.sdk.api.payments.KlarnaPaymentView
 import io.primer.android.PrimerSessionIntent
 import io.primer.android.core.di.DISdkComponent
 import io.primer.android.core.di.extensions.resolve
+import io.primer.android.core.extensions.isNightModeEnabled
+import io.primer.android.data.settings.PrimerSettings
 import io.primer.android.klarna.api.component.KlarnaComponent
 import io.primer.android.paymentmethods.common.data.model.PaymentMethodType
 
@@ -41,7 +44,14 @@ internal class KlarnaComponentProvider : DISdkComponent {
                                 category = paymentCategory,
                                 callback = callback,
                                 returnURL = returnUrl,
-                            )
+                            ).apply {
+                                val themeDarkMode = resolve<PrimerSettings>().uiOptions.theme.isDarkMode == true
+                                theme = when {
+                                    themeDarkMode -> KlarnaTheme.DARK
+                                    context.isNightModeEnabled() -> KlarnaTheme.DARK
+                                    else -> KlarnaTheme.LIGHT
+                                }
+                            }
                         },
                         primerSettings = resolve(),
                         primerSessionIntent = primerSessionIntent,

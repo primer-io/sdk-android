@@ -15,7 +15,6 @@ import io.primer.android.analytics.infrastructure.datasource.BatteryLevelDataSou
 import io.primer.android.analytics.infrastructure.datasource.BatteryStatusDataSource
 import io.primer.android.analytics.infrastructure.datasource.DeviceIdDataSource
 import io.primer.android.analytics.infrastructure.datasource.FileAnalyticsDataSource
-import io.primer.android.analytics.infrastructure.datasource.NetworkTypeDataSource
 import io.primer.android.analytics.infrastructure.datasource.ScreenSizeDataSource
 import io.primer.android.analytics.infrastructure.datasource.connectivity.UncaughtHandlerDataSource
 import io.primer.android.core.utils.BaseDataProvider
@@ -38,7 +37,6 @@ internal class AnalyticsDataRepository(
     private val batteryLevelDataSource: BatteryLevelDataSource,
     private val batteryStatusDataSource: BatteryStatusDataSource,
     private val deviceIdDataSource: DeviceIdDataSource,
-    private val networkTypeDataSource: NetworkTypeDataSource,
     private val uncaughtHandlerDataSource: UncaughtHandlerDataSource,
     private val networkCallDataSource: NetworkCallDataSource,
     private val timerDataSource: TimerDataSource,
@@ -52,7 +50,6 @@ internal class AnalyticsDataRepository(
         merge(
             networkCallDataSource.execute(Unit),
             uncaughtHandlerDataSource.execute(Unit),
-            networkTypeDataSource.execute(Unit),
             timerDataSource.execute(Unit),
             messagePropertiesDataSource.execute(Unit),
         ).mapLatest { properties ->

@@ -1,3 +1,21 @@
+## 2.42.1 (2025-09-02)
+
+### Fix
+
+- expand network calls context with network type, remove network change events (#1034)
+
+## 2.42.0 (2025-08-26)
+
+### Feat
+
+- pick correct Klarna theme, update wrapper to 1.2.0 (#1025)
+
+## 2.41.1 (2025-08-21)
+
+### Fix
+
+- improvements to 3DS flow (#1018)
+
 ## 2.41.0 (2025-06-20)
 
 ### Feat
