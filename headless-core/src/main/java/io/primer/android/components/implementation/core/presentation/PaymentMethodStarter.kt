@@ -12,6 +12,7 @@ import io.primer.android.paymentmethods.core.composer.provider.PaymentMethodProv
 import io.primer.android.paymentmethods.core.composer.registry.PaymentMethodComposerRegistry
 import io.primer.android.paymentmethods.core.ui.navigation.PaymentMethodNavigationFactoryRegistry
 import io.primer.android.payments.core.helpers.PaymentMethodShowedHandler
+import io.primer.android.payments.core.tokenization.domain.repository.TokenizedPaymentMethodRepository
 import io.primer.paymentMethodCoreUi.core.ui.navigation.PaymentMethodContextNavigationHandler
 
 internal interface PaymentMethodStarter {
@@ -30,6 +31,7 @@ internal class DefaultPaymentMethodStarter(
     private val providerFactoryRegistry: PaymentMethodProviderFactoryRegistry,
     private val paymentMethodNavigationFactoryRegistry: PaymentMethodNavigationFactoryRegistry,
     private val paymentMethodShowedHandler: PaymentMethodShowedHandler,
+    private val tokenizedPaymentMethodRepository: TokenizedPaymentMethodRepository,
 ) : PaymentMethodStarter {
     override suspend fun start(
         context: Context,
@@ -49,6 +51,9 @@ internal class DefaultPaymentMethodStarter(
             ),
         )
 
+        tokenizedPaymentMethodRepository.setPaymentMethod(paymentMethodTokenInternal = null)
+
+        composerRegistry[paymentMethodType]?.cancel()
         composerRegistry.unregister(paymentMethodType)
         val composer = providerFactoryRegistry.create(paymentMethodType, sessionIntent)
         composer?.let { composerRegistry.register(paymentMethodType, it) }

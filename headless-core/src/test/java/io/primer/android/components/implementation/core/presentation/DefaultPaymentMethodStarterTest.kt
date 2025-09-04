@@ -20,6 +20,7 @@ import io.primer.android.paymentmethods.core.composer.registry.PaymentMethodComp
 import io.primer.android.paymentmethods.core.ui.navigation.NavigationParams
 import io.primer.android.paymentmethods.core.ui.navigation.PaymentMethodNavigationFactoryRegistry
 import io.primer.android.payments.core.helpers.PaymentMethodShowedHandler
+import io.primer.android.payments.core.tokenization.domain.repository.TokenizedPaymentMethodRepository
 import io.primer.android.webRedirectShared.implementation.composer.presentation.BaseWebRedirectComposer
 import io.primer.paymentMethodCoreUi.core.ui.navigation.Navigator
 import io.primer.paymentMethodCoreUi.core.ui.navigation.PaymentMethodContextNavigationHandler
@@ -40,6 +41,7 @@ class DefaultPaymentMethodStarterTest {
     private lateinit var providerFactoryRegistry: PaymentMethodProviderFactoryRegistry
     private lateinit var paymentMethodNavigationFactoryRegistry: PaymentMethodNavigationFactoryRegistry
     private lateinit var paymentMethodShowedHandler: PaymentMethodShowedHandler
+    private lateinit var tokenizedPaymentMethodRepository: TokenizedPaymentMethodRepository
     private lateinit var paymentMethodStarter: DefaultPaymentMethodStarter
 
     @BeforeEach
@@ -49,6 +51,7 @@ class DefaultPaymentMethodStarterTest {
         providerFactoryRegistry = mockk()
         paymentMethodNavigationFactoryRegistry = mockk()
         paymentMethodShowedHandler = mockk()
+        tokenizedPaymentMethodRepository = mockk()
         paymentMethodStarter =
             DefaultPaymentMethodStarter(
                 analyticsInteractor,
@@ -56,6 +59,7 @@ class DefaultPaymentMethodStarterTest {
                 providerFactoryRegistry,
                 paymentMethodNavigationFactoryRegistry,
                 paymentMethodShowedHandler,
+                tokenizedPaymentMethodRepository,
             )
     }
 
@@ -72,6 +76,7 @@ class DefaultPaymentMethodStarterTest {
                 every { uiEvent } returns uiEventFlow
             }
         every { providerFactoryRegistry.create(paymentMethodType, sessionIntent) } returns composer
+        every { tokenizedPaymentMethodRepository.setPaymentMethod(any()) } just Runs
 
         val navigationHandler = mockk<PaymentMethodContextNavigationHandler>(relaxed = true)
         every { paymentMethodNavigationFactoryRegistry.create(paymentMethodType) } returns navigationHandler
@@ -93,6 +98,36 @@ class DefaultPaymentMethodStarterTest {
     }
 
     @Test
+    fun `start should clear tokenized payment method`() {
+        val context = mockk<Context>()
+        val paymentMethodType = "testType"
+        val sessionIntent = PrimerSessionIntent.CHECKOUT
+        val category = PrimerPaymentMethodManagerCategory.NATIVE_UI
+
+        val uiEventFlow = MutableSharedFlow<ComposerUiEvent>()
+        val composer =
+            mockk<BaseWebRedirectComposer>(relaxed = true) {
+                every { uiEvent } returns uiEventFlow
+            }
+        every { providerFactoryRegistry.create(paymentMethodType, sessionIntent) } returns composer
+
+        every { tokenizedPaymentMethodRepository.setPaymentMethod(any()) } just Runs
+
+        runTest {
+            val job =
+                launch {
+                    paymentMethodStarter.start(context, paymentMethodType, sessionIntent, category)
+                }
+            advanceUntilIdle()
+            job.cancel()
+        }
+
+        verify {
+            tokenizedPaymentMethodRepository.setPaymentMethod(any())
+        }
+    }
+
+    @Test
     fun `start should unregister and register composer`() {
         val context = mockk<Context>()
         val paymentMethodType = "testType"
@@ -106,6 +141,7 @@ class DefaultPaymentMethodStarterTest {
             }
         every { providerFactoryRegistry.create(paymentMethodType, sessionIntent) } returns composer
         coEvery { paymentMethodShowedHandler.handle(any()) } just Runs
+        every { tokenizedPaymentMethodRepository.setPaymentMethod(any()) } just Runs
 
         val navigator =
             mockk<Navigator<NavigationParams>>(relaxed = true) {
@@ -146,6 +182,7 @@ class DefaultPaymentMethodStarterTest {
                 every { uiEvent } returns uiEventFlow
             }
         every { providerFactoryRegistry.create(paymentMethodType, sessionIntent) } returns composer
+        every { tokenizedPaymentMethodRepository.setPaymentMethod(any()) } just Runs
 
         val navigationHandler = mockk<PaymentMethodContextNavigationHandler>(relaxed = true)
         every { paymentMethodNavigationFactoryRegistry.create(paymentMethodType) } returns navigationHandler

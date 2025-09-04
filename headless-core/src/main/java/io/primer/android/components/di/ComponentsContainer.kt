@@ -193,6 +193,7 @@ internal class ComponentsContainer(private val sdk: () -> SdkContainer) : Depend
                 providerFactoryRegistry = sdk().resolve(),
                 paymentMethodNavigationFactoryRegistry = sdk().resolve(),
                 paymentMethodShowedHandler = sdk().resolve(),
+                tokenizedPaymentMethodRepository = sdk().resolve(),
             )
         }
 

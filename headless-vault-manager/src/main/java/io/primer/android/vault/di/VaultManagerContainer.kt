@@ -129,7 +129,7 @@ class VaultManagerContainer(
             )
         }
 
-        registerSingleton {
+        registerFactory {
             VaultManagerComposerDelegate(
                 paymentMethodNavigationFactoryRegistry = sdk().resolve(),
                 composerRegistry = sdk().resolve(),
@@ -140,6 +140,7 @@ class VaultManagerContainer(
                         runCatching { sdk().resolve<PaymentMethodPaymentDelegate>(it) }.getOrNull()
                     } ?: sdk().resolve(DEFAULT_COMPOSER_DI_KEY)
                 },
+                headlessScopeProvider = sdk().resolve(),
             )
         }
 
