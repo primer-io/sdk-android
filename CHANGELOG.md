@@ -1,3 +1,10 @@
+## 2.42.2 (2025-09-04)
+
+### Fix
+
+- expand buffer for external events (#1042)
+- reset tokenized payment method when new flow is started, cancel … (#1040)
+
 ## 2.42.1 (2025-09-02)
 
 ### Fix

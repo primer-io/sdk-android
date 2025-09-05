@@ -36,7 +36,7 @@ internal class DefaultPrimerHeadlessRepository(
 ) : PrimerHeadlessRepository {
     private val headlessUniversalCheckout = PrimerHeadlessUniversalCheckout.current
 
-    private val externalEvents = MutableSharedFlow<PrimerEvent>(replay = 1)
+    private val externalEvents = MutableSharedFlow<PrimerEvent>(replay = 1, extraBufferCapacity = 15)
 
     override val events: Flow<PrimerEvent> =
         merge(

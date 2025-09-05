@@ -149,6 +149,7 @@ internal class DefaultRawDataManagerDelegate(
         paymentMethodType: String,
         primerSessionIntent: PrimerSessionIntent,
     ) {
+        composerRegistry[paymentMethodType]?.cancel()
         composerRegistry.unregister(paymentMethodType)
         composer =
             providerFactoryRegistry.create(

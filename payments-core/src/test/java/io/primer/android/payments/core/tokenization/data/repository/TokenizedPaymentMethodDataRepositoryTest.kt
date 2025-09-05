@@ -7,6 +7,7 @@ import io.primer.android.payments.core.tokenization.domain.repository.TokenizedP
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
 
 @ExtendWith(MockKExtension::class)
@@ -29,6 +30,12 @@ class TokenizedPaymentMethodDataRepositoryTest {
 
         // Then
         assertEquals(paymentMethodTokenInternal, retrievedPaymentMethod)
+
+        // When
+        repository.setPaymentMethod(null)
+
+        // Then
+        assertThrows<IllegalArgumentException> { repository.getPaymentMethod() }
     }
 
     @Test

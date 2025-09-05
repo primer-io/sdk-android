@@ -5,5 +5,5 @@ import io.primer.android.payments.core.tokenization.data.model.PaymentMethodToke
 interface TokenizedPaymentMethodRepository {
     fun getPaymentMethod(): PaymentMethodTokenInternal
 
-    fun setPaymentMethod(paymentMethodTokenInternal: PaymentMethodTokenInternal)
+    fun setPaymentMethod(paymentMethodTokenInternal: PaymentMethodTokenInternal?)
 }
