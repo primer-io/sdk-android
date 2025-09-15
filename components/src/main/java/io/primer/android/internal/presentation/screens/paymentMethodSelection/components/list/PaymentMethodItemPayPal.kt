@@ -1,12 +1,17 @@
 package io.primer.android.internal.presentation.screens.paymentMethodSelection.components.list
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.LayoutDirection
+import androidx.compose.ui.unit.dp
 import io.primer.android.LocalPrimerTheme
 import io.primer.android.components.R
 import io.primer.android.internal.presentation.constants.PaymentMethodColors
@@ -17,12 +22,21 @@ import io.primer.android.scope.PrimerPaymentMethodSelectionScope
 internal fun PrimerPaymentMethodSelectionScope.PaymentMethodItemPaypal(
     modifier: Modifier = Modifier,
 ) {
+    val layoutDirection = LocalLayoutDirection.current
+    
     PaymentMethodItem(
         modifier = modifier,
         backgroundColor = PaymentMethodColors.paypalYellow,
         onPaymentMethodSelected = { onPaymentMethodSelected(PaymentMethodType.PAYPAL.name) },
     ) {
-        Row {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = if (layoutDirection == LayoutDirection.Rtl) {
+                Arrangement.End
+            } else {
+                Arrangement.Start
+            }
+        ) {
             Icon(
                 painter = painterResource(id = R.drawable.ic_primer_paypal_icon),
                 contentDescription = null,
@@ -32,7 +46,10 @@ internal fun PrimerPaymentMethodSelectionScope.PaymentMethodItemPaypal(
                 painter = painterResource(id = R.drawable.ic_primer_paypal_logo),
                 contentDescription = null,
                 tint = Color.Unspecified,
-                modifier = Modifier.padding(start = LocalPrimerTheme.current.spacingTokens.xsmall),
+                modifier = Modifier.padding(
+                    start = if (layoutDirection == LayoutDirection.Ltr) LocalPrimerTheme.current.spacingTokens.xsmall else 0.dp,
+                    end = if (layoutDirection == LayoutDirection.Rtl) LocalPrimerTheme.current.spacingTokens.xsmall else 0.dp
+                ),
             )
         }
     }

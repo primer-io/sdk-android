@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App Bar Titles -->
+    <string name="primer_components_select_payment_method_card">ادفع بالبطاقة</string>
+    <string name="primer_components_select_payment_method_coming_soon">🚧 قريباً</string>
+    <string name="primer_components_select_country">اختر البلد</string>
+    
+    <!-- Button Text -->
+    <string name="primer_components_checkout_retry">إعادة المحاولة</string>
+    <string name="primer_components_checkout_cancel">إلغاء</string>
+    <string name="primer_components_checkout_other_payment_methods">اختر طرق دفع أخرى</string>
+    <string name="primer_components_card_form_pay">ادفع</string>
+    
+    <!-- Form Field Labels -->
+    <string name="primer_components_card_form_name_on_card">الاسم على البطاقة</string>
+    <string name="primer_components_card_form_expiry_date">تاريخ الانتهاء</string>
+    <string name="primer_components_card_form_postal_code">الرمز البريدي</string>
+    <string name="primer_components_card_form_country_code">رمز البلد</string>
+    <string name="primer_components_card_form_city">المدينة</string>
+    <string name="primer_components_card_form_state">الولاية</string>
+    <string name="primer_components_card_form_address_line_1">العنوان السطر 1</string>
+    <string name="primer_components_card_form_address_line_2">العنوان السطر 2</string>
+    <string name="primer_components_card_form_phone_number">رقم الهاتف</string>
+    <string name="primer_components_card_form_first_name">الاسم الأول</string>
+    <string name="primer_components_card_form_last_name">الاسم الأخير</string>
+    <string name="primer_components_card_form_retail_outlet">نقطة البيع</string>
+    <string name="primer_components_card_form_otp_code">رمز OTP</string>
+    <string name="primer_components_card_form_card_number">رقم البطاقة</string>
+    <string name="primer_components_card_form_cvv">CVV</string>
+    <string name="primer_components_card_form_country">البلد</string>
+    <string name="primer_components_card_form_field">الحقل</string>
+    
+    <!-- Form Field Placeholders -->
+    <string name="primer_components_card_form_placeholder_full_name">الاسم الكامل</string>
+    <string name="primer_components_card_form_placeholder_expiry_date">MM/YY</string>
+    <string name="primer_components_card_form_placeholder_postal_code">12345</string>
+    <string name="primer_components_card_form_placeholder_country_code">US</string>
+    <string name="primer_components_card_form_placeholder_city">القاهرة</string>
+    <string name="primer_components_card_form_placeholder_state">القاهرة</string>
+    <string name="primer_components_card_form_placeholder_address_line_1">123 شارع الرئيسي</string>
+    <string name="primer_components_card_form_placeholder_address_line_2">شقة 4ب</string>
+    <string name="primer_components_card_form_placeholder_phone_number">+20 (10) 123–4567</string>
+    <string name="primer_components_card_form_placeholder_first_name">أحمد</string>
+    <string name="primer_components_card_form_placeholder_last_name">محمد</string>
+    <string name="primer_components_card_form_placeholder_retail_outlet">اختر نقطة البيع</string>
+    <string name="primer_components_card_form_placeholder_otp_code">123456</string>
+    <string name="primer_components_card_form_placeholder_card_number">1234 1234 1234 1234</string>
+    <string name="primer_components_card_form_placeholder_search_countries">البحث في البلدان…</string>
+    
+    <!-- Error Messages -->
+    <string name="primer_components_checkout_splash_title">جاري تحميل الدفع الآمن</string>
+    <string name="primer_checkout_splash_subtitle">لن يستغرق هذا وقتاً طويلاً</string>
+    <string name="primer_components_checkout_failed_title">فشل الدفع</string>
+    <string name="primer_components_checkout_failed_description">حدثت مشكلة في الشبكة.</string>
+    <string name="primer_components_payment_methods_error">خطأ في تحميل طرق الدفع</string>
+    
+    <!-- Success Messages -->
+    <string name="primer_components_checkout_success_title">تم الدفع بنجاح</string>
+    <string name="primer_components_checkout_success_description">سيتم إعادة توجيهك إلى صفحة تأكيد الطلب قريباً.</string>
+    
+    <!-- Payment Method Selection -->
+    <string name="primer_components_payment_method_selection_description">اختر طريقة الدفع</string>
+    <string name="primer_components_payment_method_selection_klarna_pay_with">ادفع بـ</string>
+    <string name="primer_components_payment_method_selection_pay">ادفع</string>
+    <string name="primer_components_payment_method_selection_pay_amount">ادفع %1$s</string>
+
+    <!-- Loading States -->
+    <string name="primer_components_checkout_loading">جاري التحميل</string>
+    
+    <!-- Content Descriptions -->
+    <string name="primer_components_content_description_back">رجوع</string>
+    <string name="primer_components_content_description_error">خطأ</string>
+    <string name="primer_components_content_description_payment_successful">تم الدفع بنجاح</string>
+    <string name="primer_components_content_description_search">بحث</string>
+    <string name="primer_components_content_description_card_network">شبكة البطاقة: %1$s</string>
+    <string name="primer_components_content_description_select_network">اختر الشبكة</string>
+
+    <!-- Surcharge Section Headers -->
+    <string name="primer_components_surcharge_no_additional_fee">لا توجد رسوم إضافية</string>
+    <string name="primer_components_surcharge_additional_fees">قد تنطبق رسوم إضافية</string>
+    <string name="primer_components_surcharge_fee">رسوم إضافية</string>
+
+</resources>

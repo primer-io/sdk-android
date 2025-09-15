@@ -97,6 +97,7 @@ internal fun PrimerCardFormScope.CardNumberInput(
         trailingIcon = { with(components) { cardNetwork(modifier) } },
         visualTransformation = CardNumberVisualTransformation(),
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+        forceLtrForNumbers = true,
     )
 }
 
@@ -142,6 +143,7 @@ internal fun PrimerCardFormScope.CvvInput(
             )
         },
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+        forceLtrForNumbers = true,
     )
 }
 

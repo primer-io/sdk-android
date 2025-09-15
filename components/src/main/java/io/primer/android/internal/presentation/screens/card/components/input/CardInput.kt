@@ -180,5 +180,11 @@ internal fun PrimerCardFormScope.CardInput(
         },
         visualTransformation = InputConfigs.visualTransformation(type),
         keyboardOptions = InputConfigs.keyboardOptions(type),
+        forceLtrForNumbers = type in listOf(
+            PrimerInputElementType.EXPIRY_DATE,
+            PrimerInputElementType.OTP_CODE,
+            PrimerInputElementType.PHONE_NUMBER,
+            PrimerInputElementType.POSTAL_CODE
+        ),
     )
 }

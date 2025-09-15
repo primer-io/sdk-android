@@ -7,6 +7,12 @@
           locale_id: en
           tags: android-sdk
           update_translations: false
+      - file: ./components/src/main/res/values/strings.xml
+        params:
+          file_format: xml
+          locale_id: en
+          tags: android-sdk-components
+          update_translations: false
 
   pull:
     targets:
@@ -15,6 +21,15 @@
           locale_id: Catalan
           file_format: xml
           tags: android-sdk
+          encoding: UTF-8
+          include_empty_translations: true
+          fallback_locale_id: en
+
+      - file: ./components/src/main/res/values-ca/strings.xml
+        params:
+          locale_id: Catalan
+          file_format: xml
+          tags: android-sdk-components
           encoding: UTF-8
           include_empty_translations: true
           fallback_locale_id: en
@@ -28,11 +43,29 @@
           include_empty_translations: true
           fallback_locale_id: en
 
+      - file: ./components/src/main/res/values-da/strings.xml
+        params:
+          locale_id: Danish
+          file_format: xml
+          tags: android-sdk-components
+          encoding: UTF-8
+          include_empty_translations: true
+          fallback_locale_id: en
+
       - file: ./drop-in/src/main/res/values-de/strings.xml
         params:
           locale_id: German
           file_format: xml
           tags: android-sdk
+          encoding: UTF-8
+          include_empty_translations: true
+          fallback_locale_id: en
+
+      - file: ./components/src/main/res/values-de/strings.xml
+        params:
+          locale_id: German
+          file_format: xml
+          tags: android-sdk-components
           encoding: UTF-8
           include_empty_translations: true
           fallback_locale_id: en
@@ -55,6 +88,15 @@
           include_empty_translations: true
           fallback_locale_id: en
 
+      - file: ./components/src/main/res/values-es/strings.xml
+        params:
+          locale_id: Spanish
+          file_format: xml
+          tags: android-sdk-components
+          encoding: UTF-8
+          include_empty_translations: true
+          fallback_locale_id: en
+
       - file: ./drop-in/src/main/res/values-fi/strings.xml
         params:
           locale_id: Finnish
@@ -73,11 +115,29 @@
           include_empty_translations: true
           fallback_locale_id: en
 
+      - file: ./components/src/main/res/values-fr/strings.xml
+        params:
+          locale_id: French
+          file_format: xml
+          tags: android-sdk-components
+          encoding: UTF-8
+          include_empty_translations: true
+          fallback_locale_id: en
+
       - file: ./drop-in/src/main/res/values-iw/strings.xml
         params:
           locale_id: Hebrew
           file_format: xml
           tags: android-sdk
+          encoding: UTF-8
+          include_empty_translations: true
+          fallback_locale_id: en
+
+      - file: ./components/src/main/res/values-iw/strings.xml
+        params:
+          locale_id: Hebrew
+          file_format: xml
+          tags: android-sdk-components
           encoding: UTF-8
           include_empty_translations: true
           fallback_locale_id: en
@@ -248,6 +308,15 @@
           locale_id: Arabic
           file_format: xml
           tags: android-sdk
+          encoding: UTF-8
+          include_empty_translations: true
+          fallback_locale_id: en
+
+      - file: ./components/src/main/res/values-ar/strings.xml
+        params:
+          locale_id: Arabic
+          file_format: xml
+          tags: android-sdk-components
           encoding: UTF-8
           include_empty_translations: true
           fallback_locale_id: en
