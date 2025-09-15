@@ -57,6 +57,20 @@ internal class CardFormViewModel(
             }
             .launchIn(viewModelScope)
 
+        // Collect field focus states
+        cardFieldsUseCase.fieldFocusStates
+            .onEach { focusStates ->
+                _uiState.update { it.copy(fieldFocusStates = focusStates) }
+            }
+            .launchIn(viewModelScope)
+
+        // Collect form validity state
+        cardFieldsUseCase.isFormValid
+            .onEach { isValid ->
+                _uiState.update { it.copy(isFormValid = isValid) }
+            }
+            .launchIn(viewModelScope)
+
         // Collect current card network immediately
         cardNetworkUseCase.currentCardNetwork
             .onEach { currentCardNetwork ->
@@ -156,18 +170,18 @@ internal class CardFormViewModel(
                 return@launch
             }
 
-            _uiState.update { it.copy(isLoading = true) }
+            _uiState.update { it.copy(isLoading = true, isFormEnabled = false) }
 
             submitCardPaymentUseCase(cardFieldsUseCase.formData.first())
                 .fold(
                     onSuccess = {
                         logReporter.debug("Payment completed successfully")
-                        _uiState.update { it.copy(isLoading = false) }
+                        _uiState.update { it.copy(isLoading = false, isFormEnabled = true) }
                         checkoutNavigator.navigateToSuccess()
                     },
                     onFailure = { error ->
                         logReporter.error("Payment failed: ${error.message}")
-                        _uiState.update { it.copy(isLoading = false) }
+                        _uiState.update { it.copy(isLoading = false, isFormEnabled = true) }
                         checkoutNavigator.navigateToError(error.message ?: "Payment failed")
                     },
                 )
@@ -194,4 +208,8 @@ internal class CardFormViewModel(
 
     override fun selectCardNetwork(network: CardNetwork.Type) =
         cardNetworkUseCase.selectCardNetwork(network)
+
+    override fun onFieldFocusChange(field: PrimerInputElementType, hasFocus: Boolean) {
+        cardFieldsUseCase.onFieldFocusChange(field, hasFocus)
+    }
 }

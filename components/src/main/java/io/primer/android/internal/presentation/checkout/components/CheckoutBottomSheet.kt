@@ -5,9 +5,12 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -52,6 +55,7 @@ internal fun CheckoutBottomSheet(
                 .fillMaxWidth()
                 .align(Alignment.BottomCenter)
                 .offset(y = (slideOffset * 1000).dp)
+                .consumeWindowInsets(WindowInsets.systemBars)
                 .clip(
                     RoundedCornerShape(
                         topEnd = LocalPrimerTheme.current.radiusTokens.large,

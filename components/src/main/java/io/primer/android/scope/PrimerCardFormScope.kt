@@ -160,6 +160,14 @@ interface PrimerCardFormScope : DISdkComponent {
     fun selectCardNetwork(network: CardNetwork.Type)
 
     /**
+     * Handles focus state changes for input fields to manage field-level validation.
+     *
+     * @param field The input field type that changed focus
+     * @param hasFocus Whether the field currently has focus
+     */
+    fun onFieldFocusChange(field: PrimerInputElementType, hasFocus: Boolean)
+
+    /**
      * Represents the current state of the card form, including field configurations,
      * user input data, validation errors, and UI state.
      *
@@ -168,9 +176,12 @@ interface PrimerCardFormScope : DISdkComponent {
      * @param fieldErrors List of validation errors for form fields
      * @param data Map of field types to their current string values
      * @param isLoading Whether the form is in a loading state
+     * @param isFormEnabled Whether the form fields are enabled for user input
      * @param selectedCountry Currently selected country for billing address
      * @param selectedNetwork Currently selected card network
      * @param availableNetworks List of available card networks for selection
+     * @param fieldFocusStates Map of field focus and interaction states
+     * @param isFormValid Whether all required fields contain valid data
      */
     data class State(
         val cardFields: List<PrimerInputElementType> = emptyList(),
@@ -178,8 +189,24 @@ interface PrimerCardFormScope : DISdkComponent {
         val fieldErrors: List<SyncValidationError>? = emptyList(),
         val data: Map<PrimerInputElementType, String> = emptyMap(),
         val isLoading: Boolean = false,
+        val isFormEnabled: Boolean = true,
         val selectedCountry: PrimerCountry? = null,
         val selectedNetwork: CardNetwork.Type = CardNetwork.Type.OTHER,
         val availableNetworks: List<PrimerCardNetwork> = emptyList(),
+        val fieldFocusStates: Map<PrimerInputElementType, FieldState> = emptyMap(),
+        val isFormValid: Boolean = false,
+    )
+
+    /**
+     * Represents the focus and validation state of an individual input field.
+     *
+     * @param hasFocus Whether the field currently has focus
+     * @param hasBeenFocused Whether the field has been focused at least once
+     * @param shouldShowError Whether validation errors should be displayed for this field
+     */
+    data class FieldState(
+        val hasFocus: Boolean = false,
+        val hasBeenFocused: Boolean = false,
+        val shouldShowError: Boolean = false,
     )
 }

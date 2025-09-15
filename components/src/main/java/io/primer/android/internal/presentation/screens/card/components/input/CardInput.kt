@@ -170,6 +170,7 @@ internal fun PrimerCardFormScope.CardInput(
         placeholder = getInputPlaceholder(type),
         modifier = modifier.fillMaxWidth(),
         error = resolveErrorMessage(error),
+        enabled = state.isFormEnabled,
         trailingIcon = {
             InputConfigs.trailingIcon(type)?.let {
                 Icon(
@@ -186,5 +187,8 @@ internal fun PrimerCardFormScope.CardInput(
             PrimerInputElementType.PHONE_NUMBER,
             PrimerInputElementType.POSTAL_CODE
         ),
+        onFocusChange = { hasFocus ->
+            onFieldFocusChange(type, hasFocus)
+        },
     )
 }

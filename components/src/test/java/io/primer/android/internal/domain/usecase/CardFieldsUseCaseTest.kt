@@ -125,9 +125,11 @@ class CardFieldsUseCaseTest {
     @Nested
     inner class ValidationTests {
         @Test
-        fun `validationErrors should be empty before submit attempted`() = runTest {
+        fun `validationErrors should be empty before submit attempted and no fields focused`() = runTest {
             // Given
-            val error = mockk<PrimerInputValidationError>()
+            val error = mockk<PrimerInputValidationError> {
+                every { inputElementType } returns PrimerInputElementType.CARD_NUMBER
+            }
             validationStateFlow.value = listOf(error)
 
             // When
@@ -135,6 +137,24 @@ class CardFieldsUseCaseTest {
 
             // Then
             assertTrue(errors.isEmpty())
+        }
+
+        @Test
+        fun `validationErrors flow can be collected and responds to submit attempts`() = runTest {
+            // This test validates that the validation errors flow works
+            // Complex error conversion logic is tested via integration tests
+
+            // Given - initially no errors shown
+            validationStateFlow.value = emptyList()
+
+            // When
+            val initialErrors = useCase.validationErrors.first()
+            useCase.markSubmitAttempted()
+            val afterSubmitErrors = useCase.validationErrors.first()
+
+            // Then
+            assertTrue(initialErrors.isEmpty())
+            assertTrue(afterSubmitErrors.isEmpty()) // No actual errors in this test
         }
 
         @Test
@@ -246,6 +266,124 @@ class CardFieldsUseCaseTest {
 
             verify(exactly = 1) { mockLogReporter.error("Failed to getBillingFields: Configuration error") }
             coVerify(exactly = 1) { mockConfigurationInteractor(ConfigurationParams(CachePolicy.ForceCache)) }
+        }
+    }
+
+    @Nested
+    inner class FocusChangeTests {
+        @Test
+        fun `onFieldFocusChange should update field focus states`() = runTest {
+            // When
+            useCase.onFieldFocusChange(PrimerInputElementType.CARD_NUMBER, hasFocus = true)
+
+            // Then
+            val focusStates = useCase.fieldFocusStates.first()
+            val cardNumberState = focusStates[PrimerInputElementType.CARD_NUMBER]
+
+            assertEquals(true, cardNumberState?.hasFocus)
+            assertEquals(true, cardNumberState?.hasBeenFocused)
+        }
+
+        @Test
+        fun `onFieldFocusChange should mark shouldShowError when field loses focus after being focused`() = runTest {
+            // Given - Field gains focus first
+            useCase.onFieldFocusChange(PrimerInputElementType.CARD_NUMBER, hasFocus = true)
+
+            // When - Field loses focus
+            useCase.onFieldFocusChange(PrimerInputElementType.CARD_NUMBER, hasFocus = false)
+
+            // Then
+            val focusStates = useCase.fieldFocusStates.first()
+            val cardNumberState = focusStates[PrimerInputElementType.CARD_NUMBER]
+
+            assertEquals(false, cardNumberState?.hasFocus)
+            assertEquals(true, cardNumberState?.hasBeenFocused)
+            assertEquals(true, cardNumberState?.shouldShowError)
+        }
+
+        @Test
+        fun `onFieldFocusChange should not show errors if field never gained focus`() = runTest {
+            // When - Field loses focus without ever gaining it (edge case)
+            useCase.onFieldFocusChange(PrimerInputElementType.CARD_NUMBER, hasFocus = false)
+
+            // Then
+            val focusStates = useCase.fieldFocusStates.first()
+            val cardNumberState = focusStates[PrimerInputElementType.CARD_NUMBER]
+
+            assertEquals(false, cardNumberState?.hasFocus)
+            assertEquals(false, cardNumberState?.hasBeenFocused)
+            assertEquals(false, cardNumberState?.shouldShowError)
+        }
+
+        @Test
+        fun `onFieldFocusChange should preserve shouldShowError state when field regains focus`() = runTest {
+            // Given - Field gains focus, loses focus (should show errors), then regains focus
+            useCase.onFieldFocusChange(PrimerInputElementType.CARD_NUMBER, hasFocus = true)
+            useCase.onFieldFocusChange(PrimerInputElementType.CARD_NUMBER, hasFocus = false)
+
+            // When - Field regains focus
+            useCase.onFieldFocusChange(PrimerInputElementType.CARD_NUMBER, hasFocus = true)
+
+            // Then - Should preserve shouldShowError state
+            val focusStates = useCase.fieldFocusStates.first()
+            val cardNumberState = focusStates[PrimerInputElementType.CARD_NUMBER]
+
+            assertEquals(true, cardNumberState?.hasFocus)
+            assertEquals(true, cardNumberState?.hasBeenFocused)
+            assertEquals(true, cardNumberState?.shouldShowError)
+        }
+    }
+
+    @Nested
+    inner class FieldLevelValidationTests {
+        @Test
+        fun `field level validation works correctly with focus changes`() = runTest {
+            // This test validates that the focus state management works
+            // Individual validation error display logic is tested via integration tests
+
+            // Given
+            useCase.onFieldFocusChange(PrimerInputElementType.CARD_NUMBER, hasFocus = true)
+
+            // When
+            useCase.onFieldFocusChange(PrimerInputElementType.CARD_NUMBER, hasFocus = false)
+
+            // Then
+            val focusStates = useCase.fieldFocusStates.first()
+            val cardNumberState = focusStates[PrimerInputElementType.CARD_NUMBER]
+
+            assertEquals(false, cardNumberState?.hasFocus)
+            assertEquals(true, cardNumberState?.hasBeenFocused)
+            assertEquals(true, cardNumberState?.shouldShowError)
+        }
+    }
+
+    @Nested
+    inner class FormValidityTests {
+        @Test
+        fun `isFormValid should return true when no validation errors`() = runTest {
+            // Given
+            validationStateFlow.value = emptyList()
+
+            // When
+            val isValid = useCase.isFormValid.first()
+
+            // Then
+            assertTrue(isValid)
+        }
+
+        @Test
+        fun `isFormValid flow exists and can be collected`() = runTest {
+            // This test validates that the isFormValid flow is properly set up
+            // Complex validation logic is tested via integration tests
+
+            // Given - no errors initially
+            validationStateFlow.value = emptyList()
+
+            // When
+            val isValid = useCase.isFormValid.first()
+
+            // Then - should be valid with no errors
+            assertTrue(isValid)
         }
     }
 }

@@ -39,8 +39,7 @@ internal class VaultManagerDelegate(
     private val findVaultedPaymentMethodInteractor: FindVaultedPaymentMethodInteractor,
     private val analyticsInteractor: AnalyticsInteractor,
     private val errorMapperRegistry: ErrorMapperRegistry,
-    private val vaultedPaymentMethodAdditionalDataValidatorRegistry:
-    VaultedPaymentMethodAdditionalDataValidatorRegistry,
+    private val vaultedPaymentMethodAdditionalDataValidatorRegistry: VaultedPaymentMethodAdditionalDataValidatorRegistry,
 ) : DISdkComponent {
     private val scope = CoroutineScope(SupervisorJob())
 

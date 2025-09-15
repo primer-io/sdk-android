@@ -13,6 +13,7 @@ import io.primer.android.internal.domain.repositories.RawDataManagerRepository
 import io.primer.android.internal.presentation.utils.BILLING_FIELDS
 import io.primer.android.internal.presentation.utils.CARD_FIELDS
 import io.primer.android.internal.presentation.utils.toPrimerCardData
+import io.primer.android.scope.PrimerCardFormScope
 import io.primer.android.ui.core.domain.helper.toSyncValidationError
 import io.primer.android.ui.core.model.SyncValidationError
 import kotlinx.coroutines.flow.Flow
@@ -34,6 +35,12 @@ internal class CardFieldsUseCase(
 
     private val _cardNetwork = MutableStateFlow(CardNetwork.Type.OTHER)
     private val _submitAttempted = MutableStateFlow(false)
+    private val _fieldFocusStates =
+        MutableStateFlow<Map<PrimerInputElementType, PrimerCardFormScope.FieldState>>(
+            emptyMap(),
+        )
+
+    val fieldFocusStates: Flow<Map<PrimerInputElementType, PrimerCardFormScope.FieldState>> = _fieldFocusStates.asStateFlow()
 
     val validationErrors: Flow<List<SyncValidationError>> =
         combine(
@@ -41,13 +48,34 @@ internal class CardFieldsUseCase(
             formData,
             _cardNetwork,
             _submitAttempted,
-        ) { errors, data, network, submitAttempted ->
+            _fieldFocusStates,
+        ) { errors, data, network, submitAttempted, focusStates ->
+            val primerCardData = data.toPrimerCardData(network)
+            val syncErrors = errors.map { it.toSyncValidationError(primerCardData) }
+
             if (submitAttempted) {
-                val primerCardData = data.toPrimerCardData(network)
-                errors.map { it.toSyncValidationError(primerCardData) }
+                // Show all validation errors when submit is attempted
+                syncErrors
             } else {
-                emptyList()
+                // Show validation errors only for fields that have lost focus (field-level validation)
+                syncErrors.filter { error ->
+                    val fieldState = focusStates[error.inputElementType]
+                    fieldState?.shouldShowError == true
+                }
             }
+        }
+
+    val isFormValid: Flow<Boolean> =
+        combine(
+            rawDataManagerRepository.validationState.onStart { emit(emptyList()) },
+            formData,
+            _cardNetwork,
+        ) { errors, data, network ->
+            val primerCardData = data.toPrimerCardData(network)
+            val syncErrors = errors.map { it.toSyncValidationError(primerCardData) }
+
+            // Form is valid when there are no validation errors for any field
+            syncErrors.isEmpty()
         }
 
     fun updateField(field: PrimerInputElementType, value: String) {
@@ -63,6 +91,26 @@ internal class CardFieldsUseCase(
     fun markSubmitAttempted() {
         _submitAttempted.value = true
         updateRepository()
+    }
+
+    fun onFieldFocusChange(field: PrimerInputElementType, hasFocus: Boolean) {
+        _fieldFocusStates.update { currentStates ->
+            val currentFieldState = currentStates[field] ?: PrimerCardFormScope.FieldState()
+            val updatedFieldState = currentFieldState.copy(
+                hasFocus = hasFocus,
+                hasBeenFocused = currentFieldState.hasBeenFocused || hasFocus,
+                shouldShowError = if (!hasFocus && currentFieldState.hasBeenFocused) {
+                    // Show errors when field loses focus and has been focused before
+                    true
+                } else if (hasFocus) {
+                    // Keep showing errors if field regains focus and was already showing errors
+                    currentFieldState.shouldShowError
+                } else {
+                    currentFieldState.shouldShowError
+                },
+            )
+            currentStates + (field to updatedFieldState)
+        }
     }
 
     suspend fun isSubmitAllowed(): Boolean {

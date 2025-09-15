@@ -94,10 +94,14 @@ internal fun PrimerCardFormScope.CardNumberInput(
         placeholder = stringResource(R.string.primer_components_card_form_placeholder_card_number),
         modifier = modifier.fillMaxWidth(),
         error = resolveErrorMessage(error),
+        enabled = state.isFormEnabled,
         trailingIcon = { with(components) { cardNetwork(modifier) } },
         visualTransformation = CardNumberVisualTransformation(),
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
         forceLtrForNumbers = true,
+        onFocusChange = { hasFocus ->
+            onFieldFocusChange(PrimerInputElementType.CARD_NUMBER, hasFocus)
+        },
     )
 }
 
@@ -136,6 +140,7 @@ internal fun PrimerCardFormScope.CvvInput(
         placeholder = "1".repeat(cvvLength),
         modifier = modifier.fillMaxWidth(),
         error = resolveErrorMessage(error),
+        enabled = state.isFormEnabled,
         trailingIcon = {
             Icon(
                 painter = painterResource(id = R.drawable.ic_primer_card_cvv),
@@ -144,6 +149,9 @@ internal fun PrimerCardFormScope.CvvInput(
         },
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
         forceLtrForNumbers = true,
+        onFocusChange = { hasFocus ->
+            onFieldFocusChange(PrimerInputElementType.CVV, hasFocus)
+        },
     )
 }
 
@@ -179,5 +187,8 @@ internal fun PrimerCardFormScope.CountryCodeInput(modifier: Modifier = Modifier)
             disabledBorderColor = MaterialTheme.colorScheme.outline,
             disabledLabelColor = MaterialTheme.colorScheme.onSurfaceVariant,
         ),
+        onFocusChange = { hasFocus ->
+            onFieldFocusChange(PrimerInputElementType.COUNTRY_CODE, hasFocus)
+        },
     )
 }
