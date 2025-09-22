@@ -1,9 +1,12 @@
-## 2.42.3 (2025-09-22)
+## 2.43.0 (2025-09-22)
+
+### Feat
+
+- remove legacy API usage and support when communicating with the backend.
 
 ### Fix
 
 - improve storing of analytics events (#1058)
-- ACC-5823 - Remove legacy API usage and support when communicating with the backend.
 
 ## 2.42.2 (2025-09-04)
 
