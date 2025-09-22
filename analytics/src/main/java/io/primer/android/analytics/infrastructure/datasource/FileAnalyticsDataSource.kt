@@ -10,17 +10,23 @@ import kotlinx.coroutines.flow.flow
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.FileOutputStream
+import java.util.zip.GZIPInputStream
+import java.util.zip.GZIPOutputStream
 
 internal class FileAnalyticsDataSource(
     private val fileProvider: AnalyticsFileProvider,
 ) : BaseFlowCacheDataSource<List<BaseAnalyticsEventRequest>, List<BaseAnalyticsEventRequest>> {
     override fun get(): Flow<List<BaseAnalyticsEventRequest>> =
         flow {
-            val content =
-                fileProvider.getFile(AnalyticsFileProvider.ANALYTICS_EVENTS_PATH).inputStream()
-                    .bufferedReader().use {
-                        it.lineSequence().joinToString()
+            val file = fileProvider.getFile(AnalyticsFileProvider.ANALYTICS_EVENTS_PATH)
+
+            val content = file.inputStream().use { fileInputStream ->
+                GZIPInputStream(fileInputStream).use { gzipInputStream ->
+                    gzipInputStream.bufferedReader(Charsets.UTF_8).use { reader ->
+                        reader.readText()
                     }
+                }
+            }
             if (content.isNotBlank()) {
                 try {
                     emit(
@@ -39,23 +45,21 @@ internal class FileAnalyticsDataSource(
 
     override fun update(input: List<BaseAnalyticsEventRequest>) =
         synchronized(this) {
-            val fileOutputStream =
-                FileOutputStream(
-                    fileProvider.getFile(AnalyticsFileProvider.ANALYTICS_EVENTS_PATH),
-                )
-            fileOutputStream.use {
-                it.write(
-                    JSONArray().apply {
-                        input.map { analyticsEvent ->
-                            put(
-                                JSONSerializationUtils
-                                    .getJsonObjectSerializer<BaseAnalyticsEventRequest>()
-                                    .serialize(analyticsEvent),
-                            )
-                        }
-                    }.toString().toByteArray(),
-                )
-                it.flush()
+            val file = fileProvider.getFile(AnalyticsFileProvider.ANALYTICS_EVENTS_PATH)
+            FileOutputStream(file).use { fileOutputStream ->
+                GZIPOutputStream(fileOutputStream).use { gzipOutputStream ->
+                    gzipOutputStream.write(
+                        JSONArray().apply {
+                            input.map { analyticsEvent ->
+                                put(
+                                    JSONSerializationUtils
+                                        .getJsonObjectSerializer<BaseAnalyticsEventRequest>()
+                                        .serialize(analyticsEvent),
+                                )
+                            }
+                        }.toString().toByteArray(),
+                    )
+                }
             }
         }
 }
