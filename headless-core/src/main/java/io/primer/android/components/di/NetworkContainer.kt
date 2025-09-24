@@ -2,7 +2,6 @@ package io.primer.android.components.di
 
 import android.content.Context
 import io.primer.android.analytics.data.datasource.CheckoutSessionIdProvider
-import io.primer.android.analytics.data.helper.SdkTypeResolver
 import io.primer.android.analytics.di.AnalyticsContainer
 import io.primer.android.analytics.di.AnalyticsContainer.Companion.MESSAGE_LOG_PROVIDER_DI_KEY
 import io.primer.android.analytics.di.AnalyticsContainer.Companion.MESSAGE_PROPERTIES_PROVIDER_DI_KEY
@@ -20,6 +19,7 @@ import io.primer.android.core.logging.BlacklistedHttpHeaderProviderRegistry
 import io.primer.android.core.logging.WhitelistedHttpBodyKeyProviderRegistry
 import io.primer.android.core.logging.di.HttpLogObfuscationContainer
 import io.primer.android.core.logging.internal.HttpLoggerInterceptor
+import io.primer.android.core.utils.SdkTypeResolver
 import okhttp3.Cache
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
@@ -99,7 +99,7 @@ internal class NetworkContainer(private val sdk: () -> SdkContainer) : Dependenc
                     chain.request().newBuilder()
                         .addHeader(CONTENT_TYPE_HEADER, CONTENT_TYPE_APPLICATION_JSON)
                         .addHeader(SDK_VERSION_HEADER, BuildConfig.SDK_VERSION_STRING)
-                        .addHeader(SDK_CLIENT_HEADER, SdkTypeResolver().resolve().name)
+                        .addHeader(SDK_CLIENT_HEADER, SdkTypeResolver.resolve().name)
                         .addHeader(
                             PRIMER_SDK_CHECKOUT_SESSION_ID_HEADER,
                             checkoutSessionIdProvider.provide(),

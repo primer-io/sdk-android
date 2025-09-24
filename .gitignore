@@ -10,6 +10,7 @@
 .bundle/
 .DS_Store
 /build
+/components-analytics/build
 /captures
 .externalNativeBuild
 .cxx

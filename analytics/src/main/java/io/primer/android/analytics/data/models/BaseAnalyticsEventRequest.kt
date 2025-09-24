@@ -1,6 +1,5 @@
 package io.primer.android.analytics.data.models
 
-import io.primer.android.analytics.data.helper.SdkTypeResolver
 import io.primer.android.analytics.domain.models.BankIssuerContextParams
 import io.primer.android.analytics.domain.models.BaseAnalyticsParams
 import io.primer.android.analytics.domain.models.BaseContextParams
@@ -23,6 +22,8 @@ import io.primer.android.core.data.serialization.json.JSONObjectDeserializer
 import io.primer.android.core.data.serialization.json.JSONObjectSerializable
 import io.primer.android.core.data.serialization.json.JSONObjectSerializer
 import io.primer.android.core.data.serialization.json.JSONSerializationUtils
+import io.primer.android.core.utils.SdkType
+import io.primer.android.core.utils.SdkTypeResolver
 import org.json.JSONObject
 
 @Suppress("UnusedPrivateMember")
@@ -40,7 +41,7 @@ internal sealed class BaseAnalyticsEventRequest : JSONObjectSerializable, JSONDe
     abstract val analyticsUrl: String?
     abstract val eventType: AnalyticsEventType
     abstract val createdAt: Long
-    protected val sdkType: SdkType = SdkTypeResolver().resolve()
+    protected val sdkType: SdkType = SdkTypeResolver.resolve()
     protected val sdkVersion: String = BuildConfig.SDK_VERSION_STRING
 
     abstract fun copy(newAnalyticsUrl: String?): BaseAnalyticsEventRequest

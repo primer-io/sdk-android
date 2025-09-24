@@ -15,6 +15,7 @@ internal class CardFormViewModelFactory : ViewModelProvider.Factory, DISdkCompon
                 submitCardPaymentUseCase = resolve(),
                 checkoutNavigator = resolve(),
                 logReporter = resolve(),
+                componentsEventsRepository = resolve(),
             ) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")

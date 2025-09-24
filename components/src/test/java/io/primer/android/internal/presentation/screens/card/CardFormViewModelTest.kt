@@ -5,6 +5,7 @@ import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import io.primer.android.components.analytics.data.repository.ComponentsEventsRepository
 import io.primer.android.components.domain.inputs.models.PrimerInputElementType
 import io.primer.android.configuration.data.model.CardNetwork
 import io.primer.android.configuration.data.model.CountryCode
@@ -41,6 +42,7 @@ class CardFormViewModelTest {
     private lateinit var submitCardPaymentUseCase: SubmitCardPaymentUseCase
     private lateinit var checkoutNavigator: CheckoutNavigator
     private lateinit var logReporter: LogReporter
+    private lateinit var componentsEventsRepository: ComponentsEventsRepository
     private lateinit var viewModel: CardFormViewModel
 
     private val formDataFlow = MutableStateFlow(emptyMap<PrimerInputElementType, String>())
@@ -57,79 +59,57 @@ class CardFormViewModelTest {
         submitCardPaymentUseCase = mockk()
         checkoutNavigator = mockk(relaxed = true)
         logReporter = mockk(relaxed = true)
+        componentsEventsRepository = mockk(relaxed = true)
 
         every { cardFieldsUseCase.formData } returns formDataFlow
         every { cardFieldsUseCase.validationErrors } returns validationErrorsFlow
+        every { cardFieldsUseCase.fieldFocusStates } returns flowOf(emptyMap())
+        every { cardFieldsUseCase.isFormValid } returns flowOf(false)
         every { cardNetworkUseCase.currentCardNetwork } returns currentCardNetworkFlow
         every { cardNetworkUseCase.availableNetworks } returns availableNetworksFlow
         every {
             checkoutNavigator.observeNavigationResult<Pair<String, String>>("selected_country")
         } returns flowOf(null)
-    }
-
-    @Test
-    fun `constructor should store dependencies correctly`() = runTest {
         coEvery { cardFieldsUseCase.getCardFields() } returns listOf(
             PrimerInputElementType.CARD_NUMBER,
             PrimerInputElementType.EXPIRY_DATE,
             PrimerInputElementType.CVV,
         )
-        coEvery { cardFieldsUseCase.getBillingFields() } returns emptyList()
-
-        viewModel = CardFormViewModel(
-            cardFieldsUseCase = cardFieldsUseCase,
-            cardNetworkUseCase = cardNetworkUseCase,
-            submitCardPaymentUseCase = submitCardPaymentUseCase,
-            checkoutNavigator = checkoutNavigator,
-            logReporter = logReporter,
-        )
-
-        assertNotNull(viewModel)
-    }
-
-    @Test
-    fun `should initialize state with card and billing fields`() = runTest {
-        val cardFields = listOf(
-            PrimerInputElementType.CARD_NUMBER,
-            PrimerInputElementType.EXPIRY_DATE,
-            PrimerInputElementType.CVV,
-        )
-        val billingFields = listOf(
+        coEvery { cardFieldsUseCase.getBillingFields() } returns listOf(
             PrimerInputElementType.POSTAL_CODE,
             PrimerInputElementType.COUNTRY_CODE,
         )
 
-        coEvery { cardFieldsUseCase.getCardFields() } returns cardFields
-        coEvery { cardFieldsUseCase.getBillingFields() } returns billingFields
-
         viewModel = CardFormViewModel(
             cardFieldsUseCase = cardFieldsUseCase,
             cardNetworkUseCase = cardNetworkUseCase,
             submitCardPaymentUseCase = submitCardPaymentUseCase,
             checkoutNavigator = checkoutNavigator,
             logReporter = logReporter,
+            componentsEventsRepository = componentsEventsRepository,
         )
+    }
 
+    @Test
+    fun `should initialize state with card and billing fields`() = runTest {
         advanceUntilIdle()
 
         val state = viewModel.state.first()
-        assertEquals(cardFields, state.cardFields)
-        assertEquals(billingFields, state.billingFields)
+        val expectedCardFields = listOf(
+            PrimerInputElementType.CARD_NUMBER,
+            PrimerInputElementType.EXPIRY_DATE,
+            PrimerInputElementType.CVV,
+        )
+        val expectedBillingFields = listOf(
+            PrimerInputElementType.POSTAL_CODE,
+            PrimerInputElementType.COUNTRY_CODE,
+        )
+        assertEquals(expectedCardFields, state.cardFields)
+        assertEquals(expectedBillingFields, state.billingFields)
     }
 
     @Test
     fun `updateCardNumber should update field and detect network`() = runTest {
-        coEvery { cardFieldsUseCase.getCardFields() } returns emptyList()
-        coEvery { cardFieldsUseCase.getBillingFields() } returns emptyList()
-
-        viewModel = CardFormViewModel(
-            cardFieldsUseCase = cardFieldsUseCase,
-            cardNetworkUseCase = cardNetworkUseCase,
-            submitCardPaymentUseCase = submitCardPaymentUseCase,
-            checkoutNavigator = checkoutNavigator,
-            logReporter = logReporter,
-        )
-
         val cardNumber = "4111111111111111"
         viewModel.updateCardNumber(cardNumber)
 
@@ -139,17 +119,6 @@ class CardFormViewModelTest {
 
     @Test
     fun `updateCardNumber with empty string should clear network`() = runTest {
-        coEvery { cardFieldsUseCase.getCardFields() } returns emptyList()
-        coEvery { cardFieldsUseCase.getBillingFields() } returns emptyList()
-
-        viewModel = CardFormViewModel(
-            cardFieldsUseCase = cardFieldsUseCase,
-            cardNetworkUseCase = cardNetworkUseCase,
-            submitCardPaymentUseCase = submitCardPaymentUseCase,
-            checkoutNavigator = checkoutNavigator,
-            logReporter = logReporter,
-        )
-
         viewModel.updateCardNumber("")
 
         verify(exactly = 1) { cardNetworkUseCase.clear() }
@@ -158,17 +127,6 @@ class CardFormViewModelTest {
 
     @Test
     fun `updateCvv should update CVV field`() = runTest {
-        coEvery { cardFieldsUseCase.getCardFields() } returns emptyList()
-        coEvery { cardFieldsUseCase.getBillingFields() } returns emptyList()
-
-        viewModel = CardFormViewModel(
-            cardFieldsUseCase = cardFieldsUseCase,
-            cardNetworkUseCase = cardNetworkUseCase,
-            submitCardPaymentUseCase = submitCardPaymentUseCase,
-            checkoutNavigator = checkoutNavigator,
-            logReporter = logReporter,
-        )
-
         val cvv = "123"
         viewModel.updateCvv(cvv)
 
@@ -177,17 +135,6 @@ class CardFormViewModelTest {
 
     @Test
     fun `updateExpiryDate should update expiry date field`() = runTest {
-        coEvery { cardFieldsUseCase.getCardFields() } returns emptyList()
-        coEvery { cardFieldsUseCase.getBillingFields() } returns emptyList()
-
-        viewModel = CardFormViewModel(
-            cardFieldsUseCase = cardFieldsUseCase,
-            cardNetworkUseCase = cardNetworkUseCase,
-            submitCardPaymentUseCase = submitCardPaymentUseCase,
-            checkoutNavigator = checkoutNavigator,
-            logReporter = logReporter,
-        )
-
         val expiryDate = "12/25"
         viewModel.updateExpiryDate(expiryDate)
 
@@ -196,17 +143,6 @@ class CardFormViewModelTest {
 
     @Test
     fun `updateCardholderName should update cardholder name field`() = runTest {
-        coEvery { cardFieldsUseCase.getCardFields() } returns emptyList()
-        coEvery { cardFieldsUseCase.getBillingFields() } returns emptyList()
-
-        viewModel = CardFormViewModel(
-            cardFieldsUseCase = cardFieldsUseCase,
-            cardNetworkUseCase = cardNetworkUseCase,
-            submitCardPaymentUseCase = submitCardPaymentUseCase,
-            checkoutNavigator = checkoutNavigator,
-            logReporter = logReporter,
-        )
-
         val name = "John Doe"
         viewModel.updateCardholderName(name)
 
@@ -215,17 +151,6 @@ class CardFormViewModelTest {
 
     @Test
     fun `updatePostalCode should update postal code field`() = runTest {
-        coEvery { cardFieldsUseCase.getCardFields() } returns emptyList()
-        coEvery { cardFieldsUseCase.getBillingFields() } returns emptyList()
-
-        viewModel = CardFormViewModel(
-            cardFieldsUseCase = cardFieldsUseCase,
-            cardNetworkUseCase = cardNetworkUseCase,
-            submitCardPaymentUseCase = submitCardPaymentUseCase,
-            checkoutNavigator = checkoutNavigator,
-            logReporter = logReporter,
-        )
-
         val postalCode = "12345"
         viewModel.updatePostalCode(postalCode)
 
@@ -234,24 +159,14 @@ class CardFormViewModelTest {
 
     @Test
     fun `onSubmit when validation fails should not proceed`() = runTest {
-        coEvery { cardFieldsUseCase.getCardFields() } returns emptyList()
-        coEvery { cardFieldsUseCase.getBillingFields() } returns emptyList()
         coEvery { cardFieldsUseCase.markSubmitAttempted() } returns Unit
         coEvery { cardFieldsUseCase.isSubmitAllowed() } returns false
-
-        viewModel = CardFormViewModel(
-            cardFieldsUseCase = cardFieldsUseCase,
-            cardNetworkUseCase = cardNetworkUseCase,
-            submitCardPaymentUseCase = submitCardPaymentUseCase,
-            checkoutNavigator = checkoutNavigator,
-            logReporter = logReporter,
-        )
 
         viewModel.onSubmit()
         advanceUntilIdle()
 
         coVerify(exactly = 1) { cardFieldsUseCase.markSubmitAttempted() }
-        coVerify(exactly = 1) { cardFieldsUseCase.isSubmitAllowed() }
+        coVerify(atLeast = 1) { cardFieldsUseCase.isSubmitAllowed() } // May be called during init too
         coVerify(exactly = 0) { submitCardPaymentUseCase(any()) }
         verify(exactly = 1) { logReporter.debug("Validation failed, not proceeding with submission") }
     }
@@ -263,20 +178,10 @@ class CardFormViewModelTest {
             PrimerInputElementType.CVV to "123",
         )
 
-        coEvery { cardFieldsUseCase.getCardFields() } returns emptyList()
-        coEvery { cardFieldsUseCase.getBillingFields() } returns emptyList()
         coEvery { cardFieldsUseCase.markSubmitAttempted() } returns Unit
         coEvery { cardFieldsUseCase.isSubmitAllowed() } returns true
         every { cardFieldsUseCase.formData } returns flowOf(formData)
         coEvery { submitCardPaymentUseCase(formData) } returns Result.success(mockk<PrimerCheckoutData>())
-
-        viewModel = CardFormViewModel(
-            cardFieldsUseCase = cardFieldsUseCase,
-            cardNetworkUseCase = cardNetworkUseCase,
-            submitCardPaymentUseCase = submitCardPaymentUseCase,
-            checkoutNavigator = checkoutNavigator,
-            logReporter = logReporter,
-        )
 
         viewModel.onSubmit()
         advanceUntilIdle()
@@ -294,20 +199,10 @@ class CardFormViewModelTest {
         )
         val errorMessage = "Payment declined"
 
-        coEvery { cardFieldsUseCase.getCardFields() } returns emptyList()
-        coEvery { cardFieldsUseCase.getBillingFields() } returns emptyList()
         coEvery { cardFieldsUseCase.markSubmitAttempted() } returns Unit
         coEvery { cardFieldsUseCase.isSubmitAllowed() } returns true
         every { cardFieldsUseCase.formData } returns flowOf(formData)
         coEvery { submitCardPaymentUseCase(formData) } returns Result.failure(Exception(errorMessage))
-
-        viewModel = CardFormViewModel(
-            cardFieldsUseCase = cardFieldsUseCase,
-            cardNetworkUseCase = cardNetworkUseCase,
-            submitCardPaymentUseCase = submitCardPaymentUseCase,
-            checkoutNavigator = checkoutNavigator,
-            logReporter = logReporter,
-        )
 
         viewModel.onSubmit()
         advanceUntilIdle()
@@ -319,17 +214,6 @@ class CardFormViewModelTest {
 
     @Test
     fun `onBack should navigate back`() = runTest {
-        coEvery { cardFieldsUseCase.getCardFields() } returns emptyList()
-        coEvery { cardFieldsUseCase.getBillingFields() } returns emptyList()
-
-        viewModel = CardFormViewModel(
-            cardFieldsUseCase = cardFieldsUseCase,
-            cardNetworkUseCase = cardNetworkUseCase,
-            submitCardPaymentUseCase = submitCardPaymentUseCase,
-            checkoutNavigator = checkoutNavigator,
-            logReporter = logReporter,
-        )
-
         viewModel.onBack()
         advanceUntilIdle()
 
@@ -338,17 +222,6 @@ class CardFormViewModelTest {
 
     @Test
     fun `onCancel should dismiss`() = runTest {
-        coEvery { cardFieldsUseCase.getCardFields() } returns emptyList()
-        coEvery { cardFieldsUseCase.getBillingFields() } returns emptyList()
-
-        viewModel = CardFormViewModel(
-            cardFieldsUseCase = cardFieldsUseCase,
-            cardNetworkUseCase = cardNetworkUseCase,
-            submitCardPaymentUseCase = submitCardPaymentUseCase,
-            checkoutNavigator = checkoutNavigator,
-            logReporter = logReporter,
-        )
-
         viewModel.onCancel()
         advanceUntilIdle()
 
@@ -357,17 +230,6 @@ class CardFormViewModelTest {
 
     @Test
     fun `navigateToCountrySelection should navigate to SelectCountry screen`() = runTest {
-        coEvery { cardFieldsUseCase.getCardFields() } returns emptyList()
-        coEvery { cardFieldsUseCase.getBillingFields() } returns emptyList()
-
-        viewModel = CardFormViewModel(
-            cardFieldsUseCase = cardFieldsUseCase,
-            cardNetworkUseCase = cardNetworkUseCase,
-            submitCardPaymentUseCase = submitCardPaymentUseCase,
-            checkoutNavigator = checkoutNavigator,
-            logReporter = logReporter,
-        )
-
         viewModel.navigateToCountrySelection()
         advanceUntilIdle()
 
@@ -376,17 +238,6 @@ class CardFormViewModelTest {
 
     @Test
     fun `selectCardNetwork should call use case`() = runTest {
-        coEvery { cardFieldsUseCase.getCardFields() } returns emptyList()
-        coEvery { cardFieldsUseCase.getBillingFields() } returns emptyList()
-
-        viewModel = CardFormViewModel(
-            cardFieldsUseCase = cardFieldsUseCase,
-            cardNetworkUseCase = cardNetworkUseCase,
-            submitCardPaymentUseCase = submitCardPaymentUseCase,
-            checkoutNavigator = checkoutNavigator,
-            logReporter = logReporter,
-        )
-
         val network = CardNetwork.Type.VISA
         viewModel.selectCardNetwork(network)
 
@@ -398,17 +249,6 @@ class CardFormViewModelTest {
         val formData = mapOf(
             PrimerInputElementType.CARD_NUMBER to "4111111111111111",
             PrimerInputElementType.CVV to "123",
-        )
-
-        coEvery { cardFieldsUseCase.getCardFields() } returns emptyList()
-        coEvery { cardFieldsUseCase.getBillingFields() } returns emptyList()
-
-        viewModel = CardFormViewModel(
-            cardFieldsUseCase = cardFieldsUseCase,
-            cardNetworkUseCase = cardNetworkUseCase,
-            submitCardPaymentUseCase = submitCardPaymentUseCase,
-            checkoutNavigator = checkoutNavigator,
-            logReporter = logReporter,
         )
 
         formDataFlow.value = formData
@@ -428,17 +268,6 @@ class CardFormViewModelTest {
             ),
         )
 
-        coEvery { cardFieldsUseCase.getCardFields() } returns emptyList()
-        coEvery { cardFieldsUseCase.getBillingFields() } returns emptyList()
-
-        viewModel = CardFormViewModel(
-            cardFieldsUseCase = cardFieldsUseCase,
-            cardNetworkUseCase = cardNetworkUseCase,
-            submitCardPaymentUseCase = submitCardPaymentUseCase,
-            checkoutNavigator = checkoutNavigator,
-            logReporter = logReporter,
-        )
-
         validationErrorsFlow.value = errors
         advanceUntilIdle()
 
@@ -448,17 +277,6 @@ class CardFormViewModelTest {
 
     @Test
     fun `card network changes should update state`() = runTest {
-        coEvery { cardFieldsUseCase.getCardFields() } returns emptyList()
-        coEvery { cardFieldsUseCase.getBillingFields() } returns emptyList()
-
-        viewModel = CardFormViewModel(
-            cardFieldsUseCase = cardFieldsUseCase,
-            cardNetworkUseCase = cardNetworkUseCase,
-            submitCardPaymentUseCase = submitCardPaymentUseCase,
-            checkoutNavigator = checkoutNavigator,
-            logReporter = logReporter,
-        )
-
         currentCardNetworkFlow.value = CardNetwork.Type.VISA
         advanceUntilIdle()
 
@@ -471,23 +289,22 @@ class CardFormViewModelTest {
     fun `country selection should update state and field`() = runTest {
         val countryCode = "US"
         val countryName = "United States"
-        val countrySelectionFlow = MutableStateFlow<Pair<String, String>?>(null)
+        val countrySelectionFlow = MutableStateFlow<Pair<String, String>?>(Pair(countryCode, countryName))
 
-        coEvery { cardFieldsUseCase.getCardFields() } returns emptyList()
-        coEvery { cardFieldsUseCase.getBillingFields() } returns emptyList()
         every {
             checkoutNavigator.observeNavigationResult<Pair<String, String>>("selected_country")
         } returns countrySelectionFlow
 
+        // We need to recreate the viewModel with the new flow setup
         viewModel = CardFormViewModel(
             cardFieldsUseCase = cardFieldsUseCase,
             cardNetworkUseCase = cardNetworkUseCase,
             submitCardPaymentUseCase = submitCardPaymentUseCase,
             checkoutNavigator = checkoutNavigator,
             logReporter = logReporter,
+            componentsEventsRepository = componentsEventsRepository,
         )
 
-        countrySelectionFlow.value = Pair(countryCode, countryName)
         advanceUntilIdle()
 
         val state = viewModel.state.value
@@ -503,8 +320,6 @@ class CardFormViewModelTest {
             PrimerInputElementType.CARD_NUMBER to "4111111111111111",
         )
 
-        coEvery { cardFieldsUseCase.getCardFields() } returns emptyList()
-        coEvery { cardFieldsUseCase.getBillingFields() } returns emptyList()
         coEvery { cardFieldsUseCase.markSubmitAttempted() } returns Unit
         coEvery { cardFieldsUseCase.isSubmitAllowed() } returns true
         every { cardFieldsUseCase.formData } returns flowOf(formData)
@@ -512,14 +327,6 @@ class CardFormViewModelTest {
             kotlinx.coroutines.delay(100)
             Result.success(mockk<PrimerCheckoutData>())
         }
-
-        viewModel = CardFormViewModel(
-            cardFieldsUseCase = cardFieldsUseCase,
-            cardNetworkUseCase = cardNetworkUseCase,
-            submitCardPaymentUseCase = submitCardPaymentUseCase,
-            checkoutNavigator = checkoutNavigator,
-            logReporter = logReporter,
-        )
 
         val stateChanges = mutableListOf<Boolean>()
         val job = launch {
@@ -539,17 +346,6 @@ class CardFormViewModelTest {
 
     @Test
     fun `all update methods should delegate to use case`() = runTest {
-        coEvery { cardFieldsUseCase.getCardFields() } returns emptyList()
-        coEvery { cardFieldsUseCase.getBillingFields() } returns emptyList()
-
-        viewModel = CardFormViewModel(
-            cardFieldsUseCase = cardFieldsUseCase,
-            cardNetworkUseCase = cardNetworkUseCase,
-            submitCardPaymentUseCase = submitCardPaymentUseCase,
-            checkoutNavigator = checkoutNavigator,
-            logReporter = logReporter,
-        )
-
         viewModel.updateCountryCode("US")
         viewModel.updateCity("New York")
         viewModel.updateState("NY")

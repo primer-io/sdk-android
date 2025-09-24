@@ -3,6 +3,8 @@ package io.primer.android.internal.presentation.screens.card
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import io.primer.android.clientSessionActions.domain.models.PrimerCountry
+import io.primer.android.components.analytics.data.model.EventType
+import io.primer.android.components.analytics.data.repository.ComponentsEventsRepository
 import io.primer.android.components.domain.inputs.models.PrimerInputElementType
 import io.primer.android.configuration.data.model.CardNetwork
 import io.primer.android.configuration.data.model.CountryCode
@@ -30,10 +32,12 @@ internal class CardFormViewModel(
     private val submitCardPaymentUseCase: SubmitCardPaymentUseCase,
     private val checkoutNavigator: CheckoutNavigator,
     private val logReporter: LogReporter,
+    private val componentsEventsRepository: ComponentsEventsRepository,
 ) : ViewModel(), PrimerCardFormScope {
 
     private val _uiState = MutableStateFlow(PrimerCardFormScope.State())
     override val state: StateFlow<PrimerCardFormScope.State> = _uiState.asStateFlow()
+    private var hasEnteredAllDetails = false
 
     init {
         // Initialize required fields
@@ -54,6 +58,15 @@ internal class CardFormViewModel(
         cardFieldsUseCase.validationErrors
             .onEach { errors ->
                 _uiState.update { it.copy(fieldErrors = errors) }
+                // Check if all required fields are valid and send PAYMENT_DETAILS_ENTERED event
+                if (errors.isEmpty() && !hasEnteredAllDetails) {
+                    viewModelScope.launch {
+                        if (cardFieldsUseCase.isSubmitAllowed()) {
+                            hasEnteredAllDetails = true
+                            componentsEventsRepository.send(EventType.PAYMENT_DETAILS_ENTERED)
+                        }
+                    }
+                }
             }
             .launchIn(viewModelScope)
 
@@ -164,6 +177,7 @@ internal class CardFormViewModel(
 
     override fun onSubmit() {
         viewModelScope.launch {
+            componentsEventsRepository.send(EventType.PAYMENT_SUBMITTED)
             cardFieldsUseCase.markSubmitAttempted()
             if (!cardFieldsUseCase.isSubmitAllowed()) {
                 logReporter.debug("Validation failed, not proceeding with submission")
@@ -171,17 +185,20 @@ internal class CardFormViewModel(
             }
 
             _uiState.update { it.copy(isLoading = true, isFormEnabled = false) }
+            componentsEventsRepository.send(EventType.PAYMENT_PROCESSING_STARTED)
 
             submitCardPaymentUseCase(cardFieldsUseCase.formData.first())
                 .fold(
                     onSuccess = {
                         logReporter.debug("Payment completed successfully")
                         _uiState.update { it.copy(isLoading = false, isFormEnabled = true) }
+                        componentsEventsRepository.send(EventType.PAYMENT_SUCCESS)
                         checkoutNavigator.navigateToSuccess()
                     },
                     onFailure = { error ->
                         logReporter.error("Payment failed: ${error.message}")
                         _uiState.update { it.copy(isLoading = false, isFormEnabled = true) }
+                        componentsEventsRepository.send(EventType.PAYMENT_FAILURE)
                         checkoutNavigator.navigateToError(error.message ?: "Payment failed")
                     },
                 )

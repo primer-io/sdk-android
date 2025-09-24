@@ -24,7 +24,7 @@ internal fun PrimerPaymentMethodSelectionScope.PaymentMethodItemCard(
     modifier: Modifier = Modifier,
 ) {
     val layoutDirection = LocalLayoutDirection.current
-    
+
     PaymentMethodItem(
         modifier = modifier,
         borderColor = LocalPrimerTheme.current.colorTokens().primerColorBorderOutlinedDefault,
@@ -36,7 +36,7 @@ internal fun PrimerPaymentMethodSelectionScope.PaymentMethodItemCard(
                 Arrangement.End
             } else {
                 Arrangement.Start
-            }
+            },
         ) {
             Icon(
                 painter = painterResource(id = R.drawable.ic_primer_credit_card),
@@ -49,8 +49,16 @@ internal fun PrimerPaymentMethodSelectionScope.PaymentMethodItemCard(
                 style = LocalPrimerTheme.current.typographyTokens.titleLarge.toTextStyle(),
                 color = LocalPrimerTheme.current.colorTokens().primerColorTextPrimary,
                 modifier = Modifier.padding(
-                    start = if (layoutDirection == LayoutDirection.Ltr) LocalPrimerTheme.current.spacingTokens.small else 0.dp,
-                    end = if (layoutDirection == LayoutDirection.Rtl) LocalPrimerTheme.current.spacingTokens.small else 0.dp
+                    start = if (layoutDirection == LayoutDirection.Ltr) {
+                        LocalPrimerTheme.current.spacingTokens.small
+                    } else {
+                        0.dp
+                    },
+                    end = if (layoutDirection == LayoutDirection.Rtl) {
+                        LocalPrimerTheme.current.spacingTokens.small
+                    } else {
+                        0.dp
+                    },
                 ),
             )
         }

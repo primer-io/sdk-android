@@ -13,9 +13,9 @@ import androidx.compose.material3.TextFieldColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.LayoutDirection
@@ -47,8 +47,8 @@ fun PrimerInput(
     // Determine if we should force LTR direction
     val shouldForceLtr = forceLtrForNumbers && (
         keyboardOptions.keyboardType == KeyboardType.Number ||
-        keyboardOptions.keyboardType == KeyboardType.Phone
-    )
+            keyboardOptions.keyboardType == KeyboardType.Phone
+        )
 
     // Use LTR layout for numeric inputs to ensure proper cursor positioning and formatting
     val textFieldLayoutDirection = if (shouldForceLtr) LayoutDirection.Ltr else layoutDirection
@@ -70,14 +70,14 @@ fun PrimerInput(
                 value = value,
                 onValueChange = onValueChange,
                 modifier = Modifier
-                .fillMaxWidth()
-                .let { modifier ->
-                    onFocusChange?.let { focusCallback ->
-                        modifier.onFocusChanged { focusState ->
-                            focusCallback(focusState.isFocused)
-                        }
-                    } ?: modifier
-                },
+                    .fillMaxWidth()
+                    .let { modifier ->
+                        onFocusChange?.let { focusCallback ->
+                            modifier.onFocusChanged { focusState ->
+                                focusCallback(focusState.isFocused)
+                            }
+                        } ?: modifier
+                    },
                 placeholder = { placeholder?.let { Text(it) } },
                 singleLine = true,
                 isError = error != null,

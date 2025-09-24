@@ -185,7 +185,7 @@ internal fun PrimerCardFormScope.CardInput(
             PrimerInputElementType.EXPIRY_DATE,
             PrimerInputElementType.OTP_CODE,
             PrimerInputElementType.PHONE_NUMBER,
-            PrimerInputElementType.POSTAL_CODE
+            PrimerInputElementType.POSTAL_CODE,
         ),
         onFocusChange = { hasFocus ->
             onFieldFocusChange(type, hasFocus)

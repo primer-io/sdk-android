@@ -5,6 +5,7 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import io.primer.android.PrimerSessionIntent
+import io.primer.android.components.analytics.data.repository.ComponentsEventsRepository
 import io.primer.android.components.domain.core.models.PrimerPaymentMethodManagerCategory
 import io.primer.android.configuration.domain.model.Surcharge
 import io.primer.android.core.InstantExecutorExtension
@@ -36,6 +37,7 @@ class PaymentMethodSelectionViewModelTest {
     private lateinit var checkoutNavigator: CheckoutNavigator
     private lateinit var availablePaymentMethodsUseCase: AvailablePaymentMethodsUseCase
     private lateinit var formatAmountToCurrencyInteractor: FormatAmountToCurrencyInteractor
+    private lateinit var componentsEventsRepository: ComponentsEventsRepository
     private lateinit var viewModel: PaymentMethodSelectionViewModel
 
     @BeforeEach
@@ -44,6 +46,7 @@ class PaymentMethodSelectionViewModelTest {
         checkoutNavigator = mockk(relaxed = true)
         availablePaymentMethodsUseCase = mockk()
         formatAmountToCurrencyInteractor = mockk()
+        componentsEventsRepository = mockk(relaxed = true)
     }
 
     @Test
@@ -57,6 +60,7 @@ class PaymentMethodSelectionViewModelTest {
             checkoutNavigator = checkoutNavigator,
             availablePaymentMethodsUseCase = availablePaymentMethodsUseCase,
             formatAmountToCurrencyInteractor = formatAmountToCurrencyInteractor,
+            componentsEventsRepository = componentsEventsRepository,
         )
 
         assertNotNull(viewModel)
@@ -82,6 +86,7 @@ class PaymentMethodSelectionViewModelTest {
             checkoutNavigator = checkoutNavigator,
             availablePaymentMethodsUseCase = availablePaymentMethodsUseCase,
             formatAmountToCurrencyInteractor = formatAmountToCurrencyInteractor,
+            componentsEventsRepository = componentsEventsRepository,
         )
 
         val state = viewModel.state.first()
@@ -117,6 +122,7 @@ class PaymentMethodSelectionViewModelTest {
             checkoutNavigator = checkoutNavigator,
             availablePaymentMethodsUseCase = availablePaymentMethodsUseCase,
             formatAmountToCurrencyInteractor = formatAmountToCurrencyInteractor,
+            componentsEventsRepository = componentsEventsRepository,
         )
 
         verify(exactly = 1) { basicOrderInfoInteractor(None) }
@@ -143,6 +149,7 @@ class PaymentMethodSelectionViewModelTest {
             checkoutNavigator = checkoutNavigator,
             availablePaymentMethodsUseCase = availablePaymentMethodsUseCase,
             formatAmountToCurrencyInteractor = formatAmountToCurrencyInteractor,
+            componentsEventsRepository = componentsEventsRepository,
         )
 
         val formatted = viewModel.formatTitleAmount()
@@ -170,6 +177,7 @@ class PaymentMethodSelectionViewModelTest {
             checkoutNavigator = checkoutNavigator,
             availablePaymentMethodsUseCase = availablePaymentMethodsUseCase,
             formatAmountToCurrencyInteractor = formatAmountToCurrencyInteractor,
+            componentsEventsRepository = componentsEventsRepository,
         )
 
         val formatted = viewModel.formatSurchargeAmount(surchargeAmount)
@@ -195,6 +203,7 @@ class PaymentMethodSelectionViewModelTest {
             checkoutNavigator = checkoutNavigator,
             availablePaymentMethodsUseCase = availablePaymentMethodsUseCase,
             formatAmountToCurrencyInteractor = formatAmountToCurrencyInteractor,
+            componentsEventsRepository = componentsEventsRepository,
         )
 
         val formatted = viewModel.formatSurchargeAmount(100)
@@ -214,6 +223,7 @@ class PaymentMethodSelectionViewModelTest {
             checkoutNavigator = checkoutNavigator,
             availablePaymentMethodsUseCase = availablePaymentMethodsUseCase,
             formatAmountToCurrencyInteractor = formatAmountToCurrencyInteractor,
+            componentsEventsRepository = componentsEventsRepository,
         )
 
         viewModel.onPaymentMethodSelected(PaymentMethodType.PAYMENT_CARD.name)
@@ -234,6 +244,7 @@ class PaymentMethodSelectionViewModelTest {
             checkoutNavigator = checkoutNavigator,
             availablePaymentMethodsUseCase = availablePaymentMethodsUseCase,
             formatAmountToCurrencyInteractor = formatAmountToCurrencyInteractor,
+            componentsEventsRepository = componentsEventsRepository,
         )
 
         viewModel.onPaymentMethodSelected("UNKNOWN_METHOD")
@@ -254,6 +265,7 @@ class PaymentMethodSelectionViewModelTest {
             checkoutNavigator = checkoutNavigator,
             availablePaymentMethodsUseCase = availablePaymentMethodsUseCase,
             formatAmountToCurrencyInteractor = formatAmountToCurrencyInteractor,
+            componentsEventsRepository = componentsEventsRepository,
         )
 
         viewModel.onCancel()
@@ -274,6 +286,7 @@ class PaymentMethodSelectionViewModelTest {
             checkoutNavigator = checkoutNavigator,
             availablePaymentMethodsUseCase = availablePaymentMethodsUseCase,
             formatAmountToCurrencyInteractor = formatAmountToCurrencyInteractor,
+            componentsEventsRepository = componentsEventsRepository,
         )
 
         val state = viewModel.state.value
@@ -301,6 +314,7 @@ class PaymentMethodSelectionViewModelTest {
             checkoutNavigator = checkoutNavigator,
             availablePaymentMethodsUseCase = availablePaymentMethodsUseCase,
             formatAmountToCurrencyInteractor = formatAmountToCurrencyInteractor,
+            componentsEventsRepository = componentsEventsRepository,
         )
 
         val state = viewModel.state.value

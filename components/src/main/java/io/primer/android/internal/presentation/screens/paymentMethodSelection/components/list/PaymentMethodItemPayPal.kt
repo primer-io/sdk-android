@@ -23,7 +23,7 @@ internal fun PrimerPaymentMethodSelectionScope.PaymentMethodItemPaypal(
     modifier: Modifier = Modifier,
 ) {
     val layoutDirection = LocalLayoutDirection.current
-    
+
     PaymentMethodItem(
         modifier = modifier,
         backgroundColor = PaymentMethodColors.paypalYellow,
@@ -35,7 +35,7 @@ internal fun PrimerPaymentMethodSelectionScope.PaymentMethodItemPaypal(
                 Arrangement.End
             } else {
                 Arrangement.Start
-            }
+            },
         ) {
             Icon(
                 painter = painterResource(id = R.drawable.ic_primer_paypal_icon),
@@ -47,8 +47,16 @@ internal fun PrimerPaymentMethodSelectionScope.PaymentMethodItemPaypal(
                 contentDescription = null,
                 tint = Color.Unspecified,
                 modifier = Modifier.padding(
-                    start = if (layoutDirection == LayoutDirection.Ltr) LocalPrimerTheme.current.spacingTokens.xsmall else 0.dp,
-                    end = if (layoutDirection == LayoutDirection.Rtl) LocalPrimerTheme.current.spacingTokens.xsmall else 0.dp
+                    start = if (layoutDirection == LayoutDirection.Ltr) {
+                        LocalPrimerTheme.current.spacingTokens.xsmall
+                    } else {
+                        0.dp
+                    },
+                    end = if (layoutDirection == LayoutDirection.Rtl) {
+                        LocalPrimerTheme.current.spacingTokens.xsmall
+                    } else {
+                        0.dp
+                    },
                 ),
             )
         }

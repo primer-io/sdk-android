@@ -32,9 +32,7 @@ import io.primer.android.ui.core.payment.domain.interactor.SurchargeInteractor
 import java.lang.ref.WeakReference
 
 internal class ComponentsContainer(
-    @Suppress(
-        "UNUSED_PARAMETER",
-    ) private val sdk: () -> SdkContainer,
+    private val sdk: () -> SdkContainer,
 ) : DependencyContainer() {
 
     override fun registerInitialDependencies() {

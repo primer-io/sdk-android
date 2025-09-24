@@ -2,6 +2,8 @@ package io.primer.android.internal.presentation.screens.paymentMethodSelection
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import io.primer.android.components.analytics.data.model.EventType
+import io.primer.android.components.analytics.data.repository.ComponentsEventsRepository
 import io.primer.android.components.currencyformat.domain.models.FormatCurrencyParams
 import io.primer.android.core.domain.None
 import io.primer.android.data.settings.internal.MonetaryAmount
@@ -22,6 +24,7 @@ internal class PaymentMethodSelectionViewModel(
     private val checkoutNavigator: CheckoutNavigator,
     private val availablePaymentMethodsUseCase: AvailablePaymentMethodsUseCase,
     private val formatAmountToCurrencyInteractor: FormatAmountToCurrencyInteractor,
+    private val componentsEventsRepository: ComponentsEventsRepository,
 ) : ViewModel(), PrimerPaymentMethodSelectionScope {
 
     private val _uiState = MutableStateFlow(PrimerPaymentMethodSelectionScope.State())
@@ -69,6 +72,7 @@ internal class PaymentMethodSelectionViewModel(
     }
 
     override fun onPaymentMethodSelected(paymentMethod: String) {
+        componentsEventsRepository.send(EventType.PAYMENT_METHOD_SELECTION)
         viewModelScope.launch {
             when (paymentMethod) {
                 // TODO add rest of payment methods

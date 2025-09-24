@@ -2,6 +2,8 @@ package io.primer.android.internal.presentation.checkout
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import io.primer.android.components.analytics.data.model.EventType
+import io.primer.android.components.analytics.data.repository.ComponentsEventsRepository
 import io.primer.android.internal.domain.usecase.AvailablePaymentMethodsUseCase
 import io.primer.android.scope.PrimerCheckoutScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -12,6 +14,7 @@ import kotlinx.coroutines.launch
 internal class CheckoutViewModel(
     private val availablePaymentMethodsUseCase: AvailablePaymentMethodsUseCase,
     private val checkoutNavigator: CheckoutNavigator,
+    private val componentsEventsRepository: ComponentsEventsRepository?, // TODO Darius fix the DI to send events
 ) : ViewModel(), PrimerCheckoutScope {
 
     private val _state =
@@ -27,6 +30,7 @@ internal class CheckoutViewModel(
             availablePaymentMethodsUseCase().fold(
                 onSuccess = {
                     _state.value = PrimerCheckoutScope.State.Ready
+                    componentsEventsRepository?.send(EventType.CHECKOUT_FLOW_STARTED)
                     checkoutNavigator.navigateToPaymentMethodsList()
                 },
                 onFailure = {
@@ -38,6 +42,7 @@ internal class CheckoutViewModel(
     }
 
     override fun onDismiss() {
+        componentsEventsRepository?.send(EventType.PAYMENT_FLOW_EXITED)
         _state.value = PrimerCheckoutScope.State.Dismissed
     }
 
@@ -46,6 +51,7 @@ internal class CheckoutViewModel(
     }
 
     override suspend fun onRetry() {
+        componentsEventsRepository?.send(EventType.PAYMENT_REATTEMPTED)
         checkoutNavigator.navigateBack()
     }
 }
