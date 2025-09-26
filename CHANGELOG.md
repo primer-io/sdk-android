@@ -1,3 +1,26 @@
+## 2.43.0 (2025-09-22)
+
+### Feat
+
+- remove legacy API usage and support when communicating with the backend.
+
+### Fix
+
+- improve storing of analytics events (#1058)
+
+## 2.42.2 (2025-09-04)
+
+### Fix
+
+- expand buffer for external events (#1042)
+- reset tokenized payment method when new flow is started, cancel … (#1040)
+
+## 2.42.1 (2025-09-02)
+
+### Fix
+
+- expand network calls context with network type, remove network change events (#1034)
+
 ## 2.42.0 (2025-08-26)
 
 ### Feat

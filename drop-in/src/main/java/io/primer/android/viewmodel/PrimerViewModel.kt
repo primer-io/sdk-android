@@ -249,7 +249,7 @@ internal class PrimerViewModel(
             launch {
                 val timeSource = TimeSource.Monotonic
                 val start = timeSource.markNow()
-                eventsInteractor.execute(None).collectLatest { event: PrimerEvent ->
+                eventsInteractor.execute(None).collect { event: PrimerEvent ->
                     when (event) {
                         is PrimerEvent.AvailablePaymentMethodsLoaded -> {
                             vaultManager.fetchVaultedPaymentMethods()

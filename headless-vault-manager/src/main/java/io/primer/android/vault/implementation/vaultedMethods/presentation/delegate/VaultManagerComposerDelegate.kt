@@ -2,6 +2,7 @@ package io.primer.android.vault.implementation.vaultedMethods.presentation.deleg
 
 import android.content.Context
 import io.primer.android.PrimerSessionIntent
+import io.primer.android.core.utils.CoroutineScopeProvider
 import io.primer.android.domain.tokenization.models.PrimerPaymentMethodTokenData
 import io.primer.android.paymentmethods.core.composer.PaymentMethodComposer
 import io.primer.android.paymentmethods.core.composer.VaultedPaymentMethodComponent
@@ -16,6 +17,7 @@ import io.primer.android.vault.implementation.composer.presentation.DefaultVault
 import io.primer.paymentMethodCoreUi.core.ui.navigation.PaymentMethodContextNavigationHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.job
 import kotlinx.coroutines.launch
 
 internal class VaultManagerComposerDelegate(
@@ -24,12 +26,19 @@ internal class VaultManagerComposerDelegate(
     private val providerFactoryRegistry: VaultedPaymentMethodProviderFactoryRegistry,
     private val context: Context,
     private val paymentDelegateProvider: (paymentMethodType: String?) -> PaymentMethodPaymentDelegate,
+    private val headlessScopeProvider: CoroutineScopeProvider,
 ) {
-    private val scope: CoroutineScope = CoroutineScope(SupervisorJob())
+    private val scope by lazy {
+        CoroutineScope(
+            SupervisorJob(
+                parent = headlessScopeProvider.scope.coroutineContext.job,
+            ),
+        )
+    }
 
     suspend fun handlePaymentMethod(paymentMethodToken: PrimerPaymentMethodTokenData): Result<PaymentDecision> {
         val paymentMethodType = paymentMethodToken.paymentMethodType.orEmpty()
-
+        composerRegistry[paymentMethodType]?.cancel()
         composerRegistry.unregister(id = paymentMethodType)
         val composer = resolvePaymentMethodComposer(paymentMethodType = paymentMethodType)
         composer.let { composerRegistry.register(paymentMethodType, it) }

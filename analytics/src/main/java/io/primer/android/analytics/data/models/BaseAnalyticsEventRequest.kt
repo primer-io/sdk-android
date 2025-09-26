@@ -74,10 +74,6 @@ internal sealed class BaseAnalyticsEventRequest : JSONObjectSerializable, JSONDe
                         AnalyticsCrashEventRequest
                             .serializer.serialize(t as AnalyticsCrashEventRequest)
 
-                    AnalyticsEventType.NETWORK_CONNECTIVITY_EVENT ->
-                        AnalyticsNetworkConnectivityEventRequest
-                            .serializer.serialize(t as AnalyticsNetworkConnectivityEventRequest)
-
                     AnalyticsEventType.NETWORK_CALL_EVENT ->
                         AnalyticsNetworkCallEvent
                             .serializer.serialize(t as AnalyticsNetworkCallEvent)
@@ -107,9 +103,6 @@ internal sealed class BaseAnalyticsEventRequest : JSONObjectSerializable, JSONDe
 
                     AnalyticsEventType.APP_CRASHED_EVENT ->
                         AnalyticsCrashEventRequest.deserializer.deserialize(t)
-
-                    AnalyticsEventType.NETWORK_CONNECTIVITY_EVENT ->
-                        AnalyticsNetworkConnectivityEventRequest.deserializer.deserialize(t)
 
                     AnalyticsEventType.NETWORK_CALL_EVENT ->
                         AnalyticsNetworkCallEvent.deserializer.deserialize(t)
@@ -193,26 +186,6 @@ internal fun BaseAnalyticsProperties.toAnalyticsEvent(
 
     is CrashProperties ->
         AnalyticsCrashEventRequest(
-            DeviceData(
-                batteryLevel,
-                batteryStatus,
-                screenData,
-                deviceId,
-            ),
-            this,
-            appIdentifier,
-            sdkSessionId,
-            sdkIntegrationType,
-            sdkPaymentHandling,
-            checkoutSessionId,
-            clientSessionId,
-            orderId,
-            primerAccountId,
-            analyticsUrl,
-        )
-
-    is NetworkTypeProperties ->
-        AnalyticsNetworkConnectivityEventRequest(
             DeviceData(
                 batteryLevel,
                 batteryStatus,

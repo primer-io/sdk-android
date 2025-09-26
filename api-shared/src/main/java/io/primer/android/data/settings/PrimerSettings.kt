@@ -50,7 +50,7 @@ constructor(
         clientSessionCachingEnabled = parcel.readByte() != 0.toByte(),
     ) {
         fromHUC = parcel.readByte() != 0.toByte()
-        apiVersion = parcel.readString()?.let { PrimerApiVersion.valueOf(it) } ?: PrimerApiVersion.V2_3
+        apiVersion = parcel.readString()?.let { PrimerApiVersion.valueOf(it) } ?: PrimerApiVersion.V2_4
     }
 
     override fun writeToParcel(

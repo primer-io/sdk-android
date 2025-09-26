@@ -335,10 +335,11 @@ internal class CardFormFragment : BaseFragment() {
         }
     }
 
-    private fun getCardNetworkDrawable(type: CardNetwork.Type?) =
+    private fun getCardNetworkDrawable(type: CardNetwork.Type?) = runCatching {
         type?.let {
             assetsManager.getCardNetworkImage(requireContext(), it)
-        } ?: AppCompatResources.getDrawable(requireContext(), R.drawable.ic_generic_card)
+        }
+    }.getOrNull() ?: AppCompatResources.getDrawable(requireContext(), R.drawable.ic_generic_card)
 
     private fun emitCardNetworkAction(cardType: CardNetwork.Type?) {
         val actionParams =

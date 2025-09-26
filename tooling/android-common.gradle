@@ -2,13 +2,13 @@ apply plugin: "com.android.library"
 apply plugin: "kotlin-android"
 
 android {
-    compileSdk 35
-    buildToolsVersion "35.0.0"
+    compileSdk 36
+    buildToolsVersion "36.0.0"
 
     defaultConfig {
         testInstrumentationRunnerArguments runnerBuilder: 'de.mannodermaus.junit5.AndroidJUnit5Builder'
         minSdkVersion 21
-        targetSdkVersion 35
+        targetSdkVersion 36
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
@@ -17,6 +17,7 @@ android {
 
     buildTypes.forEach {
         it.buildConfigField("String", "SDK_VERSION_STRING", "\"${project.findProperty("VERSION_NAME")}\"")
+        it.buildConfigField("String", "SDK_GROUP_ID", "\"${project.findProperty("GROUP")}\"")
     }
 
     buildFeatures {

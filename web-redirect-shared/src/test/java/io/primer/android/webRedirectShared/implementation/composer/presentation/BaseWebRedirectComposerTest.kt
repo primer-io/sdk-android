@@ -16,8 +16,7 @@ import io.primer.paymentMethodCoreUi.core.ui.navigation.launchers.PaymentMethodL
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.test.TestCoroutineDispatcher
-import kotlinx.coroutines.test.TestCoroutineScope
+import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -26,8 +25,6 @@ import org.junit.jupiter.api.extension.ExtendWith
 @ExperimentalCoroutinesApi
 @ExtendWith(InstantExecutorExtension::class, MockKExtension::class)
 class BaseWebRedirectComposerTest {
-    private val dispatcher = TestCoroutineDispatcher()
-    private val scope = TestCoroutineScope(dispatcher)
 
     private lateinit var uiEvent: MutableSharedFlow<ComposerUiEvent>
     private lateinit var composer: BaseWebRedirectComposer
@@ -38,7 +35,7 @@ class BaseWebRedirectComposerTest {
         composer =
             spyk(
                 object : BaseWebRedirectComposer {
-                    override val scope: CoroutineScope = this@BaseWebRedirectComposerTest.scope
+                    override val scope: CoroutineScope = TestScope()
 
                     override val _uiEvent: MutableSharedFlow<ComposerUiEvent> = this@BaseWebRedirectComposerTest.uiEvent
 
@@ -63,76 +60,82 @@ class BaseWebRedirectComposerTest {
         val webRedirectParams = mockk<WebRedirectLauncherParams>(relaxed = true)
         every { params.initialLauncherParams } returns webRedirectParams
 
-        composer.handleActivityResultIntent(params, Activity.RESULT_CANCELED, null)
+        runTest {
+            composer.handleActivityResultIntent(params, Activity.RESULT_CANCELED, null)
+        }
 
         verify { composer.onResultCancelled(webRedirectParams) }
     }
 
     @Test
-    fun `handleActivityResultIntent should call onResultOk on result ok`() =
+    fun `handleActivityResultIntent should call onResultOk on result ok`() {
+        val params = mockk<PaymentMethodLauncherParams>(relaxed = true)
+        val webRedirectParams = mockk<WebRedirectLauncherParams>(relaxed = true)
+        every { params.initialLauncherParams } returns webRedirectParams
+
         runTest {
-            val params = mockk<PaymentMethodLauncherParams>(relaxed = true)
-            val webRedirectParams = mockk<WebRedirectLauncherParams>(relaxed = true)
-            every { params.initialLauncherParams } returns webRedirectParams
-
             composer.handleActivityResultIntent(params, Activity.RESULT_OK, null)
-
-            verify { composer.onResultOk(webRedirectParams) }
         }
 
+        verify { composer.onResultOk(webRedirectParams) }
+    }
+
     @Test
-    fun `handleActivityResultIntent should call close`() =
+    fun `handleActivityResultIntent should call close`() {
+        val params = mockk<PaymentMethodLauncherParams>(relaxed = true)
+        val webRedirectParams = mockk<WebRedirectLauncherParams>(relaxed = true)
+        every { params.initialLauncherParams } returns webRedirectParams
+
+        val closeSlot = slot<ComposerUiEvent.Finish>()
+        val closeFlow = MutableSharedFlow<ComposerUiEvent>()
+        coEvery { composer._uiEvent.emit(capture(closeSlot)) } coAnswers { closeFlow.emit(closeSlot.captured) }
+
         runTest {
-            val params = mockk<PaymentMethodLauncherParams>(relaxed = true)
-            val webRedirectParams = mockk<WebRedirectLauncherParams>(relaxed = true)
-            every { params.initialLauncherParams } returns webRedirectParams
-
-            val closeSlot = slot<ComposerUiEvent.Finish>()
-            val closeFlow = MutableSharedFlow<ComposerUiEvent>()
-            coEvery { composer._uiEvent.emit(capture(closeSlot)) } coAnswers { closeFlow.emit(closeSlot.captured) }
-
             composer.handleActivityResultIntent(params, Activity.RESULT_OK, null)
-
-            coVerify { composer._uiEvent.emit(ComposerUiEvent.Finish) }
         }
 
+        coVerify { composer._uiEvent.emit(ComposerUiEvent.Finish) }
+    }
+
     @Test
-    fun `handleActivityStartEvent should call openRedirectScreen`() =
+    fun `handleActivityStartEvent should call openRedirectScreen`() {
+        val params = mockk<PaymentMethodLauncherParams>(relaxed = true)
+        val webRedirectParams = mockk<WebRedirectLauncherParams>(relaxed = true)
+        every { params.initialLauncherParams } returns webRedirectParams
+
+        val openSlot = slot<ComposerUiEvent.Navigate>()
+        val openFlow = MutableSharedFlow<ComposerUiEvent>()
+        coEvery { composer._uiEvent.emit(capture(openSlot)) } coAnswers { openFlow.emit(openSlot.captured) }
+
         runTest {
-            val params = mockk<PaymentMethodLauncherParams>(relaxed = true)
-            val webRedirectParams = mockk<WebRedirectLauncherParams>(relaxed = true)
-            every { params.initialLauncherParams } returns webRedirectParams
-
-            val openSlot = slot<ComposerUiEvent.Navigate>()
-            val openFlow = MutableSharedFlow<ComposerUiEvent>()
-            coEvery { composer._uiEvent.emit(capture(openSlot)) } coAnswers { openFlow.emit(openSlot.captured) }
-
             composer.handleActivityStartEvent(params)
-
-            coVerify {
-                composer._uiEvent.emit(
-                    ComposerUiEvent.Navigate(
-                        WebRedirectActivityLauncherParams(
-                            webRedirectParams.statusUrl,
-                            webRedirectParams.redirectUrl,
-                            webRedirectParams.title,
-                            webRedirectParams.paymentMethodType,
-                            webRedirectParams.returnUrl,
-                        ),
-                    ),
-                )
-            }
         }
+
+        coVerify {
+            composer._uiEvent.emit(
+                ComposerUiEvent.Navigate(
+                    WebRedirectActivityLauncherParams(
+                        webRedirectParams.statusUrl,
+                        webRedirectParams.redirectUrl,
+                        webRedirectParams.title,
+                        webRedirectParams.paymentMethodType,
+                        webRedirectParams.returnUrl,
+                    ),
+                ),
+            )
+        }
+    }
 
     @Test
-    fun `close should emit Finish event`() =
+    fun `close should emit Finish event`() {
+        val closeSlot = slot<ComposerUiEvent.Finish>()
+        val closeFlow = MutableSharedFlow<ComposerUiEvent>()
+        coEvery { composer._uiEvent.emit(capture(closeSlot)) } coAnswers { closeFlow.emit(closeSlot.captured) }
+
         runTest {
-            val closeSlot = slot<ComposerUiEvent.Finish>()
-            val closeFlow = MutableSharedFlow<ComposerUiEvent>()
-            coEvery { composer._uiEvent.emit(capture(closeSlot)) } coAnswers { closeFlow.emit(closeSlot.captured) }
-
             composer.close()
-
-            coVerify { composer._uiEvent.emit(ComposerUiEvent.Finish) }
         }
+
+        coVerify { composer._uiEvent.emit(ComposerUiEvent.Finish) }
+    }
 }

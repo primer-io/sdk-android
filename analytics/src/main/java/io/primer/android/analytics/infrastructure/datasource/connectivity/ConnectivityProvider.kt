@@ -7,15 +7,9 @@ import android.net.NetworkCapabilities
 import android.net.NetworkInfo
 import android.os.Build
 import io.primer.android.analytics.data.models.NetworkType
+import io.primer.android.analytics.infrastructure.datasource.connectivity.ConnectivityProvider.NetworkState
 
 internal interface ConnectivityProvider {
-    interface ConnectivityStateListener {
-        fun onStateChange(state: NetworkState)
-    }
-
-    fun addListener(listener: ConnectivityStateListener)
-
-    fun removeListener(listener: ConnectivityStateListener)
 
     fun getNetworkState(): NetworkState
 
@@ -40,11 +34,17 @@ internal interface ConnectivityProvider {
             return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                 ConnectivityProviderImpl(cm)
             } else {
-                ConnectivityProviderLegacyImpl(context, cm)
+                ConnectivityProviderLegacyImpl(cm)
             }
         }
     }
 }
+
+internal fun NetworkState.toNetworkType() =
+    when (this) {
+        is NetworkState.ConnectedState -> networkType
+        NetworkState.NotConnectedState -> NetworkType.NONE
+    }
 
 internal fun NetworkCapabilities.toNetworkType() =
     when {

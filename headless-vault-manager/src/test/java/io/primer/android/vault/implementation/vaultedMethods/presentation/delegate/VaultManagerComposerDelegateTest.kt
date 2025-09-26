@@ -2,13 +2,18 @@ package io.primer.android.vault.implementation.vaultedMethods.presentation.deleg
 
 import android.content.Context
 import io.mockk.MockKAnnotations
+import io.mockk.Runs
+import io.mockk.clearAllMocks
 import io.mockk.coEvery
 import io.mockk.coVerify
+import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.junit5.MockKExtension
+import io.mockk.just
 import io.mockk.mockk
 import io.mockk.verify
+import io.primer.android.core.utils.CoroutineScopeProvider
 import io.primer.android.domain.tokenization.models.PrimerPaymentMethodTokenData
 import io.primer.android.paymentmethods.core.composer.VaultedPaymentMethodComponent
 import io.primer.android.paymentmethods.core.composer.provider.VaultedPaymentMethodProviderFactoryRegistry
@@ -17,7 +22,9 @@ import io.primer.android.paymentmethods.core.ui.navigation.PaymentMethodNavigati
 import io.primer.android.payments.core.create.domain.model.PaymentDecision
 import io.primer.android.payments.core.helpers.PaymentMethodPaymentDelegate
 import io.primer.android.vault.implementation.composer.presentation.DefaultVaultedPaymentMethodComponent
+import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -36,15 +43,25 @@ internal class VaultManagerComposerDelegateTest {
     @RelaxedMockK
     internal lateinit var context: Context
 
+    @RelaxedMockK
+    internal lateinit var coroutineScopeProvider: CoroutineScopeProvider
+
     private lateinit var delegate: VaultManagerComposerDelegate
 
     @BeforeEach
     fun setUp() {
         MockKAnnotations.init(this, relaxed = true)
+        every { coroutineScopeProvider.scope } returns TestScope()
+    }
+
+    @AfterEach
+    fun tearDown() {
+        confirmVerified(paymentMethodNavigationFactoryRegistry, composerRegistry, providerFactoryRegistry, context)
+        clearAllMocks()
     }
 
     @Test
-    fun `handlePaymentMethod() will unregister current composer and resolve correct composer if registered`() {
+    fun `handlePaymentMethod() will cancel current composer if registered`() {
         val paymentDelegate: PaymentMethodPaymentDelegate = mockk(relaxed = true)
         delegate = getDelegate(paymentDelegate = paymentDelegate)
 
@@ -58,10 +75,41 @@ internal class VaultManagerComposerDelegateTest {
             )
         } returns Result.success(mockk<PaymentDecision>(relaxed = true))
         every { providerFactoryRegistry.create(any(), any()) } returns composer
+        every { composerRegistry[any()] } returns composer
         runTest {
             delegate.handlePaymentMethod(paymentMethodToken)
         }
 
+        verify(exactly = 1) { composerRegistry[any()] }
+        verify { composer.cancel() }
+        verify { composerRegistry.unregister(any()) }
+        verify { providerFactoryRegistry.create(any(), any()) }
+        verify { composerRegistry.register(any(), composer) }
+    }
+
+    @Test
+    fun `handlePaymentMethod() will unregister current composer and resolve correct composer if registered`() {
+        val paymentDelegate: PaymentMethodPaymentDelegate = mockk(relaxed = true)
+        delegate = getDelegate(paymentDelegate = paymentDelegate)
+
+        val paymentMethodToken = mockk<PrimerPaymentMethodTokenData>(relaxed = true)
+        val composer = mockk<VaultedPaymentMethodComponent>(relaxed = true) {
+            every { cancel() } just Runs
+        }
+
+        every { composerRegistry[any()] } returns null
+        coEvery {
+            paymentDelegate.handlePaymentMethodToken(
+                any(),
+                any(),
+            )
+        } returns Result.success(mockk<PaymentDecision>(relaxed = true))
+        every { providerFactoryRegistry.create(any(), any()) } returns composer
+        runTest {
+            delegate.handlePaymentMethod(paymentMethodToken)
+        }
+
+        verify(exactly = 1) { composerRegistry[any()] }
         verify { composerRegistry.unregister(any()) }
         verify { providerFactoryRegistry.create(any(), any()) }
         verify { composerRegistry.register(any(), composer) }
@@ -85,6 +133,7 @@ internal class VaultManagerComposerDelegateTest {
             delegate.handlePaymentMethod(paymentMethodToken)
         }
 
+        verify(exactly = 1) { composerRegistry[any()] }
         verify { composerRegistry.unregister(any()) }
         verify { providerFactoryRegistry.create(any(), any()) }
         verify { composerRegistry.register(any(), ofType(DefaultVaultedPaymentMethodComponent::class)) }
@@ -109,6 +158,7 @@ internal class VaultManagerComposerDelegateTest {
             delegate.handlePaymentMethod(paymentMethodToken)
         }
 
+        verify(exactly = 1) { composerRegistry[any()] }
         verify { composerRegistry.unregister(any()) }
         verify { providerFactoryRegistry.create(any(), any()) }
         verify { composerRegistry.register(any(), ofType(DefaultVaultedPaymentMethodComponent::class)) }
@@ -122,6 +172,7 @@ internal class VaultManagerComposerDelegateTest {
             providerFactoryRegistry = providerFactoryRegistry,
             context = context,
             paymentDelegateProvider = { paymentDelegate },
+            headlessScopeProvider = coroutineScopeProvider,
         )
     }
 }
