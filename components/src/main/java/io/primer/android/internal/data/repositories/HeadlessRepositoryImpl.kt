@@ -41,7 +41,7 @@ internal class HeadlessRepositoryImpl(
         })
 
         awaitClose {
-            // Clean up when flow is cancelled
+            headless.cleanup()
         }
     }
 

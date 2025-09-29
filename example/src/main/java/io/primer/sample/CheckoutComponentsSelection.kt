@@ -22,9 +22,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
+import com.google.android.gms.wallet.button.ButtonConstants
 import io.primer.android.PrimerCheckout
 import io.primer.android.core.ExperimentalPrimerApi
+import io.primer.android.data.settings.GooglePayButtonOptions
 import io.primer.android.data.settings.PrimerDebugOptions
+import io.primer.android.data.settings.PrimerGooglePayOptions
+import io.primer.android.data.settings.PrimerPaymentMethodOptions
 import io.primer.android.data.settings.PrimerSettings
 import io.primer.android.scope.PrimerCheckoutScope
 import io.primer.sample.demos.BoldTypographyThemeDemo
@@ -79,7 +83,16 @@ fun CheckoutComponentsSelection(clientToken: String?, onBackPress: () -> Unit) {
                     primerTheme = current.theme,
                     primerSettings = PrimerSettings(
                         debugOptions =
-                            PrimerDebugOptions(false)
+                            PrimerDebugOptions(false),
+                        paymentMethodOptions = PrimerPaymentMethodOptions(
+                            googlePayOptions = PrimerGooglePayOptions(
+                                merchantName = "Darius",
+                                buttonOptions = GooglePayButtonOptions(
+                                    buttonType = ButtonConstants.ButtonType.DONATE,
+                                    buttonTheme = ButtonConstants.ButtonTheme.LIGHT
+                                ),
+                            )
+                        )
                     ),
                     scope = {
                         checkoutScope = this

@@ -75,10 +75,13 @@ internal class PaymentMethodSelectionViewModel(
         componentsEventsRepository.send(EventType.PAYMENT_METHOD_SELECTION)
         viewModelScope.launch {
             when (paymentMethod) {
-                // TODO add rest of payment methods
                 PaymentMethodType.PAYMENT_CARD.name -> {
                     checkoutNavigator.navigateTo(Screen.CardForm)
                 }
+                PaymentMethodType.GOOGLE_PAY.name -> {
+                    checkoutNavigator.navigateTo(Screen.NativeUi(paymentMethod))
+                }
+                // TODO add rest of payment methods
             }
         }
     }

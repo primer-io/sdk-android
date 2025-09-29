@@ -10,6 +10,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import io.primer.android.core.di.DISdkContext
+import io.primer.android.internal.presentation.screens.nativeUi.NativeUiPaymentMethodScreen
 import io.primer.android.scope.PrimerCheckoutScope
 
 internal val LocalNavController = staticCompositionLocalOf<NavHostController> {
@@ -68,6 +69,11 @@ internal fun PrimerCheckoutScope.CheckoutNavHost(
                 composable(Screen.SelectCountry.route) {
                     components.cardForm.selectCountry.Screen()
                 }
+
+                composable("native_ui/{paymentMethod}") { backStackEntry ->
+                    val paymentMethod = backStackEntry.arguments?.getString("paymentMethod") ?: return@composable
+                    NativeUiPaymentMethodScreen(paymentMethod)
+                }
             }
         }
     }
@@ -79,6 +85,7 @@ internal sealed class Screen(val route: String) {
     data object PaymentsList : Screen("payments_list")
     data object CardForm : Screen("card_form")
     data object SelectCountry : Screen("select_country")
+    data class NativeUi(val paymentMethod: String) : Screen("native_ui/$paymentMethod")
     data object Success : Screen("success")
     data object Error : Screen("error")
 }

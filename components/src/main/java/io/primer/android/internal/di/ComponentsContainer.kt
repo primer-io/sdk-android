@@ -14,11 +14,14 @@ import io.primer.android.internal.data.mappers.PaymentMethodMapper
 import io.primer.android.internal.data.mappers.PaymentMethodMapperImpl
 import io.primer.android.internal.data.repositories.CardRawDataManagerRepository
 import io.primer.android.internal.data.repositories.HeadlessRepositoryImpl
+import io.primer.android.internal.data.repositories.NativeUiRepositoryImpl
 import io.primer.android.internal.domain.repositories.HeadlessRepository
+import io.primer.android.internal.domain.repositories.NativeUiRepository
 import io.primer.android.internal.domain.repositories.RawDataManagerRepository
 import io.primer.android.internal.domain.usecase.AvailablePaymentMethodsUseCase
 import io.primer.android.internal.domain.usecase.CardFieldsUseCase
 import io.primer.android.internal.domain.usecase.CardNetworkUseCase
+import io.primer.android.internal.domain.usecase.StartNativeUiPaymentUseCase
 import io.primer.android.internal.domain.usecase.SubmitCardPaymentUseCase
 import io.primer.android.internal.presentation.checkout.CheckoutNavigator
 import io.primer.android.internal.presentation.checkout.CheckoutViewModelFactory
@@ -57,6 +60,12 @@ internal class ComponentsContainer(
 
         registerSingleton<RawDataManagerRepository>(CARD_RAW_DATA_MANAGER_REPOSITORY_DI_KEY) {
             CardRawDataManagerRepository()
+        }
+
+        registerSingleton<NativeUiRepository> {
+            NativeUiRepositoryImpl(
+                context = WeakReference<Context>(sdk().resolve()),
+            )
         }
 
         registerSingleton {
@@ -107,6 +116,13 @@ internal class ComponentsContainer(
                 rawDataManagerRepository = resolve(CARD_RAW_DATA_MANAGER_REPOSITORY_DI_KEY),
                 headlessRepository = resolve(),
                 actionInteractor = sdk().resolve(ActionsContainer.ACTION_INTERACTOR_DI_KEY),
+            )
+        }
+
+        registerSingleton {
+            StartNativeUiPaymentUseCase(
+                nativeUiRepository = resolve(),
+                headlessRepository = resolve(),
             )
         }
     }
