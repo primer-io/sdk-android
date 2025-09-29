@@ -3,9 +3,12 @@ package io.primer.android.internal.presentation.screens.card.components
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.DropdownMenu
+import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -22,6 +25,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Popup
+import androidx.compose.ui.window.PopupProperties
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import io.primer.android.LocalPrimerTheme
 import io.primer.android.components.R
@@ -53,21 +58,17 @@ internal fun PrimerCardFormScope.CardNetworkIcon() {
     )
 }
 
+@Suppress("LongMethod")
 @Composable
-private fun PrimerCardFormScope.CardNetworkSelector(
-    modifier: Modifier = Modifier,
-) {
+private fun PrimerCardFormScope.CardNetworkSelector(modifier: Modifier = Modifier) {
     val state by state.collectAsStateWithLifecycle()
     val networks = state.availableNetworks
     val selectedNetwork = state.selectedNetwork
-
     var expanded by remember { mutableStateOf(false) }
 
     Box(modifier = modifier) {
         Row(
-            modifier = Modifier
-                .clickable { expanded = true }
-                .padding(horizontal = 12.dp, vertical = 8.dp), // Larger touch area
+            modifier = Modifier.clickable { expanded = true }.padding(horizontal = 12.dp, vertical = 8.dp),
             horizontalArrangement = Arrangement.spacedBy(4.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
@@ -78,36 +79,60 @@ private fun PrimerCardFormScope.CardNetworkSelector(
                 tint = LocalPrimerTheme.current.colorTokens().primerColorIconPrimary,
             )
         }
-
-        DropdownMenu(
-            containerColor = LocalPrimerTheme.current.colorTokens().primerColorBackground,
-            expanded = expanded,
-            onDismissRequest = { expanded = false },
-        ) {
-            networks.forEachIndexed { index, network ->
-                DropdownMenuItem(
-                    onClick = {
-                        expanded = false
-                        selectCardNetwork(network.network)
-                    },
-                    leadingIcon = {
-                        if (network.network == selectedNetwork) {
-                            Icon(
-                                painter = painterResource(R.drawable.ic_primer_check),
-                                contentDescription = "Selected",
-                                tint = LocalPrimerTheme.current.colorTokens().primerColorIconPrimary,
+        if (expanded) {
+            Popup(
+                alignment = Alignment.TopStart,
+                onDismissRequest = { expanded = false },
+                properties = PopupProperties(
+                    focusable = false,
+                    dismissOnBackPress = true,
+                    dismissOnClickOutside = true,
+                ),
+            ) {
+                Card(
+                    modifier = Modifier.wrapContentWidth().padding(start = 18.dp, end = 18.dp, top = 48.dp),
+                    elevation = CardDefaults.elevatedCardElevation(),
+                    colors = CardDefaults.cardColors(
+                        containerColor = LocalPrimerTheme.current.colorTokens().primerColorBackground,
+                    ),
+                ) {
+                    Column {
+                        networks.forEachIndexed { index, network ->
+                            DropdownMenuItem(
+                                onClick = {
+                                    expanded = false
+                                    selectCardNetwork(network.network)
+                                },
+                                leadingIcon = {
+                                    Icon(
+                                        painter = painterResource(
+                                            id = network.network.getCardImageAsset(ImageColor.COLORED),
+                                        ),
+                                        contentDescription = network.network.name,
+                                        tint = Color.Unspecified,
+                                    )
+                                },
+                                text = {
+                                    Text(
+                                        text = network.displayName,
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        color = LocalPrimerTheme.current.colorTokens().primerColorTextPrimary,
+                                    )
+                                },
+                                trailingIcon = {
+                                    if (network.network == selectedNetwork) {
+                                        Icon(
+                                            painter = painterResource(R.drawable.ic_primer_check),
+                                            contentDescription = "Selected",
+                                            tint = LocalPrimerTheme.current.colorTokens().primerColorIconPrimary,
+                                        )
+                                    }
+                                },
                             )
+                            if (index < networks.size - 1) { HorizontalDivider() }
                         }
-                    },
-                    text = {
-                        Text(
-                            text = network.displayName,
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = LocalPrimerTheme.current.colorTokens().primerColorTextPrimary,
-                        )
-                    },
-                )
-                if (index < networks.size - 1) { HorizontalDivider() }
+                    }
+                }
             }
         }
     }
