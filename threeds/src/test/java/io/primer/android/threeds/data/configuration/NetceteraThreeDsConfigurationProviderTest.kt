@@ -168,6 +168,10 @@ internal class NetceteraThreeDsConfigurationProviderTest {
                 "CARTES_BANCAIRES",
                 SchemeConfiguration::cbConfiguration,
             ),
+            Arguments.of(
+                "EFTPOS",
+                SchemeConfiguration::eftposConfiguration,
+            ),
         )
     }
 }

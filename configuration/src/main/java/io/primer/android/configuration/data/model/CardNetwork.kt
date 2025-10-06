@@ -22,6 +22,7 @@ class CardNetwork {
         HIPERCARD(displayName = "Hipercard"),
         CARTES_BANCAIRES(displayName = "Cartes Bancaires"),
         DANKORT(displayName = "Dankort"),
+        EFTPOS(displayName = "EFTPOS"),
         ;
 
         companion object {

@@ -25,6 +25,7 @@ internal enum class Brand(
     DANKORT(iconResId = R.drawable.ic_dankort_card_colored),
     MEASTRO(iconResId = R.drawable.ic_maestro_card_colored),
     ELO(iconResId = R.drawable.ic_elo_card_colored),
+    EFTPOS(iconResId = R.drawable.ic_eftpos_colored),
     GENERIC(iconResId = R.drawable.ic_generic_card),
     ;
 
@@ -53,6 +54,7 @@ internal fun CardNetwork.Type.getCardBrand() =
         CardNetwork.Type.MAESTRO -> Brand.MEASTRO
         CardNetwork.Type.ELO -> Brand.ELO
         CardNetwork.Type.HIPERCARD -> Brand.GENERIC
+        CardNetwork.Type.EFTPOS -> Brand.EFTPOS
         CardNetwork.Type.OTHER -> Brand.GENERIC
     }
 

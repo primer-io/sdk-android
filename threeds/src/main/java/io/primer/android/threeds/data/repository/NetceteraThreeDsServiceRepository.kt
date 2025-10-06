@@ -250,6 +250,7 @@ internal class NetceteraThreeDsServiceRepository(
         CardNetwork.Type.JCB -> DsRidValues.JCB
         CardNetwork.Type.CARTES_BANCAIRES -> DsRidValues.CB
         CardNetwork.Type.MASTERCARD, CardNetwork.Type.MAESTRO -> DsRidValues.MASTERCARD
+        CardNetwork.Type.EFTPOS -> DsRidValues.EFTPOS
         else ->
             when (environment == Environment.PRODUCTION) {
                 true -> throw ThreeDsMissingDirectoryServerException(
