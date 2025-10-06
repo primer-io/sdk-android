@@ -24,6 +24,9 @@ import io.primer.paymentMethodCoreUi.core.ui.extension.applyFullWindowInsetsPadd
 class ThreeDsActivity : BaseCheckoutActivity() {
     private val viewModel: ThreeDsViewModel
         by viewModel<ThreeDsViewModel, ThreeDsViewModelFactory>()
+    private val params: ThreeDsActivityLauncherParams? by lazy {
+        intent.getSerializableCompat(INTENT_PARAMS_EXTRA_KEY)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -117,19 +120,11 @@ class ThreeDsActivity : BaseCheckoutActivity() {
         )
 
     private fun getSupportedThreeDsProtocolVersion() =
-        intent.getSerializableCompat<ThreeDsActivityLauncherParams>(
-            INTENT_PARAMS_EXTRA_KEY,
-        )?.supportedThreeDsProtocolVersions.orEmpty()
+        params?.supportedThreeDsProtocolVersions.orEmpty()
 
-    private fun getPaymentMethodToken() =
-        intent.getSerializableCompat<ThreeDsActivityLauncherParams>(
-            INTENT_PARAMS_EXTRA_KEY,
-        )?.paymentMethodToken
+    private fun getPaymentMethodToken() = params?.paymentMethodToken
 
-    private fun getCardNetwork() =
-        intent.getSerializableCompat<ThreeDsActivityLauncherParams>(
-            INTENT_PARAMS_EXTRA_KEY,
-        )?.cardNetwork
+    private fun getCardNetwork() = params?.cardNetwork
 
     companion object {
         const val INTENT_PARAMS_EXTRA_KEY = "INTENT_PARAMS_EXTRA"
