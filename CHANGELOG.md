@@ -1,3 +1,13 @@
+## 2.44.0 (2025-10-07)
+
+### Feat
+
+- EFTPOS card network detection (#1071)
+
+### Fix
+
+- update 3DS handling after new intent (#1075)
+
 ## 2.43.0 (2025-09-22)
 
 ### Feat
