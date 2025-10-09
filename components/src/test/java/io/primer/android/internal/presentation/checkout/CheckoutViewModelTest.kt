@@ -3,11 +3,17 @@ package io.primer.android.internal.presentation.checkout
 import io.mockk.clearMocks
 import io.mockk.coEvery
 import io.mockk.coVerify
+import io.mockk.every
 import io.mockk.mockk
 import io.primer.android.components.analytics.data.repository.ComponentsEventsRepository
+import io.primer.android.configuration.domain.model.Configuration
+import io.primer.android.configuration.domain.repository.ConfigurationRepository
 import io.primer.android.core.InstantExecutorExtension
+import io.primer.android.core.domain.None
 import io.primer.android.internal.domain.usecase.AvailablePaymentMethodsUseCase
 import io.primer.android.scope.PrimerCheckoutScope
+import io.primer.android.ui.core.configuration.domain.model.BasicOrderInfo
+import io.primer.android.ui.core.configuration.domain.model.BasicOrderInfoInteractor
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
@@ -24,6 +30,8 @@ class CheckoutViewModelTest {
     private lateinit var availablePaymentMethodsUseCase: AvailablePaymentMethodsUseCase
     private lateinit var checkoutNavigator: CheckoutNavigator
     private lateinit var componentsEventsRepository: ComponentsEventsRepository
+    private lateinit var basicOrderInfoInteractor: BasicOrderInfoInteractor
+    private lateinit var configurationRepository: ConfigurationRepository
     private lateinit var viewModel: CheckoutViewModel
 
     @BeforeEach
@@ -31,26 +39,43 @@ class CheckoutViewModelTest {
         availablePaymentMethodsUseCase = mockk()
         checkoutNavigator = mockk(relaxed = true)
         componentsEventsRepository = mockk(relaxed = true)
+        basicOrderInfoInteractor = mockk()
+        configurationRepository = mockk()
 
+        val orderInfo = BasicOrderInfo(totalAmount = 1000, currencyCode = "USD")
+        every { basicOrderInfoInteractor(None) } returns orderInfo
+        coEvery { configurationRepository.fetchConfiguration(any()) } returns Result.success(mockk<Configuration>())
         coEvery { availablePaymentMethodsUseCase() } returns Result.success(Unit)
 
         viewModel = CheckoutViewModel(
             availablePaymentMethodsUseCase = availablePaymentMethodsUseCase,
             checkoutNavigator = checkoutNavigator,
             componentsEventsRepository = componentsEventsRepository,
+            basicOrderInfoInteractor = basicOrderInfoInteractor,
+            configurationRepository = configurationRepository,
         )
     }
 
     @Test
     fun `should call loadPaymentMethods in init block`() = runTest {
         advanceUntilIdle()
+        coVerify(exactly = 1) { configurationRepository.fetchConfiguration(any()) }
         coVerify(exactly = 1) { availablePaymentMethodsUseCase() }
+    }
+
+    @Test
+    fun `loadPaymentMethods should fetch configuration before loading payment methods`() = runTest {
+        advanceUntilIdle()
+        coVerify(exactly = 1) { configurationRepository.fetchConfiguration(any()) }
     }
 
     @Test
     fun `loadPaymentMethods when success should update state to Ready`() = runTest {
         advanceUntilIdle()
-        assertEquals(PrimerCheckoutScope.State.Ready, viewModel.state.value)
+        val state = viewModel.state.value
+        assertTrue(state is PrimerCheckoutScope.State.Ready)
+        assertEquals(1000, (state as PrimerCheckoutScope.State.Ready).totalAmount)
+        assertEquals("USD", state.currencyCode)
     }
 
     @Test
@@ -69,6 +94,8 @@ class CheckoutViewModelTest {
             availablePaymentMethodsUseCase = availablePaymentMethodsUseCase,
             checkoutNavigator = checkoutNavigator,
             componentsEventsRepository = componentsEventsRepository,
+            basicOrderInfoInteractor = basicOrderInfoInteractor,
+            configurationRepository = configurationRepository,
         )
 
         advanceUntilIdle()
@@ -89,6 +116,8 @@ class CheckoutViewModelTest {
             availablePaymentMethodsUseCase = availablePaymentMethodsUseCase,
             checkoutNavigator = checkoutNavigator,
             componentsEventsRepository = componentsEventsRepository,
+            basicOrderInfoInteractor = basicOrderInfoInteractor,
+            configurationRepository = configurationRepository,
         )
 
         advanceUntilIdle()
@@ -106,6 +135,8 @@ class CheckoutViewModelTest {
             availablePaymentMethodsUseCase = availablePaymentMethodsUseCase,
             checkoutNavigator = checkoutNavigator,
             componentsEventsRepository = componentsEventsRepository,
+            basicOrderInfoInteractor = basicOrderInfoInteractor,
+            configurationRepository = configurationRepository,
         )
 
         advanceUntilIdle()
@@ -142,5 +173,44 @@ class CheckoutViewModelTest {
         advanceUntilIdle()
         viewModel.onRetry()
         coVerify(exactly = 1) { checkoutNavigator.navigateBack() }
+    }
+
+    @Test
+    fun `loadPaymentMethods when configuration fetch fails should update state to Error`() = runTest {
+        val exception = RuntimeException("Configuration fetch failed")
+        coEvery { configurationRepository.fetchConfiguration(any()) } returns Result.failure(exception)
+
+        viewModel = CheckoutViewModel(
+            availablePaymentMethodsUseCase = availablePaymentMethodsUseCase,
+            checkoutNavigator = checkoutNavigator,
+            componentsEventsRepository = componentsEventsRepository,
+            basicOrderInfoInteractor = basicOrderInfoInteractor,
+            configurationRepository = configurationRepository,
+        )
+
+        advanceUntilIdle()
+
+        val state = viewModel.state.value
+        assertTrue(state is PrimerCheckoutScope.State.Error)
+        assertEquals(exception, (state as PrimerCheckoutScope.State.Error).exception)
+    }
+
+    @Test
+    fun `loadPaymentMethods when configuration fetch fails should navigate to error`() = runTest {
+        val errorMessage = "Configuration fetch failed"
+        val exception = RuntimeException(errorMessage)
+        coEvery { configurationRepository.fetchConfiguration(any()) } returns Result.failure(exception)
+
+        viewModel = CheckoutViewModel(
+            availablePaymentMethodsUseCase = availablePaymentMethodsUseCase,
+            checkoutNavigator = checkoutNavigator,
+            componentsEventsRepository = componentsEventsRepository,
+            basicOrderInfoInteractor = basicOrderInfoInteractor,
+            configurationRepository = configurationRepository,
+        )
+
+        advanceUntilIdle()
+
+        coVerify(exactly = 1) { checkoutNavigator.navigateToError(errorMessage) }
     }
 }

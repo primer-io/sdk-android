@@ -26,7 +26,6 @@ internal fun PrimerPaymentMethodSelectionScope.PaymentMethodItemCard(
     val layoutDirection = LocalLayoutDirection.current
 
     PaymentMethodItem(
-        modifier = modifier,
         borderColor = LocalPrimerTheme.current.colorTokens().primerColorBorderOutlinedDefault,
         onPaymentMethodSelected = { onPaymentMethodSelected(PaymentMethodType.PAYMENT_CARD.name) },
     ) {

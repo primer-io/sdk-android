@@ -28,12 +28,11 @@ object CustomCardComponentDemo : CheckoutDemo(
     customizationLevel = 2,
     render = {
 
-        components.paymentMethodSelection.paymentMethodCard = { modifier ->
+        components.paymentMethodSelection.paymentMethodItem = {
             var progress by remember { mutableFloatStateOf(0f) }
 
             Card(
-                modifier = modifier
-                    .fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth(),
             ) {
                 Column(
                     modifier = Modifier.padding(16.dp),

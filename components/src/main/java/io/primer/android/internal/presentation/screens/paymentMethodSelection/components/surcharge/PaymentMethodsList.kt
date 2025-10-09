@@ -4,7 +4,6 @@ import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.items
 import io.primer.android.internal.domain.models.PrimerComposablePaymentMethod
 import io.primer.android.internal.domain.utils.getValue
-import io.primer.android.internal.presentation.screens.paymentMethodSelection.components.list.PaymentMethodSelector
 import io.primer.android.scope.PrimerPaymentMethodSelectionScope
 
 fun LazyListScope.paymentMethodsList(
@@ -15,9 +14,7 @@ fun LazyListScope.paymentMethodsList(
 
     if (groupedPaymentMethods.size == 1 && groupedPaymentMethods.containsKey(0)) {
         items(groupedPaymentMethods[0] ?: emptyList()) { paymentMethod ->
-            with(scope) {
-                PaymentMethodSelector(primerMethod = paymentMethod)
-            }
+            scope.components.paymentMethodItem(scope, paymentMethod)
         }
     } else {
         val sortedGroups = groupedPaymentMethods.toList()

@@ -13,6 +13,8 @@ internal class CheckoutViewModelFactory : ViewModelProvider.Factory, DISdkCompon
                 availablePaymentMethodsUseCase = resolve(),
                 checkoutNavigator = resolve(),
                 componentsEventsRepository = null,
+                basicOrderInfoInteractor = resolve(),
+                configurationRepository = resolve(),
             ) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")

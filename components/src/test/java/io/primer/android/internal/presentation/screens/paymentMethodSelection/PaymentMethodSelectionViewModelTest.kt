@@ -51,8 +51,6 @@ class PaymentMethodSelectionViewModelTest {
 
     @Test
     fun `constructor should store dependencies correctly`() {
-        val orderInfo = BasicOrderInfo(totalAmount = 1000, currencyCode = "USD")
-        every { basicOrderInfoInteractor(None) } returns orderInfo
         every { availablePaymentMethodsUseCase.cache } returns emptyList()
 
         viewModel = PaymentMethodSelectionViewModel(
@@ -68,7 +66,6 @@ class PaymentMethodSelectionViewModelTest {
 
     @Test
     fun `should initialize state with payment methods from cache`() = runTest {
-        val orderInfo = BasicOrderInfo(totalAmount = 2000, currencyCode = "EUR")
         val paymentMethods = listOf(
             PrimerComposablePaymentMethod(
                 paymentMethodType = "PAYMENT_CARD",
@@ -78,7 +75,6 @@ class PaymentMethodSelectionViewModelTest {
             ),
         )
 
-        every { basicOrderInfoInteractor(None) } returns orderInfo
         every { availablePaymentMethodsUseCase.cache } returns paymentMethods
 
         viewModel = PaymentMethodSelectionViewModel(
@@ -91,12 +87,10 @@ class PaymentMethodSelectionViewModelTest {
 
         val state = viewModel.state.first()
         assertEquals(paymentMethods, state.paymentMethods)
-        assertEquals(orderInfo, state.orderInfo)
     }
 
     @Test
-    fun `init should load payment methods from cache and order info`() = runTest {
-        val orderInfo = BasicOrderInfo(totalAmount = 3000, currencyCode = "GBP")
+    fun `init should load payment methods from cache`() = runTest {
         val paymentMethods = listOf(
             PrimerComposablePaymentMethod(
                 paymentMethodType = "PAYPAL",
@@ -114,7 +108,6 @@ class PaymentMethodSelectionViewModelTest {
             ),
         )
 
-        every { basicOrderInfoInteractor(None) } returns orderInfo
         every { availablePaymentMethodsUseCase.cache } returns paymentMethods
 
         viewModel = PaymentMethodSelectionViewModel(
@@ -125,18 +118,16 @@ class PaymentMethodSelectionViewModelTest {
             componentsEventsRepository = componentsEventsRepository,
         )
 
-        verify(exactly = 1) { basicOrderInfoInteractor(None) }
         verify(exactly = 1) { availablePaymentMethodsUseCase.cache }
 
         val state = viewModel.state.value
         assertEquals(paymentMethods, state.paymentMethods)
-        assertEquals(orderInfo, state.orderInfo)
     }
 
     @Test
-    fun `formatTitleAmount should format amount using order info`() = runTest {
-        val orderInfo = BasicOrderInfo(totalAmount = 1500, currencyCode = "USD")
-        val expectedFormat = "$15.00"
+    fun `formatTitleAmount should format amount using basicOrderInfoInteractor`() = runTest {
+        val orderInfo = BasicOrderInfo(totalAmount = 1000, currencyCode = "USD")
+        val expectedFormat = "$10.00"
 
         every { basicOrderInfoInteractor(None) } returns orderInfo
         every { availablePaymentMethodsUseCase.cache } returns emptyList()
@@ -213,9 +204,6 @@ class PaymentMethodSelectionViewModelTest {
 
     @Test
     fun `onPaymentMethodSelected with PAYMENT_CARD should navigate to CardForm`() = runTest {
-        val orderInfo = BasicOrderInfo(totalAmount = 1000, currencyCode = "USD")
-
-        every { basicOrderInfoInteractor(None) } returns orderInfo
         every { availablePaymentMethodsUseCase.cache } returns emptyList()
 
         viewModel = PaymentMethodSelectionViewModel(
@@ -234,9 +222,6 @@ class PaymentMethodSelectionViewModelTest {
 
     @Test
     fun `onPaymentMethodSelected with unknown payment method should not navigate`() = runTest {
-        val orderInfo = BasicOrderInfo(totalAmount = 1000, currencyCode = "USD")
-
-        every { basicOrderInfoInteractor(None) } returns orderInfo
         every { availablePaymentMethodsUseCase.cache } returns emptyList()
 
         viewModel = PaymentMethodSelectionViewModel(
@@ -255,9 +240,6 @@ class PaymentMethodSelectionViewModelTest {
 
     @Test
     fun `onCancel should call dismiss on navigator`() = runTest {
-        val orderInfo = BasicOrderInfo(totalAmount = 1000, currencyCode = "USD")
-
-        every { basicOrderInfoInteractor(None) } returns orderInfo
         every { availablePaymentMethodsUseCase.cache } returns emptyList()
 
         viewModel = PaymentMethodSelectionViewModel(
@@ -276,9 +258,6 @@ class PaymentMethodSelectionViewModelTest {
 
     @Test
     fun `should handle empty payment methods list`() = runTest {
-        val orderInfo = BasicOrderInfo(totalAmount = 500, currencyCode = "CAD")
-
-        every { basicOrderInfoInteractor(None) } returns orderInfo
         every { availablePaymentMethodsUseCase.cache } returns emptyList()
 
         viewModel = PaymentMethodSelectionViewModel(
@@ -291,12 +270,10 @@ class PaymentMethodSelectionViewModelTest {
 
         val state = viewModel.state.value
         assertTrue(state.paymentMethods.isEmpty())
-        assertEquals(orderInfo, state.orderInfo)
     }
 
     @Test
     fun `should handle payment methods with surcharge`() = runTest {
-        val orderInfo = BasicOrderInfo(totalAmount = 1000, currencyCode = "USD")
         val surcharge = Surcharge.PaymentMethodSurcharge(amount = 50)
         val paymentMethod = PrimerComposablePaymentMethod(
             paymentMethodType = "PAYMENT_CARD",
@@ -306,7 +283,6 @@ class PaymentMethodSelectionViewModelTest {
             surcharge = surcharge,
         )
 
-        every { basicOrderInfoInteractor(None) } returns orderInfo
         every { availablePaymentMethodsUseCase.cache } returns listOf(paymentMethod)
 
         viewModel = PaymentMethodSelectionViewModel(

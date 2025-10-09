@@ -17,7 +17,6 @@ import io.primer.android.LocalPrimerTheme
 import io.primer.android.components.R
 import io.primer.android.internal.domain.models.PrimerComposablePaymentMethod
 import io.primer.android.internal.domain.utils.UNKNOWN_SURCHARGE
-import io.primer.android.internal.presentation.screens.paymentMethodSelection.components.list.PaymentMethodSelector
 import io.primer.android.scope.PrimerPaymentMethodSelectionScope
 
 @Composable
@@ -40,7 +39,7 @@ fun PrimerPaymentMethodSelectionScope.SurchargeGroupCard(
         ) {
             SurchargeHeader(value = value)
             paymentMethods.forEach { paymentMethod ->
-                PaymentMethodSelector(primerMethod = paymentMethod)
+                components.paymentMethodItem(this@SurchargeGroupCard, paymentMethod)
             }
         }
     }

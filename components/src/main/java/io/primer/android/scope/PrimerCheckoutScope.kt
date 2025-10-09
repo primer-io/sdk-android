@@ -16,7 +16,7 @@ interface PrimerCheckoutScope : DISdkComponent {
 
     /**
      * StateFlow representing the current state of the checkout process.
-     * Emits [State.Initializing], [State.Dismissed], or [State.Error] based on checkout progress.
+     * Emits [State.Initializing], [State.Ready], [State.Dismissed], or [State.Error] based on checkout progress.
      */
     val state: StateFlow<State>
 
@@ -44,8 +44,14 @@ interface PrimerCheckoutScope : DISdkComponent {
         /**
          * Ready state when checkout has finished loading.
          * Payment methods are available.
+         *
+         * @param totalAmount The total amount in cents for the checkout
+         * @param currencyCode The currency code (e.g., "USD", "EUR")
          */
-        data object Ready : State
+        data class Ready(
+            val totalAmount: Int,
+            val currencyCode: String,
+        ) : State
 
         /**
          * State indicating the checkout has been dismissed by the user

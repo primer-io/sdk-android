@@ -12,12 +12,12 @@ import io.primer.android.paymentmethods.common.data.model.PaymentMethodType.Comp
 import io.primer.android.scope.PrimerPaymentMethodSelectionScope
 
 @Composable
-internal fun PrimerPaymentMethodSelectionScope.PaymentMethodSelector(
+internal fun PrimerPaymentMethodSelectionScope.DefaultPaymentMethodItem(
     primerMethod: PrimerComposablePaymentMethod,
 ) {
     with(components) {
         when (safeValueOf(primerMethod.paymentMethodType)) {
-            PaymentMethodType.PAYMENT_CARD -> paymentMethodCard(Modifier)
+            PaymentMethodType.PAYMENT_CARD -> PaymentMethodItemCard()
             PaymentMethodType.ADYEN_IDEAL -> PaymentMethodItemIdeal()
             PaymentMethodType.GOOGLE_PAY -> PaymentMethodItemGooglePay()
             PaymentMethodType.KLARNA -> PaymentMethodItemKlarna()

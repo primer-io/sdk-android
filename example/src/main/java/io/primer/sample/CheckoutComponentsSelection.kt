@@ -55,6 +55,7 @@ import io.primer.sample.demos.SmallSizesThemeDemo
 import io.primer.sample.demos.SubmitOverrideDemo
 import io.primer.sample.demos.ThreeTabsDemo
 
+
 @OptIn(ExperimentalPrimerApi::class)
 @Composable
 fun CheckoutComponentsSelection(clientToken: String?, onBackPress: () -> Unit) {
@@ -172,5 +173,5 @@ private fun getAllDemos(): List<CheckoutDemo> = listOf(
     CustomCardFormLayoutDemo,
     SingleInputFieldDemo,
     ButtonedInputFieldsDemo,
-    ThreeTabsDemo
+    ThreeTabsDemo,
 )

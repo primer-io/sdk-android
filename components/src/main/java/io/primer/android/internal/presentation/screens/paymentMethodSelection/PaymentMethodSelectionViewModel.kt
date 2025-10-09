@@ -35,11 +35,8 @@ internal class PaymentMethodSelectionViewModel(
     }
 
     private fun loadPaymentMethods() {
-        val orderInfo = basicOrderInfoInteractor(None)
-
         _uiState.value = PrimerPaymentMethodSelectionScope.State(
             paymentMethods = availablePaymentMethodsUseCase.cache,
-            orderInfo = orderInfo,
         )
     }
 
@@ -57,12 +54,12 @@ internal class PaymentMethodSelectionViewModel(
     }
 
     override fun formatTitleAmount(): String {
-        val orderInfo = _uiState.value.orderInfo
+        val orderInfo = basicOrderInfoInteractor(None)
         return formatAmount(orderInfo.totalAmount, orderInfo.currencyCode)
     }
 
     override fun formatSurchargeAmount(amountInCents: Int): String {
-        val orderInfo = _uiState.value.orderInfo
+        val orderInfo = basicOrderInfoInteractor(None)
         val formattedAmount = formatAmount(amountInCents, orderInfo.currencyCode)
         return if (formattedAmount.isNotEmpty()) {
             "+ $formattedAmount"

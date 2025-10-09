@@ -4,7 +4,6 @@ import io.primer.android.components.PrimerPaymentMethodSelectionComponents
 import io.primer.android.core.di.DISdkComponent
 import io.primer.android.core.di.extensions.resolve
 import io.primer.android.internal.domain.models.PrimerComposablePaymentMethod
-import io.primer.android.ui.core.configuration.domain.model.BasicOrderInfo
 import kotlinx.coroutines.flow.StateFlow
 
 /**
@@ -49,6 +48,5 @@ interface PrimerPaymentMethodSelectionScope : DISdkComponent {
      */
     data class State(
         val paymentMethods: List<PrimerComposablePaymentMethod> = listOf(),
-        val orderInfo: BasicOrderInfo = BasicOrderInfo(0, ""),
     )
 }
