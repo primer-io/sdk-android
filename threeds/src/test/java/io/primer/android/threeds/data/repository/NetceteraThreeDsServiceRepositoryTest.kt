@@ -594,6 +594,7 @@ internal class NetceteraThreeDsServiceRepositoryTest {
                 Arguments.of(CardNetwork.Type.AMEX, DsRidValues.AMEX, Environment.SANDBOX),
                 Arguments.of(CardNetwork.Type.JCB, DsRidValues.JCB, Environment.SANDBOX),
                 Arguments.of(CardNetwork.Type.CARTES_BANCAIRES, DsRidValues.CB, Environment.SANDBOX),
+                Arguments.of(CardNetwork.Type.EFTPOS, DsRidValues.EFTPOS, Environment.SANDBOX),
                 Arguments.of(CardNetwork.Type.DINERS_CLUB, DsRidValues.DINERS, Environment.SANDBOX),
                 Arguments.of(CardNetwork.Type.DISCOVER, DsRidValues.DINERS, Environment.SANDBOX),
                 Arguments.of(CardNetwork.Type.UNIONPAY, DsRidValues.UNION, Environment.SANDBOX),

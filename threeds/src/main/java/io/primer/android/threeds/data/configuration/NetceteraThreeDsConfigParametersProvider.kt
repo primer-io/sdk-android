@@ -6,6 +6,7 @@ import com.netcetera.threeds.sdk.api.configparameters.builder.SchemeConfiguratio
 import com.netcetera.threeds.sdk.api.configparameters.builder.SchemeConfiguration.amexConfiguration
 import com.netcetera.threeds.sdk.api.configparameters.builder.SchemeConfiguration.cbConfiguration
 import com.netcetera.threeds.sdk.api.configparameters.builder.SchemeConfiguration.dinersSchemeConfiguration
+import com.netcetera.threeds.sdk.api.configparameters.builder.SchemeConfiguration.eftposConfiguration
 import com.netcetera.threeds.sdk.api.configparameters.builder.SchemeConfiguration.jcbConfiguration
 import com.netcetera.threeds.sdk.api.configparameters.builder.SchemeConfiguration.mastercardSchemeConfiguration
 import com.netcetera.threeds.sdk.api.configparameters.builder.SchemeConfiguration.newSchemeConfiguration
@@ -64,6 +65,7 @@ internal class NetceteraThreeDsConfigParametersProvider {
             CardNetwork.Type.UNIONPAY.name -> unionSchemeConfiguration()
             CardNetwork.Type.JCB.name -> jcbConfiguration()
             CardNetwork.Type.CARTES_BANCAIRES.name -> cbConfiguration()
+            CardNetwork.Type.EFTPOS.name -> eftposConfiguration()
             else -> createTestSchemeBuilder()
         }
     }
