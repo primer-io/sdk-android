@@ -30,7 +30,7 @@ class ConfigurationCoreContainer(
         registerSingleton<BaseCacheDataSource<ConfigurationData, ConfigurationData>>(
             CACHED_CONFIGURATION_DI_KEY,
         ) {
-            LocalConfigurationDataSource()
+            LocalConfigurationDataSource
         }
 
         registerSingleton<GlobalCacheConfigurationCacheDataSource>(name = GLOBAL_CACHED_CONFIGURATION_DI_KEY) {

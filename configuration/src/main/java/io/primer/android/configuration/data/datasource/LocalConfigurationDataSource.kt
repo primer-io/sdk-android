@@ -6,7 +6,7 @@ import io.primer.android.core.data.datasource.BaseCacheDataSource
 
 typealias CacheConfigurationDataSource = BaseCacheDataSource<ConfigurationData, ConfigurationData>
 
-internal class LocalConfigurationDataSource :
+internal object LocalConfigurationDataSource :
     BaseCacheDataSource<ConfigurationData, ConfigurationData> {
     private var configuration: ConfigurationData? = null
 

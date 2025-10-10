@@ -59,12 +59,12 @@ import io.primer.android.paymentmethods.common.data.model.PaymentMethodType
 import io.primer.android.payments.core.helpers.CheckoutErrorHandler
 import io.primer.android.payments.core.helpers.PollingStartHandler
 import io.primer.android.presentation.base.BaseViewModel
-import io.primer.android.surcharge.domain.SurchargeInteractor
 import io.primer.android.surcharge.utils.SurchargeFormatter
 import io.primer.android.ui.PaymentMethodButtonGroupFactory
 import io.primer.android.ui.core.configuration.domain.model.BasicOrderInfoInteractor
 import io.primer.android.ui.core.domain.FormatAmountToCurrencyInteractor
 import io.primer.android.ui.core.model.SyncValidationError
+import io.primer.android.ui.core.payment.domain.interactor.SurchargeInteractor
 import io.primer.android.utils.orNull
 import io.primer.android.vault.implementation.vaultedMethods.domain.PrimerVaultedPaymentMethodAdditionalData
 import kotlinx.coroutines.ExperimentalCoroutinesApi

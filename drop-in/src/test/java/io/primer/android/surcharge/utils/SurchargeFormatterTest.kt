@@ -9,8 +9,8 @@ import io.primer.android.configuration.domain.model.Surcharge
 import io.primer.android.core.domain.None
 import io.primer.android.data.settings.internal.MonetaryAmount
 import io.primer.android.domain.tokenization.models.PrimerVaultedPaymentMethod
-import io.primer.android.surcharge.domain.SurchargeInteractor
 import io.primer.android.ui.core.domain.FormatAmountToCurrencyInteractor
+import io.primer.android.ui.core.payment.domain.interactor.SurchargeInteractor
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test

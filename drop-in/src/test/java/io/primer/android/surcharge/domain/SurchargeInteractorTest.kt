@@ -14,6 +14,7 @@ import io.primer.android.configuration.domain.model.Configuration
 import io.primer.android.configuration.domain.model.Surcharge
 import io.primer.android.configuration.domain.repository.ConfigurationRepository
 import io.primer.android.core.domain.None
+import io.primer.android.ui.core.payment.domain.interactor.SurchargeInteractor
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
