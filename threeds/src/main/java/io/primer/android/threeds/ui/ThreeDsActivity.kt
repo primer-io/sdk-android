@@ -24,15 +24,15 @@ import io.primer.paymentMethodCoreUi.core.ui.extension.applyFullWindowInsetsPadd
 class ThreeDsActivity : BaseCheckoutActivity() {
     private val viewModel: ThreeDsViewModel
         by viewModel<ThreeDsViewModel, ThreeDsViewModelFactory>()
-    private val params: ThreeDsActivityLauncherParams? by lazy {
-        intent.getSerializableCompat(INTENT_PARAMS_EXTRA_KEY)
-    }
+    private var params: ThreeDsActivityLauncherParams? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_primer_progress)
         findViewById<View>(R.id.rootView).applyFullWindowInsetsPadding()
         runIfNotFinishing {
+            params = savedInstanceState?.getSerializableCompat(INTENT_PARAMS_EXTRA_KEY)
+                ?: intent.getSerializableCompat(INTENT_PARAMS_EXTRA_KEY)
             registerContainer(containerProvider = {
                 ThreeDsContainer(sdk = it)
             })
@@ -43,6 +43,11 @@ class ThreeDsActivity : BaseCheckoutActivity() {
                 viewModel.startThreeDsFlow()
             }
         }
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        params?.let { outState.putSerializable(INTENT_PARAMS_EXTRA_KEY, it) }
     }
 
     override fun onNewIntent(intent: Intent?) {
