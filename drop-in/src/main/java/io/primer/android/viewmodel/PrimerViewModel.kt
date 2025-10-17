@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.asFlow
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
+import io.primer.android.PrimerSessionIntent
 import io.primer.android.SessionState
 import io.primer.android.analytics.data.models.AnalyticsAction
 import io.primer.android.analytics.data.models.DropInSourceAnalyticsContext
@@ -69,6 +70,7 @@ import io.primer.android.utils.orNull
 import io.primer.android.vault.implementation.vaultedMethods.domain.PrimerVaultedPaymentMethodAdditionalData
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.NonCancellable
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
@@ -252,7 +254,7 @@ internal class PrimerViewModel(
                 eventsInteractor.execute(None).collect { event: PrimerEvent ->
                     when (event) {
                         is PrimerEvent.AvailablePaymentMethodsLoaded -> {
-                            vaultManager.fetchVaultedPaymentMethods()
+                            getVaultedPaymentMethods()
                                 .fold(
                                     { paymentModelTokens ->
                                         _vaultedPaymentMethods.postValue(paymentModelTokens)
@@ -629,5 +631,16 @@ internal class PrimerViewModel(
 
     private suspend fun handleError(throwable: Throwable) {
         checkoutErrorHandler.handle(error = errorMapperRegistry.getPrimerError(throwable), payment = null)
+    }
+
+    private suspend fun getVaultedPaymentMethods() = coroutineScope {
+        when {
+            config.isStandalonePaymentMethod || config.paymentMethodIntent == PrimerSessionIntent.VAULT ->
+                Result.success(
+                    emptyList<PrimerVaultedPaymentMethod>(),
+                )
+
+            else -> vaultManager.fetchVaultedPaymentMethods()
+        }
     }
 }
