@@ -1,3 +1,13 @@
+## 2.44.1 (2025-10-17)
+
+### Fix
+
+- 3ds crashing when activity is recreated (#1082)
+
+### Perf
+
+- improved loading performances (#1086)
+
 ## 2.44.0 (2025-10-07)
 
 ### Feat
