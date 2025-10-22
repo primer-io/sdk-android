@@ -7,6 +7,7 @@ import io.primer.android.components.PrimerCheckoutComponents
 import io.primer.android.components.PrimerHeadlessUniversalCheckout
 import io.primer.android.components.PrimerPaymentMethodSelectionComponents
 import io.primer.android.components.PrimerSelectCountryComponents
+import io.primer.android.components.PrimerVaultedComponents
 import io.primer.android.configuration.di.ConfigurationCoreContainer
 import io.primer.android.core.di.DependencyContainer
 import io.primer.android.core.di.SdkContainer
@@ -14,8 +15,10 @@ import io.primer.android.internal.data.mappers.PaymentMethodMapper
 import io.primer.android.internal.data.mappers.PaymentMethodMapperImpl
 import io.primer.android.internal.data.repositories.CardRawDataManagerRepository
 import io.primer.android.internal.data.repositories.HeadlessRepositoryImpl
+import io.primer.android.internal.data.repositories.PrimerVaultManagerRepositoryImpl
 import io.primer.android.internal.data.repositories.NativeUiRepositoryImpl
 import io.primer.android.internal.domain.repositories.HeadlessRepository
+import io.primer.android.internal.domain.repositories.PrimerVaultManagerRepository
 import io.primer.android.internal.domain.repositories.NativeUiRepository
 import io.primer.android.internal.domain.repositories.RawDataManagerRepository
 import io.primer.android.internal.domain.usecase.AvailablePaymentMethodsUseCase
@@ -23,11 +26,17 @@ import io.primer.android.internal.domain.usecase.CardFieldsUseCase
 import io.primer.android.internal.domain.usecase.CardNetworkUseCase
 import io.primer.android.internal.domain.usecase.StartNativeUiPaymentUseCase
 import io.primer.android.internal.domain.usecase.SubmitCardPaymentUseCase
+import io.primer.android.internal.domain.usecase.vault.FetchVaultedPaymentMethodsUseCase
+import io.primer.android.internal.domain.usecase.vault.ShouldCaptureVaultedCvvUseCase
+import io.primer.android.internal.domain.usecase.vault.SubmitVaultedPaymentUseCase
+import io.primer.android.internal.domain.usecase.vault.ValidateVaultedCVVUseCase
+import io.primer.android.internal.domain.usecase.vault.VaultedCvvFieldsUseCase
 import io.primer.android.internal.presentation.checkout.CheckoutNavigator
 import io.primer.android.internal.presentation.checkout.CheckoutViewModelFactory
 import io.primer.android.internal.presentation.screens.card.CardFormViewModelFactory
 import io.primer.android.internal.presentation.screens.country.SelectCountryViewModelFactory
 import io.primer.android.internal.presentation.screens.paymentMethodSelection.PaymentMethodSelectionViewModelFactory
+import io.primer.android.internal.presentation.screens.paymentMethodSelection.VaultedPaymentMethodSelectionViewModelFactory
 import io.primer.android.ui.core.configuration.domain.model.BasicOrderInfoInteractor
 import io.primer.android.ui.core.data.repository.CountriesDataRepository
 import io.primer.android.ui.core.domain.FormatAmountToCurrencyInteractor
@@ -125,12 +134,39 @@ internal class ComponentsContainer(
                 headlessRepository = resolve(),
             )
         }
+
+        registerSingleton<PrimerVaultManagerRepository> {
+            PrimerVaultManagerRepositoryImpl()
+        }
+
+        registerSingleton {
+            FetchVaultedPaymentMethodsUseCase(vaultManagerRepository  = resolve())
+        }
+
+        registerSingleton {
+            SubmitVaultedPaymentUseCase(vaultManagerRepository = resolve())
+        }
+
+        registerSingleton {
+            ValidateVaultedCVVUseCase(vaultManagerRepository  = resolve())
+        }
+
+        registerSingleton {
+            ShouldCaptureVaultedCvvUseCase(
+                configurationInteractor = sdk().resolve(ConfigurationCoreContainer.CONFIGURATION_INTERACTOR_DI_KEY),
+            )
+        }
+
+        registerSingleton {
+            VaultedCvvFieldsUseCase()
+        }
     }
 
     private fun registerComponents() {
         registerCheckoutComponents()
         registerCardFormComponents()
         registerPaymentMethodSelectionComponents()
+        registerVaultedComponents()
         registerCountrySelectionComponents()
     }
 
@@ -165,6 +201,16 @@ internal class ComponentsContainer(
 
         registerSingleton {
             PrimerPaymentMethodSelectionComponents()
+        }
+    }
+
+    private fun registerVaultedComponents() {
+        registerFactory {
+            VaultedPaymentMethodSelectionViewModelFactory()
+        }
+
+        registerSingleton {
+            PrimerVaultedComponents()
         }
     }
 

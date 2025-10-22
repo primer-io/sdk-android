@@ -7,17 +7,25 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import io.primer.android.LocalPrimerTheme
+import io.primer.android.PrimerTheme
+import io.primer.android.components.PrimerPaymentMethodSelectionComponents
 import io.primer.android.components.R
+import io.primer.android.core.di.SdkContainer
 import io.primer.android.paymentmethods.common.data.model.PaymentMethodType
 import io.primer.android.scope.PrimerPaymentMethodSelectionScope
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 
 @Composable
 internal fun PrimerPaymentMethodSelectionScope.PaymentMethodItemCard(
@@ -62,4 +70,37 @@ internal fun PrimerPaymentMethodSelectionScope.PaymentMethodItemCard(
             )
         }
     }
+}
+
+@Preview(showBackground = true, name = "Payment Method Item – Card")
+@Composable
+private fun PaymentMethodItemCardPreview() {
+    CompositionLocalProvider(LocalPrimerTheme provides PrimerTheme()) {
+        val scope = remember { PreviewPaymentMethodSelectionScope() }
+        scope.PaymentMethodItemCard(
+            modifier = Modifier.padding(LocalPrimerTheme.current.spacingTokens.small),
+        )
+    }
+}
+
+private class PreviewPaymentMethodSelectionScope : PrimerPaymentMethodSelectionScope {
+    private val previewContainer = SdkContainer()
+    private val previewState = MutableStateFlow(PrimerPaymentMethodSelectionScope.State())
+    private val previewComponents = PrimerPaymentMethodSelectionComponents()
+
+    override val components: PrimerPaymentMethodSelectionComponents
+        get() = previewComponents
+
+    override val state: StateFlow<PrimerPaymentMethodSelectionScope.State>
+        get() = previewState
+
+    override fun onPaymentMethodSelected(paymentMethod: String) {}
+
+    override fun onCancel() {}
+
+    override fun formatTitleAmount(): String = ""
+
+    override fun formatSurchargeAmount(amountInCents: Int): String = ""
+
+    override fun getSdkContainer(): SdkContainer = previewContainer
 }

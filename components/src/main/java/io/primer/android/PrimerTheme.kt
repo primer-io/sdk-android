@@ -7,6 +7,7 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.staticCompositionLocalOf
+import io.primer.android.internal.tokens.BorderWidthTokens
 import io.primer.android.internal.tokens.DarkColorTokens
 import io.primer.android.internal.tokens.LightColorTokens
 import io.primer.android.internal.tokens.RadiusTokens
@@ -17,6 +18,7 @@ import io.primer.android.internal.tokens.TypographyTokens
 data class PrimerTheme(
     val lightColorTokens: LightColorTokens = LightColorTokens(),
     val darkColorTokens: DarkColorTokens = DarkColorTokens(),
+    val borderWidthTokens: BorderWidthTokens = BorderWidthTokens(),
     val radiusTokens: RadiusTokens = RadiusTokens(),
     val sizeTokens: SizeTokens = SizeTokens(),
     val spacingTokens: SpacingTokens = SpacingTokens(),

@@ -13,6 +13,12 @@ import io.primer.android.scope.PrimerPaymentMethodSelectionScope
 
 class PrimerPaymentMethodSelectionComponents : DISdkComponent {
 
+    /**
+     * Access to vaulted payment method components for customization.
+     */
+    val vaultedComponents: PrimerVaultedComponents
+        get() = resolve()
+
     @Composable
     fun Screen() {
         screen(viewModel<PaymentMethodSelectionViewModel>(factory = resolve<PaymentMethodSelectionViewModelFactory>()))

@@ -80,4 +80,33 @@
     <string name="primer_components_surcharge_additional_fees">Additional fees may apply</string>
     <string name="primer_components_surcharge_fee">Surcharge fee</string>
 
+    <!-- Vaulted Payment Methods -->
+    <string name="primer_components_saved_payment_methods">Saved payment methods</string>
+    <string name="primer_components_pay">Pay</string>
+    <string name="primer_components_processing">Processing…</string>
+    <string name="primer_components_cvv_required">CVV Required</string>
+    <string name="primer_components_cvv_required_description">Please enter your CVV to complete this payment</string>
+    <string name="primer_components_cvv">CVV</string>
+    <string name="primer_components_cvv_invalid">Please enter a valid CVV</string>
+    <string name="primer_components_cvv_secure_prompt">Input the card CVV\nfor a secure payment</string>
+    <string name="primer_components_confirm">Confirm</string>
+    <string name="primer_components_cancel">Cancel</string>
+    <string name="primer_components_vault_error">Unable to load saved payment methods</string>
+    <string name="primer_components_retry">Tap to retry</string>
+    <string name="primer_components_vaulted_payment_selection_description">Saved payment methods</string>
+    <string name="primer_components_vault_cvv_subheading">Enter the CVV for card ending in %1$s.</string>
+    <string name="primer_components_vault_cvv_error">Please enter a valid CVV.</string>
+    <string name="primer_components_vault_show_other_ways_to_pay">Show other ways to pay</string>
+    <string name="primer_components_vault_cvv_generic_error">Something went wrong. Try again.</string>
+    <string name="primer_components_vaulted_default_cardholder_name">Cardholder</string>
+    <string name="primer_components_vaulted_default_paypal_account">PayPal account</string>
+    <string name="primer_components_vaulted_default_bank_account">Bank account</string>
+    <string name="primer_components_vaulted_masked_card_number">•••• %1$s</string>
+    <string name="primer_components_vaulted_masked_bank_account_number">•••• %1$s</string>
+    <string name="primer_components_vaulted_expires_date">Expires %1$s/%2$s</string>
+    <string name="primer_components_vaulted_selected_content_description">Selected payment method</string>
+    <string name="primer_components_vaulted_generic_card_content_description">Card</string>
+    <string name="primer_components_vaulted_cvv_placeholder">CVV</string>
+    <string name="primer_components_vaulted_show_all">Show all</string>
+
 </resources>
