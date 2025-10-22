@@ -75,7 +75,7 @@ internal class ComponentsEventsRepositoryImplTest {
 
     @Test
     fun `send should create correct event and trigger HTTP call`() {
-        val eventType = EventType.SDK_INIT_START
+        val eventType = EventType.SdkInitStart
 
         repository.send(eventType)
 
@@ -90,7 +90,7 @@ internal class ComponentsEventsRepositoryImplTest {
         every { mockClientSession.clientSessionId } returns null
         every { configurationData.clientSession } returns mockClientSession
 
-        val eventType = EventType.CHECKOUT_FLOW_STARTED
+        val eventType = EventType.CheckoutFlowStarted
 
         repository.send(eventType)
 
@@ -103,7 +103,7 @@ internal class ComponentsEventsRepositoryImplTest {
     fun `send should handle missing primerAccountId gracefully`() {
         every { configurationData.primerAccountId } returns null
 
-        val eventType = EventType.PAYMENT_SUCCESS
+        val eventType = EventType.PaymentSuccess.card("test-payment-id")
 
         repository.send(eventType)
 
@@ -113,19 +113,8 @@ internal class ComponentsEventsRepositoryImplTest {
     }
 
     @Test
-    fun `send should work for all event types`() {
-        EventType.entries.forEach { eventType ->
-            repository.send(eventType)
-        }
-
-        verify(atLeast = 1) {
-            AnalyticsEnvironmentUrlProvider.getAnalyticsUrl(environment)
-        }
-    }
-
-    @Test
     fun `send should use correct analytics URL for environment`() {
-        repository.send(EventType.SDK_INIT_START)
+        repository.send(EventType.SdkInitStart)
 
         verify {
             AnalyticsEnvironmentUrlProvider.getAnalyticsUrl(environment)
@@ -134,7 +123,7 @@ internal class ComponentsEventsRepositoryImplTest {
 
     @Test
     fun `send should be fire and forget without blocking`() {
-        val eventType = EventType.PAYMENT_METHOD_SELECTION
+        val eventType = EventType.PaymentMethodSelection("PAYMENT_CARD")
 
         val startTime = System.currentTimeMillis()
         repository.send(eventType)
@@ -159,10 +148,156 @@ internal class ComponentsEventsRepositoryImplTest {
             deviceInfoProvider = deviceInfoProvider,
         )
 
-        productionRepository.send(EventType.SDK_INIT_END)
+        productionRepository.send(EventType.SdkInitEnd)
 
         verify {
             AnalyticsEnvironmentUrlProvider.getAnalyticsUrl(Environment.PRODUCTION)
         }
+    }
+
+    @Test
+    fun `data objects should have correct eventName`() {
+        assertTrue(EventType.SdkInitStart.eventName == "SDK_INIT_START")
+        assertTrue(EventType.SdkInitEnd.eventName == "SDK_INIT_END")
+        assertTrue(EventType.CheckoutFlowStarted.eventName == "CHECKOUT_FLOW_STARTED")
+        assertTrue(EventType.PaymentFlowExited.eventName == "PAYMENT_FLOW_EXITED")
+        assertTrue(EventType.PaymentReattempted.eventName == "PAYMENT_REATTEMPTED")
+    }
+
+    @Test
+    fun `data objects should return null for all optional fields`() {
+        val event = EventType.SdkInitStart
+
+        assertTrue(event.paymentMethod == null)
+        assertTrue(event.paymentId == null)
+        assertTrue(event.redirectDestinationUrl == null)
+        assertTrue(event.threedsProvider == null)
+        assertTrue(event.threedsResponse == null)
+    }
+
+    @Test
+    fun `PaymentMethodSelection should have correct eventName and paymentMethod`() {
+        val event = EventType.PaymentMethodSelection("GOOGLE_PAY")
+
+        assertTrue(event.eventName == "PAYMENT_METHOD_SELECTION")
+        assertTrue(event.paymentMethod == "GOOGLE_PAY")
+        assertTrue(event.paymentId == null)
+    }
+
+    @Test
+    fun `PaymentDetailsEntered should have correct eventName and paymentMethod`() {
+        val event = EventType.PaymentDetailsEntered("PAYPAL")
+
+        assertTrue(event.eventName == "PAYMENT_DETAILS_ENTERED")
+        assertTrue(event.paymentMethod == "PAYPAL")
+        assertTrue(event.paymentId == null)
+    }
+
+    @Test
+    fun `PaymentSubmitted should have correct eventName and paymentMethod`() {
+        val event = EventType.PaymentSubmitted("KLARNA")
+
+        assertTrue(event.eventName == "PAYMENT_SUBMITTED")
+        assertTrue(event.paymentMethod == "KLARNA")
+        assertTrue(event.paymentId == null)
+    }
+
+    @Test
+    fun `PaymentProcessingStarted should have correct eventName and paymentMethod`() {
+        val event = EventType.PaymentProcessingStarted("STRIPE_ACH")
+
+        assertTrue(event.eventName == "PAYMENT_PROCESSING_STARTED")
+        assertTrue(event.paymentMethod == "STRIPE_ACH")
+        assertTrue(event.paymentId == null)
+    }
+
+    @Test
+    fun `PaymentSuccess should have correct eventName, paymentMethod and paymentId`() {
+        val event = EventType.PaymentSuccess("PAYMENT_CARD", "payment-123")
+
+        assertTrue(event.eventName == "PAYMENT_SUCCESS")
+        assertTrue(event.paymentMethod == "PAYMENT_CARD")
+        assertTrue(event.paymentId == "payment-123")
+        assertTrue(event.redirectDestinationUrl == null)
+    }
+
+    @Test
+    fun `PaymentFailure should have correct eventName, paymentMethod and optional paymentId`() {
+        val eventWithId = EventType.PaymentFailure("PAYMENT_CARD", "payment-456")
+        assertTrue(eventWithId.eventName == "PAYMENT_FAILURE")
+        assertTrue(eventWithId.paymentMethod == "PAYMENT_CARD")
+        assertTrue(eventWithId.paymentId == "payment-456")
+
+        val eventWithoutId = EventType.PaymentFailure("PAYMENT_CARD", null)
+        assertTrue(eventWithoutId.eventName == "PAYMENT_FAILURE")
+        assertTrue(eventWithoutId.paymentMethod == "PAYMENT_CARD")
+        assertTrue(eventWithoutId.paymentId == null)
+    }
+
+    @Test
+    fun `PaymentThreeDS should have correct eventName and 3DS fields`() {
+        val event = EventType.PaymentThreeDS("PAYMENT_CARD", "Netcetera", "05")
+
+        assertTrue(event.eventName == "PAYMENT_THREEDS")
+        assertTrue(event.paymentMethod == "PAYMENT_CARD")
+        assertTrue(event.threedsProvider == "Netcetera")
+        assertTrue(event.threedsResponse == "05")
+        assertTrue(event.paymentId == null)
+    }
+
+    @Test
+    fun `PaymentRedirect should have correct eventName and redirect fields`() {
+        val event = EventType.PaymentRedirect("PAYPAL", "https://paypal.com/redirect")
+
+        assertTrue(event.eventName == "PAYMENT_REDIRECT_TO_THIRD_PARTY")
+        assertTrue(event.paymentMethod == "PAYPAL")
+        assertTrue(event.redirectDestinationUrl == "https://paypal.com/redirect")
+        assertTrue(event.paymentId == null)
+    }
+
+    @Test
+    fun `companion factory method card() should create PaymentDetailsEntered with PAYMENT_CARD`() {
+        val event = EventType.PaymentDetailsEntered.card()
+
+        assertTrue(event.paymentMethod == "PAYMENT_CARD")
+        assertTrue(event.eventName == "PAYMENT_DETAILS_ENTERED")
+    }
+
+    @Test
+    fun `companion factory method card() should create PaymentSubmitted with PAYMENT_CARD`() {
+        val event = EventType.PaymentSubmitted.card()
+
+        assertTrue(event.paymentMethod == "PAYMENT_CARD")
+        assertTrue(event.eventName == "PAYMENT_SUBMITTED")
+    }
+
+    @Test
+    fun `companion factory method card() should create PaymentProcessingStarted with PAYMENT_CARD`() {
+        val event = EventType.PaymentProcessingStarted.card()
+
+        assertTrue(event.paymentMethod == "PAYMENT_CARD")
+        assertTrue(event.eventName == "PAYMENT_PROCESSING_STARTED")
+    }
+
+    @Test
+    fun `companion factory method card() should create PaymentSuccess with PAYMENT_CARD and paymentId`() {
+        val event = EventType.PaymentSuccess.card("payment-789")
+
+        assertTrue(event.paymentMethod == "PAYMENT_CARD")
+        assertTrue(event.paymentId == "payment-789")
+        assertTrue(event.eventName == "PAYMENT_SUCCESS")
+    }
+
+    @Test
+    fun `companion factory method card() should create PaymentFailure with PAYMENT_CARD and optional paymentId`() {
+        val eventWithId = EventType.PaymentFailure.card("payment-fail-123")
+        assertTrue(eventWithId.paymentMethod == "PAYMENT_CARD")
+        assertTrue(eventWithId.paymentId == "payment-fail-123")
+        assertTrue(eventWithId.eventName == "PAYMENT_FAILURE")
+
+        val eventWithoutId = EventType.PaymentFailure.card()
+        assertTrue(eventWithoutId.paymentMethod == "PAYMENT_CARD")
+        assertTrue(eventWithoutId.paymentId == null)
+        assertTrue(eventWithoutId.eventName == "PAYMENT_FAILURE")
     }
 }

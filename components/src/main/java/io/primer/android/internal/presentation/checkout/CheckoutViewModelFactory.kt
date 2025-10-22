@@ -2,6 +2,7 @@ package io.primer.android.internal.presentation.checkout
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import io.primer.android.configuration.di.ConfigurationCoreContainer
 import io.primer.android.core.di.DISdkComponent
 import io.primer.android.core.di.extensions.resolve
 
@@ -12,9 +13,8 @@ internal class CheckoutViewModelFactory : ViewModelProvider.Factory, DISdkCompon
             return CheckoutViewModel(
                 availablePaymentMethodsUseCase = resolve(),
                 checkoutNavigator = resolve(),
-                componentsEventsRepository = null,
                 basicOrderInfoInteractor = resolve(),
-                configurationRepository = resolve(),
+                configurationInteractor = resolve(ConfigurationCoreContainer.CONFIGURATION_INTERACTOR_DI_KEY),
             ) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")

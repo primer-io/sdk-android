@@ -5,6 +5,8 @@ import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import io.mockk.verifyOrder
+import io.primer.android.components.analytics.data.model.EventType
 import io.primer.android.components.analytics.data.repository.ComponentsEventsRepository
 import io.primer.android.components.domain.inputs.models.PrimerInputElementType
 import io.primer.android.configuration.data.model.CardNetwork
@@ -12,6 +14,7 @@ import io.primer.android.configuration.data.model.CountryCode
 import io.primer.android.core.InstantExecutorExtension
 import io.primer.android.core.logging.internal.LogReporter
 import io.primer.android.domain.PrimerCheckoutData
+import io.primer.android.domain.payments.create.model.Payment
 import io.primer.android.internal.domain.usecase.CardFieldsUseCase
 import io.primer.android.internal.domain.usecase.CardNetworkUseCase
 import io.primer.android.internal.domain.usecase.SubmitCardPaymentUseCase
@@ -177,11 +180,15 @@ class CardFormViewModelTest {
             PrimerInputElementType.CARD_NUMBER to "4111111111111111",
             PrimerInputElementType.CVV to "123",
         )
+        val payment = mockk<Payment>()
+        every { payment.id } returns "payment-id"
+        val checkoutData = mockk<PrimerCheckoutData>()
+        every { checkoutData.payment } returns payment
 
         coEvery { cardFieldsUseCase.markSubmitAttempted() } returns Unit
         coEvery { cardFieldsUseCase.isSubmitAllowed() } returns true
         every { cardFieldsUseCase.formData } returns flowOf(formData)
-        coEvery { submitCardPaymentUseCase(formData) } returns Result.success(mockk<PrimerCheckoutData>())
+        coEvery { submitCardPaymentUseCase(formData) } returns Result.success(checkoutData)
 
         viewModel.onSubmit()
         advanceUntilIdle()
@@ -319,13 +326,17 @@ class CardFormViewModelTest {
         val formData = mapOf(
             PrimerInputElementType.CARD_NUMBER to "4111111111111111",
         )
+        val payment = mockk<Payment>()
+        every { payment.id } returns "payment-id"
+        val checkoutData = mockk<PrimerCheckoutData>()
+        every { checkoutData.payment } returns payment
 
         coEvery { cardFieldsUseCase.markSubmitAttempted() } returns Unit
         coEvery { cardFieldsUseCase.isSubmitAllowed() } returns true
         every { cardFieldsUseCase.formData } returns flowOf(formData)
         coEvery { submitCardPaymentUseCase(formData) } coAnswers {
             kotlinx.coroutines.delay(100)
-            Result.success(mockk<PrimerCheckoutData>())
+            Result.success(checkoutData)
         }
 
         val stateChanges = mutableListOf<Boolean>()
@@ -367,5 +378,163 @@ class CardFormViewModelTest {
         verify(exactly = 1) { cardFieldsUseCase.updateField(PrimerInputElementType.LAST_NAME, "Doe") }
         verify(exactly = 1) { cardFieldsUseCase.updateField(PrimerInputElementType.RETAIL_OUTLET, "Store 1") }
         verify(exactly = 1) { cardFieldsUseCase.updateField(PrimerInputElementType.OTP_CODE, "123456") }
+    }
+
+    @Test
+    fun `when all details entered should send PaymentDetailsEntered event`() = runTest {
+        coEvery { cardFieldsUseCase.isSubmitAllowed() } returns true
+
+        // Trigger validation with empty errors
+        validationErrorsFlow.value = emptyList()
+        advanceUntilIdle()
+
+        verify(exactly = 1) {
+            componentsEventsRepository.send(EventType.PaymentDetailsEntered.card(), any())
+        }
+    }
+
+    @Test
+    fun `PaymentDetailsEntered event should only fire once per session`() = runTest {
+        coEvery { cardFieldsUseCase.isSubmitAllowed() } returns true
+
+        // Trigger validation multiple times with empty errors
+        validationErrorsFlow.value = emptyList()
+        advanceUntilIdle()
+
+        validationErrorsFlow.value = emptyList()
+        advanceUntilIdle()
+
+        // Should only fire once
+        verify(exactly = 1) {
+            componentsEventsRepository.send(EventType.PaymentDetailsEntered.card(), any())
+        }
+    }
+
+    @Test
+    fun `onSubmit should send PaymentSubmitted event`() = runTest {
+        coEvery { cardFieldsUseCase.markSubmitAttempted() } returns Unit
+        coEvery { cardFieldsUseCase.isSubmitAllowed() } returns false
+
+        viewModel.onSubmit()
+        advanceUntilIdle()
+
+        verify(exactly = 1) {
+            componentsEventsRepository.send(EventType.PaymentSubmitted.card(), any())
+        }
+    }
+
+    @Test
+    fun `onSubmit when validation passes should send PaymentProcessingStarted event`() = runTest {
+        val formData = mapOf(
+            PrimerInputElementType.CARD_NUMBER to "4111111111111111",
+        )
+        val payment = mockk<Payment>()
+        every { payment.id } returns "payment-id"
+        val checkoutData = mockk<PrimerCheckoutData>()
+        every { checkoutData.payment } returns payment
+
+        coEvery { cardFieldsUseCase.markSubmitAttempted() } returns Unit
+        coEvery { cardFieldsUseCase.isSubmitAllowed() } returns true
+        every { cardFieldsUseCase.formData } returns flowOf(formData)
+        coEvery { submitCardPaymentUseCase(formData) } returns Result.success(checkoutData)
+
+        viewModel.onSubmit()
+        advanceUntilIdle()
+
+        verify(exactly = 1) {
+            componentsEventsRepository.send(EventType.PaymentProcessingStarted.card(), any())
+        }
+    }
+
+    @Test
+    fun `onSubmit when payment succeeds should send PaymentSuccess event with paymentId`() = runTest {
+        val formData = mapOf(
+            PrimerInputElementType.CARD_NUMBER to "4111111111111111",
+        )
+        val paymentId = "payment-123-abc"
+        val payment = mockk<Payment>()
+        every { payment.id } returns paymentId
+
+        val checkoutData = mockk<PrimerCheckoutData>()
+        every { checkoutData.payment } returns payment
+
+        coEvery { cardFieldsUseCase.markSubmitAttempted() } returns Unit
+        coEvery { cardFieldsUseCase.isSubmitAllowed() } returns true
+        every { cardFieldsUseCase.formData } returns flowOf(formData)
+        coEvery { submitCardPaymentUseCase(formData) } returns Result.success(checkoutData)
+
+        viewModel.onSubmit()
+        advanceUntilIdle()
+
+        verify(exactly = 1) {
+            componentsEventsRepository.send(EventType.PaymentSuccess.card(paymentId), any())
+        }
+    }
+
+    @Test
+    fun `onSubmit when payment fails should send PaymentFailure event`() = runTest {
+        val formData = mapOf(
+            PrimerInputElementType.CARD_NUMBER to "4111111111111111",
+        )
+
+        coEvery { cardFieldsUseCase.markSubmitAttempted() } returns Unit
+        coEvery { cardFieldsUseCase.isSubmitAllowed() } returns true
+        every { cardFieldsUseCase.formData } returns flowOf(formData)
+        coEvery { submitCardPaymentUseCase(formData) } returns Result.failure(Exception("Payment declined"))
+
+        viewModel.onSubmit()
+        advanceUntilIdle()
+
+        verify(exactly = 1) {
+            componentsEventsRepository.send(EventType.PaymentFailure.card(), any())
+        }
+    }
+
+    @Test
+    fun `onSubmit should send events in correct order on success`() = runTest {
+        val formData = mapOf(
+            PrimerInputElementType.CARD_NUMBER to "4111111111111111",
+        )
+        val paymentId = "payment-456"
+        val payment = mockk<Payment>()
+        every { payment.id } returns paymentId
+
+        val checkoutData = mockk<PrimerCheckoutData>()
+        every { checkoutData.payment } returns payment
+
+        coEvery { cardFieldsUseCase.markSubmitAttempted() } returns Unit
+        coEvery { cardFieldsUseCase.isSubmitAllowed() } returns true
+        every { cardFieldsUseCase.formData } returns flowOf(formData)
+        coEvery { submitCardPaymentUseCase(formData) } returns Result.success(checkoutData)
+
+        viewModel.onSubmit()
+        advanceUntilIdle()
+
+        verifyOrder {
+            componentsEventsRepository.send(EventType.PaymentSubmitted.card(), any())
+            componentsEventsRepository.send(EventType.PaymentProcessingStarted.card(), any())
+            componentsEventsRepository.send(EventType.PaymentSuccess.card(paymentId), any())
+        }
+    }
+
+    @Test
+    fun `onSubmit should send events in correct order on failure`() = runTest {
+        val formData = mapOf(
+            PrimerInputElementType.CARD_NUMBER to "4111111111111111",
+        )
+
+        coEvery { cardFieldsUseCase.markSubmitAttempted() } returns Unit
+        coEvery { cardFieldsUseCase.isSubmitAllowed() } returns true
+        every { cardFieldsUseCase.formData } returns flowOf(formData)
+        coEvery { submitCardPaymentUseCase(formData) } returns Result.failure(Exception("Declined"))
+
+        viewModel.onSubmit()
+        advanceUntilIdle()
+
+        verifyOrder {
+            componentsEventsRepository.send(EventType.PaymentSubmitted.card(), any())
+            componentsEventsRepository.send(EventType.PaymentProcessingStarted.card(), any())
+            componentsEventsRepository.send(EventType.PaymentFailure.card(), any())
+        }
     }
 }

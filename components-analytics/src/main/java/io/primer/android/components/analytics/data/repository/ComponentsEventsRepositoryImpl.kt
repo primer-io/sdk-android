@@ -40,10 +40,13 @@ internal class ComponentsEventsRepositoryImpl(
         AnalyticsEnvironmentUrlProvider.getAnalyticsUrl(environment)
     }
 
-    override fun send(event: EventType, timestamp: Long) {
+    override fun send(
+        event: EventType,
+        timestamp: Long,
+    ) {
         val analyticsEvent = AnalyticsEvent(
             id = UUID.randomUUID().toString(),
-            eventName = event.value,
+            eventName = event.eventName,
             timeInSeconds = timestamp / 1000,
             checkoutSessionId = checkoutSessionId,
             clientSessionId = configurationData.clientSession.clientSessionId ?: "",
@@ -52,6 +55,11 @@ internal class ComponentsEventsRepositoryImpl(
             device = deviceInfoProvider.getDevice(),
             deviceType = deviceInfoProvider.getDeviceType(),
             userLocale = deviceInfoProvider.getUserLocale(),
+            paymentMethod = event.paymentMethod,
+            paymentId = event.paymentId,
+            redirectDestinationUrl = event.redirectDestinationUrl,
+            threedsProvider = event.threedsProvider,
+            threedsResponse = event.threedsResponse,
         )
 
         // Fire-and-forget with proper error handling
@@ -64,10 +72,12 @@ internal class ComponentsEventsRepositoryImpl(
         )
             .flowOn(Dispatchers.IO)
             .onEach { response ->
-                logReporter.debug("Analytics event sent successfully: ${event.value}, result: ${response.body.result}")
+                logReporter.debug(
+                    "Analytics event sent successfully: ${event.eventName}, result: ${response.body.result}",
+                )
             }
             .catch { error ->
-                logReporter.debug("Failed to send analytics event '${event.value}': ${error.message}")
+                logReporter.debug("Failed to send analytics event '${event.eventName}': ${error.message}")
             }
             .launchIn(scope)
     }

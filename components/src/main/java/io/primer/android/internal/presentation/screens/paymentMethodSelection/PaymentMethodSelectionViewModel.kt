@@ -35,6 +35,7 @@ internal class PaymentMethodSelectionViewModel(
     }
 
     private fun loadPaymentMethods() {
+        componentsEventsRepository.send(EventType.CheckoutFlowStarted)
         _uiState.value = PrimerPaymentMethodSelectionScope.State(
             paymentMethods = availablePaymentMethodsUseCase.cache,
         )
@@ -69,7 +70,9 @@ internal class PaymentMethodSelectionViewModel(
     }
 
     override fun onPaymentMethodSelected(paymentMethod: String) {
-        componentsEventsRepository.send(EventType.PAYMENT_METHOD_SELECTION)
+        componentsEventsRepository.send(
+            EventType.PaymentMethodSelection(paymentMethod),
+        )
         viewModelScope.launch {
             when (paymentMethod) {
                 PaymentMethodType.PAYMENT_CARD.name -> {

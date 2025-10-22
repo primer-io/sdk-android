@@ -5,9 +5,11 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.verify
+import io.primer.android.components.analytics.data.model.EventType
 import io.primer.android.components.analytics.data.repository.ComponentsEventsRepository
+import io.primer.android.configuration.domain.ConfigurationInteractor
 import io.primer.android.configuration.domain.model.Configuration
-import io.primer.android.configuration.domain.repository.ConfigurationRepository
 import io.primer.android.core.InstantExecutorExtension
 import io.primer.android.core.domain.None
 import io.primer.android.internal.domain.usecase.AvailablePaymentMethodsUseCase
@@ -31,7 +33,7 @@ class CheckoutViewModelTest {
     private lateinit var checkoutNavigator: CheckoutNavigator
     private lateinit var componentsEventsRepository: ComponentsEventsRepository
     private lateinit var basicOrderInfoInteractor: BasicOrderInfoInteractor
-    private lateinit var configurationRepository: ConfigurationRepository
+    private lateinit var configurationInteractor: ConfigurationInteractor
     private lateinit var viewModel: CheckoutViewModel
 
     @BeforeEach
@@ -40,37 +42,32 @@ class CheckoutViewModelTest {
         checkoutNavigator = mockk(relaxed = true)
         componentsEventsRepository = mockk(relaxed = true)
         basicOrderInfoInteractor = mockk()
-        configurationRepository = mockk()
+        configurationInteractor = mockk()
 
         val orderInfo = BasicOrderInfo(totalAmount = 1000, currencyCode = "USD")
         every { basicOrderInfoInteractor(None) } returns orderInfo
-        coEvery { configurationRepository.fetchConfiguration(any()) } returns Result.success(mockk<Configuration>())
+        coEvery { configurationInteractor(any()) } returns Result.success(mockk<Configuration>())
         coEvery { availablePaymentMethodsUseCase() } returns Result.success(Unit)
 
         viewModel = CheckoutViewModel(
             availablePaymentMethodsUseCase = availablePaymentMethodsUseCase,
             checkoutNavigator = checkoutNavigator,
-            componentsEventsRepository = componentsEventsRepository,
             basicOrderInfoInteractor = basicOrderInfoInteractor,
-            configurationRepository = configurationRepository,
+            configurationInteractor = configurationInteractor,
+            componentsEventsRepository = componentsEventsRepository,
         )
     }
 
     @Test
-    fun `should call loadPaymentMethods in init block`() = runTest {
+    fun `init should call configurationInteractor, availablePaymentMethodsUseCase and basicOrderInfoInteractor`() = runTest {
         advanceUntilIdle()
-        coVerify(exactly = 1) { configurationRepository.fetchConfiguration(any()) }
+        coVerify(exactly = 1) { configurationInteractor(any()) }
         coVerify(exactly = 1) { availablePaymentMethodsUseCase() }
+        coVerify(exactly = 1) { basicOrderInfoInteractor(None) }
     }
 
     @Test
-    fun `loadPaymentMethods should fetch configuration before loading payment methods`() = runTest {
-        advanceUntilIdle()
-        coVerify(exactly = 1) { configurationRepository.fetchConfiguration(any()) }
-    }
-
-    @Test
-    fun `loadPaymentMethods when success should update state to Ready`() = runTest {
+    fun `init when success should update state to Ready`() = runTest {
         advanceUntilIdle()
         val state = viewModel.state.value
         assertTrue(state is PrimerCheckoutScope.State.Ready)
@@ -79,75 +76,93 @@ class CheckoutViewModelTest {
     }
 
     @Test
-    fun `loadPaymentMethods when success should call navigateToPaymentMethodsList`() = runTest {
+    fun `init when success should call navigateToPaymentMethodsList`() = runTest {
         advanceUntilIdle()
         coVerify(exactly = 1) { checkoutNavigator.navigateToPaymentMethodsList() }
     }
 
     @Test
-    fun `loadPaymentMethods when failure should update state to Error with exception`() = runTest {
-        val exception = RuntimeException("Test error")
-        coEvery { availablePaymentMethodsUseCase() } returns Result.failure(exception)
+    fun `init when success should send SDK_INIT_START and SDK_INIT_END events`() = runTest {
+        advanceUntilIdle()
+        verify(exactly = 1) { componentsEventsRepository.send(EventType.SdkInitStart, any()) }
+        verify(exactly = 1) { componentsEventsRepository.send(EventType.SdkInitEnd, any()) }
+    }
 
-        // Reset the viewModel state by creating a new instance for failure scenario
-        viewModel = CheckoutViewModel(
+    @Test
+    fun `init when configurationInteractor fails should update state to Error`() = runTest {
+        val exception = RuntimeException("Configuration error")
+
+        val failingConfigInteractor = mockk<ConfigurationInteractor>()
+        coEvery { failingConfigInteractor(any()) } returns Result.failure(exception)
+
+        val failingViewModel = CheckoutViewModel(
             availablePaymentMethodsUseCase = availablePaymentMethodsUseCase,
-            checkoutNavigator = checkoutNavigator,
-            componentsEventsRepository = componentsEventsRepository,
+            checkoutNavigator = mockk(relaxed = true),
             basicOrderInfoInteractor = basicOrderInfoInteractor,
-            configurationRepository = configurationRepository,
+            configurationInteractor = failingConfigInteractor,
+            componentsEventsRepository = componentsEventsRepository,
         )
 
         advanceUntilIdle()
 
-        val state = viewModel.state.value
+        val state = failingViewModel.state.value
         assertTrue(state is PrimerCheckoutScope.State.Error)
         assertEquals(exception, (state as PrimerCheckoutScope.State.Error).exception)
     }
 
     @Test
-    fun `loadPaymentMethods when failure with message should navigate to error with exact message`() = runTest {
-        val errorMessage = "Payment methods failed to load"
+    fun `init when failure with message should navigate to error with exact message`() = runTest {
+        val errorMessage = "Configuration failed"
         val exception = RuntimeException(errorMessage)
-        coEvery { availablePaymentMethodsUseCase() } returns Result.failure(exception)
+        val navigator = mockk<CheckoutNavigator>(relaxed = true)
 
-        // Reset the viewModel state by creating a new instance for failure scenario
-        viewModel = CheckoutViewModel(
+        val failingConfigInteractor = mockk<ConfigurationInteractor>()
+        coEvery { failingConfigInteractor(any()) } returns Result.failure(exception)
+
+        CheckoutViewModel(
             availablePaymentMethodsUseCase = availablePaymentMethodsUseCase,
-            checkoutNavigator = checkoutNavigator,
-            componentsEventsRepository = componentsEventsRepository,
+            checkoutNavigator = navigator,
             basicOrderInfoInteractor = basicOrderInfoInteractor,
-            configurationRepository = configurationRepository,
+            configurationInteractor = failingConfigInteractor,
+            componentsEventsRepository = componentsEventsRepository,
         )
 
         advanceUntilIdle()
 
-        coVerify(exactly = 1) { checkoutNavigator.navigateToError(errorMessage) }
+        coVerify(exactly = 1) { navigator.navigateToError(errorMessage) }
     }
 
     @Test
-    fun `loadPaymentMethods when failure with null message should navigate to error with default message`() = runTest {
+    fun `init when failure with null message should navigate to error with default message`() = runTest {
         val exception = RuntimeException(null as String?)
-        coEvery { availablePaymentMethodsUseCase() } returns Result.failure(exception)
+        val navigator = mockk<CheckoutNavigator>(relaxed = true)
 
-        // Reset the viewModel state by creating a new instance for failure scenario
-        viewModel = CheckoutViewModel(
+        val failingConfigInteractor = mockk<ConfigurationInteractor>()
+        coEvery { failingConfigInteractor(any()) } returns Result.failure(exception)
+
+        CheckoutViewModel(
             availablePaymentMethodsUseCase = availablePaymentMethodsUseCase,
-            checkoutNavigator = checkoutNavigator,
-            componentsEventsRepository = componentsEventsRepository,
+            checkoutNavigator = navigator,
             basicOrderInfoInteractor = basicOrderInfoInteractor,
-            configurationRepository = configurationRepository,
+            configurationInteractor = failingConfigInteractor,
+            componentsEventsRepository = componentsEventsRepository,
         )
 
         advanceUntilIdle()
 
-        coVerify(exactly = 1) { checkoutNavigator.navigateToError("Failed to load payment methods") }
+        coVerify(exactly = 1) { navigator.navigateToError("Failed to load payment methods") }
     }
 
     @Test
     fun `onDismiss should update state value to Dismissed`() = runTest {
         viewModel.onDismiss()
         assertEquals(PrimerCheckoutScope.State.Dismissed, viewModel.state.value)
+    }
+
+    @Test
+    fun `onDismiss should send PAYMENT_FLOW_EXITED event`() = runTest {
+        viewModel.onDismiss()
+        verify(exactly = 1) { componentsEventsRepository.send(EventType.PaymentFlowExited, any()) }
     }
 
     @Test
@@ -170,47 +185,13 @@ class CheckoutViewModelTest {
 
     @Test
     fun `onRetry should call navigateBack`() = runTest {
-        advanceUntilIdle()
         viewModel.onRetry()
         coVerify(exactly = 1) { checkoutNavigator.navigateBack() }
     }
 
     @Test
-    fun `loadPaymentMethods when configuration fetch fails should update state to Error`() = runTest {
-        val exception = RuntimeException("Configuration fetch failed")
-        coEvery { configurationRepository.fetchConfiguration(any()) } returns Result.failure(exception)
-
-        viewModel = CheckoutViewModel(
-            availablePaymentMethodsUseCase = availablePaymentMethodsUseCase,
-            checkoutNavigator = checkoutNavigator,
-            componentsEventsRepository = componentsEventsRepository,
-            basicOrderInfoInteractor = basicOrderInfoInteractor,
-            configurationRepository = configurationRepository,
-        )
-
-        advanceUntilIdle()
-
-        val state = viewModel.state.value
-        assertTrue(state is PrimerCheckoutScope.State.Error)
-        assertEquals(exception, (state as PrimerCheckoutScope.State.Error).exception)
-    }
-
-    @Test
-    fun `loadPaymentMethods when configuration fetch fails should navigate to error`() = runTest {
-        val errorMessage = "Configuration fetch failed"
-        val exception = RuntimeException(errorMessage)
-        coEvery { configurationRepository.fetchConfiguration(any()) } returns Result.failure(exception)
-
-        viewModel = CheckoutViewModel(
-            availablePaymentMethodsUseCase = availablePaymentMethodsUseCase,
-            checkoutNavigator = checkoutNavigator,
-            componentsEventsRepository = componentsEventsRepository,
-            basicOrderInfoInteractor = basicOrderInfoInteractor,
-            configurationRepository = configurationRepository,
-        )
-
-        advanceUntilIdle()
-
-        coVerify(exactly = 1) { checkoutNavigator.navigateToError(errorMessage) }
+    fun `onRetry should send PAYMENT_REATTEMPTED event`() = runTest {
+        viewModel.onRetry()
+        verify(exactly = 1) { componentsEventsRepository.send(EventType.PaymentReattempted, any()) }
     }
 }

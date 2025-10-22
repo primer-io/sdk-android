@@ -5,6 +5,7 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import io.primer.android.PrimerSessionIntent
+import io.primer.android.components.analytics.data.model.EventType
 import io.primer.android.components.analytics.data.repository.ComponentsEventsRepository
 import io.primer.android.components.domain.core.models.PrimerPaymentMethodManagerCategory
 import io.primer.android.configuration.domain.model.Surcharge
@@ -47,6 +48,17 @@ class PaymentMethodSelectionViewModelTest {
         availablePaymentMethodsUseCase = mockk()
         formatAmountToCurrencyInteractor = mockk()
         componentsEventsRepository = mockk(relaxed = true)
+    }
+
+    private fun createViewModel(paymentMethods: List<PrimerComposablePaymentMethod> = emptyList()): PaymentMethodSelectionViewModel {
+        every { availablePaymentMethodsUseCase.cache } returns paymentMethods
+        return PaymentMethodSelectionViewModel(
+            basicOrderInfoInteractor = basicOrderInfoInteractor,
+            checkoutNavigator = checkoutNavigator,
+            availablePaymentMethodsUseCase = availablePaymentMethodsUseCase,
+            formatAmountToCurrencyInteractor = formatAmountToCurrencyInteractor,
+            componentsEventsRepository = componentsEventsRepository,
+        )
     }
 
     @Test
@@ -297,4 +309,72 @@ class PaymentMethodSelectionViewModelTest {
         assertEquals(1, state.paymentMethods.size)
         assertEquals(surcharge, state.paymentMethods.first().surcharge)
     }
+
+    // region Analytics Event Tests
+
+    @Test
+    fun `init should send CheckoutFlowStarted event`() = runTest {
+        viewModel = createViewModel()
+
+        verify(exactly = 1) { componentsEventsRepository.send(EventType.CheckoutFlowStarted, any()) }
+    }
+
+    @Test
+    fun `onPaymentMethodSelected should send PaymentMethodSelection event with correct paymentMethod`() = runTest {
+        viewModel = createViewModel()
+
+        viewModel.onPaymentMethodSelected(PaymentMethodType.PAYMENT_CARD.name)
+        advanceUntilIdle()
+
+        verify(exactly = 1) {
+            componentsEventsRepository.send(
+                match {
+                    it is EventType.PaymentMethodSelection &&
+                        it.paymentMethod == PaymentMethodType.PAYMENT_CARD.name
+                },
+                any(),
+            )
+        }
+        coVerify(exactly = 1) { checkoutNavigator.navigateTo(Screen.CardForm) }
+    }
+
+    @Test
+    fun `onPaymentMethodSelected with GOOGLE_PAY should send event with correct paymentMethod`() = runTest {
+        viewModel = createViewModel()
+
+        viewModel.onPaymentMethodSelected(PaymentMethodType.GOOGLE_PAY.name)
+        advanceUntilIdle()
+
+        verify(exactly = 1) {
+            componentsEventsRepository.send(
+                match {
+                    it is EventType.PaymentMethodSelection &&
+                        it.paymentMethod == PaymentMethodType.GOOGLE_PAY.name
+                },
+                any(),
+            )
+        }
+        coVerify(exactly = 1) { checkoutNavigator.navigateTo(Screen.NativeUi(PaymentMethodType.GOOGLE_PAY.name)) }
+    }
+
+    @Test
+    fun `onPaymentMethodSelected with unknown method should send event but not navigate`() = runTest {
+        viewModel = createViewModel()
+
+        viewModel.onPaymentMethodSelected("UNKNOWN_PAYMENT_METHOD")
+        advanceUntilIdle()
+
+        verify(exactly = 1) {
+            componentsEventsRepository.send(
+                match {
+                    it is EventType.PaymentMethodSelection &&
+                        it.paymentMethod == "UNKNOWN_PAYMENT_METHOD"
+                },
+                any(),
+            )
+        }
+        coVerify(exactly = 0) { checkoutNavigator.navigateTo(any()) }
+    }
+
+    // endregion
 }

@@ -4,10 +4,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import io.primer.android.components.analytics.data.model.EventType
 import io.primer.android.components.analytics.data.repository.ComponentsEventsRepository
+import io.primer.android.components.analytics.di.ComponentsAnalyticsContainer
 import io.primer.android.configuration.domain.CachePolicy
-import io.primer.android.configuration.domain.repository.ConfigurationRepository
+import io.primer.android.configuration.domain.ConfigurationInteractor
+import io.primer.android.configuration.domain.model.ConfigurationParams
+import io.primer.android.core.di.DISdkContext
 import io.primer.android.core.domain.None
-import io.primer.android.core.extensions.flatMap
+import io.primer.android.internal.di.ComponentsContainer
 import io.primer.android.internal.domain.usecase.AvailablePaymentMethodsUseCase
 import io.primer.android.scope.PrimerCheckoutScope
 import io.primer.android.ui.core.configuration.domain.model.BasicOrderInfoInteractor
@@ -19,33 +22,36 @@ import kotlinx.coroutines.launch
 internal class CheckoutViewModel(
     private val availablePaymentMethodsUseCase: AvailablePaymentMethodsUseCase,
     private val checkoutNavigator: CheckoutNavigator,
-    private val componentsEventsRepository: ComponentsEventsRepository?, // TODO Darius fix the DI to send events
     private val basicOrderInfoInteractor: BasicOrderInfoInteractor,
-    private val configurationRepository: ConfigurationRepository,
+    private val configurationInteractor: ConfigurationInteractor,
+    componentsEventsRepository: ComponentsEventsRepository? = null,
 ) : ViewModel(), PrimerCheckoutScope {
 
     private val _state =
         MutableStateFlow<PrimerCheckoutScope.State>(PrimerCheckoutScope.State.Initializing)
     override val state: StateFlow<PrimerCheckoutScope.State> = _state.asStateFlow()
 
-    init {
-        loadPaymentMethods()
+    private val eventsRepository: ComponentsEventsRepository by lazy {
+        componentsEventsRepository ?: DISdkContext.container().resolve()
     }
 
-    private fun loadPaymentMethods() {
+    init {
+        val realStartTime = System.currentTimeMillis()
         viewModelScope.launch {
-            configurationRepository.fetchConfiguration(CachePolicy.CacheFirst)
-                .flatMap { availablePaymentMethodsUseCase() }
+            configurationInteractor.invoke(ConfigurationParams(CachePolicy.CacheFirst))
+                .mapCatching { availablePaymentMethodsUseCase() }
+                .mapCatching { basicOrderInfoInteractor(None) }
                 .onSuccess {
-                    val orderInfo = basicOrderInfoInteractor(None)
+                    eventsRepository.send(EventType.SdkInitStart, realStartTime)
+                    eventsRepository.send(EventType.SdkInitEnd)
                     _state.value = PrimerCheckoutScope.State.Ready(
-                        totalAmount = orderInfo.totalAmount,
-                        currencyCode = orderInfo.currencyCode,
+                        totalAmount = it.totalAmount,
+                        currencyCode = it.currencyCode,
                     )
-                    componentsEventsRepository?.send(EventType.CHECKOUT_FLOW_STARTED)
                     checkoutNavigator.navigateToPaymentMethodsList()
                 }
                 .onFailure {
+                    // TODO: Consider adding EventType.SdkInitFailed for tracking initialization failures
                     _state.value = PrimerCheckoutScope.State.Error(it)
                     checkoutNavigator.navigateToError(it.message ?: "Failed to load payment methods")
                 }
@@ -53,8 +59,18 @@ internal class CheckoutViewModel(
     }
 
     override fun onDismiss() {
-        componentsEventsRepository?.send(EventType.PAYMENT_FLOW_EXITED)
+        eventsRepository.send(EventType.PaymentFlowExited)
         _state.value = PrimerCheckoutScope.State.Dismissed
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        DISdkContext.componentsSdkContainer?.apply {
+            unregisterContainer<ComponentsContainer>()
+            unregisterContainer<ComponentsAnalyticsContainer>()
+            clear()
+        }
+        DISdkContext.componentsSdkContainer = null
     }
 
     override suspend fun onOtherPaymentMethods() {
@@ -62,7 +78,7 @@ internal class CheckoutViewModel(
     }
 
     override suspend fun onRetry() {
-        componentsEventsRepository?.send(EventType.PAYMENT_REATTEMPTED)
+        eventsRepository.send(EventType.PaymentReattempted)
         checkoutNavigator.navigateBack()
     }
 }

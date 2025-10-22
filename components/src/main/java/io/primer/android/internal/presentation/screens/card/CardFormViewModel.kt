@@ -63,7 +63,7 @@ internal class CardFormViewModel(
                     viewModelScope.launch {
                         if (cardFieldsUseCase.isSubmitAllowed()) {
                             hasEnteredAllDetails = true
-                            componentsEventsRepository.send(EventType.PAYMENT_DETAILS_ENTERED)
+                            componentsEventsRepository.send(EventType.PaymentDetailsEntered.card())
                         }
                     }
                 }
@@ -177,7 +177,7 @@ internal class CardFormViewModel(
 
     override fun onSubmit() {
         viewModelScope.launch {
-            componentsEventsRepository.send(EventType.PAYMENT_SUBMITTED)
+            componentsEventsRepository.send(EventType.PaymentSubmitted.card())
             cardFieldsUseCase.markSubmitAttempted()
             if (!cardFieldsUseCase.isSubmitAllowed()) {
                 logReporter.debug("Validation failed, not proceeding with submission")
@@ -185,20 +185,22 @@ internal class CardFormViewModel(
             }
 
             _uiState.update { it.copy(isLoading = true, isFormEnabled = false) }
-            componentsEventsRepository.send(EventType.PAYMENT_PROCESSING_STARTED)
+            componentsEventsRepository.send(EventType.PaymentProcessingStarted.card())
 
             submitCardPaymentUseCase(cardFieldsUseCase.formData.first())
                 .fold(
-                    onSuccess = {
+                    onSuccess = { checkoutData ->
                         logReporter.debug("Payment completed successfully")
                         _uiState.update { it.copy(isLoading = false, isFormEnabled = true) }
-                        componentsEventsRepository.send(EventType.PAYMENT_SUCCESS)
+                        componentsEventsRepository.send(
+                            EventType.PaymentSuccess.card(checkoutData.payment.id),
+                        )
                         checkoutNavigator.navigateToSuccess()
                     },
                     onFailure = { error ->
                         logReporter.error("Payment failed: ${error.message}")
                         _uiState.update { it.copy(isLoading = false, isFormEnabled = true) }
-                        componentsEventsRepository.send(EventType.PAYMENT_FAILURE)
+                        componentsEventsRepository.send(EventType.PaymentFailure.card())
                         checkoutNavigator.navigateToError(error.message ?: "Payment failed")
                     },
                 )

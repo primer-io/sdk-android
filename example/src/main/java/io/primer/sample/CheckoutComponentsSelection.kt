@@ -37,6 +37,7 @@ import io.primer.sample.demos.CheckoutDemo
 import io.primer.sample.demos.CheckoutDemo.Companion.getBackground
 import io.primer.sample.demos.CustomCardComponentDemo
 import io.primer.sample.demos.CustomCardFormLayoutDemo
+import io.primer.sample.demos.AnimatedSplashScreenDemo
 import io.primer.sample.demos.CustomSuccessDemo
 import io.primer.sample.demos.DatePickerExpiryDemo
 import io.primer.sample.demos.FullscreenDemo
@@ -164,6 +165,7 @@ private fun getAllDemos(): List<CheckoutDemo> = listOf(
     LargeTypographyThemeDemo,
     // Other Demos
     FullscreenDemo,
+    AnimatedSplashScreenDemo,
     CustomSuccessDemo,
     CustomCardComponentDemo,
     SubmitOverrideDemo,

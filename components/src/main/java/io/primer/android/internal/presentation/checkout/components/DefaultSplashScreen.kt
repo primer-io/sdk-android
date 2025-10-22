@@ -3,6 +3,7 @@ package io.primer.android.internal.presentation.checkout.components
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -17,7 +18,9 @@ import io.primer.android.internal.presentation.components.PrimerLoading
 @Composable
 internal fun DefaultSplashScreen() {
     Column(
-        modifier = Modifier.height(300.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(300.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
