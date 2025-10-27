@@ -7,9 +7,7 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.verify
-import io.primer.android.components.analytics.data.model.EventType.PAYMENT_FAILURE
-import io.primer.android.components.analytics.data.model.EventType.PAYMENT_SUBMITTED
-import io.primer.android.components.analytics.data.model.EventType.PAYMENT_SUCCESS
+import io.primer.android.components.analytics.data.model.EventType
 import io.primer.android.components.analytics.data.repository.ComponentsEventsRepository
 import io.primer.android.components.domain.error.PrimerValidationError
 import io.primer.android.components.domain.payments.vault.model.card.PrimerVaultedCardAdditionalData
@@ -145,8 +143,8 @@ class VaultedPaymentMethodSelectionViewModelTest {
         assertEquals(false, state.isCvvRequired)
         assertNull(state.error)
         assertTrue(state.stage is PrimerVaultedScope.State.Stage.Selection)
-        verify { mockComponentsEventsRepository.send(PAYMENT_SUBMITTED, any()) }
-        verify { mockComponentsEventsRepository.send(PAYMENT_SUCCESS, any()) }
+        verify { mockComponentsEventsRepository.send(match { it is EventType.PaymentSubmitted }, any()) }
+        verify { mockComponentsEventsRepository.send(match { it is EventType.PaymentSuccess }, any()) }
         coVerify { mockCheckoutNavigator.navigateToSuccess() }
     }
 
@@ -168,8 +166,8 @@ class VaultedPaymentMethodSelectionViewModelTest {
         val state = viewModel.state.value
         assertEquals(false, state.isProcessing)
         assertEquals(expected, state.error)
-        verify { mockComponentsEventsRepository.send(PAYMENT_SUBMITTED, any()) }
-        verify { mockComponentsEventsRepository.send(PAYMENT_FAILURE, any()) }
+        verify { mockComponentsEventsRepository.send(match { it is EventType.PaymentSubmitted }, any()) }
+        verify { mockComponentsEventsRepository.send(match { it is EventType.PaymentFailure }, any()) }
         coVerify { mockCheckoutNavigator.navigateToError(expected.message ?: "") }
     }
 
@@ -179,7 +177,9 @@ class VaultedPaymentMethodSelectionViewModelTest {
         coEvery { mockFetchVaultedPaymentMethodsUseCase() } returns Result.success(listOf(method))
         coEvery { mockValidateVaultedCVVUseCase.invoke(any(), any()) } returns Result.success(emptyList())
         val additionalDataSlot: CapturingSlot<PrimerVaultedPaymentMethodAdditionalData> = slot()
-        coEvery { mockSubmitVaultedPaymentUseCase.invoke(any(), capture(additionalDataSlot)) } returns Result.success(Unit)
+        coEvery {
+            mockSubmitVaultedPaymentUseCase.invoke(any(), capture(additionalDataSlot))
+        } returns Result.success(Unit)
 
         createViewModel()
         advanceUntilIdle()
@@ -196,7 +196,7 @@ class VaultedPaymentMethodSelectionViewModelTest {
         assertTrue(state.stage is PrimerVaultedScope.State.Stage.Selection)
         assertTrue(additionalDataSlot.captured is PrimerVaultedCardAdditionalData)
         assertEquals("123", (additionalDataSlot.captured as PrimerVaultedCardAdditionalData).cvv)
-        verify { mockComponentsEventsRepository.send(PAYMENT_SUCCESS, any()) }
+        verify { mockComponentsEventsRepository.send(match { it is EventType.PaymentSuccess }, any()) }
         coVerify { mockCheckoutNavigator.navigateToSuccess() }
     }
 

@@ -171,7 +171,6 @@ internal class VaultedPaymentMethodsFragment : BaseFragment(), DISdkComponent {
                             it.id == id
                         }
 
-                    // FIXME: add loading view for this.
                     if (methodToBeDeleted == null) {
                         dialog.dismiss()
                     } else {

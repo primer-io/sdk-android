@@ -35,6 +35,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
+private const val CARD_LAST_DIGITS_LENGTH = 4
+
 /**
  * Content displayed when CVV recapture is required for a vaulted payment method.
  *
@@ -44,6 +46,7 @@ import kotlinx.coroutines.launch
  * - Pay button
  * - "Show other ways to pay" button to return to selection
  */
+@Suppress("LongMethod")
 @Composable
 internal fun PrimerPaymentMethodSelectionScope.VaultedCvvStageContent(
     vaultedScope: PrimerVaultedScope,
@@ -84,7 +87,8 @@ internal fun PrimerPaymentMethodSelectionScope.VaultedCvvStageContent(
         )
 
         selectedPaymentMethod?.let { method ->
-            val last4 = method.paymentInstrumentData.last4Digits?.toString()?.padStart(4, '0') ?: ""
+            val last4 = method.paymentInstrumentData.last4Digits?.toString()
+                ?.padStart(CARD_LAST_DIGITS_LENGTH, '0') ?: ""
             Text(
                 text = stringResource(R.string.primer_components_vault_cvv_subheading, last4),
                 style = theme.typographyTokens.bodyMedium.toTextStyle(),
@@ -209,9 +213,9 @@ private class DemoPaymentSelectionScope : PrimerPaymentMethodSelectionScope {
     override val state: StateFlow<PrimerPaymentMethodSelectionScope.State>
         get() = previewState
 
-    override fun onPaymentMethodSelected(paymentMethod: String) {}
+    override fun onPaymentMethodSelected(paymentMethod: String) = Unit
 
-    override fun onCancel() {}
+    override fun onCancel() = Unit
 
     override fun formatTitleAmount(): String = ""
 

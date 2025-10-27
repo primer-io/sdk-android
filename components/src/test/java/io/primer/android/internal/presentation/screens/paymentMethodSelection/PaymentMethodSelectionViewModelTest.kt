@@ -50,7 +50,9 @@ class PaymentMethodSelectionViewModelTest {
         componentsEventsRepository = mockk(relaxed = true)
     }
 
-    private fun createViewModel(paymentMethods: List<PrimerComposablePaymentMethod> = emptyList()): PaymentMethodSelectionViewModel {
+    private fun createViewModel(
+        paymentMethods: List<PrimerComposablePaymentMethod> = emptyList(),
+    ): PaymentMethodSelectionViewModel {
         every { availablePaymentMethodsUseCase.cache } returns paymentMethods
         return PaymentMethodSelectionViewModel(
             basicOrderInfoInteractor = basicOrderInfoInteractor,

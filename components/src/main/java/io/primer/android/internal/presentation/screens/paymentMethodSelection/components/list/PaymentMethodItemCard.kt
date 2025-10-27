@@ -29,7 +29,7 @@ import kotlinx.coroutines.flow.StateFlow
 
 @Composable
 internal fun PrimerPaymentMethodSelectionScope.PaymentMethodItemCard(
-    modifier: Modifier = Modifier,
+    @Suppress("UnusedParameter") modifier: Modifier = Modifier,
 ) {
     val layoutDirection = LocalLayoutDirection.current
 
@@ -94,9 +94,9 @@ private class PreviewPaymentMethodSelectionScope : PrimerPaymentMethodSelectionS
     override val state: StateFlow<PrimerPaymentMethodSelectionScope.State>
         get() = previewState
 
-    override fun onPaymentMethodSelected(paymentMethod: String) {}
+    override fun onPaymentMethodSelected(paymentMethod: String) = Unit
 
-    override fun onCancel() {}
+    override fun onCancel() = Unit
 
     override fun formatTitleAmount(): String = ""
 

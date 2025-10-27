@@ -40,7 +40,8 @@ internal class CardFieldsUseCase(
             emptyMap(),
         )
 
-    val fieldFocusStates: Flow<Map<PrimerInputElementType, PrimerCardFormScope.FieldState>> = _fieldFocusStates.asStateFlow()
+    val fieldFocusStates: Flow<Map<PrimerInputElementType, PrimerCardFormScope.FieldState>> =
+        _fieldFocusStates.asStateFlow()
 
     val validationErrors: Flow<List<SyncValidationError>> =
         combine(

@@ -78,9 +78,13 @@ internal class PaymentMethodSelectionViewModel(
                 PaymentMethodType.PAYMENT_CARD.name -> {
                     checkoutNavigator.navigateTo(Screen.CardForm)
                 }
+                PaymentMethodType.KLARNA.name -> {
+                    checkoutNavigator.navigateTo(Screen.Klarna)
+                }
                 PaymentMethodType.GOOGLE_PAY.name,
                 PaymentMethodType.PAYPAL.name,
-                PaymentMethodType.ADYEN_IDEAL.name -> {
+                PaymentMethodType.ADYEN_IDEAL.name,
+                -> {
                     checkoutNavigator.navigateTo(Screen.NativeUi(paymentMethod))
                 }
             }

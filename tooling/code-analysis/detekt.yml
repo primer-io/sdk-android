@@ -5,15 +5,26 @@ style:
     excludes: [ '**/test/**', '**/*.Test.kt', '**/*.Spec.kt' ]
     excludeCommentStatements: true
     maxLineLength: 120
+  MagicNumber:
+    ignorePropertyDeclaration: true
+    ignoreCompanionObjectPropertyDeclaration: true
+  UnusedPrivateMember:
+    ignoreAnnotated: [ 'Preview' ]
 complexity:
   LongMethod:
     excludes: [ '**/test/**', '**/*.Test.kt', '**/*.Spec.kt' ]
   LargeClass:
     excludes: [ '**/test/**', '**/*.Test.kt', '**/*.Spec.kt' ]
+  LongParameterList:
+    ignoreDefaultParameters: true
+  TooManyFunctions:
+    ignoreAnnotatedFunctions: [ 'Preview' ]
 naming:
   active: true
   FunctionNaming:
     ignoreAnnotated: [ 'Composable' ]
+  TopLevelPropertyNaming:
+    constantPattern: '[A-Z][A-Za-z0-9_]*'
 formatting:
   android: true
   autoCorrect: true

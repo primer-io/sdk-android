@@ -28,8 +28,8 @@ internal class PrimerVaultManagerRepositoryImpl(
         vaultedPaymentMethodId: String,
         additionalData: PrimerVaultedPaymentMethodAdditionalData?,
     ): Result<Unit> = if (additionalData != null) {
-            manager.startPaymentFlow(vaultedPaymentMethodId, additionalData)
-        } else {
-            manager.startPaymentFlow(vaultedPaymentMethodId)
-        }
+        manager.startPaymentFlow(vaultedPaymentMethodId, additionalData)
+    } else {
+        manager.startPaymentFlow(vaultedPaymentMethodId)
+    }
 }

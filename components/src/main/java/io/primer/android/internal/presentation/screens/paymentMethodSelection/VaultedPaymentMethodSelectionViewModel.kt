@@ -26,6 +26,7 @@ import kotlinx.coroutines.launch
  * ViewModel implementing PrimerVaultedScope for managing vaulted payment method operations.
  * Handles fetching, selecting, validating, and submitting vaulted payment methods.
  */
+@Suppress("TooManyFunctions", "LongParameterList")
 internal class VaultedPaymentMethodSelectionViewModel(
     private val fetchVaultedPaymentMethodsUseCase: FetchVaultedPaymentMethodsUseCase,
     private val submitVaultedPaymentUseCase: SubmitVaultedPaymentUseCase,
@@ -126,11 +127,7 @@ internal class VaultedPaymentMethodSelectionViewModel(
 
     private suspend fun shouldPromptForCvv(paymentMethodId: String): Boolean {
         val paymentMethod = getPaymentMethodById(paymentMethodId) ?: return false
-
-        return shouldCaptureVaultedCvvUseCase(paymentMethod).fold(
-            onSuccess = { return (it) },
-            onFailure = { false }, // TODO
-        )
+        return shouldCaptureVaultedCvvUseCase(paymentMethod).getOrDefault(false)
     }
 
     private fun updateStateToCvvRequired(paymentMethodId: String) {
@@ -172,7 +169,10 @@ internal class VaultedPaymentMethodSelectionViewModel(
 
     private suspend fun processPaymentSubmission(paymentMethodId: String) {
         updateStateToProcessing(paymentMethodId)
-        componentsEventsRepository.send(EventType.PAYMENT_SUBMITTED)
+        val paymentMethod = getPaymentMethodById(paymentMethodId)
+        paymentMethod?.let {
+            componentsEventsRepository.send(EventType.PaymentSubmitted(it.paymentMethodType))
+        }
 
         submitVaultedPaymentUseCase(paymentMethodId).fold(
             onSuccess = {
@@ -226,7 +226,12 @@ internal class VaultedPaymentMethodSelectionViewModel(
                 stage = PrimerVaultedScope.State.Stage.Selection,
             )
         }
-        componentsEventsRepository.send(EventType.PAYMENT_SUCCESS)
+        getPaymentMethodById(paymentMethodId)?.let {
+            componentsEventsRepository.send(
+                EventType.PaymentSuccess(it.paymentMethodType, it.id),
+            )
+        }
+
         checkoutNavigator.navigateToSuccess()
     }
 
@@ -246,7 +251,12 @@ internal class VaultedPaymentMethodSelectionViewModel(
                 stage = stage,
             )
         }
-        componentsEventsRepository.send(EventType.PAYMENT_FAILURE)
+        val paymentMethod = getPaymentMethodById(paymentMethodId)
+        paymentMethod?.let {
+            componentsEventsRepository.send(
+                EventType.PaymentFailure(it.paymentMethodType, null),
+            )
+        }
         checkoutNavigator.navigateToError(exception.message ?: "Payment failed")
     }
 

@@ -44,6 +44,7 @@ import kotlinx.coroutines.launch
  * Main composable for the vaulted payment methods section.
  * Handles all vault states and user interactions.
  */
+@Suppress("LongMethod")
 @Composable
 internal fun VaultedPaymentMethodsSection(
     vaultedState: PrimerVaultedScope.State,
@@ -337,6 +338,7 @@ internal fun createPreviewVaultedPaymentMethods(): List<PrimerVaultedPaymentMeth
     )
 }
 
+@Suppress("LongParameterList")
 private fun createPreviewVaultedPaymentMethod(
     id: String,
     network: String,

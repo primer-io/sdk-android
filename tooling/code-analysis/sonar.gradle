@@ -76,6 +76,9 @@ subprojects { subproject ->
                     '**/io/primer/android/components/**/*',
                     '**/io/primer/android/internal/di/ComponentsContainer.kt',
                     '**/io/primer/android/internal/domain/repositories/**/*',
+                    // KlarnaRepositoryImpl: Depends on KlarnaComponent (ViewModel subclass) which cannot be
+                    // reliably mocked with MockK due to coroutine scope ClassCastException.
+                    '**/io/primer/android/internal/data/repositories/KlarnaRepositoryImpl.kt',
                     '**/io/primer/android/internal/tokens/**/*',
                     '**/io/primer/android/internal/presentation/checkout/**/*',
                     '**/io/primer/android/internal/presentation/components/**/*',

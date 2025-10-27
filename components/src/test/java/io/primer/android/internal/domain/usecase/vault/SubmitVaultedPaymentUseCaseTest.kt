@@ -3,14 +3,14 @@ package io.primer.android.internal.domain.usecase.vault
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
+import io.primer.android.internal.domain.repositories.PrimerVaultManagerRepository
+import io.primer.android.vault.implementation.vaultedMethods.domain.PrimerVaultedPaymentMethodAdditionalData
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertSame
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import io.primer.android.internal.domain.repositories.PrimerVaultManagerRepository
-import io.primer.android.vault.implementation.vaultedMethods.domain.PrimerVaultedPaymentMethodAdditionalData
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class SubmitVaultedPaymentUseCaseTest {

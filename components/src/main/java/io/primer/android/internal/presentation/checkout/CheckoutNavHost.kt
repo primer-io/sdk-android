@@ -5,10 +5,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import io.primer.android.components.R
 import io.primer.android.core.di.DISdkContext
 import io.primer.android.internal.presentation.screens.nativeUi.NativeUiPaymentMethodScreen
 import io.primer.android.scope.PrimerCheckoutScope
@@ -43,12 +45,12 @@ internal fun PrimerCheckoutScope.CheckoutNavHost(
                     }
                 }
 
-                composable(Screen.Error.route) { backStackEntry ->
-                    // Retrieve error from SavedStateHandle - set when navigating via:
-                    // navController.currentBackStackEntry?.savedStateHandle?.set("error", primerError)
-                    val error = backStackEntry.savedStateHandle.get<String>("error")
+                composable(Screen.Error.route) {
+                    val error = LocalNavController.current.previousBackStackEntry
+                        ?.savedStateHandle
+                        ?.get<String>("error")
                     with(components) {
-                        errorScreen(error ?: "There was a network issue.")
+                        errorScreen(error ?: stringResource(R.string.primer_components_checkout_generic_error))
                     }
                 }
 
@@ -70,6 +72,10 @@ internal fun PrimerCheckoutScope.CheckoutNavHost(
                     components.cardForm.selectCountry.Screen()
                 }
 
+                composable(Screen.Klarna.route) {
+                    components.klarna.Screen()
+                }
+
                 composable("native_ui/{paymentMethod}") { backStackEntry ->
                     val paymentMethod = backStackEntry.arguments?.getString("paymentMethod") ?: return@composable
                     NativeUiPaymentMethodScreen(paymentMethod)
@@ -85,6 +91,7 @@ internal sealed class Screen(val route: String) {
     data object PaymentsList : Screen("payments_list")
     data object CardForm : Screen("card_form")
     data object SelectCountry : Screen("select_country")
+    data object Klarna : Screen("klarna")
     data class NativeUi(val paymentMethod: String) : Screen("native_ui/$paymentMethod")
     data object Success : Screen("success")
     data object Error : Screen("error")

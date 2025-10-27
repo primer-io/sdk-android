@@ -18,6 +18,9 @@ class PrimerCheckoutComponents : DISdkComponent {
     val paymentMethodSelection: PrimerPaymentMethodSelectionComponents
         get() = resolve()
 
+    val klarna: PrimerKlarnaComponents
+        get() = resolve()
+
     /**
      * Composable container that wraps the entire checkout UI.
      * Allows customization of the checkout's root container layout.

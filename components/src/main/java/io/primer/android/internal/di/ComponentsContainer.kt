@@ -5,21 +5,25 @@ import io.primer.android.clientSessionActions.di.ActionsContainer
 import io.primer.android.components.PrimerCardFormComponents
 import io.primer.android.components.PrimerCheckoutComponents
 import io.primer.android.components.PrimerHeadlessUniversalCheckout
+import io.primer.android.components.PrimerKlarnaComponents
 import io.primer.android.components.PrimerPaymentMethodSelectionComponents
 import io.primer.android.components.PrimerSelectCountryComponents
 import io.primer.android.components.PrimerVaultedComponents
 import io.primer.android.configuration.di.ConfigurationCoreContainer
 import io.primer.android.core.di.DependencyContainer
 import io.primer.android.core.di.SdkContainer
+import io.primer.android.internal.data.mappers.KlarnaMapper
 import io.primer.android.internal.data.mappers.PaymentMethodMapper
 import io.primer.android.internal.data.mappers.PaymentMethodMapperImpl
 import io.primer.android.internal.data.repositories.CardRawDataManagerRepository
 import io.primer.android.internal.data.repositories.HeadlessRepositoryImpl
-import io.primer.android.internal.data.repositories.PrimerVaultManagerRepositoryImpl
+import io.primer.android.internal.data.repositories.KlarnaRepositoryImpl
 import io.primer.android.internal.data.repositories.NativeUiRepositoryImpl
+import io.primer.android.internal.data.repositories.PrimerVaultManagerRepositoryImpl
 import io.primer.android.internal.domain.repositories.HeadlessRepository
-import io.primer.android.internal.domain.repositories.PrimerVaultManagerRepository
+import io.primer.android.internal.domain.repositories.KlarnaRepository
 import io.primer.android.internal.domain.repositories.NativeUiRepository
+import io.primer.android.internal.domain.repositories.PrimerVaultManagerRepository
 import io.primer.android.internal.domain.repositories.RawDataManagerRepository
 import io.primer.android.internal.domain.usecase.AvailablePaymentMethodsUseCase
 import io.primer.android.internal.domain.usecase.CardFieldsUseCase
@@ -43,6 +47,7 @@ import io.primer.android.ui.core.domain.FormatAmountToCurrencyInteractor
 import io.primer.android.ui.core.payment.domain.interactor.SurchargeInteractor
 import java.lang.ref.WeakReference
 
+@Suppress("TooManyFunctions")
 internal class ComponentsContainer(
     private val sdk: () -> SdkContainer,
 ) : DependencyContainer() {
@@ -79,6 +84,18 @@ internal class ComponentsContainer(
 
         registerSingleton {
             CountriesDataRepository(sdk().resolve())
+        }
+
+        registerSingleton {
+            KlarnaMapper()
+        }
+
+        registerSingleton<KlarnaRepository> {
+            KlarnaRepositoryImpl(
+                context = sdk().resolve(),
+                mapper = resolve(),
+                primerConfig = sdk().resolve(),
+            )
         }
     }
 
@@ -140,7 +157,7 @@ internal class ComponentsContainer(
         }
 
         registerSingleton {
-            FetchVaultedPaymentMethodsUseCase(vaultManagerRepository  = resolve())
+            FetchVaultedPaymentMethodsUseCase(vaultManagerRepository = resolve())
         }
 
         registerSingleton {
@@ -148,7 +165,7 @@ internal class ComponentsContainer(
         }
 
         registerSingleton {
-            ValidateVaultedCVVUseCase(vaultManagerRepository  = resolve())
+            ValidateVaultedCVVUseCase(vaultManagerRepository = resolve())
         }
 
         registerSingleton {
@@ -168,6 +185,7 @@ internal class ComponentsContainer(
         registerPaymentMethodSelectionComponents()
         registerVaultedComponents()
         registerCountrySelectionComponents()
+        registerKlarnaComponents()
     }
 
     private fun registerCheckoutComponents() {
@@ -221,6 +239,12 @@ internal class ComponentsContainer(
 
         registerSingleton {
             PrimerSelectCountryComponents()
+        }
+    }
+
+    private fun registerKlarnaComponents() {
+        registerSingleton {
+            PrimerKlarnaComponents()
         }
     }
 

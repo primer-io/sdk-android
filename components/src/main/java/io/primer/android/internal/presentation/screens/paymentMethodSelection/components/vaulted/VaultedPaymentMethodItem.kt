@@ -30,6 +30,7 @@ import io.primer.android.paymentmethods.common.data.model.PaymentMethodType
  * Default composable for displaying an individual vaulted payment method.
  * Shows payment method icon, details, and selection state.
  */
+@Suppress("LongMethod")
 @Composable
 internal fun VaultedPaymentMethodItem(
     paymentMethod: PrimerVaultedPaymentMethod,

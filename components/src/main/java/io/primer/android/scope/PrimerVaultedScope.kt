@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.StateFlow
  * Defines the scope for Primer's vaulted payment methods functionality,
  * providing state management and operations for saved payment methods.
  */
-interface PrimerVaultedScope: DISdkComponent {
+interface PrimerVaultedScope : DISdkComponent {
 
     /**
      * StateFlow representing the complete state of vaulted payment method operations,

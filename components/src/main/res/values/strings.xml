@@ -4,7 +4,12 @@
     <string name="primer_components_select_payment_method_card">Pay with card</string>
     <string name="primer_components_select_payment_method_coming_soon">🚧 Coming soon</string>
     <string name="primer_components_select_country">Select Country</string>
-    
+    <string name="primer_components_klarna_screen_title">Klarna</string>
+
+    <!-- Klarna -->
+    <string name="primer_components_klarna_authorize">Authorize</string>
+    <string name="primer_components_klarna_finalize">Complete Payment</string>
+
     <!-- Button Text -->
     <string name="primer_components_checkout_retry">Retry</string>
     <string name="primer_components_checkout_cancel">Cancel</string>
@@ -57,6 +62,9 @@
     <!-- Success Messages -->
     <string name="primer_components_checkout_success_title">Payment successful</string>
     <string name="primer_components_checkout_success_description">You\'ll be redirected to the order confirmation page soon.</string>
+
+    <!-- Error message   -->
+    <string name="primer_components_checkout_generic_error">An unknown error occured.</string>
     
     <!-- Payment Method Selection -->
     <string name="primer_components_payment_method_selection_description">Choose payment method</string>

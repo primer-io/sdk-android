@@ -21,7 +21,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.LayoutDirection
 import io.primer.android.LocalPrimerTheme
 
-@Suppress("LongParameterList")
 @Composable
 fun PrimerInput(
     modifier: Modifier = Modifier,

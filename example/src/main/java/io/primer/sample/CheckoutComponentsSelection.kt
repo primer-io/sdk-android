@@ -1,5 +1,6 @@
 package io.primer.sample
 
+import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -28,16 +29,18 @@ import io.primer.android.core.ExperimentalPrimerApi
 import io.primer.android.data.settings.GooglePayButtonOptions
 import io.primer.android.data.settings.PrimerDebugOptions
 import io.primer.android.data.settings.PrimerGooglePayOptions
+import io.primer.android.data.settings.PrimerKlarnaOptions
 import io.primer.android.data.settings.PrimerPaymentMethodOptions
 import io.primer.android.data.settings.PrimerSettings
 import io.primer.android.scope.PrimerCheckoutScope
+import io.primer.sample.demos.AnimatedSplashScreenDemo
 import io.primer.sample.demos.BoldTypographyThemeDemo
 import io.primer.sample.demos.ButtonedInputFieldsDemo
 import io.primer.sample.demos.CheckoutDemo
 import io.primer.sample.demos.CheckoutDemo.Companion.getBackground
 import io.primer.sample.demos.CustomCardComponentDemo
 import io.primer.sample.demos.CustomCardFormLayoutDemo
-import io.primer.sample.demos.AnimatedSplashScreenDemo
+import io.primer.sample.demos.CustomKlarnaDemo
 import io.primer.sample.demos.CustomSuccessDemo
 import io.primer.sample.demos.DatePickerExpiryDemo
 import io.primer.sample.demos.FullscreenDemo
@@ -93,6 +96,14 @@ fun CheckoutComponentsSelection(clientToken: String?, onBackPress: () -> Unit) {
                                     buttonType = ButtonConstants.ButtonType.DONATE,
                                     buttonTheme = ButtonConstants.ButtonTheme.LIGHT
                                 ),
+                            ),
+                            klarnaOptions = PrimerKlarnaOptions(
+                                recurringPaymentDescription = "This is custom description",
+                                returnIntentUrl = Uri.Builder()
+                                    .scheme("app")
+                                    .authority("deeplink.return.activity")
+                                    .build()
+                                    .toString()
                             )
                         )
                     ),
@@ -168,6 +179,7 @@ private fun getAllDemos(): List<CheckoutDemo> = listOf(
     AnimatedSplashScreenDemo,
     CustomSuccessDemo,
     CustomCardComponentDemo,
+    CustomKlarnaDemo,
     SubmitOverrideDemo,
     HorizontalPaymentMethodsDemo,
     DatePickerExpiryDemo,

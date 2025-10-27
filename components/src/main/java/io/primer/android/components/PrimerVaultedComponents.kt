@@ -29,7 +29,7 @@ class PrimerVaultedComponents : DISdkComponent {
     @Composable
     fun rememberScope(): PrimerVaultedScope {
         return viewModel<VaultedPaymentMethodSelectionViewModel>(
-            factory = resolve<VaultedPaymentMethodSelectionViewModelFactory>()
+            factory = resolve<VaultedPaymentMethodSelectionViewModelFactory>(),
         )
     }
 

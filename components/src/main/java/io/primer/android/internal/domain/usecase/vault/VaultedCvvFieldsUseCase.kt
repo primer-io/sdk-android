@@ -30,8 +30,12 @@ internal class VaultedCvvFieldsUseCase {
         if (digits.isNotEmpty()) {
             CardNumberFormatter.fromString(digits).getCvvLength()
         } else {
-            3 // Default to 3 digits when no card network is detected
+            DEFAULT_CVV_LENGTH
         }
+    }
+
+    companion object {
+        private const val DEFAULT_CVV_LENGTH = 3
     }
 
     /**

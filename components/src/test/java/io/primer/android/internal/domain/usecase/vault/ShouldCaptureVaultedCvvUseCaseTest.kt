@@ -2,11 +2,12 @@ package io.primer.android.internal.domain.usecase.vault
 
 import io.mockk.every
 import io.mockk.mockk
+import io.primer.android.configuration.data.model.PaymentMethodRemoteConfigOptions
 import io.primer.android.configuration.domain.CachePolicy
 import io.primer.android.configuration.domain.model.Configuration
 import io.primer.android.configuration.domain.model.ConfigurationParams
 import io.primer.android.configuration.domain.model.PaymentMethodConfig
-import io.primer.android.configuration.data.model.PaymentMethodRemoteConfigOptions
+import io.primer.android.core.domain.BaseSuspendInteractor
 import io.primer.android.data.tokenization.models.PaymentInstrumentData
 import io.primer.android.domain.tokenization.models.PrimerVaultedPaymentMethod
 import io.primer.android.paymentmethods.common.data.model.PaymentMethodType
@@ -19,7 +20,6 @@ import org.junit.jupiter.api.Assertions.assertSame
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import io.primer.android.core.domain.BaseSuspendInteractor
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class ShouldCaptureVaultedCvvUseCaseTest {

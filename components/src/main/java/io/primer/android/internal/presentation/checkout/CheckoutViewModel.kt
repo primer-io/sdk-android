@@ -19,6 +19,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
+@Suppress("ForbiddenComment")
 internal class CheckoutViewModel(
     private val availablePaymentMethodsUseCase: AvailablePaymentMethodsUseCase,
     private val checkoutNavigator: CheckoutNavigator,
