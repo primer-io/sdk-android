@@ -21,9 +21,11 @@ package io.primer.android.internal.tokens
 
 // Auto-generated file. Do not modify!
 
+import androidx.compose.ui.text.ExperimentalTextApi
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontVariation
 import androidx.compose.ui.unit.sp
 import io.primer.android.components.R
 

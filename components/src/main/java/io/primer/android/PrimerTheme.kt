@@ -1,12 +1,12 @@
 package io.primer.android
 
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.darkColorScheme
-import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.staticCompositionLocalOf
+import androidx.compose.ui.graphics.Color
 import io.primer.android.internal.tokens.BorderWidthTokens
 import io.primer.android.internal.tokens.DarkColorTokens
 import io.primer.android.internal.tokens.LightColorTokens
@@ -25,8 +25,10 @@ data class PrimerTheme(
     val typographyTokens: TypographyTokens = TypographyTokens(),
 ) {
     @Composable
-    fun colorTokens(): LightColorTokens {
-        return if (isSystemInDarkTheme()) {
+    fun colorTokens(
+        darkTheme: Boolean = isSystemInDarkTheme(),
+    ): LightColorTokens {
+        return if (darkTheme) {
             darkColorTokens
         } else {
             lightColorTokens
@@ -34,51 +36,69 @@ data class PrimerTheme(
     }
 }
 
-internal val LocalPrimerTheme = staticCompositionLocalOf {
-    PrimerTheme()
+val LocalPrimerTheme = staticCompositionLocalOf { PrimerTheme() }
+
+/**
+ * Creates Material 3 ColorScheme from Primer color tokens.
+ *
+ * Works for both LightColorTokens and DarkColorTokens (which extends Light).
+ * Detects theme mode by checking actual color values to select correct base tokens.
+ *
+ * Key challenge: Gray tokens flip between modes
+ * - Light: gray.000 = white, gray.900 = dark
+ * - Dark:  gray.000 = dark, gray.900 = light
+ *
+ * For "on" colors on colored surfaces, we need light text in BOTH modes:
+ * - Light: use gray.000 (white)
+ * - Dark:  use gray.900 (light)
+ */
+private fun LightColorTokens.toMaterialColorScheme(): ColorScheme {
+    // Detect mode by checking if gray.000 is white (light mode) or dark (dark mode)
+    val isLightMode = primerColorGray000 == Color(0xffffffff)
+
+    // For colored surfaces, select the correct "light" token for each mode
+    val onColoredSurface = if (isLightMode) primerColorGray000 else primerColorGray900
+
+    return ColorScheme(
+        primary = primerColorBrand,
+        onPrimary = onColoredSurface,
+        primaryContainer = primerColorBlue900,
+        onPrimaryContainer = onColoredSurface,
+        inversePrimary = primerColorBlue500,
+        secondary = primerColorGray600,
+        onSecondary = onColoredSurface,
+        secondaryContainer = primerColorGray200,
+        onSecondaryContainer = primerColorTextPrimary,
+        tertiary = primerColorBlue500,
+        onTertiary = onColoredSurface,
+        tertiaryContainer = primerColorGray200,
+        onTertiaryContainer = primerColorTextPrimary,
+        background = primerColorBackground,
+        onBackground = primerColorTextPrimary,
+        surface = primerColorBackground,
+        onSurface = primerColorTextPrimary,
+        surfaceVariant = primerColorGray100,
+        onSurfaceVariant = primerColorTextSecondary,
+        surfaceTint = primerColorBrand,
+        inverseSurface = primerColorGray900,
+        inverseOnSurface = primerColorGray000,
+        error = primerColorRed500,
+        onError = onColoredSurface,
+        errorContainer = primerColorRed100,
+        onErrorContainer = primerColorTextNegative,
+        outline = primerColorBorderOutlinedDefault,
+        outlineVariant = primerColorGray300,
+        scrim = Color.Black.copy(alpha = 0.32f),
+        // Surface elevation: lighter = higher (but tokens flip in dark mode)
+        surfaceBright = if (isLightMode) primerColorGray000 else primerColorGray300,
+        surfaceDim = if (isLightMode) primerColorGray100 else primerColorGray000,
+        surfaceContainer = primerColorGray100,
+        surfaceContainerHigh = primerColorGray200,
+        surfaceContainerHighest = primerColorGray300,
+        surfaceContainerLow = primerColorGray100,
+        surfaceContainerLowest = primerColorBackground,
+    )
 }
-
-private fun createDarkColorScheme(colorTokens: DarkColorTokens) = darkColorScheme(
-    primary = colorTokens.primerColorBrand,
-    onPrimary = colorTokens.primerColorGray000,
-    secondary = colorTokens.primerColorGray600,
-    onSecondary = colorTokens.primerColorGray100,
-    tertiary = colorTokens.primerColorBlue500,
-    onTertiary = colorTokens.primerColorGray000,
-    background = colorTokens.primerColorGray000,
-    onBackground = colorTokens.primerColorGray900,
-    surface = colorTokens.primerColorGray100,
-    onSurface = colorTokens.primerColorGray900,
-    surfaceVariant = colorTokens.primerColorGray200,
-    onSurfaceVariant = colorTokens.primerColorGray600,
-    outline = colorTokens.primerColorGray400,
-    outlineVariant = colorTokens.primerColorGray300,
-    error = colorTokens.primerColorRed500,
-    onError = colorTokens.primerColorGray000,
-    errorContainer = colorTokens.primerColorRed100,
-    onErrorContainer = colorTokens.primerColorRed900,
-)
-
-private fun createLightColorScheme(colorTokens: LightColorTokens) = lightColorScheme(
-    primary = colorTokens.primerColorBrand,
-    onPrimary = colorTokens.primerColorGray000,
-    secondary = colorTokens.primerColorGray600,
-    onSecondary = colorTokens.primerColorGray000,
-    tertiary = colorTokens.primerColorBlue500,
-    onTertiary = colorTokens.primerColorGray000,
-    background = colorTokens.primerColorBackground,
-    onBackground = colorTokens.primerColorTextPrimary,
-    surface = colorTokens.primerColorGray000,
-    onSurface = colorTokens.primerColorTextPrimary,
-    surfaceVariant = colorTokens.primerColorGray100,
-    onSurfaceVariant = colorTokens.primerColorGray600,
-    outline = colorTokens.primerColorBorderOutlinedDefault,
-    outlineVariant = colorTokens.primerColorGray300,
-    error = colorTokens.primerColorRed500,
-    onError = colorTokens.primerColorGray000,
-    errorContainer = colorTokens.primerColorRed100,
-    onErrorContainer = colorTokens.primerColorRed900,
-)
 
 @Composable
 internal fun PrimerTheme(
@@ -86,17 +106,13 @@ internal fun PrimerTheme(
     theme: PrimerTheme,
     content: @Composable () -> Unit,
 ) {
-    val colorScheme = if (darkTheme) {
-        createDarkColorScheme(theme.darkColorTokens)
-    } else {
-        createLightColorScheme(theme.lightColorTokens)
-    }
+    val colorTokens = if (darkTheme) theme.darkColorTokens else theme.lightColorTokens
 
     CompositionLocalProvider(
         LocalPrimerTheme provides theme,
     ) {
         MaterialTheme(
-            colorScheme = colorScheme,
+            colorScheme = colorTokens.toMaterialColorScheme(),
             content = content,
         )
     }

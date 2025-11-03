@@ -20,6 +20,7 @@ internal fun DefaultCountryItem(
     modifier: Modifier = Modifier,
 ) {
     val spacing = LocalPrimerTheme.current.spacingTokens
+    val colorTokens = LocalPrimerTheme.current.colorTokens()
 
     Column(
         modifier = modifier
@@ -32,6 +33,7 @@ internal fun DefaultCountryItem(
             style = MaterialTheme.typography.bodyLarge.copy(
                 fontWeight = FontWeight.Medium,
             ),
+            color = colorTokens.primerColorTextPrimary,
         )
         HorizontalDivider()
     }

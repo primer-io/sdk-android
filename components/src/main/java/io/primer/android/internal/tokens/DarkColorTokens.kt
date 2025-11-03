@@ -6,7 +6,41 @@ package io.primer.android.internal.tokens
 
 import androidx.compose.ui.graphics.Color
 
+/**
+ * Dark mode color tokens.
+ *
+ * Architecture:
+ * - Extends LightColorTokens to inherit all semantic tokens
+ * - Overrides only 15 base color values
+ * - Semantic tokens (27) are automatically inherited as computed properties
+ *
+ * How it works:
+ * 1. This class extends LightColorTokens
+ * 2. It overrides only the base token values (direct colors)
+ * 3. Semantic tokens are inherited as getters from LightColorTokens
+ * 4. Those getters automatically resolve to the overridden base values
+ *
+ * Example runtime resolution:
+ *   primerColorBackground.get()
+ *     → calls inherited getter
+ *     → getter returns primerColorGray000
+ *     → resolves to OVERRIDDEN value: Color(0xff171619) ✓
+ *
+ * vs Light mode:
+ *   primerColorBackground.get()
+ *     → calls same getter
+ *     → getter returns primerColorGray000
+ *     → resolves to base value: Color(0xffffffff) ✓
+ *
+ * Same getter, different values! That's polymorphism.
+ */
 class DarkColorTokens : LightColorTokens() {
+    // ========================================
+    // BASE TOKEN OVERRIDES (15)
+    // ========================================
+    // Override base token values for dark mode
+    // Semantic tokens automatically inherit these new values
+
     override val primerColorGray100: Color = Color(0xff292929)
     override val primerColorGray200: Color = Color(0xff424242)
     override val primerColorGray300: Color = Color(0xff575757)

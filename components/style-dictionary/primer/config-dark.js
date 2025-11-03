@@ -11,7 +11,7 @@ export default {
   platforms: {
     android: {
       transformGroup: 'primer-android-compose-dark',
-      buildPath: '../src/main/java/io/primer/components/internal/tokens/',
+      buildPath: '../src/main/java/io/primer/android/internal/tokens/',
       files: [darkColorsConfig],
     },
   },
