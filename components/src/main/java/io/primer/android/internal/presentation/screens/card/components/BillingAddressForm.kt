@@ -9,8 +9,13 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import io.primer.android.LocalPrimerTheme
+import io.primer.android.components.R
 import io.primer.android.scope.PrimerCardFormScope
 
 @Composable
@@ -22,9 +27,15 @@ internal fun PrimerCardFormScope.BillingAddressForm(
     if (billingInputFields.isEmpty()) return
 
     val spacingSmall = LocalPrimerTheme.current.spacingTokens.small
+    val billingSectionDescription = stringResource(R.string.primer_components_content_description_billing_section)
 
     Column(
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier
+            .fillMaxWidth()
+            .semantics {
+                contentDescription = billingSectionDescription
+                heading()
+            },
     ) {
         with(components) {
             countryCodeInput(Modifier.fillMaxWidth())

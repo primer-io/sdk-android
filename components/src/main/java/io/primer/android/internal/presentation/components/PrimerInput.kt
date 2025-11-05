@@ -15,6 +15,9 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.semantics.LiveRegionMode
+import androidx.compose.ui.semantics.liveRegion
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
@@ -97,6 +100,9 @@ fun PrimerInput(
                 style = LocalPrimerTheme.current.typographyTokens.bodySmall.toTextStyle(),
                 color = LocalPrimerTheme.current.colorTokens().primerColorTextNegative,
                 textAlign = if (layoutDirection == LayoutDirection.Rtl) TextAlign.End else TextAlign.Start,
+                modifier = Modifier.semantics {
+                    liveRegion = LiveRegionMode.Polite
+                },
             )
             Spacer(modifier = Modifier.height(LocalPrimerTheme.current.spacingTokens.xsmall))
         }

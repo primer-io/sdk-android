@@ -9,6 +9,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -89,6 +90,11 @@ private object InputConfigs {
 
     fun trailingIcon(type: PrimerInputElementType): Int? = when (type) {
         PrimerInputElementType.EXPIRY_DATE -> R.drawable.ic_primer_card_expiry_date
+        else -> null
+    }
+
+    fun trailingIconContentDescription(type: PrimerInputElementType): Int? = when (type) {
+        PrimerInputElementType.EXPIRY_DATE -> R.string.primer_components_content_description_expiry_icon
         else -> null
     }
 }
@@ -172,10 +178,11 @@ internal fun PrimerCardFormScope.CardInput(
         error = resolveErrorMessage(error),
         enabled = state.isFormEnabled,
         trailingIcon = {
-            InputConfigs.trailingIcon(type)?.let {
+            InputConfigs.trailingIcon(type)?.let { iconRes ->
+                val contentDescRes = InputConfigs.trailingIconContentDescription(type)
                 Icon(
-                    painter = painterResource(id = it),
-                    contentDescription = null,
+                    painter = painterResource(id = iconRes),
+                    contentDescription = contentDescRes?.let { stringResource(id = it) },
                 )
             }
         },

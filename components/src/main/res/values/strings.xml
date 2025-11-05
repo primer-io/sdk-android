@@ -82,6 +82,10 @@
     <string name="primer_components_content_description_search">Search</string>
     <string name="primer_components_content_description_card_network">Card network: %1$s</string>
     <string name="primer_components_content_description_select_network">Select network</string>
+    <string name="primer_components_content_description_cvv_icon">CVV security code</string>
+    <string name="primer_components_content_description_expiry_icon">Card expiry date</string>
+    <string name="primer_components_content_description_country_selector">Select country</string>
+    <string name="primer_components_content_description_billing_section">Billing address</string>
 
     <!-- Surcharge Section Headers -->
     <string name="primer_components_surcharge_no_additional_fee">No additional fee</string>
