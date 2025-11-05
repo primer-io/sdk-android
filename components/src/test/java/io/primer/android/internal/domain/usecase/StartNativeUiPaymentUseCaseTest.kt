@@ -1,6 +1,6 @@
 package io.primer.android.internal.domain.usecase
 
-import io.mockk.every
+import io.mockk.coEvery
 import io.mockk.justRun
 import io.mockk.mockk
 import io.mockk.verify
@@ -8,8 +8,6 @@ import io.primer.android.domain.PrimerCheckoutData
 import io.primer.android.internal.domain.repositories.HeadlessRepository
 import io.primer.android.internal.domain.repositories.NativeUiRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -40,7 +38,7 @@ class StartNativeUiPaymentUseCaseTest {
         val successResult = Result.success(expectedCheckoutData)
 
         justRun { mockNativeUiRepository.startPaymentFlow(paymentMethodType) }
-        every { mockHeadlessRepository.paymentResults } returns flowOf(successResult)
+        coEvery { mockHeadlessRepository.awaitPaymentResult() } returns successResult
 
         val result = useCase(paymentMethodType)
 
@@ -56,7 +54,7 @@ class StartNativeUiPaymentUseCaseTest {
         val failureResult = Result.failure<PrimerCheckoutData>(expectedError)
 
         justRun { mockNativeUiRepository.startPaymentFlow(paymentMethodType) }
-        every { mockHeadlessRepository.paymentResults } returns flowOf(failureResult)
+        coEvery { mockHeadlessRepository.awaitPaymentResult() } returns failureResult
 
         val result = useCase(paymentMethodType)
 
@@ -66,15 +64,12 @@ class StartNativeUiPaymentUseCaseTest {
     }
 
     @Test
-    fun `invoke waits for first payment result from flow`() = runTest {
+    fun `invoke waits for payment result`() = runTest {
         val paymentMethodType = "STRIPE"
         val expectedCheckoutData = mockk<PrimerCheckoutData>()
-        val paymentResultsFlow = MutableSharedFlow<Result<PrimerCheckoutData>>(replay = 1)
 
         justRun { mockNativeUiRepository.startPaymentFlow(paymentMethodType) }
-        every { mockHeadlessRepository.paymentResults } returns paymentResultsFlow
-
-        paymentResultsFlow.emit(Result.success(expectedCheckoutData))
+        coEvery { mockHeadlessRepository.awaitPaymentResult() } returns Result.success(expectedCheckoutData)
 
         val result = useCase(paymentMethodType)
 

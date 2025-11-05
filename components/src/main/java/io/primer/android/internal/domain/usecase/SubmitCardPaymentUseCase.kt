@@ -7,7 +7,6 @@ import io.primer.android.components.domain.inputs.models.PrimerInputElementType
 import io.primer.android.domain.PrimerCheckoutData
 import io.primer.android.internal.domain.repositories.HeadlessRepository
 import io.primer.android.internal.domain.repositories.RawDataManagerRepository
-import kotlinx.coroutines.flow.first
 
 internal class SubmitCardPaymentUseCase(
     private val rawDataManagerRepository: RawDataManagerRepository,
@@ -31,7 +30,7 @@ internal class SubmitCardPaymentUseCase(
         )
 
         // Wait for the result from the headless repository
-        return headlessRepository.paymentResults.first()
+        return headlessRepository.awaitPaymentResult()
     }
 
     private suspend fun validateBillingAddress(formData: Map<PrimerInputElementType, String>): Result<Unit> {

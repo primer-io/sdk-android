@@ -238,11 +238,7 @@ internal class VaultedPaymentMethodSelectionViewModel(
     private suspend fun handlePaymentFailure(paymentMethodId: String, exception: Throwable) {
         _state.update { current ->
             // Stay on CVV screen if we were there, otherwise go to Selection
-            val stage = if (current.stage is PrimerVaultedScope.State.Stage.Cvv) {
-                current.stage
-            } else {
-                PrimerVaultedScope.State.Stage.Selection
-            }
+            val stage = current.stage as? PrimerVaultedScope.State.Stage.Cvv ?: PrimerVaultedScope.State.Stage.Selection
 
             current.copy(
                 selectedPaymentMethodId = paymentMethodId,

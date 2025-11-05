@@ -2,7 +2,6 @@ package io.primer.android.internal.domain.usecase
 
 import io.mockk.coEvery
 import io.mockk.coVerify
-import io.mockk.every
 import io.mockk.mockk
 import io.primer.android.clientSessionActions.domain.ActionInteractor
 import io.primer.android.clientSessionActions.domain.models.ActionUpdateBillingAddressParams
@@ -12,7 +11,6 @@ import io.primer.android.domain.PrimerCheckoutData
 import io.primer.android.internal.domain.repositories.HeadlessRepository
 import io.primer.android.internal.domain.repositories.RawDataManagerRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
@@ -28,17 +26,11 @@ class SubmitCardPaymentUseCaseTest {
     private lateinit var mockHeadlessRepository: HeadlessRepository
     private lateinit var mockActionInteractor: ActionInteractor
 
-    private val paymentResultsFlow = MutableStateFlow<Result<PrimerCheckoutData>>(
-        Result.success(mockk()),
-    )
-
     @BeforeEach
     fun setUp() {
         mockRawDataManagerRepository = mockk(relaxed = true)
         mockHeadlessRepository = mockk()
         mockActionInteractor = mockk()
-
-        every { mockHeadlessRepository.paymentResults } returns paymentResultsFlow
 
         useCase = SubmitCardPaymentUseCase(
             rawDataManagerRepository = mockRawDataManagerRepository,
@@ -66,7 +58,7 @@ class SubmitCardPaymentUseCaseTest {
         // Given
         val formData = emptyMap<PrimerInputElementType, String>()
         val expectedResult = mockk<PrimerCheckoutData>()
-        paymentResultsFlow.value = Result.success(expectedResult)
+        coEvery { mockHeadlessRepository.awaitPaymentResult() } returns Result.success(expectedResult)
 
         // When
         val result = useCase(formData)
@@ -83,7 +75,7 @@ class SubmitCardPaymentUseCaseTest {
         // Given
         val formData = createBillingAddressData()
         val expectedResult = mockk<PrimerCheckoutData>()
-        paymentResultsFlow.value = Result.success(expectedResult)
+        coEvery { mockHeadlessRepository.awaitPaymentResult() } returns Result.success(expectedResult)
 
         coEvery { mockActionInteractor.invoke(any()) } returns Result.success(mockk())
 
@@ -122,7 +114,7 @@ class SubmitCardPaymentUseCaseTest {
             PrimerInputElementType.COUNTRY_CODE to "US",
         )
         val expectedResult = mockk<PrimerCheckoutData>()
-        paymentResultsFlow.value = Result.success(expectedResult)
+        coEvery { mockHeadlessRepository.awaitPaymentResult() } returns Result.success(expectedResult)
 
         coEvery { mockActionInteractor.invoke(any()) } returns Result.success(mockk())
 
@@ -161,7 +153,7 @@ class SubmitCardPaymentUseCaseTest {
             PrimerInputElementType.CITY to "",
         )
         val expectedResult = mockk<PrimerCheckoutData>()
-        paymentResultsFlow.value = Result.success(expectedResult)
+        coEvery { mockHeadlessRepository.awaitPaymentResult() } returns Result.success(expectedResult)
 
         // When
         val result = useCase(formData)
@@ -203,7 +195,7 @@ class SubmitCardPaymentUseCaseTest {
         // Given
         val formData = emptyMap<PrimerInputElementType, String>()
         val paymentError = Exception("Payment failed")
-        paymentResultsFlow.value = Result.failure(paymentError)
+        coEvery { mockHeadlessRepository.awaitPaymentResult() } returns Result.failure(paymentError)
 
         // When
         val result = useCase(formData)
@@ -226,7 +218,7 @@ class SubmitCardPaymentUseCaseTest {
             PrimerInputElementType.COUNTRY_CODE to "US",
         )
         val expectedResult = mockk<PrimerCheckoutData>()
-        paymentResultsFlow.value = Result.success(expectedResult)
+        coEvery { mockHeadlessRepository.awaitPaymentResult() } returns Result.success(expectedResult)
 
         coEvery { mockActionInteractor.invoke(any()) } returns Result.success(mockk())
 
@@ -264,7 +256,7 @@ class SubmitCardPaymentUseCaseTest {
             PrimerInputElementType.CITY to "New York",
         )
         val expectedResult = mockk<PrimerCheckoutData>()
-        paymentResultsFlow.value = Result.success(expectedResult)
+        coEvery { mockHeadlessRepository.awaitPaymentResult() } returns Result.success(expectedResult)
 
         coEvery { mockActionInteractor.invoke(any()) } returns Result.success(mockk())
 

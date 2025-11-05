@@ -8,11 +8,9 @@ import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.domain.PrimerCheckoutData
 import io.primer.android.domain.error.models.PrimerError
 import io.primer.android.internal.domain.repositories.HeadlessRepository
-import kotlinx.coroutines.channels.awaitClose
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.suspendCancellableCoroutine
 import java.lang.ref.WeakReference
+import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.coroutines.resume
 
 internal class HeadlessRepositoryImpl(
@@ -21,29 +19,38 @@ internal class HeadlessRepositoryImpl(
     private val primerConfig: PrimerConfig,
 ) : HeadlessRepository {
 
-    override val paymentResults: Flow<Result<PrimerCheckoutData>> = callbackFlow {
-        headless.setCheckoutListener(object : PrimerHeadlessUniversalCheckoutListener {
-            override fun onAvailablePaymentMethodsLoaded(
-                paymentMethods: List<PrimerHeadlessUniversalCheckoutPaymentMethod>,
-            ) = Unit
+    override suspend fun awaitPaymentResult(): Result<PrimerCheckoutData> =
+        suspendCancellableCoroutine { continuation ->
+            val resumed = AtomicBoolean(false)
 
-            override fun onCheckoutCompleted(checkoutData: PrimerCheckoutData) {
-                trySend(Result.success(checkoutData))
+            headless.setCheckoutListener(object : PrimerHeadlessUniversalCheckoutListener {
+                override fun onAvailablePaymentMethodsLoaded(
+                    paymentMethods: List<PrimerHeadlessUniversalCheckoutPaymentMethod>,
+                ) = Unit
+
+                override fun onCheckoutCompleted(checkoutData: PrimerCheckoutData) {
+                    if (resumed.compareAndSet(false, true)) {
+                        continuation.resume(Result.success(checkoutData))
+                    }
+                }
+
+                override fun onFailed(error: PrimerError, checkoutData: PrimerCheckoutData?) {
+                    if (resumed.compareAndSet(false, true)) {
+                        continuation.resume(Result.failure(Exception(error.description)))
+                    }
+                }
+
+                override fun onFailed(error: PrimerError) {
+                    if (resumed.compareAndSet(false, true)) {
+                        continuation.resume(Result.failure(Exception(error.description)))
+                    }
+                }
+            })
+
+            continuation.invokeOnCancellation {
+                headless.cleanup()
             }
-
-            override fun onFailed(error: PrimerError, checkoutData: PrimerCheckoutData?) {
-                trySend(Result.failure(Exception(error.description)))
-            }
-
-            override fun onFailed(error: PrimerError) {
-                trySend(Result.failure(Exception(error.description)))
-            }
-        })
-
-        awaitClose {
-            headless.cleanup()
         }
-    }
 
     override suspend fun getAvailablePaymentMethods() =
         suspendCancellableCoroutine { continuation ->

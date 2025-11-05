@@ -16,11 +16,10 @@ import io.primer.android.domain.error.models.PrimerError
 import io.primer.android.internal.data.repositories.HeadlessRepositoryImpl
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.take
-import kotlinx.coroutines.flow.toList
+import kotlinx.coroutines.async
+import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.StandardTestDispatcher
-import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
@@ -68,15 +67,18 @@ class HeadlessRepositoryImplTest {
     }
 
     @Nested
-    inner class PaymentResultsTests {
+    inner class AwaitPaymentResultTests {
 
         @Test
-        fun `should set checkout listener when flow is collected`() = runTest {
-            val listenerSlot = captureCheckoutListener()
+        fun `should set checkout listener when awaitPaymentResult is called`() = runTest {
+            val mockCheckoutData = mockk<PrimerCheckoutData>()
 
-            // Start collecting from the flow
-            val job = launch {
-                repository.paymentResults.take(1).toList()
+            setupListenerToReturn { listener ->
+                listener.onCheckoutCompleted(mockCheckoutData)
+            }
+
+            val deferred = async {
+                repository.awaitPaymentResult()
             }
 
             advanceUntilIdle()
@@ -86,91 +88,91 @@ class HeadlessRepositoryImplTest {
                 mockHeadlessInterface.setCheckoutListener(any())
             }
 
-            assertTrue(listenerSlot.isCaptured)
-
-            job.cancel()
+            // Complete the deferred to clean up
+            deferred.await()
         }
 
         @Test
-        fun `should emit success when checkout completes`() = runTest {
+        fun `should return success when checkout completes`() = runTest {
             val mockCheckoutData = mockk<PrimerCheckoutData>()
 
-            val results = collectPaymentResults(1) { listener ->
+            val result = awaitPaymentResult { listener ->
                 listener.onCheckoutCompleted(mockCheckoutData)
             }
 
-            assertSuccessResult(results.single(), mockCheckoutData)
+            assertSuccessResult(result, mockCheckoutData)
         }
 
         @Test
-        fun `should emit failure when onFailed is called with error and checkout data`() = runTest {
+        fun `should return failure when onFailed is called with error and checkout data`() = runTest {
             val mockError = createMockError(TEST_ERROR_MESSAGE)
             val mockCheckoutData = mockk<PrimerCheckoutData>()
 
-            val results = collectPaymentResults(1) { listener ->
+            val result = awaitPaymentResult { listener ->
                 listener.onFailed(mockError, mockCheckoutData)
             }
 
-            assertFailureResult(results.single(), TEST_ERROR_MESSAGE)
+            assertFailureResult(result, TEST_ERROR_MESSAGE)
         }
 
         @Test
-        fun `should emit failure when onFailed is called with error only`() = runTest {
+        fun `should return failure when onFailed is called with error only`() = runTest {
             val mockError = createMockError(TEST_ERROR_MESSAGE)
 
-            val results = collectPaymentResults(1) { listener ->
+            val result = awaitPaymentResult { listener ->
                 listener.onFailed(mockError)
             }
 
-            assertFailureResult(results.single(), TEST_ERROR_MESSAGE)
+            assertFailureResult(result, TEST_ERROR_MESSAGE)
         }
 
         @Test
-        fun `should test both onFailed overloads separately`() = runTest {
-            val mockError = createMockError("Different error")
+        fun `should ignore onAvailablePaymentMethodsLoaded and wait for payment result`() = runTest {
             val mockCheckoutData = mockk<PrimerCheckoutData>()
 
-            val results = collectPaymentResults(2) { listener ->
-                // Test overload with checkoutData parameter
-                listener.onFailed(mockError, mockCheckoutData)
-                // Test overload without checkoutData parameter
-                listener.onFailed(mockError)
+            val result = awaitPaymentResult { listener ->
+                // This should not trigger completion
+                listener.onAvailablePaymentMethodsLoaded(emptyList())
+                // This should trigger completion
+                listener.onCheckoutCompleted(mockCheckoutData)
             }
 
-            assertEquals(2, results.size)
-            assertFailureResult(results[0], "Different error")
-            assertFailureResult(results[1], "Different error")
+            assertSuccessResult(result, mockCheckoutData)
         }
 
         @Test
-        fun `should handle multiple emissions in sequence`() = runTest {
+        fun `should cleanup when cancelled`() = runTest {
+            val listenerSlot = captureCheckoutListener()
+
+            setupListenerToReturn { /* Don't call any callback - suspend indefinitely */ }
+
+            val job = launch {
+                repository.awaitPaymentResult()
+            }
+
+            advanceUntilIdle()
+            job.cancelAndJoin()
+
+            // Verify cleanup was called
+            verify(exactly = 1) {
+                mockHeadlessInterface.cleanup()
+            }
+        }
+
+        @Test
+        fun `should only respond to first callback when multiple are called`() = runTest {
             val mockCheckoutData = mockk<PrimerCheckoutData>()
             val mockError = createMockError("Error")
 
-            val results = collectPaymentResults(2) { listener ->
+            val result = awaitPaymentResult { listener ->
+                // First callback should complete the suspension
+                listener.onCheckoutCompleted(mockCheckoutData)
+                // Second callback should be ignored (continuation already resumed)
                 listener.onFailed(mockError)
-                listener.onCheckoutCompleted(mockCheckoutData)
             }
 
-            assertEquals(2, results.size)
-            assertFailureResult(results[0], "Error")
-            assertSuccessResult(results[1], mockCheckoutData)
-        }
-
-        @Test
-        fun `should not emit when onAvailablePaymentMethodsLoaded is called`() = runTest {
-            val mockCheckoutData = mockk<PrimerCheckoutData>()
-
-            val results = collectPaymentResults(1) { listener ->
-                // This should not emit
-                listener.onAvailablePaymentMethodsLoaded(emptyList())
-                // This should emit
-                listener.onCheckoutCompleted(mockCheckoutData)
-            }
-
-            // Only one result from onCheckoutCompleted
-            assertEquals(1, results.size)
-            assertSuccessResult(results.single(), mockCheckoutData)
+            // Should get success from first callback
+            assertSuccessResult(result, mockCheckoutData)
         }
     }
 
@@ -259,24 +261,22 @@ class HeadlessRepositoryImplTest {
         return listenerSlot
     }
 
-    private suspend fun TestScope.collectPaymentResults(
-        count: Int,
+    private fun setupListenerToReturn(
         action: (PrimerHeadlessUniversalCheckoutListener) -> Unit,
-    ): List<Result<PrimerCheckoutData>> {
-        val listenerSlot = captureCheckoutListener()
-        val results = mutableListOf<Result<PrimerCheckoutData>>()
-
-        val job = launch {
-            repository.paymentResults.take(count).toList(results)
+    ) {
+        val listenerSlot = slot<PrimerHeadlessUniversalCheckoutListener>()
+        every {
+            mockHeadlessInterface.setCheckoutListener(capture(listenerSlot))
+        } answers {
+            action(listenerSlot.captured)
         }
+    }
 
-        advanceUntilIdle()
-        assertTrue(listenerSlot.isCaptured)
-        action(listenerSlot.captured)
-        advanceUntilIdle()
-
-        job.join()
-        return results
+    private suspend fun awaitPaymentResult(
+        action: (PrimerHeadlessUniversalCheckoutListener) -> Unit,
+    ): Result<PrimerCheckoutData> {
+        setupListenerToReturn(action)
+        return repository.awaitPaymentResult()
     }
 
     private fun setupHeadlessStartToReturn(paymentMethods: List<PrimerHeadlessUniversalCheckoutPaymentMethod>) {
