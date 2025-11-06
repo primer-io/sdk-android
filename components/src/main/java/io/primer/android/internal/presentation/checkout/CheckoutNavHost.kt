@@ -10,10 +10,12 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.toRoute
 import io.primer.android.components.R
 import io.primer.android.core.di.DISdkContext
 import io.primer.android.internal.presentation.screens.nativeUi.NativeUiPaymentMethodScreen
 import io.primer.android.scope.PrimerCheckoutScope
+import kotlinx.serialization.Serializable
 
 internal val LocalNavController = staticCompositionLocalOf<NavHostController> {
     error("NavController not provided")
@@ -30,22 +32,22 @@ internal fun PrimerCheckoutScope.CheckoutNavHost(
         CheckoutNavigator {
             NavHost(
                 navController = LocalNavController.current,
-                startDestination = Screen.Splash.route,
+                startDestination = Screen.Splash,
                 modifier = modifier.fillMaxWidth(),
             ) {
-                composable(Screen.Splash.route) {
+                composable<Screen.Splash> {
                     with(components) {
                         splashScreen()
                     }
                 }
 
-                composable(Screen.Loading.route) {
+                composable<Screen.Loading> {
                     with(components) {
                         loadingScreen()
                     }
                 }
 
-                composable(Screen.Error.route) {
+                composable<Screen.Error> {
                     val error = LocalNavController.current.previousBackStackEntry
                         ?.savedStateHandle
                         ?.get<String>("error")
@@ -54,45 +56,63 @@ internal fun PrimerCheckoutScope.CheckoutNavHost(
                     }
                 }
 
-                composable(Screen.Success.route) {
+                composable<Screen.Success> {
                     with(components) {
                         successScreen()
                     }
                 }
 
-                composable(Screen.PaymentsList.route) {
+                composable<Screen.PaymentsList> {
                     components.paymentMethodSelection.Screen()
                 }
 
-                composable(Screen.CardForm.route) {
+                composable<Screen.CardForm> {
                     components.cardForm.Screen()
                 }
 
-                composable(Screen.SelectCountry.route) {
+                composable<Screen.SelectCountry> {
                     components.cardForm.selectCountry.Screen()
                 }
 
-                composable(Screen.Klarna.route) {
+                composable<Screen.Klarna> {
                     components.klarna.Screen()
                 }
 
-                composable("native_ui/{paymentMethod}") { backStackEntry ->
-                    val paymentMethod = backStackEntry.arguments?.getString("paymentMethod") ?: return@composable
-                    NativeUiPaymentMethodScreen(paymentMethod)
+                composable<Screen.NativeUi> { backStackEntry ->
+                    val nativeUi = backStackEntry.toRoute<Screen.NativeUi>()
+                    NativeUiPaymentMethodScreen(nativeUi.paymentMethod)
                 }
             }
         }
     }
 }
 
-internal sealed class Screen(val route: String) {
-    data object Splash : Screen("splash")
-    data object Loading : Screen("loading")
-    data object PaymentsList : Screen("payments_list")
-    data object CardForm : Screen("card_form")
-    data object SelectCountry : Screen("select_country")
-    data object Klarna : Screen("klarna")
-    data class NativeUi(val paymentMethod: String) : Screen("native_ui/$paymentMethod")
-    data object Success : Screen("success")
-    data object Error : Screen("error")
+@Serializable
+internal sealed interface Screen {
+    @Serializable
+    data object Splash : Screen
+
+    @Serializable
+    data object Loading : Screen
+
+    @Serializable
+    data object PaymentsList : Screen
+
+    @Serializable
+    data object CardForm : Screen
+
+    @Serializable
+    data object SelectCountry : Screen
+
+    @Serializable
+    data object Klarna : Screen
+
+    @Serializable
+    data class NativeUi(val paymentMethod: String) : Screen
+
+    @Serializable
+    data object Success : Screen
+
+    @Serializable
+    data object Error : Screen
 }

@@ -71,17 +71,17 @@ internal fun PrimerCheckoutScope.CheckoutNavigator(
     LaunchedEffect(checkoutNavigator) {
         checkoutNavigator.navigationEvents.collectLatest { event ->
             when (event) {
-                is NavigationEvent.NavigateTo -> navController.navigate(event.screen.route)
+                is NavigationEvent.NavigateTo -> navController.navigate(event.screen)
                 NavigationEvent.NavigateBack -> navController.popBackStack()
                 NavigationEvent.NavigateToPaymentMethodsList -> {
-                    navController.navigate(Screen.PaymentsList.route) { popUpTo(0) }
+                    navController.navigate(Screen.PaymentsList) { popUpTo(0) }
                 }
                 is NavigationEvent.NavigateToError -> {
                     navController.currentBackStackEntry?.savedStateHandle?.set("error", event.errorMessage)
-                    navController.navigate(Screen.Error.route)
+                    navController.navigate(Screen.Error)
                 }
                 NavigationEvent.NavigateToSuccess -> {
-                    navController.navigate(Screen.Success.route) { popUpTo(0) }
+                    navController.navigate(Screen.Success) { popUpTo(0) }
                 }
                 is NavigationEvent.NavigateBackWithResult<*> -> {
                     checkoutNavigator.setResult(event.resultKey, event.result)
