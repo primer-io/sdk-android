@@ -7,7 +7,7 @@ android {
 
     defaultConfig {
         testInstrumentationRunnerArguments runnerBuilder: 'de.mannodermaus.junit5.AndroidJUnit5Builder'
-        minSdkVersion 21
+        minSdkVersion 23
         targetSdkVersion 36
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
