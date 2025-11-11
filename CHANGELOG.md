@@ -1,3 +1,9 @@
+## 2.45.0 (2025-11-11)
+
+### Feat
+
+- bump com.google.android.gms:play-services-wallet from 19.4.0 to 19.5.0, bump minimum supported version to 23 (#1095)
+
 ## 2.44.1 (2025-10-17)
 
 ### Fix
