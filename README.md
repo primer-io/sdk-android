@@ -16,12 +16,13 @@
 <br/>
 
 <p align="center">
-  <a href="https://android-arsenal.com/api?level=24"><img alt="API" src="https://img.shields.io/badge/API-21%2B-brightgreen.svg?style=flat"/></a>
+  <a href="https://android-arsenal.com/api?level=24"><img alt="API" src="https://img.shields.io/badge/API-23%2B-brightgreen.svg?style=flat"/></a>
   <a href="https://search.maven.org/search?q=g:%22io.primer%22%20AND%20a:%22android%22"><img src="https://img.shields.io/maven-central/v/io.primer/android"/></a>
   <a href="LICENSE.md"><img src="https://img.shields.io/github/license/primer-io/sdk-android"/></a>
 </p>
 
 <br/>
+
 # 💪 Features of the Android SDK
 
 <p>💳 &nbsp; Create great payment experiences with our highly customizable Universal Checkout</p>
@@ -36,10 +37,10 @@
 Consider looking at the following resources:
 
 - [Documentation](https://primer.io/docs)
-- [Client session creation](https://primer.io/docs/accept-payments/manage-client-sessions/#create-a-client-session)
-- [API reference](https://apiref.primer.io/docs/getting-started)
+- [Client session creation](https://primer.io/docs/checkout/client-session#create-a-client-session)
+- [API reference](https://primer.io/docs/api-reference/get-started/overview)
 - [Changelogs](https://primer.io/docs/changelog/sdk-changelog/android)
-- [Detailed Android Documentation](https://primer.io/docs/payments/universal-checkout/drop-in/get-started/android)
+- [Detailed Android Documentation](https://primer.io/docs/checkout/drop-in/overview#android)
 
 
 # 💡 Support
@@ -49,7 +50,7 @@ For any support or integration related queries, feel free to [Contact Us](mailto
 
 ## 🚀 Quick start
 
-Take a look at our [Quick Start Guide](https://primer.io/docs/get-started/android) for accepting your first payment with Universal Checkout.
+Take a look at our [Quick Start Guide](https://primer.io/docs/checkout/drop-in/overview#android) for accepting your first payment with Universal Checkout.
 
 <br/>
 
@@ -78,7 +79,7 @@ dependencies {
 }
 ```
 
-For more details about SDK versions, please see our [changelog](https://www.notion.so/primerio/Android-SDK-8b4bd28444eb4af283678c9f2b5f46fe).
+For more details about SDK versions, please see our [changelog](https://primer.io/docs/changelogs/android-sdk).
 
 It is highly recommended adding following settings to your `app/build.gradle` file:
 
@@ -94,7 +95,7 @@ android {
 
 ## 📋 Prerequisites
 
-- 🔑 Generate a client token by [creating a client session](https://primer.io/docs/accept-payments/manage-client-sessions) in your backend.
+- 🔑 Generate a client token by [creating a client session](https://primer.io/docs/checkout/client-session#create-a-client-session) in your backend.
 - 🎉 _That's it!_
 
 ## 🔍 &nbsp;Initializing the SDK
@@ -155,7 +156,6 @@ You should now be able to see Universal Checkout! The user can now interact with
 The payment’s data will be returned on `onCheckoutCompleted(checkoutData)`.
 
 **Note:** There are more options which can be passed to Universal Checkout. Please refer to the section below for more information.
-
 
 # Running
 
