@@ -32,4 +32,7 @@ internal class PrimerVaultManagerRepositoryImpl(
     } else {
         manager.startPaymentFlow(vaultedPaymentMethodId)
     }
+
+    override suspend fun deleteVaultedPaymentMethod(paymentMethodId: String): Result<Unit> =
+        manager.deleteVaultedPaymentMethod(paymentMethodId)
 }

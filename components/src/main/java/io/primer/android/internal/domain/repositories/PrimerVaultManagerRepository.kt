@@ -17,4 +17,5 @@ internal interface PrimerVaultManagerRepository {
         vaultedPaymentMethodId: String,
         additionalData: PrimerVaultedPaymentMethodAdditionalData? = null,
     ): Result<Unit>
+    suspend fun deleteVaultedPaymentMethod(paymentMethodId: String): Result<Unit>
 }

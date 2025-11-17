@@ -2,6 +2,7 @@ package io.primer.android.internal.presentation.screens.paymentMethodSelection.c
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,12 +15,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -27,17 +25,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import io.primer.android.LocalPrimerTheme
-import io.primer.android.PrimerTheme
 import io.primer.android.components.PrimerVaultedComponents
 import io.primer.android.components.R
 import io.primer.android.domain.tokenization.models.PrimerVaultedPaymentMethod
 import io.primer.android.scope.PrimerVaultedScope
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 /**
@@ -75,7 +68,9 @@ internal fun VaultedPaymentMethodsSection(
         modifier = modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(LocalPrimerTheme.current.spacingTokens.medium),
     ) {
-        VaultSectionHeader()
+        VaultSectionHeader(
+            onShowAllClick = { vaultedScope.showAllMethods() },
+        )
 
         // Content (loading, error, or list with pay button in gray container)
         when {
@@ -258,6 +253,7 @@ internal fun DefaultVaultErrorState(
 
 @Composable
 private fun VaultSectionHeader(
+    onShowAllClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Row(
@@ -273,6 +269,7 @@ private fun VaultSectionHeader(
         )
 
         Row(
+            modifier = Modifier.clickable(onClick = onShowAllClick),
             horizontalArrangement = Arrangement.spacedBy(4.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
@@ -286,125 +283,6 @@ private fun VaultSectionHeader(
                 contentDescription = null,
                 tint = LocalPrimerTheme.current.colorTokens().primerColorTextPrimary,
                 modifier = Modifier.size(20.dp),
-            )
-        }
-    }
-}
-
-@Preview(showBackground = true, name = "Vaulted Payment Methods Section")
-@Composable
-private fun VaultedPaymentMethodsSectionPreview() {
-    CompositionLocalProvider(LocalPrimerTheme provides PrimerTheme()) {
-        MaterialTheme {
-            val previewMethods = remember { createPreviewVaultedPaymentMethods() }
-            val previewState = remember {
-                PrimerVaultedScope.State(
-                    paymentMethods = previewMethods,
-                    selectedPaymentMethodId = previewMethods.first().id,
-                    isLoading = false,
-                    stage = PrimerVaultedScope.State.Stage.Selection,
-                )
-            }
-            val previewScope = remember {
-                PreviewVaultedScope(initialState = previewState)
-            }
-
-            VaultedPaymentMethodsSection(
-                vaultedState = previewState,
-                vaultedScope = previewScope,
-                vaultedComponents = PrimerVaultedComponents(),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-            )
-        }
-    }
-}
-
-internal fun createPreviewVaultedPaymentMethods(): List<PrimerVaultedPaymentMethod> {
-    return listOf(
-        createPreviewVaultedPaymentMethod(
-            id = "preview-card-mastercard",
-            network = "MASTERCARD",
-            last4 = 1234,
-            cardholderName = "John Appleseed",
-        ),
-        createPreviewVaultedPaymentMethod(
-            id = "preview-card-visa",
-            network = "VISA",
-            last4 = 9876,
-            cardholderName = "Jane Smith",
-        ),
-    )
-}
-
-@Suppress("LongParameterList")
-private fun createPreviewVaultedPaymentMethod(
-    id: String,
-    network: String,
-    last4: Int,
-    cardholderName: String,
-    expirationMonth: Int = 12,
-    expirationYear: Int = 2026,
-): PrimerVaultedPaymentMethod {
-    return PrimerVaultedPaymentMethod(
-        id = id,
-        analyticsId = "preview-analytics-$id",
-        paymentMethodType = "PAYMENT_CARD",
-        paymentInstrumentType = "PAYMENT_CARD",
-        paymentInstrumentData = io.primer.android.data.tokenization.models.PaymentInstrumentData(
-            network = network,
-            cardholderName = cardholderName,
-            first6Digits = 543210,
-            last4Digits = last4,
-            accountNumberLast4Digits = null,
-            expirationMonth = expirationMonth,
-            expirationYear = expirationYear,
-            externalPayerInfo = null,
-            klarnaCustomerToken = null,
-            sessionData = null,
-            paymentMethodType = null,
-            sessionInfo = null,
-            binData = null,
-            bankName = null,
-        ),
-    )
-}
-
-class PreviewVaultedScope(
-    initialState: PrimerVaultedScope.State = PrimerVaultedScope.State(),
-) : PrimerVaultedScope {
-
-    private val _state = MutableStateFlow(initialState)
-    override val state: StateFlow<PrimerVaultedScope.State> = _state
-
-    override suspend fun submit() { /* no-op for previews */ }
-
-    override suspend fun cvvRecapture() { /* no-op for previews */ }
-
-    override fun updateCvv(cvv: String) {
-        _state.update {
-            it.copy(
-                cvvValue = cvv,
-                isCvvValid = cvv.length == it.expectedCvvLength && cvv.all { char -> char.isDigit() },
-            )
-        }
-    }
-
-    override fun selectPaymentMethod(paymentMethodId: String) {
-        _state.update { it.copy(selectedPaymentMethodId = paymentMethodId) }
-    }
-
-    override fun clearSelection() {
-        _state.update { it.copy(selectedPaymentMethodId = null) }
-    }
-
-    override fun cancelCvvRecapture() {
-        _state.update {
-            it.copy(
-                isCvvRequired = false,
-                isProcessing = false,
-                isLoading = it.paymentMethods.isEmpty(),
             )
         }
     }

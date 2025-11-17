@@ -19,6 +19,7 @@ internal class VaultedPaymentMethodSelectionViewModelFactory : ViewModelProvider
                 validateVaultedCVVUseCase = resolve(),
                 shouldCaptureVaultedCvvUseCase = resolve(),
                 cvvFieldsUseCase = resolve(),
+                deleteVaultedPaymentMethodUseCase = resolve(),
                 componentsEventsRepository = resolve(),
                 checkoutNavigator = resolve(),
             ) as T

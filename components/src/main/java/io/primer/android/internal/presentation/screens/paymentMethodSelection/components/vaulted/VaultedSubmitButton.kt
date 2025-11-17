@@ -55,7 +55,7 @@ internal fun VaultedSubmitButton(
  */
 @Preview(showBackground = true, name = "Pay Button - Normal")
 @Composable
-internal fun DefaultPaymentVaultedSubmitButtonPreview() {
+private fun DefaultPaymentVaultedSubmitButtonPreview() {
     MaterialTheme {
         Column(
             modifier = Modifier
@@ -79,7 +79,7 @@ internal fun DefaultPaymentVaultedSubmitButtonPreview() {
  */
 @Preview(showBackground = true, name = "Pay Button - Loading")
 @Composable
-internal fun DefaultPaymentVaultedSubmitButtonLoadingPreview() {
+private fun DefaultPaymentVaultedSubmitButtonLoadingPreview() {
     MaterialTheme {
         Column(
             modifier = Modifier
@@ -103,7 +103,7 @@ internal fun DefaultPaymentVaultedSubmitButtonLoadingPreview() {
  */
 @Preview(showBackground = true, name = "Pay Button - Disabled")
 @Composable
-internal fun DefaultPaymentVaultedSubmitButtonDisabledPreview() {
+private fun DefaultPaymentVaultedSubmitButtonDisabledPreview() {
     MaterialTheme {
         Column(
             modifier = Modifier

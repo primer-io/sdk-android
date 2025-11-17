@@ -1,3 +1,5 @@
+@file:Suppress("UnusedPrivateMember")
+
 package io.primer.android.internal.presentation.screens.paymentMethodSelection.components.vaulted
 
 import androidx.compose.foundation.layout.Arrangement

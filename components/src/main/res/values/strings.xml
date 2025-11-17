@@ -120,5 +120,22 @@
     <string name="primer_components_vaulted_generic_card_content_description">Card</string>
     <string name="primer_components_vaulted_cvv_placeholder">CVV</string>
     <string name="primer_components_vaulted_show_all">Show all</string>
+    <string name="primer_components_vaulted_show_all_content_description">Show all saved payment methods</string>
+
+    <!-- All Saved Payment Methods Screen -->
+    <string name="primer_components_vaulted_all_methods_title">All saved payment methods</string>
+    <string name="primer_components_vaulted_edit_button">Edit</string>
+    <string name="primer_components_vaulted_done_button">Done</string>
+    <string name="primer_components_vaulted_empty_state_title">No saved payment methods</string>
+    <string name="primer_components_vaulted_empty_state_description">You don\'t have any saved payment methods yet.</string>
+    <string name="primer_components_vaulted_delete_content_description">Delete payment method</string>
+    <string name="primer_components_vaulted_card_details_separator">•</string>
+
+    <!-- Delete Confirmation Dialog -->
+    <string name="primer_components_vaulted_delete_dialog_title">Delete payment method?</string>
+    <string name="primer_components_vaulted_delete_dialog_message">Are you sure you want to delete %1$s?</string>
+    <string name="primer_components_vaulted_delete_dialog_card_details">%1$s ending in %2$s</string>
+    <string name="primer_components_vaulted_delete_dialog_confirm">Delete</string>
+    <string name="primer_components_vaulted_delete_dialog_cancel">Cancel</string>
 
 </resources>

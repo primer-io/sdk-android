@@ -66,7 +66,7 @@ internal class CardExpiryDateValidatorTest {
     @Test
     fun `validate should return null when expiry date format is valid`() =
         runTest {
-            val validExpiryDates = listOf("01/2027", "12/2030", "10/2025")
+            val validExpiryDates = listOf("01/2027", "12/2030", "10/2026")
 
             validExpiryDates.forEach { expiryDate ->
                 val result = cardExpiryDateValidator.validate(expiryDate)

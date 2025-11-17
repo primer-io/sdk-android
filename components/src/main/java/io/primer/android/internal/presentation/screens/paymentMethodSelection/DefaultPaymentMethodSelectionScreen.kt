@@ -25,6 +25,7 @@ import io.primer.android.LocalPrimerTheme
 import io.primer.android.components.R
 import io.primer.android.internal.presentation.checkout.components.CheckoutAppBar
 import io.primer.android.internal.presentation.screens.paymentMethodSelection.components.surcharge.paymentMethodsList
+import io.primer.android.internal.presentation.screens.paymentMethodSelection.components.vaulted.AllVaultedMethodsStageContent
 import io.primer.android.internal.presentation.screens.paymentMethodSelection.components.vaulted.VaultedCvvStageContent
 import io.primer.android.internal.presentation.screens.paymentMethodSelection.components.vaulted.VaultedPaymentMethodsSection
 import io.primer.android.scope.PrimerPaymentMethodSelectionScope
@@ -83,6 +84,15 @@ internal fun PrimerPaymentMethodSelectionScope.DefaultPaymentMethodSelectionScre
                     vaultedScope = vaultedScope,
                     onDismiss = { vaultedScope.cancelCvvRecapture() },
                 )
+
+                is PrimerVaultedScope.State.Stage.AllMethods -> {
+                    val viewModel = components.vaultedComponents.getViewModel()
+                    AllVaultedMethodsStageContent(
+                        vaultedScope = vaultedScope,
+                        viewModel = viewModel,
+                        onDismiss = { viewModel.returnToSelection() },
+                    )
+                }
             }
         }
     }

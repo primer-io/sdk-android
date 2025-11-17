@@ -8,6 +8,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 
+private const val DEFAULT_CVV_LENGTH = 3
+
 /**
  * Use case for managing CVV field state and validation for vaulted payment methods.
  * Provides real-time validation using card network detection from BIN (first 6 digits).
@@ -30,12 +32,8 @@ internal class VaultedCvvFieldsUseCase {
         if (digits.isNotEmpty()) {
             CardNumberFormatter.fromString(digits).getCvvLength()
         } else {
-            DEFAULT_CVV_LENGTH
+            DEFAULT_CVV_LENGTH // when no card network is detected
         }
-    }
-
-    companion object {
-        private const val DEFAULT_CVV_LENGTH = 3
     }
 
     /**

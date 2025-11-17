@@ -6,6 +6,7 @@ import io.primer.android.components.analytics.data.model.EventType
 import io.primer.android.components.analytics.data.repository.ComponentsEventsRepository
 import io.primer.android.components.domain.payments.vault.model.card.PrimerVaultedCardAdditionalData
 import io.primer.android.domain.tokenization.models.PrimerVaultedPaymentMethod
+import io.primer.android.internal.domain.usecase.vault.DeleteVaultedPaymentMethodUseCase
 import io.primer.android.internal.domain.usecase.vault.FetchVaultedPaymentMethodsUseCase
 import io.primer.android.internal.domain.usecase.vault.ShouldCaptureVaultedCvvUseCase
 import io.primer.android.internal.domain.usecase.vault.SubmitVaultedPaymentUseCase
@@ -33,6 +34,7 @@ internal class VaultedPaymentMethodSelectionViewModel(
     private val validateVaultedCVVUseCase: ValidateVaultedCVVUseCase,
     private val shouldCaptureVaultedCvvUseCase: ShouldCaptureVaultedCvvUseCase,
     private val cvvFieldsUseCase: VaultedCvvFieldsUseCase,
+    private val deleteVaultedPaymentMethodUseCase: DeleteVaultedPaymentMethodUseCase,
     private val componentsEventsRepository: ComponentsEventsRepository,
     private val checkoutNavigator: CheckoutNavigator,
 ) : ViewModel(), PrimerVaultedScope {
@@ -95,7 +97,20 @@ internal class VaultedPaymentMethodSelectionViewModel(
         val first6Digits = paymentMethod?.paymentInstrumentData?.first6Digits?.toString() ?: ""
         cvvFieldsUseCase.updateFirst6Digits(first6Digits)
 
-        _state.update { it.copy(selectedPaymentMethodId = paymentMethodId) }
+        _state.update { currentState ->
+            // If we're in AllMethods stage, return to Selection stage after selection
+            val newStage = if (currentState.stage is PrimerVaultedScope.State.Stage.AllMethods) {
+                PrimerVaultedScope.State.Stage.Selection
+            } else {
+                currentState.stage
+            }
+
+            currentState.copy(
+                selectedPaymentMethodId = paymentMethodId,
+                stage = newStage,
+                editMode = PrimerVaultedScope.State.EditMode.View,
+            )
+        }
     }
 
     override fun clearSelection() {
@@ -169,10 +184,7 @@ internal class VaultedPaymentMethodSelectionViewModel(
 
     private suspend fun processPaymentSubmission(paymentMethodId: String) {
         updateStateToProcessing(paymentMethodId)
-        val paymentMethod = getPaymentMethodById(paymentMethodId)
-        paymentMethod?.let {
-            componentsEventsRepository.send(EventType.PaymentSubmitted(it.paymentMethodType))
-        }
+        logPaymentSubmitted(paymentMethodId)
 
         submitVaultedPaymentUseCase(paymentMethodId).fold(
             onSuccess = {
@@ -226,12 +238,7 @@ internal class VaultedPaymentMethodSelectionViewModel(
                 stage = PrimerVaultedScope.State.Stage.Selection,
             )
         }
-        getPaymentMethodById(paymentMethodId)?.let {
-            componentsEventsRepository.send(
-                EventType.PaymentSuccess(it.paymentMethodType, it.id),
-            )
-        }
-
+        logPaymentSuccess(paymentMethodId)
         checkoutNavigator.navigateToSuccess()
     }
 
@@ -247,12 +254,7 @@ internal class VaultedPaymentMethodSelectionViewModel(
                 stage = stage,
             )
         }
-        val paymentMethod = getPaymentMethodById(paymentMethodId)
-        paymentMethod?.let {
-            componentsEventsRepository.send(
-                EventType.PaymentFailure(it.paymentMethodType, null),
-            )
-        }
+        logPaymentFailure(paymentMethodId)
         checkoutNavigator.navigateToError(exception.message ?: "Payment failed")
     }
 
@@ -270,6 +272,8 @@ internal class VaultedPaymentMethodSelectionViewModel(
     private fun loadVaultedPaymentMethods() {
         viewModelScope.launch {
             val currentSelection = _state.value.selectedPaymentMethodId
+            val currentStage = _state.value.stage
+            val currentEditMode = _state.value.editMode
 
             _state.update { it.copy(isLoading = true) }
 
@@ -285,7 +289,9 @@ internal class VaultedPaymentMethodSelectionViewModel(
                             selectedPaymentMethodId = updatedSelection,
                             isLoading = false,
                             error = null,
-                            stage = PrimerVaultedScope.State.Stage.Selection,
+                            // Preserve the current stage and edit mode instead of resetting
+                            stage = currentStage,
+                            editMode = currentEditMode,
                         )
                     }
                 },
@@ -307,5 +313,132 @@ internal class VaultedPaymentMethodSelectionViewModel(
 
     private fun getPaymentMethodById(paymentMethodId: String): PrimerVaultedPaymentMethod? {
         return _state.value.paymentMethods.find { it.id == paymentMethodId }
+    }
+
+    private fun logPaymentSubmitted(paymentMethodId: String) {
+        val paymentMethodType = getAnalyticsPaymentMethodType(paymentMethodId)
+        componentsEventsRepository.send(EventType.PaymentSubmitted(paymentMethodType))
+    }
+
+    private fun logPaymentSuccess(paymentMethodId: String) {
+        val paymentMethodType = getAnalyticsPaymentMethodType(paymentMethodId)
+        // Payment ID is not yet available in the vaulted flow; emit empty value until backend support arrives.
+        componentsEventsRepository.send(EventType.PaymentSuccess(paymentMethodType, ""))
+    }
+
+    private fun logPaymentFailure(paymentMethodId: String) {
+        val paymentMethodType = getAnalyticsPaymentMethodType(paymentMethodId)
+        componentsEventsRepository.send(EventType.PaymentFailure(paymentMethodType))
+    }
+
+    private fun getAnalyticsPaymentMethodType(paymentMethodId: String): String {
+        return getPaymentMethodById(paymentMethodId)?.paymentMethodType ?: paymentMethodId
+    }
+
+    // ========== AllMethods Stage Management ==========
+
+    /**
+     * Navigates to the AllMethods stage showing full list of vaulted payment methods.
+     * Preserves the current selection state.
+     */
+    override fun showAllMethods() {
+        _state.update {
+            it.copy(
+                stage = PrimerVaultedScope.State.Stage.AllMethods,
+                editMode = PrimerVaultedScope.State.EditMode.View,
+            )
+        }
+    }
+
+    /**
+     * Returns to the Selection stage from AllMethods.
+     * Preserves the current selection state.
+     */
+    fun returnToSelection() {
+        _state.update {
+            it.copy(
+                stage = PrimerVaultedScope.State.Stage.Selection,
+                editMode = PrimerVaultedScope.State.EditMode.View,
+                deletingPaymentMethodId = null,
+            )
+        }
+    }
+
+    /**
+     * Toggles between View and Edit modes in the AllMethods stage.
+     */
+    fun toggleEditMode() {
+        _state.update {
+            val newEditMode = when (it.editMode) {
+                PrimerVaultedScope.State.EditMode.View -> PrimerVaultedScope.State.EditMode.Edit
+                PrimerVaultedScope.State.EditMode.Edit -> PrimerVaultedScope.State.EditMode.View
+            }
+            it.copy(
+                editMode = newEditMode,
+                deletingPaymentMethodId = null,
+            )
+        }
+    }
+
+    /**
+     * Shows delete confirmation dialog for a payment method.
+     *
+     * @param paymentMethodId The ID of the payment method to mark for deletion
+     */
+    fun showDeleteConfirmation(paymentMethodId: String) {
+        _state.update {
+            it.copy(deletingPaymentMethodId = paymentMethodId)
+        }
+    }
+
+    /**
+     * Cancels the delete operation and clears the deletion state.
+     */
+    fun cancelDelete() {
+        _state.update {
+            it.copy(deletingPaymentMethodId = null)
+        }
+    }
+
+    /**
+     * Confirms and executes deletion of the payment method.
+     * Refreshes the payment methods list after deletion.
+     * If the deleted method was selected, clears the selection.
+     */
+    fun confirmDelete() {
+        val paymentMethodId = _state.value.deletingPaymentMethodId ?: return
+        val wasSelected = _state.value.selectedPaymentMethodId == paymentMethodId
+
+        viewModelScope.launch {
+            _state.update { it.copy(isDeleting = true) }
+
+            deleteVaultedPaymentMethodUseCase(paymentMethodId).fold(
+                onSuccess = {
+                    if (wasSelected) {
+                        clearSelection()
+                    }
+
+                    // Clear deletion state
+                    _state.update {
+                        it.copy(
+                            deletingPaymentMethodId = null,
+                            isDeleting = false,
+                        )
+                    }
+
+                    // Reload payment methods to reflect the deletion
+                    loadVaultedPaymentMethods()
+                },
+                onFailure = { exception ->
+                    _state.update {
+                        it.copy(
+                            deletingPaymentMethodId = null,
+                            isDeleting = false,
+                            error = exception,
+                        )
+                    }
+                },
+            )
+        }
     }
 }

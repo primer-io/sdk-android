@@ -10,7 +10,7 @@ import io.primer.android.internal.presentation.screens.paymentMethodSelection.Va
 import io.primer.android.internal.presentation.screens.paymentMethodSelection.VaultedPaymentMethodSelectionViewModelFactory
 import io.primer.android.internal.presentation.screens.paymentMethodSelection.components.vaulted.DefaultVaultErrorState
 import io.primer.android.internal.presentation.screens.paymentMethodSelection.components.vaulted.DefaultVaultLoadingState
-import io.primer.android.internal.presentation.screens.paymentMethodSelection.components.vaulted.VaultedPaymentMethodItem
+import io.primer.android.internal.presentation.screens.paymentMethodSelection.components.vaulted.VaultedCardPaymentMethodItem
 import io.primer.android.internal.presentation.screens.paymentMethodSelection.components.vaulted.VaultedSubmitButton
 import io.primer.android.scope.PrimerVaultedScope
 
@@ -28,6 +28,19 @@ class PrimerVaultedComponents : DISdkComponent {
      */
     @Composable
     fun rememberScope(): PrimerVaultedScope {
+        return viewModel<VaultedPaymentMethodSelectionViewModel>(
+            factory = resolve<VaultedPaymentMethodSelectionViewModelFactory>(),
+        )
+    }
+
+    /**
+     * Gets the ViewModel instance for direct access to methods not exposed in PrimerVaultedScope.
+     * Used internally for stage management operations.
+     *
+     * @return The VaultedPaymentMethodSelectionViewModel instance
+     */
+    @Composable
+    internal fun getViewModel(): VaultedPaymentMethodSelectionViewModel {
         return viewModel<VaultedPaymentMethodSelectionViewModel>(
             factory = resolve<VaultedPaymentMethodSelectionViewModelFactory>(),
         )
@@ -68,7 +81,7 @@ class PrimerVaultedComponents : DISdkComponent {
         modifier: Modifier,
         onClick: () -> Unit,
     ) -> Unit = { paymentMethod, isSelected, modifier, onClick ->
-        VaultedPaymentMethodItem(
+        VaultedCardPaymentMethodItem(
             paymentMethod = paymentMethod,
             isSelected = isSelected,
             modifier = modifier,

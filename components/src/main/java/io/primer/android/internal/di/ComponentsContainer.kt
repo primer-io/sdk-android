@@ -30,6 +30,7 @@ import io.primer.android.internal.domain.usecase.CardFieldsUseCase
 import io.primer.android.internal.domain.usecase.CardNetworkUseCase
 import io.primer.android.internal.domain.usecase.StartNativeUiPaymentUseCase
 import io.primer.android.internal.domain.usecase.SubmitCardPaymentUseCase
+import io.primer.android.internal.domain.usecase.vault.DeleteVaultedPaymentMethodUseCase
 import io.primer.android.internal.domain.usecase.vault.FetchVaultedPaymentMethodsUseCase
 import io.primer.android.internal.domain.usecase.vault.ShouldCaptureVaultedCvvUseCase
 import io.primer.android.internal.domain.usecase.vault.SubmitVaultedPaymentUseCase
@@ -176,6 +177,10 @@ internal class ComponentsContainer(
 
         registerSingleton {
             VaultedCvvFieldsUseCase()
+        }
+
+        registerSingleton {
+            DeleteVaultedPaymentMethodUseCase(repository = resolve())
         }
     }
 

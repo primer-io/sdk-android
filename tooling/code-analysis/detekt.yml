@@ -17,6 +17,7 @@ complexity:
     excludes: [ '**/test/**', '**/*.Test.kt', '**/*.Spec.kt' ]
   LongParameterList:
     ignoreDefaultParameters: true
+    ignoreAnnotated: [ 'Composable' ]
   TooManyFunctions:
     ignoreAnnotatedFunctions: [ 'Preview' ]
 naming:

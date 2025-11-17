@@ -53,6 +53,12 @@ interface PrimerVaultedScope : DISdkComponent {
     fun cancelCvvRecapture()
 
     /**
+     * Navigates to the AllMethods stage to show the full list of vaulted payment methods.
+     * This allows users to view all their saved payment methods and manage them.
+     */
+    fun showAllMethods()
+
+    /**
      * Represents the complete state of vaulted payment method operations,
      * including payment methods list, selection, CVV input, and flow status.
      *
@@ -65,7 +71,10 @@ interface PrimerVaultedScope : DISdkComponent {
      * @param isCvvRequired Whether CVV input is required for the selected payment method
      * @param isProcessing Whether a payment is currently being processed
      * @param error Exception if an error occurred, null otherwise
-     * @param stage Current UI stage (Selection or CVV input screen)
+     * @param stage Current UI stage (Selection, CVV input, or All methods screen)
+     * @param editMode Current edit mode for AllMethods stage (View or Edit)
+     * @param deletingPaymentMethodId ID of payment method pending deletion confirmation
+     * @param isDeleting Whether a delete operation is in progress
      */
     data class State(
         val paymentMethods: List<PrimerVaultedPaymentMethod> = emptyList(),
@@ -78,13 +87,16 @@ interface PrimerVaultedScope : DISdkComponent {
         val isProcessing: Boolean = false,
         val error: Throwable? = null,
         val stage: Stage = Stage.Selection,
+        val editMode: EditMode = EditMode.View,
+        val deletingPaymentMethodId: String? = null,
+        val isDeleting: Boolean = false,
     ) {
         /**
          * Represents the current UI stage in the vaulted payment flow.
          */
         sealed interface Stage {
             /**
-             * Selection stage - showing list of vaulted payment methods
+             * Selection stage - showing list of vaulted payment methods in compact view
              */
             data object Selection : Stage
 
@@ -93,6 +105,27 @@ interface PrimerVaultedScope : DISdkComponent {
              * @param paymentMethodId The ID of the payment method requiring CVV
              */
             data class Cvv(val paymentMethodId: String) : Stage
+
+            /**
+             * All methods stage - showing full screen view of all saved payment methods
+             * Allows browsing all methods and deleting via edit mode
+             */
+            data object AllMethods : Stage
+        }
+
+        /**
+         * Represents the edit mode for AllMethods stage.
+         */
+        sealed interface EditMode {
+            /**
+             * View mode - allows selection of payment methods
+             */
+            data object View : EditMode
+
+            /**
+             * Edit mode - allows deletion of payment methods
+             */
+            data object Edit : EditMode
         }
     }
 }
