@@ -1,3 +1,9 @@
+## 2.45.1 (2025-11-18)
+
+### Fix
+
+- better handling of initial deeplink (#1105)
+
 ## 2.45.0 (2025-11-11)
 
 ### Feat
