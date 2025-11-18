@@ -1,5 +1,6 @@
 package io.primer.android.bancontact.implementation.composer
 
+import android.content.Intent
 import androidx.annotation.VisibleForTesting
 import io.primer.android.PrimerSessionIntent
 import io.primer.android.analytics.utils.RawDataManagerAnalyticsConstants
@@ -14,6 +15,7 @@ import io.primer.android.components.domain.error.PrimerInputValidationError
 import io.primer.android.core.extensions.flatMap
 import io.primer.android.core.extensions.runSuspendCatching
 import io.primer.android.errors.data.exception.PaymentMethodCancelledException
+import io.primer.android.errors.data.exception.PaymentMethodRedirectException
 import io.primer.android.paymentmethods.PaymentInputDataValidator
 import io.primer.android.paymentmethods.analytics.delegate.PaymentMethodSdkAnalyticsEventLoggingDelegate
 import io.primer.android.paymentmethods.core.composer.RawDataPaymentMethodComponent
@@ -81,6 +83,17 @@ internal class AdyenBancontactComponent(
         scope.launch {
             paymentDelegate.handleError(
                 throwable = PaymentMethodCancelledException(paymentMethodType = params.paymentMethodType),
+            )
+        }
+    }
+
+    override fun onResultError(params: WebRedirectLauncherParams, intent: Intent?) {
+        composerScope.launch {
+            paymentDelegate.handleError(
+                PaymentMethodRedirectException(
+                    paymentMethodType = params.paymentMethodType,
+                    uri = intent?.dataString.orEmpty(),
+                ),
             )
         }
     }

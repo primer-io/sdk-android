@@ -44,26 +44,13 @@ abstract class BaseWebViewClient(
         }
     }
 
-    @Deprecated("Deprecated in Java")
-    @SuppressWarnings("deprecation")
-    override fun onReceivedError(
-        view: WebView?,
-        errorCode: Int,
-        description: String?,
-        failingUrl: String?,
-    ) {
-        super.onReceivedError(view, errorCode, description, failingUrl)
-        handleError(failingUrl, errorCode)
-    }
-
-    @RequiresApi(Build.VERSION_CODES.M)
     override fun onReceivedError(
         view: WebView?,
         request: WebResourceRequest?,
         error: WebResourceError?,
     ) {
         super.onReceivedError(view, request, error)
-        handleError(request?.url?.toString(), error?.errorCode)
+        handleError(view, request?.url?.toString(), error?.errorCode)
     }
 
     abstract fun getUrlState(url: String): UrlState
@@ -191,18 +178,28 @@ abstract class BaseWebViewClient(
     }
 
     /**
-     * 1. In case return url is same as url, we need to trigger error.
+     * 1. In case return url is same as url, we need to trigger error in case it's not a deeplink.
+     * Otherwise, try handling it.
      * 2. In case there is an HTTP POST redirect, we won't enter @see [shouldOverrideUrlLoading].
      * We will try to handle the deeplink in that case for ERROR_UNSUPPORTED_SCHEME.
      */
     private fun handleError(
+        view: WebView?,
         requestUrl: String?,
         errorCode: Int?,
     ) {
         when {
-            requestUrl == url -> cannotHandleIntent(Intent(requestUrl))
-            errorCode == ERROR_UNSUPPORTED_SCHEME && canCaptureUrl(requestUrl)
-            -> handleDeepLink(Uri.parse(requestUrl))
+            requestUrl == url -> {
+                if (URLUtil.isNetworkUrl(requestUrl)) {
+                    cannotHandleIntent(Intent(requestUrl))
+                } else {
+                    view?.loadUrl("about:blank")
+                    handleDeepLink(requestUrl?.toUri())
+                }
+            }
+
+            errorCode == ERROR_UNSUPPORTED_SCHEME && canCaptureUrl(requestUrl) ->
+                handleDeepLink(requestUrl?.toUri())
         }
     }
 

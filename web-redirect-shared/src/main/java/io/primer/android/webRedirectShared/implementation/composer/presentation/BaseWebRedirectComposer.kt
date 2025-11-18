@@ -10,6 +10,7 @@ import io.primer.android.webRedirectShared.implementation.composer.ui.navigation
 import io.primer.paymentMethodCoreUi.core.ui.composable.ActivityResultIntentHandler
 import io.primer.paymentMethodCoreUi.core.ui.composable.ActivityStartIntentHandler
 import io.primer.paymentMethodCoreUi.core.ui.navigation.launchers.PaymentMethodLauncherParams
+import io.primer.paymentMethodCoreUi.core.ui.webview.WebViewActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -28,6 +29,8 @@ interface BaseWebRedirectComposer :
 
     fun onResultCancelled(params: WebRedirectLauncherParams)
 
+    fun onResultError(params: WebRedirectLauncherParams, intent: Intent?)
+
     fun onResultOk(params: WebRedirectLauncherParams)
 
     override fun handleActivityResultIntent(
@@ -38,12 +41,17 @@ interface BaseWebRedirectComposer :
         when (resultCode) {
             Activity.RESULT_CANCELED -> {
                 val redirectParams = params.initialLauncherParams as WebRedirectLauncherParams
-                onResultCancelled(redirectParams)
+                onResultCancelled(params = redirectParams)
             }
 
             Activity.RESULT_OK -> {
                 val redirectParams = params.initialLauncherParams as WebRedirectLauncherParams
-                onResultOk(redirectParams)
+                onResultOk(params = redirectParams)
+            }
+
+            WebViewActivity.RESULT_ERROR -> {
+                val redirectParams = params.initialLauncherParams as WebRedirectLauncherParams
+                onResultError(params = redirectParams, intent = intent)
             }
         }
         close()

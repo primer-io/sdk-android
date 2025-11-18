@@ -25,6 +25,7 @@ import io.primer.android.webRedirectShared.implementation.composer.presentation.
 import io.primer.android.webredirect.implementation.payment.presentation.delegate.presentation.WebRedirectPaymentDelegate
 import io.primer.android.webredirect.implementation.tokenization.presentation.WebRedirectTokenizationDelegate
 import io.primer.paymentMethodCoreUi.core.ui.navigation.launchers.PaymentMethodLauncherParams
+import io.primer.paymentMethodCoreUi.core.ui.webview.WebViewActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -113,6 +114,26 @@ class WebRedirectComponentTest {
 
         runTest {
             component.handleActivityResultIntent(params, Activity.RESULT_CANCELED, null)
+        }
+
+        coVerify {
+            paymentDelegate.handleError(any())
+        }
+    }
+
+    @Test
+    fun `handleActivityResultIntent with RESULT_ERROR should handle PaymentMethodRedirectException`() {
+        val params: PaymentMethodLauncherParams =
+            mockk(relaxed = true) {
+                every { initialLauncherParams } returns
+                    mockk<WebRedirectLauncherParams> {
+                        every { statusUrl } returns "testStatusUrl"
+                        every { paymentMethodType } returns "testPaymentMethod"
+                    }
+            }
+
+        runTest {
+            component.handleActivityResultIntent(params, WebViewActivity.RESULT_ERROR, null)
         }
 
         coVerify {

@@ -1,5 +1,7 @@
 package io.primer.android.errors.data.mapper
 
+import android.net.Uri
+import androidx.core.net.toUri
 import io.primer.android.configuration.data.exception.MissingConfigurationException
 import io.primer.android.core.data.network.exception.HttpException
 import io.primer.android.core.data.network.exception.InvalidUrlException
@@ -9,6 +11,7 @@ import io.primer.android.domain.error.models.PrimerError
 import io.primer.android.errors.data.exception.IllegalClientSessionValueException
 import io.primer.android.errors.data.exception.IllegalValueException
 import io.primer.android.errors.data.exception.PaymentMethodCancelledException
+import io.primer.android.errors.data.exception.PaymentMethodRedirectException
 import io.primer.android.errors.data.exception.SessionCreateException
 import io.primer.android.errors.data.exception.SessionUpdateException
 import io.primer.android.errors.domain.ErrorMapper
@@ -18,6 +21,7 @@ import io.primer.android.errors.domain.models.GeneralError
 import io.primer.android.errors.domain.models.HttpError
 import io.primer.android.errors.domain.models.ParserError
 import io.primer.android.errors.domain.models.PaymentMethodCancelledError
+import io.primer.android.errors.domain.models.PaymentMethodRedirectError
 import io.primer.android.errors.domain.models.PrimerUnknownError
 import io.primer.android.errors.domain.models.SessionCreateError
 import io.primer.android.errors.domain.models.SessionUpdateError
@@ -76,6 +80,14 @@ internal class DefaultErrorMapper : ErrorMapper {
             is PaymentMethodCancelledException ->
                 PaymentMethodCancelledError(
                     throwable.paymentMethodType,
+                )
+
+            is PaymentMethodRedirectException ->
+                PaymentMethodRedirectError(
+                    throwable.paymentMethodType,
+                    throwable.uri.toUri().let { uri ->
+                        Uri.Builder().scheme(uri.scheme).authority(uri.authority).build()
+                    }.toString(),
                 )
 
             is MissingConfigurationException -> GeneralError.MissingConfigurationError

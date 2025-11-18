@@ -1,5 +1,6 @@
 package io.primer.android.banks.di
 
+import android.content.Intent
 import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -16,6 +17,7 @@ import io.primer.android.core.di.DISdkComponent
 import io.primer.android.core.di.extensions.resolve
 import io.primer.android.core.extensions.flatMap
 import io.primer.android.errors.data.exception.PaymentMethodCancelledException
+import io.primer.android.errors.data.exception.PaymentMethodRedirectException
 import io.primer.android.paymentmethods.common.data.model.PaymentMethodType
 import io.primer.android.paymentmethods.core.composer.composable.ComposerUiEvent
 import io.primer.android.payments.core.status.domain.AsyncPaymentMethodPollingInteractor
@@ -52,6 +54,17 @@ internal class BankWebRedirectComposer(
         scope.launch {
             paymentDelegate.handleError(
                 throwable = PaymentMethodCancelledException(paymentMethodType = params.paymentMethodType),
+            )
+        }
+    }
+
+    override fun onResultError(params: WebRedirectLauncherParams, intent: Intent?) {
+        scope.launch {
+            paymentDelegate.handleError(
+                PaymentMethodRedirectException(
+                    paymentMethodType = params.paymentMethodType,
+                    uri = intent?.dataString.orEmpty(),
+                ),
             )
         }
     }
