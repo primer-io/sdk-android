@@ -1,14 +1,17 @@
 package io.primer.android.internal.presentation.screens.paymentMethodSelection.components.vaulted
 
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import io.primer.android.LocalPrimerTheme
 import io.primer.android.components.R
 import io.primer.android.components.assets.ui.getCardImageAsset
 import io.primer.android.configuration.data.model.CardNetwork
+import io.primer.android.displayMetadata.domain.model.ImageColor
 import io.primer.android.paymentmethods.common.data.model.PaymentMethodType
 
 @Composable
@@ -22,13 +25,10 @@ internal fun PaymentMethodIcon(
     } ?: stringResource(id = R.string.primer_components_vaulted_generic_card_content_description)
 
     if (cardNetworkType != null) {
-        val iconResId = cardNetworkType.getCardImageAsset(
-            io.primer.android.displayMetadata.domain.model.ImageColor.COLORED,
-        )
         Icon(
-            painter = painterResource(id = iconResId),
+            painter = painterResource(id = cardNetworkType.getCardImageAsset(ImageColor.COLORED)),
             contentDescription = contentDescription,
-            modifier = modifier,
+            modifier = modifier.width(LocalPrimerTheme.current.spacingTokens.xlarge),
             tint = Color.Unspecified,
         )
     } else {

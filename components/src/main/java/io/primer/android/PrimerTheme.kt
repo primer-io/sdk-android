@@ -42,7 +42,7 @@ val LocalPrimerTheme = staticCompositionLocalOf { PrimerTheme() }
  * Creates Material 3 ColorScheme from Primer color tokens.
  *
  * Works for both LightColorTokens and DarkColorTokens (which extends Light).
- * Detects theme mode by checking actual color values to select correct base tokens.
+ * Detects theme mode using type checking for DarkColorTokens.
  *
  * Key challenge: Gray tokens flip between modes
  * - Light: gray.000 = white, gray.900 = dark
@@ -53,8 +53,8 @@ val LocalPrimerTheme = staticCompositionLocalOf { PrimerTheme() }
  * - Dark:  use gray.900 (light)
  */
 private fun LightColorTokens.toMaterialColorScheme(): ColorScheme {
-    // Detect mode by checking if gray.000 is white (light mode) or dark (dark mode)
-    val isLightMode = primerColorGray000 == Color(0xffffffff)
+    // Detect mode using type check
+    val isLightMode = this !is DarkColorTokens
 
     // For colored surfaces, select the correct "light" token for each mode
     val onColoredSurface = if (isLightMode) primerColorGray000 else primerColorGray900

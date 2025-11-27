@@ -5,6 +5,7 @@ style:
     excludes: [ '**/test/**', '**/*.Test.kt', '**/*.Spec.kt' ]
     excludeCommentStatements: true
     maxLineLength: 120
+    ignoreAnnotated: [ 'Preview' ]
   MagicNumber:
     ignorePropertyDeclaration: true
     ignoreCompanionObjectPropertyDeclaration: true
@@ -13,11 +14,12 @@ style:
 complexity:
   LongMethod:
     excludes: [ '**/test/**', '**/*.Test.kt', '**/*.Spec.kt' ]
+    ignoreAnnotated: [ 'Preview' ]
   LargeClass:
     excludes: [ '**/test/**', '**/*.Test.kt', '**/*.Spec.kt' ]
   LongParameterList:
     ignoreDefaultParameters: true
-    ignoreAnnotated: [ 'Composable' ]
+    ignoreAnnotated: [ 'Composable', 'Preview' ]
   TooManyFunctions:
     ignoreAnnotatedFunctions: [ 'Preview' ]
 naming:

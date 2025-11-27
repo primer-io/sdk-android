@@ -106,7 +106,6 @@
     <string name="primer_components_vault_error">Unable to load saved payment methods</string>
     <string name="primer_components_retry">Tap to retry</string>
     <string name="primer_components_vaulted_payment_selection_description">Saved payment methods</string>
-    <string name="primer_components_vault_cvv_subheading">Enter the CVV for card ending in %1$s.</string>
     <string name="primer_components_vault_cvv_error">Please enter a valid CVV.</string>
     <string name="primer_components_vault_show_other_ways_to_pay">Show other ways to pay</string>
     <string name="primer_components_vault_cvv_generic_error">Something went wrong. Try again.</string>

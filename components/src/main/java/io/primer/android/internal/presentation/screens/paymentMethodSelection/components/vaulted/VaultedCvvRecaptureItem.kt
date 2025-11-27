@@ -4,11 +4,9 @@ package io.primer.android.internal.presentation.screens.paymentMethodSelection.c
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardOptions
@@ -22,7 +20,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import io.primer.android.LocalPrimerTheme
@@ -37,62 +34,55 @@ internal fun VaultedCvvRecaptureItem(
     showError: Boolean,
     enabled: Boolean,
     cvvLength: Int,
+    modifier: Modifier = Modifier,
 ) {
     val theme = LocalPrimerTheme.current
-
-    Column(
-        modifier = Modifier.fillMaxWidth()
-            .padding(theme.spacingTokens.medium),
-        verticalArrangement = Arrangement.spacedBy(theme.spacingTokens.xxsmall),
+    Row(
+        modifier = modifier
+            .fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         Row(
-            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(theme.spacingTokens.small),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(theme.spacingTokens.small),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_elo_card_colored),
-                    contentDescription = null,
-                    tint = theme.colorTokens().primerColorTextSecondary,
-                    modifier = Modifier.size(theme.sizeTokens.small),
-                )
+            Icon(
+                painter = painterResource(id = R.drawable.ic_lock),
+                contentDescription = null,
+                tint = theme.colorTokens().primerColorGray900,
+                modifier = Modifier.size(theme.sizeTokens.medium),
+            )
 
-                Text(
-                    text = stringResource(R.string.primer_components_cvv_secure_prompt),
-                    style = theme.typographyTokens.bodySmall.toTextStyle(),
-                    color = theme.colorTokens().primerColorTextSecondary,
-                )
-            }
+            Text(
+                text = stringResource(R.string.primer_components_cvv_secure_prompt),
+                style = theme.typographyTokens.bodySmall.toTextStyle(),
+                color = theme.colorTokens().primerColorTextSecondary,
+            )
+        }
 
-            Spacer(modifier = Modifier.weight(1f))
+        Spacer(modifier = Modifier.weight(1f))
 
-            Box(modifier = Modifier.width(120.dp)) {
-                PrimerInput(
-                    value = cvvValue,
-                    onValueChange = { newValue ->
-                        // Apply essential input filtering for CVV (same approach as CvvInput)
-                        var processedValue = newValue.filter { it in "0123456789" }
-                        if (processedValue.length > cvvLength) {
-                            processedValue = processedValue.take(cvvLength)
-                        }
-                        onCvvChange(processedValue)
-                    },
-                    label = stringResource(R.string.primer_components_cvv),
-                    placeholder = "1".repeat(cvvLength),
-                    enabled = enabled,
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                    visualTransformation = PasswordVisualTransformation(),
-                    error = if (showError) {
-                        stringResource(R.string.primer_components_vault_cvv_error)
-                    } else {
-                        null
-                    },
-                    forceLtrForNumbers = true,
-                )
-            }
+        Box(modifier = Modifier.width(120.dp)) {
+            PrimerInput(
+                value = cvvValue,
+                onValueChange = { newValue ->
+                    // Apply essential input filtering for CVV (same approach as CvvInput)
+                    var processedValue = newValue.filter { it in "0123456789" }
+                    if (processedValue.length > cvvLength) {
+                        processedValue = processedValue.take(cvvLength)
+                    }
+                    onCvvChange(processedValue)
+                },
+                placeholder = stringResource(R.string.primer_components_cvv),
+                enabled = enabled,
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                error = if (showError) {
+                    stringResource(R.string.primer_components_vault_cvv_error)
+                } else {
+                    null
+                },
+                forceLtrForNumbers = true,
+            )
         }
     }
 }

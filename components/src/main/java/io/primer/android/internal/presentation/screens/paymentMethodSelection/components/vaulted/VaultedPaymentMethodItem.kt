@@ -52,7 +52,6 @@ internal fun VaultedPaymentMethodContent(
     }
 }
 
-@Suppress("LongMethod")
 @Composable
 internal fun VaultedCardPaymentMethodItem(
     paymentMethod: PrimerVaultedPaymentMethod,
@@ -75,7 +74,10 @@ internal fun VaultedCardPaymentMethodItem(
         horizontalArrangement = Arrangement.spacedBy(theme.spacingTokens.medium),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        VaultedPaymentMethodDetails(paymentMethod = paymentMethod)
+        VaultedPaymentMethodDetails(
+            paymentMethod = paymentMethod,
+            modifier = Modifier.weight(1f),
+        )
 
         if (isSelected) {
             VaultedSelectionIndicator()
@@ -84,12 +86,15 @@ internal fun VaultedCardPaymentMethodItem(
 }
 
 @Composable
-private fun VaultedPaymentMethodDetails(paymentMethod: PrimerVaultedPaymentMethod) {
+private fun VaultedPaymentMethodDetails(
+    paymentMethod: PrimerVaultedPaymentMethod,
+    modifier: Modifier = Modifier,
+) {
     val theme = LocalPrimerTheme.current
     val isCard = paymentMethod.paymentMethodType == PaymentMethodType.PAYMENT_CARD.name
 
     Column(
-        modifier = Modifier,
+        modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(theme.spacingTokens.xxsmall),
     ) {
         if (isCard) {
@@ -117,7 +122,7 @@ private fun VaultedCardHeaderRow(paymentMethod: PrimerVaultedPaymentMethod) {
     ) {
         Text(
             text = resolveCardHolderNameFromPaymentMethod(paymentMethod),
-            style = theme.typographyTokens.bodyMedium.toTextStyle(),
+            style = theme.typographyTokens.bodyLarge.toTextStyle(),
             color = theme.colorTokens().primerColorTextPrimary,
             fontWeight = FontWeight.Medium,
             modifier = Modifier.weight(1f, fill = false),
@@ -202,7 +207,7 @@ private fun VaultedSelectionIndicator() {
         contentDescription = stringResource(
             id = R.string.primer_components_vaulted_selected_content_description,
         ),
-        modifier = Modifier.size(theme.sizeTokens.small),
+        modifier = Modifier.size(theme.sizeTokens.medium),
         tint = Color.Unspecified,
     )
 }

@@ -86,15 +86,8 @@ internal fun VaultedPaymentMethodsSection(
             }
             scopedVaultedMethods.isNotEmpty() -> {
                 // Gray background container for payment method and Pay button
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .background(
-                            color = LocalPrimerTheme.current.colorTokens().primerColorGray100,
-                            shape = RoundedCornerShape(LocalPrimerTheme.current.radiusTokens.medium),
-                        )
-                        .padding(LocalPrimerTheme.current.spacingTokens.small),
-                    verticalArrangement = Arrangement.spacedBy(LocalPrimerTheme.current.spacingTokens.medium),
+                VaultedHighlightedContainer(
+                    modifier = Modifier.fillMaxWidth(),
                 ) {
                     val isProcessing = vaultedState.isProcessing
                     val isPayButtonEnabled = selectedPaymentMethodId != null && !isProcessing
@@ -152,11 +145,7 @@ private fun VaultedPaymentMethodsList(
         } else {
             theme.colorTokens().primerColorBorderOutlinedDefault
         }
-        val backgroundColor = if (isSelected) {
-            theme.colorTokens().primerColorGray100
-        } else {
-            theme.colorTokens().primerColorBackground
-        }
+        val backgroundColor = theme.colorTokens().primerColorBackground
         val borderWidth = if (isSelected) {
             theme.borderWidthTokens.medium
         } else {

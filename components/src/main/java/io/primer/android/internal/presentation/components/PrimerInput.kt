@@ -29,7 +29,7 @@ fun PrimerInput(
     modifier: Modifier = Modifier,
     value: String,
     onValueChange: (String) -> Unit,
-    label: String,
+    label: String? = null,
     placeholder: String? = null,
     error: String? = null,
     trailingIcon: @Composable (() -> Unit)? = null,
@@ -58,14 +58,16 @@ fun PrimerInput(
     Column(
         modifier = modifier.fillMaxWidth(),
     ) {
-        Text(
-            text = label,
-            style = LocalPrimerTheme.current.typographyTokens.bodySmall.toTextStyle(),
-            color = LocalPrimerTheme.current.colorTokens().primerColorTextPrimary,
-            textAlign = if (layoutDirection == LayoutDirection.Rtl) TextAlign.End else TextAlign.Start,
-        )
+        if (!label.isNullOrBlank()) {
+            Text(
+                text = label,
+                style = LocalPrimerTheme.current.typographyTokens.bodySmall.toTextStyle(),
+                color = LocalPrimerTheme.current.colorTokens().primerColorTextPrimary,
+                textAlign = if (layoutDirection == LayoutDirection.Rtl) TextAlign.End else TextAlign.Start,
+            )
 
-        Spacer(modifier = Modifier.height(LocalPrimerTheme.current.spacingTokens.xsmall))
+            Spacer(modifier = Modifier.height(LocalPrimerTheme.current.spacingTokens.xsmall))
+        }
 
         CompositionLocalProvider(LocalLayoutDirection provides textFieldLayoutDirection) {
             OutlinedTextField(
@@ -80,7 +82,11 @@ fun PrimerInput(
                             }
                         } ?: modifier
                     },
-                placeholder = { placeholder?.let { Text(it) } },
+                placeholder = {
+                    placeholder?.let {
+                        Text(text = it, color = LocalPrimerTheme.current.colorTokens().primerColorTextPlaceholder)
+                    }
+                },
                 singleLine = true,
                 isError = error != null,
                 trailingIcon = trailingIcon,
@@ -93,18 +99,21 @@ fun PrimerInput(
             )
         }
 
-        error?.let {
-            Spacer(modifier = Modifier.height(LocalPrimerTheme.current.spacingTokens.xsmall))
-            Text(
-                text = it,
-                style = LocalPrimerTheme.current.typographyTokens.bodySmall.toTextStyle(),
-                color = LocalPrimerTheme.current.colorTokens().primerColorTextNegative,
-                textAlign = if (layoutDirection == LayoutDirection.Rtl) TextAlign.End else TextAlign.Start,
-                modifier = Modifier.semantics {
-                    liveRegion = LiveRegionMode.Polite
-                },
-            )
-            Spacer(modifier = Modifier.height(LocalPrimerTheme.current.spacingTokens.xsmall))
-        }
+        error?.let { ErrorSection(it, layoutDirection) }
     }
+}
+
+@Composable
+private fun ErrorSection(errorText: String, layoutDirection: LayoutDirection) {
+    Spacer(modifier = Modifier.height(LocalPrimerTheme.current.spacingTokens.xsmall))
+    Text(
+        text = errorText,
+        style = LocalPrimerTheme.current.typographyTokens.bodySmall.toTextStyle(),
+        color = LocalPrimerTheme.current.colorTokens().primerColorTextNegative,
+        textAlign = if (layoutDirection == LayoutDirection.Rtl) TextAlign.End else TextAlign.Start,
+        modifier = Modifier.semantics {
+            liveRegion = LiveRegionMode.Polite
+        },
+    )
+    Spacer(modifier = Modifier.height(LocalPrimerTheme.current.spacingTokens.xsmall))
 }

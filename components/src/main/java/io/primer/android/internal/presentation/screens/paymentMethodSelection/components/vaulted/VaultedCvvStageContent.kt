@@ -1,3 +1,5 @@
+@file:Suppress("UnusedPrivateMember")
+
 package io.primer.android.internal.presentation.screens.paymentMethodSelection.components.vaulted
 
 import androidx.compose.foundation.background
@@ -24,15 +26,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import io.primer.android.LocalPrimerTheme
 import io.primer.android.PrimerTheme
-import io.primer.android.components.PrimerPaymentMethodSelectionComponents
 import io.primer.android.components.R
-import io.primer.android.core.di.SdkContainer
 import io.primer.android.internal.presentation.checkout.components.CheckoutAppBar
 import io.primer.android.internal.presentation.components.PrimerButton
 import io.primer.android.scope.PrimerPaymentMethodSelectionScope
 import io.primer.android.scope.PrimerVaultedScope
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 private const val CARD_LAST_DIGITS_LENGTH = 4
@@ -87,62 +85,60 @@ internal fun PrimerPaymentMethodSelectionScope.VaultedCvvStageContent(
         )
 
         selectedPaymentMethod?.let { method ->
-            val last4 = method.paymentInstrumentData.last4Digits?.toString()
-                ?.padStart(CARD_LAST_DIGITS_LENGTH, '0') ?: ""
-            Text(
-                text = stringResource(R.string.primer_components_vault_cvv_subheading, last4),
-                style = theme.typographyTokens.bodyMedium.toTextStyle(),
-                color = theme.colorTokens().primerColorTextSecondary,
-            )
-
             val borderColor = theme.colorTokens().primerColorBorderOutlinedSelected
-            val backgroundColor = theme.colorTokens().primerColorGray100
             val shape = RoundedCornerShape(theme.radiusTokens.medium)
 
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clip(shape)
-                    .border(width = theme.borderWidthTokens.medium, color = borderColor, shape = shape)
-                    .background(backgroundColor)
-                    .padding(theme.spacingTokens.medium),
-            ) {
-                vaultedComponents.vaultedPaymentMethod(
-                    method,
-                    true,
-                    Modifier.fillMaxWidth(),
-                ) { }
+            VaultedHighlightedContainer {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(shape)
+                        .border(
+                            width = theme.borderWidthTokens.medium,
+                            color = borderColor,
+                            shape = shape,
+                        )
+                        .background(theme.colorTokens().primerColorBackground)
+                        .padding(theme.spacingTokens.medium),
+                    verticalArrangement = Arrangement.spacedBy(theme.spacingTokens.small),
+                ) {
+                    vaultedComponents.vaultedPaymentMethod(
+                        method,
+                        true,
+                        Modifier.fillMaxWidth(),
+                    ) { }
 
-                VaultedCvvRecaptureItem(
-                    cvvValue = state.cvvValue,
-                    onCvvChange = { value ->
-                        vaultedScope.updateCvv(value)
-                        showCvvError = false
-                    },
-                    showError = showCvvError,
-                    enabled = !state.isProcessing,
-                    cvvLength = state.expectedCvvLength,
-                )
-            }
-        }
-
-        vaultedComponents.payButton(isPayButtonEnabled, state.isProcessing) {
-            if (state.isCvvValid) {
-                coroutineScope.launch {
-                    vaultedScope.cvvRecapture()
+                    VaultedCvvRecaptureItem(
+                        cvvValue = state.cvvValue,
+                        onCvvChange = { value ->
+                            vaultedScope.updateCvv(value)
+                            showCvvError = false
+                        },
+                        showError = showCvvError,
+                        enabled = !state.isProcessing,
+                        cvvLength = state.expectedCvvLength,
+                    )
                 }
-            } else {
-                showCvvError = true
-            }
-        }
 
-        state.error?.let { error ->
-            Text(
-                text = error.message
-                    ?: stringResource(R.string.primer_components_vault_cvv_generic_error),
-                style = theme.typographyTokens.bodySmall.toTextStyle(),
-                color = theme.colorTokens().primerColorTextNegative,
-            )
+                state.error?.let { error ->
+                    Text(
+                        text = error.message
+                            ?: stringResource(R.string.primer_components_vault_cvv_generic_error),
+                        style = theme.typographyTokens.bodySmall.toTextStyle(),
+                        color = theme.colorTokens().primerColorTextNegative,
+                    )
+                }
+
+                vaultedComponents.payButton(isPayButtonEnabled, state.isProcessing) {
+                    if (state.isCvvValid) {
+                        coroutineScope.launch {
+                            vaultedScope.cvvRecapture()
+                        }
+                    } else {
+                        showCvvError = true
+                    }
+                }
+            }
         }
 
         PrimerButton(
@@ -168,58 +164,82 @@ private fun VaultedCvvStageContentPreview() {
     CompositionLocalProvider(LocalPrimerTheme provides PrimerTheme()) {
         MaterialTheme {
             val previewMethods = remember { createPreviewVaultedPaymentMethods() }
-            val selectedId = remember(previewMethods) { previewMethods.first().id }
-            val paymentScope = remember { DemoPaymentSelectionScope() }
-            val previewVaultedScope = remember(selectedId) {
-                PreviewVaultedScope(
-                    initialState = PrimerVaultedScope.State(
-                        paymentMethods = previewMethods,
-                        selectedPaymentMethodId = selectedId,
-                        isCvvRequired = true,
-                        isLoading = false,
-                        stage = PrimerVaultedScope.State.Stage.Cvv(selectedId),
-                    ),
+            val selectedMethod = remember(previewMethods) { previewMethods.first() }
+            val theme = LocalPrimerTheme.current
+
+            Column {
+                CheckoutAppBar(
+                    title = "Pay $99.00",
+                    onCancelClick = {},
                 )
-            }
-            with(paymentScope) {
-                Column {
-                    CheckoutAppBar(
-                        title = "Pay $99.00",
-                        onCancelClick = {},
+
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(theme.spacingTokens.large),
+                    verticalArrangement = Arrangement.spacedBy(theme.spacingTokens.medium),
+                ) {
+                    Text(
+                        text = stringResource(R.string.primer_components_vaulted_payment_selection_description),
+                        style = theme.typographyTokens.titleLarge.toTextStyle(),
+                        color = theme.colorTokens().primerColorTextPrimary,
                     )
-                    VaultedCvvStageContent(
-                        vaultedScope = previewVaultedScope,
-                        onDismiss = {},
-                    )
+
+                    val borderColor = theme.colorTokens().primerColorBorderOutlinedSelected
+                    val shape = RoundedCornerShape(theme.radiusTokens.medium)
+
+                    VaultedHighlightedContainer {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clip(shape)
+                                .border(
+                                    width = theme.borderWidthTokens.medium,
+                                    color = borderColor,
+                                    shape = shape,
+                                )
+                                .background(theme.colorTokens().primerColorBackground)
+                                .padding(theme.spacingTokens.medium),
+                            verticalArrangement = Arrangement.spacedBy(theme.spacingTokens.small),
+                        ) {
+                            VaultedCardPaymentMethodItem(
+                                paymentMethod = selectedMethod,
+                                isSelected = true,
+                                modifier = Modifier.fillMaxWidth(),
+                                onClick = {},
+                            )
+
+                            VaultedCvvRecaptureItem(
+                                cvvValue = "",
+                                onCvvChange = {},
+                                showError = false,
+                                enabled = true,
+                                cvvLength = 3,
+                                modifier = Modifier.fillMaxWidth(),
+                            )
+                        }
+
+                        VaultedSubmitButton(
+                            enabled = false,
+                            isLoading = false,
+                            onClick = {},
+                        )
+                    }
+
+                    PrimerButton(
+                        onClick = {},
+                        modifier = Modifier.fillMaxWidth(),
+                        borderColor = theme.colorTokens().primerColorBorderOutlinedDefault,
+                        backgroundColor = theme.colorTokens().primerColorBackground,
+                    ) {
+                        Text(
+                            text = stringResource(R.string.primer_components_vault_show_other_ways_to_pay),
+                            style = theme.typographyTokens.titleLarge.toTextStyle(),
+                            color = theme.colorTokens().primerColorTextPrimary,
+                        )
+                    }
                 }
             }
         }
     }
-}
-
-/**
- * Demo implementation of PrimerPaymentMethodSelectionScope for previews.
- */
-private class DemoPaymentSelectionScope : PrimerPaymentMethodSelectionScope {
-
-    private val previewState = MutableStateFlow(PrimerPaymentMethodSelectionScope.State())
-
-    private val previewComponents = PrimerPaymentMethodSelectionComponents()
-    private val previewContainer = SdkContainer()
-
-    override val components: PrimerPaymentMethodSelectionComponents
-        get() = previewComponents
-
-    override val state: StateFlow<PrimerPaymentMethodSelectionScope.State>
-        get() = previewState
-
-    override fun onPaymentMethodSelected(paymentMethod: String) = Unit
-
-    override fun onCancel() = Unit
-
-    override fun formatTitleAmount(): String = ""
-
-    override fun formatSurchargeAmount(amountInCents: Int): String = ""
-
-    override fun getSdkContainer(): SdkContainer = previewContainer
 }
