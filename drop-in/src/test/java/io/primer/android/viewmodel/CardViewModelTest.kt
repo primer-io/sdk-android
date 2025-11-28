@@ -462,5 +462,61 @@ class CardViewModelTest {
         assertEquals(2, networkState.networks.size)
         assertEquals(CardNetwork.Type.VISA, networkState.preferredNetwork)
         assertEquals(CardNetwork.Type.VISA, networkState.selectedNetwork)
+        assertTrue(networkState.isSelectable)
+    }
+
+    @Test
+    fun `handleFetchedMetadata sets isSelectable false for EFTPOS co-branded cards`() {
+        val visa = PrimerCardNetwork(network = CardNetwork.Type.VISA, CardNetwork.Type.VISA.displayName, true)
+        val eftpos =
+            PrimerCardNetwork(
+                network = CardNetwork.Type.EFTPOS,
+                displayName = CardNetwork.Type.EFTPOS.displayName,
+                allowed = true,
+            )
+        val mockMetadata =
+            mockk<PrimerCardNumberEntryMetadata> {
+                // selectableCardNetworks is null for EFTPOS co-branded cards
+                every { selectableCardNetworks } returns null
+                every { detectedCardNetworks } returns
+                    PrimerCardNetworksMetadata(
+                        items = listOf(visa, eftpos),
+                        preferred = visa,
+                    )
+            }
+
+        // Act
+        viewModel.handleFetchedMetadata(mockMetadata)
+
+        // Assert
+        val networkState = viewModel.cardNetworksState.value
+        assertEquals(2, networkState.networks.size)
+        assertEquals(CardNetwork.Type.VISA, networkState.networks[0].network)
+        assertEquals(CardNetwork.Type.EFTPOS, networkState.networks[1].network)
+        assertFalse(networkState.isSelectable)
+        assertEquals(CardNetwork.Type.VISA, networkState.selectedNetwork)
+    }
+
+    @Test
+    fun `handleFetchedMetadata sets isSelectable true when single detected network`() {
+        val visa = PrimerCardNetwork(network = CardNetwork.Type.VISA, CardNetwork.Type.VISA.displayName, true)
+        val mockMetadata =
+            mockk<PrimerCardNumberEntryMetadata> {
+                every { selectableCardNetworks } returns null
+                every { detectedCardNetworks } returns
+                    PrimerCardNetworksMetadata(
+                        items = listOf(visa),
+                        preferred = visa,
+                    )
+            }
+
+        // Act
+        viewModel.handleFetchedMetadata(mockMetadata)
+
+        // Assert
+        val networkState = viewModel.cardNetworksState.value
+        assertEquals(1, networkState.networks.size)
+        assertFalse(networkState.isSelectable)
+        assertEquals(CardNetwork.Type.VISA, networkState.selectedNetwork)
     }
 }

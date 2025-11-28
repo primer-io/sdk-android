@@ -12,6 +12,7 @@ import io.primer.android.components.domain.core.models.card.PrimerCardNetworksMe
 import io.primer.android.components.domain.core.models.card.PrimerCardNumberEntryMetadata
 import io.primer.android.components.domain.core.models.card.PrimerCardNumberEntryState
 import io.primer.android.components.domain.core.models.card.ValidationSource
+import io.primer.android.configuration.data.model.CardNetwork
 import io.primer.android.configuration.extension.sanitizedCardNumber
 import io.primer.android.core.extensions.mapSuspendCatching
 import io.primer.android.core.logging.internal.LogReporter
@@ -72,10 +73,12 @@ class CardMetadataStateRetriever(
                 val allowedNetworks =
                     allNetworks.filter { primerCardNetwork -> primerCardNetwork.allowed }
                 logCardNetworksFetchedEvent(binMetadata)
+                val selectableNetworks = allowedNetworks.takeIf { primerCardNetworks ->
+                    primerCardNetworks.size > MIN_SELECTABLE_NETWORKS_SIZE &&
+                        allowsUserNetworkSelection(primerCardNetworks)
+                }
                 PrimerCardNumberEntryMetadata(
-                    allowedNetworks.takeIf { primerCardNetworks ->
-                        primerCardNetworks.size > MIN_SELECTABLE_NETWORKS_SIZE
-                    }?.toCardNetworksMetadata(),
+                    selectableNetworks?.toCardNetworksMetadata(),
                     allNetworks.toCardNetworksMetadata(),
                     ValidationSource.REMOTE,
                 )
@@ -192,9 +195,26 @@ class CardMetadataStateRetriever(
             this.firstOrNull { primerCardNetwork -> primerCardNetwork.allowed },
         )
 
+    /*
+     * Determines if the user should be allowed to select between card networks.
+     * Returns false if any of the detected card networks are in the disallowed list (e.g., EFTPOS).
+     * This prevents user selection for EFTPOS co-branded cards while allowing it for EU co-badge cards.
+     */
+    private fun allowsUserNetworkSelection(cardNetworks: List<PrimerCardNetwork>): Boolean {
+        return cardNetworks.none { it.network in USER_SELECTION_DISALLOWED_CARD_NETWORKS }
+    }
+
     internal companion object {
         private const val MIN_SELECTABLE_NETWORKS_SIZE = 1
         private const val BIN_CALL_TIMEOUT = 10000L
+
+        /*
+         * Card networks for which user selection should be disabled.
+         * For EFTPOS co-branded cards, merchants need automatic routing control
+         * without exposing brand choice to customers.
+         */
+        private val USER_SELECTION_DISALLOWED_CARD_NETWORKS = setOf(CardNetwork.Type.EFTPOS)
+
         val REMOTE_VALIDATION_FAILED_MESSAGE =
             """
             Local validation was used where remote validation would have been preferred

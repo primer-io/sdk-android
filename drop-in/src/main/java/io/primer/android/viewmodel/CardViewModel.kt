@@ -90,12 +90,20 @@ internal class CardViewModel(
     @VisibleForTesting
     internal fun handleFetchedMetadata(metadata: PrimerCardNumberEntryMetadata) {
         val selectableNetworks = metadata.selectableCardNetworks?.items
+        val detectedNetworks = metadata.detectedCardNetworks.items
         val detectedNonSelectableNetwork =
             metadata.detectedCardNetworks.let {
                 it.preferred ?: it.items.firstOrNull()
             }
 
-        val resolvedNetworks = selectableNetworks ?: listOf(detectedNonSelectableNetwork)
+        // When selectableNetworks is null but there are multiple detected networks (e.g., EFTPOS co-brand),
+        // we show all detected networks but without selection capability
+        val isSelectable = selectableNetworks != null
+        val resolvedNetworks = when {
+            selectableNetworks != null -> selectableNetworks
+            detectedNetworks.size > 1 -> detectedNetworks
+            else -> listOf(detectedNonSelectableNetwork)
+        }
 
         val state =
             CardNetworksState(
@@ -104,7 +112,8 @@ internal class CardViewModel(
                 selectedNetwork =
                 cachedCardData?.cardNetwork
                     ?: metadata.selectableCardNetworks?.preferred?.network
-                    ?: resolvedNetworks.first()?.network,
+                    ?: detectedNonSelectableNetwork?.network,
+                isSelectable = isSelectable,
             )
         _cardNetworksState.update { state }
     }
@@ -178,4 +187,5 @@ internal data class CardNetworksState(
     val networks: List<PrimerCardNetwork>,
     val preferredNetwork: CardNetwork.Type?,
     val selectedNetwork: CardNetwork.Type?,
+    val isSelectable: Boolean = true,
 )

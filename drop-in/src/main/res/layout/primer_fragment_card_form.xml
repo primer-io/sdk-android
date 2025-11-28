@@ -59,7 +59,8 @@
                 android:clickable="true"
                 android:focusable="true"
                 android:gravity="center_vertical"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                >
 
                 <TextView
                     android:id="@+id/text_view_surcharge"
@@ -87,6 +88,17 @@
                     android:layout_height="wrap_content"
                     android:layout_margin="@dimen/medium_vertical_margin2"
                     android:src="@drawable/ic_generic_card" />
+
+                <ImageView
+                    android:id="@+id/image_view_card_network_secondary"
+                    android:layout_width="@dimen/primer_card_network_icon_width"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/medium_vertical_margin2"
+                    android:layout_marginBottom="@dimen/medium_vertical_margin2"
+                    android:layout_marginEnd="@dimen/medium_vertical_margin2"
+                    android:visibility="gone"
+                    tools:src="@drawable/ic_generic_card"
+                    tools:visibility="visible" />
 
                 <ImageView
                     android:id="@+id/image_view_card_network_caret"

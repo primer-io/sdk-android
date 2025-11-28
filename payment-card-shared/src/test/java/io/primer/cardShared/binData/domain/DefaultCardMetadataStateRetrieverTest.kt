@@ -627,15 +627,137 @@ internal class DefaultCardMetadataStateRetrieverTest {
         verify(exactly = 0) { metadataCacheHelper.saveCardNetworksMetadata(any(), any()) }
     }
 
+    @Test
+    fun `metadataState should emit Fetched state without selectable networks for EFTPOS and Visa co-branded cards`() {
+        val cardData = mockk<PrimerCardData>(relaxed = true)
+        every { cardData.cardNumber } returns CARD_NUMBER
+
+        val source = ValidationSource.REMOTE
+        val cardBinMetadata = listOf(EFTPOS_CARD_BIN_METADATA, VISA_CARD_BIN_METADATA)
+
+        coEvery { cardBinMetadataRepository.getBinMetadata(any(), any()) }.returns(
+            Result.success(cardBinMetadata),
+        )
+
+        every { orderedAllowedCardNetworksRepository.getOrderedAllowedCardNetworks() }.returns(
+            listOf(CardNetwork.Type.VISA, CardNetwork.Type.EFTPOS),
+        )
+
+        val visaCardNetwork = PrimerCardNetwork(CardNetwork.Type.VISA, "VISA", true)
+        val eftposCardNetwork = PrimerCardNetwork(CardNetwork.Type.EFTPOS, "EFTPOS", true)
+
+        val expectedNetworks = listOf(visaCardNetwork, eftposCardNetwork)
+        val expectedCardNumberEntryMetadata =
+            PrimerCardNumberEntryMetadata(
+                null, // selectableCardNetworks should be null for EFTPOS co-branded cards
+                PrimerCardNetworksMetadata(
+                    expectedNetworks,
+                    expectedNetworks.firstOrNull(),
+                ),
+                source,
+            )
+
+        runTest {
+            launch {
+                metadataStateRetriever.handleInputData(cardData)
+            }
+            val metadataStates = metadataStateRetriever.metadataState.toListDuring(1.seconds)
+
+            assertEquals(
+                listOf(
+                    PrimerCardMetadataState.Fetching(
+                        PrimerCardNumberEntryState(
+                            CARD_NUMBER,
+                        ),
+                    ),
+                    PrimerCardMetadataState.Fetched(
+                        expectedCardNumberEntryMetadata,
+                        PrimerCardNumberEntryState(CARD_NUMBER),
+                    ),
+                ),
+                metadataStates,
+            )
+        }
+
+        coVerify {
+            cardBinMetadataRepository.getBinMetadata(
+                CARD_NUMBER.take(MAX_BIN_LENGTH),
+                source,
+            )
+        }
+    }
+
+    @Test
+    fun `metadataState should emit Fetched state without selectable networks for EFTPOS and Mastercard co-branded cards`() {
+        val cardData = mockk<PrimerCardData>(relaxed = true)
+        every { cardData.cardNumber } returns CARD_NUMBER
+
+        val source = ValidationSource.REMOTE
+        val cardBinMetadata = listOf(EFTPOS_CARD_BIN_METADATA, MASTERCARD_CARD_BIN_METADATA)
+
+        coEvery { cardBinMetadataRepository.getBinMetadata(any(), any()) }.returns(
+            Result.success(cardBinMetadata),
+        )
+
+        every { orderedAllowedCardNetworksRepository.getOrderedAllowedCardNetworks() }.returns(
+            listOf(CardNetwork.Type.MASTERCARD, CardNetwork.Type.EFTPOS),
+        )
+
+        val mastercardNetwork = PrimerCardNetwork(CardNetwork.Type.MASTERCARD, "Mastercard", true)
+        val eftposCardNetwork = PrimerCardNetwork(CardNetwork.Type.EFTPOS, "EFTPOS", true)
+
+        val expectedNetworks = listOf(mastercardNetwork, eftposCardNetwork)
+        val expectedCardNumberEntryMetadata =
+            PrimerCardNumberEntryMetadata(
+                null, // selectableCardNetworks should be null for EFTPOS co-branded cards
+                PrimerCardNetworksMetadata(
+                    expectedNetworks,
+                    expectedNetworks.firstOrNull(),
+                ),
+                source,
+            )
+
+        runTest {
+            launch {
+                metadataStateRetriever.handleInputData(cardData)
+            }
+            val metadataStates = metadataStateRetriever.metadataState.toListDuring(1.seconds)
+
+            assertEquals(
+                listOf(
+                    PrimerCardMetadataState.Fetching(
+                        PrimerCardNumberEntryState(
+                            CARD_NUMBER,
+                        ),
+                    ),
+                    PrimerCardMetadataState.Fetched(
+                        expectedCardNumberEntryMetadata,
+                        PrimerCardNumberEntryState(CARD_NUMBER),
+                    ),
+                ),
+                metadataStates,
+            )
+        }
+
+        coVerify {
+            cardBinMetadataRepository.getBinMetadata(
+                CARD_NUMBER.take(MAX_BIN_LENGTH),
+                source,
+            )
+        }
+    }
+
     private companion object {
         const val CARD_NUMBER = "40355000000"
         const val CARD_NUMBER_SHORT = "40355"
 
         val VISA_CARD_BIN_METADATA = CardBinMetadata("VISA", CardNetwork.Type.VISA)
+        val MASTERCARD_CARD_BIN_METADATA = CardBinMetadata("Mastercard", CardNetwork.Type.MASTERCARD)
         val CARTES_BANCAIRES_CARD_BIN_METADATA =
             CardBinMetadata(
                 "CB",
                 CardNetwork.Type.CARTES_BANCAIRES,
             )
+        val EFTPOS_CARD_BIN_METADATA = CardBinMetadata("EFTPOS", CardNetwork.Type.EFTPOS)
     }
 }
