@@ -3,6 +3,7 @@ package io.primer.android.ui.fragments
 import android.annotation.SuppressLint
 import android.app.Dialog
 import android.content.DialogInterface
+import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -11,8 +12,11 @@ import androidx.activity.ComponentDialog
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.addCallback
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.core.graphics.Insets
 import androidx.core.view.ViewCompat
+import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import androidx.fragment.app.commit
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -28,6 +32,7 @@ import io.primer.android.viewmodel.PrimerViewModel
 import io.primer.android.viewmodel.PrimerViewModelFactory
 import io.primer.android.viewmodel.ViewStatus
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlin.math.max
 
 @Suppress("NestedBlockDepth")
 @ExperimentalCoroutinesApi
@@ -79,16 +84,34 @@ internal class CheckoutSheetFragment :
         savedInstanceState: Bundle?,
     ) {
         super.onViewCreated(view, savedInstanceState)
+        configureWindowInsets(view)
+    }
 
-        ViewCompat.setOnApplyWindowInsetsListener(view.rootView) { _, insets ->
+    private fun configureWindowInsets(root: View) {
+        val sheetContent = root.findViewById<View>(R.id.checkout_sheet_content)
+
+        val contentInitialPadding = sheetContent?.capturePadding()
+
+        ViewCompat.setOnApplyWindowInsetsListener(root) { _, insets ->
             val imeVisible = insets.isVisible(WindowInsetsCompat.Type.ime())
             viewModel.setKeyboardVisibility(imeVisible)
+
+            val systemBarsInsets = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            val imeInsets = insets.getInsets(WindowInsetsCompat.Type.ime())
+            val bottomInset = max(systemBarsInsets.bottom, imeInsets.bottom)
+
+            sheetContent?.applyContentInsets(contentInitialPadding, systemBarsInsets, bottomInset)
+
             insets
         }
+
+        ViewCompat.requestApplyInsets(root)
     }
 
     override fun onStart() {
         super.onStart()
+        enableEdgeToEdgeIfNeeded()
+
         if (config.settings.uiOptions.theme.windowMode == PrimerTheme.WindowMode.FULL_HEIGHT) {
             setFullHeight()
         }
@@ -110,6 +133,35 @@ internal class CheckoutSheetFragment :
     override fun onDismiss(dialog: DialogInterface) {
         super.onDismiss(dialog)
         viewModel.setViewStatus(ViewStatus.Dismiss)
+    }
+
+    private fun enableEdgeToEdgeIfNeeded() {
+        dialog?.window?.let { window ->
+            WindowCompat.setDecorFitsSystemWindows(window, false)
+            window.statusBarColor = Color.TRANSPARENT
+            window.navigationBarColor = Color.TRANSPARENT
+
+            val controller = WindowInsetsControllerCompat(window, window.decorView)
+            val shouldUseLightAppearance = (config.settings.uiOptions.theme.isDarkMode ?: false).not()
+            controller.isAppearanceLightStatusBars = shouldUseLightAppearance
+            controller.isAppearanceLightNavigationBars = shouldUseLightAppearance
+        }
+    }
+
+    private fun View.capturePadding() = ViewPadding(paddingLeft, paddingTop, paddingRight, paddingBottom)
+
+    private fun View.applyContentInsets(
+        initialPadding: ViewPadding?,
+        systemBarsInsets: Insets,
+        bottomInset: Int,
+    ) {
+        val padding = initialPadding ?: return
+        setPadding(
+            padding.left + systemBarsInsets.left,
+            padding.top,
+            padding.right + systemBarsInsets.right,
+            padding.bottom + bottomInset,
+        )
     }
 
     private fun setFullHeight() {
@@ -180,3 +232,10 @@ internal class CheckoutSheetFragment :
     private fun isCloseButtonEnabled() =
         config.settings.uiOptions.dismissalMechanism.contains(DismissalMechanism.CLOSE_BUTTON)
 }
+
+private data class ViewPadding(
+    val left: Int,
+    val top: Int,
+    val right: Int,
+    val bottom: Int,
+)
