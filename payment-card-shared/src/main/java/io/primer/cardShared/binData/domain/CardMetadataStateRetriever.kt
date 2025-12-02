@@ -79,7 +79,7 @@ class CardMetadataStateRetriever(
                 }
                 PrimerCardNumberEntryMetadata(
                     selectableNetworks?.toCardNetworksMetadata(),
-                    allNetworks.toCardNetworksMetadata(),
+                    allowedNetworks.toCardNetworksMetadata(),
                     ValidationSource.REMOTE,
                 )
             }.recoverCatching { throwable ->
@@ -118,6 +118,7 @@ class CardMetadataStateRetriever(
                 .toSortedPrimerCardNetworks(
                     allowedCardNetworksRepository.getOrderedAllowedCardNetworks(),
                 )
+                .filter { it.allowed }
                 .let { primerCardNetworks ->
                     PrimerCardNumberEntryMetadata(
                         null,

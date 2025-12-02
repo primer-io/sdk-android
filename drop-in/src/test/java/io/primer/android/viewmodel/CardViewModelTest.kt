@@ -494,6 +494,7 @@ class CardViewModelTest {
         assertEquals(CardNetwork.Type.VISA, networkState.networks[0].network)
         assertEquals(CardNetwork.Type.EFTPOS, networkState.networks[1].network)
         assertFalse(networkState.isSelectable)
+        // For display-only cards, UI shows the preferred network from metadata (VISA)
         assertEquals(CardNetwork.Type.VISA, networkState.selectedNetwork)
     }
 
@@ -518,5 +519,102 @@ class CardViewModelTest {
         assertEquals(1, networkState.networks.size)
         assertFalse(networkState.isSelectable)
         assertEquals(CardNetwork.Type.VISA, networkState.selectedNetwork)
+    }
+
+    @Test
+    fun `handleFetchedMetadata should clear stale network when switching from selectable to display-only card`() {
+        // Arrange - Step 1: User enters selectable co-badged card (VISA/Cartes Bancaires)
+        val visa = PrimerCardNetwork(network = CardNetwork.Type.VISA, CardNetwork.Type.VISA.displayName, true)
+        val cartesBancaires = PrimerCardNetwork(
+            network = CardNetwork.Type.CARTES_BANCAIRES,
+            displayName = CardNetwork.Type.CARTES_BANCAIRES.displayName,
+            allowed = true,
+        )
+        val selectableMetadata =
+            mockk<PrimerCardNumberEntryMetadata> {
+                every { selectableCardNetworks } returns
+                    PrimerCardNetworksMetadata(
+                        items = listOf(visa, cartesBancaires),
+                        preferred = visa,
+                    )
+                every { detectedCardNetworks } returns
+                    PrimerCardNetworksMetadata(
+                        items = listOf(visa, cartesBancaires),
+                        preferred = visa,
+                    )
+            }
+
+        // User enters selectable card and selects VISA
+        val initialCardData = PrimerCardData(
+            cardNumber = "4035500000000002",
+            expiryDate = "12/25",
+            cvv = "123",
+            cardHolderName = "John Doe",
+            cardNetwork = CardNetwork.Type.VISA,
+        )
+        viewModel.onCardDataChanged(initialCardData)
+        viewModel.handleFetchedMetadata(selectableMetadata)
+        viewModel.setSelectedNetwork(CardNetwork.Type.VISA)
+
+        // Verify VISA is selected
+        assertEquals(CardNetwork.Type.VISA, viewModel.cardNetworksState.value.selectedNetwork)
+
+        // Arrange - Step 2: User switches to display-only EFTPOS co-badged card
+        val mastercard = PrimerCardNetwork(
+            network = CardNetwork.Type.MASTERCARD,
+            displayName = CardNetwork.Type.MASTERCARD.displayName,
+            allowed = true,
+        )
+        val eftpos = PrimerCardNetwork(
+            network = CardNetwork.Type.EFTPOS,
+            displayName = CardNetwork.Type.EFTPOS.displayName,
+            allowed = true,
+        )
+        val displayOnlyMetadata =
+            mockk<PrimerCardNumberEntryMetadata> {
+                // selectableCardNetworks is null for EFTPOS co-branded cards (display-only)
+                every { selectableCardNetworks } returns null
+                every { detectedCardNetworks } returns
+                    PrimerCardNetworksMetadata(
+                        items = listOf(mastercard, eftpos),
+                        preferred = mastercard,
+                    )
+            }
+
+        // User changes card number (without specifying network - as happens in real UI)
+        val newCardData = PrimerCardData(
+            cardNumber = "5163150000000005",
+            expiryDate = "12/25",
+            cvv = "123",
+            cardHolderName = "John Doe",
+            cardNetwork = null, // No network specified when changing card number
+        )
+        viewModel.onCardDataChanged(newCardData)
+        viewModel.handleFetchedMetadata(displayOnlyMetadata)
+
+        // Assert - The selected network should NOT be VISA (which is not valid for this card)
+        // For display-only cards, the UI shows the preferred network from metadata
+        val networkState = viewModel.cardNetworksState.value
+        assertFalse(networkState.isSelectable)
+        assertEquals(listOf(mastercard, eftpos), networkState.networks)
+
+        // The selectedNetwork for UI display should be MASTERCARD (the preferred from metadata)
+        // not VISA which is not a valid network for this card
+        assertEquals(
+            CardNetwork.Type.MASTERCARD,
+            networkState.selectedNetwork,
+            "Expected selectedNetwork to be MASTERCARD (metadata preferred), but was ${networkState.selectedNetwork}",
+        )
+
+        // Verify that setRawData was called with cardNetwork = null for display-only cards
+        // This ensures the backend decides the network (regulatory requirement)
+        verify {
+            mockCardManager.setRawData(
+                match { rawData ->
+                    val cardData = rawData as PrimerCardData
+                    cardData.cardNetwork == null && cardData.cardNumber == "5163150000000005"
+                },
+            )
+        }
     }
 }

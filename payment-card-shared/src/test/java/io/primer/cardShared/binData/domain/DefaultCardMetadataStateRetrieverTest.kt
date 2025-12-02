@@ -165,12 +165,6 @@ internal class DefaultCardMetadataStateRetrieverTest {
             listOf(CardNetwork.Type.CARTES_BANCAIRES, CardNetwork.Type.AMEX),
         )
 
-        val visaCardNetwork =
-            PrimerCardNetwork(
-                CardNetwork.Type.VISA,
-                "VISA",
-                false,
-            )
         val cbCardNetwork =
             PrimerCardNetwork(
                 CardNetwork.Type.CARTES_BANCAIRES,
@@ -178,11 +172,12 @@ internal class DefaultCardMetadataStateRetrieverTest {
                 true,
             )
 
+        // Only allowed networks should be in detectedCardNetworks (VISA is not allowed)
         val expectedCardNumberEntryMetadata =
             PrimerCardNumberEntryMetadata(
                 null,
                 PrimerCardNetworksMetadata(
-                    listOf(cbCardNetwork, visaCardNetwork),
+                    listOf(cbCardNetwork),
                     cbCardNetwork,
                 ),
                 ValidationSource.REMOTE,
@@ -330,7 +325,7 @@ internal class DefaultCardMetadataStateRetrieverTest {
     }
 
     @Test
-    fun `metadataState should emit Fetching and Fetched states with only local detected network and without preferred network when getBinMetadata failed and card network is not supported`() {
+    fun `metadataState should emit Fetching and Fetched states with empty detected networks when getBinMetadata failed and card network is not supported`() {
         val cardData = mockk<PrimerCardData>(relaxed = true)
         val exception = mockk<Exception>(relaxed = true)
         every { cardData.cardNumber } returns CARD_NUMBER
@@ -356,17 +351,12 @@ internal class DefaultCardMetadataStateRetrieverTest {
             listOf(CardNetwork.Type.CARTES_BANCAIRES, CardNetwork.Type.AMEX),
         )
 
-        val visaCardNetwork =
-            PrimerCardNetwork(
-                CardNetwork.Type.VISA,
-                "VISA",
-                false,
-            )
+        // Only allowed networks should be in detectedCardNetworks (VISA is not allowed, so empty)
         val expectedCardNumberEntryMetadata =
             PrimerCardNumberEntryMetadata(
                 null,
                 PrimerCardNetworksMetadata(
-                    listOf(visaCardNetwork),
+                    emptyList(),
                     null,
                 ),
                 ValidationSource.LOCAL_FALLBACK,
@@ -499,7 +489,7 @@ internal class DefaultCardMetadataStateRetrieverTest {
     }
 
     @Test
-    fun `metadataState should emit Fetched state with detected local card network and without preferred network when card number is less than 8 digits and card network is not supported`() {
+    fun `metadataState should emit Fetched state with empty detected networks when card number is less than 8 digits and card network is not supported`() {
         val cardData = mockk<PrimerCardData>(relaxed = true)
         every { cardData.cardNumber } returns CARD_NUMBER_SHORT
 
@@ -516,17 +506,12 @@ internal class DefaultCardMetadataStateRetrieverTest {
             listOf(CardNetwork.Type.CARTES_BANCAIRES, CardNetwork.Type.AMEX),
         )
 
-        val visaCardNetwork =
-            PrimerCardNetwork(
-                CardNetwork.Type.VISA,
-                "VISA",
-                false,
-            )
+        // Only allowed networks should be in detectedCardNetworks (VISA is not allowed, so empty)
         val expectedCardNumberEntryMetadata =
             PrimerCardNumberEntryMetadata(
                 null,
                 PrimerCardNetworksMetadata(
-                    listOf(visaCardNetwork),
+                    emptyList(),
                     null,
                 ),
                 ValidationSource.LOCAL,
