@@ -1,3 +1,15 @@
+## 2.46.0 (2025-12-02)
+
+### Feat
+
+- Upgrade 3DS SDK to 1.7.0 (#1115)
+
+### Fix
+
+- send appropriate card networks when switching between different co-badge cards corner case (#1114)
+- don't blur navigation bar background when edge-to-edge enabled (#1107)
+- EFTPOS co-brand should not be selectable by user (#1112)
+
 ## 2.45.1 (2025-11-18)
 
 ### Fix
