@@ -6,6 +6,8 @@ import io.primer.android.components.currencyformat.domain.repository.CurrencyFor
 import io.primer.android.configuration.data.model.ConfigurationData
 import io.primer.android.core.data.datasource.BaseCacheDataSource
 import io.primer.android.core.extensions.runSuspendCatching
+import kotlinx.coroutines.withTimeoutOrNull
+import java.util.concurrent.TimeoutException
 
 internal class CurrencyFormatDataRepository(
     private val configurationDataSource: BaseCacheDataSource<ConfigurationData, ConfigurationData>,
@@ -17,9 +19,15 @@ internal class CurrencyFormatDataRepository(
             val assetUrl = configurationDataSource.get().assetsUrl
             val url = "$assetUrl/currency-information/v1/data.json"
 
-            val response = remoteDataSource.execute(url)
+            val response = withTimeoutOrNull(timeMillis = TIMEOUT_IN_MILLIS) { remoteDataSource.execute(url) }
+                ?: throw TimeoutException("Request timed out")
             localDataSource.update(response)
         }
 
     override fun getCurrencyFormats() = localDataSource.get().data
+
+    private companion object {
+
+        const val TIMEOUT_IN_MILLIS = 500L
+    }
 }

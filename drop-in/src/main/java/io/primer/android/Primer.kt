@@ -43,7 +43,12 @@ class Primer private constructor() : PrimerInterface, DISdkComponent {
     }
 
     override fun cleanup(cleanClientSessionCache: Boolean) {
-        addAnalyticsEvent(SdkFunctionParams("cleanup"))
+        addAnalyticsEvent(
+            SdkFunctionParams(
+                "cleanup",
+                mapOf("cleanClientSessionCache" to cleanClientSessionCache),
+            ),
+        )
         if (cleanClientSessionCache) clearGlobalCache()
         listener = null
     }

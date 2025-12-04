@@ -33,6 +33,8 @@
         <item name="bottomSheetStyle">@style/Primer.BottomSheetModal</item>
         <item name="android:backgroundDimEnabled">true</item>
         <item name="android:backgroundDimAmount">0.3</item>
+        <item name="enableEdgeToEdge">true</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
     </style>
 
     <style name="Primer.BottomSheetModal" parent="Widget.Design.BottomSheet.Modal">

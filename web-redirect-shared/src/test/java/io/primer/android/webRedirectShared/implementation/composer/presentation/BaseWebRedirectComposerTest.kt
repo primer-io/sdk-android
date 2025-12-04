@@ -1,6 +1,7 @@
 package io.primer.android.webRedirectShared.implementation.composer.presentation
 
 import android.app.Activity
+import android.content.Intent
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
@@ -41,6 +42,10 @@ class BaseWebRedirectComposerTest {
 
                     override fun onResultCancelled(params: WebRedirectLauncherParams) {
                         println("onResultCancelled")
+                    }
+
+                    override fun onResultError(params: WebRedirectLauncherParams, intent: Intent?) {
+                        println("onResultError")
                     }
 
                     override fun onResultOk(params: WebRedirectLauncherParams) {

@@ -1,3 +1,37 @@
+## 2.46.0 (2025-12-02)
+
+### Feat
+
+- Upgrade 3DS SDK to 1.7.0 (#1115)
+
+### Fix
+
+- send appropriate card networks when switching between different co-badge cards corner case (#1114)
+- don't blur navigation bar background when edge-to-edge enabled (#1107)
+- EFTPOS co-brand should not be selectable by user (#1112)
+
+## 2.45.1 (2025-11-18)
+
+### Fix
+
+- better handling of initial deeplink (#1105)
+
+## 2.45.0 (2025-11-11)
+
+### Feat
+
+- bump com.google.android.gms:play-services-wallet from 19.4.0 to 19.5.0, bump minimum supported version to 23 (#1095)
+
+## 2.44.1 (2025-10-17)
+
+### Fix
+
+- 3ds crashing when activity is recreated (#1082)
+
+### Perf
+
+- improved loading performances (#1086)
+
 ## 2.44.0 (2025-10-07)
 
 ### Feat

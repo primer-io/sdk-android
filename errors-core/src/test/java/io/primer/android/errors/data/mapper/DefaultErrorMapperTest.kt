@@ -1,5 +1,8 @@
+import android.net.Uri
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.mockkConstructor
+import io.mockk.mockkStatic
 import io.primer.android.analytics.domain.models.ErrorContextParams
 import io.primer.android.configuration.data.exception.MissingConfigurationException
 import io.primer.android.core.data.network.exception.HttpException
@@ -8,6 +11,7 @@ import io.primer.android.core.data.network.exception.JsonDecodingException
 import io.primer.android.core.data.network.exception.JsonEncodingException
 import io.primer.android.errors.data.exception.IllegalValueException
 import io.primer.android.errors.data.exception.PaymentMethodCancelledException
+import io.primer.android.errors.data.exception.PaymentMethodRedirectException
 import io.primer.android.errors.data.exception.SessionCreateException
 import io.primer.android.errors.data.mapper.DefaultErrorMapper
 import io.primer.android.errors.domain.models.ClientError
@@ -16,6 +20,7 @@ import io.primer.android.errors.domain.models.GeneralError
 import io.primer.android.errors.domain.models.HttpError
 import io.primer.android.errors.domain.models.ParserError
 import io.primer.android.errors.domain.models.PaymentMethodCancelledError
+import io.primer.android.errors.domain.models.PaymentMethodRedirectError
 import io.primer.android.errors.domain.models.SessionCreateError
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNull
@@ -116,6 +121,26 @@ class DefaultErrorMapperTest {
         val result = errorMapper.getPrimerError(exception)
         assertTrue(result is PaymentMethodCancelledError)
         assertEquals("BANK", (result as PaymentMethodCancelledError).paymentMethodType)
+    }
+
+    @Test
+    fun `getPrimerError should return PaymentMethodRedirectError when PaymentMethodRedirectException is thrown`() {
+        mockkStatic(Uri::class)
+        val uriMock = mockk<Uri>()
+        val uriBuilder = mockk<Uri.Builder>()
+        every { uriMock.scheme } returns "primer"
+        every { uriMock.authority } returns "test"
+
+        mockkConstructor(Uri.Builder::class).also {
+            every { anyConstructed<Uri.Builder>().scheme(any()) } returns uriBuilder
+            every { uriBuilder.authority(any()) } returns uriBuilder
+            every { uriBuilder.build() } returns uriMock
+        }
+        every { Uri.parse(any()) } returns uriMock
+        val exception = PaymentMethodRedirectException(paymentMethodType = "BANK", uri = "primer://test")
+        val result = errorMapper.getPrimerError(exception)
+        assertTrue(result is PaymentMethodRedirectError)
+        assertEquals("BANK", (result as PaymentMethodRedirectError).paymentMethodType)
     }
 
     @Test

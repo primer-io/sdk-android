@@ -1,9 +1,11 @@
 package io.primer.android.webredirect.implementation.composer.presentation
 
+import android.content.Intent
 import androidx.annotation.VisibleForTesting
 import io.primer.android.PrimerSessionIntent
 import io.primer.android.core.extensions.flatMap
 import io.primer.android.errors.data.exception.PaymentMethodCancelledException
+import io.primer.android.errors.data.exception.PaymentMethodRedirectException
 import io.primer.android.paymentmethods.core.composer.InternalNativeUiPaymentMethodComponent
 import io.primer.android.paymentmethods.core.composer.composable.ComposerUiEvent
 import io.primer.android.payments.core.status.domain.AsyncPaymentMethodPollingInteractor
@@ -54,6 +56,17 @@ internal class WebRedirectComponent(
             paymentDelegate.handleError(
                 PaymentMethodCancelledException(
                     params.paymentMethodType,
+                ),
+            )
+        }
+    }
+
+    override fun onResultError(params: WebRedirectLauncherParams, intent: Intent?) {
+        composerScope.launch {
+            paymentDelegate.handleError(
+                PaymentMethodRedirectException(
+                    paymentMethodType = params.paymentMethodType,
+                    uri = intent?.dataString.orEmpty(),
                 ),
             )
         }

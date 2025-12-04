@@ -2,7 +2,6 @@ package io.primer.android.webRedirectShared.implementation.composer.ui.activity
 
 import android.content.Intent
 import android.net.Uri
-import android.util.Log
 import androidx.core.net.toUri
 import io.primer.paymentMethodCoreUi.core.ui.webview.BaseWebViewClient
 import io.primer.paymentMethodCoreUi.core.ui.webview.WebViewActivity
@@ -37,10 +36,6 @@ internal class WebRedirectPaymentMethodWebViewClient(
         }
 
         return true
-    }
-
-    override fun cannotHandleIntent(intent: Intent) {
-        Log.e(TAG, "Cannot handle intent: ${intent.data}")
     }
 
     internal companion object {

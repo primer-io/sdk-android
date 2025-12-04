@@ -31,11 +31,11 @@ class WebRedirectActivity : WebViewActivity() {
         return super.onSupportNavigateUp()
     }
 
-    override fun onNewIntent(intent: Intent?) {
+    override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         logNewIntentCalled(intent = intent)
         when (
-            intent?.data?.pathSegments?.contains(
+            intent.data?.pathSegments?.contains(
                 WebRedirectPaymentMethodWebViewClient.CANCEL_STATE_QUERY_PARAM,
             )
         ) {

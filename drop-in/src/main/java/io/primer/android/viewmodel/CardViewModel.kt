@@ -90,21 +90,48 @@ internal class CardViewModel(
     @VisibleForTesting
     internal fun handleFetchedMetadata(metadata: PrimerCardNumberEntryMetadata) {
         val selectableNetworks = metadata.selectableCardNetworks?.items
+        val detectedNetworks = metadata.detectedCardNetworks.items
         val detectedNonSelectableNetwork =
             metadata.detectedCardNetworks.let {
                 it.preferred ?: it.items.firstOrNull()
             }
 
-        val resolvedNetworks = selectableNetworks ?: listOf(detectedNonSelectableNetwork)
+        // When selectableNetworks is null but there are multiple detected networks (e.g., EFTPOS co-brand),
+        // we show all detected networks but without selection capability
+        val isSelectable = selectableNetworks != null
+        val resolvedNetworks = when {
+            selectableNetworks != null -> selectableNetworks
+            detectedNetworks.size > 1 -> detectedNetworks
+            else -> listOf(detectedNonSelectableNetwork)
+        }
+
+        val availableNetworkTypes = resolvedNetworks.mapNotNull { it?.network }.toSet()
+        // Only use cached network if it's still valid for the current card's available networks
+        val validCachedNetwork = cachedCardData?.cardNetwork?.takeIf { it in availableNetworkTypes }
+
+        // For display-only cards, we should NOT send a preferredNetwork - let the backend decide.
+        // Sending a preferredNetwork implies user choice, which has regulatory implications.
+        val networkForTokenization = if (isSelectable) validCachedNetwork else null
+
+        // Sync cachedCardData and manager if network changed
+        val cachedNetwork = cachedCardData?.cardNetwork
+        if (cachedCardData != null && cachedNetwork != networkForTokenization) {
+            val updatedCardData = cachedCardData!!.copy(cardNetwork = networkForTokenization)
+            cachedCardData = updatedCardData
+            cardManager.setRawData(updatedCardData)
+        }
+
+        val selectedNetwork =
+            validCachedNetwork
+                ?: metadata.selectableCardNetworks?.preferred?.network
+                ?: detectedNonSelectableNetwork?.network
 
         val state =
             CardNetworksState(
                 networks = resolvedNetworks.mapNotNull { it },
                 preferredNetwork = metadata.selectableCardNetworks?.preferred?.network,
-                selectedNetwork =
-                cachedCardData?.cardNetwork
-                    ?: metadata.selectableCardNetworks?.preferred?.network
-                    ?: resolvedNetworks.first()?.network,
+                selectedNetwork = selectedNetwork,
+                isSelectable = isSelectable,
             )
         _cardNetworksState.update { state }
     }
@@ -178,4 +205,5 @@ internal data class CardNetworksState(
     val networks: List<PrimerCardNetwork>,
     val preferredNetwork: CardNetwork.Type?,
     val selectedNetwork: CardNetwork.Type?,
+    val isSelectable: Boolean = true,
 )

@@ -267,11 +267,12 @@ internal class CardFormFragment : BaseFragment() {
             updateCardNetworkViews(
                 state.networks.map { it.network },
                 state.selectedNetwork,
+                state.isSelectable,
             ) { network ->
                 cardViewModel.setSelectedNetwork(network)
             }
         } else {
-            updateCardNetworkViews(emptyList(), null) { }
+            updateCardNetworkViews(emptyList(), null, true) { }
         }
         showSurchargeIfNeeded()
         setValidationErrors()
@@ -280,11 +281,13 @@ internal class CardFormFragment : BaseFragment() {
     private fun updateCardNetworkViews(
         networks: List<CardNetwork.Type>,
         selectedNetwork: CardNetwork.Type?,
+        isSelectable: Boolean,
         onNetworkSelected: (CardNetwork.Type) -> Unit,
     ) {
-        when (networks.size) {
-            0 -> showSingleCard(null)
-            1 -> showSingleCard(networks.first())
+        when {
+            networks.isEmpty() -> showSingleCard(null)
+            networks.size == 1 -> showSingleCard(networks.first())
+            !isSelectable -> showCoBadgeDisplayOnly(networks)
             else -> showCoBadgeCardDropdown(networks, selectedNetwork ?: networks.first(), onNetworkSelected)
         }
     }
@@ -293,6 +296,21 @@ internal class CardFormFragment : BaseFragment() {
         with(binding) {
             cardNetworkContainer.setOnClickListener(null)
             imageViewCardNetwork.setImageDrawable(getCardNetworkDrawable(networkType))
+            imageViewCardNetworkSecondary.isVisible = false
+            imageViewCardNetworkCaret.isVisible = false
+        }
+    }
+
+    private fun showCoBadgeDisplayOnly(networks: List<CardNetwork.Type>) {
+        with(binding) {
+            cardNetworkContainer.setOnClickListener(null)
+            imageViewCardNetwork.setImageDrawable(getCardNetworkDrawable(networks.firstOrNull()))
+            if (networks.size > 1) {
+                imageViewCardNetworkSecondary.setImageDrawable(getCardNetworkDrawable(networks[1]))
+                imageViewCardNetworkSecondary.isVisible = true
+            } else {
+                imageViewCardNetworkSecondary.isVisible = false
+            }
             imageViewCardNetworkCaret.isVisible = false
         }
     }
@@ -307,6 +325,7 @@ internal class CardFormFragment : BaseFragment() {
                 showCardSelectPopup(networks, selectedNetwork, onNetworkSelected)
             }
             imageViewCardNetwork.setImageDrawable(getCardNetworkDrawable(selectedNetwork))
+            imageViewCardNetworkSecondary.isVisible = false
             imageViewCardNetworkCaret.isVisible = true
         }
     }
