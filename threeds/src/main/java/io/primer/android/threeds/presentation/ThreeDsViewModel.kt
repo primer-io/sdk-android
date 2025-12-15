@@ -22,6 +22,7 @@ import io.primer.android.threeds.domain.interactor.ThreeDsInteractor
 import io.primer.android.threeds.domain.models.ChallengeStatusData
 import io.primer.android.threeds.domain.models.ThreeDsCheckoutParams
 import io.primer.android.threeds.domain.models.ThreeDsInitParams
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
 
@@ -65,6 +66,7 @@ internal class ThreeDsViewModel(
     }
 
     fun performAuthorization(
+        activity: Activity,
         supportedThreeDsProtocolVersions: List<String>,
         paymentMethodToken: String?,
         cardNetwork: CardNetwork.Type?,
@@ -77,13 +79,26 @@ internal class ThreeDsViewModel(
                 ).onFailure { throwable ->
                     _threeDsErrorEvent.postValue(throwable)
                 }.onSuccess { transaction ->
+                    // Get and show progress view per EMVCo requirements
+                    val progressView = threeDsInteractor.getProgressView(activity, transaction)
+                    progressView?.showProgress()
+                    val startTime = System.currentTimeMillis()
+
                     threeDsInteractor.beginRemoteAuth(
                         getThreeDsParams(transaction.authenticationRequestParameters),
                         paymentMethodToken = requireNotNull(paymentMethodToken),
                     ).onFailure { throwable ->
+                        progressView?.hideProgress()
                         _threeDsErrorEvent.postValue(throwable)
                         transaction.close()
                     }.onSuccess { result ->
+                        // Ensure minimum 2-second display per EMVCo specification
+                        val elapsed = System.currentTimeMillis() - startTime
+                        if (elapsed < PROCESSING_SCREEN_MIN_DISPLAY_MS) {
+                            delay(PROCESSING_SCREEN_MIN_DISPLAY_MS - elapsed)
+                        }
+                        progressView?.hideProgress()
+
                         when (result.authentication.responseCode) {
                             ResponseCode.CHALLENGE -> _challengeRequiredEvent.postValue(
                                 ThreeDsEventData.ChallengeRequiredData(
@@ -203,5 +218,13 @@ internal class ThreeDsViewModel(
 
     private fun runIfChallengeNotInProgress(block: () -> Unit) = challengeInProgress.takeIf { it.not() }?.run {
         block()
+    }
+
+    companion object {
+        /**
+         * EMVCo requires the processing screen to be displayed for minimum 2 seconds
+         * during the Authentication Request.
+         */
+        private const val PROCESSING_SCREEN_MIN_DISPLAY_MS = 2000L
     }
 }

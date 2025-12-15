@@ -87,6 +87,7 @@ class ThreeDsViewModelTest {
 
     @Test
     fun `performAuthorization() should receive error event when interactor authenticateSdk() failed`() {
+        val activity = mockk<Activity>(relaxed = true)
         val observer = viewModel.threeDsErrorEvent.test()
         val exception = mockk<Exception>()
 
@@ -98,6 +99,7 @@ class ThreeDsViewModelTest {
 
         runTest {
             viewModel.performAuthorization(
+                activity = activity,
                 supportedThreeDsProtocolVersions = supportedProtocolVersions,
                 paymentMethodToken = PAYMENT_METHOD_TOKEN,
                 cardNetwork = CardNetwork.Type.MASTERCARD,
@@ -111,6 +113,7 @@ class ThreeDsViewModelTest {
 
     @Test
     fun `performAuthorization() should receive error event when interactor beginRemoteAuth() failed`() {
+        val activity = mockk<Activity>(relaxed = true)
         val transaction = mockk<Transaction>(relaxed = true)
         val requestParameters = mock(AuthenticationRequestParameters::class.java)
         val exception = mockk<Exception>()
@@ -131,6 +134,7 @@ class ThreeDsViewModelTest {
 
         runTest {
             viewModel.performAuthorization(
+                activity = activity,
                 supportedThreeDsProtocolVersions = supportedProtocolVersions,
                 paymentMethodToken = PAYMENT_METHOD_TOKEN,
                 cardNetwork = CardNetwork.Type.MASTERCARD,
@@ -145,6 +149,7 @@ class ThreeDsViewModelTest {
 
     @Test
     fun `performAuthorization() should receive challenge required event when interactor beginRemoteAuth() was success and response code is CHALLENGE`() {
+        val activity = mockk<Activity>(relaxed = true)
         val transaction = mockk<Transaction>(relaxed = true)
         val authResponse = mockk<BeginAuthResponse>(relaxed = true)
         val requestParameters = mock(AuthenticationRequestParameters::class.java)
@@ -166,6 +171,7 @@ class ThreeDsViewModelTest {
 
         runTest {
             viewModel.performAuthorization(
+                activity = activity,
                 supportedThreeDsProtocolVersions = supportedProtocolVersions,
                 paymentMethodToken = PAYMENT_METHOD_TOKEN,
                 cardNetwork = CardNetwork.Type.MASTERCARD,
@@ -181,6 +187,7 @@ class ThreeDsViewModelTest {
 
     @Test
     fun `performAuthorization() should receive finished event when interactor beginRemoteAuth() was success and response code is not CHALLENGE`() {
+        val activity = mockk<Activity>(relaxed = true)
         val transaction = mockk<Transaction>(relaxed = true)
         val requestParameters = mock(AuthenticationRequestParameters::class.java)
 
@@ -202,6 +209,7 @@ class ThreeDsViewModelTest {
 
         runTest {
             viewModel.performAuthorization(
+                activity = activity,
                 supportedThreeDsProtocolVersions = supportedProtocolVersions,
                 paymentMethodToken = PAYMENT_METHOD_TOKEN,
                 cardNetwork = CardNetwork.Type.MASTERCARD,

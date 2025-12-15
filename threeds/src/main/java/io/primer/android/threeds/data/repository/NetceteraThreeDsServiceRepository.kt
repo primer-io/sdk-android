@@ -10,6 +10,7 @@ import com.netcetera.threeds.sdk.api.transaction.challenge.ChallengeStatusReceiv
 import com.netcetera.threeds.sdk.api.transaction.challenge.events.CompletionEvent
 import com.netcetera.threeds.sdk.api.transaction.challenge.events.ProtocolErrorEvent
 import com.netcetera.threeds.sdk.api.transaction.challenge.events.RuntimeErrorEvent
+import com.netcetera.threeds.sdk.api.ui.ProgressView
 import com.netcetera.threeds.sdk.api.ui.logic.UiCustomization
 import com.netcetera.threeds.sdk.api.utils.DsRidValues
 import io.primer.android.configuration.data.model.CardNetwork
@@ -237,6 +238,16 @@ internal class NetceteraThreeDsServiceRepository(
         }
 
     override fun performCleanup() = threeDS2Service.cleanup(context)
+
+    override fun getProgressView(
+        activity: Activity,
+        transaction: Transaction,
+    ): ProgressView? =
+        try {
+            transaction.getProgressView(activity)
+        } catch (expected: Exception) {
+            null
+        }
 
     @Throws(ThreeDsMissingDirectoryServerException::class)
     private fun directoryServerIdForCard(
