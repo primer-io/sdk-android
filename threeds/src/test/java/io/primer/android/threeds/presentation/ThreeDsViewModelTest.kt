@@ -4,6 +4,7 @@ import android.app.Activity
 import com.jraska.livedata.test
 import com.netcetera.threeds.sdk.api.transaction.AuthenticationRequestParameters
 import com.netcetera.threeds.sdk.api.transaction.Transaction
+import com.netcetera.threeds.sdk.api.ui.ProgressView
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -12,6 +13,7 @@ import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
 import io.mockk.verify
+import io.mockk.verifyOrder
 import io.primer.android.analytics.domain.AnalyticsInteractor
 import io.primer.android.configuration.data.model.CardNetwork
 import io.primer.android.core.InstantExecutorExtension
@@ -103,6 +105,7 @@ class ThreeDsViewModelTest {
                 supportedThreeDsProtocolVersions = supportedProtocolVersions,
                 paymentMethodToken = PAYMENT_METHOD_TOKEN,
                 cardNetwork = CardNetwork.Type.MASTERCARD,
+                processingDisplayTimeMs = 0L,
             )
         }
 
@@ -138,6 +141,7 @@ class ThreeDsViewModelTest {
                 supportedThreeDsProtocolVersions = supportedProtocolVersions,
                 paymentMethodToken = PAYMENT_METHOD_TOKEN,
                 cardNetwork = CardNetwork.Type.MASTERCARD,
+                processingDisplayTimeMs = 0L,
             )
         }
 
@@ -175,6 +179,7 @@ class ThreeDsViewModelTest {
                 supportedThreeDsProtocolVersions = supportedProtocolVersions,
                 paymentMethodToken = PAYMENT_METHOD_TOKEN,
                 cardNetwork = CardNetwork.Type.MASTERCARD,
+                processingDisplayTimeMs = 0L,
             )
         }
 
@@ -213,6 +218,7 @@ class ThreeDsViewModelTest {
                 supportedThreeDsProtocolVersions = supportedProtocolVersions,
                 paymentMethodToken = PAYMENT_METHOD_TOKEN,
                 cardNetwork = CardNetwork.Type.MASTERCARD,
+                processingDisplayTimeMs = 0L,
             )
         }
 
@@ -388,6 +394,174 @@ class ThreeDsViewModelTest {
         }
 
         verify { threeDsInteractor.cleanup() }
+    }
+
+    @Test
+    fun `performAuthorization() should show progress view before beginRemoteAuth`() {
+        val activity = mockk<Activity>(relaxed = true)
+        val transaction = mockk<Transaction>(relaxed = true)
+        val progressView = mockk<ProgressView>(relaxed = true)
+        val requestParameters = mock(AuthenticationRequestParameters::class.java)
+        val authResponse = mockk<BeginAuthResponse>(relaxed = true)
+
+        val supportedProtocolVersions = listOf(ProtocolVersion.V_210.versionNumber)
+
+        `when`(requestParameters.messageVersion).thenReturn(ProtocolVersion.V_210.versionNumber)
+        every { transaction.authenticationRequestParameters }.returns(requestParameters)
+        every { authResponse.authentication.responseCode }.returns(ResponseCode.AUTH_SUCCESS)
+        every { threeDsInteractor.getProgressView(activity, transaction) }.returns(progressView)
+        coEvery { threeDsInteractor.authenticateSdk(any(), any()) }.returns(Result.success(transaction))
+        coEvery { threeDsInteractor.beginRemoteAuth(any(), any()) }.returns(Result.success(authResponse))
+
+        runTest {
+            viewModel.performAuthorization(
+                activity = activity,
+                supportedThreeDsProtocolVersions = supportedProtocolVersions,
+                paymentMethodToken = PAYMENT_METHOD_TOKEN,
+                cardNetwork = CardNetwork.Type.MASTERCARD,
+                processingDisplayTimeMs = 0L,
+            )
+        }
+
+        verifyOrder {
+            threeDsInteractor.getProgressView(activity, transaction)
+            progressView.showProgress()
+        }
+    }
+
+    @Test
+    fun `performAuthorization() should hide progress view on error`() {
+        val activity = mockk<Activity>(relaxed = true)
+        val transaction = mockk<Transaction>(relaxed = true)
+        val progressView = mockk<ProgressView>(relaxed = true)
+        val requestParameters = mock(AuthenticationRequestParameters::class.java)
+        val exception = mockk<Exception>()
+
+        val supportedProtocolVersions = listOf(ProtocolVersion.V_210.versionNumber)
+
+        `when`(requestParameters.messageVersion).thenReturn(ProtocolVersion.V_210.versionNumber)
+        every { transaction.authenticationRequestParameters }.returns(requestParameters)
+        every { threeDsInteractor.getProgressView(activity, transaction) }.returns(progressView)
+        coEvery { threeDsInteractor.authenticateSdk(any(), any()) }.returns(Result.success(transaction))
+        coEvery { threeDsInteractor.beginRemoteAuth(any(), any()) }.returns(Result.failure(exception))
+
+        runTest {
+            viewModel.performAuthorization(
+                activity = activity,
+                supportedThreeDsProtocolVersions = supportedProtocolVersions,
+                paymentMethodToken = PAYMENT_METHOD_TOKEN,
+                cardNetwork = CardNetwork.Type.MASTERCARD,
+                processingDisplayTimeMs = 0L,
+            )
+        }
+
+        verifyOrder {
+            progressView.showProgress()
+            progressView.hideProgress()
+        }
+    }
+
+    @Test
+    fun `performAuthorization() should not hide progress view when challenge is required`() {
+        val activity = mockk<Activity>(relaxed = true)
+        val transaction = mockk<Transaction>(relaxed = true)
+        val progressView = mockk<ProgressView>(relaxed = true)
+        val requestParameters = mock(AuthenticationRequestParameters::class.java)
+        val authResponse = mockk<BeginAuthResponse>(relaxed = true)
+
+        val supportedProtocolVersions = listOf(ProtocolVersion.V_210.versionNumber)
+
+        `when`(requestParameters.messageVersion).thenReturn(ProtocolVersion.V_210.versionNumber)
+        every { transaction.authenticationRequestParameters }.returns(requestParameters)
+        every { authResponse.authentication.responseCode }.returns(ResponseCode.CHALLENGE)
+        every { threeDsInteractor.getProgressView(activity, transaction) }.returns(progressView)
+        coEvery { threeDsInteractor.authenticateSdk(any(), any()) }.returns(Result.success(transaction))
+        coEvery { threeDsInteractor.beginRemoteAuth(any(), any()) }.returns(Result.success(authResponse))
+
+        runTest {
+            viewModel.performAuthorization(
+                activity = activity,
+                supportedThreeDsProtocolVersions = supportedProtocolVersions,
+                paymentMethodToken = PAYMENT_METHOD_TOKEN,
+                cardNetwork = CardNetwork.Type.MASTERCARD,
+                processingDisplayTimeMs = 0L,
+            )
+        }
+
+        verify { progressView.showProgress() }
+        verify(exactly = 0) { progressView.hideProgress() }
+    }
+
+    @Test
+    fun `performAuthorization() should hide progress view when auth succeeds without challenge`() {
+        val activity = mockk<Activity>(relaxed = true)
+        val transaction = mockk<Transaction>(relaxed = true)
+        val progressView = mockk<ProgressView>(relaxed = true)
+        val requestParameters = mock(AuthenticationRequestParameters::class.java)
+        val authResponse = mockk<BeginAuthResponse>(relaxed = true)
+
+        val supportedProtocolVersions = listOf(ProtocolVersion.V_210.versionNumber)
+
+        `when`(requestParameters.messageVersion).thenReturn(ProtocolVersion.V_210.versionNumber)
+        every { transaction.authenticationRequestParameters }.returns(requestParameters)
+        every { authResponse.authentication.responseCode }.returns(ResponseCode.AUTH_SUCCESS)
+        every { threeDsInteractor.getProgressView(activity, transaction) }.returns(progressView)
+        coEvery { threeDsInteractor.authenticateSdk(any(), any()) }.returns(Result.success(transaction))
+        coEvery { threeDsInteractor.beginRemoteAuth(any(), any()) }.returns(Result.success(authResponse))
+
+        runTest {
+            viewModel.performAuthorization(
+                activity = activity,
+                supportedThreeDsProtocolVersions = supportedProtocolVersions,
+                paymentMethodToken = PAYMENT_METHOD_TOKEN,
+                cardNetwork = CardNetwork.Type.MASTERCARD,
+                processingDisplayTimeMs = 0L,
+            )
+        }
+
+        verifyOrder {
+            progressView.showProgress()
+            progressView.hideProgress()
+        }
+    }
+
+    @Test
+    fun `performAuthorization() should complete successfully with non-zero processing display time`() {
+        val activity = mockk<Activity>(relaxed = true)
+        val transaction = mockk<Transaction>(relaxed = true)
+        val progressView = mockk<ProgressView>(relaxed = true)
+        val requestParameters = mock(AuthenticationRequestParameters::class.java)
+        val authResponse = mockk<BeginAuthResponse>(relaxed = true)
+
+        val supportedProtocolVersions = listOf(ProtocolVersion.V_210.versionNumber)
+        val minDisplayTimeMs = 2000L
+
+        `when`(requestParameters.messageVersion).thenReturn(ProtocolVersion.V_210.versionNumber)
+        every { transaction.authenticationRequestParameters }.returns(requestParameters)
+        every { authResponse.authentication.responseCode }.returns(ResponseCode.CHALLENGE)
+        every { threeDsInteractor.getProgressView(activity, transaction) }.returns(progressView)
+        coEvery { threeDsInteractor.authenticateSdk(any(), any()) }.returns(Result.success(transaction))
+        coEvery { threeDsInteractor.beginRemoteAuth(any(), any()) }.returns(Result.success(authResponse))
+
+        val observer = viewModel.challengeRequiredEvent.test()
+
+        runTest {
+            viewModel.performAuthorization(
+                activity = activity,
+                supportedThreeDsProtocolVersions = supportedProtocolVersions,
+                paymentMethodToken = PAYMENT_METHOD_TOKEN,
+                cardNetwork = CardNetwork.Type.MASTERCARD,
+                processingDisplayTimeMs = minDisplayTimeMs,
+            )
+        }
+
+        // Verify the delay didn't prevent the challenge event from being posted
+        assertEquals(transaction, observer.value().transaction)
+        assertEquals(authResponse, observer.value().authData)
+
+        // Verify progress view was shown but not hidden (challenge flow)
+        verify { progressView.showProgress() }
+        verify(exactly = 0) { progressView.hideProgress() }
     }
 
     private companion object {

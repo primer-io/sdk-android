@@ -31,6 +31,7 @@ internal class ThreeDsViewModel(
     private val threeDsInteractor: ThreeDsInteractor,
     private val analyticsInteractor: AnalyticsInteractor,
     private val settings: PrimerSettings,
+    private val getCurrentTimeMillis: () -> Long = { System.currentTimeMillis() },
 ) : ViewModel() {
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     internal var challengeInProgress: Boolean = false
@@ -70,6 +71,7 @@ internal class ThreeDsViewModel(
         supportedThreeDsProtocolVersions: List<String>,
         paymentMethodToken: String?,
         cardNetwork: CardNetwork.Type?,
+        processingDisplayTimeMs: Long = PROCESSING_SCREEN_MIN_DISPLAY_MS,
     ) {
         runIfChallengeNotInProgress {
             viewModelScope.launch {
@@ -79,40 +81,54 @@ internal class ThreeDsViewModel(
                 ).onFailure { throwable ->
                     _threeDsErrorEvent.postValue(throwable)
                 }.onSuccess { transaction ->
-                    // Get and show progress view per EMVCo requirements
-                    val progressView = threeDsInteractor.getProgressView(activity, transaction)
-                    progressView?.showProgress()
-                    val startTime = System.currentTimeMillis()
+                    beginRemoteAuth(activity, transaction, paymentMethodToken, processingDisplayTimeMs)
+                }
+            }
+        }
+    }
 
-                    threeDsInteractor.beginRemoteAuth(
-                        getThreeDsParams(transaction.authenticationRequestParameters),
-                        paymentMethodToken = requireNotNull(paymentMethodToken),
-                    ).onFailure { throwable ->
-                        progressView?.hideProgress()
-                        _threeDsErrorEvent.postValue(throwable)
-                        transaction.close()
-                    }.onSuccess { result ->
-                        // Ensure minimum 2-second display per EMVCo specification
-                        val elapsed = System.currentTimeMillis() - startTime
-                        if (elapsed < PROCESSING_SCREEN_MIN_DISPLAY_MS) {
-                            delay(PROCESSING_SCREEN_MIN_DISPLAY_MS - elapsed)
-                        }
-                        progressView?.hideProgress()
+    private suspend fun beginRemoteAuth(
+        activity: Activity,
+        transaction: Transaction,
+        paymentMethodToken: String?,
+        processingDisplayTimeMs: Long,
+    ) {
+        // Get and show progress view per EMVCo requirements
+        val progressView = threeDsInteractor.getProgressView(activity, transaction)
+        progressView?.showProgress()
 
-                        when (result.authentication.responseCode) {
-                            ResponseCode.CHALLENGE -> _challengeRequiredEvent.postValue(
-                                ThreeDsEventData.ChallengeRequiredData(
-                                    transaction,
-                                    result,
-                                ),
-                            )
+        val startTime = getCurrentTimeMillis()
 
-                            else -> {
-                                _threeDsFinishedEvent.postValue(result.resumeToken)
-                                transaction.close()
-                            }
-                        }
-                    }
+        threeDsInteractor.beginRemoteAuth(
+            getThreeDsParams(transaction.authenticationRequestParameters),
+            paymentMethodToken = requireNotNull(paymentMethodToken),
+        ).onFailure { throwable ->
+            progressView?.hideProgress()
+            _threeDsErrorEvent.postValue(throwable)
+            transaction.close()
+        }.onSuccess { result ->
+            // Ensure minimum display time
+            val elapsed = getCurrentTimeMillis() - startTime
+            if (elapsed < processingDisplayTimeMs) {
+                delay(processingDisplayTimeMs - elapsed)
+            }
+
+            when (result.authentication.responseCode) {
+                ResponseCode.CHALLENGE -> {
+                    // Don't hide progress - SDK manages transition to challenge UI
+                    // per Netcetera docs to prevent screen flickering
+                    _challengeRequiredEvent.postValue(
+                        ThreeDsEventData.ChallengeRequiredData(
+                            transaction,
+                            result,
+                        ),
+                    )
+                }
+
+                else -> {
+                    progressView?.hideProgress()
+                    _threeDsFinishedEvent.postValue(result.resumeToken)
+                    transaction.close()
                 }
             }
         }

@@ -245,7 +245,7 @@ internal class NetceteraThreeDsServiceRepository(
     ): ProgressView? =
         try {
             transaction.getProgressView(activity)
-        } catch (expected: Exception) {
+        } catch (ignored: Exception) {
             null
         }
 
