@@ -2,6 +2,7 @@ package io.primer.android.threeds.domain.interactor
 
 import android.app.Activity
 import com.netcetera.threeds.sdk.api.transaction.Transaction
+import com.netcetera.threeds.sdk.api.ui.ProgressView
 import io.primer.android.analytics.data.models.MessageType
 import io.primer.android.analytics.data.models.Severity
 import io.primer.android.analytics.domain.models.MessageAnalyticsParams
@@ -67,6 +68,11 @@ internal interface ThreeDsInteractor {
     ): Result<PostAuthResponse>
 
     fun cleanup()
+
+    fun getProgressView(
+        activity: Activity,
+        transaction: Transaction,
+    ): ProgressView?
 }
 
 @Suppress("LongParameterList")
@@ -211,6 +217,11 @@ internal class DefaultThreeDsInteractor(
         } catch (_: Exception) {
         } catch (_: NoClassDefFoundError) {
         }
+
+    override fun getProgressView(
+        activity: Activity,
+        transaction: Transaction,
+    ): ProgressView? = threeDsServiceRepository.getProgressView(activity, transaction)
 
     private fun logAnalytics(error: PrimerError) =
         analyticsRepository.addEvent(

@@ -13,6 +13,7 @@ import com.netcetera.threeds.sdk.api.transaction.challenge.ErrorMessage
 import com.netcetera.threeds.sdk.api.transaction.challenge.events.CompletionEvent
 import com.netcetera.threeds.sdk.api.transaction.challenge.events.ProtocolErrorEvent
 import com.netcetera.threeds.sdk.api.transaction.challenge.events.RuntimeErrorEvent
+import com.netcetera.threeds.sdk.api.ui.ProgressView
 import com.netcetera.threeds.sdk.api.ui.logic.UiCustomization
 import com.netcetera.threeds.sdk.api.utils.DsRidValues
 import io.mockk.MockKAnnotations
@@ -582,6 +583,27 @@ internal class NetceteraThreeDsServiceRepositoryTest {
         )
         verify { mockConfigurationProvider.createConfigParameters(keys) }
         assertTrue(result.isSuccess)
+    }
+
+    @Test
+    fun `getProgressView should return ProgressView when transaction returns it successfully`() {
+        val progressView = mockk<ProgressView>(relaxed = true)
+        every { mockTransaction.getProgressView(mockActivity) }.returns(progressView)
+
+        val result = repository.getProgressView(mockActivity, mockTransaction)
+
+        assertEquals(progressView, result)
+        verify { mockTransaction.getProgressView(mockActivity) }
+    }
+
+    @Test
+    fun `getProgressView should return null when transaction throws exception`() {
+        every { mockTransaction.getProgressView(mockActivity) }.throws(RuntimeException("SDK error"))
+
+        val result = repository.getProgressView(mockActivity, mockTransaction)
+
+        assertEquals(null, result)
+        verify { mockTransaction.getProgressView(mockActivity) }
     }
 
     private companion object {

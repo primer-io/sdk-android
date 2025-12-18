@@ -3,6 +3,7 @@ package io.primer.android.threeds.domain.interactor
 import android.app.Activity
 import com.netcetera.threeds.sdk.api.exceptions.SDKRuntimeException
 import com.netcetera.threeds.sdk.api.transaction.Transaction
+import com.netcetera.threeds.sdk.api.ui.ProgressView
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -609,5 +610,32 @@ internal class DefaultThreeDsInteractorTest {
         }
 
         coVerify { threeDsServiceRepository.performCleanup() }
+    }
+
+    @Test
+    fun `getProgressView() should delegate to repository and return ProgressView`() {
+        val activity = mockk<Activity>(relaxed = true)
+        val transaction = mockk<Transaction>(relaxed = true)
+        val progressView = mockk<ProgressView>(relaxed = true)
+
+        every { threeDsServiceRepository.getProgressView(activity, transaction) }.returns(progressView)
+
+        val result = interactor.getProgressView(activity, transaction)
+
+        assertEquals(progressView, result)
+        verify { threeDsServiceRepository.getProgressView(activity, transaction) }
+    }
+
+    @Test
+    fun `getProgressView() should return null when repository returns null`() {
+        val activity = mockk<Activity>(relaxed = true)
+        val transaction = mockk<Transaction>(relaxed = true)
+
+        every { threeDsServiceRepository.getProgressView(activity, transaction) }.returns(null)
+
+        val result = interactor.getProgressView(activity, transaction)
+
+        assertEquals(null, result)
+        verify { threeDsServiceRepository.getProgressView(activity, transaction) }
     }
 }
