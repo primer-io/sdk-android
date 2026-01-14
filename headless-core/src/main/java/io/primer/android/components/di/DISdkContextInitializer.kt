@@ -22,9 +22,6 @@ object DISdkContextInitializer : DISdkComponent {
         config: PrimerConfig,
         context: Context,
     ) {
-        DISdkContext.integrationContext =
-            DISdkContext.integrationContext.copy(isDropIn = false, locale = config.settings.locale)
-
         SdkContainer().let { container ->
             container.init(config, context)
             DISdkContext.headlessSdkContainer?.clear()
