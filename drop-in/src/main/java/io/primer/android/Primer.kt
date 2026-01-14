@@ -9,6 +9,7 @@ import io.primer.android.clientToken.core.token.data.model.ClientToken
 import io.primer.android.configuration.data.datasource.GlobalCacheConfigurationCacheDataSource
 import io.primer.android.configuration.di.ConfigurationCoreContainer
 import io.primer.android.core.di.DISdkComponent
+import io.primer.android.core.di.DISdkContext
 import io.primer.android.core.di.extensions.resolve
 import io.primer.android.data.settings.PrimerPaymentHandling
 import io.primer.android.data.settings.PrimerSettings
@@ -17,6 +18,7 @@ import io.primer.android.data.settings.internal.PrimerIntent
 import io.primer.android.domain.error.models.PrimerError
 import io.primer.android.errors.domain.models.PrimerUnknownError
 import io.primer.android.payments.core.helpers.CheckoutExitHandler
+import io.primer.paymentMethodCoreUi.core.ui.BaseCheckoutActivity
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
@@ -105,9 +107,10 @@ class Primer private constructor() : PrimerInterface, DISdkComponent {
     ) {
         try {
             setupAndVerifyClientToken(clientToken)
+            DISdkContext.integrationContext = DISdkContext.integrationContext.copy(locale = config.settings.locale)
             Intent(context, CheckoutSheetActivity::class.java)
                 .apply {
-                    putExtra(CheckoutSheetActivity.PRIMER_CONFIG_KEY, config)
+                    putExtra(BaseCheckoutActivity.PRIMER_CONFIG_KEY, config)
                     addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                 }.run { context.startActivity(this) }
         } catch (expected: Exception) {

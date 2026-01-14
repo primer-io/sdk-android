@@ -142,7 +142,6 @@ internal class CheckoutConfigContainer(private val sdk: () -> SdkContainer) : De
         registerSingleton {
             PrimerPaymentMethodViewFactory(
                 config = sdk().resolve(),
-                context = sdk().resolve(),
                 assetsManager = resolve(),
             )
         }

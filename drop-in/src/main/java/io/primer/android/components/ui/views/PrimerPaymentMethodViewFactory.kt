@@ -13,11 +13,11 @@ import io.primer.android.paymentMethods.core.ui.assets.AssetsManager
 import io.primer.android.paymentmethods.common.data.model.PaymentMethodType
 
 internal class PrimerPaymentMethodViewFactory(
-    val context: Context,
     val config: PrimerConfig,
     val assetsManager: AssetsManager,
 ) {
     fun getViewForPaymentMethod(
+        context: Context,
         displayMetadata: BaseDisplayMetadata,
         container: ViewGroup?,
     ): View {

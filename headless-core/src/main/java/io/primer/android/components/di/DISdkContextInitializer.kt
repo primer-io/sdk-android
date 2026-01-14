@@ -22,6 +22,9 @@ object DISdkContextInitializer : DISdkComponent {
         config: PrimerConfig,
         context: Context,
     ) {
+        DISdkContext.integrationContext =
+            DISdkContext.integrationContext.copy(isDropIn = false, locale = config.settings.locale)
+
         SdkContainer().let { container ->
             container.init(config, context)
             DISdkContext.headlessSdkContainer?.clear()
@@ -33,7 +36,8 @@ object DISdkContextInitializer : DISdkComponent {
         config: PrimerConfig,
         context: Context,
     ) {
-        DISdkContext.isDropIn = true
+        DISdkContext.integrationContext =
+            DISdkContext.IntegrationContext(isDropIn = true, locale = config.settings.locale)
         SdkContainer().let { container ->
             container.init(config, context)
             // Remove headless implementation
@@ -51,7 +55,7 @@ object DISdkContextInitializer : DISdkComponent {
     fun clearDropIn() {
         DISdkContext.dropInSdkContainer?.clear()
         DISdkContext.dropInSdkContainer = null
-        DISdkContext.isDropIn = false
+        DISdkContext.integrationContext = DISdkContext.integrationContext.copy(isDropIn = false)
     }
     // endregion
 

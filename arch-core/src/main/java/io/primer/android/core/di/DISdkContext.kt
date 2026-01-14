@@ -3,13 +3,17 @@ package io.primer.android.core.di
 import android.util.Log
 import androidx.annotation.RestrictTo
 import io.primer.android.core.di.exception.SdkContainerUninitializedException
+import java.util.Locale
 import java.util.concurrent.ConcurrentHashMap
 
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 object DISdkContext {
     private val merged: SdkContainer by lazy { SdkContainer() }
 
-    var isDropIn: Boolean = false
+    data class IntegrationContext(val isDropIn: Boolean, val locale: Locale)
+
+    @Volatile
+    var integrationContext = IntegrationContext(isDropIn = false, locale = Locale.getDefault())
 
     @Volatile
     var dropInSdkContainer: SdkContainer? = null
@@ -23,7 +27,7 @@ object DISdkContext {
     val container: () -> SdkContainer
         get() = {
             val selectedContainer =
-                if (isDropIn) {
+                if (integrationContext.isDropIn) {
                     dropInSdkContainer + coreContainer
                 } else {
                     headlessSdkContainer + coreContainer
