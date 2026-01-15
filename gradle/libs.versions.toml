@@ -14,7 +14,7 @@ browser = "1.9.0"
 
 okhttp = "4.12.0"
 
-primer-3ds = "1.7.0"
+primer-3ds = "1.8.0"
 primer-klarna = "1.2.0"
 primer-ipay88 = "1.0.3"
 primer-nol-pay = "1.0.2"
