@@ -36,11 +36,11 @@ import io.primer.android.threeds.helpers.ProtocolVersion
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import java.util.Locale
-import kotlin.coroutines.coroutineContext
 
 @ExperimentalCoroutinesApi
 internal class NetceteraThreeDsServiceRepository(
@@ -68,7 +68,7 @@ internal class NetceteraThreeDsServiceRepository(
         threeDsKeysParams: ThreeDsKeysParams?,
     ): Result<Unit> =
         runSuspendCatching {
-            coroutineContext.ensureActive()
+            currentCoroutineContext().ensureActive()
 
             try {
                 requireNotNull(threeDsKeysParams) { KEYS_CONFIG_ERROR }
@@ -97,9 +97,9 @@ internal class NetceteraThreeDsServiceRepository(
                 )
             }
 
-            coroutineContext.ensureActive()
+            currentCoroutineContext().ensureActive()
             val warnings = threeDS2Service.warnings
-            coroutineContext.ensureActive()
+            currentCoroutineContext().ensureActive()
             if (is3DSSanityCheckEnabled.not() || warnings.isEmpty()) {
                 Unit
             } else {

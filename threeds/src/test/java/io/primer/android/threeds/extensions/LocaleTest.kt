@@ -38,11 +38,11 @@ internal class LocaleTest {
         assertEquals("zh_HK", result)
     }
 
-    @ParameterizedTest
-    @MethodSource("malformedLocaleProvider")
-    fun `should handle invalid languages`(locale: Locale, expected: String) {
+    @Test
+    fun `should format language tags properly`() {
+        val locale = Locale("fr_FR", "FR")
         val result = locale.toNormalizedLocale()
-        assertEquals(expected, result)
+        assertEquals("fr_FR", result)
     }
 
     @Test
@@ -54,6 +54,13 @@ internal class LocaleTest {
             .build()
         val result = locale.toNormalizedLocale()
         assertEquals("en_GB", result)
+    }
+
+    @ParameterizedTest
+    @MethodSource("malformedLocaleProvider")
+    fun `should handle invalid languages`(locale: Locale, expected: String) {
+        val result = locale.toNormalizedLocale()
+        assertEquals(expected, result)
     }
 
     private companion object {

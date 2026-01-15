@@ -16,12 +16,6 @@ internal data class AuthenticationDataResponse(
     val dsTransactionId: String? = null,
     val eci: String? = null,
     val protocolVersion: String? = null,
-    // skipped
-    val skippedReasonCode: SkippedCode? = null,
-    val skippedReasonText: String? = null,
-    // declined
-    val declinedReasonCode: DeclinedReasonCode? = null,
-    val declinedReasonText: String? = null,
 ) : JSONDeserializable {
     companion object {
         private const val ACS_REFERENCE_NUMBER_FIELD = "acsReferenceNumber"
@@ -34,10 +28,6 @@ internal data class AuthenticationDataResponse(
         private const val DS_TRANSACTION_ID_FIELD = "dsTransactionId"
         private const val ECI_FIELD = "eci"
         private const val PROTOCOL_VERSION_FIELD = "protocolVersion"
-        private const val SKIPPED_REASON_CODE_FIELD = "skippedReasonCode"
-        private const val SKIPPED_REASON_TEXT_FIELD = "skippedReasonText"
-        private const val DECLINED_REASON_CODE_FIELD = "declinedReasonCode"
-        private const val DECLINED_REASON_TEXT_FIELD = "declinedReasonText"
 
         @JvmField
         val deserializer =
@@ -53,12 +43,6 @@ internal data class AuthenticationDataResponse(
                     dsTransactionId = t.optNullableString(DS_TRANSACTION_ID_FIELD),
                     eci = t.optNullableString(ECI_FIELD),
                     protocolVersion = t.optNullableString(PROTOCOL_VERSION_FIELD),
-                    skippedReasonCode = t.optNullableString(SKIPPED_REASON_CODE_FIELD)?.let { SkippedCode.valueOf(it) },
-                    skippedReasonText = t.optNullableString(SKIPPED_REASON_TEXT_FIELD),
-                    declinedReasonCode =
-                    t.optNullableString(DECLINED_REASON_CODE_FIELD)
-                        ?.let { DeclinedReasonCode.valueOf(it) },
-                    declinedReasonText = t.optNullableString(DECLINED_REASON_TEXT_FIELD),
                 )
             }
     }

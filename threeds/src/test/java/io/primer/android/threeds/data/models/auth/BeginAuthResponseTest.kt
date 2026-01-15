@@ -76,9 +76,6 @@ class BeginAuthResponseTest {
                 dsTransactionId = null,
                 eci = null,
                 protocolVersion = null,
-                skippedReasonCode = null,
-                skippedReasonText = null,
-                declinedReasonCode = null,
             )
 
         // Deserialize the JSON object
