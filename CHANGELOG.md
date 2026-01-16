@@ -1,13 +1,3 @@
-## 2.47.0 (2026-01-14)
-
-### Feat
-
-- Implement 3DS Progress View (#1147)
-
-### Fix
-
-- properly set locale in sheet (#1154)
-
 ## 2.46.0 (2025-12-02)
 
 ### Feat
