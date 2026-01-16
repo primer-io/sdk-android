@@ -1,3 +1,14 @@
+## 2.47.0 (2026-01-16)
+
+### Feat
+
+- updated primer-3DS to 1.8.0 (#1157)
+
+### Fix
+
+- **3DS**: handle locale normalization edge cases, removed unused fields from data models (#1156)
+- properly set locale in sheet (#1154)
+
 ## 2.46.0 (2025-12-02)
 
 ### Feat
