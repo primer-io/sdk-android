@@ -21,62 +21,66 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.window.Popup
 import androidx.compose.ui.window.PopupProperties
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import io.primer.android.LocalPrimerTheme
+import io.primer.android.api.components.card.PrimerCardFormController
 import io.primer.android.components.R
-import io.primer.android.components.assets.ui.getCardImageAsset
-import io.primer.android.displayMetadata.domain.model.ImageColor
-import io.primer.android.scope.PrimerCardFormScope
+import io.primer.android.components.domain.core.models.card.PrimerCardNetwork
+import io.primer.android.internal.presentation.preview.PreviewContainer
 
-// TODO check this
 @Composable
-internal fun PrimerCardFormScope.CardNetwork() {
-    val state by state.collectAsStateWithLifecycle()
-    val networks = state.availableNetworks
-
-    if (networks.isEmpty() || networks.size == 1) {
-        CardNetworkIcon()
-    } else {
-        CardNetworkSelector()
+internal fun DefaultCardNetworkIcon(
+    networkSelection: PrimerCardFormController.NetworkSelection,
+    onNetworkSelected: (PrimerCardNetwork) -> Unit,
+) {
+    val networks = networkSelection.availableNetworks
+    when {
+        networks.size <= 1 -> CardNetworkIcon(network = networkSelection.selectedNetwork?.network)
+        networkSelection.isNetworkSelectable.not() -> CardNetworkDisplayOnly(networks)
+        else -> CardNetworkSelector(networkSelection = networkSelection, onNetworkSelected = onNetworkSelected)
     }
 }
 
 @Composable
-internal fun PrimerCardFormScope.CardNetworkIcon() {
-    val state by state.collectAsStateWithLifecycle()
-
-    Icon(
-        painter = painterResource(id = state.selectedNetwork.getCardImageAsset(ImageColor.COLORED)),
-        contentDescription = state.selectedNetwork.name,
-        tint = Color.Unspecified,
-    )
+private fun CardNetworkDisplayOnly(networks: List<PrimerCardNetwork>) {
+    val theme = LocalPrimerTheme.current
+    Row(
+        modifier = Modifier.padding(horizontal = theme.spacingTokens.medium),
+        horizontalArrangement = Arrangement.spacedBy(theme.spacingTokens.xsmall),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        networks.forEach { CardNetworkIcon(network = it.network) }
+    }
 }
 
 @Suppress("LongMethod")
 @Composable
-private fun PrimerCardFormScope.CardNetworkSelector(modifier: Modifier = Modifier) {
-    val state by state.collectAsStateWithLifecycle()
-    val networks = state.availableNetworks
-    val selectedNetwork = state.selectedNetwork
+private fun CardNetworkSelector(
+    networkSelection: PrimerCardFormController.NetworkSelection,
+    onNetworkSelected: (PrimerCardNetwork) -> Unit,
+) {
+    val networks = networkSelection.availableNetworks
+    val selectedNetwork = networkSelection.selectedNetwork
     var expanded by remember { mutableStateOf(false) }
+    val theme = LocalPrimerTheme.current
 
-    Box(modifier = modifier) {
+    Box {
         Row(
-            modifier = Modifier.clickable { expanded = true }.padding(horizontal = 12.dp, vertical = 8.dp),
-            horizontalArrangement = Arrangement.spacedBy(4.dp),
+            modifier = Modifier
+                .clickable { expanded = true }
+                .padding(horizontal = theme.spacingTokens.medium, vertical = theme.spacingTokens.small),
+            horizontalArrangement = Arrangement.spacedBy(theme.spacingTokens.xsmall),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            CardNetworkIcon()
+            CardNetworkIcon(network = networkSelection.selectedNetwork?.network)
             Icon(
                 painter = painterResource(R.drawable.ic_primer_chevron_down),
-                contentDescription = stringResource(R.string.primer_components_content_description_select_network),
-                tint = LocalPrimerTheme.current.colorTokens().primerColorIconPrimary,
+                contentDescription = stringResource(R.string.accessibility_card_form_network_selector),
+                tint = theme.colorTokens().primerColorIconPrimary,
             )
         }
         if (expanded) {
@@ -90,10 +94,16 @@ private fun PrimerCardFormScope.CardNetworkSelector(modifier: Modifier = Modifie
                 ),
             ) {
                 Card(
-                    modifier = Modifier.wrapContentWidth().padding(start = 18.dp, end = 18.dp, top = 48.dp),
+                    modifier = Modifier
+                        .wrapContentWidth()
+                        .padding(
+                            start = theme.spacingTokens.xlarge,
+                            end = theme.spacingTokens.xlarge,
+                            top = theme.sizeTokens.xxlarge,
+                        ),
                     elevation = CardDefaults.elevatedCardElevation(),
                     colors = CardDefaults.cardColors(
-                        containerColor = LocalPrimerTheme.current.colorTokens().primerColorBackground,
+                        containerColor = theme.colorTokens().primerColorBackground,
                     ),
                 ) {
                     Column {
@@ -101,39 +111,44 @@ private fun PrimerCardFormScope.CardNetworkSelector(modifier: Modifier = Modifie
                             DropdownMenuItem(
                                 onClick = {
                                     expanded = false
-                                    selectCardNetwork(network.network)
+                                    onNetworkSelected(network)
                                 },
                                 leadingIcon = {
-                                    Icon(
-                                        painter = painterResource(
-                                            id = network.network.getCardImageAsset(ImageColor.COLORED),
-                                        ),
-                                        contentDescription = network.network.name,
-                                        tint = Color.Unspecified,
-                                    )
+                                    CardNetworkIcon(network = network.network)
                                 },
                                 text = {
                                     Text(
                                         text = network.displayName,
                                         style = MaterialTheme.typography.bodyMedium,
-                                        color = LocalPrimerTheme.current.colorTokens().primerColorTextPrimary,
+                                        color = theme.colorTokens().primerColorTextPrimary,
                                     )
                                 },
                                 trailingIcon = {
-                                    if (network.network == selectedNetwork) {
+                                    if (network == selectedNetwork) {
                                         Icon(
                                             painter = painterResource(R.drawable.ic_primer_check),
-                                            contentDescription = "Selected",
-                                            tint = LocalPrimerTheme.current.colorTokens().primerColorIconPrimary,
+                                            contentDescription = stringResource(R.string.accessibility_common_selected),
+                                            tint = theme.colorTokens().primerColorIconPrimary,
                                         )
                                     }
                                 },
                             )
-                            if (index < networks.size - 1) { HorizontalDivider() }
+                            if (index < networks.size - 1) {
+                                HorizontalDivider()
+                            }
                         }
                     }
                 }
             }
         }
     }
+}
+
+@Preview(name = "Default", showBackground = true)
+@Composable
+private fun DefaultCardNetworkIconPreview() = PreviewContainer {
+    DefaultCardNetworkIcon(
+        networkSelection = PrimerCardFormController.NetworkSelection(),
+        onNetworkSelected = { },
+    )
 }

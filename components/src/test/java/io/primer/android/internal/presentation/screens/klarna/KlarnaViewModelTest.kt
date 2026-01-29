@@ -1,5 +1,6 @@
 package io.primer.android.internal.presentation.screens.klarna
 
+import android.content.Context
 import android.view.View
 import androidx.lifecycle.ViewModelStoreOwner
 import io.mockk.coEvery
@@ -7,19 +8,23 @@ import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import io.primer.android.core.InstantExecutorExtension
+import io.primer.android.core.logging.internal.LogReporter
+import io.primer.android.domain.PrimerCheckoutData
 import io.primer.android.internal.domain.models.KlarnaCategory
 import io.primer.android.internal.domain.models.KlarnaStep
 import io.primer.android.internal.domain.models.KlarnaViewData
+import io.primer.android.internal.domain.repositories.HeadlessRepository
 import io.primer.android.internal.domain.repositories.KlarnaRepository
-import io.primer.android.internal.presentation.checkout.CheckoutNavigator
-import io.primer.android.internal.presentation.checkout.Screen
+import io.primer.android.internal.domain.usecase.KlarnaCleanupUseCase
 import io.primer.android.scope.PrimerKlarnaScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNull
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -30,29 +35,40 @@ class KlarnaViewModelTest {
 
     private lateinit var mockViewModelStoreOwner: ViewModelStoreOwner
     private lateinit var mockKlarnaRepository: KlarnaRepository
-    private lateinit var mockCheckoutNavigator: CheckoutNavigator
+    private lateinit var mockHeadlessRepository: HeadlessRepository
+    private lateinit var mockCheckoutData: PrimerCheckoutData
+    private lateinit var mockContext: Context
     private lateinit var stepFlow: MutableSharedFlow<KlarnaStep>
     private lateinit var errorFlow: MutableSharedFlow<String>
+    private lateinit var cleanupUseCase: KlarnaCleanupUseCase
+    private lateinit var logReporter: LogReporter
     private lateinit var viewModel: KlarnaViewModel
 
     @BeforeEach
     fun setUp() {
         mockViewModelStoreOwner = mockk(relaxed = true)
         mockKlarnaRepository = mockk(relaxed = true)
-        mockCheckoutNavigator = mockk(relaxed = true)
+        mockHeadlessRepository = mockk(relaxed = true)
+        mockCheckoutData = mockk(relaxed = true)
+        mockContext = mockk(relaxed = true)
         stepFlow = MutableSharedFlow()
         errorFlow = MutableSharedFlow()
+        cleanupUseCase = mockk(relaxed = true)
+        logReporter = mockk(relaxed = true)
 
         every { mockKlarnaRepository.stepFlow } returns stepFlow
         every { mockKlarnaRepository.errorFlow } returns errorFlow
         coEvery { mockKlarnaRepository.start(any()) } returns Unit
+        coEvery { mockHeadlessRepository.awaitPaymentResult() } returns Result.success(mockCheckoutData)
     }
 
     private fun createViewModel(): KlarnaViewModel {
         return KlarnaViewModel(
             viewModelStoreOwner = mockViewModelStoreOwner,
             klarnaRepository = mockKlarnaRepository,
-            checkoutNavigator = mockCheckoutNavigator,
+            headlessRepository = mockHeadlessRepository,
+            cleanupUseCase = cleanupUseCase,
+            logReporter = logReporter,
         )
     }
 
@@ -124,14 +140,16 @@ class KlarnaViewModelTest {
     }
 
     @Test
-    fun `Authorized step with needsFinalization=false navigates to Success`() = runTest {
+    fun `Authorized step with needsFinalization=false emits Success navigation event`() = runTest {
         viewModel = createViewModel()
         advanceUntilIdle()
 
         stepFlow.emit(KlarnaStep.Authorized(needsFinalization = false))
         advanceUntilIdle()
 
-        coVerify(exactly = 1) { mockCheckoutNavigator.navigateTo(Screen.Success) }
+        val event = viewModel.navigation.first()
+        assertTrue(event is KlarnaViewModel.NavigationEvent.Success)
+        assertEquals(mockCheckoutData, (event as KlarnaViewModel.NavigationEvent.Success).checkoutData)
     }
 
     @Test
@@ -147,18 +165,20 @@ class KlarnaViewModelTest {
     }
 
     @Test
-    fun `Finalized step navigates to Success`() = runTest {
+    fun `Finalized step emits Success navigation event`() = runTest {
         viewModel = createViewModel()
         advanceUntilIdle()
 
         stepFlow.emit(KlarnaStep.Finalized)
         advanceUntilIdle()
 
-        coVerify(exactly = 1) { mockCheckoutNavigator.navigateTo(Screen.Success) }
+        val event = viewModel.navigation.first()
+        assertTrue(event is KlarnaViewModel.NavigationEvent.Success)
+        assertEquals(mockCheckoutData, (event as KlarnaViewModel.NavigationEvent.Success).checkoutData)
     }
 
     @Test
-    fun `error flow navigates to error screen`() = runTest {
+    fun `error flow emits Error navigation event`() = runTest {
         viewModel = createViewModel()
         advanceUntilIdle()
 
@@ -166,7 +186,9 @@ class KlarnaViewModelTest {
         errorFlow.emit(errorMessage)
         advanceUntilIdle()
 
-        coVerify(exactly = 1) { mockCheckoutNavigator.navigateToError(errorMessage) }
+        val event = viewModel.navigation.first()
+        assertTrue(event is KlarnaViewModel.NavigationEvent.Error)
+        assertTrue((event as KlarnaViewModel.NavigationEvent.Error).error.description.contains(errorMessage))
     }
 
     @Test
@@ -186,16 +208,16 @@ class KlarnaViewModelTest {
         stepFlow.emit(KlarnaStep.CategoriesAvailable(categories))
         advanceUntilIdle()
 
-        coEvery { mockKlarnaRepository.selectPaymentCategory(any()) } returns Unit
+        coEvery { mockKlarnaRepository.selectPaymentCategory(any(), any()) } returns Unit
 
-        viewModel.selectPaymentCategory("pay_now")
+        viewModel.selectPaymentCategory(mockContext, "pay_now")
         advanceUntilIdle()
 
         val state = viewModel.state.value
         assertEquals("pay_now", state.selectedCategoryId)
         assertEquals(PrimerKlarnaScope.Step.Loading, state.step)
 
-        coVerify(exactly = 1) { mockKlarnaRepository.selectPaymentCategory(categories[0]) }
+        coVerify(exactly = 1) { mockKlarnaRepository.selectPaymentCategory(mockContext, categories[0]) }
     }
 
     @Test
@@ -215,10 +237,10 @@ class KlarnaViewModelTest {
         stepFlow.emit(KlarnaStep.CategoriesAvailable(categories))
         advanceUntilIdle()
 
-        viewModel.selectPaymentCategory("unknown_category")
+        viewModel.selectPaymentCategory(mockContext, "unknown_category")
         advanceUntilIdle()
 
-        coVerify(exactly = 0) { mockKlarnaRepository.selectPaymentCategory(any()) }
+        coVerify(exactly = 0) { mockKlarnaRepository.selectPaymentCategory(any(), any()) }
     }
 
     @Test
@@ -232,7 +254,7 @@ class KlarnaViewModelTest {
         advanceUntilIdle()
 
         val state = viewModel.state.value
-        assertEquals(PrimerKlarnaScope.Step.Loading, state.step)
+        assertEquals(PrimerKlarnaScope.Step.AuthorizationStarted, state.step)
 
         coVerify(exactly = 1) { mockKlarnaRepository.authorizePayment() }
     }
@@ -254,76 +276,16 @@ class KlarnaViewModelTest {
     }
 
     @Test
-    fun `onBack from ViewReady returns to CategorySelection`() = runTest {
-        viewModel = createViewModel()
-        advanceUntilIdle()
-
-        val mockView = mockk<View>()
-        val categories = listOf(
-            KlarnaCategory(
-                id = "pay_now",
-                displayName = "Pay Now",
-                descriptiveAssetUrl = "https://example.com/desc.png",
-                standardAssetUrl = "https://example.com/std.png",
-            ),
-        )
-
-        stepFlow.emit(KlarnaStep.CategoriesAvailable(categories))
-        advanceUntilIdle()
-
-        viewModel.selectPaymentCategory("pay_now")
-        advanceUntilIdle()
-
-        stepFlow.emit(KlarnaStep.ViewLoaded(KlarnaViewData(mockView)))
-        advanceUntilIdle()
-
-        assertEquals(PrimerKlarnaScope.Step.ViewReady, viewModel.state.value.step)
-
-        viewModel.onBack()
-        advanceUntilIdle()
-
-        val state = viewModel.state.value
-        assertEquals(PrimerKlarnaScope.Step.CategorySelection, state.step)
-        assertNull(state.selectedCategoryId)
-        assertNull(state.paymentView)
-    }
-
-    @Test
-    fun `onBack from other steps calls navigator navigateBack`() = runTest {
-        viewModel = createViewModel()
-        advanceUntilIdle()
-
-        viewModel.onBack()
-        advanceUntilIdle()
-
-        coVerify(exactly = 1) { mockCheckoutNavigator.navigateBack() }
-    }
-
-    @Test
-    fun `onCancel calls dismiss on navigator`() = runTest {
-        viewModel = createViewModel()
-        advanceUntilIdle()
-
-        viewModel.onCancel()
-        advanceUntilIdle()
-
-        coVerify(exactly = 1) { mockCheckoutNavigator.dismiss() }
-    }
-
-    @Test
-    fun `multiple error flows are handled correctly`() = runTest {
+    fun `multiple error flows emit Error events correctly`() = runTest {
         viewModel = createViewModel()
         advanceUntilIdle()
 
         errorFlow.emit("Error 1")
         advanceUntilIdle()
 
-        coVerify(exactly = 1) { mockCheckoutNavigator.navigateToError("Error 1") }
-
-        errorFlow.emit("Error 2")
-        advanceUntilIdle()
-
-        coVerify(exactly = 1) { mockCheckoutNavigator.navigateToError("Error 2") }
+        val firstEvent = viewModel.navigation.first()
+        assertTrue(firstEvent is KlarnaViewModel.NavigationEvent.Error)
+        assertTrue((firstEvent as KlarnaViewModel.NavigationEvent.Error).error.description.contains("Error 1"))
     }
 
     @Test

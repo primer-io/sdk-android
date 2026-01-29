@@ -18,6 +18,7 @@ import io.primer.android.clientSessionActions.domain.models.ActionUpdateSelectPa
 import io.primer.android.clientSessionActions.domain.models.ActionUpdateShippingAddressParams
 import io.primer.android.clientSessionActions.domain.models.ActionUpdateShippingOptionIdParams
 import io.primer.android.clientSessionActions.domain.models.ActionUpdateUnselectPaymentMethodParams
+import io.primer.android.clientSessionActions.domain.models.ActionUpdateVaultOnSuccessParams
 import io.primer.android.configuration.data.extensions.surcharges
 import io.primer.android.configuration.domain.model.Configuration
 import io.primer.android.configuration.domain.model.Surcharge
@@ -222,6 +223,14 @@ internal class ActionUpdateFilterTest {
     fun `filter() should return 'false' when called with ActionUpdateEmailAddressParams`() =
         runTest {
             val result = filter.filter(mockk<ActionUpdateEmailAddressParams>())
+
+            assertFalse(result)
+        }
+
+    @Test
+    fun `filter() should return 'false' when called with ActionUpdateVaultOnSuccessParams`() =
+        runTest {
+            val result = filter.filter(mockk<ActionUpdateVaultOnSuccessParams>())
 
             assertFalse(result)
         }

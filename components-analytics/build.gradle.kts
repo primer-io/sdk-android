@@ -14,7 +14,8 @@ dependencies {
     implementation(project(":configuration"))
     implementation(project(":api-shared"))
     implementation(project(":logging"))
-    
+    implementation(project(":analytics"))
+
     implementation(libs.kotlin.coroutines)
     implementation(libs.android.lifecycle.runtime.ktx)
     

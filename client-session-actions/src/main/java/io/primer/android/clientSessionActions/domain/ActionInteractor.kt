@@ -32,12 +32,12 @@ internal class DefaultActionInteractor(
 
         return when (filteredActions.isNotEmpty() && lastParams != params) {
             true -> {
-                lastParams = params
                 try {
                     clientSessionActionsHandler.onClientSessionUpdateStarted()
                     actionRepository.updateClientActions(
                         filteredActions,
                     ).onSuccess { clientSessionData ->
+                        lastParams = params
                         clientSessionActionsHandler.onClientSessionUpdateSuccess(
                             clientSession = clientSessionData.clientSession,
                         )
@@ -58,6 +58,7 @@ internal class DefaultActionInteractor(
                         .clientSession.clientSessionDataResponse.toClientSessionData()
                 }
         }.onFailure { throwable ->
+            lastParams = null
             if (!ignoreErrors) {
                 clientSessionActionsHandler.onClientSessionUpdateError(error = errorEventResolver.resolve(throwable))
             }

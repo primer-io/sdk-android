@@ -9,7 +9,7 @@ import android.os.Build
 import io.primer.android.analytics.data.models.NetworkType
 import io.primer.android.analytics.infrastructure.datasource.connectivity.ConnectivityProvider.NetworkState
 
-internal interface ConnectivityProvider {
+interface ConnectivityProvider {
 
     fun getNetworkState(): NetworkState
 
@@ -40,7 +40,7 @@ internal interface ConnectivityProvider {
     }
 }
 
-internal fun NetworkState.toNetworkType() =
+fun NetworkState.toNetworkType() =
     when (this) {
         is NetworkState.ConnectedState -> networkType
         NetworkState.NotConnectedState -> NetworkType.NONE

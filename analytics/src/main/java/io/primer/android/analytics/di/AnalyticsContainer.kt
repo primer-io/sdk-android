@@ -101,6 +101,12 @@ class AnalyticsContainer(private val sdk: () -> SdkContainer) : DependencyContai
             BaseDataProvider { sdk().resolve<MetaDataSource>().getApplicationId() }
         }
 
+        registerSingleton<UncaughtHandlerDataSource>(name = UNCAUGHT_HANDLER_DI_KEY) {
+            UncaughtHandlerDataSource().also {
+                Thread.setDefaultUncaughtExceptionHandler(it)
+            }
+        }
+
         val localAnalyticsDataSource = LocalAnalyticsDataSource.instance
         val analyticsFileProvider = AnalyticsFileProvider(sdk().resolve())
         val fileAnalyticsDataSource = FileAnalyticsDataSource(analyticsFileProvider)
@@ -132,10 +138,7 @@ class AnalyticsContainer(private val sdk: () -> SdkContainer) : DependencyContai
                 batteryLevelDataSource = BatteryLevelDataSource(sdk().resolve()),
                 batteryStatusDataSource = BatteryStatusDataSource(sdk().resolve()),
                 deviceIdDataSource = DeviceIdDataSource(sdk().resolve()),
-                uncaughtHandlerDataSource =
-                UncaughtHandlerDataSource().also {
-                    Thread.setDefaultUncaughtExceptionHandler(it)
-                },
+                uncaughtHandlerDataSource = resolve(UNCAUGHT_HANDLER_DI_KEY),
                 networkCallDataSource = sdk().resolve(HTTP_INTERCEPTOR_DI_KEY),
                 timerDataSource = sdk().resolve(),
                 checkoutSessionIdDataSource = resolve(CHECKOUT_SESSION_ID_PROVIDER_DI_KEY),
@@ -161,5 +164,6 @@ class AnalyticsContainer(private val sdk: () -> SdkContainer) : DependencyContai
         const val MESSAGE_PROPERTIES_PROVIDER_DI_KEY = "MESSAGE_PROPERTIES_PROVIDER"
         const val PCI_URL_PROVIDER_INTERNAL_DI_KEY = "PCI_URL_PROVIDER_INTERNAL"
         const val PCI_URL_PROVIDER_DI_KEY = "PCI_URL_PROVIDER"
+        const val UNCAUGHT_HANDLER_DI_KEY = "UNCAUGHT_HANDLER"
     }
 }

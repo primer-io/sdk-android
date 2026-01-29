@@ -22,6 +22,12 @@ data class PrimerPaymentMethodAsset(
     override val paymentMethodName: String,
     val paymentMethodLogo: PrimerAsset,
     val paymentMethodBackgroundColor: PrimerPaymentMethodBackgroundColor,
+    val text: String? = null,
+    val textColor: PrimerPaymentMethodColor? = null,
+    val borderColor: PrimerPaymentMethodColor? = null,
+    val borderWidth: PrimerPaymentMethodBorderWidth? = null,
+    val cornerRadius: Float? = null,
+    val iconPosition: PrimerIconPosition = PrimerIconPosition.START,
 ) : PrimerPaymentMethodResource
 
 data class PrimerPaymentMethodNativeView(
@@ -48,3 +54,33 @@ data class PrimerCardNetworkAsset(
     val displayName: String,
     val cardImage: Drawable?,
 )
+
+/**
+ * Color data for payment method styling (text, border, etc.).
+ * Provides themed color values for different appearance modes.
+ */
+data class PrimerPaymentMethodColor(
+    @ColorInt val colored: Int?,
+    @ColorInt val light: Int?,
+    @ColorInt val dark: Int?,
+)
+
+/**
+ * Border width data for payment method button styling.
+ * Values are in dp (density-independent pixels).
+ */
+data class PrimerPaymentMethodBorderWidth(
+    val colored: Float?,
+    val light: Float?,
+    val dark: Float?,
+)
+
+/**
+ * Icon position relative to text in payment method buttons.
+ */
+enum class PrimerIconPosition {
+    START,
+    END,
+    ABOVE,
+    BELOW,
+}

@@ -17,7 +17,7 @@ import io.primer.android.core.di.SdkContainer
  * ### 1. `resolve()` - Component-level resolution (this file)
  * Used by classes implementing [DISdkComponent] such as:
  * - Component factories and providers
- * - Public API scopes (PrimerCheckoutScope, PrimerCardFormScope, etc.)
+ * - Public API state classes (PrimerCheckoutScope, CardFormState, etc.)
  * - ViewModels and UI components
  *
  * ```kotlin

@@ -5,14 +5,17 @@ import io.mockk.mockk
 import io.mockk.mockkObject
 import io.mockk.unmockkObject
 import io.mockk.verify
+import io.primer.android.analytics.data.datasource.CheckoutSessionIdProvider
 import io.primer.android.components.analytics.data.model.EventType
 import io.primer.android.components.analytics.data.provider.DeviceInfoProvider
 import io.primer.android.components.analytics.internal.AnalyticsEnvironmentUrlProvider
 import io.primer.android.configuration.data.model.ClientSessionDataResponse
 import io.primer.android.configuration.data.model.ConfigurationData
 import io.primer.android.configuration.data.model.Environment
+import io.primer.android.core.data.datasource.BaseCacheDataSource
 import io.primer.android.core.data.network.PrimerHttpClient
 import io.primer.android.core.logging.internal.LogReporter
+import io.primer.android.data.settings.internal.PrimerConfig
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -23,12 +26,14 @@ internal class ComponentsEventsRepositoryImplTest {
     private lateinit var logReporter: LogReporter
     private lateinit var httpClient: PrimerHttpClient
     private lateinit var configurationData: ConfigurationData
+    private lateinit var configurationDataSource: BaseCacheDataSource<ConfigurationData, ConfigurationData>
+    private lateinit var checkoutSessionIdProvider: CheckoutSessionIdProvider
+    private lateinit var primerConfig: PrimerConfig
     private lateinit var deviceInfoProvider: DeviceInfoProvider
     private lateinit var repository: ComponentsEventsRepositoryImpl
 
     private val environment = Environment.SANDBOX
     private val checkoutSessionId = "test-checkout-session-id"
-    private val sdkVersion = "1.0.0"
     private val clientToken = "test-client-token"
     private val clientSessionId = "test-client-session-id"
     private val primerAccountId = "test-primer-account-id"
@@ -45,12 +50,20 @@ internal class ComponentsEventsRepositoryImplTest {
         logReporter = mockk(relaxed = true)
         httpClient = mockk(relaxed = true)
         configurationData = mockk()
+        configurationDataSource = mockk()
+        checkoutSessionIdProvider = mockk()
+        primerConfig = mockk()
         deviceInfoProvider = mockk()
 
         val mockClientSession = mockk<ClientSessionDataResponse>()
         every { mockClientSession.clientSessionId } returns clientSessionId
         every { configurationData.clientSession } returns mockClientSession
         every { configurationData.primerAccountId } returns primerAccountId
+        every { configurationData.environment } returns environment
+
+        every { configurationDataSource.get() } returns configurationData
+        every { checkoutSessionIdProvider.provide() } returns checkoutSessionId
+        every { primerConfig.clientTokenBase64 } returns clientToken
 
         every { deviceInfoProvider.getDevice() } returns deviceModel
         every { deviceInfoProvider.getDeviceType() } returns deviceType
@@ -58,12 +71,10 @@ internal class ComponentsEventsRepositoryImplTest {
 
         repository = ComponentsEventsRepositoryImpl(
             logReporter = logReporter,
-            environment = environment,
-            configurationData = configurationData,
-            checkoutSessionId = checkoutSessionId,
-            sdkVersion = sdkVersion,
+            checkoutSessionIdProvider = checkoutSessionIdProvider,
+            configurationDataSource = configurationDataSource,
+            primerConfig = primerConfig,
             httpClient = httpClient,
-            clientToken = clientToken,
             deviceInfoProvider = deviceInfoProvider,
         )
     }
@@ -135,16 +146,24 @@ internal class ComponentsEventsRepositoryImplTest {
     @Test
     fun `repository should use correct environment URL for production`() {
         val productionUrl = "https://analytics.primer.io/events"
+        val productionConfigurationData = mockk<ConfigurationData>()
+        val productionConfigurationDataSource = mockk<BaseCacheDataSource<ConfigurationData, ConfigurationData>>()
+
+        val mockClientSession = mockk<ClientSessionDataResponse>()
+        every { mockClientSession.clientSessionId } returns clientSessionId
+        every { productionConfigurationData.clientSession } returns mockClientSession
+        every { productionConfigurationData.primerAccountId } returns primerAccountId
+        every { productionConfigurationData.environment } returns Environment.PRODUCTION
+        every { productionConfigurationDataSource.get() } returns productionConfigurationData
+
         every { AnalyticsEnvironmentUrlProvider.getAnalyticsUrl(Environment.PRODUCTION) } returns productionUrl
 
         val productionRepository = ComponentsEventsRepositoryImpl(
             logReporter = logReporter,
-            environment = Environment.PRODUCTION,
-            configurationData = configurationData,
-            checkoutSessionId = checkoutSessionId,
-            sdkVersion = sdkVersion,
+            checkoutSessionIdProvider = checkoutSessionIdProvider,
+            configurationDataSource = productionConfigurationDataSource,
+            primerConfig = primerConfig,
             httpClient = httpClient,
-            clientToken = clientToken,
             deviceInfoProvider = deviceInfoProvider,
         )
 

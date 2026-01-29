@@ -1,5 +1,6 @@
 package io.primer.android.klarna.di
 
+import android.view.ViewGroup
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelStoreOwner
@@ -45,6 +46,11 @@ internal class KlarnaComponentProvider : DISdkComponent {
                                 callback = callback,
                                 returnURL = returnUrl,
                             ).apply {
+                                layoutParams =
+                                    ViewGroup.LayoutParams(
+                                        ViewGroup.LayoutParams.MATCH_PARENT,
+                                        ViewGroup.LayoutParams.WRAP_CONTENT,
+                                    )
                                 val themeDarkMode = resolve<PrimerSettings>().uiOptions.theme.isDarkMode == true
                                 theme = when {
                                     themeDarkMode -> KlarnaTheme.DARK

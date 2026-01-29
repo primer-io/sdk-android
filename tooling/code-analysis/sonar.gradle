@@ -85,6 +85,9 @@ subprojects { subproject ->
                     '**/io/primer/android/internal/presentation/constants/**/*',
                     '**/io/primer/android/internal/presentation/screens/**/*',
                     '**/io/primer/android/scope/*Scope.kt',
+                    '**/io/primer/android/scope/providers/**/*',
+                    '**/PreviewMocks.kt',
+                    '**/PreviewContainer.kt',
             ]
 
             sonarqube {

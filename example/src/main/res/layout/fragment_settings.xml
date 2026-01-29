@@ -303,7 +303,7 @@
         android:layout_marginBottom="36dp"
         android:layout_weight="1"
         android:text="@string/button_components_sdk"
-        app:backgroundTint="@color/primer"
+        app:backgroundTint="#FF6200EE"
         app:cornerRadius="8sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

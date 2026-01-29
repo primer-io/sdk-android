@@ -58,4 +58,57 @@ internal class AnalyticsEnvironmentUrlProviderTest {
             }
         }
     }
+
+    @Test
+    fun `getLoggingUrl should return DEV URL for DEV environment`() {
+        val url = AnalyticsEnvironmentUrlProvider.getLoggingUrl(Environment.DEV)
+
+        assertEquals("https://analytics.dev.data.primer.io/v1/sdk-logs", url)
+    }
+
+    @Test
+    fun `getLoggingUrl should return STAGING URL for STAGING environment`() {
+        val url = AnalyticsEnvironmentUrlProvider.getLoggingUrl(Environment.STAGING)
+
+        assertEquals("https://analytics.staging.data.primer.io/v1/sdk-logs", url)
+    }
+
+    @Test
+    fun `getLoggingUrl should return SANDBOX URL for SANDBOX environment`() {
+        val url = AnalyticsEnvironmentUrlProvider.getLoggingUrl(Environment.SANDBOX)
+
+        assertEquals("https://analytics.sandbox.data.primer.io/v1/sdk-logs", url)
+    }
+
+    @Test
+    fun `getLoggingUrl should return PRODUCTION URL for PRODUCTION environment`() {
+        val url = AnalyticsEnvironmentUrlProvider.getLoggingUrl(Environment.PRODUCTION)
+
+        assertEquals("https://analytics.production.data.primer.io/v1/sdk-logs", url)
+    }
+
+    @Test
+    fun `getLoggingUrl should return DEV URL for LOCAL_DOCKER environment`() {
+        val url = AnalyticsEnvironmentUrlProvider.getLoggingUrl(Environment.LOCAL_DOCKER)
+
+        assertEquals("https://analytics.dev.data.primer.io/v1/sdk-logs", url)
+    }
+
+    @Test
+    fun `getLoggingUrl should handle all Environment enum values`() {
+        Environment.entries.forEach { environment ->
+            val url = AnalyticsEnvironmentUrlProvider.getLoggingUrl(environment)
+
+            when (environment) {
+                Environment.DEV, Environment.LOCAL_DOCKER ->
+                    assertEquals("https://analytics.dev.data.primer.io/v1/sdk-logs", url)
+                Environment.STAGING ->
+                    assertEquals("https://analytics.staging.data.primer.io/v1/sdk-logs", url)
+                Environment.SANDBOX ->
+                    assertEquals("https://analytics.sandbox.data.primer.io/v1/sdk-logs", url)
+                Environment.PRODUCTION ->
+                    assertEquals("https://analytics.production.data.primer.io/v1/sdk-logs", url)
+            }
+        }
+    }
 }

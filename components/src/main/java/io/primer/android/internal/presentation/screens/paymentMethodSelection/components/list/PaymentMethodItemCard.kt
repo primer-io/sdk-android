@@ -7,35 +7,31 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import io.primer.android.LocalPrimerTheme
-import io.primer.android.PrimerTheme
-import io.primer.android.components.PrimerPaymentMethodSelectionComponents
 import io.primer.android.components.R
-import io.primer.android.core.di.SdkContainer
+import io.primer.android.internal.presentation.preview.PreviewContainer
 import io.primer.android.paymentmethods.common.data.model.PaymentMethodType
-import io.primer.android.scope.PrimerPaymentMethodSelectionScope
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 
 @Composable
-internal fun PrimerPaymentMethodSelectionScope.PaymentMethodItemCard(
-    @Suppress("UnusedParameter") modifier: Modifier = Modifier,
+internal fun PaymentMethodItemCard(
+    onPaymentMethodSelected: (String) -> Unit,
 ) {
     val layoutDirection = LocalLayoutDirection.current
 
     PaymentMethodItem(
+        modifier = Modifier.testTag("primer_payment_method_card"),
         borderColor = LocalPrimerTheme.current.colorTokens().primerColorBorderOutlinedDefault,
         onPaymentMethodSelected = { onPaymentMethodSelected(PaymentMethodType.PAYMENT_CARD.name) },
+        accessibilityLabel = stringResource(R.string.accessibility_payment_selection_pay_with_card),
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -52,7 +48,7 @@ internal fun PrimerPaymentMethodSelectionScope.PaymentMethodItemCard(
                 modifier = Modifier.size(LocalPrimerTheme.current.sizeTokens.medium),
             )
             Text(
-                text = stringResource(R.string.primer_components_select_payment_method_card),
+                text = stringResource(R.string.primer_card_form_title),
                 style = LocalPrimerTheme.current.typographyTokens.titleLarge.toTextStyle(),
                 color = LocalPrimerTheme.current.colorTokens().primerColorTextPrimary,
                 modifier = Modifier.padding(
@@ -72,35 +68,8 @@ internal fun PrimerPaymentMethodSelectionScope.PaymentMethodItemCard(
     }
 }
 
-@Preview(showBackground = true, name = "Payment Method Item – Card")
+@Preview(name = "Default", showBackground = true)
 @Composable
-private fun PaymentMethodItemCardPreview() {
-    CompositionLocalProvider(LocalPrimerTheme provides PrimerTheme()) {
-        val scope = remember { PreviewPaymentMethodSelectionScope() }
-        scope.PaymentMethodItemCard(
-            modifier = Modifier.padding(LocalPrimerTheme.current.spacingTokens.small),
-        )
-    }
-}
-
-private class PreviewPaymentMethodSelectionScope : PrimerPaymentMethodSelectionScope {
-    private val previewContainer = SdkContainer()
-    private val previewState = MutableStateFlow(PrimerPaymentMethodSelectionScope.State())
-    private val previewComponents = PrimerPaymentMethodSelectionComponents()
-
-    override val components: PrimerPaymentMethodSelectionComponents
-        get() = previewComponents
-
-    override val state: StateFlow<PrimerPaymentMethodSelectionScope.State>
-        get() = previewState
-
-    override fun onPaymentMethodSelected(paymentMethod: String) = Unit
-
-    override fun onCancel() = Unit
-
-    override fun formatTitleAmount(): String = ""
-
-    override fun formatSurchargeAmount(amountInCents: Int): String = ""
-
-    override fun getSdkContainer(): SdkContainer = previewContainer
+private fun PaymentMethodItemCardPreview() = PreviewContainer {
+    PaymentMethodItemCard(onPaymentMethodSelected = {})
 }

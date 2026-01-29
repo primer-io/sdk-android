@@ -14,6 +14,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -62,53 +64,91 @@ class CardNetworkUseCaseTest {
     }
 
     @Test
-    fun `detectCardNetwork should update detected card network`() = runTest {
-        // When - using known card patterns
-        useCase.detectCardNetwork("4111111111111111") // Visa starts with 4
+    fun `networkSelection should return selectable networks as available`() = runTest {
+        val visa = createCardNetwork(CardNetwork.Type.VISA, "Visa")
+        val mastercard = createCardNetwork(CardNetwork.Type.MASTERCARD, "Mastercard")
+        val mockMetadata = createMetadata(
+            selectableNetworks = listOf(visa, mastercard),
+            detectedNetworks = listOf(visa),
+            preferredNetwork = visa,
+        )
 
-        // Then
-        val result = useCase.currentCardNetwork.first()
-        assertEquals(CardNetwork.Type.VISA, result)
+        setFetchedMetadata(mockMetadata)
+
+        val result = useCase.networkSelection.first()
+        assertEquals(2, result.availableNetworks.size)
+        assertTrue(result.availableNetworks.any { it.network == CardNetwork.Type.VISA })
+        assertTrue(result.availableNetworks.any { it.network == CardNetwork.Type.MASTERCARD })
+        assertTrue(result.isNetworkSelectable)
+    }
+
+    @Test
+    fun `networkSelection should use detected networks when selectable is null and multiple detected`() = runTest {
+        val visa = createCardNetwork(CardNetwork.Type.VISA, "Visa")
+        val mastercard = createCardNetwork(CardNetwork.Type.MASTERCARD, "Mastercard")
+        val mockMetadata = createMetadata(
+            selectableNetworks = null,
+            detectedNetworks = listOf(visa, mastercard),
+            preferredNetwork = visa,
+        )
+
+        setFetchedMetadata(mockMetadata)
+
+        val result = useCase.networkSelection.first()
+        assertEquals(2, result.availableNetworks.size)
+        assertFalse(result.isNetworkSelectable)
+    }
+
+    @Test
+    fun `selectedNetwork should be first detected when selectableNetworks is null`() = runTest {
+        val visa = createCardNetwork(CardNetwork.Type.VISA, "Visa")
+        val mastercard = createCardNetwork(CardNetwork.Type.MASTERCARD, "Mastercard")
+        val mockMetadata = createMetadata(
+            selectableNetworks = null,
+            detectedNetworks = listOf(visa, mastercard),
+            preferredNetwork = visa,
+        )
+
+        setFetchedMetadata(mockMetadata)
+
+        val result = useCase.networkSelection.first()
+        assertEquals(visa, result.selectedNetwork)
+        assertFalse(result.isNetworkSelectable)
+    }
+
+    @Test
+    fun `selectedNetwork should be null when selectableNetworks is empty`() = runTest {
+        val visa = createCardNetwork(CardNetwork.Type.VISA, "Visa")
+        val mockMetadata = createMetadata(
+            selectableNetworks = emptyList(),
+            detectedNetworks = listOf(visa),
+            preferredNetwork = visa,
+        )
+
+        setFetchedMetadata(mockMetadata)
+
+        val result = useCase.networkSelection.first()
+        assertNull(result.selectedNetwork)
+    }
+
+    @Test
+    fun `selectedNetwork should default to first network when selectable is non-empty`() = runTest {
+        val visa = createCardNetwork(CardNetwork.Type.VISA, "Visa")
+        val mastercard = createCardNetwork(CardNetwork.Type.MASTERCARD, "Mastercard")
+        val mockMetadata = createMetadata(
+            selectableNetworks = listOf(visa, mastercard),
+            detectedNetworks = listOf(visa),
+            preferredNetwork = visa,
+        )
+
+        setFetchedMetadata(mockMetadata)
+
+        val result = useCase.networkSelection.first()
+        assertEquals(visa, result.selectedNetwork)
     }
 
     @Test
     fun `selectCardNetwork should update selected network`() = runTest {
-        // When
-        useCase.selectCardNetwork(CardNetwork.Type.AMEX)
-
-        // Then
-        val result = useCase.currentCardNetwork.first()
-        assertEquals(CardNetwork.Type.AMEX, result)
-    }
-
-    @Test
-    fun `clear should reset selected and detected networks`() = runTest {
-        // Given
-        useCase.detectCardNetwork("4111111111111111") // Visa
-        useCase.selectCardNetwork(CardNetwork.Type.MASTERCARD)
-
-        // When
-        useCase.clear()
-
-        // Then
-        val result = useCase.currentCardNetwork.first()
-        assertEquals(CardNetwork.Type.OTHER, result)
-    }
-
-    @Test
-    fun `currentCardNetwork should prefer selected over detected network`() = runTest {
-        // When
-        useCase.detectCardNetwork("4111111111111111") // Visa
-        useCase.selectCardNetwork(CardNetwork.Type.MASTERCARD)
-
-        // Then
-        val result = useCase.currentCardNetwork.first()
-        assertEquals(CardNetwork.Type.MASTERCARD, result)
-    }
-
-    @Test
-    fun `availableNetworks should return networks from metadata`() = runTest {
-        // Given
         val visa = createCardNetwork(CardNetwork.Type.VISA, "Visa")
         val mastercard = createCardNetwork(CardNetwork.Type.MASTERCARD, "Mastercard")
         val mockMetadata = createMetadata(
@@ -116,55 +156,36 @@ class CardNetworkUseCaseTest {
             detectedNetworks = listOf(visa),
             preferredNetwork = visa,
         )
-
-        // When
         setFetchedMetadata(mockMetadata)
 
-        // Then
-        val result = useCase.availableNetworks.first()
-        assertEquals(2, result.size)
-        assertTrue(result.any { it.network == CardNetwork.Type.VISA })
-        assertTrue(result.any { it.network == CardNetwork.Type.MASTERCARD })
+        useCase.selectCardNetwork(mastercard)
+
+        val result = useCase.networkSelection.first()
+        assertEquals(mastercard, result.selectedNetwork)
     }
 
     @Test
-    fun `availableNetworks should use detected network when selectable is null`() = runTest {
-        // Given
+    fun `selected network should fallback to first available if not in list`() = runTest {
+        val visa = createCardNetwork(CardNetwork.Type.VISA, "Visa")
+        val mastercard = createCardNetwork(CardNetwork.Type.MASTERCARD, "Mastercard")
         val amex = createCardNetwork(CardNetwork.Type.AMEX, "Amex")
-        val mockMetadata = createMetadata(
-            selectableNetworks = null,
-            detectedNetworks = listOf(amex),
-            preferredNetwork = amex,
+
+        val initialMetadata = createMetadata(
+            selectableNetworks = listOf(visa, amex),
+            detectedNetworks = listOf(visa),
         )
+        setFetchedMetadata(initialMetadata)
 
-        // When
-        setFetchedMetadata(mockMetadata)
+        useCase.selectCardNetwork(amex)
 
-        // Then
-        val result = useCase.availableNetworks.first()
-        assertEquals(1, result.size)
-        assertEquals(CardNetwork.Type.AMEX, result.first().network)
-    }
-
-    @Test
-    fun `availableNetworks should clear selected network if not in available list`() = runTest {
-        // Given
-        useCase.selectCardNetwork(CardNetwork.Type.DISCOVER)
-
-        val visa = createCardNetwork(CardNetwork.Type.VISA, "Visa")
-        val mastercard = createCardNetwork(CardNetwork.Type.MASTERCARD, "Mastercard")
-        val mockMetadata = createMetadata(
+        val newMetadata = createMetadata(
             selectableNetworks = listOf(visa, mastercard),
             detectedNetworks = listOf(visa),
             preferredNetwork = visa,
         )
+        setFetchedMetadata(newMetadata)
 
-        // When
-        setFetchedMetadata(mockMetadata)
-        useCase.availableNetworks.first()
-
-        // Then - selected network should be cleared since DISCOVER is not in available networks
-        val currentNetwork = useCase.currentCardNetwork.first()
-        assertEquals(CardNetwork.Type.OTHER, currentNetwork)
+        val result = useCase.networkSelection.first()
+        assertEquals(visa, result.selectedNetwork)
     }
 }

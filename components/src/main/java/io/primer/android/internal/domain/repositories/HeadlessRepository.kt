@@ -8,4 +8,6 @@ internal interface HeadlessRepository {
     suspend fun getAvailablePaymentMethods(): List<PrimerHeadlessUniversalCheckoutPaymentMethod>
 
     suspend fun awaitPaymentResult(): Result<PrimerCheckoutData>
+
+    fun cleanup()
 }

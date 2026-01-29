@@ -2,9 +2,12 @@ package io.primer.android.components.ui.assets
 
 import android.content.Context
 import androidx.annotation.DrawableRes
+import androidx.core.graphics.toColorInt
 import io.primer.android.components.SdkUninitializedException
 import io.primer.android.components.assets.DefaultAssetsHeadlessDelegate
+import io.primer.android.components.assets.displayMetadata.models.PaymentMethodImplementation
 import io.primer.android.configuration.data.model.CardNetwork
+import io.primer.android.configuration.data.model.IconPosition
 import io.primer.android.core.di.DISdkComponent
 import io.primer.android.core.di.extensions.resolve
 import io.primer.android.displayMetadata.domain.model.ImageColor
@@ -30,10 +33,11 @@ class PrimerHeadlessUniversalCheckoutAssetsManager private constructor() : DISdk
         paymentMethodType: String,
     ): PrimerPaymentMethodAsset {
         val delegate = getAssetsDelegate()
+        val buttonMetadata = delegate.getPaymentMethodButtonMetadata(paymentMethodType)
         return PrimerPaymentMethodAsset(
-            paymentMethodType,
-            delegate.getPaymentMethodName(paymentMethodType),
-            PrimerPaymentMethodLogo(
+            paymentMethodType = paymentMethodType,
+            paymentMethodName = delegate.getPaymentMethodName(paymentMethodType),
+            paymentMethodLogo = PrimerPaymentMethodLogo(
                 delegate.getPaymentMethodLogo(
                     context,
                     paymentMethodType,
@@ -50,12 +54,44 @@ class PrimerHeadlessUniversalCheckoutAssetsManager private constructor() : DISdk
                     ImageColor.DARK,
                 ),
             ),
-            PrimerPaymentMethodBackgroundColor(
+            paymentMethodBackgroundColor = PrimerPaymentMethodBackgroundColor(
                 delegate.getPaymentMethodBackgroundColor(paymentMethodType, ImageColor.COLORED),
                 delegate.getPaymentMethodBackgroundColor(paymentMethodType, ImageColor.LIGHT),
                 delegate.getPaymentMethodBackgroundColor(paymentMethodType, ImageColor.DARK),
             ),
+            text = buttonMetadata?.text,
+            textColor = buttonMetadata?.textColor?.toPrimerColor(),
+            borderColor = buttonMetadata?.borderColor?.toPrimerColor(),
+            borderWidth = buttonMetadata?.borderWidth?.toPrimerBorderWidth(),
+            cornerRadius = buttonMetadata?.cornerRadius,
+            iconPosition = buttonMetadata?.iconPosition.toPrimerIconPosition(),
         )
+    }
+
+    private fun PaymentMethodImplementation.ButtonMetadata.ColorMetadata.toPrimerColor(): PrimerPaymentMethodColor {
+        return PrimerPaymentMethodColor(
+            colored = colored?.let { runCatching { it.toColorInt() }.getOrNull() },
+            light = light?.let { runCatching { it.toColorInt() }.getOrNull() },
+            dark = dark?.let { runCatching { it.toColorInt() }.getOrNull() },
+        )
+    }
+
+    private fun PaymentMethodImplementation.ButtonMetadata.BorderWidthMetadata.toPrimerBorderWidth(): PrimerPaymentMethodBorderWidth {
+        return PrimerPaymentMethodBorderWidth(
+            colored = colored,
+            light = light,
+            dark = dark,
+        )
+    }
+
+    private fun IconPosition?.toPrimerIconPosition(): PrimerIconPosition {
+        return when (this) {
+            IconPosition.START -> PrimerIconPosition.START
+            IconPosition.END -> PrimerIconPosition.END
+            IconPosition.ABOVE -> PrimerIconPosition.ABOVE
+            IconPosition.BELOW -> PrimerIconPosition.BELOW
+            null -> PrimerIconPosition.START
+        }
     }
 
     @Throws(SdkUninitializedException::class)

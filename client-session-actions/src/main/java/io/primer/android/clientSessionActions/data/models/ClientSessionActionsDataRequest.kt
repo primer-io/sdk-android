@@ -156,6 +156,16 @@ internal data class ClientSessionActionsDataRequest(
         }
     }
 
+    data class SetVaultOnSuccess(val enabled: Boolean) : Action(
+        type = "SET_VAULT_ON_SUCCESS",
+        params = SingleStringParam("vault_on_success", enabled.toString()),
+    ) {
+        companion object {
+            @JvmField
+            val serializer = JSONObjectSerializer<SetVaultOnSuccess> { it.toJSONObject() }
+        }
+    }
+
     companion object {
         private const val ACTIONS_FIELD = "actions"
 

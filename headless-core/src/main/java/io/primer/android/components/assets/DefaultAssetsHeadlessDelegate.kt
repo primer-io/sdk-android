@@ -13,6 +13,7 @@ import io.primer.android.assets.ui.model.ViewProvider
 import io.primer.android.assets.ui.model.getImageAsset
 import io.primer.android.assets.ui.registry.BrandRegistry
 import io.primer.android.components.assets.displayMetadata.PaymentMethodsImplementationInteractor
+import io.primer.android.components.assets.displayMetadata.models.PaymentMethodImplementation
 import io.primer.android.components.assets.extensions.dPtoPx
 import io.primer.android.components.assets.extensions.scaleImage
 import io.primer.android.components.assets.extensions.toResourcesScale
@@ -29,6 +30,8 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 
 internal interface AssetsHeadlessDelegate {
+    fun getPaymentMethodButtonMetadata(paymentMethodType: String): PaymentMethodImplementation.ButtonMetadata?
+
     @ColorInt
     fun getPaymentMethodBackgroundColor(
         paymentMethodType: String,
@@ -72,6 +75,12 @@ internal class DefaultAssetsHeadlessDelegate(
     private val analyticsInteractor: AnalyticsInteractor,
 ) : AssetsHeadlessDelegate {
     private val scope = CoroutineScope(SupervisorJob())
+
+    override fun getPaymentMethodButtonMetadata(paymentMethodType: String): PaymentMethodImplementation.ButtonMetadata? {
+        checkIfInitialized()
+        return paymentMethodsImplementationInteractor.execute(None)
+            .find { it.paymentMethodType == paymentMethodType }?.buttonMetadata
+    }
 
     override fun getPaymentMethodBackgroundColor(
         paymentMethodType: String,

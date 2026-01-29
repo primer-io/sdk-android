@@ -22,7 +22,6 @@ internal class PaymentMethodMapperImpl : PaymentMethodMapper {
             paymentMethodName = headless.paymentMethodName,
             supportedPrimerSessionIntents = headless.supportedPrimerSessionIntents,
             paymentMethodManagerCategories = headless.paymentMethodManagerCategories,
-            requiredInputDataClass = headless.requiredInputDataClass,
             surcharge = surcharges[headless.paymentMethodType],
         )
     }

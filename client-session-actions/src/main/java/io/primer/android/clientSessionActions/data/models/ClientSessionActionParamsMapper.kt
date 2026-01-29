@@ -8,6 +8,7 @@ import io.primer.android.clientSessionActions.domain.models.ActionUpdateSelectPa
 import io.primer.android.clientSessionActions.domain.models.ActionUpdateShippingAddressParams
 import io.primer.android.clientSessionActions.domain.models.ActionUpdateShippingOptionIdParams
 import io.primer.android.clientSessionActions.domain.models.ActionUpdateUnselectPaymentMethodParams
+import io.primer.android.clientSessionActions.domain.models.ActionUpdateVaultOnSuccessParams
 import io.primer.android.clientSessionActions.domain.models.BaseActionUpdateParams
 import io.primer.android.clientSessionActions.domain.models.MultipleActionUpdateParams
 import io.primer.android.configuration.data.model.AddressData
@@ -72,4 +73,7 @@ internal fun BaseActionUpdateParams.toActionData(): List<ClientSessionActionsDat
             )
 
         is ActionUpdateEmailAddressParams -> listOf(ClientSessionActionsDataRequest.SetEmailAddress(email = email))
+        is ActionUpdateVaultOnSuccessParams -> listOf(
+            ClientSessionActionsDataRequest.SetVaultOnSuccess(enabled = vaultOnSuccess),
+        )
     }

@@ -1,20 +1,24 @@
 package io.primer.android.internal.domain.usecase.vault
 
+import io.primer.android.components.domain.payments.vault.model.card.PrimerVaultedCardAdditionalData
+import io.primer.android.domain.PrimerCheckoutData
+import io.primer.android.internal.domain.repositories.HeadlessRepository
 import io.primer.android.internal.domain.repositories.PrimerVaultManagerRepository
-import io.primer.android.vault.implementation.vaultedMethods.domain.PrimerVaultedPaymentMethodAdditionalData
 
-/**
- * Use case for submitting a vaulted payment method for processing.
- * Handles the payment flow including potential CVV recapture requirements.
- */
 internal class SubmitVaultedPaymentUseCase(
     private val vaultManagerRepository: PrimerVaultManagerRepository,
+    private val headlessRepository: HeadlessRepository,
 ) {
 
     suspend operator fun invoke(
         vaultedPaymentMethodId: String,
-        additionalData: PrimerVaultedPaymentMethodAdditionalData? = null,
-    ): Result<Unit> {
+        cvv: String? = null,
+    ): Result<PrimerCheckoutData> {
+        val additionalData = cvv?.let { PrimerVaultedCardAdditionalData(it) }
         return vaultManagerRepository.startPaymentFlow(vaultedPaymentMethodId, additionalData)
+            .fold(
+                onSuccess = { headlessRepository.awaitPaymentResult() },
+                onFailure = { Result.failure(it) },
+            )
     }
 }

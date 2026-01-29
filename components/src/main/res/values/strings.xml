@@ -1,140 +1,202 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- App Bar Titles -->
-    <string name="primer_components_select_payment_method_card">Pay with card</string>
-    <string name="primer_components_select_payment_method_coming_soon">🚧 Coming soon</string>
-    <string name="primer_components_select_country">Select Country</string>
-    <string name="primer_components_klarna_screen_title">Klarna</string>
+
+    <!-- Shared across multiple screens -->
+    <string name="primer_common_button_pay">Pay</string>
+    <string name="primer_common_add_card">Add card</string>
+    <string name="primer_common_button_pay_amount">Pay %1$s</string>
+    <string name="primer_common_button_cancel">Cancel</string>
+    <string name="primer_common_button_retry">Retry</string>
+    <string name="primer_common_error_generic">An unknown error occurred.</string>
+    <string name="primer_common_back">Back</string>
+
+    <!-- Loading/Splash Screen -->
+    <string name="primer_checkout_splash_title">Loading your secure checkout</string>
+    <string name="primer_checkout_splash_subtitle">This won\'t take long</string>
+    <string name="primer_checkout_loading_indicator">Loading</string>
+
+    <!-- Success Screen -->
+    <string name="primer_checkout_success_title">Payment successful</string>
+    <string name="primer_checkout_success_subtitle">You\'ll be redirected to the order confirmation page soon.</string>
+
+    <!-- Error Screen -->
+    <string name="primer_checkout_error_title">Payment failed</string>
+    <string name="primer_checkout_error_subtitle">There was a network issue.</string>
+    <string name="primer_checkout_error_button_other_methods">Choose other payment methods</string>
+
+    <string name="primer_payment_selection_header">Choose payment method</string>
+
+    <!-- Surcharge grouping -->
+    <string name="primer_payment_selection_surcharge_none">No additional fee</string>
+    <string name="primer_payment_selection_surcharge_may_apply">Additional fees may apply</string>
+    <string name="primer_payment_selection_surcharge_label">Surcharge fee</string>
+
+    <string name="primer_card_form_title">Pay with card</string>
+
+    <!-- Labels -->
+    <string name="primer_card_form_label_number">Card Number</string>
+    <string name="primer_card_form_label_name">Name on card</string>
+    <string name="primer_card_form_label_expiry">Expiry Date</string>
+    <string name="primer_card_form_label_cvv">CVV</string>
+    <string name="primer_card_form_label_country">Country</string>
+    <string name="primer_card_form_label_country_code">Country Code</string>
+    <string name="primer_card_form_label_postal">Postal Code</string>
+    <string name="primer_card_form_label_city">City</string>
+    <string name="primer_card_form_label_state">State</string>
+    <string name="primer_card_form_label_address1">Address Line 1</string>
+    <string name="primer_card_form_label_address2">Address Line 2</string>
+    <string name="primer_card_form_label_phone">Phone Number</string>
+    <string name="primer_card_form_label_first_name">First Name</string>
+    <string name="primer_card_form_label_last_name">Last Name</string>
+    <string name="primer_card_form_label_retail">Retail Outlet</string>
+    <string name="primer_card_form_label_otp">OTP Code</string>
+    <string name="primer_card_form_label_field">Field</string>
+
+    <!-- Placeholders -->
+    <string name="primer_card_form_placeholder_number">1234 1234 1234 1234</string>
+    <string name="primer_card_form_placeholder_name">Full name</string>
+    <string name="primer_card_form_placeholder_expiry">MM/YY</string>
+    <string name="primer_card_form_placeholder_country_code">Select country</string>
+    <string name="primer_card_form_placeholder_postal">12345</string>
+    <string name="primer_card_form_placeholder_city">New York</string>
+    <string name="primer_card_form_placeholder_state">NY</string>
+    <string name="primer_card_form_placeholder_address1">123 Main Street</string>
+    <string name="primer_card_form_placeholder_address2">Apt 4B</string>
+    <string name="primer_card_form_placeholder_phone">+1 (555) 123–4567</string>
+    <string name="primer_card_form_placeholder_first_name">John</string>
+    <string name="primer_card_form_placeholder_last_name">Doe</string>
+    <string name="primer_card_form_placeholder_retail">Select outlet</string>
+    <string name="primer_card_form_placeholder_otp">123456</string>
+
+    <!-- COUNTRY SELECTION -->
+    <string name="primer_country_title">Select Country</string>
+    <string name="primer_country_placeholder_search">Search</string>
+
+    <!-- KLARNA -->
+    <string name="primer_klarna_title">Klarna</string>
+    <string name="primer_klarna_pay_with">Pay with</string>
+    <string name="primer_klarna_button_authorize">Continue</string>
+    <string name="primer_klarna_button_finalize">Pay</string>
+
+    <!-- VAULT -->
+    <!-- Section header (on payment selection screen) -->
+    <string name="primer_vault_section_title">Saved payment methods</string>
+    <string name="primer_vault_button_show_all">Show all</string>
+
+    <!-- Default values for payment methods -->
+    <string name="primer_vault_default_cardholder">Cardholder</string>
+    <string name="primer_vault_default_paypal">PayPal account</string>
+    <string name="primer_vault_default_bank">Bank account</string>
+
+    <!-- Format strings -->
+    <string name="primer_vault_format_masked">•••• %1$s</string>
+    <string name="primer_vault_format_expires">Expires %1$s/%2$s</string>
+    <string name="primer_vault_format_card_details">%1$s ending in %2$s</string>
+
+    <!-- Vault: Selected Method Screen -->
+    <string name="primer_vault_selected_button_other">Show other ways to pay</string>
+
+    <!-- Vault: Manage Screen -->
+    <string name="primer_vault_manage_title">All saved payment methods</string>
+    <string name="primer_vault_manage_button_edit">Edit</string>
+    <string name="primer_vault_manage_button_done">Done</string>
+
+    <!-- Vault: CVV Recapture Screen -->
+    <string name="primer_vault_cvv_title">Enter CVV</string>
+    <string name="primer_vault_cvv_hint">Input the card CVV\nfor a secure payment.</string>
+    <string name="primer_vault_cvv_error_invalid">Please enter a valid CVV.</string>
+    <string name="primer_vault_cvv_error_generic">Something went wrong. Try again.</string>
+
+    <!-- Vault: Delete Confirmation Screen -->
+    <string name="primer_vault_delete_message">Are you sure you want to delete this payment method?</string>
+    <string name="primer_vault_delete_button_confirm">Delete</string>
+    <string name="primer_vault_delete_button_cancel">Cancel</string>
+
+    <!-- MISC -->
+    <string name="primer_misc_coming_soon">🚧 Coming soon</string>
+
+    <!-- ACCESSIBILITY - TalkBack support (WCAG 2.1 AA) -->
+    <!-- snake_case naming: accessibility_section_component_property -->
+
+    <!-- Card Form Labels -->
+    <string name="accessibility_card_form_card_number_label">Card number, required</string>
+    <string name="accessibility_card_form_expiry_label">Expiry date, required</string>
+    <string name="accessibility_card_form_cvc_label">Security code, required</string>
+    <string name="accessibility_card_form_cardholder_name_label">Cardholder name</string>
+
+    <!-- Card Form Hints -->
+    <string name="accessibility_card_form_card_number_hint">Enter your 16-digit card number</string>
+    <string name="accessibility_card_form_expiry_hint">Enter expiry date in MM/YY format</string>
+    <string name="accessibility_card_form_cvc_hint">3 or 4 digit code on back of card</string>
+    <string name="accessibility_card_form_cardholder_name_hint">Enter name as shown on card</string>
+
+    <!-- Billing Address -->
+    <string name="accessibility_card_form_billing_address_first_name_label">First name, required</string>
+    <string name="accessibility_card_form_billing_address_last_name_label">Last name, required</string>
+    <string name="accessibility_card_form_billing_address_address_line_1_label">Address line 1, required</string>
+    <string name="accessibility_card_form_billing_address_address_line_2_label">Address line 2, optional</string>
+    <string name="accessibility_card_form_billing_address_city_label">City, required</string>
+    <string name="accessibility_card_form_billing_address_city_hint">Enter city name</string>
+    <string name="accessibility_card_form_billing_address_state_label">State, required</string>
+    <string name="accessibility_card_form_billing_address_postal_code_label">Postal code, required</string>
+    <string name="accessibility_card_form_billing_address_postal_code_hint">Enter postal or ZIP code</string>
+    <string name="accessibility_card_form_billing_address_country_label">Country, required</string>
+
+    <!-- Submit Button -->
+    <string name="accessibility_card_form_submit_label">Submit payment</string>
+    <string name="accessibility_card_form_submit_loading">Processing payment, please wait</string>
+    <string name="accessibility_card_form_submit_disabled">Button disabled. Complete all required fields to enable payment</string>
+
+    <!-- Common -->
+    <string name="accessibility_common_required">required</string>
+    <string name="accessibility_common_optional">optional</string>
+    <string name="accessibility_common_loading">Loading, please wait</string>
+    <string name="accessibility_common_close">Close</string>
+    <string name="accessibility_common_cancel">Cancel</string>
+    <string name="accessibility_common_back">Go back</string>
+    <string name="accessibility_common_selected">Selected</string>
+
+    <!-- Screen Announcements -->
+    <string name="accessibility_screen_success">Payment successful</string>
+    <string name="accessibility_screen_error">Payment error occurred</string>
+    <string name="accessibility_screen_country_selection">Select country</string>
+    <string name="accessibility_screen_loading_payment_methods">Loading payment methods</string>
+
+    <!-- Payment Selection -->
+    <string name="accessibility_payment_selection_pay_with_card">Pay with card</string>
+    <string name="accessibility_payment_selection_pay_with_google_pay">Pay with Google Pay</string>
+    <string name="accessibility_payment_selection_pay_with_paypal">Pay with PayPal</string>
+    <string name="accessibility_payment_selection_pay_with_klarna">Pay with Klarna</string>
+    <string name="accessibility_payment_selection_pay_with_ideal">Pay with iDEAL</string>
+    <string name="accessibility_payment_selection_coming_soon">Payment method coming soon</string>
+    <string name="accessibility_payment_selection_card_full">%1$s card ending in %2$s, expires %3$s</string>
+
+    <!-- Country Selection -->
+    <string name="accessibility_country_selection_item">%1$s, country</string>
+    <string name="accessibility_country_selection_search">Search countries</string>
 
     <!-- Klarna -->
-    <string name="primer_components_klarna_authorize">Authorize</string>
-    <string name="primer_components_klarna_finalize">Complete Payment</string>
+    <string name="accessibility_klarna_category">%1$s payment option</string>
+    <string name="accessibility_klarna_category_selected">%1$s payment option, selected</string>
 
-    <!-- Button Text -->
-    <string name="primer_components_checkout_retry">Retry</string>
-    <string name="primer_components_checkout_cancel">Cancel</string>
-    <string name="primer_components_checkout_other_payment_methods">Choose other payment methods</string>
-    <string name="primer_components_card_form_pay">Pay</string>
-    
-    <!-- Form Field Labels -->
-    <string name="primer_components_card_form_name_on_card">Name on card</string>
-    <string name="primer_components_card_form_expiry_date">Expiry Date</string>
-    <string name="primer_components_card_form_postal_code">Postal Code</string>
-    <string name="primer_components_card_form_country_code">Country Code</string>
-    <string name="primer_components_card_form_city">City</string>
-    <string name="primer_components_card_form_state">State</string>
-    <string name="primer_components_card_form_address_line_1">Address Line 1</string>
-    <string name="primer_components_card_form_address_line_2">Address Line 2</string>
-    <string name="primer_components_card_form_phone_number">Phone Number</string>
-    <string name="primer_components_card_form_first_name">First Name</string>
-    <string name="primer_components_card_form_last_name">Last Name</string>
-    <string name="primer_components_card_form_retail_outlet">Retail Outlet</string>
-    <string name="primer_components_card_form_otp_code">OTP Code</string>
-    <string name="primer_components_card_form_card_number">Card Number</string>
-    <string name="primer_components_card_form_cvv">CVV</string>
-    <string name="primer_components_card_form_country">Country</string>
-    <string name="primer_components_card_form_field">Field</string>
-    
-    <!-- Form Field Placeholders -->
-    <string name="primer_components_card_form_placeholder_full_name">Full name</string>
-    <string name="primer_components_card_form_placeholder_expiry_date">MM/YY</string>
-    <string name="primer_components_card_form_placeholder_postal_code">12345</string>
-    <string name="primer_components_card_form_placeholder_country_code">US</string>
-    <string name="primer_components_card_form_placeholder_city">New York</string>
-    <string name="primer_components_card_form_placeholder_state">NY</string>
-    <string name="primer_components_card_form_placeholder_address_line_1">123 Main Street</string>
-    <string name="primer_components_card_form_placeholder_address_line_2">Apt 4B</string>
-    <string name="primer_components_card_form_placeholder_phone_number">+1 (555) 123–4567</string>
-    <string name="primer_components_card_form_placeholder_first_name">John</string>
-    <string name="primer_components_card_form_placeholder_last_name">Doe</string>
-    <string name="primer_components_card_form_placeholder_retail_outlet">Select outlet</string>
-    <string name="primer_components_card_form_placeholder_otp_code">123456</string>
-    <string name="primer_components_card_form_placeholder_card_number">1234 1234 1234 1234</string>
-    <string name="primer_components_card_form_placeholder_search_countries">Search countries…</string>
-    
-    <!-- Error Messages -->
-    <string name="primer_components_checkout_splash_title">Loading your secure checkout</string>
-    <string name="primer_checkout_splash_subtitle">This won’t take long</string>
-    <string name="primer_components_checkout_failed_title">Payment failed</string>
-    <string name="primer_components_checkout_failed_description">There was a network issue.</string>
-    <string name="primer_components_payment_methods_error">Error loading payment methods</string>
-    
-    <!-- Success Messages -->
-    <string name="primer_components_checkout_success_title">Payment successful</string>
-    <string name="primer_components_checkout_success_description">You\'ll be redirected to the order confirmation page soon.</string>
+    <!-- Actions -->
+    <string name="accessibility_action_delete">Delete payment method</string>
 
-    <!-- Error message   -->
-    <string name="primer_components_checkout_generic_error">An unknown error occured.</string>
-    
-    <!-- Payment Method Selection -->
-    <string name="primer_components_payment_method_selection_description">Choose payment method</string>
-    <string name="primer_components_payment_method_selection_klarna_pay_with">Pay with</string>
-    <string name="primer_components_payment_method_selection_pay">Pay</string>
-    <string name="primer_components_payment_method_selection_pay_amount">Pay %1$s</string>
+    <!-- Card Form Icons -->
+    <string name="accessibility_card_form_network_selector">Select network</string>
+    <string name="accessibility_card_form_cvv_icon">CVV security code</string>
+    <string name="accessibility_card_form_expiry_icon">Card expiry date</string>
+    <string name="accessibility_card_form_billing_section">Billing address</string>
 
-    <!-- Loading States -->
-    <string name="primer_components_checkout_loading">Loading</string>
-    
-    <!-- Content Descriptions -->
-    <string name="primer_components_content_description_back">Back</string>
-    <string name="primer_components_content_description_error">Error</string>
-    <string name="primer_components_content_description_payment_successful">Payment successful</string>
-    <string name="primer_components_content_description_search">Search</string>
-    <string name="primer_components_content_description_card_network">Card network: %1$s</string>
-    <string name="primer_components_content_description_select_network">Select network</string>
-    <string name="primer_components_content_description_cvv_icon">CVV security code</string>
-    <string name="primer_components_content_description_expiry_icon">Card expiry date</string>
-    <string name="primer_components_content_description_country_selector">Select country</string>
-    <string name="primer_components_content_description_billing_section">Billing address</string>
+    <!-- Country Selection Icons -->
+    <string name="accessibility_country_selection_search_icon">Search</string>
+    <string name="accessibility_country_selection_clear">Clear</string>
 
-    <!-- Surcharge Section Headers -->
-    <string name="primer_components_surcharge_no_additional_fee">No additional fee</string>
-    <string name="primer_components_surcharge_additional_fees">Additional fees may apply</string>
-    <string name="primer_components_surcharge_fee">Surcharge fee</string>
+    <!-- Checkout Screen Icons -->
+    <string name="accessibility_checkout_success_icon">Payment successful</string>
+    <string name="accessibility_checkout_error_icon">Error</string>
 
-    <!-- Vaulted Payment Methods -->
-    <string name="primer_components_saved_payment_methods">Saved payment methods</string>
-    <string name="primer_components_pay">Pay</string>
-    <string name="primer_components_processing">Processing…</string>
-    <string name="primer_components_cvv_required">CVV Required</string>
-    <string name="primer_components_cvv_required_description">Please enter your CVV to complete this payment</string>
-    <string name="primer_components_cvv">CVV</string>
-    <string name="primer_components_cvv_invalid">Please enter a valid CVV</string>
-    <string name="primer_components_cvv_secure_prompt">Input the card CVV\nfor a secure payment</string>
-    <string name="primer_components_confirm">Confirm</string>
-    <string name="primer_components_cancel">Cancel</string>
-    <string name="primer_components_vault_error">Unable to load saved payment methods</string>
-    <string name="primer_components_retry">Tap to retry</string>
-    <string name="primer_components_vaulted_payment_selection_description">Saved payment methods</string>
-    <string name="primer_components_vault_cvv_error">Please enter a valid CVV.</string>
-    <string name="primer_components_vault_show_other_ways_to_pay">Show other ways to pay</string>
-    <string name="primer_components_vault_cvv_generic_error">Something went wrong. Try again.</string>
-    <string name="primer_components_vaulted_default_cardholder_name">Cardholder</string>
-    <string name="primer_components_vaulted_default_paypal_account">PayPal account</string>
-    <string name="primer_components_vaulted_default_bank_account">Bank account</string>
-    <string name="primer_components_vaulted_masked_card_number">•••• %1$s</string>
-    <string name="primer_components_vaulted_masked_bank_account_number">•••• %1$s</string>
-    <string name="primer_components_vaulted_expires_date">Expires %1$s/%2$s</string>
-    <string name="primer_components_vaulted_selected_content_description">Selected payment method</string>
-    <string name="primer_components_vaulted_generic_card_content_description">Card</string>
-    <string name="primer_components_vaulted_cvv_placeholder">CVV</string>
-    <string name="primer_components_vaulted_show_all">Show all</string>
-    <string name="primer_components_vaulted_show_all_content_description">Show all saved payment methods</string>
-
-    <!-- All Saved Payment Methods Screen -->
-    <string name="primer_components_vaulted_all_methods_title">All saved payment methods</string>
-    <string name="primer_components_vaulted_edit_button">Edit</string>
-    <string name="primer_components_vaulted_done_button">Done</string>
-    <string name="primer_components_vaulted_empty_state_title">No saved payment methods</string>
-    <string name="primer_components_vaulted_empty_state_description">You don\'t have any saved payment methods yet.</string>
-    <string name="primer_components_vaulted_delete_content_description">Delete payment method</string>
-    <string name="primer_components_vaulted_card_details_separator">•</string>
-
-    <!-- Delete Confirmation Dialog -->
-    <string name="primer_components_vaulted_delete_dialog_title">Delete payment method?</string>
-    <string name="primer_components_vaulted_delete_dialog_message">Are you sure you want to delete %1$s?</string>
-    <string name="primer_components_vaulted_delete_dialog_card_details">%1$s ending in %2$s</string>
-    <string name="primer_components_vaulted_delete_dialog_confirm">Delete</string>
-    <string name="primer_components_vaulted_delete_dialog_cancel">Cancel</string>
+    <!-- Paypal -->
+    <string name="accessibility_vaulted_paypal">PayPal</string>
 
 </resources>

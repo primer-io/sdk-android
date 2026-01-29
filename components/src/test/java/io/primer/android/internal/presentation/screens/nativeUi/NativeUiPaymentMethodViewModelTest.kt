@@ -1,18 +1,16 @@
 package io.primer.android.internal.presentation.screens.nativeUi
 
-import io.mockk.Runs
 import io.mockk.coEvery
 import io.mockk.coVerify
-import io.mockk.just
 import io.mockk.justRun
 import io.mockk.mockk
 import io.mockk.verify
+import io.primer.android.core.logging.internal.LogReporter
 import io.primer.android.domain.PrimerCheckoutData
 import io.primer.android.internal.domain.usecase.StartNativeUiPaymentUseCase
-import io.primer.android.internal.presentation.checkout.CheckoutNavigator
-import io.primer.android.internal.presentation.checkout.Screen
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
@@ -30,8 +28,8 @@ import org.junit.jupiter.api.Test
 @OptIn(ExperimentalCoroutinesApi::class)
 class NativeUiPaymentMethodViewModelTest {
 
-    private lateinit var mockCheckoutNavigator: CheckoutNavigator
     private lateinit var mockStartNativeUiPaymentUseCase: StartNativeUiPaymentUseCase
+    private lateinit var logReporter: LogReporter
     private lateinit var viewModel: NativeUiPaymentMethodViewModel
 
     private val testDispatcher = UnconfinedTestDispatcher()
@@ -40,8 +38,8 @@ class NativeUiPaymentMethodViewModelTest {
     @BeforeEach
     fun setup() {
         Dispatchers.setMain(testDispatcher)
-        mockCheckoutNavigator = mockk(relaxed = true)
         mockStartNativeUiPaymentUseCase = mockk(relaxed = true)
+        logReporter = mockk(relaxed = true)
     }
 
     @AfterEach
@@ -50,50 +48,61 @@ class NativeUiPaymentMethodViewModelTest {
     }
 
     @Test
-    fun `init starts payment flow and navigates to success on successful payment`() = runTest {
+    fun `init starts payment flow and emits PaymentSuccess on successful payment`() = runTest {
         val mockCheckoutData = mockk<PrimerCheckoutData>()
 
         coEvery { mockStartNativeUiPaymentUseCase(paymentMethodType) } returns Result.success(mockCheckoutData)
-        coEvery { mockCheckoutNavigator.navigateTo(any()) } just Runs
 
         viewModel = NativeUiPaymentMethodViewModel(
             paymentMethodType = paymentMethodType,
-            checkoutNavigator = mockCheckoutNavigator,
             startNativeUiPaymentUseCase = mockStartNativeUiPaymentUseCase,
+            logReporter = logReporter,
         )
 
         advanceUntilIdle()
+
+        val event = viewModel.navigation.first()
+        assertTrue(event is NativeUiPaymentMethodViewModel.NavigationEvent.PaymentSuccess)
+        assertEquals(
+            mockCheckoutData,
+            (event as NativeUiPaymentMethodViewModel.NavigationEvent.PaymentSuccess).checkoutData,
+        )
 
         val state = viewModel.state.value
         assertFalse(state.isProcessing)
         assertNull(state.error)
 
         coVerify(exactly = 1) { mockStartNativeUiPaymentUseCase(paymentMethodType) }
-        coVerify(exactly = 1) { mockCheckoutNavigator.navigateTo(Screen.Success) }
     }
 
     @Test
-    fun `init starts payment flow and navigates to error on failed payment`() = runTest {
+    fun `init starts payment flow and emits PaymentError on failed payment`() = runTest {
         val errorMessage = "Payment failed"
         val error = RuntimeException(errorMessage)
 
         coEvery { mockStartNativeUiPaymentUseCase(paymentMethodType) } returns Result.failure(error)
-        coEvery { mockCheckoutNavigator.navigateTo(any()) } just Runs
 
         viewModel = NativeUiPaymentMethodViewModel(
             paymentMethodType = paymentMethodType,
-            checkoutNavigator = mockCheckoutNavigator,
             startNativeUiPaymentUseCase = mockStartNativeUiPaymentUseCase,
+            logReporter = logReporter,
         )
 
         advanceUntilIdle()
 
+        val event = viewModel.navigation.first()
+        assertTrue(event is NativeUiPaymentMethodViewModel.NavigationEvent.PaymentError)
+        assertTrue(
+            (event as NativeUiPaymentMethodViewModel.NavigationEvent.PaymentError).error.description.contains(
+                errorMessage,
+            ),
+        )
+
         val state = viewModel.state.value
         assertFalse(state.isProcessing)
-        assertEquals(errorMessage, state.error)
+        assertTrue(state.error?.contains(errorMessage) == true)
 
         coVerify(exactly = 1) { mockStartNativeUiPaymentUseCase(paymentMethodType) }
-        coVerify(exactly = 1) { mockCheckoutNavigator.navigateTo(Screen.Error) }
     }
 
     @Test
@@ -107,30 +116,13 @@ class NativeUiPaymentMethodViewModelTest {
 
         viewModel = NativeUiPaymentMethodViewModel(
             paymentMethodType = paymentMethodType,
-            checkoutNavigator = mockCheckoutNavigator,
             startNativeUiPaymentUseCase = mockStartNativeUiPaymentUseCase,
+            logReporter = logReporter,
         )
 
         val initialState = viewModel.state.value
         assertTrue(initialState.isProcessing)
         assertNull(initialState.error)
-    }
-
-    @Test
-    fun `onCancel dismisses checkout navigator`() = runTest {
-        coEvery { mockStartNativeUiPaymentUseCase(paymentMethodType) } returns Result.success(mockk())
-        coEvery { mockCheckoutNavigator.dismiss() } just Runs
-
-        viewModel = NativeUiPaymentMethodViewModel(
-            paymentMethodType = paymentMethodType,
-            checkoutNavigator = mockCheckoutNavigator,
-            startNativeUiPaymentUseCase = mockStartNativeUiPaymentUseCase,
-        )
-
-        viewModel.onCancel()
-        advanceUntilIdle()
-
-        coVerify(exactly = 1) { mockCheckoutNavigator.dismiss() }
     }
 
     @Test
@@ -140,8 +132,8 @@ class NativeUiPaymentMethodViewModelTest {
 
         viewModel = NativeUiPaymentMethodViewModel(
             paymentMethodType = paymentMethodType,
-            checkoutNavigator = mockCheckoutNavigator,
             startNativeUiPaymentUseCase = mockStartNativeUiPaymentUseCase,
+            logReporter = logReporter,
         )
 
         val onClearedMethod = viewModel::class.java.getDeclaredMethod("onCleared")
@@ -152,25 +144,31 @@ class NativeUiPaymentMethodViewModelTest {
     }
 
     @Test
-    fun `error with null message is handled correctly`() = runTest {
+    fun `error with null message uses fallback message in state and event`() = runTest {
         val error = RuntimeException()
+        val fallbackMessage = "Payment failed"
 
         coEvery { mockStartNativeUiPaymentUseCase(paymentMethodType) } returns Result.failure(error)
-        coEvery { mockCheckoutNavigator.navigateTo(any()) } just Runs
 
         viewModel = NativeUiPaymentMethodViewModel(
             paymentMethodType = paymentMethodType,
-            checkoutNavigator = mockCheckoutNavigator,
             startNativeUiPaymentUseCase = mockStartNativeUiPaymentUseCase,
+            logReporter = logReporter,
         )
 
         advanceUntilIdle()
 
+        val event = viewModel.navigation.first()
+        assertTrue(event is NativeUiPaymentMethodViewModel.NavigationEvent.PaymentError)
+        assertTrue(
+            (event as NativeUiPaymentMethodViewModel.NavigationEvent.PaymentError).error.description.contains(
+                fallbackMessage,
+            ),
+        )
+
         val state = viewModel.state.value
         assertFalse(state.isProcessing)
-        assertNull(state.error)
-
-        coVerify(exactly = 1) { mockCheckoutNavigator.navigateTo(Screen.Error) }
+        assertTrue(state.error?.contains(fallbackMessage) == true)
     }
 
     @Test
@@ -179,12 +177,11 @@ class NativeUiPaymentMethodViewModelTest {
 
         viewModel = NativeUiPaymentMethodViewModel(
             paymentMethodType = paymentMethodType,
-            checkoutNavigator = mockCheckoutNavigator,
             startNativeUiPaymentUseCase = mockStartNativeUiPaymentUseCase,
+            logReporter = logReporter,
         )
 
         assertNotNull(viewModel.state)
-        // State is always StateFlow by declaration, this test validates it's properly initialized
         val initialState = viewModel.state.value
         assertNotNull(initialState)
     }
@@ -198,8 +195,8 @@ class NativeUiPaymentMethodViewModelTest {
 
             NativeUiPaymentMethodViewModel(
                 paymentMethodType = type,
-                checkoutNavigator = mockCheckoutNavigator,
                 startNativeUiPaymentUseCase = mockStartNativeUiPaymentUseCase,
+                logReporter = logReporter,
             )
 
             advanceUntilIdle()

@@ -5,6 +5,7 @@ import io.primer.android.clientSessionActions.data.models.ClientSessionActionsDa
 import io.primer.android.clientSessionActions.domain.models.ActionUpdateBillingAddressParams
 import io.primer.android.clientSessionActions.domain.models.ActionUpdateSelectPaymentMethodParams
 import io.primer.android.clientSessionActions.domain.models.ActionUpdateUnselectPaymentMethodParams
+import io.primer.android.clientSessionActions.domain.models.ActionUpdateVaultOnSuccessParams
 import io.primer.android.configuration.data.model.AddressData
 import io.primer.android.configuration.data.model.CountryCode
 import io.primer.android.core.data.model.EmptyDataRequest
@@ -312,6 +313,38 @@ internal class ClientSessionActionsDataRequestTest {
             }
         assertEquals(expectedJson.toString(), action.serialize().toString())
     }
+
+    @Test
+    fun `test ClientSessionActionsDataRequest serializer with SetVaultOnSuccess enabled`() {
+        val action = ClientSessionActionsDataRequest.SetVaultOnSuccess(enabled = true)
+        val expectedJson =
+            JSONObject().apply {
+                put("type", "SET_VAULT_ON_SUCCESS")
+                put(
+                    "params",
+                    JSONObject().apply {
+                        put("vault_on_success", "true")
+                    },
+                )
+            }
+        assertEquals(expectedJson.toString(), action.serialize().toString())
+    }
+
+    @Test
+    fun `test ClientSessionActionsDataRequest serializer with SetVaultOnSuccess disabled`() {
+        val action = ClientSessionActionsDataRequest.SetVaultOnSuccess(enabled = false)
+        val expectedJson =
+            JSONObject().apply {
+                put("type", "SET_VAULT_ON_SUCCESS")
+                put(
+                    "params",
+                    JSONObject().apply {
+                        put("vault_on_success", "false")
+                    },
+                )
+            }
+        assertEquals(expectedJson.toString(), action.serialize().toString())
+    }
 }
 
 internal class BaseActionUpdateParamsTest {
@@ -386,6 +419,28 @@ internal class BaseActionUpdateParamsTest {
         assertEquals(city, billingAddress.city)
         assertEquals(state, billingAddress.state)
         assertEquals(CountryCode.US, billingAddress.countryCode)
+    }
+
+    @Test
+    fun `test toActionData with ActionUpdateVaultOnSuccessParams enabled`() {
+        val params = ActionUpdateVaultOnSuccessParams(vaultOnSuccess = true)
+
+        val action = params.toActionData()
+
+        assertIs<List<ClientSessionActionsDataRequest.SetVaultOnSuccess>>(action)
+        val requestDataParams = action.single()
+        assertEquals(true, requestDataParams.enabled)
+    }
+
+    @Test
+    fun `test toActionData with ActionUpdateVaultOnSuccessParams disabled`() {
+        val params = ActionUpdateVaultOnSuccessParams(vaultOnSuccess = false)
+
+        val action = params.toActionData()
+
+        assertIs<List<ClientSessionActionsDataRequest.SetVaultOnSuccess>>(action)
+        val requestDataParams = action.single()
+        assertEquals(false, requestDataParams.enabled)
     }
 }
 

@@ -2,13 +2,7 @@ package io.primer.android.internal.di
 
 import android.content.Context
 import io.primer.android.clientSessionActions.di.ActionsContainer
-import io.primer.android.components.PrimerCardFormComponents
-import io.primer.android.components.PrimerCheckoutComponents
 import io.primer.android.components.PrimerHeadlessUniversalCheckout
-import io.primer.android.components.PrimerKlarnaComponents
-import io.primer.android.components.PrimerPaymentMethodSelectionComponents
-import io.primer.android.components.PrimerSelectCountryComponents
-import io.primer.android.components.PrimerVaultedComponents
 import io.primer.android.configuration.di.ConfigurationCoreContainer
 import io.primer.android.core.di.DependencyContainer
 import io.primer.android.core.di.SdkContainer
@@ -27,21 +21,23 @@ import io.primer.android.internal.domain.repositories.PrimerVaultManagerReposito
 import io.primer.android.internal.domain.repositories.RawDataManagerRepository
 import io.primer.android.internal.domain.usecase.AvailablePaymentMethodsUseCase
 import io.primer.android.internal.domain.usecase.CardFieldsUseCase
+import io.primer.android.internal.domain.usecase.CardFormCleanupUseCase
 import io.primer.android.internal.domain.usecase.CardNetworkUseCase
+import io.primer.android.internal.domain.usecase.GetCountriesUseCase
+import io.primer.android.internal.domain.usecase.HeadlessCleanupUseCase
+import io.primer.android.internal.domain.usecase.KlarnaCleanupUseCase
+import io.primer.android.internal.domain.usecase.SetVaultOnSuccessUseCase
 import io.primer.android.internal.domain.usecase.StartNativeUiPaymentUseCase
 import io.primer.android.internal.domain.usecase.SubmitCardPaymentUseCase
+import io.primer.android.internal.domain.usecase.vault.CheckCvvRecaptureRequiredUseCase
 import io.primer.android.internal.domain.usecase.vault.DeleteVaultedPaymentMethodUseCase
 import io.primer.android.internal.domain.usecase.vault.FetchVaultedPaymentMethodsUseCase
-import io.primer.android.internal.domain.usecase.vault.ShouldCaptureVaultedCvvUseCase
 import io.primer.android.internal.domain.usecase.vault.SubmitVaultedPaymentUseCase
-import io.primer.android.internal.domain.usecase.vault.ValidateVaultedCVVUseCase
-import io.primer.android.internal.domain.usecase.vault.VaultedCvvFieldsUseCase
-import io.primer.android.internal.presentation.checkout.CheckoutNavigator
-import io.primer.android.internal.presentation.checkout.CheckoutViewModelFactory
-import io.primer.android.internal.presentation.screens.card.CardFormViewModelFactory
-import io.primer.android.internal.presentation.screens.country.SelectCountryViewModelFactory
-import io.primer.android.internal.presentation.screens.paymentMethodSelection.PaymentMethodSelectionViewModelFactory
-import io.primer.android.internal.presentation.screens.paymentMethodSelection.VaultedPaymentMethodSelectionViewModelFactory
+import io.primer.android.internal.navigation.CheckoutNavigator
+import io.primer.android.internal.navigation.CheckoutResultHandler
+import io.primer.android.internal.navigation.CountryNavigator
+import io.primer.android.internal.navigation.DefaultCountryNavigator
+import io.primer.android.internal.navigation.ScreenNavigator
 import io.primer.android.ui.core.configuration.domain.model.BasicOrderInfoInteractor
 import io.primer.android.ui.core.data.repository.CountriesDataRepository
 import io.primer.android.ui.core.domain.FormatAmountToCurrencyInteractor
@@ -57,7 +53,12 @@ internal class ComponentsContainer(
         registerRepositories()
         registerInteractors()
         registerUseCases()
-        registerComponents()
+        registerNavigators()
+    }
+
+    private fun registerNavigators() {
+        // CountryNavigator - standalone, no external dependencies
+        registerSingleton<CountryNavigator> { DefaultCountryNavigator() }
     }
 
     private fun registerRepositories() {
@@ -93,7 +94,6 @@ internal class ComponentsContainer(
 
         registerSingleton<KlarnaRepository> {
             KlarnaRepositoryImpl(
-                context = sdk().resolve(),
                 mapper = resolve(),
                 primerConfig = sdk().resolve(),
             )
@@ -118,6 +118,12 @@ internal class ComponentsContainer(
     }
 
     private fun registerUseCases() {
+        registerPaymentUseCases()
+        registerVaultUseCases()
+        registerCleanupUseCases()
+    }
+
+    private fun registerPaymentUseCases() {
         registerSingleton {
             AvailablePaymentMethodsUseCase(
                 headlessRepository = resolve(),
@@ -153,6 +159,20 @@ internal class ComponentsContainer(
             )
         }
 
+        registerSingleton {
+            SetVaultOnSuccessUseCase(
+                actionInteractor = sdk().resolve(ActionsContainer.ACTION_INTERACTOR_DI_KEY),
+            )
+        }
+
+        registerSingleton {
+            GetCountriesUseCase(
+                countriesRepository = resolve(),
+            )
+        }
+    }
+
+    private fun registerVaultUseCases() {
         registerSingleton<PrimerVaultManagerRepository> {
             PrimerVaultManagerRepositoryImpl()
         }
@@ -162,21 +182,16 @@ internal class ComponentsContainer(
         }
 
         registerSingleton {
-            SubmitVaultedPaymentUseCase(vaultManagerRepository = resolve())
-        }
-
-        registerSingleton {
-            ValidateVaultedCVVUseCase(vaultManagerRepository = resolve())
-        }
-
-        registerSingleton {
-            ShouldCaptureVaultedCvvUseCase(
-                configurationInteractor = sdk().resolve(ConfigurationCoreContainer.CONFIGURATION_INTERACTOR_DI_KEY),
+            SubmitVaultedPaymentUseCase(
+                vaultManagerRepository = resolve(),
+                headlessRepository = resolve(),
             )
         }
 
         registerSingleton {
-            VaultedCvvFieldsUseCase()
+            CheckCvvRecaptureRequiredUseCase(
+                configurationInteractor = sdk().resolve(ConfigurationCoreContainer.CONFIGURATION_INTERACTOR_DI_KEY),
+            )
         }
 
         registerSingleton {
@@ -184,73 +199,39 @@ internal class ComponentsContainer(
         }
     }
 
-    private fun registerComponents() {
-        registerCheckoutComponents()
-        registerCardFormComponents()
-        registerPaymentMethodSelectionComponents()
-        registerVaultedComponents()
-        registerCountrySelectionComponents()
-        registerKlarnaComponents()
-    }
-
-    private fun registerCheckoutComponents() {
+    private fun registerCleanupUseCases() {
         registerSingleton {
-            CheckoutNavigator()
-        }
-
-        registerFactory {
-            CheckoutViewModelFactory()
+            HeadlessCleanupUseCase(
+                headlessRepository = resolve(),
+            )
         }
 
         registerSingleton {
-            PrimerCheckoutComponents()
+            CardFormCleanupUseCase(
+                rawDataManagerRepository = resolve(CARD_RAW_DATA_MANAGER_REPOSITORY_DI_KEY),
+            )
+        }
+
+        registerSingleton {
+            KlarnaCleanupUseCase(
+                klarnaRepository = resolve(),
+            )
         }
     }
 
-    private fun registerCardFormComponents() {
-        registerFactory {
-            CardFormViewModelFactory()
-        }
-
-        registerSingleton {
-            PrimerCardFormComponents()
-        }
-    }
-
-    private fun registerPaymentMethodSelectionComponents() {
-        registerFactory {
-            PaymentMethodSelectionViewModelFactory()
-        }
-
-        registerSingleton {
-            PrimerPaymentMethodSelectionComponents()
-        }
-    }
-
-    private fun registerVaultedComponents() {
-        registerFactory {
-            VaultedPaymentMethodSelectionViewModelFactory()
-        }
-
-        registerSingleton {
-            PrimerVaultedComponents()
-        }
-    }
-
-    private fun registerCountrySelectionComponents() {
-        registerFactory {
-            SelectCountryViewModelFactory()
-        }
-
-        registerSingleton {
-            PrimerSelectCountryComponents()
-        }
-    }
-
-    private fun registerKlarnaComponents() {
-        registerSingleton {
-            PrimerKlarnaComponents()
-        }
+    /**
+     * Register the checkout navigator instance.
+     * Called from PrimerCheckoutViewModelFactory after creating the navigator.
+     *
+     * Registers as:
+     * - [CheckoutNavigator] - for direct access to navigation events
+     * - [ScreenNavigator] - for screen navigation
+     * - [CheckoutResultHandler] - for result delivery
+     */
+    fun registerNavigator(navigator: CheckoutNavigator) {
+        registerSingleton { navigator }
+        registerSingleton<ScreenNavigator> { navigator }
+        registerSingleton<CheckoutResultHandler> { navigator }
     }
 
     companion object {

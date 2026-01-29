@@ -9,6 +9,7 @@ import io.mockk.verify
 import io.primer.android.components.PrimerHeadlessUniversalCheckoutInterface
 import io.primer.android.components.PrimerHeadlessUniversalCheckoutListener
 import io.primer.android.components.domain.core.models.PrimerHeadlessUniversalCheckoutPaymentMethod
+import io.primer.android.components.domain.core.models.PrimerPaymentMethodManagerCategory
 import io.primer.android.data.settings.PrimerSettings
 import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.domain.PrimerCheckoutData
@@ -17,8 +18,6 @@ import io.primer.android.internal.data.repositories.HeadlessRepositoryImpl
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.async
-import kotlinx.coroutines.cancelAndJoin
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
@@ -56,7 +55,9 @@ class HeadlessRepositoryImplTest {
         mockHeadlessInterface = mockk(relaxed = true)
         mockContext = mockk()
         mockContextRef = WeakReference(mockContext)
-        mockPrimerSettings = mockk()
+        mockPrimerSettings = mockk {
+            every { clientSessionCachingEnabled } returns false
+        }
         mockPrimerConfig = createMockPrimerConfig(TEST_CLIENT_TOKEN)
         repository = HeadlessRepositoryImpl(mockHeadlessInterface, mockContextRef, mockPrimerConfig)
     }
@@ -141,25 +142,6 @@ class HeadlessRepositoryImplTest {
         }
 
         @Test
-        fun `should cleanup when cancelled`() = runTest {
-            val listenerSlot = captureCheckoutListener()
-
-            setupListenerToReturn { /* Don't call any callback - suspend indefinitely */ }
-
-            val job = launch {
-                repository.awaitPaymentResult()
-            }
-
-            advanceUntilIdle()
-            job.cancelAndJoin()
-
-            // Verify cleanup was called
-            verify(exactly = 1) {
-                mockHeadlessInterface.cleanup()
-            }
-        }
-
-        @Test
         fun `should only respond to first callback when multiple are called`() = runTest {
             val mockCheckoutData = mockk<PrimerCheckoutData>()
             val mockError = createMockError("Error")
@@ -181,16 +163,18 @@ class HeadlessRepositoryImplTest {
 
         @Test
         fun `should return payment methods when loaded`() = runTest {
-            val expectedPaymentMethods = listOf(
-                createMockPaymentMethod("PAYMENT_CARD"),
-                createMockPaymentMethod("GOOGLE_PAY"),
+            val cardPaymentMethod = createMockPaymentMethod("PAYMENT_CARD")
+            val nativeUiPaymentMethod = createMockPaymentMethod(
+                "GOOGLE_PAY",
+                listOf(PrimerPaymentMethodManagerCategory.NATIVE_UI),
             )
+            val paymentMethodsFromHeadless = listOf(cardPaymentMethod, nativeUiPaymentMethod)
 
-            setupHeadlessStartToReturn(expectedPaymentMethods)
+            setupHeadlessStartToReturn(paymentMethodsFromHeadless)
 
             val result = repository.getAvailablePaymentMethods()
 
-            assertEquals(expectedPaymentMethods, result)
+            assertEquals(paymentMethodsFromHeadless, result)
             verify {
                 mockHeadlessInterface.start(
                     context = mockContext,
@@ -228,7 +212,7 @@ class HeadlessRepositoryImplTest {
 
         @Test
         fun `should only respond to onAvailablePaymentMethodsLoaded callback`() = runTest {
-            val expectedPaymentMethods = listOf(createMockPaymentMethod("TEST"))
+            val expectedPaymentMethods = listOf(createMockPaymentMethod("PAYMENT_CARD"))
             val listenerSlot = slot<PrimerHeadlessUniversalCheckoutListener>()
 
             every {
@@ -249,6 +233,142 @@ class HeadlessRepositoryImplTest {
             val result = repository.getAvailablePaymentMethods()
 
             assertEquals(expectedPaymentMethods, result)
+        }
+
+        @Test
+        fun `should include PAYMENT_CARD type regardless of categories`() = runTest {
+            val cardWithNoCategories = createMockPaymentMethod("PAYMENT_CARD", emptyList())
+            val cardWithRawData = createMockPaymentMethod(
+                "PAYMENT_CARD",
+                listOf(PrimerPaymentMethodManagerCategory.RAW_DATA),
+            )
+
+            setupHeadlessStartToReturn(listOf(cardWithNoCategories, cardWithRawData))
+
+            val result = repository.getAvailablePaymentMethods()
+
+            assertEquals(2, result.size)
+            assertTrue(result.all { it.paymentMethodType == "PAYMENT_CARD" })
+        }
+
+        @Test
+        fun `should include methods with NATIVE_UI category`() = runTest {
+            val nativeUiMethod = createMockPaymentMethod(
+                "GOOGLE_PAY",
+                listOf(PrimerPaymentMethodManagerCategory.NATIVE_UI),
+            )
+
+            setupHeadlessStartToReturn(listOf(nativeUiMethod))
+
+            val result = repository.getAvailablePaymentMethods()
+
+            assertEquals(1, result.size)
+            assertEquals("GOOGLE_PAY", result[0].paymentMethodType)
+        }
+
+        @Test
+        fun `should include methods with KLARNA category`() = runTest {
+            val klarnaMethod = createMockPaymentMethod(
+                "KLARNA",
+                listOf(PrimerPaymentMethodManagerCategory.KLARNA),
+            )
+
+            setupHeadlessStartToReturn(listOf(klarnaMethod))
+
+            val result = repository.getAvailablePaymentMethods()
+
+            assertEquals(1, result.size)
+            assertEquals("KLARNA", result[0].paymentMethodType)
+        }
+
+        @Test
+        fun `should filter out methods without supported categories`() = runTest {
+            val rawDataMethod = createMockPaymentMethod(
+                "CUSTOM_PM",
+                listOf(PrimerPaymentMethodManagerCategory.RAW_DATA),
+            )
+            val stripeAchMethod = createMockPaymentMethod(
+                "STRIPE_ACH",
+                listOf(PrimerPaymentMethodManagerCategory.STRIPE_ACH),
+            )
+            val nolPayMethod = createMockPaymentMethod(
+                "NOL_PAY",
+                listOf(PrimerPaymentMethodManagerCategory.NOL_PAY),
+            )
+            val componentWithRedirectMethod = createMockPaymentMethod(
+                "REDIRECT_PM",
+                listOf(PrimerPaymentMethodManagerCategory.COMPONENT_WITH_REDIRECT),
+            )
+
+            setupHeadlessStartToReturn(
+                listOf(rawDataMethod, stripeAchMethod, nolPayMethod, componentWithRedirectMethod),
+            )
+
+            val result = repository.getAvailablePaymentMethods()
+
+            assertTrue(result.isEmpty())
+        }
+
+        @Test
+        fun `should filter out methods with no categories that are not PAYMENT_CARD`() = runTest {
+            val unknownMethod = createMockPaymentMethod("UNKNOWN_PM", emptyList())
+
+            setupHeadlessStartToReturn(listOf(unknownMethod))
+
+            val result = repository.getAvailablePaymentMethods()
+
+            assertTrue(result.isEmpty())
+        }
+
+        @Test
+        fun `should correctly filter mixed payment methods list`() = runTest {
+            val card = createMockPaymentMethod("PAYMENT_CARD", emptyList())
+            val googlePay = createMockPaymentMethod(
+                "GOOGLE_PAY",
+                listOf(PrimerPaymentMethodManagerCategory.NATIVE_UI),
+            )
+            val klarna = createMockPaymentMethod(
+                "KLARNA",
+                listOf(PrimerPaymentMethodManagerCategory.KLARNA),
+            )
+            val rawDataMethod = createMockPaymentMethod(
+                "RAW_DATA_PM",
+                listOf(PrimerPaymentMethodManagerCategory.RAW_DATA),
+            )
+            val stripeAch = createMockPaymentMethod(
+                "STRIPE_ACH",
+                listOf(PrimerPaymentMethodManagerCategory.STRIPE_ACH),
+            )
+            val unsupportedMethod = createMockPaymentMethod("UNSUPPORTED", emptyList())
+
+            setupHeadlessStartToReturn(
+                listOf(card, googlePay, klarna, rawDataMethod, stripeAch, unsupportedMethod),
+            )
+
+            val result = repository.getAvailablePaymentMethods()
+
+            assertEquals(3, result.size)
+            assertTrue(result.any { it.paymentMethodType == "PAYMENT_CARD" })
+            assertTrue(result.any { it.paymentMethodType == "GOOGLE_PAY" })
+            assertTrue(result.any { it.paymentMethodType == "KLARNA" })
+        }
+
+        @Test
+        fun `should include method with multiple categories if one is supported`() = runTest {
+            val multiCategoryMethod = createMockPaymentMethod(
+                "MULTI_CATEGORY",
+                listOf(
+                    PrimerPaymentMethodManagerCategory.RAW_DATA,
+                    PrimerPaymentMethodManagerCategory.NATIVE_UI,
+                ),
+            )
+
+            setupHeadlessStartToReturn(listOf(multiCategoryMethod))
+
+            val result = repository.getAvailablePaymentMethods()
+
+            assertEquals(1, result.size)
+            assertEquals("MULTI_CATEGORY", result[0].paymentMethodType)
         }
     }
 
@@ -303,11 +423,14 @@ class HeadlessRepositoryImplTest {
         every { this@mockk.description } returns description
     }
 
-    private fun createMockPaymentMethod(type: String): PrimerHeadlessUniversalCheckoutPaymentMethod = mockk {
+    private fun createMockPaymentMethod(
+        type: String,
+        categories: List<PrimerPaymentMethodManagerCategory> = emptyList(),
+    ): PrimerHeadlessUniversalCheckoutPaymentMethod = mockk {
         every { paymentMethodType } returns type
         every { paymentMethodName } returns "$type Name"
         every { supportedPrimerSessionIntents } returns emptyList()
-        every { paymentMethodManagerCategories } returns emptyList()
+        every { paymentMethodManagerCategories } returns categories
         every { requiredInputDataClass } returns null
     }
 

@@ -1,8 +1,8 @@
 package io.primer.android.internal.presentation.utils
 
 import io.primer.android.components.domain.core.models.card.PrimerCardData
+import io.primer.android.components.domain.core.models.card.PrimerCardNetwork
 import io.primer.android.components.domain.inputs.models.PrimerInputElementType
-import io.primer.android.configuration.data.model.CardNetwork
 
 internal val CARD_FIELDS = setOf(
     PrimerInputElementType.CARD_NUMBER,
@@ -23,13 +23,13 @@ internal val BILLING_FIELDS = setOf(
 )
 
 internal fun Map<PrimerInputElementType, String>.toPrimerCardData(
-    cardNetwork: CardNetwork.Type = CardNetwork.Type.OTHER,
+    cardNetwork: PrimerCardNetwork? = null,
 ): PrimerCardData = PrimerCardData(
     cardNumber = get(PrimerInputElementType.CARD_NUMBER) ?: "",
     expiryDate = get(PrimerInputElementType.EXPIRY_DATE)?.formatExpiryDate() ?: "",
     cvv = get(PrimerInputElementType.CVV) ?: "",
     cardHolderName = get(PrimerInputElementType.CARDHOLDER_NAME)?.takeIf { it.isNotEmpty() },
-    cardNetwork = cardNetwork,
+    cardNetwork = cardNetwork?.network,
 )
 
 @Suppress("MagicNumber")

@@ -16,7 +16,9 @@ internal class KlarnaViewModelFactory(
             return KlarnaViewModel(
                 viewModelStoreOwner = viewModelStoreOwner,
                 klarnaRepository = resolve(),
-                checkoutNavigator = resolve(),
+                headlessRepository = resolve(),
+                cleanupUseCase = resolve(),
+                logReporter = resolve(),
             ) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")

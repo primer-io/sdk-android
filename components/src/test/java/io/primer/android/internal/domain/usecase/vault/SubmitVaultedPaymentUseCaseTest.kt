@@ -3,8 +3,10 @@ package io.primer.android.internal.domain.usecase.vault
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
+import io.primer.android.components.domain.payments.vault.model.card.PrimerVaultedCardAdditionalData
+import io.primer.android.domain.PrimerCheckoutData
+import io.primer.android.internal.domain.repositories.HeadlessRepository
 import io.primer.android.internal.domain.repositories.PrimerVaultManagerRepository
-import io.primer.android.vault.implementation.vaultedMethods.domain.PrimerVaultedPaymentMethodAdditionalData
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertSame
@@ -16,68 +18,69 @@ import org.junit.jupiter.api.Test
 class SubmitVaultedPaymentUseCaseTest {
 
     private lateinit var repository: PrimerVaultManagerRepository
+    private lateinit var headlessRepository: HeadlessRepository
     private lateinit var useCase: SubmitVaultedPaymentUseCase
 
     @BeforeEach
     fun setUp() {
         repository = mockk()
-        useCase = SubmitVaultedPaymentUseCase(repository)
+        headlessRepository = mockk()
+        useCase = SubmitVaultedPaymentUseCase(repository, headlessRepository)
     }
 
     @Test
-    fun `invoke should start payment flow without additional data`() = runTest {
-        // Given
+    fun `invoke should start payment flow without cvv and return checkout data`() = runTest {
+        val mockCheckoutData = mockk<PrimerCheckoutData>()
         coEvery { repository.startPaymentFlow("vault-id", null) } returns Result.success(Unit)
+        coEvery { headlessRepository.awaitPaymentResult() } returns Result.success(mockCheckoutData)
 
-        // When
         val result = useCase("vault-id")
 
-        // Then
         assertTrue(result.isSuccess)
+        assertSame(mockCheckoutData, result.getOrNull())
         coVerify(exactly = 1) { repository.startPaymentFlow("vault-id", null) }
+        coVerify(exactly = 1) { headlessRepository.awaitPaymentResult() }
     }
 
     @Test
-    fun `invoke should start payment flow with additional data when provided`() = runTest {
-        // Given
-        val additionalData = mockk<PrimerVaultedPaymentMethodAdditionalData>()
-        coEvery { repository.startPaymentFlow("vault-id", additionalData) } returns Result.success(Unit)
+    fun `invoke should start payment flow with cvv when provided`() = runTest {
+        val mockCheckoutData = mockk<PrimerCheckoutData>()
+        coEvery {
+            repository
+                .startPaymentFlow("vault-id", any<PrimerVaultedCardAdditionalData>())
+        } returns Result.success(Unit)
+        coEvery { headlessRepository.awaitPaymentResult() } returns Result.success(mockCheckoutData)
 
-        // When
-        val result = useCase("vault-id", additionalData)
+        val result = useCase("vault-id", cvv = "123")
 
-        // Then
         assertTrue(result.isSuccess)
-        coVerify(exactly = 1) { repository.startPaymentFlow("vault-id", additionalData) }
+        assertSame(mockCheckoutData, result.getOrNull())
+        coVerify(exactly = 1) {
+            repository.startPaymentFlow("vault-id", match<PrimerVaultedCardAdditionalData> { it.cvv == "123" })
+        }
     }
 
     @Test
-    fun `invoke should return failure when manager startPaymentFlow fails`() = runTest {
-        // Given
+    fun `invoke should return failure when repository fails`() = runTest {
         val expected = IllegalStateException("Unable to start")
         coEvery { repository.startPaymentFlow("vault-id", null) } returns Result.failure(expected)
 
-        // When
         val result = useCase("vault-id")
 
-        // Then
         assertTrue(result.isFailure)
         assertSame(expected, result.exceptionOrNull())
-        coVerify(exactly = 1) { repository.startPaymentFlow("vault-id", null) }
+        coVerify(exactly = 0) { headlessRepository.awaitPaymentResult() }
     }
 
     @Test
-    fun `invoke should return failure when manager retrieval fails`() = runTest {
-        // Given
-        val expected = RuntimeException("Manager unavailable")
-        coEvery { repository.startPaymentFlow("vault-id", null) } returns Result.failure(expected)
+    fun `invoke should return failure when headless repository fails`() = runTest {
+        val expected = IllegalStateException("Payment failed")
+        coEvery { repository.startPaymentFlow("vault-id", null) } returns Result.success(Unit)
+        coEvery { headlessRepository.awaitPaymentResult() } returns Result.failure(expected)
 
-        // When
         val result = useCase("vault-id")
 
-        // Then
         assertTrue(result.isFailure)
         assertSame(expected, result.exceptionOrNull())
-        coVerify(exactly = 1) { repository.startPaymentFlow("vault-id", null) }
     }
 }

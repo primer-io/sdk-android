@@ -7,8 +7,6 @@ internal interface PrimerNativeUiPaymentMethodScope : DISdkComponent {
 
     val state: StateFlow<State>
 
-    fun onCancel()
-
     data class State(
         val isProcessing: Boolean = false,
         val error: String? = null,

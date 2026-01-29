@@ -1,14 +1,17 @@
 package io.primer.android.components.analytics.data.repository
 
+import io.primer.android.analytics.data.datasource.CheckoutSessionIdProvider
 import io.primer.android.components.analytics.data.model.AnalyticsEvent
 import io.primer.android.components.analytics.data.model.AnalyticsResponse
 import io.primer.android.components.analytics.data.model.EventType
 import io.primer.android.components.analytics.data.provider.DeviceInfoProvider
 import io.primer.android.components.analytics.internal.AnalyticsEnvironmentUrlProvider
 import io.primer.android.configuration.data.model.ConfigurationData
-import io.primer.android.configuration.data.model.Environment
+import io.primer.android.core.BuildConfig
+import io.primer.android.core.data.datasource.BaseCacheDataSource
 import io.primer.android.core.data.network.PrimerHttpClient
 import io.primer.android.core.logging.internal.LogReporter
+import io.primer.android.data.settings.internal.PrimerConfig
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -18,14 +21,13 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import java.util.UUID
 
+@Suppress("LongParameterList")
 internal class ComponentsEventsRepositoryImpl(
     private val logReporter: LogReporter,
-    private val environment: Environment,
-    private val configurationData: ConfigurationData,
-    private val checkoutSessionId: String,
-    private val sdkVersion: String,
+    private val checkoutSessionIdProvider: CheckoutSessionIdProvider,
+    private val configurationDataSource: BaseCacheDataSource<ConfigurationData, ConfigurationData>,
+    private val primerConfig: PrimerConfig,
     private val httpClient: PrimerHttpClient,
-    private val clientToken: String,
     private val deviceInfoProvider: DeviceInfoProvider,
 ) : ComponentsEventsRepository {
 
@@ -36,21 +38,30 @@ internal class ComponentsEventsRepositoryImpl(
 
     private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 
+    private val configurationData: ConfigurationData by lazy {
+        configurationDataSource.get()
+    }
+
     private val analyticsUrl: String by lazy {
-        AnalyticsEnvironmentUrlProvider.getAnalyticsUrl(environment)
+        AnalyticsEnvironmentUrlProvider.getAnalyticsUrl(configurationData.environment)
     }
 
     override fun send(
         event: EventType,
         timestamp: Long,
     ) {
+
+        if (BuildConfig.DEBUG) {
+            return
+        }
+
         val analyticsEvent = AnalyticsEvent(
             id = UUID.randomUUID().toString(),
             eventName = event.eventName,
             timeInSeconds = timestamp / 1000,
-            checkoutSessionId = checkoutSessionId,
+            checkoutSessionId = checkoutSessionIdProvider.provide(),
             clientSessionId = configurationData.clientSession.clientSessionId ?: "",
-            sdkVersion = sdkVersion,
+            sdkVersion = BuildConfig.SDK_VERSION_STRING,
             primerAccountId = configurationData.primerAccountId ?: "",
             device = deviceInfoProvider.getDevice(),
             deviceType = deviceInfoProvider.getDeviceType(),
@@ -67,7 +78,7 @@ internal class ComponentsEventsRepositoryImpl(
             url = analyticsUrl,
             request = analyticsEvent,
             headers = mapOf(
-                AUTHORIZATION_HEADER to "$BEARER_PREFIX $clientToken",
+                AUTHORIZATION_HEADER to "$BEARER_PREFIX ${primerConfig.clientTokenBase64 ?: ""}",
             ),
         )
             .flowOn(Dispatchers.IO)

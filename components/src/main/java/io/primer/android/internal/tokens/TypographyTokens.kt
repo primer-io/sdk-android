@@ -4,6 +4,7 @@ package io.primer.android.internal.tokens
 
 // Auto-generated file. Do not modify!
 
+import androidx.annotation.FontRes
 import androidx.compose.ui.text.ExperimentalTextApi
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
@@ -14,35 +15,35 @@ import io.primer.android.components.R
 
 data class TypographyTokens(
     val titleXlarge: TypographyStyle = TypographyStyle(
-        font = "Inter",
+        font = R.font.inter,
         letterSpacing = -0.6f,
         weight = 550,
         size = 24,
         lineHeight = 32
     ),
     val titleLarge: TypographyStyle = TypographyStyle(
-        font = "Inter",
+        font = R.font.inter,
         letterSpacing = -0.2f,
         weight = 550,
         size = 16,
         lineHeight = 20
     ),
     val bodyLarge: TypographyStyle = TypographyStyle(
-        font = "Inter",
+        font = R.font.inter,
         letterSpacing = -0.2f,
         weight = 400,
         size = 16,
         lineHeight = 20
     ),
     val bodyMedium: TypographyStyle = TypographyStyle(
-        font = "Inter",
+        font = R.font.inter,
         letterSpacing = 0f,
         weight = 400,
         size = 14,
         lineHeight = 20
     ),
     val bodySmall: TypographyStyle = TypographyStyle(
-        font = "Inter",
+        font = R.font.inter,
         letterSpacing = 0f,
         weight = 400,
         size = 12,
@@ -51,34 +52,27 @@ data class TypographyTokens(
 )
 
 data class TypographyStyle(
-    val font: String,
+    @FontRes val font: Int,
     val letterSpacing: Float,
     val weight: Int,
     val size: Int,
     val lineHeight: Int
 ) {
+    @OptIn(ExperimentalTextApi::class)
     fun toTextStyle(): TextStyle {
         return TextStyle(
-            fontFamily = getFontFamily(font, weight),
+            fontFamily = FontFamily(
+                Font(
+                    resId = font,
+                    variationSettings = FontVariation.Settings(
+                        FontVariation.weight(weight)
+                    )
+                )
+            ),
             fontSize = size.sp,
             letterSpacing = letterSpacing.sp,
             lineHeight = lineHeight.sp
         )
-    }
-
-    @OptIn(ExperimentalTextApi::class)
-    private fun getFontFamily(fontName: String, weight: Int): FontFamily {
-        return when (fontName.lowercase()) {
-            "inter" -> FontFamily(
-                Font(
-                    resId = R.font.inter,
-                    variationSettings = FontVariation.Settings(
-                        FontVariation.weight(weight),
-                    )
-                )
-            ) // Add more fonts here if needed
-            else -> FontFamily.Default
-        }
     }
 }
 

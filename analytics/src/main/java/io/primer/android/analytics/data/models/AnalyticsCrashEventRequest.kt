@@ -70,7 +70,7 @@ internal data class AnalyticsCrashEventRequest(
     }
 }
 
-internal data class CrashProperties(val stacktrace: List<String>) : BaseAnalyticsProperties() {
+data class CrashProperties(val stacktrace: List<String>) : BaseAnalyticsProperties() {
     companion object {
         private const val STACKTRACE_FIELD = "stacktrace"
 

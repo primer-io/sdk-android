@@ -20,7 +20,7 @@ fun Activity.launchCustomTab(launcher: ActivityResultLauncher<Intent>, url: Stri
     val packageName = CustomTabsClient.getPackageName(this, null)
     CustomTabsClient.bindCustomTabsService(
         this,
-        packageName,
+        requireNotNull(packageName),
         object : CustomTabsServiceConnection() {
             override fun onCustomTabsServiceConnected(
                 name: ComponentName,

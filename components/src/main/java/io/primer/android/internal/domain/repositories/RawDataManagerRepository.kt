@@ -4,9 +4,10 @@ import io.primer.android.components.domain.core.models.card.PrimerCardData
 import io.primer.android.components.domain.core.models.metadata.PrimerPaymentMethodMetadataState
 import io.primer.android.components.domain.error.PrimerInputValidationError
 import io.primer.android.components.domain.inputs.models.PrimerInputElementType
+import io.primer.android.internal.domain.Cleanable
 import kotlinx.coroutines.flow.Flow
 
-internal interface RawDataManagerRepository {
+internal interface RawDataManagerRepository : Cleanable {
 
     fun getRequiredInputElementTypes(): List<PrimerInputElementType>
 

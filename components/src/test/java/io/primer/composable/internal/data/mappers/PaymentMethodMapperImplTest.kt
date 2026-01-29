@@ -7,12 +7,10 @@ import io.primer.android.components.domain.core.models.PrimerPaymentMethodManage
 import io.primer.android.configuration.domain.model.Surcharge
 import io.primer.android.internal.data.mappers.PaymentMethodMapperImpl
 import io.primer.android.internal.domain.models.PrimerComposablePaymentMethod
-import io.primer.android.paymentmethods.PrimerRawData
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import kotlin.reflect.KClass
 
 class PaymentMethodMapperImplTest {
 
@@ -28,13 +26,11 @@ class PaymentMethodMapperImplTest {
         paymentMethodName: String? = "Credit Card",
         supportedIntents: List<PrimerSessionIntent> = listOf(PrimerSessionIntent.CHECKOUT),
         categories: List<PrimerPaymentMethodManagerCategory> = listOf(PrimerPaymentMethodManagerCategory.NATIVE_UI),
-        requiredInputDataClass: KClass<out PrimerRawData>? = null,
     ) = PrimerHeadlessUniversalCheckoutPaymentMethod(
         paymentMethodType = paymentMethodType,
         paymentMethodName = paymentMethodName,
         supportedPrimerSessionIntents = supportedIntents,
         paymentMethodManagerCategories = categories,
-        requiredInputDataClass = requiredInputDataClass,
     )
 
     private fun assertPaymentMethodEquals(
@@ -46,19 +42,16 @@ class PaymentMethodMapperImplTest {
         assertEquals(expected.paymentMethodName, actual.paymentMethodName)
         assertEquals(expected.supportedPrimerSessionIntents, actual.supportedPrimerSessionIntents)
         assertEquals(expected.paymentMethodManagerCategories, actual.paymentMethodManagerCategories)
-        assertEquals(expected.requiredInputDataClass, actual.requiredInputDataClass)
         assertEquals(expectedSurcharge, actual.surcharge)
     }
 
     @Test
     fun `toComposable maps all fields correctly with surcharge`() {
-        val requiredInputDataClass: KClass<out PrimerRawData> = mockk()
         val surcharge = mockk<Surcharge>()
         val surcharges = mapOf("PAYMENT_CARD" to surcharge)
 
         val headlessPaymentMethod = createHeadlessPaymentMethod(
             supportedIntents = listOf(PrimerSessionIntent.CHECKOUT, PrimerSessionIntent.VAULT),
-            requiredInputDataClass = requiredInputDataClass,
         )
 
         val result = mapper.toComposable(headlessPaymentMethod, surcharges)
@@ -144,7 +137,6 @@ class PaymentMethodMapperImplTest {
 
     @Test
     fun `toComposable creates correct PrimerComposablePaymentMethod instance`() {
-        val requiredInputDataClass: KClass<out PrimerRawData> = mockk()
         val headlessPaymentMethod = createHeadlessPaymentMethod(
             paymentMethodType = "TEST_TYPE",
             paymentMethodName = "Test Payment",
@@ -153,7 +145,6 @@ class PaymentMethodMapperImplTest {
                 PrimerPaymentMethodManagerCategory.NATIVE_UI,
                 PrimerPaymentMethodManagerCategory.COMPONENT_WITH_REDIRECT,
             ),
-            requiredInputDataClass = requiredInputDataClass,
         )
 
         val result = mapper.toComposable(headlessPaymentMethod)
@@ -164,7 +155,6 @@ class PaymentMethodMapperImplTest {
                 paymentMethodName = headlessPaymentMethod.paymentMethodName,
                 supportedPrimerSessionIntents = headlessPaymentMethod.supportedPrimerSessionIntents,
                 paymentMethodManagerCategories = headlessPaymentMethod.paymentMethodManagerCategories,
-                requiredInputDataClass = headlessPaymentMethod.requiredInputDataClass,
                 surcharge = null,
             ),
             result,

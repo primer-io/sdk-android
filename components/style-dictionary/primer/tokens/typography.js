@@ -7,7 +7,7 @@ StyleDictionary.registerFormat({
       .filter(token => token.path[1] === 'typography' && token.path.length === 5)
       .reduce((acc, token) => {
         const name = token.path[2] + token.path[3].charAt(0).toUpperCase() + token.path[3].slice(1);
-        acc[name] = acc[name] || { font: `"Inter"`, fontSize: undefined, fontWeight: undefined, letterSpacing: undefined, lineHeight: undefined };
+        acc[name] = acc[name] || { font: `R.font.inter`, fontSize: undefined, fontWeight: undefined, letterSpacing: undefined, lineHeight: undefined };
         if (token.path[4] === 'size') acc[name].fontSize = `${token.value}`;
         if (token.path[4] === 'weight') acc[name].fontWeight = `${token.value}`;
         if (token.path[4] === 'letterSpacing') acc[name].letterSpacing = `${token.value}`;
@@ -21,6 +21,7 @@ package io.primer.android.internal.tokens
 
 // Auto-generated file. Do not modify!
 
+import androidx.annotation.FontRes
 import androidx.compose.ui.text.ExperimentalTextApi
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
@@ -42,34 +43,27 @@ data class TypographyTokens(
 )
 
 data class TypographyStyle(
-    val font: String,
+    @FontRes val font: Int,
     val letterSpacing: Float,
     val weight: Int,
     val size: Int,
     val lineHeight: Int
 ) {
+    @OptIn(ExperimentalTextApi::class)
     fun toTextStyle(): TextStyle {
         return TextStyle(
-            fontFamily = getFontFamily(font, weight),
+            fontFamily = FontFamily(
+                Font(
+                    resId = font,
+                    variationSettings = FontVariation.Settings(
+                        FontVariation.weight(weight)
+                    )
+                )
+            ),
             fontSize = size.sp,
             letterSpacing = letterSpacing.sp,
             lineHeight = lineHeight.sp
         )
-    }
-
-    @OptIn(ExperimentalTextApi::class)
-    private fun getFontFamily(fontName: String, weight: Int): FontFamily {
-        return when (fontName.lowercase()) {
-            "inter" -> FontFamily(
-                Font(
-                    resId = R.font.inter,
-                    variationSettings = FontVariation.Settings(
-                        FontVariation.weight(weight),
-                    )
-                )
-            ) // Add more fonts here if needed
-            else -> FontFamily.Default
-        }
     }
 }
 

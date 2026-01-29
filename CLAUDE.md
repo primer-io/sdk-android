@@ -100,7 +100,7 @@ The `:composable` module demonstrates modern Clean Architecture with Jetpack Com
 ```
 
 **Key Features:**
-- **Scope Pattern**: Type-safe APIs (`PrimerCheckoutScope`, `CardFormScope`)
+- **State Pattern**: Type-safe state classes (`PrimerCheckoutScope`, `CardFormState`)
 - **Design System**: Auto-generated tokens from Style Dictionary
 - **Navigation**: Event-based navigation with Jetpack Navigation
 - **Material 3**: Custom theming with light/dark mode support
@@ -446,3 +446,4 @@ project = ACC AND "Acceptance Team" = "Experience"
 - Include file paths for development context
 - Add time estimates for planning accuracy
 - Use the 🤖 marker for automated ticket creation
+- there's no release yet! it's still WIP! components will be delivered later when it's ready!

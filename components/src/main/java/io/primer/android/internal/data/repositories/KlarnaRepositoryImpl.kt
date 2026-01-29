@@ -13,26 +13,30 @@ import io.primer.android.klarna.api.composable.KlarnaPaymentCollectableData
 import kotlinx.coroutines.flow.map
 
 internal class KlarnaRepositoryImpl(
-    private val context: Context,
     private val mapper: KlarnaMapper,
     private val primerConfig: PrimerConfig,
 ) : KlarnaRepository {
 
-    private lateinit var klarnaComponent: KlarnaComponent
+    private var klarnaComponent: KlarnaComponent? = null
 
-    override suspend fun start(viewModelStoreOwner: ViewModelStoreOwner) {
-        klarnaComponent = PrimerHeadlessUniversalCheckoutKlarnaManager(viewModelStoreOwner)
-            .provideKlarnaComponent(PrimerSessionIntent.CHECKOUT)
-        klarnaComponent.start()
+    private fun requireKlarnaComponent() = requireNotNull(klarnaComponent) {
+        "KlarnaComponent not initialized. Call start() first."
     }
 
-    override suspend fun selectPaymentCategory(category: KlarnaCategory) {
+    override suspend fun start(viewModelStoreOwner: ViewModelStoreOwner) {
+        cleanup()
+        klarnaComponent = PrimerHeadlessUniversalCheckoutKlarnaManager(viewModelStoreOwner)
+            .provideKlarnaComponent(PrimerSessionIntent.CHECKOUT)
+        requireKlarnaComponent().start()
+    }
+
+    override suspend fun selectPaymentCategory(context: Context, category: KlarnaCategory) {
         val klarnaCategory = mapper.mapCategoryToDomain(category)
         val returnIntentUrl = requireNotNull(
             primerConfig.settings.paymentMethodOptions.klarnaOptions.returnIntentUrl,
         ) { "Klarna returnIntentUrl must be configured in PrimerSettings.paymentMethodOptions.klarnaOptions" }
 
-        klarnaComponent.updateCollectedData(
+        requireKlarnaComponent().updateCollectedData(
             KlarnaPaymentCollectableData.PaymentOptions(
                 context = context,
                 returnIntentUrl = returnIntentUrl,
@@ -41,15 +45,19 @@ internal class KlarnaRepositoryImpl(
         )
     }
 
-    override suspend fun authorizePayment() = klarnaComponent.submit()
+    override suspend fun authorizePayment() = requireKlarnaComponent().submit()
 
-    override suspend fun finalizePayment() = klarnaComponent.updateCollectedData(
+    override suspend fun finalizePayment() = requireKlarnaComponent().updateCollectedData(
         KlarnaPaymentCollectableData.FinalizePayment,
     )
 
     override val stepFlow
-        get() = klarnaComponent.componentStep.map { mapper.mapStep(it) }
+        get() = requireKlarnaComponent().componentStep.map { mapper.mapStep(it) }
 
     override val errorFlow
-        get() = klarnaComponent.componentError.map { it.description }
+        get() = requireKlarnaComponent().componentError.map { it.description }
+
+    override fun cleanup() {
+        klarnaComponent = null
+    }
 }

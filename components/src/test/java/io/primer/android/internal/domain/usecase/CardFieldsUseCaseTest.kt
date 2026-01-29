@@ -8,6 +8,7 @@ import io.mockk.mockk
 import io.mockk.runs
 import io.mockk.verify
 import io.primer.android.components.domain.core.models.card.PrimerCardData
+import io.primer.android.components.domain.core.models.card.PrimerCardNetwork
 import io.primer.android.components.domain.error.PrimerInputValidationError
 import io.primer.android.components.domain.inputs.models.PrimerInputElementType
 import io.primer.android.configuration.data.model.CardNetwork
@@ -75,7 +76,7 @@ class CardFieldsUseCaseTest {
                         cardNumber = value,
                         expiryDate = "",
                         cvv = "",
-                        cardNetwork = CardNetwork.Type.OTHER,
+                        cardNetwork = null,
                     ),
                 )
             }
@@ -103,7 +104,7 @@ class CardFieldsUseCaseTest {
         @Test
         fun `updateCardNetwork should update network and repository`() = runTest {
             // Given
-            val network = CardNetwork.Type.VISA
+            val network = PrimerCardNetwork(CardNetwork.Type.VISA, "Visa", allowed = true)
 
             // When
             useCase.updateCardNetwork(network)
@@ -115,7 +116,7 @@ class CardFieldsUseCaseTest {
                         cardNumber = "",
                         expiryDate = "",
                         cvv = "",
-                        cardNetwork = network,
+                        cardNetwork = network.network,
                     ),
                 )
             }

@@ -72,4 +72,6 @@ class CardRawDataManagerRepository(
     override fun setData(data: PrimerCardData) = cardManager.setRawData(data)
 
     override fun submit() = cardManager.submit()
+
+    override fun cleanup() = cardManager.cleanup()
 }

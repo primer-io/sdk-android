@@ -4,7 +4,6 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
 import io.primer.android.internal.tokens.BorderWidthTokens
@@ -103,17 +102,13 @@ private fun LightColorTokens.toMaterialColorScheme(): ColorScheme {
 @Composable
 internal fun PrimerTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    theme: PrimerTheme,
     content: @Composable () -> Unit,
 ) {
+    val theme = LocalPrimerTheme.current
     val colorTokens = if (darkTheme) theme.darkColorTokens else theme.lightColorTokens
 
-    CompositionLocalProvider(
-        LocalPrimerTheme provides theme,
-    ) {
-        MaterialTheme(
-            colorScheme = colorTokens.toMaterialColorScheme(),
-            content = content,
-        )
-    }
+    MaterialTheme(
+        colorScheme = colorTokens.toMaterialColorScheme(),
+        content = content,
+    )
 }

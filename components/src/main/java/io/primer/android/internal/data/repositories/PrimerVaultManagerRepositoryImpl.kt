@@ -7,9 +7,6 @@ import io.primer.android.domain.tokenization.models.PrimerVaultedPaymentMethod
 import io.primer.android.internal.domain.repositories.PrimerVaultManagerRepository
 import io.primer.android.vault.implementation.vaultedMethods.domain.PrimerVaultedPaymentMethodAdditionalData
 
-/**
- * Concrete implementation that lazily creates and caches the vault manager instance.
- */
 internal class PrimerVaultManagerRepositoryImpl(
     private val manager: PrimerHeadlessUniversalCheckoutVaultManagerInterface =
         PrimerHeadlessUniversalCheckoutVaultManager.newInstance(),

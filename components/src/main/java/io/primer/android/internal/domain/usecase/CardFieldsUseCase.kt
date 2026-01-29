@@ -1,8 +1,9 @@
 package io.primer.android.internal.domain.usecase
 
+import io.primer.android.api.components.card.PrimerCardFormController
+import io.primer.android.components.domain.core.models.card.PrimerCardNetwork
 import io.primer.android.components.domain.inputs.models.PrimerInputElementType
 import io.primer.android.components.domain.inputs.models.isEnabled
-import io.primer.android.configuration.data.model.CardNetwork
 import io.primer.android.configuration.domain.CachePolicy
 import io.primer.android.configuration.domain.ConfigurationInteractor
 import io.primer.android.configuration.domain.model.CheckoutModule
@@ -13,13 +14,13 @@ import io.primer.android.internal.domain.repositories.RawDataManagerRepository
 import io.primer.android.internal.presentation.utils.BILLING_FIELDS
 import io.primer.android.internal.presentation.utils.CARD_FIELDS
 import io.primer.android.internal.presentation.utils.toPrimerCardData
-import io.primer.android.scope.PrimerCardFormScope
 import io.primer.android.ui.core.domain.helper.toSyncValidationError
 import io.primer.android.ui.core.model.SyncValidationError
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.update
@@ -33,14 +34,14 @@ internal class CardFieldsUseCase(
     private val _formData = MutableStateFlow<Map<PrimerInputElementType, String>>(emptyMap())
     val formData: Flow<Map<PrimerInputElementType, String>> = _formData.asStateFlow()
 
-    private val _cardNetwork = MutableStateFlow(CardNetwork.Type.OTHER)
+    private val _cardNetwork: MutableStateFlow<PrimerCardNetwork?> = MutableStateFlow(null)
     private val _submitAttempted = MutableStateFlow(false)
     private val _fieldFocusStates =
-        MutableStateFlow<Map<PrimerInputElementType, PrimerCardFormScope.FieldState>>(
+        MutableStateFlow<Map<PrimerInputElementType, PrimerCardFormController.FieldState>>(
             emptyMap(),
         )
 
-    val fieldFocusStates: Flow<Map<PrimerInputElementType, PrimerCardFormScope.FieldState>> =
+    val fieldFocusStates: Flow<Map<PrimerInputElementType, PrimerCardFormController.FieldState>> =
         _fieldFocusStates.asStateFlow()
 
     val validationErrors: Flow<List<SyncValidationError>> =
@@ -64,19 +65,30 @@ internal class CardFieldsUseCase(
                     fieldState?.shouldShowError == true
                 }
             }
-        }
+        }.distinctUntilChanged()
+
+    private val _billingFields = MutableStateFlow<List<PrimerInputElementType>>(emptyList())
 
     val isFormValid: Flow<Boolean> =
         combine(
             rawDataManagerRepository.validationState.onStart { emit(emptyList()) },
             formData,
             _cardNetwork,
-        ) { errors, data, network ->
+            _billingFields,
+        ) { errors, data, network, billingFields ->
             val primerCardData = data.toPrimerCardData(network)
             val syncErrors = errors.map { it.toSyncValidationError(primerCardData) }
 
-            // Form is valid when there are no validation errors for any field
-            syncErrors.isEmpty()
+            // Check card validation errors are empty
+            val cardValid = syncErrors.isEmpty()
+
+            // Check all required billing fields have values
+            val billingValid = billingFields.all { field ->
+                val value = data[field].orEmpty()
+                value.isNotBlank()
+            }
+
+            cardValid && billingValid
         }
 
     fun updateField(field: PrimerInputElementType, value: String) {
@@ -84,7 +96,7 @@ internal class CardFieldsUseCase(
         updateRepository()
     }
 
-    fun updateCardNetwork(network: CardNetwork.Type) {
+    fun updateCardNetwork(network: PrimerCardNetwork?) {
         _cardNetwork.value = network
         updateRepository()
     }
@@ -96,7 +108,7 @@ internal class CardFieldsUseCase(
 
     fun onFieldFocusChange(field: PrimerInputElementType, hasFocus: Boolean) {
         _fieldFocusStates.update { currentStates ->
-            val currentFieldState = currentStates[field] ?: PrimerCardFormScope.FieldState()
+            val currentFieldState = currentStates[field] ?: PrimerCardFormController.FieldState()
             val updatedFieldState = currentFieldState.copy(
                 hasFocus = hasFocus,
                 hasBeenFocused = currentFieldState.hasBeenFocused || hasFocus,
@@ -127,7 +139,10 @@ internal class CardFieldsUseCase(
             val configuration = configurationInteractor(ConfigurationParams(CachePolicy.ForceCache)).getOrThrow()
             val billingAddress = configuration.checkoutModules.findFirstInstance<CheckoutModule.BillingAddress>()
             val billingAddressOptions = billingAddress?.options
-            BILLING_FIELDS.filter { billingAddressOptions.isEnabled(it) }
+            val fields = BILLING_FIELDS.filter { billingAddressOptions.isEnabled(it) }
+            // Update internal billing fields for form validation
+            _billingFields.value = fields
+            fields
         } catch (ignored: Exception) {
             logReporter.error("Failed to getBillingFields: ${ignored.message}")
             emptyList()

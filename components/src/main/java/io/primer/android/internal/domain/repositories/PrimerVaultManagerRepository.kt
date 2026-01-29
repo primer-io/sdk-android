@@ -4,9 +4,6 @@ import io.primer.android.components.domain.error.PrimerValidationError
 import io.primer.android.domain.tokenization.models.PrimerVaultedPaymentMethod
 import io.primer.android.vault.implementation.vaultedMethods.domain.PrimerVaultedPaymentMethodAdditionalData
 
-/**
- * Abstraction for vaulted payment manager operations.
- */
 internal interface PrimerVaultManagerRepository {
     suspend fun fetchVaultedPaymentMethods(): Result<List<PrimerVaultedPaymentMethod>>
     suspend fun validate(

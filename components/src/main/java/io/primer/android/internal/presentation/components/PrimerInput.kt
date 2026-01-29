@@ -13,19 +13,43 @@ import androidx.compose.material3.TextFieldColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.LayoutDirection
 import io.primer.android.LocalPrimerTheme
+import io.primer.android.components.R
+import io.primer.android.internal.presentation.preview.PreviewContainer
 
 @Composable
-fun PrimerInput(
+private fun buildAccessibilityLabel(accessibilityLabel: String?, isRequired: Boolean): String? {
+    val requiredText = if (isRequired) stringResource(R.string.accessibility_common_required) else null
+    return buildList {
+        accessibilityLabel?.let { add(it) }
+        requiredText?.let { add(it) }
+    }.joinToString(", ").ifEmpty { null }
+}
+
+private fun resolveTextFieldLayoutDirection(
+    forceLtrForNumbers: Boolean,
+    keyboardOptions: KeyboardOptions,
+    layoutDirection: LayoutDirection,
+): LayoutDirection {
+    val shouldForceLtr = forceLtrForNumbers && (
+        keyboardOptions.keyboardType == KeyboardType.Number ||
+            keyboardOptions.keyboardType == KeyboardType.Phone
+        )
+    return if (shouldForceLtr) LayoutDirection.Ltr else layoutDirection
+}
+
+@Composable
+internal fun PrimerInput(
     modifier: Modifier = Modifier,
     value: String,
     onValueChange: (String) -> Unit,
@@ -39,24 +63,25 @@ fun PrimerInput(
     enabled: Boolean = true,
     forceLtrForNumbers: Boolean = false,
     onFocusChange: ((Boolean) -> Unit)? = null,
+    accessibilityLabel: String?,
+    isRequired: Boolean = false,
     colors: TextFieldColors = OutlinedTextFieldDefaults.colors(
+        focusedContainerColor = LocalPrimerTheme.current.colorTokens().primerColorBackground,
+        unfocusedContainerColor = LocalPrimerTheme.current.colorTokens().primerColorBackground,
+        disabledContainerColor = LocalPrimerTheme.current.colorTokens().primerColorBackground,
+        errorContainerColor = LocalPrimerTheme.current.colorTokens().primerColorBackground,
         focusedBorderColor = LocalPrimerTheme.current.colorTokens().primerColorBorderOutlinedFocus,
         unfocusedBorderColor = LocalPrimerTheme.current.colorTokens().primerColorBorderOutlinedDefault,
     ),
 ) {
+    val fullAccessibilityLabel = buildAccessibilityLabel(accessibilityLabel, isRequired)
     val layoutDirection = LocalLayoutDirection.current
-
-    // Determine if we should force LTR direction
-    val shouldForceLtr = forceLtrForNumbers && (
-        keyboardOptions.keyboardType == KeyboardType.Number ||
-            keyboardOptions.keyboardType == KeyboardType.Phone
-        )
-
-    // Use LTR layout for numeric inputs to ensure proper cursor positioning and formatting
-    val textFieldLayoutDirection = if (shouldForceLtr) LayoutDirection.Ltr else layoutDirection
+    val textFieldLayoutDirection = resolveTextFieldLayoutDirection(forceLtrForNumbers, keyboardOptions, layoutDirection)
 
     Column(
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier
+            .fillMaxWidth()
+            .contentDescriptionIfNotNull(fullAccessibilityLabel),
     ) {
         if (!label.isNullOrBlank()) {
             Text(
@@ -75,27 +100,32 @@ fun PrimerInput(
                 onValueChange = onValueChange,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .let { modifier ->
-                        onFocusChange?.let { focusCallback ->
-                            modifier.onFocusChanged { focusState ->
-                                focusCallback(focusState.isFocused)
-                            }
-                        } ?: modifier
-                    },
+                    .onFocusChangedIfNotNull(onFocusChange),
                 placeholder = {
                     placeholder?.let {
                         Text(text = it, color = LocalPrimerTheme.current.colorTokens().primerColorTextPlaceholder)
                     }
                 },
                 singleLine = true,
-                isError = error != null,
+                // isError=false to prevent Material's TalkBack announcements
+                // Error announcement handled solely by ErrorSection with liveRegion
+                isError = false,
                 trailingIcon = trailingIcon,
                 visualTransformation = visualTransformation,
                 keyboardOptions = keyboardOptions,
                 enabled = enabled,
                 readOnly = readOnly,
                 shape = RoundedCornerShape(LocalPrimerTheme.current.radiusTokens.small),
-                colors = colors,
+                // Custom colors to show error border since isError=false
+                colors = if (error != null) {
+                    val errorColor = LocalPrimerTheme.current.colorTokens().primerColorTextNegative
+                    OutlinedTextFieldDefaults.colors(
+                        focusedBorderColor = errorColor,
+                        unfocusedBorderColor = errorColor,
+                    )
+                } else {
+                    colors
+                },
             )
         }
 
@@ -111,9 +141,55 @@ private fun ErrorSection(errorText: String, layoutDirection: LayoutDirection) {
         style = LocalPrimerTheme.current.typographyTokens.bodySmall.toTextStyle(),
         color = LocalPrimerTheme.current.colorTokens().primerColorTextNegative,
         textAlign = if (layoutDirection == LayoutDirection.Rtl) TextAlign.End else TextAlign.Start,
-        modifier = Modifier.semantics {
-            liveRegion = LiveRegionMode.Polite
-        },
+        // Announce error via liveRegion (Material's isError is disabled)
+        modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
     )
     Spacer(modifier = Modifier.height(LocalPrimerTheme.current.spacingTokens.xsmall))
+}
+
+@Preview(name = "Empty", showBackground = true)
+@Composable
+private fun PrimerInputEmptyPreview() = PreviewContainer {
+    PrimerInput(
+        value = "",
+        onValueChange = {},
+        label = "Card Number",
+        placeholder = "1234 5678 9012 3456",
+        accessibilityLabel = "",
+    )
+}
+
+@Preview(name = "Filled", showBackground = true)
+@Composable
+private fun PrimerInputFilledPreview() = PreviewContainer {
+    PrimerInput(
+        value = "4242 4242 4242 4242",
+        onValueChange = {},
+        label = "Card Number",
+        accessibilityLabel = "",
+    )
+}
+
+@Preview(name = "Error", showBackground = true)
+@Composable
+private fun PrimerInputErrorPreview() = PreviewContainer {
+    PrimerInput(
+        value = "1234",
+        onValueChange = {},
+        label = "Card Number",
+        error = "Invalid card number",
+        accessibilityLabel = "",
+    )
+}
+
+@Preview(name = "Disabled", showBackground = true)
+@Composable
+private fun PrimerInputDisabledPreview() = PreviewContainer {
+    PrimerInput(
+        value = "4242 4242 4242 4242",
+        onValueChange = {},
+        label = "Card Number",
+        enabled = false,
+        accessibilityLabel = "",
+    )
 }

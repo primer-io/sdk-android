@@ -209,9 +209,9 @@
     <fragment
         android:id="@+id/ComponentsCheckoutFragment"
         android:name="io.primer.sample.ComponentsCheckoutFragment"
-        android:label="Components Checkout">
+        android:label="Components">
     </fragment>
-    
+
     <fragment
         android:id="@+id/AdyenBankSelectionFragment"
         android:name="io.primer.sample.adyen.ideal.AdyenBankSelectionFragment"

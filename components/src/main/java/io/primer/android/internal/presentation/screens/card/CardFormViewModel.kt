@@ -2,49 +2,70 @@ package io.primer.android.internal.presentation.screens.card
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import io.primer.android.api.components.card.PrimerCardFormController
 import io.primer.android.clientSessionActions.domain.models.PrimerCountry
 import io.primer.android.components.analytics.data.model.EventType
 import io.primer.android.components.analytics.data.repository.ComponentsEventsRepository
+import io.primer.android.components.domain.core.models.card.PrimerCardNetwork
 import io.primer.android.components.domain.inputs.models.PrimerInputElementType
-import io.primer.android.configuration.data.model.CardNetwork
 import io.primer.android.configuration.data.model.CountryCode
+import io.primer.android.core.ExperimentalPrimerApi
 import io.primer.android.core.logging.internal.LogReporter
+import io.primer.android.errors.domain.models.PrimerUnknownError
+import io.primer.android.internal.domain.Cleanable
+import io.primer.android.internal.domain.error.PrimerErrorException
 import io.primer.android.internal.domain.usecase.CardFieldsUseCase
+import io.primer.android.internal.domain.usecase.CardFormCleanupUseCase
 import io.primer.android.internal.domain.usecase.CardNetworkUseCase
+import io.primer.android.internal.domain.usecase.SetVaultOnSuccessUseCase
 import io.primer.android.internal.domain.usecase.SubmitCardPaymentUseCase
-import io.primer.android.internal.presentation.checkout.CheckoutNavigator
-import io.primer.android.internal.presentation.checkout.Screen
-import io.primer.android.scope.PrimerCardFormScope
+import io.primer.android.internal.navigation.CheckoutResultHandler
+import io.primer.android.internal.navigation.CountryNavigator
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-@Suppress("TooManyFunctions")
+@Suppress("TooManyFunctions", "LongParameterList")
 internal class CardFormViewModel(
     private val cardFieldsUseCase: CardFieldsUseCase,
     private val cardNetworkUseCase: CardNetworkUseCase,
     private val submitCardPaymentUseCase: SubmitCardPaymentUseCase,
-    private val checkoutNavigator: CheckoutNavigator,
+    private val setVaultOnSuccessUseCase: SetVaultOnSuccessUseCase,
+    private val cleanupUseCase: CardFormCleanupUseCase,
     private val logReporter: LogReporter,
     private val componentsEventsRepository: ComponentsEventsRepository,
-) : ViewModel(), PrimerCardFormScope {
+    private val countryNavigator: CountryNavigator,
+    private val resultHandler: CheckoutResultHandler,
+) : ViewModel(), PrimerCardFormController, Cleanable {
 
-    private val _uiState = MutableStateFlow(PrimerCardFormScope.State())
-    override val state: StateFlow<PrimerCardFormScope.State> = _uiState.asStateFlow()
+    private val _uiState = MutableStateFlow(PrimerCardFormController.State())
+    override val state: StateFlow<PrimerCardFormController.State> = _uiState.asStateFlow()
     private var hasEnteredAllDetails = false
 
     init {
+        logReporter.info("Initializing card form", component = TAG)
+
+        // Listen for country selection results
+        countryNavigator.countrySelectionResult
+            .onEach { result ->
+                onCountrySelected(result.code, result.name)
+            }
+            .launchIn(viewModelScope)
+
         // Initialize required fields
         viewModelScope.launch {
             val cardFields = cardFieldsUseCase.getCardFields()
             val billingFields = cardFieldsUseCase.getBillingFields()
-            _uiState.value = PrimerCardFormScope.State(cardFields, billingFields)
+            logReporter.debug(
+                "Card fields initialized: cardFields=${cardFields.size}, billingFields=${billingFields.size}",
+                component = TAG,
+            )
+            _uiState.value = PrimerCardFormController.State(cardFields, billingFields)
         }
 
         // Collect form data
@@ -84,53 +105,35 @@ internal class CardFormViewModel(
             }
             .launchIn(viewModelScope)
 
-        // Collect current card network immediately
-        cardNetworkUseCase.currentCardNetwork
-            .onEach { currentCardNetwork ->
-                cardFieldsUseCase.updateCardNetwork(currentCardNetwork)
-
-                _uiState.update { currentState ->
-                    currentState.copy(
-                        selectedNetwork = currentCardNetwork,
-                    )
-                }
-            }
-            .launchIn(viewModelScope)
-
-        // Collect available networks separately (slower)
-        cardNetworkUseCase.availableNetworks
-            .onEach { availableNetworks ->
-                _uiState.update { currentState ->
-                    currentState.copy(
-                        availableNetworks = availableNetworks,
-                    )
-                }
-            }
-            .launchIn(viewModelScope)
-
-        // Listen for country selection results
-        checkoutNavigator.observeNavigationResult<Pair<String, String>>("selected_country")
-            .filterNotNull()
-            .onEach { (countryCode, countryName) ->
-                cardFieldsUseCase.updateField(PrimerInputElementType.COUNTRY_CODE, countryCode)
-                _uiState.update { currentState ->
-                    currentState.copy(
-                        selectedCountry = PrimerCountry(
-                            name = countryName,
-                            code = CountryCode.safeValueOf(countryCode),
-                        ),
-                    )
-                }
+        // Collect network selection state
+        cardNetworkUseCase.networkSelection
+            .onEach { networkSelection ->
+                cardFieldsUseCase.updateCardNetwork(
+                    networkSelection.selectedNetwork.takeIf { networkSelection.isNetworkSelectable },
+                )
+                _uiState.update { it.copy(networkSelection = networkSelection) }
             }
             .launchIn(viewModelScope)
     }
 
-    override fun updateCardNumber(cardNumber: String) {
-        if (cardNumber.isEmpty()) {
-            cardNetworkUseCase.clear()
+    private fun onCountrySelected(countryCode: String, countryName: String) {
+        cardFieldsUseCase.updateField(PrimerInputElementType.COUNTRY_CODE, countryCode)
+        _uiState.update { currentState ->
+            currentState.copy(
+                selectedCountry = PrimerCountry(
+                    name = countryName,
+                    code = CountryCode.safeValueOf(countryCode),
+                ),
+            )
         }
+    }
+
+    override fun requestCountrySelection() {
+        countryNavigator.navigateToCountrySelection()
+    }
+
+    override fun updateCardNumber(cardNumber: String) {
         cardFieldsUseCase.updateField(PrimerInputElementType.CARD_NUMBER, cardNumber)
-        cardNetworkUseCase.detectCardNetwork(cardNumber)
     }
 
     override fun updateCvv(cvv: String) =
@@ -169,66 +172,94 @@ internal class CardFormViewModel(
     override fun updateLastName(lastName: String) =
         cardFieldsUseCase.updateField(PrimerInputElementType.LAST_NAME, lastName)
 
-    override fun updateRetailOutlet(retailOutlet: String) =
-        cardFieldsUseCase.updateField(PrimerInputElementType.RETAIL_OUTLET, retailOutlet)
-
-    override fun updateOtpCode(otpCode: String) =
-        cardFieldsUseCase.updateField(PrimerInputElementType.OTP_CODE, otpCode)
-
-    override fun onSubmit() {
+    override fun submit() {
+        logReporter.debug("Submit button tapped", component = TAG)
         viewModelScope.launch {
             componentsEventsRepository.send(EventType.PaymentSubmitted.card())
             cardFieldsUseCase.markSubmitAttempted()
             if (!cardFieldsUseCase.isSubmitAllowed()) {
-                logReporter.debug("Validation failed, not proceeding with submission")
+                logReporter.debug("Validation failed, not proceeding with submission", component = TAG)
                 return@launch
             }
 
+            logReporter.info("Payment submission started", component = TAG)
             _uiState.update { it.copy(isLoading = true, isFormEnabled = false) }
             componentsEventsRepository.send(EventType.PaymentProcessingStarted.card())
 
             submitCardPaymentUseCase(cardFieldsUseCase.formData.first())
                 .fold(
                     onSuccess = { checkoutData ->
-                        logReporter.debug("Payment completed successfully")
+                        logReporter.info("Payment completed successfully", component = TAG)
                         _uiState.update { it.copy(isLoading = false, isFormEnabled = true) }
                         componentsEventsRepository.send(
                             EventType.PaymentSuccess.card(checkoutData.payment.id),
                         )
-                        checkoutNavigator.navigateToSuccess()
+                        resultHandler.onSuccess(checkoutData)
                     },
                     onFailure = { error ->
-                        logReporter.error("Payment failed: ${error.message}")
+                        logReporter.error(
+                            "Payment failed: ${error.message}",
+                            component = TAG,
+                            throwable = error,
+                        )
                         _uiState.update { it.copy(isLoading = false, isFormEnabled = true) }
                         componentsEventsRepository.send(EventType.PaymentFailure.card())
-                        checkoutNavigator.navigateToError(error.message ?: "Payment failed")
+                        val primerError = (error as? PrimerErrorException)?.primerError
+                            ?: PrimerUnknownError(error.message ?: "Payment failed")
+                        resultHandler.onError(primerError)
                     },
                 )
         }
     }
 
-    override fun onBack() {
-        viewModelScope.launch {
-            checkoutNavigator.navigateBack()
-        }
-    }
-
-    override fun onCancel() {
-        viewModelScope.launch {
-            checkoutNavigator.dismiss()
-        }
-    }
-
-    override fun navigateToCountrySelection() {
-        viewModelScope.launch {
-            checkoutNavigator.navigateTo(Screen.SelectCountry)
-        }
-    }
-
-    override fun selectCardNetwork(network: CardNetwork.Type) =
+    override fun selectCardNetwork(network: PrimerCardNetwork) =
         cardNetworkUseCase.selectCardNetwork(network)
 
     override fun onFieldFocusChange(field: PrimerInputElementType, hasFocus: Boolean) {
         cardFieldsUseCase.onFieldFocusChange(field, hasFocus)
+    }
+
+    override fun setVaultOnSuccess(enabled: Boolean) {
+        viewModelScope.launch {
+            _uiState.update {
+                it.copy(isLoading = true)
+            }
+            setVaultOnSuccessUseCase(enabled)
+                .fold(
+                    onSuccess = {
+                        _uiState.update {
+                            it.copy(
+                                vaultOnSuccess = enabled,
+                                isLoading = false,
+                            )
+                        }
+                    },
+                    onFailure = { throwable ->
+                        logReporter.warn(
+                            "Failed to set vaultOnSuccess=$enabled: ${throwable.message}",
+                            component = TAG,
+                        )
+                        _uiState.update {
+                            it.copy(
+                                vaultOnSuccess = !enabled,
+                                isLoading = false,
+                            )
+                        }
+                    },
+                )
+        }
+    }
+
+    override fun cleanup() {
+        cleanupUseCase.cleanup()
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        cleanup()
+    }
+
+    companion object {
+        private const val TAG = "CardFormViewModel"
     }
 }
