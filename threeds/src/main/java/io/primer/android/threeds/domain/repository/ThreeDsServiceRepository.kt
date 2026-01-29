@@ -2,6 +2,7 @@ package io.primer.android.threeds.domain.repository
 
 import android.app.Activity
 import com.netcetera.threeds.sdk.api.transaction.Transaction
+import com.netcetera.threeds.sdk.api.ui.ProgressView
 import io.primer.android.configuration.data.model.CardNetwork
 import io.primer.android.configuration.data.model.Environment
 import io.primer.android.threeds.data.exception.ThreeDsConfigurationException
@@ -39,4 +40,9 @@ internal interface ThreeDsServiceRepository {
     ): Flow<ChallengeStatusData>
 
     fun performCleanup()
+
+    fun getProgressView(
+        activity: Activity,
+        transaction: Transaction,
+    ): ProgressView?
 }

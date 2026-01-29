@@ -42,6 +42,7 @@ internal class PaymentMethodButtonGroupFactory(
                         }
                     }
                 val button: View = viewFactory.getViewForPaymentMethod(
+                    context = context,
                     displayMetadata.first {
                         d.paymentMethodType == it.paymentMethodType
                     },

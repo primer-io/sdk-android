@@ -1,5 +1,6 @@
 package io.primer.paymentMethodCoreUi.core.ui
 
+import android.content.Context
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -9,6 +10,7 @@ import io.primer.android.core.di.extensions.inject
 import io.primer.android.core.di.extensions.resolve
 import io.primer.android.core.logging.internal.LogReporter
 import io.primer.android.data.settings.internal.PrimerConfig
+import io.primer.paymentMethodCoreUi.core.ui.extension.withLocale
 
 open class BaseCheckoutActivity : AppCompatActivity(), DISdkComponent {
     protected val logReporter by inject<LogReporter>()
@@ -32,6 +34,12 @@ open class BaseCheckoutActivity : AppCompatActivity(), DISdkComponent {
         }
     }
 
+    override fun attachBaseContext(newBase: Context?) {
+        val locale = DISdkContext.integrationContext.locale
+        val wrapped = locale.let { newBase?.withLocale(it) } ?: newBase
+        super.attachBaseContext(wrapped)
+    }
+
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putParcelable(SAVED_STATE_CONFIG_KEY, runCatching { resolve<PrimerConfig>() }.getOrNull())
@@ -43,7 +51,8 @@ open class BaseCheckoutActivity : AppCompatActivity(), DISdkComponent {
         }
     }
 
-    private companion object {
-        const val SAVED_STATE_CONFIG_KEY = "CONFIG"
+    companion object {
+        const val PRIMER_CONFIG_KEY = "PRIMER_CONFIG"
+        private const val SAVED_STATE_CONFIG_KEY = "CONFIG"
     }
 }

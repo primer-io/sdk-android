@@ -74,6 +74,7 @@ class ThreeDsActivity : BaseCheckoutActivity() {
     private fun setupObservers() {
         viewModel.threeDsInitEvent.observe(this) {
             viewModel.performAuthorization(
+                activity = this,
                 supportedThreeDsProtocolVersions = getSupportedThreeDsProtocolVersion(),
                 paymentMethodToken = getPaymentMethodToken(),
                 cardNetwork = getCardNetwork(),

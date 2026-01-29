@@ -59,10 +59,6 @@ class AuthenticationDataResponseTest {
                 dsTransactionId = dsTransactionId,
                 eci = eci,
                 protocolVersion = protocolVersion,
-                skippedReasonCode = skippedReasonCode,
-                skippedReasonText = skippedReasonText,
-                declinedReasonCode = declinedReasonCode,
-                declinedReasonText = declinedReasonText,
             )
 
         // Assert the deserialized AuthenticationDataResponse matches the expected values
@@ -106,10 +102,6 @@ class AuthenticationDataResponseTest {
                 dsTransactionId = null,
                 eci = null,
                 protocolVersion = null,
-                skippedReasonCode = null,
-                skippedReasonText = null,
-                declinedReasonCode = null,
-                declinedReasonText = null,
             )
 
         // Assert the deserialized AuthenticationDataResponse matches the expected values

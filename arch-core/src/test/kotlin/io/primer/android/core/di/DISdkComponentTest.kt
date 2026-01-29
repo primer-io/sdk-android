@@ -23,7 +23,6 @@ internal class DISdkComponentTest {
 
     @Test
     fun `getSdkContainer() throws SdkContainerUninitializedException when dropInSdkContainer and coreSdkContainer are null and sdkType is DROP_IN`() {
-        DISdkContext.sdkType = SdkType.DROP_IN
         DISdkContext.dropInSdkContainer = null
 
         assertThrows<SdkContainerUninitializedException> {
@@ -33,7 +32,6 @@ internal class DISdkComponentTest {
 
     @Test
     fun `getSdkContainer() throws SdkContainerUninitializedException when headlessSdkContainer and coreSdkContainer are null and sdkType is HEADLESS`() {
-        DISdkContext.sdkType = SdkType.HEADLESS
         DISdkContext.headlessSdkContainer = null
 
         assertThrows<SdkContainerUninitializedException> {
@@ -43,7 +41,6 @@ internal class DISdkComponentTest {
 
     @Test
     fun `getSdkContainer() throws SdkContainerUninitializedException when headlessSdkContainer is null and coreSdkContainer is empty and sdkType is HEADLESS`() {
-        DISdkContext.sdkType = SdkType.HEADLESS
         DISdkContext.headlessSdkContainer = null
 
         val sdkContainer = spyk<SdkContainer>()
@@ -56,7 +53,6 @@ internal class DISdkComponentTest {
 
     @Test
     fun `getSdkContainer() returns merged containers of dropInSdkContainer and coreSdkContainer when sdkType is DROP_IN`() {
-        DISdkContext.sdkType = SdkType.DROP_IN
         val sdkContainer = spyk<SdkContainer>()
         sdkContainer.registerContainer(spyk<DependencyContainer>())
         DISdkContext.dropInSdkContainer = sdkContainer
@@ -68,7 +64,6 @@ internal class DISdkComponentTest {
 
     @Test
     fun `getSdkContainer() returns merged containers of headlessSdkContainer and coreSdkContainer when sdkType is HEADLESS`() {
-        DISdkContext.sdkType = SdkType.HEADLESS
         val sdkContainer = spyk<SdkContainer>()
         sdkContainer.registerContainer(spyk<DependencyContainer>())
         DISdkContext.headlessSdkContainer = sdkContainer

@@ -351,8 +351,4 @@ internal class CheckoutSheetActivity : BaseCheckoutActivity(), AchMandateActionH
                 type,
             ),
         )
-
-    internal companion object {
-        const val PRIMER_CONFIG_KEY = "PRIMER_CONFIG"
-    }
 }

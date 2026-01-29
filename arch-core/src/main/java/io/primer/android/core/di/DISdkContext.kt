@@ -3,6 +3,7 @@ package io.primer.android.core.di
 import android.util.Log
 import androidx.annotation.RestrictTo
 import io.primer.android.core.di.exception.SdkContainerUninitializedException
+import java.util.Locale
 import java.util.concurrent.ConcurrentHashMap
 
 enum class SdkType {
@@ -15,7 +16,10 @@ enum class SdkType {
 object DISdkContext {
     private val merged: SdkContainer by lazy { SdkContainer() }
 
-    var sdkType: SdkType = SdkType.HEADLESS
+    data class IntegrationContext(val sdkType: SdkType, val locale: Locale)
+
+    @Volatile
+    var integrationContext = IntegrationContext(sdkType = SdkType.HEADLESS, locale = Locale.getDefault())
 
     @Volatile
     var dropInSdkContainer: SdkContainer? = null
@@ -31,7 +35,7 @@ object DISdkContext {
 
     val container: () -> SdkContainer
         get() = {
-            val selectedContainer = when (sdkType) {
+            val selectedContainer = when (integrationContext.sdkType) {
                 SdkType.DROP_IN -> dropInSdkContainer + coreContainer
                 SdkType.HEADLESS -> headlessSdkContainer + coreContainer
                 SdkType.COMPONENTS -> componentsSdkContainer + coreContainer
