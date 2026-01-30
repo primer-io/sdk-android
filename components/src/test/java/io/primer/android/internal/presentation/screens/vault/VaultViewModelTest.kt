@@ -383,7 +383,7 @@ class VaultViewModelTest {
             val eventDeferred = async {
                 viewModel.navigation.first {
                     it is VaultViewModel.NavigationEvent.PaymentSuccess ||
-                    it is VaultViewModel.NavigationEvent.PaymentError
+                        it is VaultViewModel.NavigationEvent.PaymentError
                 }
             }
             viewModel.submit()
@@ -438,7 +438,7 @@ class VaultViewModelTest {
             val eventDeferred = async {
                 viewModel.navigation.first {
                     it is VaultViewModel.NavigationEvent.PaymentSuccess ||
-                    it is VaultViewModel.NavigationEvent.PaymentError
+                        it is VaultViewModel.NavigationEvent.PaymentError
                 }
             }
             viewModel.submit()

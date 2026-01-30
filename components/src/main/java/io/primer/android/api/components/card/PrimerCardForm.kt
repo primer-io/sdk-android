@@ -31,8 +31,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import io.primer.android.LocalPrimerTheme
 import io.primer.android.components.R
 import io.primer.android.components.domain.inputs.models.PrimerInputElementType
-import io.primer.android.core.ExperimentalPrimerApi
 import io.primer.android.configuration.data.model.emojiFlag
+import io.primer.android.core.ExperimentalPrimerApi
 import io.primer.android.internal.presentation.components.DefaultSubmitButton
 import io.primer.android.internal.presentation.components.PrimerInput
 import io.primer.android.internal.presentation.screens.card.components.DefaultCardNetworkIcon

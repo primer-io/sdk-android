@@ -9,7 +9,6 @@ import io.primer.android.components.analytics.data.repository.ComponentsEventsRe
 import io.primer.android.components.domain.core.models.card.PrimerCardNetwork
 import io.primer.android.components.domain.inputs.models.PrimerInputElementType
 import io.primer.android.configuration.data.model.CountryCode
-import io.primer.android.core.ExperimentalPrimerApi
 import io.primer.android.core.logging.internal.LogReporter
 import io.primer.android.errors.domain.models.PrimerUnknownError
 import io.primer.android.internal.domain.Cleanable

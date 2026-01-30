@@ -71,7 +71,9 @@ class CheckoutNavigatorTest {
     }
 
     @Test
-    fun `startPaymentFlow emits StartPaymentFlow event with payment method type`() = runTest(UnconfinedTestDispatcher()) {
+    fun `startPaymentFlow emits StartPaymentFlow event with payment method type`() = runTest(
+        UnconfinedTestDispatcher(),
+    ) {
         val paymentMethodType = "PAYMENT_CARD"
         val events = mutableListOf<CheckoutNavigator.NavigationEvent>()
         val job = launch(UnconfinedTestDispatcher(testScheduler)) {
@@ -88,7 +90,9 @@ class CheckoutNavigatorTest {
     }
 
     @Test
-    fun `startVaultedPaymentFlow emits StartVaultedPaymentFlow event with vaulted method`() = runTest(UnconfinedTestDispatcher()) {
+    fun `startVaultedPaymentFlow emits StartVaultedPaymentFlow event with vaulted method`() = runTest(
+        UnconfinedTestDispatcher(),
+    ) {
         val mockVaultedMethod = mockk<PrimerVaultedPaymentMethod>(relaxed = true)
         val events = mutableListOf<CheckoutNavigator.NavigationEvent>()
         val job = launch(UnconfinedTestDispatcher(testScheduler)) {
