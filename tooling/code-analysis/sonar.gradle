@@ -72,22 +72,27 @@ subprojects { subproject ->
                     'android/**/*.*',
                     'androidx/**/*.*',
                     '**/io/primer/android/PrimerCheckout.kt',
+                    // Theme & Design System
                     '**/io/primer/android/PrimerTheme.kt',
-                    '**/io/primer/android/components/**/*',
+                    '**/io/primer/android/internal/tokens/**/*',
+                    // Public API - @Composable Components
+                    '**/io/primer/android/api/components/**/*',
+                    '**/io/primer/android/api/checkout/**/*',
+                    // Internal Presentation - @Composable UI
+                    '**/io/primer/android/internal/presentation/screens/**/*',
+                    '**/io/primer/android/internal/presentation/components/**/*',
+                    '**/io/primer/android/internal/presentation/checkout/**/*',
+                    '**/io/primer/android/internal/presentation/preview/**/*',
+                    '**/io/primer/android/internal/presentation/utils/VaultItemProperties.kt',
+                    // Scope APIs
+                    '**/io/primer/android/scope/*Scope.kt',
+                    '**/io/primer/android/scope/providers/**/*',
+                    // Components DI & Domain
                     '**/io/primer/android/internal/di/ComponentsContainer.kt',
                     '**/io/primer/android/internal/domain/repositories/**/*',
                     // KlarnaRepositoryImpl: Depends on KlarnaComponent (ViewModel subclass) which cannot be
                     // reliably mocked with MockK due to coroutine scope ClassCastException.
                     '**/io/primer/android/internal/data/repositories/KlarnaRepositoryImpl.kt',
-                    '**/io/primer/android/internal/tokens/**/*',
-                    '**/io/primer/android/internal/presentation/checkout/**/*',
-                    '**/io/primer/android/internal/presentation/components/**/*',
-                    '**/io/primer/android/internal/presentation/constants/**/*',
-                    '**/io/primer/android/internal/presentation/screens/**/*',
-                    '**/io/primer/android/scope/*Scope.kt',
-                    '**/io/primer/android/scope/providers/**/*',
-                    '**/PreviewMocks.kt',
-                    '**/PreviewContainer.kt',
             ]
 
             sonarqube {
