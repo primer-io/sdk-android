@@ -32,7 +32,7 @@ import io.primer.android.LocalPrimerTheme
 import io.primer.android.components.R
 import io.primer.android.components.domain.inputs.models.PrimerInputElementType
 import io.primer.android.core.ExperimentalPrimerApi
-import io.primer.android.internal.extensions.toFlagEmoji
+import io.primer.android.configuration.data.model.emojiFlag
 import io.primer.android.internal.presentation.components.DefaultSubmitButton
 import io.primer.android.internal.presentation.components.PrimerInput
 import io.primer.android.internal.presentation.screens.card.components.DefaultCardNetworkIcon
@@ -335,7 +335,7 @@ object CardFormDefaults {
         val error = state.fieldErrors?.find { it.inputElementType == PrimerInputElementType.COUNTRY_CODE }
 
         val displayValue = selectedCountry?.let { country ->
-            val flag = country.code.name.toFlagEmoji()
+            val flag = country.code.emojiFlag()
             "$flag ${country.name}"
         }.orEmpty()
 

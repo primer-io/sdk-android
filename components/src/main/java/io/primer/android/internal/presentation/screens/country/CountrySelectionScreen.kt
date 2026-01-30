@@ -28,7 +28,7 @@ import androidx.navigation.NavController
 import io.primer.android.LocalPrimerTheme
 import io.primer.android.clientSessionActions.domain.models.PrimerCountry
 import io.primer.android.components.R
-import io.primer.android.internal.extensions.toFlagEmoji
+import io.primer.android.configuration.data.model.emojiFlag
 
 /**
  * Internal country selection screen component.
@@ -118,7 +118,7 @@ private fun CountryItem(
             horizontalArrangement = Arrangement.spacedBy(spacing.medium),
         ) {
             Text(
-                text = country.code.name.toFlagEmoji(),
+                text = country.code.emojiFlag(),
                 style = MaterialTheme.typography.bodyLarge,
             )
             Text(
