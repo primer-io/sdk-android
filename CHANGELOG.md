@@ -1,3 +1,9 @@
+## 2.47.1 (2026-02-04)
+
+### Fix
+
+- polling for status url retries added (#1175)
+
 ## 2.47.0 (2026-01-16)
 
 ### Feat
