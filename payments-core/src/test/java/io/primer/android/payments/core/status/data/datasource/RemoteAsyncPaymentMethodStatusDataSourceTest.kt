@@ -6,20 +6,31 @@ import io.mockk.mockkObject
 import io.mockk.unmockkAll
 import io.primer.android.core.data.network.PrimerHttpClient
 import io.primer.android.core.data.network.exception.JsonDecodingException
+import io.primer.android.core.data.network.helpers.MessageLog
+import io.primer.android.core.data.network.helpers.MessagePropertiesHelper
 import io.primer.android.core.data.network.utils.PrimerTimeouts
 import io.primer.android.core.data.network.utils.PrimerTimeouts.PRIMER_60S_TIMEOUT
-import kotlinx.coroutines.flow.collect
+import io.primer.android.core.utils.EventFlowProvider
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runTest
 import okhttp3.OkHttpClient
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import java.net.SocketTimeoutException
+import java.io.IOException
 import java.util.concurrent.TimeUnit
+import kotlin.test.assertEquals
 import kotlin.time.Duration.Companion.milliseconds
 
 class RemoteAsyncPaymentMethodStatusDataSourceTest {
+
+    @AfterEach
+    fun tearDown() {
+        PrimerHttpClient.clearCustomTimeoutInstances()
+    }
+
     @Test
     fun `response is processed when the server responds in time`() =
         runTest {
@@ -40,32 +51,58 @@ class RemoteAsyncPaymentMethodStatusDataSourceTest {
                         messagePropertiesEventProvider = mockk(),
                     ),
                 )
-            assertThrows<JsonDecodingException> { tested.execute(input).collect() }
+            assertThrows<JsonDecodingException> { tested.execute(input) }
 
             mockWebServer.shutdown()
             unmockkAll()
         }
 
     @Test
-    fun `SocketTimeoutException is thrown when the server takes too long to respond`() =
+    fun `IOException is thrown when all the retries are exhausted due to network conditions`() =
         runTest {
             mockkObject(PrimerTimeouts)
-            every { PRIMER_60S_TIMEOUT } returns 100.milliseconds
+            every { PRIMER_60S_TIMEOUT } returns 1000.milliseconds
             val mockWebServer =
                 MockWebServer().apply {
-                    enqueue(MockResponse().setHeadersDelay(200, TimeUnit.MILLISECONDS))
+                    enqueue(MockResponse().setHeadersDelay(1000, TimeUnit.MILLISECONDS))
                     start()
                 }
+            val messagePropsFlow =
+                MutableStateFlow<MessagePropertiesHelper?>(null)
+
+            val messagePropertiesEventProvider =
+                mockk<EventFlowProvider<MessagePropertiesHelper>>()
+
+            val logFlow =
+                MutableStateFlow<MessageLog?>(
+                    value = null,
+                )
+
+            val logProvider =
+                mockk<EventFlowProvider<MessageLog>>()
+
+            every {
+                logProvider.getEventProvider()
+            } returns logFlow
+
+            every {
+                messagePropertiesEventProvider.getEventProvider()
+            } returns messagePropsFlow
             val input = mockWebServer.url("/").toString()
             val tested =
                 RemoteAsyncPaymentMethodStatusDataSource(
                     PrimerHttpClient(
                         okHttpClient = OkHttpClient().newBuilder().build(),
-                        logProvider = mockk(),
-                        messagePropertiesEventProvider = mockk(),
+                        logProvider = logProvider,
+                        messagePropertiesEventProvider = messagePropertiesEventProvider,
                     ),
                 )
-            assertThrows<SocketTimeoutException> { tested.execute(input).collect() }
+            val exception = assertThrows<IOException> { tested.execute(input) }
+            assertEquals(
+                "Failed after 3 retries.\n" +
+                    "Reached maximum retries (3).",
+                exception.message,
+            )
 
             mockWebServer.shutdown()
             unmockkAll()

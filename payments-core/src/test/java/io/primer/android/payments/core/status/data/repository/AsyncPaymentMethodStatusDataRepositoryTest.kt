@@ -12,7 +12,6 @@ import io.primer.android.payments.core.status.data.models.AsyncPaymentMethodStat
 import io.primer.android.payments.core.status.domain.model.AsyncStatus
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -46,7 +45,7 @@ class AsyncPaymentMethodStatusDataRepositoryTest {
                     status = AsyncMethodStatus.COMPLETE,
                     source = "test_source",
                 )
-            coEvery { dataSource.execute(url) } returns flowOf(response)
+            coEvery { dataSource.execute(url) } returns response
 
             // When
             val result = repository.getAsyncStatus(url).first()
@@ -73,12 +72,11 @@ class AsyncPaymentMethodStatusDataRepositoryTest {
                     status = AsyncMethodStatus.COMPLETE,
                     source = "test_source",
                 )
-            coEvery { dataSource.execute(url) } returns flowOf(incompleteResponse, completeResponse)
 
+            coEvery { dataSource.execute(url) } returnsMany listOf(incompleteResponse, completeResponse)
             // When
             val results = repository.getAsyncStatus(url).toListDuring(2.0.seconds)
 
-            println(results)
             // Then
             assertTrue(results.any { it.resumeToken == "test_id" })
         }
@@ -95,7 +93,7 @@ class AsyncPaymentMethodStatusDataRepositoryTest {
                     status = AsyncMethodStatus.PROCESSING,
                     source = "test_source",
                 )
-            coEvery { dataSource.execute(url) } returns flowOf(response)
+            coEvery { dataSource.execute(url) } returns response
 
             // When / Then
             assertThrows<AsyncFlowIncompleteException> {

@@ -7,6 +7,7 @@ import io.primer.android.payments.core.status.domain.model.AsyncStatus
 import io.primer.android.payments.core.status.domain.repository.AsyncPaymentMethodStatusRepository
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.retry
 
@@ -14,7 +15,9 @@ internal class AsyncPaymentMethodStatusDataRepository(
     private val asyncPaymentMethodStatusDataSource: RemoteAsyncPaymentMethodStatusDataSource,
 ) : AsyncPaymentMethodStatusRepository {
     override fun getAsyncStatus(url: String): Flow<AsyncStatus> {
-        return asyncPaymentMethodStatusDataSource.execute(url).map { statusResponse ->
+        return flow {
+            emit(asyncPaymentMethodStatusDataSource.execute(url))
+        }.map { statusResponse ->
             if (statusResponse.status != AsyncMethodStatus.COMPLETE) throw AsyncFlowIncompleteException()
             AsyncStatus(resumeToken = statusResponse.id)
         }.retry {
