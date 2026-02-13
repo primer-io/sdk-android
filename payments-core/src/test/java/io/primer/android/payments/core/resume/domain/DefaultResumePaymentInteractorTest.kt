@@ -50,7 +50,7 @@ class DefaultResumePaymentInteractorTest {
             val paymentResult = mockk<PaymentResult>()
             val paymentDecision = PaymentDecision.Success(payment)
 
-            coEvery { resumePaymentsRepository.resumePayment(any(), any()) } returns Result.success(paymentResult)
+            coEvery { resumePaymentsRepository.resumePayment(any()) } returns Result.success(paymentResult)
             coEvery { paymentDecisionResolver.resolve(any()) } returns paymentDecision
 
             // When
@@ -59,7 +59,7 @@ class DefaultResumePaymentInteractorTest {
             // Then
             assertTrue(result.isSuccess)
             assertEquals(paymentDecision, result.getOrNull())
-            coVerify { resumePaymentsRepository.resumePayment(resumeParams.paymentId, resumeParams.resumeToken) }
+            coVerify { resumePaymentsRepository.resumePayment(resumeParams) }
             coVerify { paymentDecisionResolver.resolve(paymentResult) }
             verify { logReporter.debug("Resuming payment with id: ${resumeParams.paymentId}") }
         }
@@ -71,7 +71,7 @@ class DefaultResumePaymentInteractorTest {
             val resumeParams = ResumeParams(paymentId = "paymentId", resumeToken = "resumeToken")
             val exception = RuntimeException("Some error")
 
-            coEvery { resumePaymentsRepository.resumePayment(any(), any()) } returns Result.failure(exception)
+            coEvery { resumePaymentsRepository.resumePayment(any()) } returns Result.failure(exception)
 
             // When
             val result = interactor(resumeParams)
@@ -79,7 +79,7 @@ class DefaultResumePaymentInteractorTest {
             // Then
             assertTrue(result.isFailure)
             assertEquals(exception, result.exceptionOrNull())
-            coVerify { resumePaymentsRepository.resumePayment(resumeParams.paymentId, resumeParams.resumeToken) }
+            coVerify { resumePaymentsRepository.resumePayment(resumeParams) }
             verify { logReporter.debug("Resuming payment with id: ${resumeParams.paymentId}") }
         }
 }

@@ -33,6 +33,7 @@ import io.primer.sample.datamodels.CheckoutDataWithError
 import io.primer.sample.datamodels.TransactionState
 import io.primer.sample.datamodels.toMappedError
 import io.primer.sample.viewmodels.MainViewModel
+import java.util.UUID
 
 class MerchantCheckoutFragment : Fragment() {
 
@@ -42,6 +43,7 @@ class MerchantCheckoutFragment : Fragment() {
     private val binding get() = _binding!!
 
     private val viewModel: MainViewModel by activityViewModels()
+    internal fun generateIdempotencyKey(): String = "${UUID.randomUUID()}-example-app"
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -142,9 +144,10 @@ class MerchantCheckoutFragment : Fragment() {
             paymentMethodData: PrimerPaymentMethodData,
             decisionHandler: PrimerPaymentCreationDecisionHandler
         ) {
-            decisionHandler.continuePaymentCreation()
+            val idempotencyKey = generateIdempotencyKey()
+            decisionHandler.continuePaymentCreation(idempotencyKey = idempotencyKey)
             callbacks.add(PrimerDropInCallbacks.ON_BEFORE_PAYMENT_CREATED)
-            Log.d(TAG, "onBeforePaymentCreated - $paymentMethodData")
+            Log.d(TAG, "onBeforePaymentCreated - $paymentMethodData with idempotency key: $idempotencyKey")
         }
 
         override fun onFailed(

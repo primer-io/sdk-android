@@ -19,7 +19,7 @@ internal class DefaultCreatePaymentInteractor(
 ) : BaseSuspendInteractor<PaymentDecision, CreatePaymentParams>() {
     override suspend fun performAction(params: CreatePaymentParams): Result<PaymentDecision> {
         logReporter.debug("Creating payment for payment method token: ${params.token}")
-        return createPaymentsRepository.createPayment(params.token)
+        return createPaymentsRepository.createPayment(params)
             .map { paymentDecisionResolver.resolve(it) }
     }
 }

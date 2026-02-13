@@ -10,6 +10,7 @@ import io.primer.android.payments.core.create.data.datasource.CreatePaymentDataS
 import io.primer.android.payments.core.create.data.datasource.LocalPaymentDataSource
 import io.primer.android.payments.core.create.data.model.CreatePaymentDataRequest
 import io.primer.android.payments.core.create.data.model.toPaymentResult
+import io.primer.android.payments.core.create.domain.model.CreatePaymentParams
 import io.primer.android.payments.core.create.domain.repository.CreatePaymentRepository
 import io.primer.android.payments.core.errors.data.exception.PaymentCreateException
 
@@ -18,13 +19,15 @@ internal class CreatePaymentDataRepository(
     private val localPaymentDataSource: LocalPaymentDataSource,
     private val configurationDataSource: BaseCacheDataSource<ConfigurationData, ConfigurationData>,
 ) : CreatePaymentRepository {
-    override suspend fun createPayment(token: String) =
+    override suspend fun createPayment(params: CreatePaymentParams) =
         runSuspendCatching {
             configurationDataSource.get().let {
                 createPaymentDataSource.execute(
                     BaseRemoteHostRequest(
                         host = it.pciUrl,
-                        data = CreatePaymentDataRequest(token),
+                        data = CreatePaymentDataRequest(
+                            paymentMethodToken = params.token,
+                        ),
                     ),
                 )
             }.let { paymentResponse ->

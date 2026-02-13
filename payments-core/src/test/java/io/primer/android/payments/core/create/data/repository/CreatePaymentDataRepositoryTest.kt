@@ -13,6 +13,7 @@ import io.primer.android.payments.core.create.data.datasource.CreatePaymentDataS
 import io.primer.android.payments.core.create.data.datasource.LocalPaymentDataSource
 import io.primer.android.payments.core.create.data.model.PaymentDataResponse
 import io.primer.android.payments.core.create.data.model.PaymentStatus
+import io.primer.android.payments.core.create.domain.model.CreatePaymentParams
 import io.primer.android.payments.core.create.domain.repository.CreatePaymentRepository
 import io.primer.android.payments.core.errors.data.exception.PaymentCreateException
 import kotlinx.coroutines.test.runTest
@@ -34,7 +35,11 @@ internal class CreatePaymentDataRepositoryTest {
         localPaymentDataSource = mockk()
         configurationDataSource = mockk()
         repository =
-            CreatePaymentDataRepository(createPaymentDataSource, localPaymentDataSource, configurationDataSource)
+            CreatePaymentDataRepository(
+                createPaymentDataSource,
+                localPaymentDataSource,
+                configurationDataSource,
+            )
     }
 
     @Test
@@ -66,7 +71,7 @@ internal class CreatePaymentDataRepositoryTest {
             coEvery { localPaymentDataSource.update(paymentResponse) } just Runs
 
             // Act
-            val paymentResult = repository.createPayment(token)
+            val paymentResult = repository.createPayment(CreatePaymentParams(token))
 
             // Assert
             assertNotNull(paymentResult.isSuccess)
@@ -98,7 +103,7 @@ internal class CreatePaymentDataRepositoryTest {
             coEvery { createPaymentDataSource.execute(any()) } throws httpException
 
             // Act & Assert
-            val result = repository.createPayment(token)
+            val result = repository.createPayment(CreatePaymentParams(token))
             assertTrue(result.isFailure)
 
             assertTrue(result.exceptionOrNull() is PaymentCreateException)
@@ -125,7 +130,7 @@ internal class CreatePaymentDataRepositoryTest {
             coEvery { createPaymentDataSource.execute(any()) } throws httpException
 
             // Act & Assert
-            val result = repository.createPayment(token)
+            val result = repository.createPayment(CreatePaymentParams(token))
             assertTrue(result.isFailure)
 
             assertTrue(result.exceptionOrNull() is HttpException)
@@ -148,7 +153,7 @@ internal class CreatePaymentDataRepositoryTest {
             coEvery { createPaymentDataSource.execute(any()) } throws exception
 
             // Act & Assert
-            val result = repository.createPayment(token)
+            val result = repository.createPayment(CreatePaymentParams(token))
             assertTrue(result.isFailure)
 
             assertEquals(exception, result.exceptionOrNull())

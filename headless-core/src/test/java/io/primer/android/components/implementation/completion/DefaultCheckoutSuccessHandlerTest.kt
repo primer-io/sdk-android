@@ -13,6 +13,7 @@ import io.primer.android.components.PrimerHeadlessUniversalCheckoutListener
 import io.primer.android.core.InstantExecutorExtension
 import io.primer.android.domain.payments.create.model.Payment
 import io.primer.android.payments.core.additionalInfo.PrimerCheckoutAdditionalInfo
+import io.primer.android.payments.core.idempotency.IdempotencyKeyHolder
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
@@ -31,11 +32,17 @@ class DefaultCheckoutSuccessHandlerTest {
     @RelaxedMockK
     internal lateinit var analyticsRepository: AnalyticsRepository
 
+    @RelaxedMockK
+    internal lateinit var idempotencyKeyHolder: IdempotencyKeyHolder
+
     private lateinit var checkoutSuccessHandler: DefaultCheckoutSuccessHandler
 
     @BeforeEach
     fun setUp() {
-        checkoutSuccessHandler = DefaultCheckoutSuccessHandler(analyticsRepository = analyticsRepository)
+        checkoutSuccessHandler = DefaultCheckoutSuccessHandler(
+            analyticsRepository = analyticsRepository,
+            idempotencyKeyHolder = idempotencyKeyHolder,
+        )
     }
 
     @AfterEach

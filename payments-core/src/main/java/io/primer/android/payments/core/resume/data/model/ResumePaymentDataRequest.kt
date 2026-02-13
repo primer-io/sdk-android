@@ -4,7 +4,9 @@ import io.primer.android.core.data.serialization.json.JSONObjectSerializable
 import io.primer.android.core.data.serialization.json.JSONObjectSerializer
 import org.json.JSONObject
 
-internal data class ResumePaymentDataRequest(val resumeToken: String) : JSONObjectSerializable {
+internal data class ResumePaymentDataRequest(
+    val resumeToken: String,
+) : JSONObjectSerializable {
     companion object {
         private const val RESUME_TOKEN_FIELD = "resumeToken"
 

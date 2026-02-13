@@ -8,10 +8,13 @@ import io.primer.android.core.data.network.PrimerHttpClient
 import io.primer.android.core.data.network.utils.PrimerTimeouts.PRIMER_60S_TIMEOUT
 import io.primer.android.payments.core.create.data.model.CreatePaymentDataRequest
 import io.primer.android.payments.core.create.data.model.PaymentDataResponse
+import io.primer.android.payments.core.idempotency.HEADER_IDEMPOTENCY_KEY
+import io.primer.android.payments.core.idempotency.IdempotencyKeyHolder
 
 internal class CreatePaymentDataSource(
     private val primerHttpClient: PrimerHttpClient,
     private val apiVersion: () -> PrimerApiVersion,
+    private val idempotencyKeyHolder: IdempotencyKeyHolder,
 ) : BaseSuspendDataSource<PaymentDataResponse, BaseRemoteHostRequest<CreatePaymentDataRequest>> {
     override suspend fun execute(input: BaseRemoteHostRequest<CreatePaymentDataRequest>): PaymentDataResponse {
         return primerHttpClient
@@ -19,11 +22,11 @@ internal class CreatePaymentDataSource(
             .suspendPost<CreatePaymentDataRequest, PaymentDataResponse>(
                 url = "${input.host}/payments",
                 request = input.data,
-                headers =
-                mapOf(
-                    apiVersion().toHeaderPair(),
-                    HEADER_ACCEPT to "*/*",
-                ),
+                headers = buildMap {
+                    put(apiVersion().toHeaderPair().first, apiVersion().toHeaderPair().second)
+                    put(HEADER_ACCEPT, "*/*")
+                    idempotencyKeyHolder.get()?.let { put(HEADER_IDEMPOTENCY_KEY, it) }
+                },
             ).body
     }
 

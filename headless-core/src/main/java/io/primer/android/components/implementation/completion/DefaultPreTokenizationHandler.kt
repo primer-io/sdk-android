@@ -9,6 +9,7 @@ import io.primer.android.components.implementation.HeadlessUniversalCheckoutAnal
 import io.primer.android.data.settings.PrimerPaymentHandling
 import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.domain.tokenization.models.PrimerPaymentMethodData
+import io.primer.android.payments.core.idempotency.IdempotencyKeyHolder
 import io.primer.android.payments.core.tokenization.domain.handler.PreTokenizationHandler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainCoroutineDispatcher
@@ -21,6 +22,7 @@ fun interface PreTokenizationHandlerStrategy {
 
 internal class AutoPreTokenizationHandlerStrategy(
     private val analyticsRepository: AnalyticsRepository,
+    private val idempotencyKeyHolder: IdempotencyKeyHolder,
     private val coroutineDispatcher: MainCoroutineDispatcher = Dispatchers.Main,
 ) : PreTokenizationHandlerStrategy {
     override suspend fun handle(paymentMethodType: String): Result<Unit> {
@@ -29,7 +31,8 @@ internal class AutoPreTokenizationHandlerStrategy(
 
             val handler =
                 object : PrimerPaymentCreationDecisionHandler {
-                    override fun continuePaymentCreation() {
+                    override fun continuePaymentCreation(idempotencyKey: String?) {
+                        idempotencyKeyHolder.set(idempotencyKey)
                         analyticsRepository.addEvent(
                             SdkFunctionParams(
                                 HeadlessUniversalCheckoutAnalyticsConstants.ON_TOKENIZATION_STARTED,
@@ -44,6 +47,7 @@ internal class AutoPreTokenizationHandlerStrategy(
                     }
 
                     override fun abortPaymentCreation(errorMessage: String?) {
+                        idempotencyKeyHolder.clear()
                         continuation.resume(Result.failure(IllegalStateException(errorMessage)))
                     }
                 }
@@ -80,6 +84,7 @@ internal class ManualPreTokenizationHandlerStrategy(
 class DefaultPreTokenizationHandler(
     private val analyticsRepository: AnalyticsRepository,
     private val config: PrimerConfig,
+    private val idempotencyKeyHolder: IdempotencyKeyHolder,
 ) : PreTokenizationHandler {
     private enum class PaymentHandlingStrategy {
         AUTO,
@@ -92,6 +97,7 @@ class DefaultPreTokenizationHandler(
             PaymentHandlingStrategy.AUTO to
                 AutoPreTokenizationHandlerStrategy(
                     analyticsRepository = analyticsRepository,
+                    idempotencyKeyHolder = idempotencyKeyHolder,
                 ),
             PaymentHandlingStrategy.MANUAL to ManualPreTokenizationHandlerStrategy(),
             PaymentHandlingStrategy.VAULT to ManualPreTokenizationHandlerStrategy(),

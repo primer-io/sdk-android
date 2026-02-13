@@ -101,7 +101,11 @@ internal class ComponentsContainer(private val sdk: () -> SdkContainer) : Depend
         }
 
         registerFactory<PreTokenizationHandler> {
-            DefaultPreTokenizationHandler(analyticsRepository = sdk().resolve(), config = sdk().resolve())
+            DefaultPreTokenizationHandler(
+                analyticsRepository = sdk().resolve(),
+                config = sdk().resolve(),
+                idempotencyKeyHolder = sdk().resolve(),
+            )
         }
 
         registerFactory<PostTokenizationHandler> {
@@ -121,7 +125,10 @@ internal class ComponentsContainer(private val sdk: () -> SdkContainer) : Depend
         }
 
         registerFactory<CheckoutSuccessHandler> {
-            DefaultCheckoutSuccessHandler(analyticsRepository = sdk().resolve())
+            DefaultCheckoutSuccessHandler(
+                analyticsRepository = sdk().resolve(),
+                idempotencyKeyHolder = sdk().resolve(),
+            )
         }
 
         registerSingleton<PreparationStartHandler> {
@@ -137,7 +144,11 @@ internal class ComponentsContainer(private val sdk: () -> SdkContainer) : Depend
         }
 
         registerSingleton<CheckoutErrorHandler> {
-            DefaultCheckoutErrorHandler(analyticsRepository = sdk().resolve(), config = sdk().resolve())
+            DefaultCheckoutErrorHandler(
+                analyticsRepository = sdk().resolve(),
+                config = sdk().resolve(),
+                idempotencyKeyHolder = sdk().resolve(),
+            )
         }
 
         registerSingleton<CheckoutAdditionalInfoHandler> {

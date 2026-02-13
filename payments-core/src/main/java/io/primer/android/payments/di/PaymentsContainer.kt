@@ -19,6 +19,7 @@ import io.primer.android.payments.core.create.domain.repository.PaymentResultRep
 import io.primer.android.payments.core.errors.data.mapper.PaymentCreateErrorMapper
 import io.primer.android.payments.core.errors.data.mapper.PaymentResumeErrorMapper
 import io.primer.android.payments.core.helpers.PaymentDecisionResolver
+import io.primer.android.payments.core.idempotency.IdempotencyKeyHolder
 import io.primer.android.payments.core.resume.data.datasource.ResumePaymentDataSource
 import io.primer.android.payments.core.resume.data.repository.ResumePaymentDataRepository
 import io.primer.android.payments.core.resume.domain.DefaultResumePaymentInteractor
@@ -38,6 +39,8 @@ class PaymentsContainer(
     private val sdk: () -> SdkContainer,
 ) : DependencyContainer() {
     override fun registerInitialDependencies() {
+        registerSingleton { IdempotencyKeyHolder() }
+
         registerSingleton<TokenizedPaymentMethodRepository> { TokenizedPaymentMethodDataRepository() }
 
         registerSingleton {
@@ -63,6 +66,7 @@ class PaymentsContainer(
             CreatePaymentDataSource(
                 primerHttpClient = sdk().resolve(),
                 apiVersion = sdk().resolve<BaseDataProvider<PrimerApiVersion>>()::provide,
+                idempotencyKeyHolder = resolve(),
             )
         }
 
@@ -70,6 +74,7 @@ class PaymentsContainer(
             ResumePaymentDataSource(
                 primerHttpClient = sdk().resolve(),
                 apiVersion = sdk().resolve<BaseDataProvider<PrimerApiVersion>>()::provide,
+                idempotencyKeyHolder = resolve(),
             )
         }
 

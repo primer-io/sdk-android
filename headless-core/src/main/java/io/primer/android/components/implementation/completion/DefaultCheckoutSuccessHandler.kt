@@ -8,6 +8,7 @@ import io.primer.android.domain.PrimerCheckoutData
 import io.primer.android.domain.payments.create.model.Payment
 import io.primer.android.payments.core.additionalInfo.PrimerCheckoutAdditionalInfo
 import io.primer.android.payments.core.helpers.CheckoutSuccessHandler
+import io.primer.android.payments.core.idempotency.IdempotencyKeyHolder
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainCoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
@@ -15,6 +16,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 
 internal class DefaultCheckoutSuccessHandler(
     private val analyticsRepository: AnalyticsRepository,
+    private val idempotencyKeyHolder: IdempotencyKeyHolder,
     private val coroutineDispatcher: MainCoroutineDispatcher = Dispatchers.Main,
 ) : CheckoutSuccessHandler {
     private val _checkoutCompleted = MutableSharedFlow<Payment>()
@@ -30,6 +32,7 @@ internal class DefaultCheckoutSuccessHandler(
             ),
         )
         _checkoutCompleted.emit(payment)
+        idempotencyKeyHolder.clear()
         coroutineDispatcher.dispatch(coroutineDispatcher.immediate) {
             val checkoutListener = PrimerHeadlessUniversalCheckout.instance.checkoutListener
 

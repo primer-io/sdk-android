@@ -10,31 +10,35 @@ import io.primer.android.payments.core.create.data.model.toPaymentResult
 import io.primer.android.payments.core.errors.data.exception.PaymentResumeException
 import io.primer.android.payments.core.resume.data.datasource.ResumePaymentDataSource
 import io.primer.android.payments.core.resume.data.model.ResumePaymentDataRequest
+import io.primer.android.payments.core.resume.domain.models.ResumeParams
 import io.primer.android.payments.core.resume.domain.respository.ResumePaymentsRepository
 
 internal class ResumePaymentDataRepository(
     private val resumePaymentDataSource: ResumePaymentDataSource,
     private val configurationDataSource: BaseCacheDataSource<ConfigurationData, ConfigurationData>,
 ) : ResumePaymentsRepository {
-    override suspend fun resumePayment(
-        paymentId: String,
-        resumeToken: String,
-    ) = runSuspendCatching {
-        configurationDataSource.get()
-            .let {
-                resumePaymentDataSource.execute(
-                    BaseRemoteHostRequest(
-                        host = it.pciUrl,
-                        data = Pair(paymentId, ResumePaymentDataRequest(resumeToken)),
-                    ),
-                )
-            }.toPaymentResult()
-    }.onError { throwable ->
-        throw when {
-            throwable is HttpException && (throwable.isClientError() || throwable.isPaymentError()) ->
-                PaymentResumeException(cause = throwable)
+    override suspend fun resumePayment(params: ResumeParams) =
+        runSuspendCatching {
+            configurationDataSource.get()
+                .let {
+                    resumePaymentDataSource.execute(
+                        BaseRemoteHostRequest(
+                            host = it.pciUrl,
+                            data = Pair(
+                                params.paymentId,
+                                ResumePaymentDataRequest(
+                                    resumeToken = params.resumeToken,
+                                ),
+                            ),
+                        ),
+                    )
+                }.toPaymentResult()
+        }.onError { throwable ->
+            throw when {
+                throwable is HttpException && (throwable.isClientError() || throwable.isPaymentError()) ->
+                    PaymentResumeException(cause = throwable)
 
-            else -> throwable
+                else -> throwable
+            }
         }
-    }
 }

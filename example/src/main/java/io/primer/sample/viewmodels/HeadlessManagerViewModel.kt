@@ -34,6 +34,7 @@ import io.primer.sample.repositories.PaymentsRepository
 import io.primer.sample.repositories.ResumeRepository
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
+import java.util.UUID
 import kotlin.time.toJavaDuration
 
 class HeadlessManagerViewModel(
@@ -44,6 +45,7 @@ class HeadlessManagerViewModel(
     PrimerHeadlessUniversalCheckoutUiListener {
 
     val callbacks = mutableListOf<String>()
+    private fun generateIdempotencyKey(): String = "${UUID.randomUUID()}-example-app"
 
     private val headlessUniversalCheckout: PrimerHeadlessUniversalCheckoutInterface =
         PrimerHeadlessUniversalCheckout.current
@@ -218,10 +220,11 @@ class HeadlessManagerViewModel(
         paymentMethodData: PrimerPaymentMethodData,
         createPaymentHandler: PrimerPaymentCreationDecisionHandler
     ) {
-        Log.d(TAG, "onBeforePaymentCreated - $paymentMethodData")
+        val idempotencyKey = generateIdempotencyKey()
+        Log.d(TAG, "onBeforePaymentCreated - $paymentMethodData with idempotency key: $idempotencyKey")
         callbacks.add(PrimerHeadlessCallbacks.ON_BEFORE_PAYMENT_CREATED)
         _uiState.value = UiState.BeforePaymentCreateReceived(paymentMethodData)
-        super.onBeforePaymentCreated(paymentMethodData, createPaymentHandler)
+        createPaymentHandler.continuePaymentCreation(idempotencyKey = idempotencyKey)
     }
 
     override fun onFailed(error: PrimerError) {

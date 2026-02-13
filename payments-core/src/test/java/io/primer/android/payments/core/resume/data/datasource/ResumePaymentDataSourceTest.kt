@@ -14,6 +14,7 @@ import io.primer.android.core.data.network.PrimerHttpClient
 import io.primer.android.core.data.network.exception.JsonDecodingException
 import io.primer.android.core.data.network.utils.PrimerTimeouts
 import io.primer.android.core.data.network.utils.PrimerTimeouts.PRIMER_60S_TIMEOUT
+import io.primer.android.payments.core.idempotency.IdempotencyKeyHolder
 import io.primer.android.payments.core.resume.data.model.ResumePaymentDataRequest
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -50,7 +51,10 @@ class ResumePaymentDataSourceTest {
                     every { okHttpClient } returns mockedOkHttpClient
                     every { withTimeout(PRIMER_60S_TIMEOUT) } returns this
                 }
-            val tested = ResumePaymentDataSource(primerHttpClient) { apiVersion }
+            val idempotencyKeyHolder = mockk<IdempotencyKeyHolder> {
+                every { get() } returns null
+            }
+            val tested = ResumePaymentDataSource(primerHttpClient, { apiVersion }, idempotencyKeyHolder)
             val dataRequest = ResumePaymentDataRequest(resumeToken = "resumeToken")
             val input =
                 mockk<BaseRemoteHostRequest<Pair<String, ResumePaymentDataRequest>>> {
@@ -100,6 +104,9 @@ class ResumePaymentDataSourceTest {
                     every { data } returns Pair("paymentId", dataRequest)
                 }
 
+            val idempotencyKeyHolder = mockk<IdempotencyKeyHolder> {
+                every { get() } returns null
+            }
             val tested =
                 ResumePaymentDataSource(
                     PrimerHttpClient(
@@ -107,7 +114,9 @@ class ResumePaymentDataSourceTest {
                         logProvider = mockk(),
                         messagePropertiesEventProvider = mockk(),
                     ),
-                ) { PrimerApiVersion.LATEST }
+                    { PrimerApiVersion.LATEST },
+                    idempotencyKeyHolder,
+                )
             assertThrows<JsonDecodingException> { tested.execute(input) }
 
             mockWebServer.shutdown()
@@ -131,6 +140,9 @@ class ResumePaymentDataSourceTest {
                     every { data } returns Pair("paymentId", dataRequest)
                 }
 
+            val idempotencyKeyHolder = mockk<IdempotencyKeyHolder> {
+                every { get() } returns null
+            }
             val tested =
                 ResumePaymentDataSource(
                     PrimerHttpClient(
@@ -138,7 +150,9 @@ class ResumePaymentDataSourceTest {
                         logProvider = mockk(),
                         messagePropertiesEventProvider = mockk(),
                     ),
-                ) { PrimerApiVersion.LATEST }
+                    { PrimerApiVersion.LATEST },
+                    idempotencyKeyHolder,
+                )
             assertThrows<SocketTimeoutException> { tested.execute(input) }
 
             mockWebServer.shutdown()

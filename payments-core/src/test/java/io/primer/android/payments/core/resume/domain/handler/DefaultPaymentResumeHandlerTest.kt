@@ -14,8 +14,8 @@ import io.primer.android.data.settings.PrimerPaymentHandling
 import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.domain.payments.create.model.Payment
 import io.primer.android.payments.core.create.domain.model.PaymentDecision
+import io.primer.android.payments.core.idempotency.IdempotencyKeyHolder
 import io.primer.android.payments.core.resume.domain.ResumePaymentInteractor
-import io.primer.android.payments.core.resume.domain.models.ResumeParams
 import io.primer.android.payments.di.PaymentsContainer
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -51,6 +51,7 @@ class DefaultPaymentResumeHandlerTest {
                             name = PaymentsContainer.RESUME_PAYMENT_INTERACTOR_DI_KEY,
                         ) { resumePaymentInteractor }
                         container.registerFactory<PostResumeHandler> { postResumeHandler }
+                        container.registerFactory<IdempotencyKeyHolder> { mockk(relaxed = true) }
                     }
 
                 every { sdkContainer.containers }
@@ -68,6 +69,7 @@ class DefaultPaymentResumeHandlerTest {
             val paymentId = "paymentId"
 
             every { config.settings.paymentHandling } returns PrimerPaymentHandling.AUTO
+            coEvery { resumePaymentInteractor.invoke(any()) } returns Result.success(paymentDecision)
 
             // Act
             val result = defaultPaymentResumeHandler.handle(resumeToken, paymentId)
@@ -75,7 +77,11 @@ class DefaultPaymentResumeHandlerTest {
             // Assert
             assertTrue(result.isSuccess)
 //        assertEquals(paymentDecision, result.getOrNull())
-            coVerify { resumePaymentInteractor.invoke(ResumeParams(paymentId, resumeToken)) }
+            coVerify {
+                resumePaymentInteractor.invoke(
+                    match { it.paymentId == paymentId && it.resumeToken == resumeToken },
+                )
+            }
         }
 
     @Test

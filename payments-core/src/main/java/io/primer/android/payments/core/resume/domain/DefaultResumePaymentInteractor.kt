@@ -19,7 +19,7 @@ internal class DefaultResumePaymentInteractor(
 ) : BaseSuspendInteractor<PaymentDecision, ResumeParams>() {
     override suspend fun performAction(params: ResumeParams): Result<PaymentDecision> {
         logReporter.debug("Resuming payment with id: ${params.paymentId}")
-        return resumePaymentsRepository.resumePayment(paymentId = params.paymentId, resumeToken = params.resumeToken)
+        return resumePaymentsRepository.resumePayment(params)
             .map { paymentResult -> paymentDecisionResolver.resolve(paymentResult) }
     }
 }

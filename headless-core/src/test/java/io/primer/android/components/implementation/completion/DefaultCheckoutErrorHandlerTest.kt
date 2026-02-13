@@ -15,6 +15,7 @@ import io.primer.android.data.settings.PrimerPaymentHandling
 import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.domain.error.models.PrimerError
 import io.primer.android.domain.payments.create.model.Payment
+import io.primer.android.payments.core.idempotency.IdempotencyKeyHolder
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
@@ -33,11 +34,18 @@ class DefaultCheckoutErrorHandlerTest {
     @RelaxedMockK
     internal lateinit var config: PrimerConfig
 
+    @RelaxedMockK
+    internal lateinit var idempotencyKeyHolder: IdempotencyKeyHolder
+
     private lateinit var checkoutErrorHandler: DefaultCheckoutErrorHandler
 
     @BeforeEach
     fun setUp() {
-        checkoutErrorHandler = DefaultCheckoutErrorHandler(analyticsRepository = analyticsRepository, config = config)
+        checkoutErrorHandler = DefaultCheckoutErrorHandler(
+            analyticsRepository = analyticsRepository,
+            config = config,
+            idempotencyKeyHolder = idempotencyKeyHolder,
+        )
     }
 
     @Test

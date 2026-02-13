@@ -13,8 +13,8 @@ import io.primer.android.data.settings.PrimerPaymentHandling
 import io.primer.android.data.settings.internal.PrimerConfig
 import io.primer.android.domain.tokenization.models.PrimerPaymentMethodTokenData
 import io.primer.android.payments.core.create.domain.CreatePaymentInteractor
-import io.primer.android.payments.core.create.domain.model.CreatePaymentParams
 import io.primer.android.payments.core.create.domain.model.PaymentDecision
+import io.primer.android.payments.core.idempotency.IdempotencyKeyHolder
 import io.primer.android.payments.di.PaymentsContainer
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
@@ -43,6 +43,7 @@ class DefaultPaymentMethodTokenHandlerTest {
                         ) { createPaymentInteractor }
                         container.registerFactory<CreatePaymentInteractor> { createPaymentInteractor }
                         container.registerFactory<PostTokenizationHandler> { postTokenizationHandler }
+                        container.registerFactory<IdempotencyKeyHolder> { mockk(relaxed = true) }
                     }
 
                 every { sdkContainer.containers }
@@ -64,7 +65,7 @@ class DefaultPaymentMethodTokenHandlerTest {
             val paymentDecision = mockk<PaymentDecision>()
 
             every { config.settings.paymentHandling } returns PrimerPaymentHandling.AUTO
-            coEvery { createPaymentInteractor.invoke(CreatePaymentParams("testToken")) } returns
+            coEvery { createPaymentInteractor.invoke(any()) } returns
                 Result.success(
                     paymentDecision,
                 )
@@ -74,7 +75,7 @@ class DefaultPaymentMethodTokenHandlerTest {
 
             // Assert
             assertEquals(Result.success(paymentDecision), result)
-            coVerify { createPaymentInteractor.invoke(CreatePaymentParams("testToken")) }
+            coVerify { createPaymentInteractor.invoke(match { it.token == "testToken" }) }
         }
 
     @Test

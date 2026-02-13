@@ -13,6 +13,7 @@ import io.primer.android.domain.PrimerCheckoutData
 import io.primer.android.domain.error.models.PrimerError
 import io.primer.android.domain.payments.create.model.Payment
 import io.primer.android.payments.core.helpers.CheckoutErrorHandler
+import io.primer.android.payments.core.idempotency.IdempotencyKeyHolder
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainCoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
@@ -21,6 +22,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 class DefaultCheckoutErrorHandler(
     private val analyticsRepository: AnalyticsRepository,
     private val config: PrimerConfig,
+    private val idempotencyKeyHolder: IdempotencyKeyHolder,
     private val coroutineDispatcher: MainCoroutineDispatcher = Dispatchers.Main,
 ) : CheckoutErrorHandler {
     private val _errors = MutableSharedFlow<PrimerError>()
@@ -31,6 +33,7 @@ class DefaultCheckoutErrorHandler(
         payment: Payment?,
     ) {
         _errors.emit(error)
+        idempotencyKeyHolder.clear()
         coroutineDispatcher.dispatch(coroutineDispatcher.immediate) {
             analyticsRepository.apply {
                 addEvent(
