@@ -1,6 +1,7 @@
 [tool.commitizen]
-version_scheme = "semver"
+version_scheme = "semver2"
 version = "2.47.1"
 version_files = [
     "gradle.properties:VERSION_NAME"
 ]
+prerelease_offset = 1
