@@ -25,7 +25,7 @@ import io.primer.android.payments.core.helpers.PaymentMethodPaymentDelegate
 import io.primer.android.payments.core.tokenization.data.datasource.BaseRemoteTokenizationDataSource
 import io.primer.cardShared.binData.data.datasource.InMemoryCardBinMetadataDataSource
 import io.primer.cardShared.binData.data.datasource.RemoteCardBinMetadataDataSource
-import io.primer.cardShared.binData.data.model.CardBinMetadataDataNetworksResponse
+import io.primer.cardShared.binData.data.model.BinDataResponse
 import io.primer.cardShared.binData.data.repository.CardBinMetadataDataRepository
 import io.primer.cardShared.binData.domain.CardBinMetadataRepository
 import io.primer.cardShared.binData.domain.CardDataMetadataRetriever
@@ -41,7 +41,7 @@ internal class CardContainer(
     override fun registerInitialDependencies() {
         sdk().resolve<WhitelistedHttpBodyKeyProviderRegistry>().apply {
             listOf(
-                CardBinMetadataDataNetworksResponse.provider,
+                BinDataResponse.provider,
             ).forEach(::register)
         }
 

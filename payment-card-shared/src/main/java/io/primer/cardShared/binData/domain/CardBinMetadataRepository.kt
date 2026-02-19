@@ -6,5 +6,5 @@ fun interface CardBinMetadataRepository {
     suspend fun getBinMetadata(
         bin: String,
         source: ValidationSource,
-    ): Result<List<CardBinMetadata>>
+    ): Result<CardBinMetadataResult>
 }

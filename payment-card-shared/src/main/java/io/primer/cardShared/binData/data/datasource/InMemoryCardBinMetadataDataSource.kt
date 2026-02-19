@@ -1,20 +1,20 @@
 package io.primer.cardShared.binData.data.datasource
 
 import io.primer.android.core.data.datasource.BaseCacheDataSource
-import io.primer.cardShared.binData.data.model.CardNetworkDataResponse
+import io.primer.cardShared.binData.data.model.BinDataResponse
 
 class InMemoryCardBinMetadataDataSource :
     BaseCacheDataSource<
-        Map<String, List<CardNetworkDataResponse>>,
-        Pair<String, List<CardNetworkDataResponse>>,
+        Map<String, BinDataResponse>,
+        Pair<String, BinDataResponse>,
         > {
-    private val cardNetworkDataResponses: HashMap<String, List<CardNetworkDataResponse>> =
+    private val binDataResponses: HashMap<String, BinDataResponse> =
         hashMapOf()
 
-    override fun get() = cardNetworkDataResponses.toMap()
+    override fun get() = binDataResponses.toMap()
 
-    override fun update(input: Pair<String, List<CardNetworkDataResponse>>) {
+    override fun update(input: Pair<String, BinDataResponse>) {
         super.update(input)
-        cardNetworkDataResponses[input.first] = input.second
+        binDataResponses[input.first] = input.second
     }
 }

@@ -11,6 +11,8 @@ import io.primer.android.analytics.data.models.MessageType
 import io.primer.android.analytics.data.models.Severity
 import io.primer.android.analytics.domain.models.MessageAnalyticsParams
 import io.primer.android.analytics.domain.repository.AnalyticsRepository
+import io.primer.android.components.domain.core.models.card.PrimerCardBinData
+import io.primer.android.components.domain.core.models.card.PrimerCardBinDataMetadata
 import io.primer.android.components.domain.core.models.card.PrimerCardData
 import io.primer.android.components.domain.core.models.card.PrimerCardMetadataState
 import io.primer.android.components.domain.core.models.card.PrimerCardNetwork
@@ -72,9 +74,10 @@ internal class DefaultCardMetadataStateRetrieverTest {
 
         val source = ValidationSource.REMOTE
         val cardBinMetadata = listOf(CARTES_BANCAIRES_CARD_BIN_METADATA, VISA_CARD_BIN_METADATA)
+        val cardBinMetadataResult = CardBinMetadataResult(cardBinMetadata, FIRST_DIGITS)
 
         coEvery { cardBinMetadataRepository.getBinMetadata(any(), any()) }.returns(
-            Result.success(cardBinMetadata),
+            Result.success(cardBinMetadataResult),
         )
 
         every { orderedAllowedCardNetworksRepository.getOrderedAllowedCardNetworks() }.returns(
@@ -101,6 +104,11 @@ internal class DefaultCardMetadataStateRetrieverTest {
                     expectedNetworks.firstOrNull(),
                 ),
                 source,
+                PrimerCardBinDataMetadata(
+                    preferred = VISA_PRIMER_CARD_BIN_DATA,
+                    alternatives = listOf(CB_PRIMER_CARD_BIN_DATA),
+                    firstDigits = FIRST_DIGITS,
+                ),
             )
 
         runTest {
@@ -156,9 +164,10 @@ internal class DefaultCardMetadataStateRetrieverTest {
         every { cardData.cardNumber } returns CARD_NUMBER
 
         val cardBinMetadata = listOf(VISA_CARD_BIN_METADATA, CARTES_BANCAIRES_CARD_BIN_METADATA)
+        val cardBinMetadataResult = CardBinMetadataResult(cardBinMetadata, FIRST_DIGITS)
 
         coEvery { cardBinMetadataRepository.getBinMetadata(any(), any()) }.returns(
-            Result.success(cardBinMetadata),
+            Result.success(cardBinMetadataResult),
         )
 
         every { orderedAllowedCardNetworksRepository.getOrderedAllowedCardNetworks() }.returns(
@@ -172,7 +181,6 @@ internal class DefaultCardMetadataStateRetrieverTest {
                 true,
             )
 
-        // Only allowed networks should be in detectedCardNetworks (VISA is not allowed)
         val expectedCardNumberEntryMetadata =
             PrimerCardNumberEntryMetadata(
                 null,
@@ -181,6 +189,11 @@ internal class DefaultCardMetadataStateRetrieverTest {
                     cbCardNetwork,
                 ),
                 ValidationSource.REMOTE,
+                PrimerCardBinDataMetadata(
+                    preferred = CB_PRIMER_CARD_BIN_DATA,
+                    alternatives = emptyList(),
+                    firstDigits = FIRST_DIGITS,
+                ),
             )
 
         runTest {
@@ -250,7 +263,7 @@ internal class DefaultCardMetadataStateRetrieverTest {
                 ValidationSource.LOCAL_FALLBACK,
             )
         }.returns(
-            Result.success(listOf(VISA_CARD_BIN_METADATA)),
+            Result.success(CardBinMetadataResult(listOf(VISA_CARD_BIN_METADATA), null)),
         )
 
         every { orderedAllowedCardNetworksRepository.getOrderedAllowedCardNetworks() }.returns(
@@ -344,14 +357,13 @@ internal class DefaultCardMetadataStateRetrieverTest {
                 ValidationSource.LOCAL_FALLBACK,
             )
         }.returns(
-            Result.success(listOf(VISA_CARD_BIN_METADATA)),
+            Result.success(CardBinMetadataResult(listOf(VISA_CARD_BIN_METADATA), null)),
         )
 
         every { orderedAllowedCardNetworksRepository.getOrderedAllowedCardNetworks() }.returns(
             listOf(CardNetwork.Type.CARTES_BANCAIRES, CardNetwork.Type.AMEX),
         )
 
-        // Only allowed networks should be in detectedCardNetworks (VISA is not allowed, so empty)
         val expectedCardNumberEntryMetadata =
             PrimerCardNumberEntryMetadata(
                 null,
@@ -430,7 +442,7 @@ internal class DefaultCardMetadataStateRetrieverTest {
                 ValidationSource.LOCAL,
             )
         }.returns(
-            Result.success(listOf(VISA_CARD_BIN_METADATA)),
+            Result.success(CardBinMetadataResult(listOf(VISA_CARD_BIN_METADATA), null)),
         )
 
         every { orderedAllowedCardNetworksRepository.getOrderedAllowedCardNetworks() }.returns(
@@ -499,7 +511,7 @@ internal class DefaultCardMetadataStateRetrieverTest {
                 ValidationSource.LOCAL,
             )
         }.returns(
-            Result.success(listOf(VISA_CARD_BIN_METADATA)),
+            Result.success(CardBinMetadataResult(listOf(VISA_CARD_BIN_METADATA), null)),
         )
 
         every { orderedAllowedCardNetworksRepository.getOrderedAllowedCardNetworks() }.returns(
@@ -619,9 +631,10 @@ internal class DefaultCardMetadataStateRetrieverTest {
 
         val source = ValidationSource.REMOTE
         val cardBinMetadata = listOf(EFTPOS_CARD_BIN_METADATA, VISA_CARD_BIN_METADATA)
+        val cardBinMetadataResult = CardBinMetadataResult(cardBinMetadata, FIRST_DIGITS)
 
         coEvery { cardBinMetadataRepository.getBinMetadata(any(), any()) }.returns(
-            Result.success(cardBinMetadata),
+            Result.success(cardBinMetadataResult),
         )
 
         every { orderedAllowedCardNetworksRepository.getOrderedAllowedCardNetworks() }.returns(
@@ -634,12 +647,17 @@ internal class DefaultCardMetadataStateRetrieverTest {
         val expectedNetworks = listOf(visaCardNetwork, eftposCardNetwork)
         val expectedCardNumberEntryMetadata =
             PrimerCardNumberEntryMetadata(
-                null, // selectableCardNetworks should be null for EFTPOS co-branded cards
+                null,
                 PrimerCardNetworksMetadata(
                     expectedNetworks,
                     expectedNetworks.firstOrNull(),
                 ),
                 source,
+                PrimerCardBinDataMetadata(
+                    preferred = VISA_PRIMER_CARD_BIN_DATA,
+                    alternatives = listOf(EFTPOS_PRIMER_CARD_BIN_DATA),
+                    firstDigits = FIRST_DIGITS,
+                ),
             )
 
         runTest {
@@ -679,9 +697,10 @@ internal class DefaultCardMetadataStateRetrieverTest {
 
         val source = ValidationSource.REMOTE
         val cardBinMetadata = listOf(EFTPOS_CARD_BIN_METADATA, MASTERCARD_CARD_BIN_METADATA)
+        val cardBinMetadataResult = CardBinMetadataResult(cardBinMetadata, FIRST_DIGITS)
 
         coEvery { cardBinMetadataRepository.getBinMetadata(any(), any()) }.returns(
-            Result.success(cardBinMetadata),
+            Result.success(cardBinMetadataResult),
         )
 
         every { orderedAllowedCardNetworksRepository.getOrderedAllowedCardNetworks() }.returns(
@@ -694,12 +713,17 @@ internal class DefaultCardMetadataStateRetrieverTest {
         val expectedNetworks = listOf(mastercardNetwork, eftposCardNetwork)
         val expectedCardNumberEntryMetadata =
             PrimerCardNumberEntryMetadata(
-                null, // selectableCardNetworks should be null for EFTPOS co-branded cards
+                null,
                 PrimerCardNetworksMetadata(
                     expectedNetworks,
                     expectedNetworks.firstOrNull(),
                 ),
                 source,
+                PrimerCardBinDataMetadata(
+                    preferred = MASTERCARD_PRIMER_CARD_BIN_DATA,
+                    alternatives = listOf(EFTPOS_PRIMER_CARD_BIN_DATA),
+                    firstDigits = FIRST_DIGITS,
+                ),
             )
 
         runTest {
@@ -735,6 +759,7 @@ internal class DefaultCardMetadataStateRetrieverTest {
     private companion object {
         const val CARD_NUMBER = "40355000000"
         const val CARD_NUMBER_SHORT = "40355"
+        const val FIRST_DIGITS = "40355000"
 
         val VISA_CARD_BIN_METADATA = CardBinMetadata("VISA", CardNetwork.Type.VISA)
         val MASTERCARD_CARD_BIN_METADATA = CardBinMetadata("Mastercard", CardNetwork.Type.MASTERCARD)
@@ -744,5 +769,28 @@ internal class DefaultCardMetadataStateRetrieverTest {
                 CardNetwork.Type.CARTES_BANCAIRES,
             )
         val EFTPOS_CARD_BIN_METADATA = CardBinMetadata("EFTPOS", CardNetwork.Type.EFTPOS)
+
+        val VISA_PRIMER_CARD_BIN_DATA = defaultPrimerCardBinData(CardNetwork.Type.VISA, "VISA")
+        val MASTERCARD_PRIMER_CARD_BIN_DATA = defaultPrimerCardBinData(CardNetwork.Type.MASTERCARD, "Mastercard")
+        val CB_PRIMER_CARD_BIN_DATA = defaultPrimerCardBinData(CardNetwork.Type.CARTES_BANCAIRES, "CB")
+        val EFTPOS_PRIMER_CARD_BIN_DATA = defaultPrimerCardBinData(CardNetwork.Type.EFTPOS, "EFTPOS")
+
+        private fun defaultPrimerCardBinData(
+            network: CardNetwork.Type,
+            displayName: String,
+        ) = PrimerCardBinData(
+            network = network,
+            displayName = displayName,
+            issuerCountryCode = "",
+            issuerName = null,
+            accountFundingType = "",
+            prepaidReloadableIndicator = "",
+            productUsageType = "",
+            productCode = "",
+            productName = "",
+            issuerCurrencyCode = null,
+            regionalRestriction = "",
+            accountNumberType = "",
+        )
     }
 }

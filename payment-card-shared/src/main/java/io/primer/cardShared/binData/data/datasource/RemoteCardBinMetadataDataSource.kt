@@ -6,19 +6,18 @@ import io.primer.android.core.data.datasource.toHeaderMap
 import io.primer.android.core.data.model.BaseRemoteHostRequest
 import io.primer.android.core.data.network.PrimerHttpClient
 import io.primer.android.core.data.network.utils.PrimerTimeouts.PRIMER_15S_TIMEOUT
-import io.primer.cardShared.binData.data.model.CardBinMetadataDataNetworksResponse
-import io.primer.cardShared.binData.data.model.CardNetworkDataResponse
+import io.primer.cardShared.binData.data.model.BinDataResponse
 
 class RemoteCardBinMetadataDataSource(
     private val httpClient: PrimerHttpClient,
     private val apiVersion: () -> PrimerApiVersion,
-) : BaseSuspendDataSource<List<CardNetworkDataResponse>, BaseRemoteHostRequest<String>> {
-    override suspend fun execute(input: BaseRemoteHostRequest<String>): List<CardNetworkDataResponse> {
+) : BaseSuspendDataSource<BinDataResponse, BaseRemoteHostRequest<String>> {
+    override suspend fun execute(input: BaseRemoteHostRequest<String>): BinDataResponse {
         val bin = input.data
         return httpClient.withTimeout(PRIMER_15S_TIMEOUT)
-            .suspendGet<CardBinMetadataDataNetworksResponse>(
-                url = "${input.host}/v1/bin-data/$bin/networks",
+            .suspendGet<BinDataResponse>(
+                url = "${input.host}/v1/bin-data/$bin",
                 headers = apiVersion().toHeaderMap(),
-            ).body.networks
+            ).body
     }
 }

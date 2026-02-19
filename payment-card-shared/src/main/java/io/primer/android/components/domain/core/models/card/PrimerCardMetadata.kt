@@ -31,6 +31,7 @@ data class PrimerCardNumberEntryMetadata(
     val selectableCardNetworks: PrimerCardNetworksMetadata?,
     val detectedCardNetworks: PrimerCardNetworksMetadata,
     val source: ValidationSource,
+    val binData: PrimerCardBinDataMetadata? = null,
 ) : PrimerPaymentMethodMetadata
 
 /**

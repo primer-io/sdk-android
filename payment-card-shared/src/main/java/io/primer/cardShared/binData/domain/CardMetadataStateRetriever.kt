@@ -5,6 +5,7 @@ import io.primer.android.analytics.data.models.MessageType
 import io.primer.android.analytics.data.models.Severity
 import io.primer.android.analytics.domain.models.MessageAnalyticsParams
 import io.primer.android.analytics.domain.repository.AnalyticsRepository
+import io.primer.android.components.domain.core.models.card.PrimerCardBinDataMetadata
 import io.primer.android.components.domain.core.models.card.PrimerCardData
 import io.primer.android.components.domain.core.models.card.PrimerCardMetadataState
 import io.primer.android.components.domain.core.models.card.PrimerCardNetwork
@@ -66,21 +67,36 @@ class CardMetadataStateRetriever(
             binMetadataDataRepository.getBinMetadata(
                 cardNumber.take(MAX_BIN_LENGTH),
                 ValidationSource.REMOTE,
-            ).mapSuspendCatching { binMetadata ->
+            ).mapSuspendCatching { binMetadataResult ->
                 val orderedAllowedCardNetworks =
                     allowedCardNetworksRepository.getOrderedAllowedCardNetworks()
-                val allNetworks = binMetadata.toSortedPrimerCardNetworks(orderedAllowedCardNetworks)
-                val allowedNetworks =
-                    allNetworks.filter { primerCardNetwork -> primerCardNetwork.allowed }
-                logCardNetworksFetchedEvent(binMetadata)
+                val sortedAllowedItems =
+                    binMetadataResult.items.sortedByAllowedNetworks(orderedAllowedCardNetworks)
+                val allowedNetworks = sortedAllowedItems.map { metadata ->
+                    PrimerCardNetwork(
+                        requireNotNull(metadata.network),
+                        metadata.displayName,
+                        true,
+                    )
+                }
+                logCardNetworksFetchedEvent(binMetadataResult)
                 val selectableNetworks = allowedNetworks.takeIf { primerCardNetworks ->
                     primerCardNetworks.size > MIN_SELECTABLE_NETWORKS_SIZE &&
                         allowsUserNetworkSelection(primerCardNetworks)
+                }
+                val sortedBinData = sortedAllowedItems.map { it.toPrimerCardBinData() }
+                val binDataMetadata = sortedBinData.takeIf { it.isNotEmpty() }?.let {
+                    PrimerCardBinDataMetadata(
+                        preferred = it.firstOrNull(),
+                        alternatives = it.drop(1),
+                        firstDigits = binMetadataResult.firstDigits.orEmpty(),
+                    )
                 }
                 PrimerCardNumberEntryMetadata(
                     selectableNetworks?.toCardNetworksMetadata(),
                     allowedNetworks.toCardNetworksMetadata(),
                     ValidationSource.REMOTE,
+                    binDataMetadata,
                 )
             }.recoverCatching { throwable ->
                 logReporter.warn("Remote card validation failed: ${throwable.message}")
@@ -115,7 +131,7 @@ class CardMetadataStateRetriever(
 
         false ->
             binMetadataDataRepository.getBinMetadata(bin, source).getOrThrow()
-                .toSortedPrimerCardNetworks(
+                .items.toSortedPrimerCardNetworks(
                     allowedCardNetworksRepository.getOrderedAllowedCardNetworks(),
                 )
                 .filter { it.allowed }
@@ -163,11 +179,11 @@ class CardMetadataStateRetriever(
         this.lastInputData = lastInputData
     }
 
-    private fun logCardNetworksFetchedEvent(binMetadata: List<CardBinMetadata>) =
+    private fun logCardNetworksFetchedEvent(binMetadataResult: CardBinMetadataResult) =
         analyticsRepository.addEvent(
             MessageAnalyticsParams(
                 MessageType.INFO,
-                "Fetched card networks: $binMetadata.",
+                "Fetched card networks: ${binMetadataResult.items}.",
                 Severity.INFO,
             ),
         )

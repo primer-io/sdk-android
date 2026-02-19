@@ -1,7 +1,7 @@
 package io.primer.cardShared.binData.data.datasource
 
 import io.mockk.mockk
-import io.primer.cardShared.binData.data.model.CardNetworkDataResponse
+import io.primer.cardShared.binData.data.model.BinDataResponse
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -17,13 +17,13 @@ class InMemoryCardBinMetadataDataSourceTest {
     @Test
     fun `get returns empty map when no data is present`() {
         val result = dataSource.get()
-        assertEquals(emptyMap<String, List<CardNetworkDataResponse>>(), result)
+        assertEquals(emptyMap<String, BinDataResponse>(), result)
     }
 
     @Test
     fun `update adds data to the cache`() {
         val key = "key1"
-        val data = listOf(mockk<CardNetworkDataResponse>())
+        val data = mockk<BinDataResponse>()
 
         dataSource.update(key to data)
 
@@ -34,8 +34,8 @@ class InMemoryCardBinMetadataDataSourceTest {
     @Test
     fun `update overwrites existing data for the same key`() {
         val key = "key1"
-        val initialData = listOf(mockk<CardNetworkDataResponse>())
-        val newData = listOf(mockk<CardNetworkDataResponse>())
+        val initialData = mockk<BinDataResponse>()
+        val newData = mockk<BinDataResponse>()
 
         dataSource.update(key to initialData)
         dataSource.update(key to newData)

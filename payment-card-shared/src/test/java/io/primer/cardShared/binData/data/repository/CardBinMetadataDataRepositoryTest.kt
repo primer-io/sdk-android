@@ -15,7 +15,8 @@ import io.primer.android.configuration.data.model.ConfigurationData
 import io.primer.android.core.data.datasource.BaseCacheDataSource
 import io.primer.cardShared.binData.data.datasource.InMemoryCardBinMetadataDataSource
 import io.primer.cardShared.binData.data.datasource.RemoteCardBinMetadataDataSource
-import io.primer.cardShared.binData.data.model.CardNetworkDataResponse
+import io.primer.cardShared.binData.data.model.BinDataItemResponse
+import io.primer.cardShared.binData.data.model.BinDataResponse
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
@@ -51,7 +52,26 @@ class CardBinMetadataDataRepositoryTest {
         runTest {
             val bin = "123456"
             val url = "https://example.com/binData"
-            val remoteResponse = listOf(CardNetworkDataResponse("Visa", null))
+            val remoteResponse =
+                BinDataResponse(
+                    firstDigits = bin,
+                    binData = listOf(
+                        BinDataItemResponse(
+                            network = CardNetwork.Type.VISA,
+                            displayName = "Visa",
+                            issuerCountryCode = "US",
+                            issuerName = null,
+                            accountFundingType = "CREDIT",
+                            prepaidReloadableIndicator = "NOT_APPLICABLE",
+                            productUsageType = "CONSUMER",
+                            productCode = "A",
+                            productName = "Visa Classic",
+                            issuerCurrencyCode = null,
+                            regionalRestriction = "NONE",
+                            accountNumberType = "PRIMARY_ACCOUNT_NUMBER",
+                        ),
+                    ),
+                )
 
             coEvery { localConfigurationDataSource.get() } returns
                 mockk<ConfigurationData> {
@@ -66,8 +86,12 @@ class CardBinMetadataDataRepositoryTest {
             coVerify { remoteCardBinMetadataDataSource.execute(any()) }
             coVerify { inMemoryCardBinMetadataDataSource.update(any()) }
 
-            assertEquals(1, result.size)
-            assertEquals(CardNetwork.Type.VISA.name.titlecase(), result[0].displayName)
+            assertEquals(1, result.items.size)
+            assertEquals("Visa", result.items[0].displayName)
+            assertEquals(CardNetwork.Type.VISA, result.items[0].network)
+            assertEquals("US", result.items[0].issuerCountryCode)
+            assertEquals("CREDIT", result.items[0].accountFundingType)
+            assertEquals(bin, result.firstDigits)
         }
 
     @Test
@@ -90,9 +114,10 @@ class CardBinMetadataDataRepositoryTest {
 
             verify { CardNetwork.lookupAll(bin) }
 
-            assertEquals(2, result.size)
-            assertEquals(CardNetwork.Type.VISA.name.titlecase(), result[0].displayName)
-            assertEquals(CardNetwork.Type.MASTERCARD.name.titlecase(), result[1].displayName)
+            assertEquals(2, result.items.size)
+            assertEquals(CardNetwork.Type.VISA.name.titlecase(), result.items[0].displayName)
+            assertEquals(CardNetwork.Type.MASTERCARD.name.titlecase(), result.items[1].displayName)
+            assertEquals(null, result.firstDigits)
         }
 
     @Test
@@ -115,9 +140,10 @@ class CardBinMetadataDataRepositoryTest {
 
             verify { CardNetwork.lookupAll(bin) }
 
-            assertEquals(2, result.size)
-            assertEquals(CardNetwork.Type.VISA.name.titlecase(), result[0].displayName)
-            assertEquals(CardNetwork.Type.MASTERCARD.name.titlecase(), result[1].displayName)
+            assertEquals(2, result.items.size)
+            assertEquals(CardNetwork.Type.VISA.name.titlecase(), result.items[0].displayName)
+            assertEquals(CardNetwork.Type.MASTERCARD.name.titlecase(), result.items[1].displayName)
+            assertEquals(null, result.firstDigits)
         }
 
     private fun String.titlecase(): String {

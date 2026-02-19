@@ -69,7 +69,7 @@ class RemoteCardBinMetadataDataSourceTest {
             }
             val request = requestSlot.captured
             assertEquals("GET", request.method)
-            assertEquals("https://example.com/v1/bin-data/bin/networks", request.url.toString())
+            assertEquals("https://example.com/v1/bin-data/bin", request.url.toString())
             assertEquals(apiVersion.toHeaderMap().toHeaders(), request.headers)
         }
 
