@@ -1,5 +1,6 @@
 package io.primer.android.components.manager.raw
 
+import io.primer.android.components.domain.core.models.metadata.PrimerPaymentMethodBinData
 import io.primer.android.components.domain.core.models.metadata.PrimerPaymentMethodMetadata
 import io.primer.android.components.domain.core.models.metadata.PrimerPaymentMethodMetadataState
 import io.primer.android.components.domain.error.PrimerInputValidationError
@@ -33,4 +34,11 @@ interface PrimerHeadlessUniversalCheckoutRawDataManagerListener {
      * @param metadataState The updated [PrimerPaymentMethodMetadataState].
      */
     fun onMetadataStateChanged(metadataState: PrimerPaymentMethodMetadataState) = Unit
+
+    /**
+     * Called when BIN data becomes available or is updated for the current card input.
+     *
+     * @param binData The updated [PrimerPaymentMethodBinData].
+     */
+    fun onBinDataAvailable(binData: PrimerPaymentMethodBinData) = Unit
 }

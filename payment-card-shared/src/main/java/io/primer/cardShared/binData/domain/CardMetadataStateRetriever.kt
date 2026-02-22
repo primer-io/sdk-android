@@ -5,7 +5,8 @@ import io.primer.android.analytics.data.models.MessageType
 import io.primer.android.analytics.data.models.Severity
 import io.primer.android.analytics.domain.models.MessageAnalyticsParams
 import io.primer.android.analytics.domain.repository.AnalyticsRepository
-import io.primer.android.components.domain.core.models.card.PrimerCardBinDataMetadata
+import io.primer.android.components.domain.core.models.card.PrimerBinData
+import io.primer.android.components.domain.core.models.card.PrimerBinDataStatus
 import io.primer.android.components.domain.core.models.card.PrimerCardData
 import io.primer.android.components.domain.core.models.card.PrimerCardMetadataState
 import io.primer.android.components.domain.core.models.card.PrimerCardNetwork
@@ -19,6 +20,7 @@ import io.primer.android.core.extensions.mapSuspendCatching
 import io.primer.android.core.logging.internal.LogReporter
 import io.primer.cardShared.PaymentRawDataMetadataStateRetriever
 import io.primer.cardShared.networks.domain.repository.OrderedAllowedCardNetworksRepository
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.withTimeout
@@ -36,6 +38,9 @@ class CardMetadataStateRetriever(
     private val _metadataState = MutableSharedFlow<PrimerCardMetadataState>()
     override val metadataState = _metadataState.distinctUntilChanged()
 
+    private val _binData = MutableSharedFlow<PrimerBinData>(replay = 1)
+    val binData: Flow<PrimerBinData> = _binData
+
     override suspend fun handleInputData(inputData: PrimerCardData) {
         val newCardNumber = inputData.cardNumber.sanitizedCardNumber()
         val lastCardNumber = lastInputData?.cardNumber?.sanitizedCardNumber()
@@ -46,7 +51,15 @@ class CardMetadataStateRetriever(
                     getRemoteCardMetadata(newCardNumber)
                         .also { updateLastInputData(inputData) }
 
-                else ->
+                else -> {
+                    _binData.emit(
+                        PrimerBinData(
+                            preferred = null,
+                            alternatives = emptyList(),
+                            status = PrimerBinDataStatus.PARTIAL,
+                            firstDigits = null,
+                        ),
+                    )
                     _metadataState.emit(
                         PrimerCardMetadataState.Fetched(
                             getLocalCardMetadata(newCardNumber, ValidationSource.LOCAL),
@@ -55,6 +68,7 @@ class CardMetadataStateRetriever(
                     ).also {
                         updateLastInputData(inputData)
                     }
+                }
             }
         }
     }
@@ -85,22 +99,34 @@ class CardMetadataStateRetriever(
                         allowsUserNetworkSelection(primerCardNetworks)
                 }
                 val sortedBinData = sortedAllowedItems.map { it.toPrimerCardBinData() }
-                val binDataMetadata = sortedBinData.takeIf { it.isNotEmpty() }?.let {
-                    PrimerCardBinDataMetadata(
-                        preferred = it.firstOrNull(),
-                        alternatives = it.drop(1),
-                        firstDigits = binMetadataResult.firstDigits.orEmpty(),
-                    )
-                }
+                _binData.emit(
+                    PrimerBinData(
+                        preferred = sortedBinData.firstOrNull(),
+                        alternatives = sortedBinData.drop(1),
+                        status = if (sortedBinData.isNotEmpty()) {
+                            PrimerBinDataStatus.COMPLETE
+                        } else {
+                            PrimerBinDataStatus.PARTIAL
+                        },
+                        firstDigits = binMetadataResult.firstDigits,
+                    ),
+                )
                 PrimerCardNumberEntryMetadata(
                     selectableNetworks?.toCardNetworksMetadata(),
                     allowedNetworks.toCardNetworksMetadata(),
                     ValidationSource.REMOTE,
-                    binDataMetadata,
                 )
             }.recoverCatching { throwable ->
                 logReporter.warn("Remote card validation failed: ${throwable.message}")
                 logCardNetworksFetchingErrorEvent(throwable)
+                _binData.emit(
+                    PrimerBinData(
+                        preferred = null,
+                        alternatives = emptyList(),
+                        status = PrimerBinDataStatus.PARTIAL,
+                        firstDigits = null,
+                    ),
+                )
                 getLocalCardMetadata(cardNumber.take(MAX_BIN_LENGTH), ValidationSource.LOCAL_FALLBACK)
             }.onSuccess { cardNumberEntryMetadata ->
                 saveCardNetworksMetadata(

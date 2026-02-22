@@ -1,6 +1,7 @@
 package io.primer.android.paymentmethods.core.composer
 
 import io.primer.android.PrimerSessionIntent
+import io.primer.android.components.domain.core.models.metadata.PrimerPaymentMethodBinData
 import io.primer.android.core.di.DISdkComponent
 import io.primer.android.core.di.extensions.resolve
 import io.primer.android.core.utils.CoroutineScopeProvider
@@ -19,6 +20,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.job
@@ -50,6 +52,8 @@ abstract class RawDataPaymentMethodComponent<TCollectableData : PrimerCollectabl
     PrimerHeadlessContextualStartable,
     PaymentMethodComposer,
     DISdkComponent {
+    open val binDataFlow: Flow<PrimerPaymentMethodBinData>? get() = null
+
     protected val composerScope by lazy {
         CoroutineScope(
             SupervisorJob(

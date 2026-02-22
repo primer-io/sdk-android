@@ -33,9 +33,11 @@ import io.primer.android.RetailOutletsList
 import io.primer.android.bancontact.PrimerBancontactCardData
 import io.primer.android.bancontact.implementation.metadata.domain.model.PrimerBancontactCardMetadata
 import io.primer.android.components.SdkUninitializedException
+import io.primer.android.components.domain.core.models.card.PrimerBinData
 import io.primer.android.components.domain.core.models.card.PrimerCardData
 import io.primer.android.components.domain.core.models.card.PrimerCardMetadataState
 import io.primer.android.components.domain.core.models.card.PrimerCardNetwork
+import io.primer.android.components.domain.core.models.metadata.PrimerPaymentMethodBinData
 import io.primer.android.components.domain.core.models.metadata.PrimerPaymentMethodMetadata
 import io.primer.android.components.domain.core.models.metadata.PrimerPaymentMethodMetadataState
 import io.primer.android.components.domain.error.PrimerInputValidationError
@@ -164,6 +166,28 @@ class HeadlessRawFragment : Fragment(), PrimerHeadlessUniversalCheckoutRawDataMa
             is PrimerBancontactCardMetadata -> binding.pmView.findViewWithTag<TextInputLayout>(
                 PrimerInputElementType.CARD_NUMBER
             ).prefixText = metadata.cardNetwork.name
+        }
+    }
+
+    override fun onBinDataAvailable(binData: PrimerPaymentMethodBinData) {
+        _cardNumberInputBinding?.binDataInfo?.apply {
+            when (binData) {
+                is PrimerBinData -> {
+                    val preferred = binData.preferred
+                    if (preferred != null) {
+                        text = buildString {
+                            append("Network: ${preferred.displayName}")
+                            if (preferred.issuerName != null) append(" | Issuer: ${preferred.issuerName}")
+                            if (preferred.issuerCountryCode.isNotEmpty()) append(" | Country: ${preferred.issuerCountryCode}")
+                            if (preferred.accountFundingType.isNotEmpty()) append(" | Funding: ${preferred.accountFundingType}")
+                        }
+                        isVisible = true
+                    } else {
+                        isVisible = false
+                    }
+                }
+                else -> isVisible = false
+            }
         }
     }
 

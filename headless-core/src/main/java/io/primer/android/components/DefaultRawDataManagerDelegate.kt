@@ -204,6 +204,12 @@ internal class DefaultRawDataManagerDelegate(
                     listener?.onMetadataChanged(metadata)
                 }
             }
+
+            launch {
+                composer.binDataFlow?.distinctUntilChanged()?.collectLatest { binData ->
+                    listener?.onBinDataAvailable(binData)
+                }
+            }
         }
         composer.start(paymentMethodType = paymentMethodType, sessionIntent = primerSessionIntent)
     }

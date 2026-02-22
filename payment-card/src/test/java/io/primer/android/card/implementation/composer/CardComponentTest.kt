@@ -20,6 +20,8 @@ import io.primer.android.card.implementation.payment.delegate.CardPaymentDelegat
 import io.primer.android.card.implementation.payment.delegate.ProcessorThreeDsInitialLauncherParams
 import io.primer.android.card.implementation.payment.delegate.ThreeDsInitialLauncherParams
 import io.primer.android.card.implementation.tokenization.presentation.CardTokenizationDelegate
+import io.primer.android.components.domain.core.models.card.PrimerBinData
+import io.primer.android.components.domain.core.models.card.PrimerBinDataStatus
 import io.primer.android.components.domain.core.models.card.PrimerCardData
 import io.primer.android.components.domain.core.models.card.PrimerCardMetadata
 import io.primer.android.components.domain.error.PrimerInputValidationError
@@ -48,6 +50,7 @@ import io.primer.paymentMethodCoreUi.core.ui.webview.WebViewActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
@@ -477,5 +480,21 @@ class CardComponentTest {
         // Assert
         coVerify { tokenizationDelegate.tokenize(any()) }
         coVerify { paymentDelegate.handleError(exception) }
+    }
+
+    @Test
+    fun `binDataFlow should delegate to cardDataMetadataStateRetriever binData`() {
+        val expectedBinData = PrimerBinData(
+            preferred = null,
+            alternatives = emptyList(),
+            status = PrimerBinDataStatus.PARTIAL,
+            firstDigits = null,
+        )
+        every { cardDataMetadataStateRetriever.binData } returns flowOf(expectedBinData)
+
+        runTest {
+            val emissions = component.binDataFlow.toListDuring(1.seconds)
+            Assertions.assertEquals(listOf(expectedBinData), emissions)
+        }
     }
 }

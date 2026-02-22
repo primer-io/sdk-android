@@ -1,5 +1,6 @@
 package io.primer.android.components.domain.core.models.card
 
+import io.primer.android.components.domain.core.models.metadata.PrimerPaymentMethodBinData
 import io.primer.android.configuration.data.model.CardNetwork
 
 data class PrimerCardBinData(
@@ -17,8 +18,11 @@ data class PrimerCardBinData(
     val accountNumberType: String,
 )
 
-data class PrimerCardBinDataMetadata(
+enum class PrimerBinDataStatus { PARTIAL, COMPLETE }
+
+data class PrimerBinData(
     val preferred: PrimerCardBinData?,
     val alternatives: List<PrimerCardBinData>,
-    val firstDigits: String,
-)
+    val status: PrimerBinDataStatus,
+    val firstDigits: String?,
+) : PrimerPaymentMethodBinData

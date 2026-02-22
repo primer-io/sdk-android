@@ -11,8 +11,9 @@ import io.primer.android.analytics.data.models.MessageType
 import io.primer.android.analytics.data.models.Severity
 import io.primer.android.analytics.domain.models.MessageAnalyticsParams
 import io.primer.android.analytics.domain.repository.AnalyticsRepository
+import io.primer.android.components.domain.core.models.card.PrimerBinData
+import io.primer.android.components.domain.core.models.card.PrimerBinDataStatus
 import io.primer.android.components.domain.core.models.card.PrimerCardBinData
-import io.primer.android.components.domain.core.models.card.PrimerCardBinDataMetadata
 import io.primer.android.components.domain.core.models.card.PrimerCardData
 import io.primer.android.components.domain.core.models.card.PrimerCardMetadataState
 import io.primer.android.components.domain.core.models.card.PrimerCardNetwork
@@ -104,11 +105,14 @@ internal class DefaultCardMetadataStateRetrieverTest {
                     expectedNetworks.firstOrNull(),
                 ),
                 source,
-                PrimerCardBinDataMetadata(
-                    preferred = VISA_PRIMER_CARD_BIN_DATA,
-                    alternatives = listOf(CB_PRIMER_CARD_BIN_DATA),
-                    firstDigits = FIRST_DIGITS,
-                ),
+            )
+
+        val expectedBinData =
+            PrimerBinData(
+                preferred = VISA_PRIMER_CARD_BIN_DATA,
+                alternatives = listOf(CB_PRIMER_CARD_BIN_DATA),
+                status = PrimerBinDataStatus.COMPLETE,
+                firstDigits = FIRST_DIGITS,
             )
 
         runTest {
@@ -116,6 +120,7 @@ internal class DefaultCardMetadataStateRetrieverTest {
                 metadataStateRetriever.handleInputData(cardData)
             }
             val metadataStates = metadataStateRetriever.metadataState.toListDuring(1.seconds)
+            val binDataEmissions = metadataStateRetriever.binData.toListDuring(1.seconds)
 
             assertEquals(
                 listOf(
@@ -131,6 +136,7 @@ internal class DefaultCardMetadataStateRetrieverTest {
                 ),
                 metadataStates,
             )
+            assertEquals(listOf(expectedBinData), binDataEmissions)
         }
 
         coVerify {
@@ -189,11 +195,14 @@ internal class DefaultCardMetadataStateRetrieverTest {
                     cbCardNetwork,
                 ),
                 ValidationSource.REMOTE,
-                PrimerCardBinDataMetadata(
-                    preferred = CB_PRIMER_CARD_BIN_DATA,
-                    alternatives = emptyList(),
-                    firstDigits = FIRST_DIGITS,
-                ),
+            )
+
+        val expectedBinData =
+            PrimerBinData(
+                preferred = CB_PRIMER_CARD_BIN_DATA,
+                alternatives = emptyList(),
+                status = PrimerBinDataStatus.COMPLETE,
+                firstDigits = FIRST_DIGITS,
             )
 
         runTest {
@@ -201,6 +210,7 @@ internal class DefaultCardMetadataStateRetrieverTest {
                 metadataStateRetriever.handleInputData(cardData)
             }
             val metadataStates = metadataStateRetriever.metadataState.toListDuring(1.seconds)
+            val binDataEmissions = metadataStateRetriever.binData.toListDuring(1.seconds)
 
             assertEquals(
                 listOf(
@@ -216,6 +226,7 @@ internal class DefaultCardMetadataStateRetrieverTest {
                 ),
                 metadataStates,
             )
+            assertEquals(listOf(expectedBinData), binDataEmissions)
         }
 
         coVerify {
@@ -281,11 +292,20 @@ internal class DefaultCardMetadataStateRetrieverTest {
                 ValidationSource.LOCAL_FALLBACK,
             )
 
+        val expectedBinData =
+            PrimerBinData(
+                preferred = null,
+                alternatives = emptyList(),
+                status = PrimerBinDataStatus.PARTIAL,
+                firstDigits = null,
+            )
+
         runTest {
             launch {
                 metadataStateRetriever.handleInputData(cardData)
             }
             val metadataStates = metadataStateRetriever.metadataState.toListDuring(1.seconds)
+            val binDataEmissions = metadataStateRetriever.binData.toListDuring(1.seconds)
 
             assertEquals(
                 listOf(
@@ -301,6 +321,7 @@ internal class DefaultCardMetadataStateRetrieverTest {
                 ),
                 metadataStates,
             )
+            assertEquals(listOf(expectedBinData), binDataEmissions)
         }
 
         coVerify {
@@ -374,12 +395,21 @@ internal class DefaultCardMetadataStateRetrieverTest {
                 ValidationSource.LOCAL_FALLBACK,
             )
 
+        val expectedBinData =
+            PrimerBinData(
+                preferred = null,
+                alternatives = emptyList(),
+                status = PrimerBinDataStatus.PARTIAL,
+                firstDigits = null,
+            )
+
         runTest {
             launch {
                 metadataStateRetriever.handleInputData(cardData)
             }
 
             val metadataStates = metadataStateRetriever.metadataState.toListDuring(1.seconds)
+            val binDataEmissions = metadataStateRetriever.binData.toListDuring(1.seconds)
 
             assertEquals(
                 listOf(
@@ -395,6 +425,7 @@ internal class DefaultCardMetadataStateRetrieverTest {
                 ),
                 metadataStates,
             )
+            assertEquals(listOf(expectedBinData), binDataEmissions)
         }
 
         coVerify {
@@ -497,6 +528,42 @@ internal class DefaultCardMetadataStateRetrieverTest {
                 CARD_NUMBER_SHORT,
                 expectedCardNumberEntryMetadata,
             )
+        }
+    }
+
+    @Test
+    fun `binData should emit reset value when card number is less than 8 digits`() {
+        val cardData = mockk<PrimerCardData>(relaxed = true)
+        every { cardData.cardNumber } returns CARD_NUMBER_SHORT
+
+        coEvery {
+            cardBinMetadataRepository.getBinMetadata(
+                any(),
+                ValidationSource.LOCAL,
+            )
+        }.returns(
+            Result.success(CardBinMetadataResult(listOf(VISA_CARD_BIN_METADATA), null)),
+        )
+
+        every { orderedAllowedCardNetworksRepository.getOrderedAllowedCardNetworks() }.returns(
+            listOf(CardNetwork.Type.VISA, CardNetwork.Type.CARTES_BANCAIRES, CardNetwork.Type.AMEX),
+        )
+
+        val expectedBinData =
+            PrimerBinData(
+                preferred = null,
+                alternatives = emptyList(),
+                status = PrimerBinDataStatus.PARTIAL,
+                firstDigits = null,
+            )
+
+        runTest {
+            launch {
+                metadataStateRetriever.handleInputData(cardData)
+            }
+            val binDataEmissions = metadataStateRetriever.binData.toListDuring(1.seconds)
+
+            assertEquals(listOf(expectedBinData), binDataEmissions)
         }
     }
 
@@ -653,11 +720,14 @@ internal class DefaultCardMetadataStateRetrieverTest {
                     expectedNetworks.firstOrNull(),
                 ),
                 source,
-                PrimerCardBinDataMetadata(
-                    preferred = VISA_PRIMER_CARD_BIN_DATA,
-                    alternatives = listOf(EFTPOS_PRIMER_CARD_BIN_DATA),
-                    firstDigits = FIRST_DIGITS,
-                ),
+            )
+
+        val expectedBinData =
+            PrimerBinData(
+                preferred = VISA_PRIMER_CARD_BIN_DATA,
+                alternatives = listOf(EFTPOS_PRIMER_CARD_BIN_DATA),
+                status = PrimerBinDataStatus.COMPLETE,
+                firstDigits = FIRST_DIGITS,
             )
 
         runTest {
@@ -665,6 +735,7 @@ internal class DefaultCardMetadataStateRetrieverTest {
                 metadataStateRetriever.handleInputData(cardData)
             }
             val metadataStates = metadataStateRetriever.metadataState.toListDuring(1.seconds)
+            val binDataEmissions = metadataStateRetriever.binData.toListDuring(1.seconds)
 
             assertEquals(
                 listOf(
@@ -680,6 +751,7 @@ internal class DefaultCardMetadataStateRetrieverTest {
                 ),
                 metadataStates,
             )
+            assertEquals(listOf(expectedBinData), binDataEmissions)
         }
 
         coVerify {
@@ -719,11 +791,14 @@ internal class DefaultCardMetadataStateRetrieverTest {
                     expectedNetworks.firstOrNull(),
                 ),
                 source,
-                PrimerCardBinDataMetadata(
-                    preferred = MASTERCARD_PRIMER_CARD_BIN_DATA,
-                    alternatives = listOf(EFTPOS_PRIMER_CARD_BIN_DATA),
-                    firstDigits = FIRST_DIGITS,
-                ),
+            )
+
+        val expectedBinData =
+            PrimerBinData(
+                preferred = MASTERCARD_PRIMER_CARD_BIN_DATA,
+                alternatives = listOf(EFTPOS_PRIMER_CARD_BIN_DATA),
+                status = PrimerBinDataStatus.COMPLETE,
+                firstDigits = FIRST_DIGITS,
             )
 
         runTest {
@@ -731,6 +806,7 @@ internal class DefaultCardMetadataStateRetrieverTest {
                 metadataStateRetriever.handleInputData(cardData)
             }
             val metadataStates = metadataStateRetriever.metadataState.toListDuring(1.seconds)
+            val binDataEmissions = metadataStateRetriever.binData.toListDuring(1.seconds)
 
             assertEquals(
                 listOf(
@@ -746,6 +822,7 @@ internal class DefaultCardMetadataStateRetrieverTest {
                 ),
                 metadataStates,
             )
+            assertEquals(listOf(expectedBinData), binDataEmissions)
         }
 
         coVerify {
@@ -753,6 +830,40 @@ internal class DefaultCardMetadataStateRetrieverTest {
                 CARD_NUMBER.take(MAX_BIN_LENGTH),
                 source,
             )
+        }
+    }
+
+    @Test
+    fun `binData should emit PARTIAL when remote succeeds but all networks are filtered out`() {
+        val cardData = mockk<PrimerCardData>(relaxed = true)
+        every { cardData.cardNumber } returns CARD_NUMBER
+
+        val cardBinMetadata = listOf(VISA_CARD_BIN_METADATA)
+        val cardBinMetadataResult = CardBinMetadataResult(cardBinMetadata, FIRST_DIGITS)
+
+        coEvery { cardBinMetadataRepository.getBinMetadata(any(), any()) }.returns(
+            Result.success(cardBinMetadataResult),
+        )
+
+        every { orderedAllowedCardNetworksRepository.getOrderedAllowedCardNetworks() }.returns(
+            listOf(CardNetwork.Type.CARTES_BANCAIRES, CardNetwork.Type.AMEX),
+        )
+
+        val expectedBinData =
+            PrimerBinData(
+                preferred = null,
+                alternatives = emptyList(),
+                status = PrimerBinDataStatus.PARTIAL,
+                firstDigits = FIRST_DIGITS,
+            )
+
+        runTest {
+            launch {
+                metadataStateRetriever.handleInputData(cardData)
+            }
+            val binDataEmissions = metadataStateRetriever.binData.toListDuring(1.seconds)
+
+            assertEquals(listOf(expectedBinData), binDataEmissions)
         }
     }
 

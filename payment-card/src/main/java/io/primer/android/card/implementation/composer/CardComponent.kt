@@ -13,6 +13,7 @@ import io.primer.android.card.implementation.payment.delegate.ThreeDsInitialLaun
 import io.primer.android.card.implementation.tokenization.presentation.CardTokenizationDelegate
 import io.primer.android.card.implementation.tokenization.presentation.composable.CardTokenizationInputable
 import io.primer.android.components.domain.core.models.card.PrimerCardData
+import io.primer.android.components.domain.core.models.metadata.PrimerPaymentMethodBinData
 import io.primer.android.components.domain.core.models.metadata.PrimerPaymentMethodMetadata
 import io.primer.android.components.domain.core.models.metadata.PrimerPaymentMethodMetadataState
 import io.primer.android.components.domain.error.PrimerInputValidationError
@@ -70,6 +71,9 @@ internal class CardComponent(
 
     override val metadataStateFlow: Flow<PrimerPaymentMethodMetadataState>
         get() = cardDataMetadataStateRetriever.metadataState
+
+    override val binDataFlow: Flow<PrimerPaymentMethodBinData>
+        get() = cardDataMetadataStateRetriever.binData
 
     private val collectedData: MutableSharedFlow<PrimerCardData> = MutableSharedFlow(replay = 1)
 
