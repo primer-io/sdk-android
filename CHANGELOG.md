@@ -1,3 +1,10 @@
+## 2.48.0 (2026-02-24)
+
+### Feat
+
+- exposing more information through onBinDataAvailable
+- added idempotency key as optional param to continuePaymentCreation in PrimerPaymentCreationDecisionHandler
+
 ## 2.47.1 (2026-02-04)
 
 ### Fix
