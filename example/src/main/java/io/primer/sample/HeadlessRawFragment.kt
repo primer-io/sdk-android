@@ -199,48 +199,88 @@ class HeadlessRawFragment : Fragment(), PrimerHeadlessUniversalCheckoutRawDataMa
                         _cardNumberInputBinding?.progressBar?.isVisible = true
 
                     is PrimerCardMetadataState.Fetched -> _cardNumberInputBinding?.apply {
+                        val cardInputText = cardInput.editText?.text?.toString().orEmpty().trim()
+                        if (cardInputText.isEmpty()) {
+                            progressBar.isVisible = false
+                            cardNetworksSelectionView.isVisible = false
+                            cardNetworkPreview.isVisible = false
+                            cardNetworkPreviewSecondary.isVisible = false
+                            return@apply
+                        }
+                        val metadata = metadataState.cardNumberEntryMetadata
+
                         progressBar.isVisible = false
                         cardNetworksSelectionView.isVisible = false
                         cardNetworksSelectionView.removeAllViews()
                         cardNetworkPreview.isVisible = false
-                        metadataState.cardNumberEntryMetadata.selectableCardNetworks?.let { selectableCardNetworks ->
+                        cardNetworkPreviewSecondary.isVisible = false
+                        metadata.selectableCardNetworks?.let { selectableCardNetworks ->
                             cardNetworksSelectionView.isVisible = true
                             cardNetworksSelectionView.apply {
                                 val lastSelectedCardNetwork =
                                     children.filterIsInstance<AppCompatRadioButton>()
                                         .firstOrNull {
                                             it.id == checkedRadioButtonId
-                                        }?.tag
+                                        }?.tag as? PrimerCardNetwork
                                 selectableCardNetworks.items.forEach { cardNetwork ->
                                     addView(
                                         getCardNetworkView(
-                                            lastSelectedCardNetwork as? PrimerCardNetwork,
-                                            cardNetwork
+                                            lastSelectedCardNetwork,
+                                            cardNetwork,
+                                            isPreferred = lastSelectedCardNetwork == null &&
+                                                cardNetwork.network == selectableCardNetworks.preferred?.network,
                                         )
                                     )
 
                                 }
                             }
                         } ?: run {
-                            metadataState.cardNumberEntryMetadata.detectedCardNetworks.let { detectedCardNetworks ->
-                                val cardNetworkMetadata = (detectedCardNetworks.preferred
-                                    ?: detectedCardNetworks.items.firstOrNull())
-                                cardNetworkMetadata?.let {
+                            metadata.detectedCardNetworks.let { detectedCardNetworks ->
+                                if (detectedCardNetworks.items.size > 1) {
+                                    val firstNetwork = detectedCardNetworks.items[0]
+                                    val secondNetwork = detectedCardNetworks.items[1]
                                     cardNetworkPreview.isVisible = true
                                     cardNetworkPreview.setImageDrawable(
                                         PrimerHeadlessUniversalCheckoutAssetsManager
                                             .getCardNetworkAsset(
                                                 requireContext(),
-                                                cardNetworkMetadata.network
+                                                firstNetwork.network
                                             ).cardImage
                                     )
-                                    cardNetworkPreview.alpha =
-                                        if (cardNetworkMetadata.allowed) 1.0f else 0.4f
+                                    cardNetworkPreview.alpha = 1.0f
                                     cardNetworkPreview.contentDescription =
-                                        cardNetworkMetadata.displayName
-                                } ?: run {
-                                    cardNetworkPreview.setImageDrawable(null)
-                                    cardNetworkPreview.isVisible = false
+                                        firstNetwork.displayName
+                                    cardNetworkPreviewSecondary.isVisible = true
+                                    cardNetworkPreviewSecondary.setImageDrawable(
+                                        PrimerHeadlessUniversalCheckoutAssetsManager
+                                            .getCardNetworkAsset(
+                                                requireContext(),
+                                                secondNetwork.network
+                                            ).cardImage
+                                    )
+                                    cardNetworkPreviewSecondary.alpha = 1.0f
+                                    cardNetworkPreviewSecondary.contentDescription =
+                                        secondNetwork.displayName
+                                } else {
+                                    val cardNetworkMetadata = (detectedCardNetworks.preferred
+                                        ?: detectedCardNetworks.items.firstOrNull())
+                                    cardNetworkMetadata?.let {
+                                        cardNetworkPreview.isVisible = true
+                                        cardNetworkPreview.setImageDrawable(
+                                            PrimerHeadlessUniversalCheckoutAssetsManager
+                                                .getCardNetworkAsset(
+                                                    requireContext(),
+                                                    cardNetworkMetadata.network
+                                                ).cardImage
+                                        )
+                                        cardNetworkPreview.alpha =
+                                            if (cardNetworkMetadata.allowed) 1.0f else 0.4f
+                                        cardNetworkPreview.contentDescription =
+                                            cardNetworkMetadata.displayName
+                                    } ?: run {
+                                        cardNetworkPreview.setImageDrawable(null)
+                                        cardNetworkPreview.isVisible = false
+                                    }
                                 }
                             }
                         }
@@ -391,6 +431,9 @@ class HeadlessRawFragment : Fragment(), PrimerHeadlessUniversalCheckoutRawDataMa
                 if (type == PrimerInputElementType.CARD_NUMBER) {
                     _cardNumberInputBinding =
                         CardNumberInputViewBinding.inflate(layoutInflater).apply {
+                            cardNetworkPreview.isVisible = false
+                            cardNetworkPreviewSecondary.isVisible = false
+                            cardNetworksSelectionView.isVisible = false
                             cardInput.apply {
                                 tag = type
                                 hint = getString(getHint(type))
@@ -597,7 +640,8 @@ class HeadlessRawFragment : Fragment(), PrimerHeadlessUniversalCheckoutRawDataMa
 
     private fun getCardNetworkView(
         lastSelectedCardNetwork: PrimerCardNetwork?,
-        cardNetwork: PrimerCardNetwork
+        cardNetwork: PrimerCardNetwork,
+        isPreferred: Boolean = false,
     ) = AppCompatRadioButton(requireContext()).apply {
         isChecked = lastSelectedCardNetwork
             ?.network == cardNetwork.network
@@ -615,7 +659,7 @@ class HeadlessRawFragment : Fragment(), PrimerHeadlessUniversalCheckoutRawDataMa
         id = cardNetwork.network.hashCode()
         tag = cardNetwork
         contentDescription = cardNetwork.displayName
-        compoundDrawables[0]?.alpha = if (isChecked) {
+        compoundDrawables[0]?.alpha = if (isChecked || isPreferred) {
             RADIO_BUTTON_SELECTED_ALPHA
         } else RADIO_BUTTON_UNSELECTED_ALPHA
 
