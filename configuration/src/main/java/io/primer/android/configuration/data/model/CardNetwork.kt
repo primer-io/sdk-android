@@ -40,6 +40,7 @@ class CardNetwork {
         lower: String,
         upper: String?,
         val cvvLength: Int = CVV_LEN_3,
+        val cvvLabel: String = CVV_LABEL_CVV,
     ) : Comparable<Descriptor> {
         private val weight: Int = lower.length
         private val min = lower.padEnd(CARD_PADDING, '0')
@@ -68,22 +69,30 @@ class CardNetwork {
         Descriptor(Type.VISA, CARD_GAPS_4_8_12, CARD_LENS_16_18_19, lower, upper)
 
     internal class MastercardDescriptor(lower: String, upper: String? = null) :
-        Descriptor(Type.MASTERCARD, CARD_GAPS_4_8_12, CARD_LENS_16, lower, upper)
+        Descriptor(Type.MASTERCARD, CARD_GAPS_4_8_12, CARD_LENS_16, lower, upper, cvvLabel = CVV_LABEL_CVC)
 
     internal class AmexDescriptor(lower: String, upper: String? = null) :
-        Descriptor(Type.AMEX, CARD_GAPS_4_10, CARD_LENS_15, lower, upper, cvvLength = CVV_LEN_4)
+        Descriptor(
+            Type.AMEX,
+            CARD_GAPS_4_10,
+            CARD_LENS_15,
+            lower,
+            upper,
+            cvvLength = CVV_LEN_4,
+            cvvLabel = CVV_LABEL_CID,
+        )
 
     internal class DinersDescriptor(lower: String, upper: String? = null) :
         Descriptor(Type.DINERS_CLUB, CARD_GAPS_4_10, CARD_LENS_14_16_19, lower, upper)
 
     internal class DiscoverDescriptor(lower: String, upper: String? = null) :
-        Descriptor(Type.DISCOVER, CARD_GAPS_4_8_12, CARD_LENS_16_19, lower, upper)
+        Descriptor(Type.DISCOVER, CARD_GAPS_4_8_12, CARD_LENS_16_19, lower, upper, cvvLabel = CVV_LABEL_CID)
 
     internal class JcbDescriptor(lower: String, upper: String? = null) :
         Descriptor(Type.JCB, CARD_GAPS_4_8_12, CARD_LENS_16_17_18_19, lower, upper)
 
     internal class UnionPayDescriptor(lower: String, upper: String? = null) :
-        Descriptor(Type.UNIONPAY, CARD_GAPS_4_8_12, CARD_LENS_16_17_18_19, lower, upper)
+        Descriptor(Type.UNIONPAY, CARD_GAPS_4_8_12, CARD_LENS_16_17_18_19, lower, upper, cvvLabel = CVV_LABEL_CVN)
 
     internal class MaestroDescriptor(lower: String, upper: String? = null) :
         Descriptor(
@@ -92,19 +101,20 @@ class CardNetwork {
             CARD_LENS_12_13_14_15_16_17_18_19,
             lower,
             upper,
+            cvvLabel = CVV_LABEL_CVC,
         )
 
     internal class EloDescriptor(lower: String, upper: String? = null) :
-        Descriptor(Type.ELO, CARD_GAPS_4_8_12, CARD_LENS_16, lower, upper)
+        Descriptor(Type.ELO, CARD_GAPS_4_8_12, CARD_LENS_16, lower, upper, cvvLabel = CVV_LABEL_CVE)
 
     internal class MirDescriptor(lower: String, upper: String? = null) :
-        Descriptor(Type.MIR, CARD_GAPS_4_8_12, CARD_LENS_16_17_18_19, lower, upper)
+        Descriptor(Type.MIR, CARD_GAPS_4_8_12, CARD_LENS_16_17_18_19, lower, upper, cvvLabel = CVV_LABEL_CVP2)
 
     internal class HiperDescriptor(lower: String, upper: String? = null) :
-        Descriptor(Type.HIPER, CARD_GAPS_4_8_12, CARD_LENS_16, lower, upper)
+        Descriptor(Type.HIPER, CARD_GAPS_4_8_12, CARD_LENS_16, lower, upper, cvvLabel = CVV_LABEL_CVC)
 
     internal class HiperCardDescriptor(lower: String, upper: String? = null) :
-        Descriptor(Type.HIPERCARD, CARD_GAPS_4_8_12, CARD_LENS_16, lower, upper)
+        Descriptor(Type.HIPERCARD, CARD_GAPS_4_8_12, CARD_LENS_16, lower, upper, cvvLabel = CVV_LABEL_CVC)
 
     internal class DankortCardDescriptor(lower: String, upper: String? = null) :
         Descriptor(Type.DANKORT, CARD_GAPS_4_8_12, CARD_LENS_16, lower, upper)
@@ -307,3 +317,10 @@ private val CARD_LENS_12_13_14_15_16_17_18_19 =
 
 private const val CVV_LEN_3 = 3
 private const val CVV_LEN_4 = 4
+
+private const val CVV_LABEL_CVV = "CVV"
+private const val CVV_LABEL_CVC = "CVC"
+private const val CVV_LABEL_CID = "CID"
+private const val CVV_LABEL_CVE = "CVE"
+private const val CVV_LABEL_CVN = "CVN"
+private const val CVV_LABEL_CVP2 = "CVP2"
