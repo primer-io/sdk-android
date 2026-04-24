@@ -1,3 +1,10 @@
+## 2.49.0 (2026-04-24)
+
+### Feat
+
+- BDC redirects (#1223)
+- Add cvvLabel to CardNetwork Descriptor (#1239)
+
 ## 2.48.0 (2026-02-24)
 
 ### Feat
