@@ -5,10 +5,6 @@
 - BDC redirects (#1223)
 - Add cvvLabel to CardNetwork Descriptor (#1239)
 
-### Fix
-
-- co-badge network display in headless example app (#1196)
-
 ## 2.48.0 (2026-02-24)
 
 ### Feat
