@@ -13,23 +13,30 @@ import io.primer.android.payments.core.status.domain.model.AsyncStatus
 import io.primer.android.payments.core.status.domain.model.AsyncStatusParams
 import io.primer.android.payments.core.status.domain.repository.AsyncPaymentMethodStatusRepository
 import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.TestCoroutineScheduler
 import kotlinx.coroutines.test.runTest
-import kotlinx.coroutines.test.setMain
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
+import org.junit.jupiter.api.extension.RegisterExtension
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 
-@ExtendWith(InstantExecutorExtension::class, MockKExtension::class)
+@ExtendWith(MockKExtension::class)
 @ExperimentalCoroutinesApi
 class AsyncPaymentMethodPollingInteractorTest {
+    private val scheduler = TestCoroutineScheduler()
+    private val testDispatcher = StandardTestDispatcher(scheduler)
+
+    @JvmField
+    @RegisterExtension
+    val instantExecutorExtension = InstantExecutorExtension(scheduler, testDispatcher)
+
     @RelaxedMockK
     internal lateinit var paymentMethodStatusRepository: AsyncPaymentMethodStatusRepository
 
@@ -41,14 +48,13 @@ class AsyncPaymentMethodPollingInteractorTest {
         interactor =
             DefaultAsyncPaymentMethodPollingInteractor(
                 paymentMethodStatusRepository = paymentMethodStatusRepository,
+                dispatcher = testDispatcher,
             )
     }
 
     @Test
     fun `getting status should return resume token event when getAsyncStatus was success`() =
-        runTest {
-            Dispatchers.setMain(StandardTestDispatcher(testScheduler))
-
+        runTest(testDispatcher) {
             val asyncStatus = AsyncStatus(resumeToken = "test_resume_token")
 
             coEvery { paymentMethodStatusRepository.getAsyncStatus(any()) }.returns(
@@ -71,8 +77,7 @@ class AsyncPaymentMethodPollingInteractorTest {
 
     @Test
     fun `getting status should return error event when getAsyncStatus failed`() =
-        runTest {
-            Dispatchers.setMain(StandardTestDispatcher(testScheduler))
+        runTest(testDispatcher) {
             val exception = mockk<Exception>(relaxed = true)
             every { exception.message }.returns("Failed to get status.")
 
@@ -80,7 +85,7 @@ class AsyncPaymentMethodPollingInteractorTest {
                 flow { throw exception },
             )
             val url = "https://www.example.com"
-            assertThrows<Exception> {
+            assertFailsWith<Exception> {
                 interactor(
                     AsyncStatusParams(
                         url,
@@ -94,15 +99,13 @@ class AsyncPaymentMethodPollingInteractorTest {
 
     @Test
     fun `getting status should return error with PaymentMethodCancelledException when getAsyncStatus failed with CancellationException`() =
-        runTest {
-            Dispatchers.setMain(StandardTestDispatcher(testScheduler))
-
+        runTest(testDispatcher) {
             val exception = mockk<CancellationException>(relaxed = true)
             every { exception.message }.returns("Job cancelled.")
             coEvery { paymentMethodStatusRepository.getAsyncStatus(any()) }.returns(
                 flow { throw exception },
             )
-            assertThrows<PaymentMethodCancelledException> {
+            assertFailsWith<PaymentMethodCancelledException> {
                 interactor(
                     AsyncStatusParams(
                         "",
