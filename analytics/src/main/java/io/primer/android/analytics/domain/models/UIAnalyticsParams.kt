@@ -26,6 +26,8 @@ data class UrlContextParams(val url: String) : BaseContextParams()
 
 data class ProcessorTestDecisionParams(val decision: String) : BaseContextParams()
 
+data class BdcFlowStartContextParams(val trustedKeyFingerprints: List<String>) : BaseContextParams()
+
 data class IPay88PaymentMethodContextParams(
     val iPay88PaymentMethodId: String,
     val iPay88ActionType: String,

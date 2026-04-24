@@ -267,6 +267,7 @@ class PrimerHttpClient(
                 is JSONDataUtils.JSONData.JSONObjectData -> {
                     body?.close()
                     PrimerResponse(
+                        statusCode = response.code,
                         body = JSONSerializationUtils.getJsonObjectDeserializer<R>().deserialize(jsonData.json),
                         headers = headers,
                     )
@@ -275,6 +276,7 @@ class PrimerHttpClient(
                 is JSONDataUtils.JSONData.JSONArrayData -> {
                     body?.close()
                     PrimerResponse(
+                        statusCode = response.code,
                         body = JSONSerializationUtils.getJsonArrayDeserializer<R>().deserialize(jsonData.json),
                         headers = headers,
                     )

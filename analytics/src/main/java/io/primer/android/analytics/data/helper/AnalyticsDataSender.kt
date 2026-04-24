@@ -3,7 +3,7 @@ package io.primer.android.analytics.data.helper
 import androidx.annotation.WorkerThread
 import io.primer.android.analytics.data.datasource.RemoteAnalyticsDataSource
 import io.primer.android.analytics.data.models.AnalyticsDataRequest
-import io.primer.android.analytics.data.models.BaseAnalyticsEventRequest
+import io.primer.android.analytics.data.models.AnalyticsEvent
 import io.primer.android.core.data.model.BaseRemoteUrlRequest
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
@@ -15,7 +15,7 @@ internal class AnalyticsDataSender(
     private val remoteAnalyticsDataSource: RemoteAnalyticsDataSource,
 ) {
     @WorkerThread
-    fun sendEvents(events: List<BaseAnalyticsEventRequest>): Flow<List<BaseAnalyticsEventRequest>> {
+    fun sendEvents(events: List<AnalyticsEvent>): Flow<List<AnalyticsEvent>> {
         val groupedChunks =
             events.chunked(CHUNK_SIZE)
                 .map { chunked -> chunked.groupBy { it.analyticsUrl ?: ANALYTICS_URL } }
@@ -24,7 +24,7 @@ internal class AnalyticsDataSender(
                 remoteAnalyticsDataSource.execute(
                     BaseRemoteUrlRequest(
                         url = group.key,
-                        data = AnalyticsDataRequest(group.value.map { it.copy(newAnalyticsUrl = null) }),
+                        data = AnalyticsDataRequest(group.value.map { it.withAnalyticsUrl(null) }),
                     ),
                 ).map { chunk[group.key].orEmpty() }.retry(NUM_OF_RETRIES).catch {
                     emit(emptyList())

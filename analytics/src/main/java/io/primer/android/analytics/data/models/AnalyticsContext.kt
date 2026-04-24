@@ -3,6 +3,7 @@ package io.primer.android.analytics.data.models
 import io.primer.android.core.data.serialization.json.JSONObjectDeserializer
 import io.primer.android.core.data.serialization.json.JSONObjectSerializer
 import io.primer.android.core.data.serialization.json.extensions.optNullableString
+import org.json.JSONArray
 import org.json.JSONObject
 
 sealed class AnalyticsContext(
@@ -21,6 +22,7 @@ sealed class AnalyticsContext(
         ERROR,
         CACHE_SOURCE,
         DROP_IN_SOURCE,
+        BDC_FLOW_START,
     }
 
     companion object {
@@ -89,6 +91,11 @@ sealed class AnalyticsContext(
                         DropInSourceAnalyticsContext.serializer.serialize(
                             t as DropInSourceAnalyticsContext,
                         )
+
+                    AnalyticsContextType.BDC_FLOW_START ->
+                        BdcFlowStartAnalyticsContext.serializer.serialize(
+                            t as BdcFlowStartAnalyticsContext,
+                        )
                 }
             }
 
@@ -133,6 +140,9 @@ sealed class AnalyticsContext(
 
                     AnalyticsContextType.DROP_IN_SOURCE ->
                         DropInSourceAnalyticsContext.deserializer.deserialize(t)
+
+                    AnalyticsContextType.BDC_FLOW_START ->
+                        BdcFlowStartAnalyticsContext.deserializer.deserialize(t)
                 }
             }
     }
@@ -526,6 +536,31 @@ data class DropInSourceAnalyticsContext(
                 DropInSourceAnalyticsContext(
                     DropInLoadingSource.valueOf(t.getString(SOURCE)),
                 )
+            }
+    }
+}
+
+internal data class BdcFlowStartAnalyticsContext(
+    val trustedKeyFingerprints: List<String>,
+) : AnalyticsContext(AnalyticsContextType.BDC_FLOW_START) {
+    companion object {
+        private const val TRUSTED_KEY_FINGERPRINTS_FIELD = "trustedKeyFingerprints"
+
+        @JvmField
+        val serializer =
+            JSONObjectSerializer<BdcFlowStartAnalyticsContext> { t ->
+                JSONObject().apply {
+                    put(TRUSTED_KEY_FINGERPRINTS_FIELD, JSONArray(t.trustedKeyFingerprints))
+                    put(ANALYTICS_CONTEXT_TYPE_FIELD, t.contextType.name)
+                }
+            }
+
+        @JvmField
+        val deserializer =
+            JSONObjectDeserializer { t ->
+                val array = t.getJSONArray(TRUSTED_KEY_FINGERPRINTS_FIELD)
+                val fingerprints = (0 until array.length()).map { array.getString(it) }
+                BdcFlowStartAnalyticsContext(fingerprints)
             }
     }
 }

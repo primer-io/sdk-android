@@ -30,7 +30,7 @@ internal class ImageLoaderContainer(private val sdk: () -> SdkContainer) : Depen
     }
 
     companion object {
-        private const val MAX_CACHE_SIZE_MB = 5 * 1024 * 1024L
+        private const val MAX_CACHE_SIZE_MB = 10 * 1024 * 1024L
         private const val CACHE_DIRECTORY = "primer_sdk_image_cache"
     }
 }

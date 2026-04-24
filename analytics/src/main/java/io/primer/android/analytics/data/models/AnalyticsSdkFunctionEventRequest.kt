@@ -11,7 +11,6 @@ internal data class AnalyticsSdkFunctionEventRequest(
     override val device: DeviceData? = null,
     override val properties: FunctionProperties,
     override val appIdentifier: String? = null,
-    override val sdkSessionId: String,
     override val sdkIntegrationType: SdkIntegrationType?,
     override val sdkPaymentHandling: String?,
     override val checkoutSessionId: String? = null,
@@ -56,7 +55,6 @@ internal data class AnalyticsSdkFunctionEventRequest(
                             t.getJSONObject(PROPERTIES_FIELD),
                         ),
                     appIdentifier = t.optNullableString(APP_IDENTIFIER_FIELD),
-                    sdkSessionId = t.getString(SDK_SESSION_ID_FIELD),
                     sdkIntegrationType =
                     t.optNullableString(SDK_INTEGRATION_TYPE_FIELD)
                         ?.let { SdkIntegrationType.valueOf(it) },

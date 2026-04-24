@@ -9,6 +9,7 @@ data class WebRedirectActivityLauncherParams(
     val title: String,
     override val paymentMethodType: String,
     val returnUrl: String,
+    val redirectUrls: List<String>? = null,
 ) : PaymentMethodRedirectLauncherParams(
     paymentMethodType,
     PrimerSessionIntent.CHECKOUT,

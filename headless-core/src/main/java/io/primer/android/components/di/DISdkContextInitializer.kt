@@ -15,7 +15,10 @@ import io.primer.android.errors.di.ErrorResolverContainer
 import io.primer.android.payments.core.helpers.ManualFlowSuccessHandler
 import io.primer.android.payments.di.PaymentsContainer
 import io.primer.android.vault.di.VaultManagerContainer
+import io.primer.executionengine.di.ExecutionEngineContainer
+import io.primer.jscore.di.JsCoreContainer
 import io.primer.paymentMethodCoreUi.core.ui.mock.di.PaymentMethodsMockContainer
+import io.primer.statetransport.di.StateTransportContainer
 
 object DISdkContextInitializer : DISdkComponent {
     fun initHeadless(
@@ -104,6 +107,12 @@ object DISdkContextInitializer : DISdkComponent {
             registerContainer(VaultManagerContainer(sdk = { container() }))
 
             registerContainer(PaymentMethodsMockContainer { container() })
+
+            registerContainer(ExecutionEngineContainer(sdk = { container() }))
+
+            registerContainer(JsCoreContainer(sdk = { container() }))
+
+            registerContainer(StateTransportContainer(sdk = { container() }))
         }
     }
 }

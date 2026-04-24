@@ -22,6 +22,7 @@ import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import java.net.HttpURLConnection
 
 internal class ActionDataRepositoryTest {
     private lateinit var configurationDataSource: CacheConfigurationDataSource
@@ -71,7 +72,11 @@ internal class ActionDataRepositoryTest {
             val params: BaseActionUpdateParams = mockk<ActionUpdateBillingAddressParams>(relaxed = true)
 
             coEvery { configurationDataSource.get() } returns configurationData
-            coEvery { remoteActionDataSource.execute(any()) } returns PrimerResponse(dataResponse, emptyMap())
+            coEvery { remoteActionDataSource.execute(any()) } returns PrimerResponse(
+                statusCode = HttpURLConnection.HTTP_OK,
+                body = dataResponse,
+                headers = emptyMap(),
+            )
             coEvery { configurationDataSource.update(any()) } returns Unit
             every { clientTokenProvider.provide() } returns "clientToken"
             every { globalCacheConfigurationCacheDataSource.update(any()) } returns Unit

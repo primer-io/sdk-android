@@ -54,11 +54,13 @@ class WebRedirectActivity : WebViewActivity() {
     override fun setupWebViewClient() {
         val url = intent.extras?.getString(PAYMENT_URL_KEY)
         val captureUrl = intent.extras?.getString(CAPTURE_URL_KEY)
+        val redirectUrls = intent.extras?.getStringArrayList(REDIRECT_URLS_KEY)
         webView.webViewClient =
             WebRedirectPaymentMethodWebViewClient(
                 activity = this,
                 url = url,
                 returnUrl = captureUrl,
+                captureUrls = redirectUrls,
             )
     }
 
@@ -96,18 +98,24 @@ class WebRedirectActivity : WebViewActivity() {
         )
 
     companion object {
+        private const val REDIRECT_URLS_KEY = "REDIRECT_URLS_KEY"
+
         fun getLaunchIntent(
             context: Context,
             paymentUrl: String,
             deeplinkUrl: String,
             title: String,
             paymentMethodType: String,
+            redirectUrls: List<String>? = null,
         ): Intent {
             return Intent(context, WebRedirectActivity::class.java).apply {
                 putExtra(PAYMENT_URL_KEY, paymentUrl)
                 putExtra(CAPTURE_URL_KEY, deeplinkUrl)
                 putExtra(PAYMENT_METHOD_TYPE_KEY, paymentMethodType)
                 putExtra(TOOLBAR_TITLE_KEY, title)
+                redirectUrls?.let {
+                    putStringArrayListExtra(REDIRECT_URLS_KEY, ArrayList(it))
+                }
             }
         }
     }

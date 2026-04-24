@@ -3,11 +3,11 @@ package io.primer.android.analytics.data.repository
 import io.primer.android.analytics.data.datasource.CheckoutSessionIdProvider
 import io.primer.android.analytics.data.datasource.LocalAnalyticsDataSource
 import io.primer.android.analytics.data.datasource.MessagePropertiesDataSource
-import io.primer.android.analytics.data.datasource.SdkSessionDataSource
 import io.primer.android.analytics.data.datasource.TimerDataSource
 import io.primer.android.analytics.data.helper.AnalyticsDataSender
 import io.primer.android.analytics.data.interceptors.NetworkCallDataSource
 import io.primer.android.analytics.data.models.AnalyticsProviderData
+import io.primer.android.analytics.data.models.RawAnalyticsEvent
 import io.primer.android.analytics.data.models.toAnalyticsEvent
 import io.primer.android.analytics.domain.models.BaseAnalyticsParams
 import io.primer.android.analytics.domain.repository.AnalyticsRepository
@@ -26,6 +26,7 @@ import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onEach
+import org.json.JSONObject
 
 @Suppress("LongParameterList")
 @ExperimentalCoroutinesApi
@@ -44,7 +45,6 @@ internal class AnalyticsDataRepository(
     private val provider: BaseDataProvider<AnalyticsProviderData>,
     private val messagePropertiesDataSource: MessagePropertiesDataSource,
 ) : AnalyticsRepository {
-    private val sdkSessionId by lazy { SdkSessionDataSource.getSessionId() }
 
     override suspend fun startObservingEvents() =
         merge(
@@ -62,7 +62,6 @@ internal class AnalyticsDataRepository(
                     screenData = screenSizeDataSource.get(),
                     deviceId = deviceIdDataSource.get(),
                     appIdentifier = providerData.applicationId,
-                    sdkSessionId = sdkSessionId,
                     sdkIntegrationType = providerData.data?.sdkIntegrationType,
                     sdkPaymentHandling = providerData.data?.paymentHandling,
                     checkoutSessionId = checkoutSessionIdDataSource.provide(),
@@ -86,7 +85,6 @@ internal class AnalyticsDataRepository(
                 screenData = screenSizeDataSource.get(),
                 deviceId = deviceIdDataSource.get(),
                 appIdentifier = providerData.applicationId,
-                sdkSessionId = sdkSessionId,
                 sdkIntegrationType = providerData.data?.sdkIntegrationType,
                 sdkPaymentHandling = providerData.data?.paymentHandling,
                 checkoutSessionId = checkoutSessionIdDataSource.provide(),
@@ -96,6 +94,11 @@ internal class AnalyticsDataRepository(
                 analyticsUrl = providerData.data?.analyticsUrl,
             ),
         )
+        fileAnalyticsDataSource.update(localAnalyticsDataSource.get())
+    }
+
+    override fun addRawEvent(json: String) {
+        localAnalyticsDataSource.addEvent(RawAnalyticsEvent.fromJson(JSONObject(json)))
         fileAnalyticsDataSource.update(localAnalyticsDataSource.get())
     }
 

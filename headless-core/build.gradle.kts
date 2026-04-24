@@ -23,6 +23,10 @@ dependencies {
     implementation(project(":web-redirect"))
     implementation(project(":ipay88"))
     implementation(project(":web-redirect-shared"))
+    implementation(project(":js-core"))
+    implementation(project(":execution-engine-core"))
+    implementation(project(":checkout-orchestrator"))
+    implementation(project(":state-transport"))
 
     api(project(":generic-off-session"))
     api(project(":payment-methods-core-ui"))

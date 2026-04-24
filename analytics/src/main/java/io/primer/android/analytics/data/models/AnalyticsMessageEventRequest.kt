@@ -10,7 +10,6 @@ internal data class AnalyticsMessageEventRequest(
     override val device: DeviceData,
     override val properties: MessageProperties,
     override val appIdentifier: String,
-    override val sdkSessionId: String,
     override val sdkIntegrationType: SdkIntegrationType?,
     override val sdkPaymentHandling: String?,
     override val checkoutSessionId: String,
@@ -51,7 +50,6 @@ internal data class AnalyticsMessageEventRequest(
                     JSONSerializationUtils.getJsonObjectDeserializer<MessageProperties>()
                         .deserialize(t.getJSONObject(PROPERTIES_FIELD)),
                     appIdentifier = t.getString(APP_IDENTIFIER_FIELD),
-                    sdkSessionId = t.getString(SDK_SESSION_ID_FIELD),
                     sdkIntegrationType =
                     t.optNullableString(SDK_INTEGRATION_TYPE_FIELD)
                         ?.let { SdkIntegrationType.valueOf(it) },
@@ -101,7 +99,7 @@ internal data class MessageProperties(
 
         @JvmField
         val deserializer =
-            JSONObjectDeserializer<MessageProperties> { t ->
+            JSONObjectDeserializer { t ->
                 MessageProperties(
                     MessageType.valueOf(t.getString(MESSAGE_TYPE_FIELD)),
                     t.getString(MESSAGE_FIELD),
@@ -124,6 +122,7 @@ enum class MessageType {
     RETRY,
     RETRY_FAILED,
     RETRY_SUCCESS,
+    BDC_FLOW_START,
 }
 
 enum class Severity {

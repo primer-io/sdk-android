@@ -8,5 +8,7 @@ interface AnalyticsRepository {
 
     fun addEvent(params: BaseAnalyticsParams)
 
+    fun addRawEvent(json: String)
+
     fun send(): Flow<Unit>
 }

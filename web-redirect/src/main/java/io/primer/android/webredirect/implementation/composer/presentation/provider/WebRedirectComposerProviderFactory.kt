@@ -1,6 +1,7 @@
 package io.primer.android.webredirect.implementation.composer.presentation.provider
 
 import io.primer.android.PrimerSessionIntent
+import io.primer.android.core.di.DISdkComponent
 import io.primer.android.core.di.extensions.resolve
 import io.primer.android.paymentmethods.core.composer.PaymentMethodComposer
 import io.primer.android.paymentmethods.core.composer.provider.PaymentMethodComposerProvider
@@ -9,7 +10,7 @@ import io.primer.android.webredirect.implementation.composer.presentation.WebRed
 import io.primer.android.webredirect.implementation.payment.presentation.delegate.presentation.WebRedirectPaymentDelegate
 import io.primer.android.webredirect.implementation.tokenization.presentation.WebRedirectTokenizationDelegate
 
-internal class WebRedirectComposerProviderFactory : PaymentMethodComposerProvider.Factory {
+internal class WebRedirectComposerProviderFactory : PaymentMethodComposerProvider.Factory, DISdkComponent {
     override fun create(
         paymentMethodType: String,
         sessionIntent: PrimerSessionIntent,

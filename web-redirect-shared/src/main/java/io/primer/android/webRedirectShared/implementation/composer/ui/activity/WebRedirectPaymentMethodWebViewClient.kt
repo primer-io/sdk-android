@@ -10,6 +10,7 @@ internal class WebRedirectPaymentMethodWebViewClient(
     private val activity: WebViewActivity,
     url: String?,
     returnUrl: String?,
+    private val captureUrls: List<String>? = null,
 ) : BaseWebViewClient(activity, url, returnUrl) {
     override fun getUrlState(url: String) =
         when {
@@ -20,7 +21,7 @@ internal class WebRedirectPaymentMethodWebViewClient(
     override fun getCaptureUrl(url: String?) = url
 
     override fun canCaptureUrl(url: String?) =
-        CAPTURE_URLS.any { url?.contains(it) == true } ||
+        (captureUrls ?: DEFAULT_CAPTURE_URLS).any { url?.contains(it) == true } ||
             super.canCaptureUrl(url)
 
     override fun onUrlCaptured(intent: Intent) {
@@ -39,7 +40,7 @@ internal class WebRedirectPaymentMethodWebViewClient(
     }
 
     internal companion object {
-        private val CAPTURE_URLS =
+        private val DEFAULT_CAPTURE_URLS =
             listOf("primer.io/static/loading.html", "primer.io/static/loading-spinner.html")
         const val CANCEL_STATE_QUERY_PARAM = "cancel"
     }

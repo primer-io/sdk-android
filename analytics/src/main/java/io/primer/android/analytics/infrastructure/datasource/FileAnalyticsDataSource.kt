@@ -1,9 +1,8 @@
 package io.primer.android.analytics.infrastructure.datasource
 
-import io.primer.android.analytics.data.models.BaseAnalyticsEventRequest
+import io.primer.android.analytics.data.models.AnalyticsEvent
 import io.primer.android.analytics.infrastructure.files.AnalyticsFileProvider
 import io.primer.android.core.data.datasource.BaseFlowCacheDataSource
-import io.primer.android.core.data.serialization.json.JSONSerializationUtils
 import io.primer.android.core.data.serialization.json.extensions.sequence
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -15,8 +14,8 @@ import java.util.zip.GZIPOutputStream
 
 internal class FileAnalyticsDataSource(
     private val fileProvider: AnalyticsFileProvider,
-) : BaseFlowCacheDataSource<List<BaseAnalyticsEventRequest>, List<BaseAnalyticsEventRequest>> {
-    override fun get(): Flow<List<BaseAnalyticsEventRequest>> =
+) : BaseFlowCacheDataSource<List<AnalyticsEvent>, List<AnalyticsEvent>> {
+    override fun get(): Flow<List<AnalyticsEvent>> =
         flow {
             val file = fileProvider.getFile(AnalyticsFileProvider.ANALYTICS_EVENTS_PATH)
 
@@ -31,9 +30,7 @@ internal class FileAnalyticsDataSource(
                 try {
                     emit(
                         JSONArray(content).sequence<JSONObject>().map {
-                            JSONSerializationUtils
-                                .getJsonObjectDeserializer<BaseAnalyticsEventRequest>()
-                                .deserialize(it)
+                            AnalyticsEvent.fromJson(it)
                         }.toList(),
                     )
                 } catch (ignored: Exception) {
@@ -43,20 +40,14 @@ internal class FileAnalyticsDataSource(
             }
         }
 
-    override fun update(input: List<BaseAnalyticsEventRequest>) =
+    override fun update(input: List<AnalyticsEvent>) =
         synchronized(this) {
             val file = fileProvider.getFile(AnalyticsFileProvider.ANALYTICS_EVENTS_PATH)
             FileOutputStream(file).use { fileOutputStream ->
                 GZIPOutputStream(fileOutputStream).use { gzipOutputStream ->
                     gzipOutputStream.write(
                         JSONArray().apply {
-                            input.map { analyticsEvent ->
-                                put(
-                                    JSONSerializationUtils
-                                        .getJsonObjectSerializer<BaseAnalyticsEventRequest>()
-                                        .serialize(analyticsEvent),
-                                )
-                            }
+                            input.map { analyticsEvent -> put(analyticsEvent.toJson()) }
                         }.toString().toByteArray(),
                     )
                 }

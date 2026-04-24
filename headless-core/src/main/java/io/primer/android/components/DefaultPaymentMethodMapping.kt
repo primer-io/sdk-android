@@ -25,11 +25,13 @@ import io.primer.android.stripe.ach.StripeAchFactory
 import io.primer.android.vouchers.multibanco.MultibancoFactory
 import io.primer.android.vouchers.retailOutlets.RetailOutletsFactory
 import io.primer.android.webredirect.WebRedirectFactory
+import io.primer.checkout.orchestrator.BackendDrivenPaymentMethodFactory
 
-internal fun interface PaymentMethodMapping {
+internal interface PaymentMethodMapping {
     fun getPaymentMethodFor(
         implementationType: PaymentMethodImplementationType,
         type: String,
+        isBackendDriven: Boolean = false,
     ): Either<PaymentMethod, Exception>
 }
 
@@ -39,6 +41,17 @@ internal class DefaultPaymentMethodMapping(
 ) : PaymentMethodMapping {
     @Suppress("CyclomaticComplexMethod", "LongMethod")
     override fun getPaymentMethodFor(
+        implementationType: PaymentMethodImplementationType,
+        type: String,
+        isBackendDriven: Boolean,
+    ): Either<PaymentMethod, Exception> =
+        when {
+            isBackendDriven -> BackendDrivenPaymentMethodFactory(type).build()
+            else -> resolveByImplementationType(implementationType, type)
+        }
+
+    @Suppress("CyclomaticComplexMethod", "LongMethod")
+    private fun resolveByImplementationType(
         implementationType: PaymentMethodImplementationType,
         type: String,
     ): Either<PaymentMethod, Exception> =

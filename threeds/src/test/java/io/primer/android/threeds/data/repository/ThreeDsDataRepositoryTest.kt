@@ -19,6 +19,7 @@ import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
+import java.net.HttpURLConnection
 import kotlin.test.assertEquals
 
 @ExtendWith(InstantExecutorExtension::class, MockKExtension::class)
@@ -46,6 +47,7 @@ internal class ThreeDsDataRepositoryTest {
         val beginAuthResponseMock = mockk<BeginAuthResponse>(relaxed = true)
         coEvery { remote3DSAuthDataSource.get3dsAuthToken(any(), any(), any()) }.returns(
             PrimerResponse(
+                statusCode = HttpURLConnection.HTTP_OK,
                 body = beginAuthResponseMock,
                 headers = emptyMap(),
             ),
@@ -69,6 +71,7 @@ internal class ThreeDsDataRepositoryTest {
         val continueAuthResponseMock = mockk<PostAuthResponse>(relaxed = true)
         coEvery { remote3DSAuthDataSource.continue3dsAuth(any(), any(), any()) }.returns(
             PrimerResponse(
+                statusCode = HttpURLConnection.HTTP_OK,
                 body = continueAuthResponseMock,
                 headers = emptyMap(),
             ),

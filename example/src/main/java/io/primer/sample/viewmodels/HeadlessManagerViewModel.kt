@@ -271,9 +271,13 @@ class HeadlessManagerViewModel(
         _uiState.value = UiState.PaymentMethodShowed(paymentMethodType)
     }
 
+    fun cleanup() {
+        headlessUniversalCheckout.cleanup()
+    }
+
     override fun onCleared() {
         super.onCleared()
-        headlessUniversalCheckout.cleanup()
+        cleanup()
         isLaunched = false
     }
 

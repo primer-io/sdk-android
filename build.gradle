@@ -14,9 +14,6 @@ plugins {
     alias libs.plugins.junit5 apply false
     alias libs.plugins.maven.publish apply false
     alias libs.plugins.google.secrets apply false
-
-    // todo remove me
-    id 'com.savvasdalkitsis.module-dependency-graph' version '0.12'
 }
 
 subprojects { subproject ->

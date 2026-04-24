@@ -22,4 +22,7 @@ dependencies {
     implementation(project(":payment-methods-core-ui"))
     implementation(project(":client-token-core"))
     implementation(project(":web-redirect-shared"))
+    implementation(project(":execution-engine-core"))
+    implementation(project(":checkout-orchestrator"))
+    implementation(project(":state-transport"))
 }

@@ -425,6 +425,61 @@ internal class ConfigurationDataResponseTest {
         )
     }
 
+    @Test
+    fun `'paymentMethod-capabilities' should default to empty set when missing`() {
+        assertEquals(
+            emptySet(),
+            configurationDataResponse.paymentMethods.first().capabilities,
+        )
+    }
+
+    @Test
+    fun `'paymentMethod-capabilities' should parse BACKEND_DRIVEN`() {
+        val json = JSONObject(PAYMENT_METHOD_WITH_CAPABILITIES).apply {
+            put("capabilities", org.json.JSONArray(listOf("BACKEND_DRIVEN")))
+        }
+
+        val result = PaymentMethodConfigDataResponse.deserializer.deserialize(json)
+
+        assertEquals(setOf(PaymentMethodCapability.BACKEND_DRIVEN), result.capabilities)
+    }
+
+    @Test
+    fun `'paymentMethod-capabilities' should map unknown values to UNKNOWN`() {
+        val json = JSONObject(PAYMENT_METHOD_WITH_CAPABILITIES).apply {
+            put("capabilities", org.json.JSONArray(listOf("SOME_FUTURE_CAPABILITY")))
+        }
+
+        val result = PaymentMethodConfigDataResponse.deserializer.deserialize(json)
+
+        assertEquals(setOf(PaymentMethodCapability.UNKNOWN), result.capabilities)
+    }
+
+    @Test
+    fun `'paymentMethod-capabilities' should parse multiple values`() {
+        val json = JSONObject(PAYMENT_METHOD_WITH_CAPABILITIES).apply {
+            put("capabilities", org.json.JSONArray(listOf("BACKEND_DRIVEN", "SOMETHING_NEW")))
+        }
+
+        val result = PaymentMethodConfigDataResponse.deserializer.deserialize(json)
+
+        assertEquals(
+            setOf(PaymentMethodCapability.BACKEND_DRIVEN, PaymentMethodCapability.UNKNOWN),
+            result.capabilities,
+        )
+    }
+
+    @Test
+    fun `'paymentMethod-capabilities' should return empty set for empty array`() {
+        val json = JSONObject(PAYMENT_METHOD_WITH_CAPABILITIES).apply {
+            put("capabilities", org.json.JSONArray())
+        }
+
+        val result = PaymentMethodConfigDataResponse.deserializer.deserialize(json)
+
+        assertEquals(emptySet(), result.capabilities)
+    }
+
     private companion object {
         const val CORE_URL = "https://api.staging.primer.io"
         const val PCI_URL = "https://sdk.api.staging.primer.io"
@@ -487,6 +542,9 @@ internal class ConfigurationDataResponseTest {
 
         const val PRIMER_ACCOUNT_ID = "d634b2c6-17d8-4347-bac0"
         const val ENV = "STAGING"
+
+        const val PAYMENT_METHOD_WITH_CAPABILITIES =
+            """{"type":"PAYMENT_CARD","implementationType":"NATIVE_SDK"}"""
 
         const val JSON_OBJECT =
             """

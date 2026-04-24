@@ -20,6 +20,7 @@ internal data class WebRedirectNavigator(
                 deeplinkUrl = params.returnUrl,
                 title = params.title,
                 paymentMethodType = params.paymentMethodType,
+                redirectUrls = params.redirectUrls,
             ),
         )
     }

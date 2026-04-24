@@ -13,6 +13,7 @@ import io.primer.android.payments.core.idempotency.IdempotencyKeyHolder
 import io.primer.android.payments.core.tokenization.domain.handler.PreTokenizationHandler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainCoroutineDispatcher
+import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
@@ -26,7 +27,7 @@ internal class AutoPreTokenizationHandlerStrategy(
     private val coroutineDispatcher: MainCoroutineDispatcher = Dispatchers.Main,
 ) : PreTokenizationHandlerStrategy {
     override suspend fun handle(paymentMethodType: String): Result<Unit> {
-        return suspendCoroutine { continuation ->
+        return suspendCancellableCoroutine { continuation ->
             val checkoutListener = PrimerHeadlessUniversalCheckout.instance.checkoutListener
 
             val handler =

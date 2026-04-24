@@ -1,11 +1,13 @@
 package io.primer.android.payments.core.errors.domain.model
 
+import androidx.annotation.RestrictTo
 import io.primer.android.analytics.domain.models.ErrorContextParams
 import io.primer.android.domain.error.models.PrimerError
 import io.primer.android.payments.core.create.data.model.PaymentStatus
 import java.util.UUID
 
-internal sealed class PaymentError : PrimerError() {
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+sealed class PaymentError : PrimerError() {
     data class PaymentFailedError(
         val paymentId: String,
         val paymentStatus: PaymentStatus,

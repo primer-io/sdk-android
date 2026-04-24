@@ -271,6 +271,7 @@ data class PaymentMethodConfigDataResponse(
     val type: String,
     val options: PaymentMethodRemoteConfigOptions?,
     val displayMetadata: PaymentMethodDisplayMetadataResponse?,
+    val capabilities: Set<PaymentMethodCapability>,
 ) : JSONDeserializable {
     fun toPaymentMethodConfig() = PaymentMethodConfig(id = id, name = name, type = type, options = options)
 
@@ -281,6 +282,7 @@ data class PaymentMethodConfigDataResponse(
         const val TYPE_FIELD = "type"
         private const val OPTIONS_FIELD = "options"
         const val DISPLAY_METADATA_FIELD = "displayMetadata"
+        const val CAPABILITIES_FIELD = "capabilities"
 
         @JvmField
         val deserializer =
@@ -304,8 +306,21 @@ data class PaymentMethodConfigDataResponse(
                             .getJsonObjectDeserializer<PaymentMethodDisplayMetadataResponse>()
                             .deserialize(it)
                     },
+                    t.optJSONArray(CAPABILITIES_FIELD)?.sequence<String>()?.map {
+                        PaymentMethodCapability.safeValueOf(it)
+                    }?.toSet().orEmpty(),
                 )
             }
+    }
+}
+
+enum class PaymentMethodCapability {
+    BACKEND_DRIVEN,
+    UNKNOWN,
+    ;
+
+    companion object {
+        fun safeValueOf(type: String?) = PaymentMethodCapability.entries.find { type == it.name } ?: UNKNOWN
     }
 }
 

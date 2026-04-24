@@ -4,6 +4,7 @@ import io.primer.android.analytics.data.helper.SdkTypeResolver
 import io.primer.android.analytics.domain.models.BankIssuerContextParams
 import io.primer.android.analytics.domain.models.BaseAnalyticsParams
 import io.primer.android.analytics.domain.models.BaseContextParams
+import io.primer.android.analytics.domain.models.BdcFlowStartContextParams
 import io.primer.android.analytics.domain.models.ErrorContextParams
 import io.primer.android.analytics.domain.models.IPay88PaymentMethodContextParams
 import io.primer.android.analytics.domain.models.MessageAnalyticsParams
@@ -26,18 +27,17 @@ import io.primer.android.core.data.serialization.json.JSONSerializationUtils
 import org.json.JSONObject
 
 @Suppress("UnusedPrivateMember")
-internal sealed class BaseAnalyticsEventRequest : JSONObjectSerializable, JSONDeserializable {
+internal sealed class BaseAnalyticsEventRequest : AnalyticsEvent, JSONObjectSerializable, JSONDeserializable {
     abstract val device: DeviceData?
     abstract val properties: BaseAnalyticsProperties
     abstract val appIdentifier: String?
-    abstract val sdkSessionId: String
     abstract val sdkIntegrationType: SdkIntegrationType?
     abstract val sdkPaymentHandling: String?
     abstract val checkoutSessionId: String?
     abstract val clientSessionId: String?
     abstract val orderId: String?
     abstract val primerAccountId: String?
-    abstract val analyticsUrl: String?
+    abstract override val analyticsUrl: String?
     abstract val eventType: AnalyticsEventType
     abstract val createdAt: Long
     protected val sdkType: SdkType = SdkTypeResolver().resolve()
@@ -45,11 +45,14 @@ internal sealed class BaseAnalyticsEventRequest : JSONObjectSerializable, JSONDe
 
     abstract fun copy(newAnalyticsUrl: String?): BaseAnalyticsEventRequest
 
-    protected companion object {
+    override fun withAnalyticsUrl(newAnalyticsUrl: String?): AnalyticsEvent = copy(newAnalyticsUrl)
+
+    override fun toJson(): JSONObject = serializer.serialize(this)
+
+    companion object {
         const val DEVICE_FIELD = "device"
         const val PROPERTIES_FIELD = "properties"
         const val APP_IDENTIFIER_FIELD = "appIdentifier"
-        const val SDK_SESSION_ID_FIELD = "sdkSessionId"
         const val CHECKOUT_SESSION_ID_FIELD = "checkoutSessionId"
         const val CLIENT_SESSION_ID_FIELD = "clientSessionId"
         const val ORDER_ID_FIELD = "orderId"
@@ -128,7 +131,6 @@ internal sealed class BaseAnalyticsEventRequest : JSONObjectSerializable, JSONDe
                         },
                     )
                     put(APP_IDENTIFIER_FIELD, t.appIdentifier)
-                    put(SDK_SESSION_ID_FIELD, t.sdkSessionId)
                     putOpt(CHECKOUT_SESSION_ID_FIELD, t.checkoutSessionId)
                     putOpt(CLIENT_SESSION_ID_FIELD, t.clientSessionId)
                     putOpt(ORDER_ID_FIELD, t.orderId)
@@ -154,7 +156,6 @@ internal fun BaseAnalyticsProperties.toAnalyticsEvent(
     screenData: ScreenData,
     deviceId: String,
     appIdentifier: String,
-    sdkSessionId: String,
     sdkIntegrationType: SdkIntegrationType?,
     sdkPaymentHandling: String?,
     checkoutSessionId: String,
@@ -173,7 +174,6 @@ internal fun BaseAnalyticsProperties.toAnalyticsEvent(
             ),
             this,
             appIdentifier,
-            sdkSessionId,
             sdkIntegrationType,
             sdkPaymentHandling,
             checkoutSessionId,
@@ -193,7 +193,6 @@ internal fun BaseAnalyticsProperties.toAnalyticsEvent(
             ),
             this,
             appIdentifier,
-            sdkSessionId,
             sdkIntegrationType,
             sdkPaymentHandling,
             checkoutSessionId,
@@ -213,7 +212,6 @@ internal fun BaseAnalyticsProperties.toAnalyticsEvent(
             ),
             this,
             appIdentifier,
-            sdkSessionId,
             sdkIntegrationType,
             sdkPaymentHandling,
             checkoutSessionId,
@@ -233,7 +231,6 @@ internal fun BaseAnalyticsProperties.toAnalyticsEvent(
             ),
             this,
             appIdentifier,
-            sdkSessionId,
             sdkIntegrationType,
             sdkPaymentHandling,
             checkoutSessionId,
@@ -253,7 +250,6 @@ internal fun BaseAnalyticsParams.toAnalyticsEvent(
     screenData: ScreenData,
     deviceId: String,
     appIdentifier: String,
-    sdkSessionId: String,
     sdkIntegrationType: SdkIntegrationType?,
     sdkPaymentHandling: String?,
     checkoutSessionId: String,
@@ -272,7 +268,6 @@ internal fun BaseAnalyticsParams.toAnalyticsEvent(
             ),
             UIProperties(action, objectType, place, objectId, context?.toAnalyticsContext()),
             appIdentifier,
-            sdkSessionId,
             sdkIntegrationType,
             sdkPaymentHandling,
             checkoutSessionId,
@@ -292,7 +287,6 @@ internal fun BaseAnalyticsParams.toAnalyticsEvent(
             ),
             TimerProperties(id = id, timerType = timerType, duration = duration, analyticsContext = context),
             appIdentifier,
-            sdkSessionId,
             sdkIntegrationType,
             sdkPaymentHandling,
             checkoutSessionId,
@@ -318,7 +312,6 @@ internal fun BaseAnalyticsParams.toAnalyticsEvent(
                 context?.toAnalyticsContext(),
             ),
             appIdentifier,
-            sdkSessionId,
             sdkIntegrationType,
             sdkPaymentHandling,
             checkoutSessionId,
@@ -338,7 +331,6 @@ internal fun BaseAnalyticsParams.toAnalyticsEvent(
             ),
             FunctionProperties(name, params),
             appIdentifier,
-            sdkSessionId,
             sdkIntegrationType,
             sdkPaymentHandling,
             checkoutSessionId,
@@ -421,4 +413,9 @@ internal fun BaseContextParams.toAnalyticsContext() =
             )
 
         is ErrorContextParams -> ErrorAnalyticsContext(errorId, paymentMethodType)
+
+        is BdcFlowStartContextParams ->
+            BdcFlowStartAnalyticsContext(
+                trustedKeyFingerprints = trustedKeyFingerprints,
+            )
     }

@@ -2,10 +2,9 @@ package io.primer.android.analytics.data.models
 
 import io.primer.android.core.data.serialization.json.JSONArraySerializable
 import io.primer.android.core.data.serialization.json.JSONArraySerializer
-import io.primer.android.core.data.serialization.json.JSONSerializationUtils
 import org.json.JSONArray
 
-internal data class AnalyticsDataRequest(val data: List<BaseAnalyticsEventRequest>) :
+internal data class AnalyticsDataRequest(val data: List<AnalyticsEvent>) :
     JSONArraySerializable {
     companion object {
         @JvmField
@@ -13,13 +12,7 @@ internal data class AnalyticsDataRequest(val data: List<BaseAnalyticsEventReques
             object : JSONArraySerializer<AnalyticsDataRequest> {
                 override fun serialize(t: AnalyticsDataRequest): JSONArray {
                     return JSONArray().apply {
-                        t.data.map {
-                            put(
-                                JSONSerializationUtils
-                                    .getJsonObjectSerializer<BaseAnalyticsEventRequest>()
-                                    .serialize(it),
-                            )
-                        }
+                        t.data.map { put(it.toJson()) }
                     }
                 }
             }

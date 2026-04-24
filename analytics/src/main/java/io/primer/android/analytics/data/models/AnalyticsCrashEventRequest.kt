@@ -12,7 +12,6 @@ internal data class AnalyticsCrashEventRequest(
     override val device: DeviceData,
     override val properties: CrashProperties,
     override val appIdentifier: String,
-    override val sdkSessionId: String,
     override val sdkIntegrationType: SdkIntegrationType?,
     override val sdkPaymentHandling: String?,
     override val checkoutSessionId: String,
@@ -54,7 +53,6 @@ internal data class AnalyticsCrashEventRequest(
                         t.getJSONObject(PROPERTIES_FIELD),
                     ),
                     appIdentifier = t.getString(APP_IDENTIFIER_FIELD),
-                    sdkSessionId = t.getString(SDK_SESSION_ID_FIELD),
                     sdkIntegrationType =
                     t.optNullableString(SDK_INTEGRATION_TYPE_FIELD)
                         ?.let { SdkIntegrationType.valueOf(it) },

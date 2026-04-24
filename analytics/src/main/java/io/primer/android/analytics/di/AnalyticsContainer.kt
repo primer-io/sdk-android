@@ -128,10 +128,10 @@ class AnalyticsContainer(private val sdk: () -> SdkContainer) : DependencyContai
                 analyticsDataSender = analyticsDataSender,
                 localAnalyticsDataSource = localAnalyticsDataSource,
                 fileAnalyticsDataSource = fileAnalyticsDataSource,
-                screenSizeDataSource = ScreenSizeDataSource(sdk().resolve()),
+                deviceIdDataSource = DeviceIdDataSource(sdk().resolve()),
                 batteryLevelDataSource = BatteryLevelDataSource(sdk().resolve()),
                 batteryStatusDataSource = BatteryStatusDataSource(sdk().resolve()),
-                deviceIdDataSource = DeviceIdDataSource(sdk().resolve()),
+                screenSizeDataSource = ScreenSizeDataSource(sdk().resolve()),
                 uncaughtHandlerDataSource =
                 UncaughtHandlerDataSource().also {
                     Thread.setDefaultUncaughtExceptionHandler(it)
