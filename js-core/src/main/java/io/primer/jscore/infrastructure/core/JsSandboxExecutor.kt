@@ -1,5 +1,9 @@
 package io.primer.jscore.infrastructure.core
 
+import android.annotation.SuppressLint
+import android.os.Build
+import android.webkit.WebView
+import androidx.javascriptengine.JavaScriptConsoleCallback
 import androidx.javascriptengine.JavaScriptIsolate
 import androidx.javascriptengine.JavaScriptSandbox
 import androidx.javascriptengine.JavaScriptSandbox.JS_FEATURE_PROVIDE_CONSUME_ARRAY_BUFFER
@@ -7,7 +11,6 @@ import com.google.common.util.concurrent.ListenableFuture
 import com.google.common.util.concurrent.MoreExecutors
 import io.primer.android.core.extensions.runSuspendCatching
 import io.primer.android.core.logging.internal.LogReporter
-import io.primer.jscore.BuildConfig
 import io.primer.jscore.domain.core.JsExecutor
 import io.primer.jscore.domain.core.models.JsResource
 import io.primer.jscore.domain.core.models.JsResourceUrl
@@ -31,6 +34,7 @@ internal class JsSandboxExecutor(
 
     private lateinit var isolate: JavaScriptIsolate
 
+    @SuppressLint("RequiresFeature")
     override suspend fun initialize(resources: List<JsResourceUrl>) = runSuspendCatching {
         val sandbox = sandboxProvider.get()
 
@@ -38,12 +42,8 @@ internal class JsSandboxExecutor(
             launch {
                 if (::isolate.isInitialized) isolate.close()
                 isolate = sandbox.createIsolate()
-                if (BuildConfig.DEBUG) {
-                    if (sandbox.isFeatureSupported(JavaScriptSandbox.JS_FEATURE_CONSOLE_MESSAGING)) {
-                        isolate.setConsoleCallback {
-                            logReporter.debug(it.message)
-                        }
-                    }
+                if (sandbox.isFeatureSupported(JavaScriptSandbox.JS_FEATURE_CONSOLE_MESSAGING)) {
+                    isolate.setConsoleCallback(::onJsConsoleMessage)
                 }
 
                 isolate.evaluateJsAsync(JsPolyfills.TEXT_ENCODER_DECODER)
@@ -56,6 +56,21 @@ internal class JsSandboxExecutor(
         }.awaitAll()
 
         val currentIsolate = isolate
+        val wasmResources = resolvedResources.filterIsInstance<JsResource.Wasm>()
+        if (wasmResources.isNotEmpty() &&
+            !sandbox.isFeatureSupported(JS_FEATURE_PROVIDE_CONSUME_ARRAY_BUFFER)
+        ) {
+            val webViewPackage = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                WebView.getCurrentWebViewPackage()?.packageName.orEmpty()
+            } else {
+                ""
+            }
+            error(
+                "JavaScriptSandbox does not support JS_FEATURE_PROVIDE_CONSUME_ARRAY_BUFFER; " +
+                    "cannot load ${wasmResources.size} WASM resource(s). " +
+                    "The Android System WebView is likely too old (provider=$webViewPackage).",
+            )
+        }
 
         // feed the JS scripts first
         resolvedResources.filterIsInstance<JsResource.Js>().forEach { jsResource ->
@@ -63,17 +78,25 @@ internal class JsSandboxExecutor(
         }
 
         // then inject WASM
-        resolvedResources.filterIsInstance<JsResource.Wasm>().forEach { wasmResource ->
-            if (sandbox.isFeatureSupported(JS_FEATURE_PROVIDE_CONSUME_ARRAY_BUFFER)) {
-                currentIsolate.provideNamedData(wasmResource.name, wasmResource.bytes)
-                val initScript = """
-                (async () => {
-                    const buffer = await android.consumeNamedDataAsArrayBuffer('${wasmResource.name}');
-                    await wasm_bindgen(buffer);
-                })();
-                """.trimIndent()
-                currentIsolate.evaluateJsAsync(initScript)
-            }
+        wasmResources.forEach { wasmResource ->
+            currentIsolate.provideNamedData(wasmResource.name, wasmResource.bytes)
+            val initScript = """
+            (async () => {
+                const buffer = await android.consumeNamedDataAsArrayBuffer('${wasmResource.name}');
+                await wasm_bindgen(buffer);
+            })();
+            """.trimIndent()
+            currentIsolate.evaluateJsAsync(initScript)
+        }
+    }
+
+    private fun onJsConsoleMessage(message: JavaScriptConsoleCallback.ConsoleMessage) {
+        val formatted = "[JS:${message.line}:${message.column}] ${message.message}"
+        when (message.level) {
+            JavaScriptConsoleCallback.ConsoleMessage.LEVEL_ERROR -> logReporter.error(formatted)
+            JavaScriptConsoleCallback.ConsoleMessage.LEVEL_WARNING -> logReporter.warn(formatted)
+            JavaScriptConsoleCallback.ConsoleMessage.LEVEL_INFO -> logReporter.info(formatted)
+            else -> logReporter.debug(formatted)
         }
     }
 

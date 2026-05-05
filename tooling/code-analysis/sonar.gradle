@@ -41,6 +41,7 @@ subprojects { subproject ->
                     '**/implementation/tokenization/data/repository/*',
                     '**/data/datasource/*',
                     '**/implementation/tokenization/domain/*',
+                    '**/jscore/infrastructure/core/*',
                     '**/*Fragment.*',
                     '**/*Fragment$*.*',
                     '**/*Activity.*',
