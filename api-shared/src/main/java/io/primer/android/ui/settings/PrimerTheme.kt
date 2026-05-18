@@ -615,27 +615,27 @@ data class PrimerTheme internal constructor(
             val styledTitleText =
                 TextTheme(
                     defaultColor =
-                    mainColor?.let {
-                        DynamicColor.valueOf(default = it)
-                    } ?: ResourceColor.valueOf(R.color.primer_title),
+                    textColor?.let { DynamicColor.valueOf(default = it) }
+                        ?: mainColor?.let { DynamicColor.valueOf(default = it) }
+                        ?: ResourceColor.valueOf(R.color.primer_title),
                     fontSize = ResourceDimension.valueOf(R.dimen.primer_title_fontsize),
                 )
 
             val styledAmountLabelText =
                 TextTheme(
                     defaultColor =
-                    mainColor?.let {
-                        DynamicColor.valueOf(default = it)
-                    } ?: ResourceColor.valueOf(R.color.primer_amount),
+                    textColor?.let { DynamicColor.valueOf(default = it) }
+                        ?: mainColor?.let { DynamicColor.valueOf(default = it) }
+                        ?: ResourceColor.valueOf(R.color.primer_amount),
                     fontSize = ResourceDimension.valueOf(R.dimen.primer_amount_label_fontsize),
                 )
 
             val styledSubtitleText =
                 TextTheme(
                     defaultColor =
-                    mainColor?.let {
-                        DynamicColor.valueOf(default = it)
-                    } ?: ResourceColor.valueOf(R.color.primer_subtitle),
+                    textColor?.let { DynamicColor.valueOf(default = it) }
+                        ?: mainColor?.let { DynamicColor.valueOf(default = it) }
+                        ?: ResourceColor.valueOf(R.color.primer_subtitle),
                     fontSize = ResourceDimension.valueOf(R.dimen.primer_subtitle_fontsize),
                 )
 
@@ -723,10 +723,9 @@ data class PrimerTheme internal constructor(
             val styledSystemText =
                 TextTheme(
                     defaultColor =
-                    when {
-                        mainColor != null -> DynamicColor.valueOf(default = mainColor)
-                        else -> ResourceColor.valueOf(R.color.primer_system_text)
-                    },
+                    textColor?.let { DynamicColor.valueOf(default = it) }
+                        ?: mainColor?.let { DynamicColor.valueOf(default = it) }
+                        ?: ResourceColor.valueOf(R.color.primer_system_text),
                     fontSize = ResourceDimension.valueOf(R.dimen.primer_subtitle_fontsize),
                 )
 
