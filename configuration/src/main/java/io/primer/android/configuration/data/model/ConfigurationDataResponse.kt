@@ -328,6 +328,7 @@ enum class PaymentMethodImplementationType {
     NATIVE_SDK,
     WEB_REDIRECT,
     IPAY88_SDK,
+    BACKEND_DRIVEN,
     UNKNOWN,
     ;
 

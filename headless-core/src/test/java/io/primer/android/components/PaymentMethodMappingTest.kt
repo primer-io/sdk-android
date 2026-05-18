@@ -294,6 +294,20 @@ internal class PaymentMethodMappingTest {
     }
 
     @Test
+    fun `test maps BACKEND_DRIVEN correctly`() {
+        when (
+            val result =
+                mapping.getPaymentMethodFor(
+                    PaymentMethodImplementationType.BACKEND_DRIVEN,
+                    PaymentMethodType.ADYEN_ALIPAY.name,
+                )
+        ) {
+            is Failure -> assertFails {}
+            is Success -> assertEquals(result.value.type, PaymentMethodType.ADYEN_ALIPAY.name)
+        }
+    }
+
+    @Test
     fun `test maps IPAY88_SDK correctly`() {
         mockkConstructor(IPay88PaymentMethodFactory::class)
         every { anyConstructed<IPay88PaymentMethodFactory>().build() } returns

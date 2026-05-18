@@ -1,5 +1,6 @@
 package io.primer.statetransport.di
 
+import io.primer.android.analytics.utils.Constants
 import io.primer.android.configuration.di.ConfigurationCoreContainer
 import io.primer.android.core.data.datasource.PrimerApiVersion
 import io.primer.android.core.di.DependencyContainer
@@ -35,6 +36,7 @@ class StateTransportContainer(
                 configurationDataSource = sdk().resolve(ConfigurationCoreContainer.CACHED_CONFIGURATION_DI_KEY),
                 remoteStartDataSource = resolve(),
                 remoteInstructionsDataSource = resolve(),
+                applicationIdProvider = sdk().resolve(Constants.APPLICATION_ID_PROVIDER_DI_KEY),
             )
         }
 

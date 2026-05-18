@@ -117,6 +117,9 @@ internal class DefaultPaymentMethodMapping(
             PaymentMethodImplementationType.WEB_REDIRECT ->
                 WebRedirectFactory(type).build()
 
+            PaymentMethodImplementationType.BACKEND_DRIVEN ->
+                BackendDrivenPaymentMethodFactory(type).build()
+
             PaymentMethodImplementationType.IPAY88_SDK ->
                 IPay88PaymentMethodFactory(
                     type = type,

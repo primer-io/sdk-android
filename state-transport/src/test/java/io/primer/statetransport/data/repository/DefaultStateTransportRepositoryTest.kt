@@ -13,6 +13,7 @@ import io.primer.android.configuration.data.model.PaymentMethodRemoteConfigOptio
 import io.primer.android.core.InstantExecutorExtension
 import io.primer.android.core.data.datasource.BaseCacheDataSource
 import io.primer.android.core.data.network.PrimerResponse
+import io.primer.android.core.utils.BaseDataProvider
 import io.primer.statetransport.data.datasource.RemoteInstructionsDataSource
 import io.primer.statetransport.data.datasource.RemotePayDataSource
 import io.primer.statetransport.data.model.ClientInstructionDataResponse
@@ -39,6 +40,9 @@ internal class DefaultStateTransportRepositoryTest {
     @MockK
     lateinit var remoteInstructionsDataSource: RemoteInstructionsDataSource
 
+    @MockK
+    lateinit var applicationIdProvider: BaseDataProvider<String>
+
     private lateinit var repository: DefaultStateTransportRepository
 
     private val paymentMethodConfig = mockk<PaymentMethodConfigDataResponse>(relaxed = true) {
@@ -57,10 +61,12 @@ internal class DefaultStateTransportRepositoryTest {
     @BeforeEach
     fun setUp() {
         every { configurationDataSource.get() } returns configurationData
+        every { applicationIdProvider.provide() } returns "app_123"
         repository = DefaultStateTransportRepository(
             configurationDataSource = configurationDataSource,
             remoteStartDataSource = remoteStartDataSource,
             remoteInstructionsDataSource = remoteInstructionsDataSource,
+            applicationIdProvider = applicationIdProvider,
         )
     }
 
