@@ -13,6 +13,7 @@ import io.primer.android.paymentmethods.PaymentMethodModule
 import io.primer.android.paymentmethods.core.composer.provider.PaymentMethodProviderFactoryRegistry
 import io.primer.android.paymentmethods.core.composer.provider.VaultedPaymentMethodProviderFactoryRegistry
 import io.primer.android.paymentmethods.core.ui.navigation.PaymentMethodNavigationFactoryRegistry
+import io.primer.android.webRedirectShared.di.WebRedirectContainer
 import io.primer.checkout.orchestrator.data.mapper.CheckoutOrchestratorErrorMapper
 import io.primer.checkout.orchestrator.di.CheckoutOrchestratorContainer
 import io.primer.checkout.orchestrator.presentation.BackendDrivenComposerProviderFactory
@@ -62,6 +63,7 @@ internal class BackendDrivenPaymentMethod(
         override fun registerDependencyContainer(sdkContainers: List<SdkContainer>) {
             sdkContainers.forEach { sdkContainer ->
                 sdkContainer.registerContainer(CheckoutOrchestratorContainer(sdk = { getSdkContainer() }))
+                sdkContainer.registerContainer(WebRedirectContainer(sdk = { getSdkContainer() }))
             }
         }
 
