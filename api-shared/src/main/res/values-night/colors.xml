@@ -7,8 +7,8 @@
     <color name="primer_disabled">#48484A</color>
     <color name="primer_hint">#3A3A3C</color>
     <color name="primer_search_input_border">@android:color/transparent</color>
-    <color name="primer_payment_method_button">@color/primer_app_background</color>
-    <color name="primer_payment_method_button_disabled">@color/primer_app_background</color>
+    <color name="primer_payment_method_button">#000000</color>
+    <color name="primer_payment_method_button_disabled">#000000</color>
     <color name="primer_payment_method_button_border">@android:color/white</color>
     <color name="primer_text_color_default">@android:color/white</color>
     <color name="primer_underline_color">#33FFFFFF</color>
