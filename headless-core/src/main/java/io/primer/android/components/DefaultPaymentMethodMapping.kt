@@ -46,7 +46,7 @@ internal class DefaultPaymentMethodMapping(
         isBackendDriven: Boolean,
     ): Either<PaymentMethod, Exception> =
         when {
-            isBackendDriven -> BackendDrivenPaymentMethodFactory(type).build()
+            isBackendDriven -> BackendDrivenPaymentMethodFactory(type = type, settings = settings).build()
             else -> resolveByImplementationType(implementationType, type)
         }
 
@@ -118,7 +118,7 @@ internal class DefaultPaymentMethodMapping(
                 WebRedirectFactory(type).build()
 
             PaymentMethodImplementationType.BACKEND_DRIVEN ->
-                BackendDrivenPaymentMethodFactory(type).build()
+                BackendDrivenPaymentMethodFactory(type = type, settings = settings).build()
 
             PaymentMethodImplementationType.IPAY88_SDK ->
                 IPay88PaymentMethodFactory(
