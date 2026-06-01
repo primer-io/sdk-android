@@ -5,6 +5,13 @@ All notable changes to `primer-sdk-android` are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 2.50.2 (2026-06-01)
+
+### Fix
+
+- filter BDC in Manual mode (#1262)
+- **theme**: align card surface with iOS in dark mode (#1259)
+
 ## 2.50.1 (2026-05-20)
 
 ### Fix
