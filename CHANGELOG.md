@@ -5,6 +5,12 @@ All notable changes to `primer-sdk-android` are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 2.51.0 (2026-06-03)
+
+### Feat
+
+- **klarna**: upgrade bundled Klarna SDK to 2.11.x (#1267)
+
 ## 2.50.2 (2026-06-01)
 
 ### Fix
