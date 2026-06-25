@@ -50,7 +50,9 @@ abstract class WebViewActivity : BaseCheckoutActivity() {
 
     private fun setupViews() {
         val toolbar = findViewById<Toolbar>(R.id.primerWebviewToolbar)
-        toolbar.title = intent.extras?.getString(TOOLBAR_TITLE_KEY).orEmpty()
+        toolbar.title = intent.extras?.getString(TOOLBAR_TITLE_KEY).orEmpty().ifEmpty {
+            getString(android.R.string.cancel)
+        }
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
     }

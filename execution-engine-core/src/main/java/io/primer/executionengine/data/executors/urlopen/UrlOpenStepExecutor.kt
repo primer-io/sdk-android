@@ -16,7 +16,7 @@ internal class UrlOpenStepExecutor(
     override suspend fun execute(actionId: String, step: String): Result<StepResult> = runSuspendCatching {
         val params = UrlOpenParams.deserializer.deserialize(JSONObject(step))
 
-        urlOpenHandler.launch(params.url, params.redirectUrls, params.webview?.title)
+        urlOpenHandler.launch(params.url, params.redirectUrls)
 
         val event = urlOpenHandler.componentEvents.first()
         val outcome = when (event.value) {

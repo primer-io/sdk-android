@@ -41,7 +41,7 @@ internal class UrlOpenStepExecutorTest {
             put("url", "https://example.com")
         }.toString()
 
-        every { urlOpenHandler.launch("https://example.com", null, null) } answers {
+        every { urlOpenHandler.launch("https://example.com", null) } answers {
             componentEvents.tryEmit(ComponentResultEvent(value = "completed", eventType = "custom"))
         }
 
@@ -60,7 +60,7 @@ internal class UrlOpenStepExecutorTest {
             put("url", "https://example.com")
         }.toString()
 
-        every { urlOpenHandler.launch(any(), any(), any()) } answers {
+        every { urlOpenHandler.launch(any(), any()) } answers {
             componentEvents.tryEmit(ComponentResultEvent(value = "cancelled", eventType = "custom"))
         }
 
@@ -76,7 +76,7 @@ internal class UrlOpenStepExecutorTest {
             put("url", "https://example.com")
         }.toString()
 
-        every { urlOpenHandler.launch(any(), any(), any()) } answers {
+        every { urlOpenHandler.launch(any(), any()) } answers {
             componentEvents.tryEmit(ComponentResultEvent(value = "something_else", eventType = "custom"))
         }
 
@@ -94,7 +94,7 @@ internal class UrlOpenStepExecutorTest {
             put("webview", JSONObject().put("title", "Payment"))
         }.toString()
 
-        every { urlOpenHandler.launch(any(), any(), any()) } answers {
+        every { urlOpenHandler.launch(any(), any()) } answers {
             componentEvents.tryEmit(ComponentResultEvent(value = "completed", eventType = "custom"))
         }
 
@@ -104,7 +104,6 @@ internal class UrlOpenStepExecutorTest {
             urlOpenHandler.launch(
                 "https://pay.example.com",
                 listOf("https://return.example.com"),
-                "Payment",
             )
         }
     }

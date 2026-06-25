@@ -15,8 +15,8 @@ internal class DefaultUrlOpenHandler : UrlOpenHandler {
     private val _componentEvents = MutableSharedFlow<ComponentResultEvent>(extraBufferCapacity = 1)
     override val componentEvents: SharedFlow<ComponentResultEvent> = _componentEvents.asSharedFlow()
 
-    override fun launch(url: String, redirectUrls: List<String>?, title: String?) {
-        _launchRequest.tryEmit(UrlOpenLaunchRequest(url, redirectUrls, title))
+    override fun launch(url: String, redirectUrls: List<String>?) {
+        _launchRequest.tryEmit(UrlOpenLaunchRequest(url, redirectUrls))
     }
 
     override fun onResultOk() {

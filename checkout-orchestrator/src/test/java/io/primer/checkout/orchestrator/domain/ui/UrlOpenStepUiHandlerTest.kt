@@ -65,7 +65,6 @@ internal class UrlOpenStepUiHandlerTest {
                 UrlOpenLaunchRequest(
                     url = "https://pay.example.com",
                     redirectUrls = listOf("https://redirect.example.com"),
-                    title = "Pay Now",
                 ),
             )
 
@@ -76,7 +75,7 @@ internal class UrlOpenStepUiHandlerTest {
             assertEquals(PrimerSessionIntent.CHECKOUT, launcherParams.sessionIntent)
 
             val redirectParams = launcherParams.initialLauncherParams as WebRedirectLauncherParams
-            assertEquals("Pay Now", redirectParams.title)
+            assertEquals("", redirectParams.title)
             assertEquals("https://pay.example.com", redirectParams.redirectUrl)
             assertEquals(RETURN_URI, redirectParams.returnUrl)
             assertEquals(PAYMENT_METHOD_TYPE, redirectParams.paymentMethodType)
@@ -94,7 +93,7 @@ internal class UrlOpenStepUiHandlerTest {
             )
 
             launchRequestFlow.emit(
-                UrlOpenLaunchRequest(url = "https://pay.example.com", redirectUrls = null, title = null),
+                UrlOpenLaunchRequest(url = "https://pay.example.com", redirectUrls = null),
             )
 
             val navigate = emittedEvents[0] as ComposerUiEvent.Navigate

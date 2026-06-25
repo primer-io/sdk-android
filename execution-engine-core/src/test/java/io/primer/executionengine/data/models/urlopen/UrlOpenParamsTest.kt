@@ -19,7 +19,6 @@ internal class UrlOpenParamsTest {
 
         assertEquals("https://example.com", result.url)
         assertNull(result.redirectUrls)
-        assertNull(result.webview)
     }
 
     @Test
@@ -33,7 +32,6 @@ internal class UrlOpenParamsTest {
 
         assertEquals("https://example.com", result.url)
         assertEquals(listOf("https://return1.com", "https://return2.com"), result.redirectUrls)
-        assertNull(result.webview)
     }
 
     @Test
@@ -47,7 +45,6 @@ internal class UrlOpenParamsTest {
 
         assertEquals("https://pay.example.com", result.url)
         assertNull(result.redirectUrls)
-        assertEquals(WebviewConfig(title = "Payment"), result.webview)
     }
 
     @Test
@@ -62,19 +59,6 @@ internal class UrlOpenParamsTest {
 
         assertEquals("https://pay.example.com", result.url)
         assertEquals(listOf("https://return.com"), result.redirectUrls)
-        assertEquals(WebviewConfig(title = "Pay Now"), result.webview)
-    }
-
-    @Test
-    fun `deserialize should handle webview with null title`() {
-        val json = JSONObject().apply {
-            put("url", "https://example.com")
-            put("webview", JSONObject().put("title", JSONObject.NULL))
-        }
-
-        val result = UrlOpenParams.deserializer.deserialize(json)
-
-        assertNull(result.webview?.title)
     }
 
     @Test

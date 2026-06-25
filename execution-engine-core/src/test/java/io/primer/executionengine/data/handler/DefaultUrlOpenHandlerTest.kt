@@ -28,11 +28,11 @@ internal class DefaultUrlOpenHandlerTest {
     fun `launch should emit UrlOpenLaunchRequest with all parameters`() = runTest(UnconfinedTestDispatcher()) {
         val deferred = async { handler.launchRequest.first() }
 
-        handler.launch("https://example.com", listOf("https://redirect.com"), "Pay Now")
+        handler.launch("https://example.com", listOf("https://redirect.com"))
 
         val request = deferred.await()
         assertEquals(
-            UrlOpenLaunchRequest("https://example.com", listOf("https://redirect.com"), "Pay Now"),
+            UrlOpenLaunchRequest("https://example.com", listOf("https://redirect.com")),
             request,
         )
     }
@@ -41,10 +41,10 @@ internal class DefaultUrlOpenHandlerTest {
     fun `launch should emit request with null redirectUrls and title`() = runTest(UnconfinedTestDispatcher()) {
         val deferred = async { handler.launchRequest.first() }
 
-        handler.launch("https://example.com", null, null)
+        handler.launch("https://example.com", null)
 
         val request = deferred.await()
-        assertEquals(UrlOpenLaunchRequest("https://example.com", null, null), request)
+        assertEquals(UrlOpenLaunchRequest("https://example.com", null), request)
     }
 
     @Test

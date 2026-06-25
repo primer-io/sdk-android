@@ -32,7 +32,7 @@ internal class UrlOpenStepUiHandler(
                             paymentMethodType = paymentMethodType,
                             sessionIntent = PrimerSessionIntent.CHECKOUT,
                             initialLauncherParams = WebRedirectLauncherParams(
-                                title = request.title.orEmpty(),
+                                title = "",
                                 paymentMethodType = paymentMethodType,
                                 redirectUrl = request.url,
                                 statusUrl = "",
