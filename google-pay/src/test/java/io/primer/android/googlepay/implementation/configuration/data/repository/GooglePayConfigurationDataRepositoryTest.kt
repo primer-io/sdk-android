@@ -85,6 +85,8 @@ internal class GooglePayConfigurationDataRepositoryTest {
             every { settings.paymentMethodOptions.googlePayOptions.merchantName } returns "Test Merchant"
             every { settings.paymentMethodOptions.googlePayOptions.captureBillingAddress } returns true
             every { settings.paymentMethodOptions.googlePayOptions.existingPaymentMethodRequired } returns false
+            every { settings.paymentMethodOptions.googlePayOptions.allowCreditCards } returns true
+            every { settings.paymentMethodOptions.googlePayOptions.allowPrepaidCards } returns true
             val shippingAddressParameters = mockk<PrimerGoogleShippingAddressParameters>()
             every { settings.paymentMethodOptions.googlePayOptions.shippingAddressParameters } returns
                 shippingAddressParameters
@@ -106,6 +108,8 @@ internal class GooglePayConfigurationDataRepositoryTest {
                     currencyCode = "USD",
                     allowedCardNetworks = emptyList(),
                     allowedCardAuthMethods = listOf("PAN_ONLY", "CRYPTOGRAM_3DS"),
+                    allowCreditCards = true,
+                    allowPrepaidCards = true,
                     billingAddressRequired = true,
                     existingPaymentMethodRequired = false,
                     shippingOptions = shippingOptions,
@@ -167,6 +171,8 @@ internal class GooglePayConfigurationDataRepositoryTest {
             every { settings.paymentMethodOptions.googlePayOptions.merchantName } returns "Test Merchant"
             every { settings.paymentMethodOptions.googlePayOptions.captureBillingAddress } returns true
             every { settings.paymentMethodOptions.googlePayOptions.existingPaymentMethodRequired } returns false
+            every { settings.paymentMethodOptions.googlePayOptions.allowCreditCards } returns true
+            every { settings.paymentMethodOptions.googlePayOptions.allowPrepaidCards } returns true
             val shippingAddressParameters = mockk<PrimerGoogleShippingAddressParameters>()
             every { settings.paymentMethodOptions.googlePayOptions.shippingAddressParameters } returns
                 shippingAddressParameters
@@ -188,6 +194,8 @@ internal class GooglePayConfigurationDataRepositoryTest {
                     currencyCode = "USD",
                     allowedCardNetworks = listOf("VISA", "MASTERCARD"),
                     allowedCardAuthMethods = listOf("PAN_ONLY", "CRYPTOGRAM_3DS"),
+                    allowCreditCards = true,
+                    allowPrepaidCards = true,
                     billingAddressRequired = true,
                     existingPaymentMethodRequired = false,
                     shippingOptions = shippingOptions,
@@ -196,6 +204,50 @@ internal class GooglePayConfigurationDataRepositoryTest {
                     emailAddressRequired = false,
                 )
             assertEquals(expected, result.getOrThrow())
+        }
+
+    @Test
+    fun `getPaymentMethodConfiguration carries merchant allowCreditCards and allowPrepaidCards`() =
+        runBlocking {
+            val paymentMethodConfig =
+                mockk<PaymentMethodConfigDataResponse> {
+                    every { type } returns PaymentMethodType.GOOGLE_PAY.name
+                    every { options } returns
+                        mockk<PaymentMethodRemoteConfigOptions> { every { merchantId } returns "testMerchantId" }
+                }
+            val orderResponse =
+                mockk<OrderDataResponse> {
+                    every { currentAmount } returns 1000
+                    every { currencyCode } returns "USD"
+                    every { countryCode } returns CountryCode.US
+                }
+            val clientSessionDataResponse =
+                mockk<ClientSessionDataResponse> {
+                    every { order } returns orderResponse
+                    every { paymentMethod } returns
+                        mockk { every { orderedAllowedCardNetworks } returns emptyList() }
+                }
+            val configurationData =
+                mockk<ConfigurationData> {
+                    every { paymentMethods } returns listOf(paymentMethodConfig)
+                    every { clientSession } returns clientSessionDataResponse
+                    every { environment } returns Environment.DEV
+                }
+            every { configurationDataSource.get() } returns configurationData
+            every { configurationData.toConfiguration().checkoutModules } returns emptyList()
+            every { settings.paymentMethodOptions.googlePayOptions.allowCreditCards } returns true
+            every { settings.paymentMethodOptions.googlePayOptions.allowPrepaidCards } returns false
+
+            mockkObject(PaymentUtils)
+            every { PaymentUtils.minorToAmount(any<Int>(), any<Currency>()) } returns 10.00
+
+            // When
+            val configuration = repository.getPaymentMethodConfiguration(NoOpPaymentMethodConfigurationParams)
+                .getOrThrow()
+
+            // Then
+            assertEquals(true, configuration.allowCreditCards)
+            assertEquals(false, configuration.allowPrepaidCards)
         }
 
     @Test

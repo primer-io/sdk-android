@@ -8,12 +8,16 @@ internal object GooglePayPayloadUtils {
         allowedCardNetworks: List<String>,
         allowedCardAuthMethods: List<String>,
         billingAddressRequired: Boolean,
+        allowCreditCards: Boolean,
+        allowPrepaidCards: Boolean,
     ): JSONObject {
         return JSONObject().apply {
             val parameters =
                 JSONObject().apply {
                     put("allowedAuthMethods", JSONArray(allowedCardAuthMethods))
                     put("allowedCardNetworks", JSONArray(allowedCardNetworks))
+                    put("allowCreditCards", allowCreditCards)
+                    put("allowPrepaidCards", allowPrepaidCards)
                     put("billingAddressRequired", billingAddressRequired)
                     if (billingAddressRequired) {
                         put(

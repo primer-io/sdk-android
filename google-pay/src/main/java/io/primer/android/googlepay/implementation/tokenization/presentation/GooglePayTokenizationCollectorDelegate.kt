@@ -34,6 +34,8 @@ internal class GooglePayTokenizationCollectorDelegate(
                         shippingAddressParameters = configuration.shippingAddressParameters,
                         requireShippingMethod = configuration.requireShippingMethod,
                         emailAddressRequired = configuration.emailAddressRequired,
+                        allowCreditCards = configuration.allowCreditCards,
+                        allowPrepaidCards = configuration.allowPrepaidCards,
                     ),
                 ),
             )

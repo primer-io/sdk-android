@@ -44,8 +44,9 @@ class GooglePayFactory(
                     ).toList(),
                 buttonStyle = settings.paymentMethodOptions.googlePayOptions.buttonStyle,
                 billingAddressRequired = settings.paymentMethodOptions.googlePayOptions.captureBillingAddress,
-                existingPaymentMethodRequired =
-                settings.paymentMethodOptions.googlePayOptions.existingPaymentMethodRequired,
+                existingPaymentMethodRequired = settings.paymentMethodOptions.googlePayOptions.existingPaymentMethodRequired,
+                allowCreditCards = settings.paymentMethodOptions.googlePayOptions.allowCreditCards,
+                allowPrepaidCards = settings.paymentMethodOptions.googlePayOptions.allowPrepaidCards,
             )
 
         return Success(googlePay)

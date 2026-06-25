@@ -60,6 +60,8 @@ internal class GooglePayNavigatorTest {
                 shippingAddressParameters = null,
                 requireShippingMethod = false,
                 emailAddressRequired = false,
+                allowCreditCards = true,
+                allowPrepaidCards = true,
             )
         every { Looper.getMainLooper() } returns mockk(relaxed = true)
 
@@ -82,6 +84,8 @@ internal class GooglePayNavigatorTest {
                 shippingAddressParameters = null,
                 requireShippingMethod = false,
                 emailAddressRequired = false,
+                allowCreditCards = true,
+                allowPrepaidCards = true,
             )
         }
     }
@@ -104,6 +108,8 @@ internal class GooglePayNavigatorTest {
                 shippingAddressParameters = null,
                 requireShippingMethod = false,
                 emailAddressRequired = false,
+                allowCreditCards = true,
+                allowPrepaidCards = true,
             )
 
         // When

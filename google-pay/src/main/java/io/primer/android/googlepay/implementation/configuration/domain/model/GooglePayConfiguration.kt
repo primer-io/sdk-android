@@ -14,6 +14,8 @@ internal data class GooglePayConfiguration(
     val currencyCode: String,
     val allowedCardNetworks: List<String>,
     val allowedCardAuthMethods: List<String>,
+    val allowCreditCards: Boolean,
+    val allowPrepaidCards: Boolean,
     val billingAddressRequired: Boolean,
     val existingPaymentMethodRequired: Boolean,
     val shippingOptions: CheckoutModule.Shipping?,

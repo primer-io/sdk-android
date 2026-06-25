@@ -31,6 +31,8 @@ internal data class GooglePayNavigator(
                 shippingAddressParameters = params.shippingAddressParameters,
                 emailAddressRequired = params.emailAddressRequired,
                 requireShippingMethod = params.requireShippingMethod,
+                allowCreditCards = params.allowCreditCards,
+                allowPrepaidCards = params.allowPrepaidCards,
             )
     }
 

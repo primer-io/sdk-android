@@ -76,6 +76,16 @@ constructor(
             "MASTERCARD",
             "VISA",
         ),
+    /**
+     * Whether credit cards may be offered through Google Pay. Defaults to `true`. Maps directly to
+     * Google Pay's `allowCreditCards` flag.
+     */
+    var allowCreditCards: Boolean = true,
+    /**
+     * Whether prepaid cards may be offered through Google Pay. Defaults to `true`. Maps directly to
+     * Google Pay's `allowPrepaidCards` flag.
+     */
+    var allowPrepaidCards: Boolean = true,
     var buttonStyle: GooglePayButtonStyle = GooglePayButtonStyle.BLACK,
     var captureBillingAddress: Boolean = false,
     val existingPaymentMethodRequired: Boolean = false,
@@ -87,6 +97,8 @@ constructor(
     constructor(parcel: Parcel) : this(
         merchantName = parcel.readString(),
         allowedCardNetworks = parcel.createStringArrayList().orEmpty(),
+        allowCreditCards = parcel.readByte() != 0.toByte(),
+        allowPrepaidCards = parcel.readByte() != 0.toByte(),
         buttonStyle = GooglePayButtonStyle.valueOf(parcel.readString().orEmpty()),
         captureBillingAddress = parcel.readByte() != 0.toByte(),
         existingPaymentMethodRequired = parcel.readByte() != 0.toByte(),
@@ -102,6 +114,8 @@ constructor(
     ) {
         parcel.writeString(merchantName)
         parcel.writeStringList(allowedCardNetworks)
+        parcel.writeByte(if (allowCreditCards) 1 else 0)
+        parcel.writeByte(if (allowPrepaidCards) 1 else 0)
         parcel.writeString(buttonStyle.name)
         parcel.writeByte(if (captureBillingAddress) 1 else 0)
         parcel.writeByte(if (existingPaymentMethodRequired) 1 else 0)
@@ -136,6 +150,8 @@ constructor(
 
         private const val MERCHANT_NAME_FIELD = "merchantName"
         private const val ALLOWED_CARD_NETWORKS_FIELD = "allowedCardNetworks"
+        private const val ALLOW_CREDIT_CARDS_FIELD = "allowCreditCards"
+        private const val ALLOW_PREPAID_CARDS_FIELD = "allowPrepaidCards"
         private const val BUTTON_STYLE_FIELD = "buttonStyle"
         private const val CAPTURE_BILLING_ADDRESS_FIELD = "captureBillingAddress"
         private const val EXISTING_PAYMENT_METHOD_REQUIRED_FIELD = "existingPaymentMethodRequired"
@@ -150,6 +166,8 @@ constructor(
                 JSONObject().apply {
                     put(MERCHANT_NAME_FIELD, t.merchantName)
                     put(ALLOWED_CARD_NETWORKS_FIELD, JSONArray(t.allowedCardNetworks))
+                    put(ALLOW_CREDIT_CARDS_FIELD, t.allowCreditCards)
+                    put(ALLOW_PREPAID_CARDS_FIELD, t.allowPrepaidCards)
                     put(BUTTON_STYLE_FIELD, t.buttonStyle.name)
                     put(CAPTURE_BILLING_ADDRESS_FIELD, t.captureBillingAddress)
                     put(EXISTING_PAYMENT_METHOD_REQUIRED_FIELD, t.existingPaymentMethodRequired)

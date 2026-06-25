@@ -38,6 +38,8 @@ internal class GooglePayFacade(
         allowedCardAuthMethods: List<String>,
         billingAddressRequired: Boolean,
         existingPaymentMethodRequired: Boolean,
+        allowCreditCards: Boolean,
+        allowPrepaidCards: Boolean,
     ): Boolean =
         checkIfIsReadyToPay(
             buildIsReadyToGooglePayRequest(
@@ -45,6 +47,8 @@ internal class GooglePayFacade(
                 allowedCardAuthMethods = allowedCardAuthMethods,
                 billingAddressRequired = billingAddressRequired,
                 existingPaymentMethodRequired = existingPaymentMethodRequired,
+                allowCreditCards = allowCreditCards,
+                allowPrepaidCards = allowPrepaidCards,
             ),
         )
 
@@ -53,12 +57,16 @@ internal class GooglePayFacade(
         allowedCardAuthMethods: List<String>,
         billingAddressRequired: Boolean,
         existingPaymentMethodRequired: Boolean,
+        allowCreditCards: Boolean,
+        allowPrepaidCards: Boolean,
     ): JSONObject {
         val baseCardPaymentMethods =
             GooglePayPayloadUtils.baseCardPaymentMethod(
-                allowedCardNetworks,
-                allowedCardAuthMethods,
-                billingAddressRequired,
+                allowedCardNetworks = allowedCardNetworks,
+                allowedCardAuthMethods = allowedCardAuthMethods,
+                billingAddressRequired = billingAddressRequired,
+                allowCreditCards = allowCreditCards,
+                allowPrepaidCards = allowPrepaidCards,
             )
 
         return baseRequest.apply {
@@ -114,6 +122,8 @@ internal class GooglePayFacade(
         shippingAddressParameters: PrimerGoogleShippingAddressParameters?,
         requireShippingMethod: Boolean,
         emailAddressRequired: Boolean,
+        allowCreditCards: Boolean,
+        allowPrepaidCards: Boolean,
     ) {
         val request =
             buildPaymentRequest(
@@ -129,6 +139,8 @@ internal class GooglePayFacade(
                 shippingAddressParameters = shippingAddressParameters,
                 requireShippingMethod = requireShippingMethod,
                 emailAddressRequired = emailAddressRequired,
+                allowCreditCards = allowCreditCards,
+                allowPrepaidCards = allowPrepaidCards,
             )
         pay(activity, request)
     }
@@ -148,6 +160,8 @@ internal class GooglePayFacade(
         shippingAddressParameters: PrimerGoogleShippingAddressParameters?,
         requireShippingMethod: Boolean,
         emailAddressRequired: Boolean,
+        allowCreditCards: Boolean,
+        allowPrepaidCards: Boolean,
     ): JSONObject {
         val gatewayParams =
             JSONObject(
@@ -164,9 +178,11 @@ internal class GooglePayFacade(
 
         val cardPaymentMethod =
             GooglePayPayloadUtils.baseCardPaymentMethod(
-                allowedCardNetworks,
-                allowedCardAuthMethods,
-                billingAddressRequired,
+                allowedCardNetworks = allowedCardNetworks,
+                allowedCardAuthMethods = allowedCardAuthMethods,
+                billingAddressRequired = billingAddressRequired,
+                allowCreditCards = allowCreditCards,
+                allowPrepaidCards = allowPrepaidCards,
             ).apply {
                 put("tokenizationSpecification", gatewayTokenizationSpecification)
             }

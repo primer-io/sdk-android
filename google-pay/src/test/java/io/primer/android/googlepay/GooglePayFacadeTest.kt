@@ -29,6 +29,7 @@ import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
+import org.json.JSONObject
 import org.junit.jupiter.api.Test
 
 internal class GooglePayFacadeTest {
@@ -70,7 +71,7 @@ internal class GooglePayFacadeTest {
             }
             every { task.getResult(ApiException::class.java) } returns true
 
-            val result = googlePayFacade.checkIfIsReadyToPay(emptyList(), emptyList(), true, false)
+            val result = googlePayFacade.checkIfIsReadyToPay(emptyList(), emptyList(), true, false, true, true)
 
             assertTrue(result)
         }
@@ -83,7 +84,7 @@ internal class GooglePayFacadeTest {
                 GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(context)
             } returns ConnectionResult.SERVICE_MISSING
 
-            val result = googlePayFacade.checkIfIsReadyToPay(emptyList(), emptyList(), true, false)
+            val result = googlePayFacade.checkIfIsReadyToPay(emptyList(), emptyList(), true, false, true, true)
 
             assertFalse(result)
         }
@@ -109,7 +110,7 @@ internal class GooglePayFacadeTest {
             }
 
             // Invoke the method
-            val result = googlePayFacade.checkIfIsReadyToPay(emptyList(), emptyList(), true, false)
+            val result = googlePayFacade.checkIfIsReadyToPay(emptyList(), emptyList(), true, false, true, true)
 
             // Verify that the result is false
             assertFalse(result)
@@ -139,6 +140,8 @@ internal class GooglePayFacadeTest {
                     shippingAddressParameters = null,
                     requireShippingMethod = false,
                     emailAddressRequired = false,
+                    allowCreditCards = true,
+                    allowPrepaidCards = true,
                 )
             }
 
@@ -159,6 +162,8 @@ internal class GooglePayFacadeTest {
             shippingAddressParameters = null,
             requireShippingMethod = false,
             emailAddressRequired = false,
+            allowCreditCards = true,
+            allowPrepaidCards = true,
         )
 
         verify {
@@ -196,6 +201,8 @@ internal class GooglePayFacadeTest {
                     shippingAddressParameters = PrimerGoogleShippingAddressParameters(phoneNumberRequired = true),
                     requireShippingMethod = true,
                     emailAddressRequired = true,
+                    allowCreditCards = true,
+                    allowPrepaidCards = true,
                 )
             }
 
@@ -223,5 +230,40 @@ internal class GooglePayFacadeTest {
         assertTrue(shippingAddressParams.getBoolean("phoneNumberRequired"))
         assertTrue(json.getBoolean("shippingOptionRequired"))
         assertTrue(json.getBoolean("emailRequired"))
+
+        // Card-type flags default to true (matching Google Pay's defaults) when not filtered.
+        val cardParameters = json.cardParameters()
+        assertTrue(cardParameters.getBoolean("allowCreditCards"))
+        assertTrue(cardParameters.getBoolean("allowPrepaidCards"))
     }
+
+    @Test
+    fun `buildPaymentRequest includes card type flags when filtering is enabled`() {
+        val json =
+            googlePayFacade.run {
+                buildPaymentRequest(
+                    gatewayMerchantId = "test_merchant_id",
+                    merchantName = "Test Merchant",
+                    totalPrice = "10.00",
+                    countryCode = "US",
+                    currencyCode = "USD",
+                    allowedCardNetworks = listOf("VISA", "MASTERCARD"),
+                    allowedCardAuthMethods = listOf("PAN_ONLY", "CRYPTOGRAM_3DS"),
+                    billingAddressRequired = false,
+                    shippingOptions = null,
+                    shippingAddressParameters = null,
+                    requireShippingMethod = false,
+                    emailAddressRequired = false,
+                    allowCreditCards = true,
+                    allowPrepaidCards = false,
+                )
+            }
+
+        val cardParameters = json.cardParameters()
+        assertTrue(cardParameters.getBoolean("allowCreditCards"))
+        assertTrue(!cardParameters.getBoolean("allowPrepaidCards"))
+    }
+
+    private fun JSONObject.cardParameters(): JSONObject =
+        getJSONArray("allowedPaymentMethods").getJSONObject(0).getJSONObject("parameters")
 }

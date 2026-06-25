@@ -27,6 +27,8 @@ internal class GooglePayPaymentMethodCheckerTest {
                 allowedCardNetworks = listOf(CardNetwork.Type.VISA, CardNetwork.Type.MASTERCARD),
                 billingAddressRequired = true,
                 existingPaymentMethodRequired = false,
+                allowCreditCards = true,
+                allowPrepaidCards = true,
             )
     }
 
@@ -39,6 +41,8 @@ internal class GooglePayPaymentMethodCheckerTest {
                     googlePay.allowedCardAuthMethods,
                     googlePay.billingAddressRequired,
                     googlePay.existingPaymentMethodRequired,
+                    googlePay.allowCreditCards,
+                    googlePay.allowPrepaidCards,
                 )
             } returns true
 
@@ -51,6 +55,8 @@ internal class GooglePayPaymentMethodCheckerTest {
                     googlePay.allowedCardAuthMethods,
                     googlePay.billingAddressRequired,
                     googlePay.existingPaymentMethodRequired,
+                    googlePay.allowCreditCards,
+                    googlePay.allowPrepaidCards,
                 )
             }
         }
@@ -64,6 +70,8 @@ internal class GooglePayPaymentMethodCheckerTest {
                     googlePay.allowedCardAuthMethods,
                     googlePay.billingAddressRequired,
                     googlePay.existingPaymentMethodRequired,
+                    googlePay.allowCreditCards,
+                    googlePay.allowPrepaidCards,
                 )
             } returns false
 
@@ -76,6 +84,8 @@ internal class GooglePayPaymentMethodCheckerTest {
                     googlePay.allowedCardAuthMethods,
                     googlePay.billingAddressRequired,
                     googlePay.existingPaymentMethodRequired,
+                    googlePay.allowCreditCards,
+                    googlePay.allowPrepaidCards,
                 )
             }
         }

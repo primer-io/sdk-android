@@ -25,6 +25,8 @@ internal class GooglePayFactoryTest {
                 every { paymentMethodOptions.googlePayOptions.buttonStyle } returns GooglePayButtonStyle.WHITE
                 every { paymentMethodOptions.googlePayOptions.captureBillingAddress } returns true
                 every { paymentMethodOptions.googlePayOptions.existingPaymentMethodRequired } returns false
+                every { paymentMethodOptions.googlePayOptions.allowCreditCards } returns true
+                every { paymentMethodOptions.googlePayOptions.allowPrepaidCards } returns true
             }
         configurationDataSource = mockk()
     }

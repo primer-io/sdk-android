@@ -48,6 +48,8 @@ class GooglePayTokenizationDelegateTest {
                     currencyCode = "currencyCode",
                     allowedCardNetworks = listOf("VISA", "MASTERCARD"),
                     allowedCardAuthMethods = listOf("PAN_ONLY", "CRYPTOGRAM_3DS"),
+                    allowCreditCards = true,
+                    allowPrepaidCards = true,
                     billingAddressRequired = true,
                     existingPaymentMethodRequired = false,
                     shippingOptions = null,

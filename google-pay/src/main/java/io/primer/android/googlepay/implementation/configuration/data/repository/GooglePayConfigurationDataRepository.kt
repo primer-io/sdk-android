@@ -56,6 +56,8 @@ internal class GooglePayConfigurationDataRepository(
                 currencyCode = order.currencyCode.orEmpty(),
                 allowedCardNetworks = allowedCardNetworks,
                 allowedCardAuthMethods = allowedCardAuthMethods,
+                allowCreditCards = googlePayOptions.allowCreditCards,
+                allowPrepaidCards = googlePayOptions.allowPrepaidCards,
                 billingAddressRequired = googlePayOptions.captureBillingAddress,
                 existingPaymentMethodRequired =
                 googlePayOptions.existingPaymentMethodRequired,

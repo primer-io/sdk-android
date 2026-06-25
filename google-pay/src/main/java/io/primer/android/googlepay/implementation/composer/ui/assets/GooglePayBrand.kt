@@ -44,6 +44,8 @@ internal class GooglePayBrand(
                         allowedCardNetworks = configuration.allowedCardNetworks,
                         allowedCardAuthMethods = configuration.allowedCardAuthMethods,
                         billingAddressRequired = options.captureBillingAddress,
+                        allowCreditCards = configuration.allowCreditCards,
+                        allowPrepaidCards = configuration.allowPrepaidCards,
                     ),
                 )
             payButton.apply {

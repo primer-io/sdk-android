@@ -14,6 +14,8 @@ internal class GooglePayPaymentMethodChecker(
             allowedCardAuthMethods = googlePay.allowedCardAuthMethods,
             billingAddressRequired = googlePay.billingAddressRequired,
             existingPaymentMethodRequired = googlePay.existingPaymentMethodRequired,
+            allowCreditCards = googlePay.allowCreditCards,
+            allowPrepaidCards = googlePay.allowPrepaidCards,
         )
     }
 }

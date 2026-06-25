@@ -43,6 +43,8 @@ internal class GooglePayActivityLauncherParamsTest {
                 shippingAddressParameters = shippingAddressParameters,
                 requireShippingMethod = requireShippingMethod,
                 emailAddressRequired = emailAddressRequired,
+                allowCreditCards = true,
+                allowPrepaidCards = true,
             )
 
         // Then

@@ -22,6 +22,8 @@ internal class GooglePayActivityLauncherParams(
     val shippingAddressParameters: PrimerGoogleShippingAddressParameters? = null,
     val requireShippingMethod: Boolean,
     val emailAddressRequired: Boolean,
+    val allowCreditCards: Boolean,
+    val allowPrepaidCards: Boolean,
 ) : PaymentMethodRedirectLauncherParams(
     PaymentMethodType.GOOGLE_PAY.name,
     PrimerSessionIntent.CHECKOUT,
