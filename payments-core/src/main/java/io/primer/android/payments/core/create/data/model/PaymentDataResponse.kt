@@ -106,6 +106,7 @@ fun PaymentDataResponse.toPaymentResult(paymentMethodData: PrimerCheckoutAdditio
         Payment(
             id = id,
             orderId = orderId,
+            status = status,
         ),
         paymentStatus = status,
         requiredActionName = requiredAction?.name,
