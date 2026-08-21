@@ -16,7 +16,7 @@
 <br/>
 
 <p align="center">
-  <a href="https://android-arsenal.com/api?level=24"><img alt="API" src="https://img.shields.io/badge/API-23%2B-brightgreen.svg?style=flat"/></a>
+  <a href="https://android-arsenal.com/api?level=23"><img alt="API" src="https://img.shields.io/badge/API-23%2B-brightgreen.svg?style=flat"/></a>
   <a href="https://search.maven.org/search?q=g:%22io.primer%22%20AND%20a:%22android%22"><img src="https://img.shields.io/maven-central/v/io.primer/android"/></a>
   <a href="LICENSE.md"><img src="https://img.shields.io/github/license/primer-io/sdk-android"/></a>
 </p>
