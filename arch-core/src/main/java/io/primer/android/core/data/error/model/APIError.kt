@@ -6,7 +6,6 @@ import io.primer.android.core.data.serialization.json.JSONSerializationUtils
 import io.primer.android.core.data.serialization.json.extensions.optNullableString
 import io.primer.android.core.data.serialization.json.extensions.sequence
 import okhttp3.Response
-import okhttp3.ResponseBody
 import org.json.JSONObject
 
 data class APIError(
@@ -65,21 +64,22 @@ data class APIError(
                 "description":"Failed to decode json response."
             }"""
 
-        fun create(response: Response): APIError {
+        fun create(response: Response): APIError = create(bodyText = response.body?.string())
+
+        fun create(bodyText: String?): APIError {
             return JSONSerializationUtils.getJsonObjectDeserializer<APIError>()
                 .deserialize(
                     getErrorFromContent(
-                        response.body,
+                        bodyText,
                     ),
                 )
         }
 
-        private fun getErrorFromContent(body: ResponseBody?): JSONObject {
-            if (body == null) {
+        @Suppress("TooGenericExceptionCaught", "SwallowedException")
+        private fun getErrorFromContent(content: String?): JSONObject {
+            if (content == null) {
                 return JSONObject(DEFAULT_ERROR_ELEMENT)
             }
-
-            val content = body.string()
 
             return try {
                 JSONObject(content).optJSONObject("error") ?: JSONObject(content)

@@ -1,6 +1,7 @@
 package io.primer.executionengine.data.handler
 
 import io.primer.executionengine.domain.executor.ComponentResultEvent
+import io.primer.executionengine.domain.handler.UrlCloseReason
 import io.primer.executionengine.domain.handler.UrlOpenHandler
 import io.primer.executionengine.domain.handler.UrlOpenLaunchRequest
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -19,22 +20,24 @@ internal class DefaultUrlOpenHandler : UrlOpenHandler {
         _launchRequest.tryEmit(UrlOpenLaunchRequest(url, redirectUrls))
     }
 
-    override fun onResultOk() {
-        emitEvent(VALUE_SUCCESS)
-    }
-
-    override fun onResultCancelled() {
-        emitEvent(VALUE_CANCELLED)
+    /**
+     * A browser close never resolves success: the schema decides via `browserClose.closeReason`
+     * (`auto` -> confirm payment, `user` -> poll payment), so both variants emit `cancelled`.
+     */
+    override fun onClosed(closeReason: UrlCloseReason) {
+        _componentEvents.tryEmit(
+            ComponentResultEvent(
+                value = VALUE_CANCELLED,
+                eventType = EVENT_TYPE,
+                data = mapOf(CLOSE_REASON_KEY to closeReason.value),
+            ),
+        )
     }
 
     override fun onResultError(uri: String) {
-        emitEvent(VALUE_ERROR)
-    }
-
-    private fun emitEvent(value: String) {
         _componentEvents.tryEmit(
             ComponentResultEvent(
-                value = value,
+                value = VALUE_ERROR,
                 eventType = EVENT_TYPE,
             ),
         )
@@ -42,8 +45,8 @@ internal class DefaultUrlOpenHandler : UrlOpenHandler {
 
     private companion object {
         const val EVENT_TYPE = "custom"
-        const val VALUE_SUCCESS = "completed"
         const val VALUE_CANCELLED = "cancelled"
         const val VALUE_ERROR = "error"
+        const val CLOSE_REASON_KEY = "closeReason"
     }
 }

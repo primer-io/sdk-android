@@ -12,6 +12,7 @@ import io.primer.checkout.orchestrator.data.verification.ManifestSignatureVerifi
 import io.primer.checkout.orchestrator.domain.CheckoutDecisionResolver
 import io.primer.checkout.orchestrator.domain.CheckoutOrchestrator
 import io.primer.checkout.orchestrator.domain.DefaultReturnUriProvider
+import io.primer.checkout.orchestrator.domain.PaymentFlowInteractor
 import io.primer.checkout.orchestrator.domain.ReturnUriProvider
 import io.primer.checkout.orchestrator.domain.SdkContextProvider
 import io.primer.checkout.orchestrator.domain.ui.StepUiHandlerRegistry
@@ -86,6 +87,14 @@ class CheckoutOrchestratorContainer(
                 sdkContextProvider = resolve(),
                 analyticsInteractor = sdk().resolve(),
                 trustedPublicKeysB64 = MANIFEST_SIGNING_PUBLIC_KEYS,
+            )
+        }
+
+        registerFactory {
+            PaymentFlowInteractor(
+                repository = sdk().resolve(),
+                configurationRepository = sdk().resolve(),
+                orchestrator = resolve(),
             )
         }
     }

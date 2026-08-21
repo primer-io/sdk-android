@@ -14,8 +14,10 @@ import io.primer.android.PrimerSessionIntent
 import io.primer.android.core.InstantExecutorExtension
 import io.primer.android.paymentmethods.core.composer.composable.ComposerUiEvent
 import io.primer.android.webRedirectShared.implementation.composer.presentation.WebRedirectLauncherParams
+import io.primer.android.webRedirectShared.implementation.composer.ui.activity.WebRedirectActivity
 import io.primer.android.webRedirectShared.implementation.composer.ui.navigation.launcher.WebRedirectActivityLauncherParams
 import io.primer.checkout.orchestrator.domain.ReturnUriProvider
+import io.primer.executionengine.domain.handler.UrlCloseReason
 import io.primer.executionengine.domain.handler.UrlOpenHandler
 import io.primer.executionengine.domain.handler.UrlOpenLaunchRequest
 import io.primer.paymentMethodCoreUi.core.ui.navigation.launchers.PaymentMethodLauncherParams
@@ -103,23 +105,49 @@ internal class UrlOpenStepUiHandlerTest {
         }
 
     @Test
-    fun `handleActivityResult should call onResultOk when RESULT_OK`() {
-        every { urlOpenHandler.onResultOk() } returns Unit
+    fun `handleActivityResult should call onClosed with AUTO when RESULT_OK`() {
+        every { urlOpenHandler.onClosed(any()) } returns Unit
 
         val handled = handler.handleActivityResult(createParams(), Activity.RESULT_OK, null)
 
         assertTrue(handled)
-        verify { urlOpenHandler.onResultOk() }
+        verify { urlOpenHandler.onClosed(UrlCloseReason.AUTO) }
     }
 
     @Test
-    fun `handleActivityResult should call onResultCancelled when RESULT_CANCELED`() {
-        every { urlOpenHandler.onResultCancelled() } returns Unit
+    fun `handleActivityResult should call onClosed with USER when RESULT_CANCELED without intent`() {
+        every { urlOpenHandler.onClosed(any()) } returns Unit
 
         val handled = handler.handleActivityResult(createParams(), Activity.RESULT_CANCELED, null)
 
         assertTrue(handled)
-        verify { urlOpenHandler.onResultCancelled() }
+        verify { urlOpenHandler.onClosed(UrlCloseReason.USER) }
+    }
+
+    @Test
+    fun `handleActivityResult should call onClosed with USER when RESULT_CANCELED without redirect-return extra`() {
+        val intent = mockk<Intent> {
+            every { getBooleanExtra(WebRedirectActivity.REDIRECT_RETURN_EXTRA_KEY, false) } returns false
+        }
+        every { urlOpenHandler.onClosed(any()) } returns Unit
+
+        val handled = handler.handleActivityResult(createParams(), Activity.RESULT_CANCELED, intent)
+
+        assertTrue(handled)
+        verify { urlOpenHandler.onClosed(UrlCloseReason.USER) }
+    }
+
+    @Test
+    fun `handleActivityResult should call onClosed with AUTO when RESULT_CANCELED with redirect-return extra`() {
+        val intent = mockk<Intent> {
+            every { getBooleanExtra(WebRedirectActivity.REDIRECT_RETURN_EXTRA_KEY, false) } returns true
+        }
+        every { urlOpenHandler.onClosed(any()) } returns Unit
+
+        val handled = handler.handleActivityResult(createParams(), Activity.RESULT_CANCELED, intent)
+
+        assertTrue(handled)
+        verify { urlOpenHandler.onClosed(UrlCloseReason.AUTO) }
     }
 
     @Test

@@ -12,6 +12,7 @@ import io.primer.android.core.data.datasource.toHeaderPair
 import io.primer.android.core.data.model.BaseRemoteHostRequest
 import io.primer.android.core.data.network.PrimerHttpClient
 import io.primer.android.core.data.network.exception.JsonDecodingException
+import io.primer.android.core.data.network.transport.HttpTransport
 import io.primer.android.core.data.network.utils.PrimerTimeouts
 import io.primer.android.core.data.network.utils.PrimerTimeouts.PRIMER_60S_TIMEOUT
 import io.primer.android.payments.core.create.data.model.CreatePaymentDataRequest
@@ -19,7 +20,6 @@ import io.primer.android.payments.core.idempotency.IdempotencyKeyHolder
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.runTest
-import okhttp3.Headers.Companion.toHeaders
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.mockwebserver.MockResponse
@@ -33,6 +33,7 @@ import java.net.SocketTimeoutException
 import java.util.concurrent.TimeUnit
 import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
+import kotlin.test.assertNotNull
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
 
@@ -48,7 +49,7 @@ class CreatePaymentDataSourceTest {
                 }
             val primerHttpClient =
                 mockk<PrimerHttpClient> {
-                    every { okHttpClient } returns mockedOkHttpClient
+                    every { transport } returns HttpTransport(mockedOkHttpClient)
                     every { withTimeout(PRIMER_60S_TIMEOUT) } returns this
                 }
             val idempotencyKeyHolder = mockk<IdempotencyKeyHolder> {
@@ -84,13 +85,13 @@ class CreatePaymentDataSourceTest {
                     actualSink.readByteArray()
                 }
             assertContentEquals(expectedResult, actualResult)
-            assertEquals(
-                mapOf(
-                    apiVersion.toHeaderPair(),
-                    "accept" to "*/*",
-                ).toHeaders(),
-                request.headers,
-            )
+            mapOf(
+                apiVersion.toHeaderPair(),
+                "accept" to "*/*",
+            ).forEach { (name, value) ->
+                assertEquals(value, request.header(name))
+            }
+            assertNotNull(request.header("X-Request-Id"))
         }
 
     @Test

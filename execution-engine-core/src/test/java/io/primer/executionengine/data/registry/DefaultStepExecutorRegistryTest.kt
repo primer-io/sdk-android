@@ -117,4 +117,42 @@ internal class DefaultStepExecutorRegistryTest {
 
         assertEquals(expectedResult, result.getOrThrow())
     }
+
+    @Test
+    fun `onFinish should fan out to every registered executor`() {
+        var firstFinishCount = 0
+        var secondFinishCount = 0
+        registry.registerExecutor("first", finishTrackingExecutor { firstFinishCount++ })
+        registry.registerExecutor("second", finishTrackingExecutor { secondFinishCount++ })
+
+        registry.onFinish()
+
+        assertEquals(1, firstFinishCount)
+        assertEquals(1, secondFinishCount)
+    }
+
+    @Test
+    fun `onFinish should invoke the remaining executors when one throws`() {
+        var secondFinishCount = 0
+        registry.registerExecutor("first", finishTrackingExecutor { error("boom") })
+        registry.registerExecutor("second", finishTrackingExecutor { secondFinishCount++ })
+
+        registry.onFinish()
+
+        assertEquals(1, secondFinishCount)
+        verify { logReporter.debug("onFinish failed for step type='first': boom") }
+    }
+
+    @Test
+    fun `onFinish should be a no-op when no executors are registered`() {
+        registry.onFinish()
+    }
+
+    private fun finishTrackingExecutor(onFinishAction: () -> Unit): StepExecutor =
+        object : StepExecutor {
+            override suspend fun execute(actionId: String, step: String): Result<StepResult> =
+                Result.success(StepResult(outcome = Outcome.SUCCESS, actionId = actionId))
+
+            override fun onFinish() = onFinishAction()
+        }
 }

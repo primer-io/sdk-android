@@ -6,4 +6,9 @@ internal enum class HttpMethod {
     PUT,
     PATCH,
     DELETE,
+    ;
+
+    companion object {
+        fun safeValueOf(value: String?): HttpMethod? = entries.firstOrNull { it.name.equals(value, ignoreCase = true) }
+    }
 }

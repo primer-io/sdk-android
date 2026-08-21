@@ -5,8 +5,10 @@ import android.content.Intent
 import io.primer.android.PrimerSessionIntent
 import io.primer.android.paymentmethods.core.composer.composable.ComposerUiEvent
 import io.primer.android.webRedirectShared.implementation.composer.presentation.WebRedirectLauncherParams
+import io.primer.android.webRedirectShared.implementation.composer.ui.activity.WebRedirectActivity
 import io.primer.android.webRedirectShared.implementation.composer.ui.navigation.launcher.WebRedirectActivityLauncherParams
 import io.primer.checkout.orchestrator.domain.ReturnUriProvider
+import io.primer.executionengine.domain.handler.UrlCloseReason
 import io.primer.executionengine.domain.handler.UrlOpenHandler
 import io.primer.paymentMethodCoreUi.core.ui.navigation.launchers.PaymentMethodLauncherParams
 import io.primer.paymentMethodCoreUi.core.ui.webview.WebViewActivity
@@ -51,12 +53,23 @@ internal class UrlOpenStepUiHandler(
         intent: Intent?,
     ): Boolean {
         when (resultCode) {
-            Activity.RESULT_CANCELED -> urlOpenHandler.onResultCancelled()
-            Activity.RESULT_OK -> urlOpenHandler.onResultOk()
+            Activity.RESULT_OK -> urlOpenHandler.onClosed(UrlCloseReason.AUTO)
+            Activity.RESULT_CANCELED -> urlOpenHandler.onClosed(intent.toCloseReason())
             WebViewActivity.RESULT_ERROR -> urlOpenHandler.onResultError(intent?.dataString.orEmpty())
         }
         return true
     }
+
+    /**
+     * RESULT_CANCELED carrying the redirect-return extra comes from a deep-link return, so the
+     * browser closed automatically; otherwise USER is the spec-sanctioned safe default.
+     */
+    private fun Intent?.toCloseReason(): UrlCloseReason =
+        if (this?.getBooleanExtra(WebRedirectActivity.REDIRECT_RETURN_EXTRA_KEY, false) == true) {
+            UrlCloseReason.AUTO
+        } else {
+            UrlCloseReason.USER
+        }
 
     override fun handleActivityStartEvent(
         params: PaymentMethodLauncherParams,

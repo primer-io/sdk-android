@@ -26,7 +26,9 @@ suspend inline fun Call.await(): Response =
                     call: Call,
                     response: Response,
                 ) {
-                    continuation.resume(response)
+                    // Close the response if cancellation won the race before delivery,
+                    // otherwise the pooled connection leaks.
+                    continuation.resume(response) { runCatching { response.close() } }
                 }
 
                 override fun invoke(cause: Throwable?) {

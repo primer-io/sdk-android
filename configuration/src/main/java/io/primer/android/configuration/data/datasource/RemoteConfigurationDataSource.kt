@@ -6,7 +6,7 @@ import io.primer.android.core.data.datasource.PrimerApiVersion
 import io.primer.android.core.data.datasource.toHeaderMap
 import io.primer.android.core.data.network.PrimerHttpClient
 import io.primer.android.core.data.network.PrimerResponse
-import io.primer.android.core.data.network.retry.RetryConfig
+import io.primer.android.core.data.network.retry.RetryPolicy
 import io.primer.android.core.data.network.utils.PrimerTimeouts.PRIMER_15S_TIMEOUT
 
 internal class RemoteConfigurationDataSource(
@@ -18,6 +18,7 @@ internal class RemoteConfigurationDataSource(
             .retrySuspendGet<ConfigurationDataResponse>(
                 url = input,
                 headers = apiVersion().toHeaderMap(),
-                retryConfig = RetryConfig(enabled = true),
+                // Retries transient network failures only: an empty retryOn disables the 5xx default.
+                retryPolicy = RetryPolicy(retryOn = emptyList()),
             )
 }

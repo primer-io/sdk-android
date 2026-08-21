@@ -34,13 +34,17 @@ class WebRedirectActivity : WebViewActivity() {
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         logNewIntentCalled(intent = intent)
+        // onNewIntent only fires for a deep-link return, so a RESULT_CANCELED set here is a
+        // redirect-return (auto close), not a user dismissal. The extra lets consumers tell the
+        // two apart; legacy consumers keep switching on result codes only.
+        val result = Intent().putExtra(REDIRECT_RETURN_EXTRA_KEY, true)
         when (
             intent.data?.pathSegments?.contains(
                 WebRedirectPaymentMethodWebViewClient.CANCEL_STATE_QUERY_PARAM,
             )
         ) {
-            true -> setResult(RESULT_CANCELED)
-            else -> setResult(RESULT_OK)
+            true -> setResult(RESULT_CANCELED, result)
+            else -> setResult(RESULT_OK, result)
         }
         finish()
     }
@@ -98,6 +102,8 @@ class WebRedirectActivity : WebViewActivity() {
         )
 
     companion object {
+        const val REDIRECT_RETURN_EXTRA_KEY = "WEB_REDIRECT_IS_REDIRECT_RETURN"
+
         private const val REDIRECT_URLS_KEY = "REDIRECT_URLS_KEY"
 
         fun getLaunchIntent(

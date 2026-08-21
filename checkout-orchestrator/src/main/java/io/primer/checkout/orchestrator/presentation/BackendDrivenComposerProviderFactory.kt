@@ -17,7 +17,6 @@ class BackendDrivenComposerProviderFactory :
     ): PaymentMethodComposer {
         val registry: StepUiHandlerRegistry = resolve()
         return BackendDrivenCheckoutComponent(
-            orchestrator = resolve(),
             paymentFlowInteractor = resolve(),
             preTokenizationHandler = resolve(),
             successHandler = resolve(),

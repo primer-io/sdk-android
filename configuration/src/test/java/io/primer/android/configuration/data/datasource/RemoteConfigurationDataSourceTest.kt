@@ -11,16 +11,17 @@ import io.primer.android.core.data.datasource.PrimerApiVersion
 import io.primer.android.core.data.datasource.toHeaderMap
 import io.primer.android.core.data.network.PrimerHttpClient
 import io.primer.android.core.data.network.exception.JsonDecodingException
+import io.primer.android.core.data.network.transport.HttpTransport
 import io.primer.android.core.data.network.utils.PrimerTimeouts
 import io.primer.android.core.data.network.utils.PrimerTimeouts.PRIMER_15S_TIMEOUT
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.runTest
-import okhttp3.Headers.Companion.toHeaders
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.parallel.ResourceLock
@@ -29,11 +30,17 @@ import org.junit.jupiter.params.provider.EnumSource
 import java.io.IOException
 import java.util.concurrent.TimeUnit
 import kotlin.test.assertEquals
+import kotlin.test.assertNotNull
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
 
 @ResourceLock("PrimerTimeouts")
 class RemoteConfigurationDataSourceTest {
+
+    @AfterEach
+    fun tearDown() {
+        PrimerHttpClient.clearCustomTimeoutInstances()
+    }
 
     @ParameterizedTest
     @EnumSource(value = PrimerApiVersion::class)
@@ -47,7 +54,7 @@ class RemoteConfigurationDataSourceTest {
                 }
             val primerHttpClient =
                 mockk<PrimerHttpClient> {
-                    every { okHttpClient } returns mockedOkHttpClient
+                    every { transport } returns HttpTransport(mockedOkHttpClient)
                     every { withTimeout(PRIMER_15S_TIMEOUT) } returns this
                 }
             val tested = RemoteConfigurationDataSource(primerHttpClient) { apiVersion }
@@ -62,7 +69,10 @@ class RemoteConfigurationDataSourceTest {
             val request = requestSlot.captured
             assertEquals("GET", request.method)
             assertEquals("https://example.com/", request.url.toString())
-            assertEquals(apiVersion.toHeaderMap().toHeaders(), request.headers)
+            apiVersion.toHeaderMap().forEach { (name, value) ->
+                assertEquals(value, request.header(name))
+            }
+            assertNotNull(request.header("X-Request-Id"))
         }
 
     @Test

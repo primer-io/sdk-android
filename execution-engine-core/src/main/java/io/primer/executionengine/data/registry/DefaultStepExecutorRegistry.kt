@@ -36,4 +36,11 @@ internal class DefaultStepExecutorRegistry(
     override fun registerExecutor(stepType: String, executor: StepExecutor) {
         executors[stepType] = executor
     }
+
+    override fun onFinish() {
+        executors.forEach { (type, executor) ->
+            runCatching { executor.onFinish() }
+                .onFailure { logReporter.debug("onFinish failed for step type='$type': ${it.message}") }
+        }
+    }
 }

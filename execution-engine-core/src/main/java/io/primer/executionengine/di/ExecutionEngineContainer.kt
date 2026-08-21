@@ -3,7 +3,7 @@ package io.primer.executionengine.di
 import io.primer.android.core.di.DependencyContainer
 import io.primer.android.core.di.SdkContainer
 import io.primer.executionengine.data.executors.analytics.PlatformLogStepExecutor
-import io.primer.executionengine.data.executors.http.HttpStepExecutor
+import io.primer.executionengine.data.executors.http.HttpRequestStepExecutor
 import io.primer.executionengine.data.executors.urlopen.UrlOpenStepExecutor
 import io.primer.executionengine.data.handler.DefaultUrlOpenHandler
 import io.primer.executionengine.data.registry.DefaultStepExecutorRegistry
@@ -11,6 +11,7 @@ import io.primer.executionengine.domain.handler.UrlOpenHandler
 import io.primer.executionengine.domain.models.Outcome
 import io.primer.executionengine.domain.models.StepResult
 import io.primer.executionengine.domain.registry.StepExecutorRegistry
+import java.util.UUID
 
 class ExecutionEngineContainer(
     private val sdk: () -> SdkContainer,
@@ -24,8 +25,9 @@ class ExecutionEngineContainer(
             DefaultStepExecutorRegistry(logReporter = sdk().resolve()).apply {
                 registerExecutor(
                     HTTP_REQUEST_STEP_TYPE,
-                    HttpStepExecutor(
+                    HttpRequestStepExecutor(
                         httpClient = sdk().resolve(),
+                        requestIdProvider = { UUID.randomUUID().toString() },
                     ),
                 )
                 registerExecutor(

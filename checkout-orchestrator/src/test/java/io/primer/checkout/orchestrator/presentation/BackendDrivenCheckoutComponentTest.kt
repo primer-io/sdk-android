@@ -29,20 +29,17 @@ import io.primer.android.payments.core.helpers.CheckoutErrorHandler
 import io.primer.android.payments.core.helpers.CheckoutSuccessHandler
 import io.primer.android.payments.core.tokenization.domain.handler.PreTokenizationHandler
 import io.primer.checkout.orchestrator.domain.CheckoutDecisionResolver
-import io.primer.checkout.orchestrator.domain.CheckoutOrchestrator
+import io.primer.checkout.orchestrator.domain.PaymentFlowInteractor
 import io.primer.checkout.orchestrator.domain.ReturnUriProvider
 import io.primer.checkout.orchestrator.domain.model.CheckoutDecision
+import io.primer.checkout.orchestrator.domain.model.PaymentFlowResult
 import io.primer.checkout.orchestrator.domain.ui.StepUiHandler
-import io.primer.executionengine.domain.models.Outcome
 import io.primer.paymentMethodCoreUi.core.ui.navigation.launchers.PaymentMethodLauncherParams
-import io.primer.statetransport.domain.interactor.PaymentFlowInteractor
 import io.primer.statetransport.domain.model.CheckoutOutcome
 import io.primer.statetransport.domain.model.ClientInstructions
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.TestCoroutineScheduler
 import kotlinx.coroutines.test.TestScope
@@ -60,9 +57,6 @@ internal class BackendDrivenCheckoutComponentTest {
     @JvmField
     @RegisterExtension
     val instantExecutorExtension = InstantExecutorExtension(scheduler)
-
-    @MockK
-    lateinit var orchestrator: CheckoutOrchestrator
 
     @MockK
     lateinit var paymentFlowInteractor: PaymentFlowInteractor
@@ -115,7 +109,6 @@ internal class BackendDrivenCheckoutComponentTest {
         coEvery { preTokenizationHandler.handle(any(), any()) } returns Result.success(Unit)
 
         component = BackendDrivenCheckoutComponent(
-            orchestrator = orchestrator,
             paymentFlowInteractor = paymentFlowInteractor,
             preTokenizationHandler = preTokenizationHandler,
             successHandler = successHandler,
@@ -128,15 +121,15 @@ internal class BackendDrivenCheckoutComponentTest {
     }
 
     @Test
-    fun `start() should call successHandler when flow emits End with success decision`() {
+    fun `start() should call successHandler when flow completes with success decision`() {
         val payment = Payment(id = "pay_123", orderId = "order_123")
         val endInstruction = ClientInstructions.End(
             checkoutOutcome = CheckoutOutcome.CHECKOUT_COMPLETE,
             payment = null,
         )
-        every {
+        coEvery {
             paymentFlowInteractor(any())
-        } returns flowOf(endInstruction)
+        } returns Result.success(PaymentFlowResult.Completed(endInstruction))
         every {
             checkoutDecisionResolver.resolve(endInstruction, paymentMethodType)
         } returns CheckoutDecision.Success(payment)
@@ -152,16 +145,16 @@ internal class BackendDrivenCheckoutComponentTest {
     }
 
     @Test
-    fun `start() should call errorHandler when flow emits End with failure decision`() {
+    fun `start() should call errorHandler when flow completes with failure decision`() {
         val primerError = mockk<PrimerError>()
         val payment = Payment(id = "pay_123", orderId = "order_123")
         val endInstruction = ClientInstructions.End(
             checkoutOutcome = CheckoutOutcome.CHECKOUT_FAILURE,
             payment = null,
         )
-        every {
+        coEvery {
             paymentFlowInteractor(any())
-        } returns flowOf(endInstruction)
+        } returns Result.success(PaymentFlowResult.Completed(endInstruction))
         every {
             checkoutDecisionResolver.resolve(endInstruction, paymentMethodType)
         } returns CheckoutDecision.Failure(error = primerError, payment = payment)
@@ -176,73 +169,11 @@ internal class BackendDrivenCheckoutComponentTest {
     }
 
     @Test
-    fun `start() should call orchestrator when flow emits Execute instruction`() {
-        val payload = """{"action":"tokenize"}"""
-        val executeInstruction = ClientInstructions.Execute(
-            pollDelayMilliseconds = 1000L,
-            payload = payload,
-        )
-        every {
-            paymentFlowInteractor(any())
-        } returns flowOf(executeInstruction)
-        coEvery {
-            orchestrator.start(paymentMethodType, payload)
-        } returns Result.success(mockk())
-
-        component.start(paymentMethodType, primerSessionIntent)
-        scheduler.advanceUntilIdle()
-
-        coVerify {
-            orchestrator.start(
-                paymentMethodType = paymentMethodType,
-                payload = payload,
-            )
-        }
-    }
-
-    @Test
-    fun `start() should call errorHandler when orchestrator fails`() {
-        val payload = """{"action":"tokenize"}"""
-        val executeInstruction = ClientInstructions.Execute(
-            pollDelayMilliseconds = 1000L,
-            payload = payload,
-        )
-        val throwable = RuntimeException("orchestrator failed")
+    fun `start() should route PaymentMethodCancelledException when flow is cancelled`() {
         val primerError = mockk<PrimerError>()
-
-        every {
-            paymentFlowInteractor(any())
-        } returns flowOf(executeInstruction)
         coEvery {
-            orchestrator.start(paymentMethodType, payload)
-        } returns Result.failure(throwable)
-        every { baseErrorResolver.resolve(throwable) } returns primerError
-        coEvery { errorHandler.handle(any(), any()) } just Runs
-
-        component.start(paymentMethodType, primerSessionIntent)
-        scheduler.advanceUntilIdle()
-
-        coVerify {
-            baseErrorResolver.resolve(throwable)
-            errorHandler.handle(error = primerError, payment = null)
-        }
-    }
-
-    @Test
-    fun `start() should cancel polling and emit PaymentMethodCancelledException when orchestrator returns CANCELLED`() {
-        val payload = """{"action":"tokenize"}"""
-        val executeInstruction = ClientInstructions.Execute(
-            pollDelayMilliseconds = 1000L,
-            payload = payload,
-        )
-        val primerError = mockk<PrimerError>()
-
-        every {
             paymentFlowInteractor(any())
-        } returns flowOf(executeInstruction)
-        coEvery {
-            orchestrator.start(paymentMethodType, payload)
-        } returns Result.success(Outcome.CANCELLED)
+        } returns Result.success(PaymentFlowResult.Cancelled)
         every {
             baseErrorResolver.resolve(ofType(PaymentMethodCancelledException::class))
         } returns primerError
@@ -262,13 +193,11 @@ internal class BackendDrivenCheckoutComponentTest {
     }
 
     @Test
-    fun `start() should call errorHandler when paymentFlowInteractor flow errors`() {
+    fun `start() should call errorHandler when paymentFlowInteractor fails`() {
         val throwable = RuntimeException("flow error")
         val primerError = mockk<PrimerError>()
 
-        every {
-            paymentFlowInteractor(any())
-        } returns flow { throw throwable }
+        coEvery { paymentFlowInteractor(any()) } returns Result.failure(throwable)
         every { baseErrorResolver.resolve(throwable) } returns primerError
         coEvery { errorHandler.handle(any(), any()) } just Runs
 
@@ -282,30 +211,39 @@ internal class BackendDrivenCheckoutComponentTest {
     }
 
     @Test
-    fun `start() should do nothing when flow emits Wait instruction`() {
-        val waitInstruction = ClientInstructions.Wait(pollDelayMilliseconds = 2000L)
-        every {
+    fun `start() should pass payment method type and return uri to the interactor`() {
+        val endInstruction = ClientInstructions.End(
+            checkoutOutcome = CheckoutOutcome.CHECKOUT_COMPLETE,
+            payment = null,
+        )
+        val payment = Payment(id = "pay_123", orderId = "order_123")
+        coEvery {
             paymentFlowInteractor(any())
-        } returns flowOf(waitInstruction)
+        } returns Result.success(PaymentFlowResult.Completed(endInstruction))
+        every {
+            checkoutDecisionResolver.resolve(endInstruction, paymentMethodType)
+        } returns CheckoutDecision.Success(payment)
+        coEvery { successHandler.handle(any(), any()) } just Runs
 
         component.start(paymentMethodType, primerSessionIntent)
         scheduler.advanceUntilIdle()
 
-        verify {
-            paymentFlowInteractor(any())
-        }
-        coVerify(exactly = 0) {
-            orchestrator.start(any(), any())
-            successHandler.handle(any(), any())
-            errorHandler.handle(any(), any())
+        coVerify {
+            paymentFlowInteractor(
+                PaymentFlowInteractor.PaymentFlowParams(
+                    paymentMethodType = paymentMethodType,
+                    returnUri = returnUri,
+                ),
+            )
         }
     }
 
     @Test
     fun `start() should observe step UI handler launch requests`() {
-        every {
+        coEvery {
             paymentFlowInteractor(any())
-        } returns flowOf(ClientInstructions.Wait(pollDelayMilliseconds = 1000L))
+        } returns Result.success(PaymentFlowResult.Completed(endInstruction()))
+        stubSuccessDecision()
 
         component.start(paymentMethodType, primerSessionIntent)
 
@@ -320,9 +258,10 @@ internal class BackendDrivenCheckoutComponentTest {
         val navigateEvent = mockk<ComposerUiEvent>()
         every { stepUiHandler.handleActivityStartEvent(params) } returns navigateEvent
 
-        every {
+        coEvery {
             paymentFlowInteractor(any())
-        } returns flowOf(ClientInstructions.Wait(pollDelayMilliseconds = 1000L))
+        } returns Result.success(PaymentFlowResult.Completed(endInstruction()))
+        stubSuccessDecision()
         component.start(paymentMethodType, primerSessionIntent)
         scheduler.advanceUntilIdle()
 
@@ -344,9 +283,10 @@ internal class BackendDrivenCheckoutComponentTest {
         val params = mockk<PaymentMethodLauncherParams>()
         every { stepUiHandler.handleActivityStartEvent(params) } returns null
 
-        every {
+        coEvery {
             paymentFlowInteractor(any())
-        } returns flowOf(ClientInstructions.Wait(pollDelayMilliseconds = 1000L))
+        } returns Result.success(PaymentFlowResult.Completed(endInstruction()))
+        stubSuccessDecision()
         component.start(paymentMethodType, primerSessionIntent)
         scheduler.advanceUntilIdle()
 
@@ -365,16 +305,10 @@ internal class BackendDrivenCheckoutComponentTest {
 
     @Test
     fun `start() should invoke preTokenizationHandler before paymentFlowInteractor`() {
-        val endInstruction = ClientInstructions.End(
-            checkoutOutcome = CheckoutOutcome.CHECKOUT_COMPLETE,
-            payment = null,
-        )
-        val payment = Payment(id = "pay_123", orderId = "order_123")
-        every { paymentFlowInteractor(any()) } returns flowOf(endInstruction)
-        every {
-            checkoutDecisionResolver.resolve(endInstruction, paymentMethodType)
-        } returns CheckoutDecision.Success(payment)
-        coEvery { successHandler.handle(any(), any()) } just Runs
+        coEvery {
+            paymentFlowInteractor(any())
+        } returns Result.success(PaymentFlowResult.Completed(endInstruction()))
+        stubSuccessDecision()
 
         component.start(paymentMethodType, primerSessionIntent)
         scheduler.advanceUntilIdle()
@@ -412,9 +346,10 @@ internal class BackendDrivenCheckoutComponentTest {
         val resultCode = 1
         every { stepUiHandler.handleActivityResult(params, resultCode, intent) } returns true
 
-        every {
+        coEvery {
             paymentFlowInteractor(any())
-        } returns flowOf(ClientInstructions.Wait(pollDelayMilliseconds = 1000L))
+        } returns Result.success(PaymentFlowResult.Completed(endInstruction()))
+        stubSuccessDecision()
         component.start(paymentMethodType, primerSessionIntent)
         scheduler.advanceUntilIdle()
 
@@ -430,5 +365,17 @@ internal class BackendDrivenCheckoutComponentTest {
         assertEquals(listOf(ComposerUiEvent.Finish), events)
         verify { stepUiHandler.handleActivityResult(params, resultCode, intent) }
         collectJob.cancel()
+    }
+
+    private fun endInstruction() = ClientInstructions.End(
+        checkoutOutcome = CheckoutOutcome.CHECKOUT_COMPLETE,
+        payment = null,
+    )
+
+    private fun stubSuccessDecision() {
+        every {
+            checkoutDecisionResolver.resolve(any(), any())
+        } returns CheckoutDecision.Success(Payment(id = "pay_123", orderId = "order_123"))
+        coEvery { successHandler.handle(any(), any()) } just Runs
     }
 }

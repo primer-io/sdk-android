@@ -19,10 +19,12 @@ import io.primer.statetransport.data.datasource.RemotePayDataSource
 import io.primer.statetransport.data.model.ClientInstructionDataResponse
 import io.primer.statetransport.data.model.ClientInstructionType
 import io.primer.statetransport.data.model.ClientSessionInstructionResponse
+import io.primer.statetransport.data.model.CurrentAttemptDataResponse
 import io.primer.statetransport.domain.model.ClientInstructions
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -79,15 +81,49 @@ internal class DefaultStateTransportRepositoryTest {
         )
         coEvery { remoteStartDataSource.execute(any()) } returns PrimerResponse(
             statusCode = 200,
-            body = ClientSessionInstructionResponse(clientInstruction = instruction),
+            body = ClientSessionInstructionResponse(
+                clientInstruction = instruction,
+                currentAttempt = null,
+            ),
             headers = emptyMap(),
         )
 
         val result = repository.start("session_1", "PAYMENT_CARD", "https://return.com")
 
         assertTrue(result.isSuccess)
-        val wait = result.getOrThrow() as ClientInstructions.Wait
+        val fetch = result.getOrThrow()
+        val wait = fetch.instruction as ClientInstructions.Wait
         assertEquals(3000L, wait.pollDelayMilliseconds)
+        assertNull(fetch.currentAttempt)
+    }
+
+    @Test
+    fun `start should carry currentAttempt envelope across the repository boundary`() = runTest {
+        val instruction = ClientInstructionDataResponse(
+            type = ClientInstructionType.WAIT,
+            pollDelayMilliseconds = 3000L,
+            payload = null,
+        )
+        coEvery { remoteStartDataSource.execute(any()) } returns PrimerResponse(
+            statusCode = 200,
+            body = ClientSessionInstructionResponse(
+                clientInstruction = instruction,
+                currentAttempt = CurrentAttemptDataResponse(
+                    id = "attempt_1",
+                    paymentInstrumentTokenId = "token_1",
+                    paymentId = "pay_1",
+                ),
+            ),
+            headers = emptyMap(),
+        )
+
+        val result = repository.start("session_1", "PAYMENT_CARD", "https://return.com")
+
+        assertTrue(result.isSuccess)
+        val fetch = result.getOrThrow()
+        assertEquals("attempt_1", fetch.currentAttempt?.id)
+        assertEquals("token_1", fetch.currentAttempt?.paymentInstrumentTokenId)
+        assertEquals("pay_1", fetch.currentAttempt?.paymentId)
     }
 
     @Test
@@ -116,16 +152,51 @@ internal class DefaultStateTransportRepositoryTest {
         )
         coEvery { remoteInstructionsDataSource.execute(any()) } returns PrimerResponse(
             statusCode = 200,
-            body = ClientSessionInstructionResponse(clientInstruction = instruction),
+            body = ClientSessionInstructionResponse(
+                clientInstruction = instruction,
+                currentAttempt = null,
+            ),
             headers = emptyMap(),
         )
 
         val result = repository.fetchInstructions("session_1")
 
         assertTrue(result.isSuccess)
-        val execute = result.getOrThrow() as ClientInstructions.Execute
+        val fetch = result.getOrThrow()
+        val execute = fetch.instruction as ClientInstructions.Execute
         assertEquals(1000L, execute.pollDelayMilliseconds)
         assertEquals("""{"action":"tokenize"}""", execute.payload)
+        assertNull(fetch.currentAttempt)
+    }
+
+    @Test
+    fun `fetchInstructions should carry currentAttempt envelope across the boundary`() = runTest {
+        val instruction = ClientInstructionDataResponse(
+            type = ClientInstructionType.END,
+            pollDelayMilliseconds = 0L,
+            payload = """{"checkoutOutcome":"CHECKOUT_COMPLETE"}""",
+        )
+        coEvery { remoteInstructionsDataSource.execute(any()) } returns PrimerResponse(
+            statusCode = 200,
+            body = ClientSessionInstructionResponse(
+                clientInstruction = instruction,
+                currentAttempt = CurrentAttemptDataResponse(
+                    id = "attempt_2",
+                    paymentInstrumentTokenId = null,
+                    paymentId = "pay_2",
+                ),
+            ),
+            headers = emptyMap(),
+        )
+
+        val result = repository.fetchInstructions("session_1")
+
+        assertTrue(result.isSuccess)
+        val fetch = result.getOrThrow()
+        assertTrue(fetch.instruction is ClientInstructions.End)
+        assertEquals("attempt_2", fetch.currentAttempt?.id)
+        assertNull(fetch.currentAttempt?.paymentInstrumentTokenId)
+        assertEquals("pay_2", fetch.currentAttempt?.paymentId)
     }
 
     @Test

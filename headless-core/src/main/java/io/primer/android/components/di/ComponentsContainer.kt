@@ -96,6 +96,8 @@ internal class ComponentsContainer(private val sdk: () -> SdkContainer) : Depend
                 sdk().resolve(
                     ConfigurationCoreContainer.GLOBAL_CACHED_CONFIGURATION_DI_KEY,
                 ),
+                errorHandler = resolve(),
+                baseErrorResolver = sdk().resolve(),
                 scopeProvider = resolve(),
             )
         }

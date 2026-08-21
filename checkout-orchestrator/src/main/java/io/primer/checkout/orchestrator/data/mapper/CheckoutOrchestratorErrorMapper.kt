@@ -18,9 +18,6 @@ internal class CheckoutOrchestratorErrorMapper : ErrorMapper {
             is CheckoutOrchestratorException.TerminalErrorException ->
                 CheckoutOrchestratorError.CheckoutTerminalError
 
-            is CheckoutOrchestratorException.MissingActionException ->
-                CheckoutOrchestratorError.MissingActionError
-
             else -> error("Unsupported mapping for $throwable in ${this.javaClass.canonicalName}")
         }
     }

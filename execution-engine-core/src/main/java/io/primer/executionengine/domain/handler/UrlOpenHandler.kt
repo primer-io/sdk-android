@@ -11,7 +11,6 @@ data class UrlOpenLaunchRequest(
 interface UrlOpenHandler : ComponentEventSource {
     val launchRequest: SharedFlow<UrlOpenLaunchRequest>
     fun launch(url: String, redirectUrls: List<String>?)
-    fun onResultOk()
-    fun onResultCancelled()
+    fun onClosed(closeReason: UrlCloseReason)
     fun onResultError(uri: String)
 }

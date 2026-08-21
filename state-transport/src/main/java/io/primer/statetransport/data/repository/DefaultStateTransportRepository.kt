@@ -10,8 +10,8 @@ import io.primer.statetransport.data.datasource.RemotePayDataSource
 import io.primer.statetransport.data.model.ClientSessionInfoDataRequest
 import io.primer.statetransport.data.model.ClientSessionMerchantDataRequest
 import io.primer.statetransport.data.model.ClientSessionPayDataRequest
-import io.primer.statetransport.data.model.toInstructions
-import io.primer.statetransport.domain.model.ClientInstructions
+import io.primer.statetransport.data.model.toInstructionFetch
+import io.primer.statetransport.domain.model.InstructionFetch
 import io.primer.statetransport.domain.repository.StateTransportRepository
 import java.util.Locale
 
@@ -26,7 +26,7 @@ internal class DefaultStateTransportRepository(
         clientSessionId: String,
         paymentMethodType: String,
         returnUri: String,
-    ): Result<ClientInstructions> = runSuspendCatching {
+    ): Result<InstructionFetch> = runSuspendCatching {
         val url = "${configurationDataSource.get().pciUrl}/client-session/$clientSessionId:pay"
         val paymentMethodConfig = configurationDataSource.get()
             .paymentMethods.find { it.type == paymentMethodType }
@@ -49,16 +49,16 @@ internal class DefaultStateTransportRepository(
                     ),
                 ),
             ),
-        ).body.clientInstruction.toInstructions()
+        ).body.toInstructionFetch()
     }
 
     override suspend fun fetchInstructions(
         clientSessionId: String,
-    ): Result<ClientInstructions> = runSuspendCatching {
+    ): Result<InstructionFetch> = runSuspendCatching {
         val url = "${configurationDataSource.get().pciUrl}/client-session/$clientSessionId" +
             "?expand=clientInstruction"
         remoteInstructionsDataSource.execute(url)
-            .body.clientInstruction.toInstructions()
+            .body.toInstructionFetch()
     }
 
     companion object {

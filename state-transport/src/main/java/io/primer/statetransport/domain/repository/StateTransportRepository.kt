@@ -1,6 +1,6 @@
 package io.primer.statetransport.domain.repository
 
-import io.primer.statetransport.domain.model.ClientInstructions
+import io.primer.statetransport.domain.model.InstructionFetch
 
 interface StateTransportRepository {
 
@@ -8,9 +8,9 @@ interface StateTransportRepository {
         clientSessionId: String,
         paymentMethodType: String,
         returnUri: String,
-    ): Result<ClientInstructions>
+    ): Result<InstructionFetch>
 
     suspend fun fetchInstructions(
         clientSessionId: String,
-    ): Result<ClientInstructions>
+    ): Result<InstructionFetch>
 }

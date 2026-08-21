@@ -24,7 +24,7 @@ internal class DefaultSdkContextProvider(
 ) : SdkContextProvider {
 
     @SuppressLint("HardwareIds")
-    override fun provide(paymentMethodType: String): String {
+    override fun provide(paymentMethodType: String, paymentId: String?): String {
         val configurationData = configurationDataSource.get()
         val clientSession = configurationData.clientSession
         val analyticsData = analyticsDataProvider.provide()
@@ -78,6 +78,7 @@ internal class DefaultSdkContextProvider(
                 PAYMENT_FIELD,
                 JSONObject().apply {
                     put(PAYMENT_METHOD_TYPE_FIELD, paymentMethodType)
+                    putOpt(PAYMENT_ID_FIELD, paymentId)
                 },
             )
 
@@ -124,6 +125,7 @@ internal class DefaultSdkContextProvider(
 
         const val PAYMENT_FIELD = "payment"
         const val PAYMENT_METHOD_TYPE_FIELD = "paymentMethodType"
+        const val PAYMENT_ID_FIELD = "paymentId"
 
         const val MERCHANT_FIELD = "merchant"
         const val PRIMER_ACCOUNT_ID_FIELD = "primerAccountId"

@@ -83,6 +83,124 @@ internal class ClientInstructionDataResponseTest {
         assertEquals(1000L, result.clientInstruction.pollDelayMilliseconds)
     }
 
+    @Test
+    fun `deserializer should parse envelope with approvalMode and full currentAttempt`() {
+        val json = JSONObject().apply {
+            put(
+                "clientInstruction",
+                JSONObject().apply {
+                    put("type", "EXECUTE")
+                    put("pollDelayMilliseconds", 1000L)
+                    put("payload", JSONObject().apply { put("key", "value") })
+                },
+            )
+            put(
+                "currentAttempt",
+                JSONObject().apply {
+                    put("id", "attempt_1")
+                    put("paymentInstrumentTokenId", "token_1")
+                    put("paymentId", "pay_1")
+                },
+            )
+        }
+
+        val result = ClientSessionInstructionResponse.deserializer.deserialize(json)
+
+        assertEquals("attempt_1", result.currentAttempt?.id)
+        assertEquals("token_1", result.currentAttempt?.paymentInstrumentTokenId)
+        assertEquals("pay_1", result.currentAttempt?.paymentId)
+    }
+
+    @Test
+    fun `deserializer should keep envelope on WAIT responses`() {
+        val json = JSONObject().apply {
+            put(
+                "clientInstruction",
+                JSONObject().apply {
+                    put("type", "WAIT")
+                    put("pollDelayMilliseconds", 2000L)
+                },
+            )
+            put(
+                "currentAttempt",
+                JSONObject().apply {
+                    put("id", "attempt_wait")
+                },
+            )
+        }
+
+        val result = ClientSessionInstructionResponse.deserializer.deserialize(json)
+
+        assertEquals(ClientInstructionType.WAIT, result.clientInstruction.type)
+        assertEquals("attempt_wait", result.currentAttempt?.id)
+    }
+
+    @Test
+    fun `deserializer should keep envelope on END responses`() {
+        val json = JSONObject().apply {
+            put(
+                "clientInstruction",
+                JSONObject().apply {
+                    put("type", "END")
+                    put("pollDelayMilliseconds", 0L)
+                },
+            )
+            put(
+                "currentAttempt",
+                JSONObject().apply {
+                    put("id", "attempt_end")
+                },
+            )
+        }
+
+        val result = ClientSessionInstructionResponse.deserializer.deserialize(json)
+
+        assertEquals(ClientInstructionType.END, result.clientInstruction.type)
+        assertEquals("attempt_end", result.currentAttempt?.id)
+    }
+
+    @Test
+    fun `deserializer should return null envelope fields when absent`() {
+        val json = JSONObject().apply {
+            put(
+                "clientInstruction",
+                JSONObject().apply {
+                    put("type", "WAIT")
+                    put("pollDelayMilliseconds", 1000L)
+                },
+            )
+        }
+
+        val result = ClientSessionInstructionResponse.deserializer.deserialize(json)
+
+        assertNull(result.currentAttempt)
+    }
+
+    @Test
+    fun `deserializer should parse currentAttempt with only id`() {
+        val json = JSONObject().apply {
+            put(
+                "clientInstruction",
+                JSONObject().apply {
+                    put("type", "WAIT")
+                    put("pollDelayMilliseconds", 1000L)
+                },
+            )
+            put(
+                "currentAttempt",
+                JSONObject().apply {
+                    put("id", "attempt_only_id")
+                },
+            )
+        }
+
+        val result = ClientSessionInstructionResponse.deserializer.deserialize(json)
+
+        assertEquals("attempt_only_id", result.currentAttempt?.id)
+        assertNull(result.currentAttempt?.paymentInstrumentTokenId)
+        assertNull(result.currentAttempt?.paymentId)
+    }
+
     // toInstructions() tests
 
     @Test
@@ -260,5 +378,59 @@ internal class ClientInstructionDataResponseTest {
         assertThrows<IllegalArgumentException> {
             response.toInstructions()
         }
+    }
+
+    // toInstructionFetch() tests
+
+    private fun waitResponse(
+        currentAttempt: CurrentAttemptDataResponse? = null,
+    ) = ClientSessionInstructionResponse(
+        clientInstruction = ClientInstructionDataResponse(
+            type = ClientInstructionType.WAIT,
+            pollDelayMilliseconds = 1000L,
+            payload = null,
+        ),
+        currentAttempt = currentAttempt,
+    )
+
+    @Test
+    fun `toInstructionFetch should map full currentAttempt`() {
+        val response = waitResponse(
+            currentAttempt = CurrentAttemptDataResponse(
+                id = "attempt_1",
+                paymentInstrumentTokenId = "token_1",
+                paymentId = "pay_1",
+            ),
+        )
+
+        val result = response.toInstructionFetch()
+
+        assertEquals("attempt_1", result.currentAttempt?.id)
+        assertEquals("token_1", result.currentAttempt?.paymentInstrumentTokenId)
+        assertEquals("pay_1", result.currentAttempt?.paymentId)
+    }
+
+    @Test
+    fun `toInstructionFetch should map currentAttempt with only id`() {
+        val response = waitResponse(
+            currentAttempt = CurrentAttemptDataResponse(
+                id = "attempt_only_id",
+                paymentInstrumentTokenId = null,
+                paymentId = null,
+            ),
+        )
+
+        val result = response.toInstructionFetch()
+
+        assertEquals("attempt_only_id", result.currentAttempt?.id)
+        assertNull(result.currentAttempt?.paymentInstrumentTokenId)
+        assertNull(result.currentAttempt?.paymentId)
+    }
+
+    @Test
+    fun `toInstructionFetch should return null envelope fields when absent`() {
+        val result = waitResponse().toInstructionFetch()
+
+        assertNull(result.currentAttempt)
     }
 }
