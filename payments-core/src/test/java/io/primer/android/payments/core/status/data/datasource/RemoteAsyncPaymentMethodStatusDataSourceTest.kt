@@ -8,6 +8,7 @@ import io.primer.android.core.data.network.PrimerHttpClient
 import io.primer.android.core.data.network.exception.JsonDecodingException
 import io.primer.android.core.data.network.helpers.MessageLog
 import io.primer.android.core.data.network.helpers.MessagePropertiesHelper
+import io.primer.android.core.data.network.helpers.MessageTypeHelper
 import io.primer.android.core.data.network.utils.PrimerTimeouts
 import io.primer.android.core.data.network.utils.PrimerTimeouts.PRIMER_60S_TIMEOUT
 import io.primer.android.core.utils.EventFlowProvider
@@ -97,11 +98,10 @@ class RemoteAsyncPaymentMethodStatusDataSourceTest {
                         messagePropertiesEventProvider = messagePropertiesEventProvider,
                     ),
                 )
-            val exception = assertThrows<IOException> { tested.execute(input) }
+            assertThrows<IOException> { tested.execute(input) }
             assertEquals(
-                "Failed after 3 retries.\n" +
-                    "Reached maximum retries (3).",
-                exception.message,
+                MessageTypeHelper.RETRY_FAILED,
+                messagePropsFlow.value?.messageTypeHelper,
             )
 
             mockWebServer.shutdown()

@@ -36,48 +36,40 @@ internal class UrlOpenStepExecutorTest {
     }
 
     @Test
-    fun `execute should return SUCCESS when event value is completed`() = runTest {
-        val step = JSONObject().apply {
-            put("url", "https://example.com")
-        }.toString()
-
-        every { urlOpenHandler.launch("https://example.com", null) } answers {
-            componentEvents.tryEmit(ComponentResultEvent(value = "completed", eventType = "custom"))
+    fun `execute should return CANCELLED with closeReason auto data passed through untouched`() = runTest {
+        val step = stepJson()
+        every { urlOpenHandler.launch(any(), any()) } answers {
+            componentEvents.tryEmit(cancelledEvent(closeReason = "auto"))
         }
 
         val result = executor.execute("action-1", step)
 
         assertTrue(result.isSuccess)
         val stepResult = result.getOrThrow()
-        assertEquals(Outcome.SUCCESS, stepResult.outcome)
+        assertEquals(Outcome.CANCELLED, stepResult.outcome)
         assertEquals("action-1", stepResult.actionId)
-        assertEquals(emptyMap<String, Any?>(), stepResult.data)
+        assertEquals(mapOf<String, Any?>("closeReason" to "auto"), stepResult.data)
     }
 
     @Test
-    fun `execute should return CANCELLED when event value is cancelled`() = runTest {
-        val step = JSONObject().apply {
-            put("url", "https://example.com")
-        }.toString()
-
+    fun `execute should return CANCELLED with closeReason user data passed through untouched`() = runTest {
+        val step = stepJson()
         every { urlOpenHandler.launch(any(), any()) } answers {
-            componentEvents.tryEmit(ComponentResultEvent(value = "cancelled", eventType = "custom"))
+            componentEvents.tryEmit(cancelledEvent(closeReason = "user"))
         }
 
         val result = executor.execute("action-1", step)
 
-        assertTrue(result.isSuccess)
-        assertEquals(Outcome.CANCELLED, result.getOrThrow().outcome)
+        val stepResult = result.getOrThrow()
+        assertEquals(Outcome.CANCELLED, stepResult.outcome)
+        assertEquals(mapOf<String, Any?>("closeReason" to "user"), stepResult.data)
     }
 
     @Test
-    fun `execute should return ERROR when event value is unknown`() = runTest {
-        val step = JSONObject().apply {
-            put("url", "https://example.com")
-        }.toString()
-
+    fun `execute should return ERROR when event value is error`() = runTest {
+        val step = stepJson()
         every { urlOpenHandler.launch(any(), any()) } answers {
-            componentEvents.tryEmit(ComponentResultEvent(value = "something_else", eventType = "custom"))
+            componentEvents.tryEmit(ComponentResultEvent(value = "error", eventType = "custom"))
         }
 
         val result = executor.execute("action-1", step)
@@ -87,15 +79,28 @@ internal class UrlOpenStepExecutorTest {
     }
 
     @Test
-    fun `execute should pass redirectUrls and webview title to handler`() = runTest {
+    fun `execute should return ERROR for a completed event value since browser close never resolves success`() =
+        runTest {
+            val step = stepJson()
+            every { urlOpenHandler.launch(any(), any()) } answers {
+                componentEvents.tryEmit(ComponentResultEvent(value = "completed", eventType = "custom"))
+            }
+
+            val result = executor.execute("action-1", step)
+
+            assertTrue(result.isSuccess)
+            assertEquals(Outcome.ERROR, result.getOrThrow().outcome)
+        }
+
+    @Test
+    fun `execute should pass url and redirectUrls to handler`() = runTest {
         val step = JSONObject().apply {
             put("url", "https://pay.example.com")
             put("redirectUrls", org.json.JSONArray(listOf("https://return.example.com")))
-            put("webview", JSONObject().put("title", "Payment"))
         }.toString()
 
         every { urlOpenHandler.launch(any(), any()) } answers {
-            componentEvents.tryEmit(ComponentResultEvent(value = "completed", eventType = "custom"))
+            componentEvents.tryEmit(cancelledEvent(closeReason = "auto"))
         }
 
         executor.execute("action-1", step)
@@ -125,4 +130,15 @@ internal class UrlOpenStepExecutorTest {
 
         assertTrue(result.isFailure)
     }
+
+    private fun stepJson(): String = JSONObject().apply {
+        put("url", "https://example.com")
+    }.toString()
+
+    private fun cancelledEvent(closeReason: String): ComponentResultEvent =
+        ComponentResultEvent(
+            value = "cancelled",
+            eventType = "custom",
+            data = mapOf("closeReason" to closeReason),
+        )
 }

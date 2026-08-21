@@ -12,6 +12,7 @@ import io.primer.android.core.data.datasource.PrimerApiVersion
 import io.primer.android.core.data.datasource.toHeaderMap
 import io.primer.android.core.data.network.PrimerHttpClient
 import io.primer.android.core.data.network.exception.JsonDecodingException
+import io.primer.android.core.data.network.transport.HttpTransport
 import io.primer.android.core.data.network.utils.PrimerTimeouts
 import io.primer.android.core.data.network.utils.PrimerTimeouts.PRIMER_15S_TIMEOUT
 import io.primer.android.threeds.data.models.auth.BeginAuthDataRequest
@@ -20,7 +21,6 @@ import io.primer.android.threeds.data.models.postAuth.ThreeDsSdkProvider
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.runTest
-import okhttp3.Headers.Companion.toHeaders
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.mockwebserver.MockResponse
@@ -34,6 +34,7 @@ import java.net.SocketTimeoutException
 import java.util.concurrent.TimeUnit
 import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
+import kotlin.test.assertNotNull
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
 
@@ -51,7 +52,7 @@ class Remote3DSAuthDataSourceTest {
                 }
             val primerHttpClient =
                 mockk<PrimerHttpClient> {
-                    every { okHttpClient } returns mockedOkHttpClient
+                    every { transport } returns HttpTransport(mockedOkHttpClient)
                     every { withTimeout(PRIMER_15S_TIMEOUT) } returns this
                 }
             val tested = Remote3DSAuthDataSource(primerHttpClient) { apiVersion }
@@ -81,7 +82,10 @@ class Remote3DSAuthDataSourceTest {
             val actualSink = Buffer()
             request.body!!.writeTo(actualSink)
             assertContentEquals(expectedSink.readByteArray(), actualSink.readByteArray())
-            assertEquals(apiVersion.toHeaderMap().toHeaders(), request.headers)
+            apiVersion.toHeaderMap().forEach { (name, value) ->
+                assertEquals(value, request.header(name))
+            }
+            assertNotNull(request.header("X-Request-Id"))
         }
 
     @Test
@@ -180,7 +184,7 @@ class Remote3DSAuthDataSourceTest {
                 }
             val primerHttpClient =
                 mockk<PrimerHttpClient> {
-                    every { okHttpClient } returns mockedOkHttpClient
+                    every { transport } returns HttpTransport(mockedOkHttpClient)
                     every { withTimeout(PRIMER_15S_TIMEOUT) } returns this
                 }
             val tested = Remote3DSAuthDataSource(primerHttpClient) { apiVersion }
@@ -216,7 +220,10 @@ class Remote3DSAuthDataSourceTest {
                     actualSink.readByteArray()
                 }
             assertContentEquals(expectedResult, actualResult)
-            assertEquals(apiVersion.toHeaderMap().toHeaders(), request.headers)
+            apiVersion.toHeaderMap().forEach { (name, value) ->
+                assertEquals(value, request.header(name))
+            }
+            assertNotNull(request.header("X-Request-Id"))
         }
 
     @Test

@@ -13,13 +13,10 @@ sealed class CheckoutOrchestratorError : PrimerError() {
         val stateProcessorMessage: String,
     ) : CheckoutOrchestratorError()
 
-    data object MissingActionError : CheckoutOrchestratorError()
-
     override val errorId: String
         get() = when (this) {
             is CheckoutTerminalError -> "checkout-terminal-error"
             is StateProcessorError -> "state-processor-error"
-            is MissingActionError -> "checkout-missing-action"
         }
 
     override val description: String
@@ -27,8 +24,6 @@ sealed class CheckoutOrchestratorError : PrimerError() {
             is CheckoutTerminalError -> "Checkout ended with an error outcome."
             is StateProcessorError ->
                 "State processor error [$code] (diagnosticsId=$stateProcessorDiagnosticsId): $stateProcessorMessage"
-            is MissingActionError ->
-                "Processing result has no action to execute and no terminal state."
         }
 
     override val errorCode: String? = null

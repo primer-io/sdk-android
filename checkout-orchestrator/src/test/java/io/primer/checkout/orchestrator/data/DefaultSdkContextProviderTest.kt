@@ -90,7 +90,7 @@ internal class DefaultSdkContextProviderTest {
 
     @Test
     fun `provide should return JSON with sdk section`() {
-        val result = JSONObject(provider.provide(PAYMENT_METHOD_TYPE))
+        val result = JSONObject(provider.provide(PAYMENT_METHOD_TYPE, null))
         val sdk = result.getJSONObject("sdk")
 
         assertEquals(SdkType.ANDROID_NATIVE.name, sdk.getString("type"))
@@ -101,7 +101,7 @@ internal class DefaultSdkContextProviderTest {
 
     @Test
     fun `provide should return JSON with device section`() {
-        val result = JSONObject(provider.provide(PAYMENT_METHOD_TYPE))
+        val result = JSONObject(provider.provide(PAYMENT_METHOD_TYPE, null))
 
         assertTrue(result.has("device"))
         val device = result.getJSONObject("device")
@@ -110,7 +110,7 @@ internal class DefaultSdkContextProviderTest {
 
     @Test
     fun `provide should return JSON with app section`() {
-        val result = JSONObject(provider.provide(PAYMENT_METHOD_TYPE))
+        val result = JSONObject(provider.provide(PAYMENT_METHOD_TYPE, null))
         val app = result.getJSONObject("app")
 
         assertEquals(APPLICATION_ID, app.getString("identifier"))
@@ -118,7 +118,7 @@ internal class DefaultSdkContextProviderTest {
 
     @Test
     fun `provide should return JSON with session section`() {
-        val result = JSONObject(provider.provide(PAYMENT_METHOD_TYPE))
+        val result = JSONObject(provider.provide(PAYMENT_METHOD_TYPE, null))
         val session = result.getJSONObject("session")
 
         assertEquals(CHECKOUT_SESSION_ID, session.getString("checkoutSessionId"))
@@ -128,15 +128,31 @@ internal class DefaultSdkContextProviderTest {
 
     @Test
     fun `provide should return JSON with payment section`() {
-        val result = JSONObject(provider.provide(PAYMENT_METHOD_TYPE))
+        val result = JSONObject(provider.provide(PAYMENT_METHOD_TYPE, null))
         val payment = result.getJSONObject("payment")
 
         assertEquals(PAYMENT_METHOD_TYPE, payment.getString("paymentMethodType"))
     }
 
     @Test
+    fun `provide should include paymentId in payment section when supplied`() {
+        val result = JSONObject(provider.provide(PAYMENT_METHOD_TYPE, PAYMENT_ID))
+        val payment = result.getJSONObject("payment")
+
+        assertEquals(PAYMENT_ID, payment.getString("paymentId"))
+    }
+
+    @Test
+    fun `provide should omit paymentId from payment section when null`() {
+        val result = JSONObject(provider.provide(PAYMENT_METHOD_TYPE, null))
+        val payment = result.getJSONObject("payment")
+
+        assertFalse(payment.has("paymentId"))
+    }
+
+    @Test
     fun `provide should return JSON with merchant section`() {
-        val result = JSONObject(provider.provide(PAYMENT_METHOD_TYPE))
+        val result = JSONObject(provider.provide(PAYMENT_METHOD_TYPE, null))
         val merchant = result.getJSONObject("merchant")
 
         assertEquals(PRIMER_ACCOUNT_ID, merchant.getString("primerAccountId"))
@@ -144,7 +160,7 @@ internal class DefaultSdkContextProviderTest {
 
     @Test
     fun `provide should include analytics section when analyticsUrl is present`() {
-        val result = JSONObject(provider.provide(PAYMENT_METHOD_TYPE))
+        val result = JSONObject(provider.provide(PAYMENT_METHOD_TYPE, null))
         val analytics = result.getJSONObject("analytics")
 
         assertEquals(ANALYTICS_URL, analytics.getString("url"))
@@ -154,7 +170,7 @@ internal class DefaultSdkContextProviderTest {
     fun `provide should omit analytics section when analyticsUrl is null`() {
         every { analyticsDataProvider.provide() } returns createAnalyticsData(analyticsUrl = null)
 
-        val result = JSONObject(provider.provide(PAYMENT_METHOD_TYPE))
+        val result = JSONObject(provider.provide(PAYMENT_METHOD_TYPE, null))
 
         assertFalse(result.has("analytics"))
     }
@@ -166,7 +182,7 @@ internal class DefaultSdkContextProviderTest {
             primerAccountId = null,
         )
 
-        val result = JSONObject(provider.provide(PAYMENT_METHOD_TYPE))
+        val result = JSONObject(provider.provide(PAYMENT_METHOD_TYPE, null))
         val session = result.getJSONObject("session")
 
         assertFalse(session.has("customerId"))
@@ -209,6 +225,7 @@ internal class DefaultSdkContextProviderTest {
 
     private companion object {
         const val PAYMENT_METHOD_TYPE = "ADYEN_IDEAL"
+        const val PAYMENT_ID = "pay-123"
         const val DEVICE_ID = "test-device-id"
         const val CLIENT_SESSION_ID = "client-session-123"
         const val CUSTOMER_ID = "customer-456"

@@ -9,7 +9,6 @@ import io.primer.android.core.utils.BaseDataProvider
 import io.primer.statetransport.data.datasource.RemoteInstructionsDataSource
 import io.primer.statetransport.data.datasource.RemotePayDataSource
 import io.primer.statetransport.data.repository.DefaultStateTransportRepository
-import io.primer.statetransport.domain.interactor.PaymentFlowInteractor
 import io.primer.statetransport.domain.repository.StateTransportRepository
 
 class StateTransportContainer(
@@ -37,13 +36,6 @@ class StateTransportContainer(
                 remoteStartDataSource = resolve(),
                 remoteInstructionsDataSource = resolve(),
                 applicationIdProvider = sdk().resolve(Constants.APPLICATION_ID_PROVIDER_DI_KEY),
-            )
-        }
-
-        registerFactory {
-            PaymentFlowInteractor(
-                repository = resolve(),
-                configurationRepository = sdk().resolve(),
             )
         }
     }

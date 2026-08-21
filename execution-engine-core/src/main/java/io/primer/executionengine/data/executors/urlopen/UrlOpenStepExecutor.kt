@@ -19,20 +19,21 @@ internal class UrlOpenStepExecutor(
         urlOpenHandler.launch(params.url, params.redirectUrls)
 
         val event = urlOpenHandler.componentEvents.first()
-        val outcome = when (event.value) {
-            VALUE_SUCCESS -> Outcome.SUCCESS
-            VALUE_CANCELLED -> Outcome.CANCELLED
-            else -> Outcome.ERROR
-        }
+        when (event.value) {
+            VALUE_CANCELLED -> StepResult(
+                outcome = Outcome.CANCELLED,
+                actionId = actionId,
+                data = event.data,
+            )
 
-        StepResult(
-            outcome = outcome,
-            actionId = actionId,
-        )
+            else -> StepResult(
+                outcome = Outcome.ERROR,
+                actionId = actionId,
+            )
+        }
     }
 
     private companion object {
-        const val VALUE_SUCCESS = "completed"
         const val VALUE_CANCELLED = "cancelled"
     }
 }

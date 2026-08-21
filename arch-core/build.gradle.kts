@@ -30,6 +30,8 @@ dependencies {
     api(libs.android.ktx)
     compileOnly(libs.android.lifecycle.viewmodel.ktx)
 
+    testImplementation(libs.mockwebserver)
+
     testFixturesRuntimeOnly(libs.junit.jupiter.api)
     testFixturesImplementation(libs.arch.core)
     testFixturesImplementation(libs.junit.jupiter.engine)

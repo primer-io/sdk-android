@@ -62,20 +62,6 @@ class CheckoutOrchestratorErrorMapperTest {
     }
 
     @Test
-    fun `getPrimerError should return MissingActionError when throwable is MissingActionException`() {
-        val throwable = CheckoutOrchestratorException.MissingActionException()
-
-        val actualResult = errorMapper.getPrimerError(throwable)
-
-        assertTrue(actualResult is CheckoutOrchestratorError.MissingActionError)
-        assertEquals("checkout-missing-action", actualResult.errorId)
-        assertEquals(
-            "Processing result has no action to execute and no terminal state.",
-            actualResult.description,
-        )
-    }
-
-    @Test
     fun `getPrimerError should throw IllegalStateException when it receives unsupported exceptions`() {
         val exception = IllegalStateException("Some error")
 

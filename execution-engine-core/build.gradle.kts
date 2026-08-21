@@ -17,4 +17,6 @@ dependencies {
     implementation(project(":analytics"))
 
     implementation(libs.kotlin.coroutines)
+
+    testImplementation(libs.mockwebserver)
 }

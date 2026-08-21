@@ -10,25 +10,20 @@ import io.primer.android.payments.core.helpers.CheckoutErrorHandler
 import io.primer.android.payments.core.helpers.CheckoutSuccessHandler
 import io.primer.android.payments.core.tokenization.domain.handler.PreTokenizationHandler
 import io.primer.checkout.orchestrator.domain.CheckoutDecisionResolver
-import io.primer.checkout.orchestrator.domain.CheckoutOrchestrator
+import io.primer.checkout.orchestrator.domain.PaymentFlowInteractor
 import io.primer.checkout.orchestrator.domain.ReturnUriProvider
 import io.primer.checkout.orchestrator.domain.model.CheckoutDecision
+import io.primer.checkout.orchestrator.domain.model.PaymentFlowResult
 import io.primer.checkout.orchestrator.domain.ui.StepUiHandler
-import io.primer.executionengine.domain.models.Outcome
 import io.primer.paymentMethodCoreUi.core.ui.composable.ActivityResultIntentHandler
 import io.primer.paymentMethodCoreUi.core.ui.composable.ActivityStartIntentHandler
 import io.primer.paymentMethodCoreUi.core.ui.navigation.launchers.PaymentMethodLauncherParams
-import io.primer.statetransport.domain.interactor.PaymentFlowInteractor
 import io.primer.statetransport.domain.model.ClientInstructions
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
 internal class BackendDrivenCheckoutComponent(
-    private val orchestrator: CheckoutOrchestrator,
     private val paymentFlowInteractor: PaymentFlowInteractor,
     private val preTokenizationHandler: PreTokenizationHandler,
     private val successHandler: CheckoutSuccessHandler,
@@ -63,10 +58,7 @@ internal class BackendDrivenCheckoutComponent(
                 sessionIntent = primerSessionIntent,
             )
             preTokenizationResult.exceptionOrNull()?.let { throwable ->
-                errorHandler.handle(
-                    error = baseErrorResolver.resolve(throwable),
-                    payment = null,
-                )
+                handleFailure(throwable)
                 return@launch
             }
 
@@ -75,45 +67,47 @@ internal class BackendDrivenCheckoutComponent(
                     paymentMethodType = paymentMethodType,
                     returnUri = returnUriProvider.provide(),
                 ),
-            ).onEach { instructions ->
-                when (instructions) {
-                    is ClientInstructions.Execute -> {
-                        val outcome = orchestrator.start(
-                            paymentMethodType = paymentMethodType,
-                            payload = instructions.payload,
-                        ).getOrThrow()
-                        if (outcome == Outcome.CANCELLED) {
-                            throw PaymentMethodCancelledException(paymentMethodType)
-                        }
-                    }
-
-                    is ClientInstructions.End -> {
-                        val decision = checkoutDecisionResolver.resolve(
-                            end = instructions,
+            ).fold(
+                onSuccess = { result ->
+                    when (result) {
+                        is PaymentFlowResult.Completed -> handleCheckoutEnd(
+                            end = result.end,
                             paymentMethodType = paymentMethodType,
                         )
-                        when (decision) {
-                            is CheckoutDecision.Success -> successHandler.handle(
-                                payment = requireNotNull(decision.payment),
-                                additionalInfo = null,
-                            )
 
-                            is CheckoutDecision.Failure -> errorHandler.handle(
-                                error = decision.error,
-                                payment = decision.payment,
-                            )
-                        }
+                        is PaymentFlowResult.Cancelled -> handleFailure(
+                            PaymentMethodCancelledException(paymentMethodType),
+                        )
                     }
-
-                    is ClientInstructions.Wait -> Unit
-                }
-            }.catch { throwable ->
-                errorHandler.handle(
-                    error = baseErrorResolver.resolve(throwable),
-                    payment = null,
-                )
-            }.collect()
+                },
+                onFailure = { throwable -> handleFailure(throwable) },
+            )
         }
+    }
+
+    private suspend fun handleCheckoutEnd(end: ClientInstructions.End, paymentMethodType: String) {
+        val decision = checkoutDecisionResolver.resolve(
+            end = end,
+            paymentMethodType = paymentMethodType,
+        )
+        when (decision) {
+            is CheckoutDecision.Success -> successHandler.handle(
+                payment = requireNotNull(decision.payment),
+                additionalInfo = null,
+            )
+
+            is CheckoutDecision.Failure -> errorHandler.handle(
+                error = decision.error,
+                payment = decision.payment,
+            )
+        }
+    }
+
+    private suspend fun handleFailure(throwable: Throwable) {
+        errorHandler.handle(
+            error = baseErrorResolver.resolve(throwable),
+            payment = null,
+        )
     }
 
     override fun handleActivityStartEvent(params: PaymentMethodLauncherParams) {

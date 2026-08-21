@@ -23,13 +23,13 @@ import io.primer.android.configuration.domain.model.CheckoutModule
 import io.primer.android.core.logging.internal.LogReporter
 import io.primer.android.data.settings.PrimerGoogleShippingAddressParameters
 import kotlinx.coroutines.runBlocking
+import org.json.JSONObject
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
-import org.json.JSONObject
 import org.junit.jupiter.api.Test
 
 internal class GooglePayFacadeTest {

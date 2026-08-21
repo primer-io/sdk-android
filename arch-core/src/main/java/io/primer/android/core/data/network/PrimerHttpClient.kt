@@ -5,18 +5,19 @@ import io.primer.android.core.data.network.exception.HttpException
 import io.primer.android.core.data.network.exception.InvalidUrlException
 import io.primer.android.core.data.network.exception.JsonDecodingException
 import io.primer.android.core.data.network.exception.JsonEncodingException
-import io.primer.android.core.data.network.extensions.await
 import io.primer.android.core.data.network.extensions.containsError
 import io.primer.android.core.data.network.helpers.MessageLog
 import io.primer.android.core.data.network.helpers.MessagePropertiesHelper
 import io.primer.android.core.data.network.helpers.MessageTypeHelper
 import io.primer.android.core.data.network.helpers.SeverityHelper
-import io.primer.android.core.data.network.retry.NETWORK_EXCEPTION_ERROR_CODE
-import io.primer.android.core.data.network.retry.RetryConfig
-import io.primer.android.core.data.network.retry.SERVER_ERRORS
-import io.primer.android.core.data.network.retry.isLastAttempt
-import io.primer.android.core.data.network.retry.networkError
-import io.primer.android.core.data.network.retry.retry
+import io.primer.android.core.data.network.retry.HttpRetryLoop
+import io.primer.android.core.data.network.retry.HttpTransportResult
+import io.primer.android.core.data.network.retry.RetryAttempt
+import io.primer.android.core.data.network.retry.RetryAttemptError
+import io.primer.android.core.data.network.retry.RetryEventListener
+import io.primer.android.core.data.network.retry.RetryPolicy
+import io.primer.android.core.data.network.transport.HttpTransport
+import io.primer.android.core.data.network.transport.RawHttpResponse
 import io.primer.android.core.data.serialization.json.JSONArraySerializer
 import io.primer.android.core.data.serialization.json.JSONDataUtils
 import io.primer.android.core.data.serialization.json.JSONDataUtils.stringToJsonData
@@ -34,8 +35,6 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
-import okhttp3.Response
-import okio.IOException
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.time.Duration
 import kotlin.time.toJavaDuration
@@ -48,6 +47,12 @@ class PrimerHttpClient(
     val logProvider: EventFlowProvider<MessageLog>,
     val messagePropertiesEventProvider: EventFlowProvider<MessagePropertiesHelper>,
 ) {
+    val transport: HttpTransport =
+        HttpTransport(
+            okHttpClient = okHttpClient,
+            retryLoop = HttpRetryLoop(listener = AnalyticsRetryEventListener()),
+        )
+
     fun withTimeout(duration: Duration?): PrimerHttpClient {
         if (duration == null) return this
 
@@ -98,7 +103,7 @@ class PrimerHttpClient(
     suspend inline fun <reified R : JSONDeserializable> retrySuspendGet(
         url: String,
         headers: Map<String, String> = hashMapOf(),
-        retryConfig: RetryConfig,
+        retryPolicy: RetryPolicy = RetryPolicy(),
     ): PrimerResponse<R> {
         if (url.toHttpUrlOrNull() == null) throw InvalidUrlException(url = url)
         return executeRequest(
@@ -107,7 +112,7 @@ class PrimerHttpClient(
                 .headers(headers.toHeaders())
                 .get()
                 .build(),
-            retryConfig,
+            retryPolicy,
         )
     }
 
@@ -129,26 +134,6 @@ class PrimerHttpClient(
             )
         }
 
-    inline fun <reified T : JSONSerializable, reified R : JSONDeserializable> retryRost(
-        url: String,
-        request: T,
-        headers: Map<String, String> = hashMapOf(),
-        retryConfig: RetryConfig,
-    ): Flow<PrimerResponse<R>> =
-        flow {
-            if (url.toHttpUrlOrNull() == null) throw InvalidUrlException(url = url)
-            emit(
-                executeRequest(
-                    Request.Builder()
-                        .url(url)
-                        .headers(headers.toHeaders())
-                        .post(getRequestBody(request))
-                        .build(),
-                    retryConfig,
-                ),
-            )
-        }
-
     suspend inline fun <reified T : JSONSerializable, reified R : JSONDeserializable> suspendPost(
         url: String,
         request: T,
@@ -161,23 +146,6 @@ class PrimerHttpClient(
                 .headers(headers.toHeaders())
                 .post(getRequestBody(request))
                 .build(),
-        )
-    }
-
-    suspend inline fun <reified T : JSONSerializable, reified R : JSONDeserializable> retryPostSuspend(
-        url: String,
-        request: T,
-        headers: Map<String, String> = hashMapOf(),
-        retryConfig: RetryConfig,
-    ): PrimerResponse<R> {
-        if (url.toHttpUrlOrNull() == null) throw InvalidUrlException(url = url)
-        return executeRequest(
-            Request.Builder()
-                .url(url)
-                .headers(headers.toHeaders())
-                .post(getRequestBody(request))
-                .build(),
-            retryConfig,
         )
     }
 
@@ -195,118 +163,46 @@ class PrimerHttpClient(
         )
     }
 
-    suspend inline fun <reified R : JSONDeserializable> retryDelete(
-        url: String,
-        headers: Map<String, String> = hashMapOf(),
-        retryConfig: RetryConfig,
-    ): PrimerResponse<R> {
-        if (url.toHttpUrlOrNull() == null) throw InvalidUrlException(url = url)
-        return executeRequest(
-            Request.Builder()
-                .url(url)
-                .headers(headers.toHeaders())
-                .delete()
-                .build(),
-            retryConfig,
-        )
-    }
-
-    @Suppress("ComplexMethod", "ThrowsCount", "LongMethod")
+    @Suppress("ThrowsCount")
     suspend inline fun <reified R : JSONDeserializable> executeRequest(
         request: Request,
-        retryConfig: RetryConfig = RetryConfig(false),
-    ): PrimerResponse<R> {
-        var response: Response
-
-        do {
-            response =
-                try {
-                    okHttpClient.newCall(request).await()
-                } catch (exception: IOException) {
-                    if (retryConfig.enabled) {
-                        networkError(request.url.toString())
-                    } else {
-                        throw exception
-                    }
+        retryPolicy: RetryPolicy? = null,
+    ): PrimerResponse<R> =
+        when (val outcome = transport.execute(request = request, retryPolicy = retryPolicy)) {
+            is HttpTransportResult.Failed -> throw outcome.error
+            is HttpTransportResult.Settled -> {
+                val response = outcome.response
+                if (!response.isSuccess || response.containsError()) {
+                    throw HttpException(response.statusCode, APIError.create(response.bodyText))
                 }
-        } while (retry(response, retryConfig, logProvider, messagePropertiesEventProvider))
-
-        if (retryConfig.enabled) {
-            if (response.containsError()) {
-                val errorMessage =
-                    "Failed after ${retryConfig.retries} retries.\n" +
-                        when {
-                            retryConfig.isLastAttempt() -> "Reached maximum retries (${retryConfig.maxRetries})."
-                            response.code == NETWORK_EXCEPTION_ERROR_CODE -> "Network error."
-                            response.code in SERVER_ERRORS -> "Server error: ${response.code}."
-                            else -> ""
-                        }
-                logRetryFailedAttempt(message = errorMessage)
-                throw if (response.code == NETWORK_EXCEPTION_ERROR_CODE) {
-                    IOException(errorMessage)
-                } else {
-                    HttpException(response.code, APIError.create(response))
-                }
-            } else {
-                if (retryConfig.retries > 0) {
-                    val message =
-                        "Request succeeded after ${retryConfig.retries} retries. Status code: ${response.code}"
-                    logRetrySuccessAttempt(message = message)
-                }
+                deserializeResponse(response)
             }
-        } else if (response.containsError()) {
-            throw HttpException(response.code, APIError.create(response))
         }
 
+    inline fun <reified R : JSONDeserializable> deserializeResponse(response: RawHttpResponse): PrimerResponse<R> {
+        // Only a NULL body coerces to an empty object; a blank body must keep failing
+        // deserialization exactly like it did before the transport rework.
+        val bodyString = response.bodyText ?: "{}"
+
         try {
-            val body = response.body
-            val headers = response.headers.toMultimap()
-            val bodyString = body?.string() ?: "{}"
-
             return when (val jsonData = stringToJsonData(bodyString)) {
-                is JSONDataUtils.JSONData.JSONObjectData -> {
-                    body?.close()
+                is JSONDataUtils.JSONData.JSONObjectData ->
                     PrimerResponse(
-                        statusCode = response.code,
+                        statusCode = response.statusCode,
                         body = JSONSerializationUtils.getJsonObjectDeserializer<R>().deserialize(jsonData.json),
-                        headers = headers,
+                        headers = response.headers,
                     )
-                }
 
-                is JSONDataUtils.JSONData.JSONArrayData -> {
-                    body?.close()
+                is JSONDataUtils.JSONData.JSONArrayData ->
                     PrimerResponse(
-                        statusCode = response.code,
+                        statusCode = response.statusCode,
                         body = JSONSerializationUtils.getJsonArrayDeserializer<R>().deserialize(jsonData.json),
-                        headers = headers,
+                        headers = response.headers,
                     )
-                }
             }
         } catch (expected: Exception) {
             throw JsonDecodingException(expected)
         }
-    }
-
-    suspend fun logRetrySuccessAttempt(message: String) {
-        logProvider.getEventProvider().emit(MessageLog(message = message, severity = SeverityHelper.INFO))
-        messagePropertiesEventProvider.getEventProvider().tryEmit(
-            MessagePropertiesHelper(
-                MessageTypeHelper.RETRY_SUCCESS,
-                message,
-                SeverityHelper.INFO,
-            ),
-        )
-    }
-
-    suspend fun logRetryFailedAttempt(message: String) {
-        logProvider.getEventProvider().emit(MessageLog(message = message, severity = SeverityHelper.ERROR))
-        messagePropertiesEventProvider.getEventProvider().tryEmit(
-            MessagePropertiesHelper(
-                MessageTypeHelper.RETRY_FAILED,
-                message,
-                SeverityHelper.ERROR,
-            ),
-        )
     }
 
     inline fun <reified T : JSONSerializable> getRequestBody(request: T): RequestBody {
@@ -319,6 +215,58 @@ class PrimerHttpClient(
             serialized.toRequestBody(CONTENT_TYPE_APPLICATION_JSON.toMediaType())
         } catch (expected: Exception) {
             throw JsonEncodingException(expected)
+        }
+    }
+
+    private inner class AnalyticsRetryEventListener : RetryEventListener {
+        override suspend fun onRetryScheduled(
+            attempt: RetryAttempt,
+            maxAttempts: Int,
+        ) {
+            val reason =
+                when (val error = attempt.error) {
+                    is RetryAttemptError.Status -> "HTTP ${error.statusCode} error encountered"
+                    is RetryAttemptError.Thrown ->
+                        "network error encountered (${error.cause::class.java.simpleName})"
+                }
+            val message =
+                "Retry attempt ${attempt.attempt} of $maxAttempts due to $reason. " +
+                    "Waiting for ${attempt.delay}ms before next attempt."
+            emitRetryEvent(MessageTypeHelper.RETRY, message, SeverityHelper.WARN)
+        }
+
+        override suspend fun onRecovered(
+            retries: Int,
+            statusCode: Int,
+        ) {
+            val message = "Request succeeded after $retries retries. Status code: $statusCode"
+            emitRetryEvent(MessageTypeHelper.RETRY_SUCCESS, message, SeverityHelper.INFO)
+        }
+
+        override suspend fun onExhausted(history: List<RetryAttempt>) {
+            val reason =
+                when (val error = history.lastOrNull()?.error) {
+                    is RetryAttemptError.Status -> "Server error: ${error.statusCode}."
+                    is RetryAttemptError.Thrown -> "Network error."
+                    null -> ""
+                }
+            val message = "Failed after ${history.size} retries. $reason".trim()
+            emitRetryEvent(MessageTypeHelper.RETRY_FAILED, message, SeverityHelper.ERROR)
+        }
+
+        private suspend fun emitRetryEvent(
+            type: MessageTypeHelper,
+            message: String,
+            severity: SeverityHelper,
+        ) {
+            logProvider.getEventProvider().emit(MessageLog(message = message, severity = severity))
+            messagePropertiesEventProvider.getEventProvider().tryEmit(
+                MessagePropertiesHelper(
+                    type,
+                    message,
+                    severity,
+                ),
+            )
         }
     }
 

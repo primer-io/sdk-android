@@ -2,6 +2,7 @@ package io.primer.checkout.orchestrator.data.model
 
 import io.primer.android.core.data.serialization.json.JSONDeserializable
 import io.primer.android.core.data.serialization.json.JSONObjectDeserializer
+import io.primer.android.core.data.serialization.json.extensions.optNullableLong
 import io.primer.executionengine.domain.models.Outcome
 
 /**
@@ -11,11 +12,13 @@ data class ResolvedAction(
     val id: String,
     val type: String,
     val params: String,
+    val delayMs: Long? = null,
 ) : JSONDeserializable {
     companion object {
         private const val ID_FIELD = "id"
         private const val TYPE_FIELD = "type"
         private const val PARAMS_FIELD = "params"
+        private const val DELAY_MS_FIELD = "delayMs"
 
         @JvmField
         val deserializer =
@@ -24,6 +27,7 @@ data class ResolvedAction(
                     id = json.getString(ID_FIELD),
                     type = json.getString(TYPE_FIELD),
                     params = json.getString(PARAMS_FIELD),
+                    delayMs = json.optNullableLong(DELAY_MS_FIELD),
                 )
             }
     }

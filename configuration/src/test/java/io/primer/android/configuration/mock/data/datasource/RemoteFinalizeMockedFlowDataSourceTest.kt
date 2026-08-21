@@ -14,6 +14,7 @@ import kotlinx.coroutines.test.runTest
 import okhttp3.OkHttpClient
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.parallel.ResourceLock
@@ -23,6 +24,11 @@ import kotlin.time.Duration.Companion.milliseconds
 
 @ResourceLock("PrimerTimeouts")
 class RemoteFinalizeMockedFlowDataSourceTest {
+    @AfterEach
+    fun tearDown() {
+        PrimerHttpClient.clearCustomTimeoutInstances()
+    }
+
     @Test
     fun `response is processed when the server responds in time`() =
         runTest {

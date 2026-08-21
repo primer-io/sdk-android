@@ -1,7 +1,10 @@
+@file:OptIn(ExperimentalCoroutinesApi::class)
+
 package io.primer.executionengine.data.handler
 
 import io.primer.android.core.InstantExecutorExtension
 import io.primer.executionengine.domain.executor.ComponentResultEvent
+import io.primer.executionengine.domain.handler.UrlCloseReason
 import io.primer.executionengine.domain.handler.UrlOpenLaunchRequest
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.async
@@ -13,7 +16,6 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 
-@OptIn(ExperimentalCoroutinesApi::class)
 @ExtendWith(InstantExecutorExtension::class)
 internal class DefaultUrlOpenHandlerTest {
 
@@ -38,7 +40,7 @@ internal class DefaultUrlOpenHandlerTest {
     }
 
     @Test
-    fun `launch should emit request with null redirectUrls and title`() = runTest(UnconfinedTestDispatcher()) {
+    fun `launch should emit request with null redirectUrls`() = runTest(UnconfinedTestDispatcher()) {
         val deferred = async { handler.launchRequest.first() }
 
         handler.launch("https://example.com", null)
@@ -48,37 +50,47 @@ internal class DefaultUrlOpenHandlerTest {
     }
 
     @Test
-    fun `onResultOk should emit completed event`() = runTest(UnconfinedTestDispatcher()) {
-        val deferred = async { handler.componentEvents.first() }
+    fun `onClosed with AUTO should emit cancelled event with closeReason auto`() =
+        runTest(UnconfinedTestDispatcher()) {
+            val deferred = async { handler.componentEvents.first() }
 
-        handler.onResultOk()
+            handler.onClosed(UrlCloseReason.AUTO)
 
-        assertEquals(
-            ComponentResultEvent(value = "completed", eventType = "custom"),
-            deferred.await(),
-        )
-    }
-
-    @Test
-    fun `onResultCancelled should emit cancelled event`() = runTest(UnconfinedTestDispatcher()) {
-        val deferred = async { handler.componentEvents.first() }
-
-        handler.onResultCancelled()
-
-        assertEquals(
-            ComponentResultEvent(value = "cancelled", eventType = "custom"),
-            deferred.await(),
-        )
-    }
+            assertEquals(
+                ComponentResultEvent(
+                    value = "cancelled",
+                    eventType = "custom",
+                    data = mapOf("closeReason" to "auto"),
+                ),
+                deferred.await(),
+            )
+        }
 
     @Test
-    fun `onResultError should emit error event`() = runTest(UnconfinedTestDispatcher()) {
+    fun `onClosed with USER should emit cancelled event with closeReason user`() =
+        runTest(UnconfinedTestDispatcher()) {
+            val deferred = async { handler.componentEvents.first() }
+
+            handler.onClosed(UrlCloseReason.USER)
+
+            assertEquals(
+                ComponentResultEvent(
+                    value = "cancelled",
+                    eventType = "custom",
+                    data = mapOf("closeReason" to "user"),
+                ),
+                deferred.await(),
+            )
+        }
+
+    @Test
+    fun `onResultError should emit error event without data`() = runTest(UnconfinedTestDispatcher()) {
         val deferred = async { handler.componentEvents.first() }
 
         handler.onResultError("https://error.example.com")
 
         assertEquals(
-            ComponentResultEvent(value = "error", eventType = "custom"),
+            ComponentResultEvent(value = "error", eventType = "custom", data = emptyMap()),
             deferred.await(),
         )
     }
