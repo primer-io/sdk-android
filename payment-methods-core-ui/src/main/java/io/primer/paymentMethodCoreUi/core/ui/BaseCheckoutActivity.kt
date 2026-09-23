@@ -23,8 +23,8 @@ open class BaseCheckoutActivity : AppCompatActivity(), DISdkComponent {
         supportActionBar?.hide()
 
         val deeplinkLaunchAfterKill: Boolean = savedInstanceState == null && intent?.data != null
-        val processRestartWithoutContainer: Boolean = savedInstanceState != null &&
-            DISdkContext.headlessSdkContainer?.containers.isNullOrEmpty()
+        val processRestartWithoutContainer: Boolean =
+            savedInstanceState != null && DISdkContext.isHeadlessInitialized.not()
 
         if (deeplinkLaunchAfterKill || processRestartWithoutContainer) {
             logReporter.warn(
@@ -49,6 +49,17 @@ open class BaseCheckoutActivity : AppCompatActivity(), DISdkComponent {
         if (isFinishing.not()) {
             block()
         }
+    }
+
+    /**
+     * Finishes the activity when the headless SDK has no initialized dependency container, which is the case
+     * when `cleanup()` ran while this activity was being launched. Returns true when the activity is finishing.
+     */
+    protected fun finishIfSdkIsNotInitialized(): Boolean {
+        if (DISdkContext.isHeadlessInitialized) return false
+        logReporter.warn("Finishing activity (hashcode ${hashCode()}) because the headless SDK is not initialized")
+        finish()
+        return true
     }
 
     companion object {

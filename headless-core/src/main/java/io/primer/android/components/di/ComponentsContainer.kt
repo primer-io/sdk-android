@@ -99,6 +99,8 @@ internal class ComponentsContainer(private val sdk: () -> SdkContainer) : Depend
                 errorHandler = resolve(),
                 baseErrorResolver = sdk().resolve(),
                 scopeProvider = resolve(),
+                paymentMethodComposerRegistry = sdk().resolve(),
+                vaultedPaymentMethodComposerRegistry = sdk().resolve(),
             )
         }
 

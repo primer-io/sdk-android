@@ -10,6 +10,8 @@ import io.primer.android.configuration.data.datasource.GlobalCacheConfigurationC
 import io.primer.android.core.domain.None
 import io.primer.android.core.utils.CoroutineScopeProvider
 import io.primer.android.errors.domain.BaseErrorResolver
+import io.primer.android.paymentmethods.core.composer.registry.PaymentMethodComposerRegistry
+import io.primer.android.paymentmethods.core.composer.registry.VaultedPaymentMethodComposerRegistry
 import io.primer.android.payments.core.helpers.CheckoutErrorHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancelChildren
@@ -25,6 +27,7 @@ internal interface HeadlessUniversalCheckoutDelegate {
     fun clear(exception: CancellationException?, cleanClientSessionCache: Boolean)
 }
 
+@Suppress("LongParameterList")
 internal class DefaultHeadlessUniversalCheckoutDelegate(
     private val paymentsTypesInteractor: PaymentsTypesInteractor,
     private val analyticsInteractor: AnalyticsInteractor,
@@ -32,6 +35,8 @@ internal class DefaultHeadlessUniversalCheckoutDelegate(
     private val errorHandler: CheckoutErrorHandler,
     private val baseErrorResolver: BaseErrorResolver,
     private val scopeProvider: CoroutineScopeProvider,
+    private val paymentMethodComposerRegistry: PaymentMethodComposerRegistry,
+    private val vaultedPaymentMethodComposerRegistry: VaultedPaymentMethodComposerRegistry,
 ) : HeadlessUniversalCheckoutDelegate {
     private val scope: CoroutineScope = scopeProvider.scope
 
@@ -68,6 +73,20 @@ internal class DefaultHeadlessUniversalCheckoutDelegate(
 
     override fun clear(exception: CancellationException?, cleanClientSessionCache: Boolean) {
         if (cleanClientSessionCache) globalCacheConfigurationCacheDataSource.clear()
+        // Composers own the coroutine scopes of in-flight payment flows and drive HeadlessActivity. Stop them before
+        // the dependency container is cleared, so no pending work resolves dependencies that no longer exist.
+        cancelComposers()
         scope.coroutineContext.cancelChildren()
+    }
+
+    private fun cancelComposers() {
+        paymentMethodComposerRegistry.composers.toMap().forEach { (id, composer) ->
+            composer.cancel()
+            paymentMethodComposerRegistry.unregister(id)
+        }
+        vaultedPaymentMethodComposerRegistry.composers.toMap().forEach { (id, composer) ->
+            composer.cancel()
+            vaultedPaymentMethodComposerRegistry.unregister(id)
+        }
     }
 }

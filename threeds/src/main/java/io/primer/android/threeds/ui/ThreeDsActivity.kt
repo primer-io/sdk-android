@@ -31,6 +31,7 @@ class ThreeDsActivity : BaseCheckoutActivity() {
         setContentView(R.layout.activity_primer_progress)
         findViewById<View>(R.id.rootView).applyFullWindowInsetsPadding()
         runIfNotFinishing {
+            if (finishIfSdkIsNotInitialized()) return@runIfNotFinishing
             params = savedInstanceState?.getSerializableCompat(INTENT_PARAMS_EXTRA_KEY)
                 ?: intent.getSerializableCompat(INTENT_PARAMS_EXTRA_KEY)
             registerContainer(containerProvider = {
