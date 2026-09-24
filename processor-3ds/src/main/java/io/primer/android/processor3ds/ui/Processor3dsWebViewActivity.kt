@@ -26,13 +26,16 @@ class Processor3dsWebViewActivity : WebViewActivity(), DISdkComponent {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        registerContainer(containerProvider = { Processor3dsContainer(it) })
-        logAnalyticsViewed()
-        viewModel.getStatus(
-            statusUrl = intent?.extras?.getString(STATUS_URL_KEY).orEmpty(),
-            paymentMethodType = intent?.extras?.getString(PAYMENT_METHOD_TYPE_KEY).orEmpty(),
-        )
-        setupObservers()
+        runIfNotFinishing {
+            if (finishIfSdkIsNotInitialized()) return@runIfNotFinishing
+            registerContainer(containerProvider = { Processor3dsContainer(it) })
+            logAnalyticsViewed()
+            viewModel.getStatus(
+                statusUrl = intent?.extras?.getString(STATUS_URL_KEY).orEmpty(),
+                paymentMethodType = intent?.extras?.getString(PAYMENT_METHOD_TYPE_KEY).orEmpty(),
+            )
+            setupObservers()
+        }
     }
 
     @Deprecated("Deprecated in Java")

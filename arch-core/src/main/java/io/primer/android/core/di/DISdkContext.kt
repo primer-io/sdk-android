@@ -21,6 +21,9 @@ object DISdkContext {
     @Volatile
     var headlessSdkContainer: SdkContainer? = null
 
+    val isHeadlessInitialized: Boolean
+        get() = headlessSdkContainer?.containers?.isNotEmpty() == true
+
     @Volatile
     var coreContainer: SdkContainer? = null
 

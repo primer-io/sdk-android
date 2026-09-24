@@ -22,6 +22,7 @@ class WebRedirectActivity : WebViewActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         runIfNotFinishing {
+            if (finishIfSdkIsNotInitialized()) return@runIfNotFinishing
             logAnalyticsViewed()
         }
     }
