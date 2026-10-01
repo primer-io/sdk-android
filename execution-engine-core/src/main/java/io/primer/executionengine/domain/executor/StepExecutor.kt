@@ -3,6 +3,9 @@ package io.primer.executionengine.domain.executor
 import io.primer.executionengine.domain.models.StepResult
 
 fun interface StepExecutor {
+    /** The version of the step's contract this executor implements. */
+    val version: String get() = "1.0.0"
+
     suspend fun execute(actionId: String, step: String): Result<StepResult>
 
     /**

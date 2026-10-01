@@ -26,7 +26,16 @@ data class UrlContextParams(val url: String) : BaseContextParams()
 
 data class ProcessorTestDecisionParams(val decision: String) : BaseContextParams()
 
-data class BdcFlowStartContextParams(val trustedKeyFingerprints: List<String>) : BaseContextParams()
+data class BdcFlowStartContextParams(
+    val trustedKeyFingerprints: List<String>,
+    val paymentMethodType: String? = null,
+) : BaseContextParams()
+
+data class BdcClientRequirementsNotMetContextParams(
+    val paymentMethodType: String,
+    // The state processor's JSON list of what falls short.
+    val unmet: String,
+) : BaseContextParams()
 
 data class IPay88PaymentMethodContextParams(
     val iPay88PaymentMethodId: String,

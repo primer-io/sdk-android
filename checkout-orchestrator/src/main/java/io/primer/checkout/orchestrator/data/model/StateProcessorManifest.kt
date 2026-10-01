@@ -2,6 +2,7 @@ package io.primer.checkout.orchestrator.data.model
 
 import io.primer.android.core.data.serialization.json.JSONDeserializable
 import io.primer.android.core.data.serialization.json.JSONObjectDeserializer
+import io.primer.jscore.domain.core.models.JsResourceUrl
 import org.json.JSONObject
 
 /**
@@ -120,3 +121,11 @@ internal data class StateProcessorManifest(
         )
     }
 }
+
+/** The bundle, and the CEL runtime its expressions are evaluated with. */
+internal val StateProcessorManifest.jsResources: List<JsResourceUrl>
+    get() = listOf(
+        JsResourceUrl(url = stateProcessor.umd.url, expectedSha256 = stateProcessor.umd.sha256),
+        JsResourceUrl(url = cel.noModules.wasm.gz, expectedSha256 = cel.noModules.wasm.sha256),
+        JsResourceUrl(url = cel.noModules.js.url, expectedSha256 = cel.noModules.js.sha256),
+    )

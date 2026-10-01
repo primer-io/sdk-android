@@ -2,6 +2,16 @@ package io.primer.jscore.infrastructure.core.script
 
 internal object JsScripts {
 
+    val CHECK_CLIENT_REQUIREMENTS = """
+        (async (items, client) => {
+            const result = {};
+            for (const item of items) {
+                result[item.type] = await StateProcessor.checkClientRequirements(item.clientRequirements, client);
+            }
+            return JSON.stringify(result);
+        })
+    """.trimIndent()
+
     val INITIALIZE_PROCESSOR = """
         (async (schema, state, sdkContext) => {
             const processor = await StateProcessor.createStateProcessor(JSON.stringify(schema), sdkContext);

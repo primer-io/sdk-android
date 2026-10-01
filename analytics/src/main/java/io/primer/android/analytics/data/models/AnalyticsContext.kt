@@ -23,6 +23,7 @@ sealed class AnalyticsContext(
         CACHE_SOURCE,
         DROP_IN_SOURCE,
         BDC_FLOW_START,
+        BDC_CLIENT_REQUIREMENTS_NOT_MET,
     }
 
     companion object {
@@ -96,6 +97,11 @@ sealed class AnalyticsContext(
                         BdcFlowStartAnalyticsContext.serializer.serialize(
                             t as BdcFlowStartAnalyticsContext,
                         )
+
+                    AnalyticsContextType.BDC_CLIENT_REQUIREMENTS_NOT_MET ->
+                        BdcClientRequirementsNotMetAnalyticsContext.serializer.serialize(
+                            t as BdcClientRequirementsNotMetAnalyticsContext,
+                        )
                 }
             }
 
@@ -143,6 +149,9 @@ sealed class AnalyticsContext(
 
                     AnalyticsContextType.BDC_FLOW_START ->
                         BdcFlowStartAnalyticsContext.deserializer.deserialize(t)
+
+                    AnalyticsContextType.BDC_CLIENT_REQUIREMENTS_NOT_MET ->
+                        BdcClientRequirementsNotMetAnalyticsContext.deserializer.deserialize(t)
                 }
             }
     }
@@ -542,15 +551,18 @@ data class DropInSourceAnalyticsContext(
 
 internal data class BdcFlowStartAnalyticsContext(
     val trustedKeyFingerprints: List<String>,
+    val paymentMethodType: String? = null,
 ) : AnalyticsContext(AnalyticsContextType.BDC_FLOW_START) {
     companion object {
         private const val TRUSTED_KEY_FINGERPRINTS_FIELD = "trustedKeyFingerprints"
+        private const val PAYMENT_METHOD_TYPE_FIELD = "paymentMethodType"
 
         @JvmField
         val serializer =
             JSONObjectSerializer<BdcFlowStartAnalyticsContext> { t ->
                 JSONObject().apply {
                     put(TRUSTED_KEY_FINGERPRINTS_FIELD, JSONArray(t.trustedKeyFingerprints))
+                    putOpt(PAYMENT_METHOD_TYPE_FIELD, t.paymentMethodType)
                     put(ANALYTICS_CONTEXT_TYPE_FIELD, t.contextType.name)
                 }
             }
@@ -560,7 +572,36 @@ internal data class BdcFlowStartAnalyticsContext(
             JSONObjectDeserializer { t ->
                 val array = t.getJSONArray(TRUSTED_KEY_FINGERPRINTS_FIELD)
                 val fingerprints = (0 until array.length()).map { array.getString(it) }
-                BdcFlowStartAnalyticsContext(fingerprints)
+                BdcFlowStartAnalyticsContext(fingerprints, t.optNullableString(PAYMENT_METHOD_TYPE_FIELD))
+            }
+    }
+}
+
+internal data class BdcClientRequirementsNotMetAnalyticsContext(
+    val paymentMethodType: String,
+    val unmet: String,
+) : AnalyticsContext(AnalyticsContextType.BDC_CLIENT_REQUIREMENTS_NOT_MET) {
+    companion object {
+        private const val PAYMENT_METHOD_TYPE_FIELD = "paymentMethodType"
+        private const val UNMET_FIELD = "unmet"
+
+        @JvmField
+        val serializer =
+            JSONObjectSerializer<BdcClientRequirementsNotMetAnalyticsContext> { t ->
+                JSONObject().apply {
+                    put(PAYMENT_METHOD_TYPE_FIELD, t.paymentMethodType)
+                    put(UNMET_FIELD, t.unmet)
+                    put(ANALYTICS_CONTEXT_TYPE_FIELD, t.contextType.name)
+                }
+            }
+
+        @JvmField
+        val deserializer =
+            JSONObjectDeserializer { t ->
+                BdcClientRequirementsNotMetAnalyticsContext(
+                    paymentMethodType = t.getString(PAYMENT_METHOD_TYPE_FIELD),
+                    unmet = t.getString(UNMET_FIELD),
+                )
             }
     }
 }

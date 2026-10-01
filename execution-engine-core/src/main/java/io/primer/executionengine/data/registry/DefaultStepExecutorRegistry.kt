@@ -37,6 +37,9 @@ internal class DefaultStepExecutorRegistry(
         executors[stepType] = executor
     }
 
+    override val declaredVersions: Map<String, String>
+        get() = executors.mapValues { (_, executor) -> executor.version }
+
     override fun onFinish() {
         executors.forEach { (type, executor) ->
             runCatching { executor.onFinish() }

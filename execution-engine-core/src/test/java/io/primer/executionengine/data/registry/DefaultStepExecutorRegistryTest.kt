@@ -148,6 +148,22 @@ internal class DefaultStepExecutorRegistryTest {
         registry.onFinish()
     }
 
+    @Test
+    fun `declaredVersions should list every registered step type at its version`() {
+        registry.registerExecutor("url.open", finishTrackingExecutor {})
+        registry.registerExecutor(
+            "http.request",
+            object : StepExecutor {
+                override val version = "2.0.0"
+
+                override suspend fun execute(actionId: String, step: String): Result<StepResult> =
+                    Result.success(StepResult(outcome = Outcome.SUCCESS, actionId = actionId))
+            },
+        )
+
+        assertEquals(mapOf("url.open" to "1.0.0", "http.request" to "2.0.0"), registry.declaredVersions)
+    }
+
     private fun finishTrackingExecutor(onFinishAction: () -> Unit): StepExecutor =
         object : StepExecutor {
             override suspend fun execute(actionId: String, step: String): Result<StepResult> =

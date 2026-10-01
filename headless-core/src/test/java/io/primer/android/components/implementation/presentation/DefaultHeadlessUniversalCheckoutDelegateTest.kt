@@ -18,6 +18,7 @@ import io.primer.android.domain.error.models.PrimerError
 import io.primer.android.errors.domain.BaseErrorResolver
 import io.primer.android.paymentmethods.core.composer.PaymentMethodComposer
 import io.primer.android.payments.core.helpers.CheckoutErrorHandler
+import io.primer.checkout.orchestrator.domain.PreloadStateProcessorInteractor
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.SupervisorJob
@@ -25,6 +26,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 
@@ -34,6 +36,9 @@ internal class DefaultHeadlessUniversalCheckoutDelegateTest {
 
     @MockK
     lateinit var paymentsTypesInteractor: PaymentsTypesInteractor
+
+    @MockK
+    lateinit var preloadStateProcessorInteractor: PreloadStateProcessorInteractor
 
     @MockK
     lateinit var analyticsInteractor: AnalyticsInteractor
@@ -53,6 +58,7 @@ internal class DefaultHeadlessUniversalCheckoutDelegateTest {
 
     private fun delegate(scope: CoroutineScope) = DefaultHeadlessUniversalCheckoutDelegate(
         paymentsTypesInteractor = paymentsTypesInteractor,
+        preloadStateProcessorInteractor = preloadStateProcessorInteractor,
         analyticsInteractor = analyticsInteractor,
         globalCacheConfigurationCacheDataSource = globalCacheConfigurationCacheDataSource,
         errorHandler = errorHandler,
@@ -63,6 +69,23 @@ internal class DefaultHeadlessUniversalCheckoutDelegateTest {
         paymentMethodComposerRegistry = paymentMethodComposerRegistry,
         vaultedPaymentMethodComposerRegistry = vaultedPaymentMethodComposerRegistry,
     )
+
+    @BeforeEach
+    fun setUp() {
+        coEvery { preloadStateProcessorInteractor(None) } returns Result.success(Unit)
+    }
+
+    @Test
+    fun `start should preload the state processor alongside the configuration`() = runTest {
+        coEvery { analyticsInteractor(any()) } returns Result.success(Unit)
+        coEvery { paymentsTypesInteractor(None) } returns Result.success(Unit)
+
+        delegate(this).start()
+        advanceUntilIdle()
+
+        coVerify(exactly = 1) { preloadStateProcessorInteractor(None) }
+        coVerify(exactly = 1) { paymentsTypesInteractor(None) }
+    }
 
     @Test
     fun `start should surface an init failure through the error handler`() = runTest {

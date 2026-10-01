@@ -13,6 +13,7 @@ import io.primer.android.errors.domain.BaseErrorResolver
 import io.primer.android.paymentmethods.core.composer.registry.PaymentMethodComposerRegistry
 import io.primer.android.paymentmethods.core.composer.registry.VaultedPaymentMethodComposerRegistry
 import io.primer.android.payments.core.helpers.CheckoutErrorHandler
+import io.primer.checkout.orchestrator.domain.PreloadStateProcessorInteractor
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.launch
@@ -30,6 +31,7 @@ internal interface HeadlessUniversalCheckoutDelegate {
 @Suppress("LongParameterList")
 internal class DefaultHeadlessUniversalCheckoutDelegate(
     private val paymentsTypesInteractor: PaymentsTypesInteractor,
+    private val preloadStateProcessorInteractor: PreloadStateProcessorInteractor,
     private val analyticsInteractor: AnalyticsInteractor,
     private val globalCacheConfigurationCacheDataSource: GlobalCacheConfigurationCacheDataSource,
     private val errorHandler: CheckoutErrorHandler,
@@ -41,6 +43,8 @@ internal class DefaultHeadlessUniversalCheckoutDelegate(
     private val scope: CoroutineScope = scopeProvider.scope
 
     override fun start() {
+        // Alongside the configuration request.
+        scope.launch { preloadStateProcessorInteractor(None) }
         scope.launch {
             val timeSource = TimeSource.Monotonic
             val start = timeSource.markNow()

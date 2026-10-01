@@ -123,6 +123,7 @@ enum class MessageType {
     RETRY_FAILED,
     RETRY_SUCCESS,
     BDC_FLOW_START,
+    BDC_CLIENT_REQUIREMENTS_NOT_MET,
 }
 
 enum class Severity {
