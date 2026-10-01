@@ -1,6 +1,5 @@
 package io.primer.android.components
 
-import io.primer.android.configuration.data.model.PaymentMethodCapability
 import io.primer.android.configuration.data.model.PaymentMethodConfigDataResponse
 import io.primer.android.core.logging.internal.LogReporter
 import io.primer.android.core.utils.Failure
@@ -15,9 +14,8 @@ internal class PaymentMethodListFactory(
         val paymentMethods = mutableListOf<PaymentMethod>()
 
         configList.forEach { config ->
-            val isBackendDriven = config.capabilities.contains(PaymentMethodCapability.BACKEND_DRIVEN)
             when (
-                val result = mapping.getPaymentMethodFor(config.implementationType, config.type, isBackendDriven)
+                val result = mapping.getPaymentMethodFor(config.implementationType, config.type, config.isBackendDriven)
             ) {
                 is Success -> paymentMethods.add(result.value)
                 is Failure ->

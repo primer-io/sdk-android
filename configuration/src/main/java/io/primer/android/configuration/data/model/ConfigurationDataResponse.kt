@@ -272,8 +272,18 @@ data class PaymentMethodConfigDataResponse(
     val options: PaymentMethodRemoteConfigOptions?,
     val displayMetadata: PaymentMethodDisplayMetadataResponse?,
     val capabilities: Set<PaymentMethodCapability>,
+    // As received, for the state processor to check.
+    val clientRequirements: String? = null,
 ) : JSONDeserializable {
     fun toPaymentMethodConfig() = PaymentMethodConfig(id = id, name = name, type = type, options = options)
+
+    /** `WEB_REDIRECT` with the `BACKEND_DRIVEN` capability is the legacy form. */
+    val isBackendDriven: Boolean
+        get() = when (implementationType) {
+            PaymentMethodImplementationType.BACKEND_DRIVEN -> true
+            PaymentMethodImplementationType.WEB_REDIRECT -> PaymentMethodCapability.BACKEND_DRIVEN in capabilities
+            else -> false
+        }
 
     companion object {
         const val ID_FIELD = "id"
@@ -283,6 +293,7 @@ data class PaymentMethodConfigDataResponse(
         private const val OPTIONS_FIELD = "options"
         const val DISPLAY_METADATA_FIELD = "displayMetadata"
         const val CAPABILITIES_FIELD = "capabilities"
+        const val CLIENT_REQUIREMENTS_FIELD = "clientRequirements"
 
         @JvmField
         val deserializer =
@@ -309,6 +320,7 @@ data class PaymentMethodConfigDataResponse(
                     t.optJSONArray(CAPABILITIES_FIELD)?.sequence<String>()?.map {
                         PaymentMethodCapability.safeValueOf(it)
                     }?.toSet().orEmpty(),
+                    t.optJSONObject(CLIENT_REQUIREMENTS_FIELD)?.toString(),
                 )
             }
     }

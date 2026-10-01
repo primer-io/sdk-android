@@ -7,7 +7,7 @@ import io.primer.android.paymentmethods.common.utils.Constants
 internal class DefaultReturnUriProvider(
     private val applicationIdProvider: BaseDataProvider<String>,
 ) : ReturnUriProvider {
-    override suspend fun provide(): String {
+    override fun provide(): String {
         return Uri.Builder()
             .scheme(Constants.PRIMER_REDIRECT_SCHEMA)
             .authority("${Constants.PRIMER_REDIRECT_PREFIX}${applicationIdProvider.provide()}")

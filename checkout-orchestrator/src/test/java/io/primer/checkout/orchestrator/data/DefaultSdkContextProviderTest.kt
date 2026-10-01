@@ -21,6 +21,7 @@ import io.primer.android.configuration.data.model.Environment
 import io.primer.android.core.utils.BaseDataProvider
 import io.primer.android.data.settings.PrimerPaymentHandling
 import io.primer.android.data.settings.PrimerSettings
+import io.primer.checkout.orchestrator.domain.ReturnUriProvider
 import org.json.JSONObject
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -54,6 +55,9 @@ internal class DefaultSdkContextProviderTest {
     @MockK
     lateinit var contentResolver: ContentResolver
 
+    @MockK
+    lateinit var returnUriProvider: ReturnUriProvider
+
     private lateinit var provider: DefaultSdkContextProvider
 
     @BeforeEach
@@ -71,6 +75,7 @@ internal class DefaultSdkContextProviderTest {
         every { settings.sdkIntegrationType } returns SdkIntegrationType.HEADLESS
         every { settings.paymentHandling } returns PrimerPaymentHandling.AUTO
         every { analyticsDataProvider.provide() } returns createAnalyticsData(analyticsUrl = ANALYTICS_URL)
+        every { returnUriProvider.provide() } returns RETURN_URL
 
         provider = DefaultSdkContextProvider(
             context = context,
@@ -79,6 +84,7 @@ internal class DefaultSdkContextProviderTest {
             applicationIdProvider = applicationIdProvider,
             settings = settings,
             analyticsDataProvider = analyticsDataProvider,
+            returnUriProvider = returnUriProvider,
         )
     }
 
@@ -106,6 +112,21 @@ internal class DefaultSdkContextProviderTest {
         assertTrue(result.has("device"))
         val device = result.getJSONObject("device")
         assertTrue(device.has("locale"))
+        assertEquals("ANDROID", device.getString("platform"))
+    }
+
+    @Test
+    fun `provide should carry the return URL a redirect brings the buyer back to`() {
+        val result = JSONObject(provider.provide(PAYMENT_METHOD_TYPE, null))
+
+        assertEquals(RETURN_URL, result.getJSONObject("redirect").getString("returnUrl"))
+    }
+
+    @Test
+    fun `provide should omit the payment section without a payment method type`() {
+        val result = JSONObject(provider.provide(null, null))
+
+        assertFalse(result.has("payment"))
     }
 
     @Test
@@ -233,5 +254,6 @@ internal class DefaultSdkContextProviderTest {
         const val APPLICATION_ID = "com.example.app"
         const val PRIMER_ACCOUNT_ID = "primer-account-123"
         const val ANALYTICS_URL = "https://analytics.example.com"
+        const val RETURN_URL = "primer://requestor.com.example.app/async"
     }
 }

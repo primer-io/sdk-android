@@ -17,7 +17,10 @@ import io.mockk.slot
 import io.mockk.unmockkObject
 import io.mockk.unmockkStatic
 import io.mockk.verify
+import io.primer.android.analytics.data.models.MessageType
 import io.primer.android.analytics.domain.AnalyticsInteractor
+import io.primer.android.analytics.domain.models.BdcFlowStartContextParams
+import io.primer.android.analytics.domain.models.MessageAnalyticsParams
 import io.primer.android.configuration.data.datasource.CacheConfigurationDataSource
 import io.primer.android.configuration.data.model.ConfigurationData
 import io.primer.android.configuration.data.model.Environment
@@ -117,11 +120,15 @@ internal class DefaultCheckoutOrchestratorTest {
         coEvery { manifestRemoteDataSource.fetchManifest(any()) } returns manifest
         every { sdkContextProvider.provide(any(), any()) } returns """{"sdk":"context"}"""
         every { stepExecutorRegistry.onFinish() } just Runs
+        // Not loaded until the flow's first call.
+        every { jsExecutor.isAlive } returns false andThen true
 
         orchestrator = DefaultCheckoutOrchestrator(
-            jsExecutor = jsExecutor,
+            stateProcessorLoader = StateProcessorLoader(
+                manifestRemoteDataSource = manifestRemoteDataSource,
+                jsExecutor = jsExecutor,
+            ),
             stepExecutorRegistry = stepExecutorRegistry,
-            manifestRemoteDataSource = manifestRemoteDataSource,
             configurationDataSource = configurationDataSource,
             sdkContextProvider = sdkContextProvider,
             analyticsInteractor = analyticsInteractor,
@@ -332,6 +339,33 @@ internal class DefaultCheckoutOrchestratorTest {
     }
 
     @Test
+    fun `start() should apply the step result again on a new load when the engine died`() = runTest {
+        var alive = false
+        every { jsExecutor.isAlive } answers { alive }
+        coEvery { jsExecutor.initialize(any()) } answers {
+            alive = true
+            Result.success(Unit)
+        }
+        coEvery {
+            jsExecutor.initializeStateProcessor(any(), any(), any())
+        } returns Result.success(actionResultJson("action-1", "TOKENIZE", "{}"))
+        coEvery { stepExecutorRegistry.executeAction(any(), any(), any()) } returns Result.success(
+            StepResult(outcome = Outcome.SUCCESS, actionId = "action-1", data = emptyMap()),
+        )
+        // Killed while the step ran, e.g. with the app in the background.
+        coEvery { jsExecutor.applyResult(any(), any(), any(), any(), any(), any()) } answers {
+            alive = false
+            Result.failure(IllegalStateException("sandbox dead"))
+        } andThen Result.success(terminalResultJson(Outcome.SUCCESS))
+
+        val result = startOrchestrator(payload)
+
+        assertEquals(CheckoutFlowOutcome.Completed, result.getOrNull())
+        coVerify(exactly = 2) { jsExecutor.initialize(any()) }
+        coVerify(exactly = 1) { stepExecutorRegistry.executeAction(any(), any(), any()) }
+    }
+
+    @Test
     fun `start() should marshal step result data as real JSON when applying the result`() = runTest {
         coEvery { jsExecutor.initialize(any()) } returns Result.success(Unit)
         coEvery {
@@ -521,8 +555,9 @@ internal class DefaultCheckoutOrchestratorTest {
 
         val result = startOrchestrator(payload)
 
-        assertTrue(result.isFailure)
-        assertEquals(error, result.exceptionOrNull())
+        // Rethrown out of a coroutine scope, so coroutines may hand back a copy.
+        assertTrue(result.exceptionOrNull() is RuntimeException)
+        assertEquals(error.message, result.exceptionOrNull()?.message)
     }
 
     @Test
@@ -534,7 +569,14 @@ internal class DefaultCheckoutOrchestratorTest {
 
         startOrchestrator(payload)
 
-        coVerify { analyticsInteractor(any()) }
+        coVerify {
+            analyticsInteractor(
+                match<MessageAnalyticsParams> {
+                    it.messageType == MessageType.BDC_FLOW_START &&
+                        (it.context as BdcFlowStartContextParams).paymentMethodType == paymentMethodType
+                },
+            )
+        }
     }
 
     private fun payloadWithParameters(parameters: JSONObject): String = JSONObject().apply {

@@ -91,6 +91,7 @@ internal class ComponentsContainer(private val sdk: () -> SdkContainer) : Depend
         registerFactory {
             DefaultHeadlessUniversalCheckoutDelegate(
                 paymentsTypesInteractor = resolve(),
+                preloadStateProcessorInteractor = sdk().resolve(),
                 analyticsInteractor = sdk().resolve(),
                 globalCacheConfigurationCacheDataSource =
                 sdk().resolve(

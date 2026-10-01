@@ -193,39 +193,40 @@ class MainViewModel(
     val canLaunchPrimer: MutableLiveData<Boolean> =
         CombinedLiveData(customerId, _amount, ::canLaunch)
 
-    val settings = PrimerSettings(
-        // todo: refactor to reintroduce custom values through client session
-        paymentHandling = _paymentHandling.value ?: PrimerPaymentHandling.AUTO,
-        paymentMethodOptions = PrimerPaymentMethodOptions(
-            redirectScheme = "primer",
-            klarnaOptions = PrimerKlarnaOptions(
-                recurringPaymentDescription = "This is custom description",
-                returnIntentUrl = Uri.Builder()
-                    .scheme("app")
-                    .authority("deeplink.return.activity")
-                    .build()
-                    .toString()
-            ),
-            googlePayOptions = PrimerGooglePayOptions(
-                captureBillingAddress = true,
-                existingPaymentMethodRequired = false,
-                shippingAddressParameters = PrimerGoogleShippingAddressParameters(
-                    phoneNumberRequired = true
+    val settings: PrimerSettings
+        get() = PrimerSettings(
+            // todo: refactor to reintroduce custom values through client session
+            paymentHandling = _paymentHandling.value ?: PrimerPaymentHandling.AUTO,
+            paymentMethodOptions = PrimerPaymentMethodOptions(
+                redirectScheme = "primer",
+                klarnaOptions = PrimerKlarnaOptions(
+                    recurringPaymentDescription = "This is custom description",
+                    returnIntentUrl = Uri.Builder()
+                        .scheme("app")
+                        .authority("deeplink.return.activity")
+                        .build()
+                        .toString()
                 ),
-                emailAddressRequired = true,
-                requireShippingMethod = false,
-                buttonOptions = GooglePayButtonOptions(buttonType = ButtonConstants.ButtonType.PAY)
+                googlePayOptions = PrimerGooglePayOptions(
+                    captureBillingAddress = true,
+                    existingPaymentMethodRequired = false,
+                    shippingAddressParameters = PrimerGoogleShippingAddressParameters(
+                        phoneNumberRequired = true
+                    ),
+                    emailAddressRequired = true,
+                    requireShippingMethod = false,
+                    buttonOptions = GooglePayButtonOptions(buttonType = ButtonConstants.ButtonType.PAY)
+                ),
+                threeDsOptions = PrimerThreeDsOptions("https://primer.io/3ds"),
+                stripeOptions = PrimerStripeOptions(
+                    mandateData = PrimerStripeOptions.MandateData.TemplateMandateData("Primer Inc."),
+                    publishableKey = BuildConfig.STRIPE_PUBLISHABLE_KEY
+                )
             ),
-            threeDsOptions = PrimerThreeDsOptions("https://primer.io/3ds"),
-            stripeOptions = PrimerStripeOptions(
-                mandateData = PrimerStripeOptions.MandateData.TemplateMandateData("Primer Inc."),
-                publishableKey = BuildConfig.STRIPE_PUBLISHABLE_KEY
-            )
-        ),
-        uiOptions = _uiOptions.value ?: PrimerUIOptions(),
-        debugOptions = PrimerDebugOptions(is3DSSanityCheckEnabled = false),
-        clientSessionCachingEnabled = true
-    ).overrideWith(savedStateHandle["settings"]).also { Log.d("PrimerSettings", it.serialize().toString()) }
+            uiOptions = _uiOptions.value ?: PrimerUIOptions(),
+            debugOptions = PrimerDebugOptions(is3DSSanityCheckEnabled = false),
+            clientSessionCachingEnabled = true
+        ).overrideWith(savedStateHandle["settings"]).also { Log.d("PrimerSettings", it.serialize().toString()) }
 
     private val _collectedTag: MutableLiveData<Intent?> = MutableLiveData()
     val collectedTag: LiveData<Intent?> = _collectedTag

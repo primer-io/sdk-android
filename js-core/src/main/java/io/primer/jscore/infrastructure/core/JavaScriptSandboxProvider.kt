@@ -20,6 +20,12 @@ internal class JavaScriptSandboxProvider(private val context: Context) {
         sandbox ?: createSandbox().also { sandbox = it }
     }
 
+    /** Forgets a sandbox whose process died, so the next [get] connects a new one. */
+    suspend fun drop(dead: JavaScriptSandbox) {
+        mutex.withLock { if (sandbox === dead) sandbox = null }
+        runCatching { dead.close() }
+    }
+
     fun close() {
         sandbox?.close()
         sandbox = null

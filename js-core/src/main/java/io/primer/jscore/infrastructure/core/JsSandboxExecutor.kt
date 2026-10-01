@@ -3,10 +3,12 @@ package io.primer.jscore.infrastructure.core
 import android.annotation.SuppressLint
 import android.os.Build
 import android.webkit.WebView
+import androidx.javascriptengine.IsolateTerminatedException
 import androidx.javascriptengine.JavaScriptConsoleCallback
 import androidx.javascriptengine.JavaScriptIsolate
 import androidx.javascriptengine.JavaScriptSandbox
 import androidx.javascriptengine.JavaScriptSandbox.JS_FEATURE_PROVIDE_CONSUME_ARRAY_BUFFER
+import androidx.javascriptengine.SandboxDeadException
 import com.google.common.util.concurrent.ListenableFuture
 import com.google.common.util.concurrent.MoreExecutors
 import io.primer.android.core.extensions.runSuspendCatching
@@ -23,6 +25,7 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
 import org.json.JSONObject
+import java.util.concurrent.ExecutionException
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 
@@ -32,11 +35,17 @@ internal class JsSandboxExecutor(
     private val jsResourceDataSource: JsResourceDataSource,
 ) : JsExecutor {
 
+    private lateinit var sandbox: JavaScriptSandbox
     private lateinit var isolate: JavaScriptIsolate
+
+    @Volatile
+    override var isAlive: Boolean = false
+        private set
 
     @SuppressLint("RequiresFeature")
     override suspend fun initialize(resources: List<JsResourceUrl>) = runSuspendCatching {
-        val sandbox = sandboxProvider.get()
+        isAlive = false
+        val sandbox = sandboxProvider.get().also { this.sandbox = it }
 
         val resolvedResources = coroutineScope {
             launch {
@@ -88,6 +97,7 @@ internal class JsSandboxExecutor(
             """.trimIndent()
             currentIsolate.evaluateJsAsync(initScript)
         }
+        isAlive = true
     }
 
     private fun onJsConsoleMessage(message: JavaScriptConsoleCallback.ConsoleMessage) {
@@ -124,12 +134,33 @@ internal class JsSandboxExecutor(
         isolate.evaluateJsAsync(script)
     }
 
+    override suspend fun checkClientRequirements(items: String, client: String): Result<String> =
+        runSuspendCatching {
+            isolate.evaluateJsAsync("${JsScripts.CHECK_CLIENT_REQUIREMENTS}($items, $client)")
+        }
+
     override fun destroy() {
         if (::isolate.isInitialized) isolate.close()
     }
 
     private suspend fun JavaScriptIsolate.evaluateJsAsync(script: String): String =
-        evaluateJavaScriptAsync(script).await()
+        try {
+            evaluateJavaScriptAsync(script).await()
+        } catch (expected: ExecutionException) {
+            expected.isolateTermination?.let { onTerminated(it) }
+            throw expected
+        }
+
+    // The next initialize recovers, on a new sandbox when this one died.
+    private suspend fun onTerminated(termination: IsolateTerminatedException) {
+        isAlive = false
+        logReporter.warn("JS engine terminated: ${termination.message}")
+        if (termination is SandboxDeadException) sandboxProvider.drop(sandbox)
+    }
+
+    // Searched along the causes, since coroutines may wrap what the future failed with.
+    private val Throwable.isolateTermination: IsolateTerminatedException?
+        get() = generateSequence(this) { it.cause }.filterIsInstance<IsolateTerminatedException>().firstOrNull()
 
     private suspend fun <T> ListenableFuture<T>.await(): T =
         suspendCancellableCoroutine { continuation ->

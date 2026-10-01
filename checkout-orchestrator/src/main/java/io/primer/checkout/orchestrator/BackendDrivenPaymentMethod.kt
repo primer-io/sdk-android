@@ -5,8 +5,10 @@ import io.primer.android.assets.ui.registry.BrandRegistry
 import io.primer.android.configuration.data.model.ConfigurationData
 import io.primer.android.core.di.DISdkComponent
 import io.primer.android.core.di.SdkContainer
+import io.primer.android.core.di.extensions.resolve
 import io.primer.android.errors.domain.ErrorMapperRegistry
 import io.primer.android.paymentmethods.PaymentMethod
+import io.primer.android.paymentmethods.PaymentMethodChecker
 import io.primer.android.paymentmethods.PaymentMethodCheckerRegistry
 import io.primer.android.paymentmethods.PaymentMethodDescriptorFactoryRegistry
 import io.primer.android.paymentmethods.PaymentMethodModule
@@ -27,7 +29,16 @@ internal class BackendDrivenPaymentMethod(
     override val module = object : PaymentMethodModule {
         override fun initialize(applicationContext: Context, configuration: ConfigurationData) = Unit
 
-        override fun registerPaymentMethodCheckers(paymentMethodCheckerRegistry: PaymentMethodCheckerRegistry) = Unit
+        override fun registerPaymentMethodCheckers(paymentMethodCheckerRegistry: PaymentMethodCheckerRegistry) {
+            paymentMethodCheckerRegistry.register(
+                type,
+                object : PaymentMethodChecker {
+                    // Resolved when checked: the container is registered after the checkers.
+                    override suspend fun shouldPaymentMethodBeAvailable(paymentMethod: PaymentMethod) =
+                        resolve<BackendDrivenPaymentMethodChecker>().shouldPaymentMethodBeAvailable(paymentMethod)
+                },
+            )
+        }
 
         override fun registerPaymentMethodDescriptorFactory(
             paymentMethodDescriptorFactoryRegistry: PaymentMethodDescriptorFactoryRegistry,

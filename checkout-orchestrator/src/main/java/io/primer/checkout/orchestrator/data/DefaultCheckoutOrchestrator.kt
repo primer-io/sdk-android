@@ -10,8 +10,6 @@ import io.primer.android.configuration.data.datasource.CacheConfigurationDataSou
 import io.primer.android.core.data.serialization.json.JSONSerializationUtils
 import io.primer.android.core.data.serialization.json.extensions.toJSONObject
 import io.primer.android.core.extensions.runSuspendCatching
-import io.primer.checkout.orchestrator.ManifestOverrides
-import io.primer.checkout.orchestrator.data.datasource.ManifestRemoteDataSource
 import io.primer.checkout.orchestrator.data.model.ExecuteInstructionPayload
 import io.primer.checkout.orchestrator.data.model.ProcessingResult
 import io.primer.checkout.orchestrator.data.model.ResolvedAction
@@ -23,8 +21,6 @@ import io.primer.checkout.orchestrator.domain.model.CheckoutFlowOutcome
 import io.primer.executionengine.domain.models.Outcome
 import io.primer.executionengine.domain.models.StepResult
 import io.primer.executionengine.domain.registry.StepExecutorRegistry
-import io.primer.jscore.domain.core.JsExecutor
-import io.primer.jscore.domain.core.models.JsResourceUrl
 import io.primer.statetransport.domain.model.ClientInstructions
 import io.primer.statetransport.domain.model.CurrentAttempt
 import io.primer.statetransport.domain.model.InstructionFetch
@@ -35,15 +31,15 @@ import java.security.MessageDigest
 import kotlin.time.Duration.Companion.milliseconds
 
 internal class DefaultCheckoutOrchestrator(
-    private val jsExecutor: JsExecutor,
+    private val stateProcessorLoader: StateProcessorLoader,
     private val stepExecutorRegistry: StepExecutorRegistry,
-    private val manifestRemoteDataSource: ManifestRemoteDataSource,
     private val configurationDataSource: CacheConfigurationDataSource,
     private val sdkContextProvider: SdkContextProvider,
     private val analyticsInteractor: AnalyticsInteractor,
     private val trustedPublicKeysB64: List<String>,
 ) : CheckoutOrchestrator {
 
+    private var environment: String = ""
     private var schema: String = ""
     private var currentState: String = ""
     private var paymentId: String? = null
@@ -58,7 +54,7 @@ internal class DefaultCheckoutOrchestrator(
                 "CheckoutOrchestrator requires an EXECUTE instruction."
             }
             paymentId = envelope.currentAttempt?.paymentId
-            logBdcFlowStart()
+            logBdcFlowStart(paymentMethodType)
 
             val instructionPayload = ExecuteInstructionPayload.deserializer.deserialize(
                 JSONObject(instruction.payload),
@@ -70,36 +66,14 @@ internal class DefaultCheckoutOrchestrator(
                 currentAttempt = envelope.currentAttempt,
             )
 
-            val manifestUrl = ManifestOverrides.url
-                ?: ManifestRemoteDataSource.buildManifestUrl(
-                    configurationDataSource.get().environment.environment,
-                )
-            val manifest = manifestRemoteDataSource.fetchManifest(manifestUrl)
-
-            jsExecutor.initialize(
-                listOf(
-                    JsResourceUrl(
-                        url = manifest.stateProcessor.umd.url,
-                        expectedSha256 = manifest.stateProcessor.umd.sha256,
-                    ),
-                    JsResourceUrl(
-                        url = manifest.cel.noModules.wasm.gz,
-                        expectedSha256 = manifest.cel.noModules.wasm.sha256,
-                    ),
-                    JsResourceUrl(
-                        url = manifest.cel.noModules.js.url,
-                        expectedSha256 = manifest.cel.noModules.js.sha256,
-                    ),
-                ),
-            ).getOrThrow()
+            environment = configurationDataSource.get().environment.environment
 
             coroutineScope {
                 val context = sdkContextProvider.provide(paymentMethodType, paymentId)
-                val resultJson = jsExecutor.initializeStateProcessor(
-                    schema = schema,
-                    state = currentState,
-                    sdkContext = context,
-                ).getOrThrow()
+                // Usually loaded already, by the preload or the client requirements check.
+                val resultJson = stateProcessorLoader.execute(environment) {
+                    initializeStateProcessor(schema = schema, state = currentState, sdkContext = context)
+                }
 
                 val processingResult = parseProcessingResult(resultJson)
                 processResult(result = processingResult, paymentMethodType = paymentMethodType)
@@ -178,14 +152,16 @@ internal class DefaultCheckoutOrchestrator(
             )
         }
 
-        val resultJson = jsExecutor.applyResult(
-            schema = schema,
-            state = currentState,
-            sdkContext = sdkContextProvider.provide(paymentMethodType, paymentId),
-            actionId = stepResult.actionId,
-            outcome = stepResult.outcome.value,
-            response = stepResult.data.toJSONObject().toString(),
-        ).getOrThrow()
+        val resultJson = stateProcessorLoader.execute(environment) {
+            applyResult(
+                schema = schema,
+                state = currentState,
+                sdkContext = sdkContextProvider.provide(paymentMethodType, paymentId),
+                actionId = stepResult.actionId,
+                outcome = stepResult.outcome.value,
+                response = stepResult.data.toJSONObject().toString(),
+            )
+        }
 
         return parseProcessingResult(resultJson)
     }
@@ -194,7 +170,7 @@ internal class DefaultCheckoutOrchestrator(
         return JSONSerializationUtils.getJsonObjectDeserializer<ProcessingResult>().deserialize(JSONObject(json))
     }
 
-    private suspend fun logBdcFlowStart() {
+    private suspend fun logBdcFlowStart(paymentMethodType: String) {
         val fingerprints = trustedPublicKeysB64.map { keyB64 ->
             val keyBytes = Base64.decode(keyB64, Base64.DEFAULT)
             val digest = MessageDigest.getInstance("SHA-256").digest(keyBytes)
@@ -205,7 +181,10 @@ internal class DefaultCheckoutOrchestrator(
                 messageType = MessageType.BDC_FLOW_START,
                 message = "BDC flow started.",
                 severity = Severity.INFO,
-                context = BdcFlowStartContextParams(trustedKeyFingerprints = fingerprints),
+                context = BdcFlowStartContextParams(
+                    trustedKeyFingerprints = fingerprints,
+                    paymentMethodType = paymentMethodType,
+                ),
             ),
         )
     }

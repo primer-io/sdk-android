@@ -4,6 +4,7 @@ import io.primer.android.analytics.data.helper.SdkTypeResolver
 import io.primer.android.analytics.domain.models.BankIssuerContextParams
 import io.primer.android.analytics.domain.models.BaseAnalyticsParams
 import io.primer.android.analytics.domain.models.BaseContextParams
+import io.primer.android.analytics.domain.models.BdcClientRequirementsNotMetContextParams
 import io.primer.android.analytics.domain.models.BdcFlowStartContextParams
 import io.primer.android.analytics.domain.models.ErrorContextParams
 import io.primer.android.analytics.domain.models.IPay88PaymentMethodContextParams
@@ -417,5 +418,9 @@ internal fun BaseContextParams.toAnalyticsContext() =
         is BdcFlowStartContextParams ->
             BdcFlowStartAnalyticsContext(
                 trustedKeyFingerprints = trustedKeyFingerprints,
+                paymentMethodType = paymentMethodType,
             )
+
+        is BdcClientRequirementsNotMetContextParams ->
+            BdcClientRequirementsNotMetAnalyticsContext(paymentMethodType = paymentMethodType, unmet = unmet)
     }

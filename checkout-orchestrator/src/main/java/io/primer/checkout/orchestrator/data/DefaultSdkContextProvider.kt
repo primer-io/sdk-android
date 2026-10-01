@@ -10,10 +10,12 @@ import io.primer.android.configuration.data.datasource.CacheConfigurationDataSou
 import io.primer.android.core.utils.BaseDataProvider
 import io.primer.android.data.settings.PrimerSettings
 import io.primer.checkout.orchestrator.BuildConfig
+import io.primer.checkout.orchestrator.domain.ReturnUriProvider
 import io.primer.checkout.orchestrator.domain.SdkContextProvider
 import org.json.JSONObject
 import java.util.Locale
 
+@Suppress("LongParameterList")
 internal class DefaultSdkContextProvider(
     private val context: Context,
     private val configurationDataSource: CacheConfigurationDataSource,
@@ -21,10 +23,11 @@ internal class DefaultSdkContextProvider(
     private val applicationIdProvider: BaseDataProvider<String>,
     private val settings: PrimerSettings,
     private val analyticsDataProvider: BaseDataProvider<AnalyticsData>,
+    private val returnUriProvider: ReturnUriProvider,
 ) : SdkContextProvider {
 
     @SuppressLint("HardwareIds")
-    override fun provide(paymentMethodType: String, paymentId: String?): String {
+    override fun provide(paymentMethodType: String?, paymentId: String?): String {
         val configurationData = configurationDataSource.get()
         val clientSession = configurationData.clientSession
         val analyticsData = analyticsDataProvider.provide()
@@ -43,6 +46,7 @@ internal class DefaultSdkContextProvider(
             put(
                 DEVICE_FIELD,
                 JSONObject().apply {
+                    put(PLATFORM_FIELD, ANDROID_PLATFORM)
                     put(MAKE_FIELD, Build.MANUFACTURER)
                     put(MODEL_FIELD, Build.MODEL)
                     put(MODEL_IDENTIFIER_FIELD, Build.DEVICE)
@@ -74,13 +78,10 @@ internal class DefaultSdkContextProvider(
                 },
             )
 
-            put(
-                PAYMENT_FIELD,
-                JSONObject().apply {
-                    put(PAYMENT_METHOD_TYPE_FIELD, paymentMethodType)
-                    putOpt(PAYMENT_ID_FIELD, paymentId)
-                },
-            )
+            paymentMethodType?.let { type -> put(PAYMENT_FIELD, payment(type, paymentId)) }
+
+            // Where a redirect brings the buyer back to.
+            put(REDIRECT_FIELD, JSONObject().put(RETURN_URL_FIELD, returnUriProvider.provide()))
 
             put(
                 MERCHANT_FIELD,
@@ -100,6 +101,12 @@ internal class DefaultSdkContextProvider(
         }.toString()
     }
 
+    private fun payment(paymentMethodType: String, paymentId: String?) =
+        JSONObject().apply {
+            put(PAYMENT_METHOD_TYPE_FIELD, paymentMethodType)
+            putOpt(PAYMENT_ID_FIELD, paymentId)
+        }
+
     private companion object {
         const val SDK_FIELD = "sdk"
         const val TYPE_FIELD = "type"
@@ -108,6 +115,8 @@ internal class DefaultSdkContextProvider(
         const val PAYMENT_HANDLING_FIELD = "paymentHandling"
 
         const val DEVICE_FIELD = "device"
+        const val PLATFORM_FIELD = "platform"
+        const val ANDROID_PLATFORM = "ANDROID"
         const val MAKE_FIELD = "make"
         const val MODEL_FIELD = "model"
         const val MODEL_IDENTIFIER_FIELD = "modelIdentifier"
@@ -126,6 +135,9 @@ internal class DefaultSdkContextProvider(
         const val PAYMENT_FIELD = "payment"
         const val PAYMENT_METHOD_TYPE_FIELD = "paymentMethodType"
         const val PAYMENT_ID_FIELD = "paymentId"
+
+        const val REDIRECT_FIELD = "redirect"
+        const val RETURN_URL_FIELD = "returnUrl"
 
         const val MERCHANT_FIELD = "merchant"
         const val PRIMER_ACCOUNT_ID_FIELD = "primerAccountId"
