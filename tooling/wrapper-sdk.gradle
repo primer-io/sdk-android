@@ -1,0 +1,12 @@
+// Conventions for the third-party wrapper modules (<name>-sdk): the vendor SDK plus a thin bridging layer,
+// published at the SDK version under the historical io.primer:<name>-android coordinates and consumed
+// compileOnly by the matching glue module so the vendor SDK stays optional for merchants.
+apply from: "$rootDir/tooling/android-common.gradle"
+
+android {
+    buildFeatures {
+        // android-common enables it for every module; wrappers have no layouts and the published POM
+        // must not gain a viewbinding dependency the standalone artifacts never had.
+        viewBinding = false
+    }
+}
