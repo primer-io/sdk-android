@@ -342,7 +342,7 @@ internal class SelectPaymentMethodFragment : BaseFragment(), DISdkComponent {
                     val last4: Int =
                         data.last4Digits ?: error("card data is invalid!")
 
-                    lastFourLabel.text = getString(R.string.last_four, last4)
+                    lastFourLabel.text = getString(R.string.last_four_padded, last4)
                     val expirationYear = "${data.expirationYear}"
                     val expirationMonth = "${data.expirationMonth}".padStart(2, '0')
                     expiryLabel.text =
@@ -353,7 +353,7 @@ internal class SelectPaymentMethodFragment : BaseFragment(), DISdkComponent {
                 PaymentMethodType.STRIPE_ACH.name -> {
                     val data = paymentMethod.paymentInstrumentData
                     val bankName = data.bankName.orEmpty()
-                    val lastFour = getString(R.string.last_four, data.accountNumberLast4Digits ?: 0)
+                    val lastFour = getString(R.string.last_four_padded, data.accountNumberLast4Digits ?: 0)
                     renderBankSavedPaymentMethodView(bankName, lastFour)
                     paymentMethodIcon.setImageResource(R.drawable.ic_bank_56)
                 }

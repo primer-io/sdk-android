@@ -103,7 +103,7 @@ internal class VaultedPaymentMethodsCvvRecaptureFragment : BaseFragment() {
         val paymentMethod = primerViewModel.selectedSavedPaymentMethod ?: return
         val data = paymentMethod.paymentInstrumentData
         val last4: Int = requireNotNull(data.last4Digits) { "card data is invalid!" }
-        binding.vaultedPaymentMethodCvvLastFourLabel.text = getString(R.string.last_four, last4)
+        binding.vaultedPaymentMethodCvvLastFourLabel.text = getString(R.string.last_four_padded, last4)
         binding.vaultedPaymentMethodCvvDescLabel.text =
             getString(
                 R.string.primer_cvv_recapture_explanation,
