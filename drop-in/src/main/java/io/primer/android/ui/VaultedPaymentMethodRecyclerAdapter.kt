@@ -128,7 +128,7 @@ internal sealed class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
             val lastFourLabel = binding.lastFourLabel
             val expiryLabel: TextView = binding.expiryLabel
             titleLabel.text = item.title
-            lastFourLabel.text = itemView.context.getString(R.string.last_four, item.lastFour)
+            lastFourLabel.text = itemView.context.getString(R.string.last_four_padded, item.lastFour)
 
             val expirationYear = "${item.expiryYear}"
             val expirationMonth = "${item.expiryMonth}".padStart(2, '0')
@@ -176,7 +176,7 @@ internal sealed class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
             }
             with(binding.bankLastFourLabel) {
                 isVisible = true
-                text = itemView.context.getString(R.string.last_four, item.lastFour)
+                text = itemView.context.getString(R.string.last_four_padded, item.lastFour)
             }
             setBankIcon()
             configureCheckIcon(binding, status, theme)
