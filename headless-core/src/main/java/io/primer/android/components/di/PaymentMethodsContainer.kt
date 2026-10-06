@@ -5,12 +5,9 @@ import io.primer.android.components.implementation.errors.data.mapper.PaymentMet
 import io.primer.android.core.di.DependencyContainer
 import io.primer.android.core.di.SdkContainer
 import io.primer.android.errors.domain.ErrorMapperRegistry
-import io.primer.android.paymentmethods.PrimerPaymentMethodCheckerRegistry
 
 internal class PaymentMethodsContainer(private val sdk: () -> SdkContainer) : DependencyContainer() {
     override fun registerInitialDependencies() {
-        registerSingleton { PrimerPaymentMethodCheckerRegistry }
-
         registerSingleton {
             PaymentMethodModulesInteractor(
                 paymentMethodDescriptorsRepository = sdk().resolve(),
