@@ -18,7 +18,7 @@ interface PaymentMethodCheckerRegistry {
     operator fun get(id: String): PaymentMethodChecker? = checkers[id]
 }
 
-object PrimerPaymentMethodCheckerRegistry : PaymentMethodCheckerRegistry {
+class PrimerPaymentMethodCheckerRegistry : PaymentMethodCheckerRegistry {
     private val _checkers: MutableMap<String, PaymentMethodChecker> =
         mutableMapOf()
     override val checkers: Map<String, PaymentMethodChecker>
