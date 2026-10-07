@@ -1,0 +1,47 @@
+plugins {
+    alias libs.plugins.android.library
+    alias libs.plugins.kotlin.android
+    alias libs.plugins.ktlint
+    alias libs.plugins.maven.publish
+}
+
+android {
+    namespace 'io.primer.android.threeds'
+
+    compileSdk 35
+
+    defaultConfig {
+        minSdkVersion 21
+        targetSdk 35
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            consumerProguardFiles 'consumer-rules.pro'
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'consumer-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+    kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_17.toString()
+    }
+
+    buildTypes.each {
+        it.buildConfigField 'String', 'SDK_VERSION_STRING', "\"$VERSION_NAME\""
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+    implementation libs.android.appcompat
+    implementation libs.slf4j.api
+    implementation libs.logback
+    implementation libs.play.services.base
+}
+
+apply from: "$rootDir/config/publish.gradle"
