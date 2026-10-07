@@ -1,0 +1,48 @@
+plugins {
+    alias libs.plugins.android.library
+    alias libs.plugins.kotlin.android
+    alias libs.plugins.maven.publish
+}
+
+android {
+    namespace "io.primer.android.klarna"
+
+    compileSdk = 36
+
+    defaultConfig {
+        minSdk 21
+        targetSdk 36
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+    kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_17
+    }
+
+    buildFeatures {
+        buildConfig = true
+    }
+
+    buildTypes.each {
+        it.buildConfigField 'String', 'SDK_VERSION_STRING', "\"$VERSION_NAME\""
+    }
+}
+
+dependencies {
+    api libs.klarna
+}
+
+apply from: "$rootDir/config/publish.gradle"
