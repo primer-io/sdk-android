@@ -1,0 +1,41 @@
+plugins {
+    alias libs.plugins.android.library
+    alias libs.plugins.kotlin.android
+    alias libs.plugins.ktlint
+    alias libs.plugins.maven.publish
+}
+
+apply from: "$rootDir/config/lint.gradle"
+
+android {
+    namespace 'io.primer.android.stripe'
+    compileSdk 34
+
+    defaultConfig {
+        minSdk 21
+        targetSdk 33
+        consumerProguardFiles "consumer-rules.pro"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    kotlin {
+        jvmToolchain(17)
+    }
+}
+
+dependencies {
+    implementation(libs.stripe.payments.core) {
+        exclude group: "org.bouncycastle", module: "bcprov-jdk15to18"
+    }
+    implementation libs.stripe.financial.connections
+    implementation libs.networking.okhttp
+    implementation libs.appcompat
+}
+
+apply from: "$rootDir/config/publish.gradle"
