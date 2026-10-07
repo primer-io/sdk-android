@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.snowballtech.transit.rta" >
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.NFC" />
+
+    <application>
+        <provider
+            android:name="com.snowballtech.transit.rta.context.TransitContentProvider"
+            android:authorities="${applicationId}.transit"
+            android:exported="false" />
+    </application>
+</manifest>
