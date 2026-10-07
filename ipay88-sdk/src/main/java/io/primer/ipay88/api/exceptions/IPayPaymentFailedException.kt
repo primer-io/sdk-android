@@ -4,5 +4,5 @@ class IPayPaymentFailedException(
     val transactionId: String?,
     val tokenId: String?,
     val refNo: String?,
-    val errorDescription: String?
+    val errorDescription: String?,
 ) : IllegalStateException()

@@ -2,6 +2,7 @@ package io.primer.ipay88.api.ui
 
 import java.io.Serializable
 
+@Suppress("LongParameterList")
 data class IPay88LauncherParams(
     val iPayPaymentId: String,
     val iPayMethod: Int,
@@ -17,5 +18,9 @@ data class IPay88LauncherParams(
     val remark: String?,
     val backendCallbackUrl: String,
     val deeplinkUrl: String,
-    val errorCode: Int
-) : Serializable
+    val errorCode: Int,
+) : Serializable {
+    private companion object {
+        private const val serialVersionUID: Long = 1L
+    }
+}

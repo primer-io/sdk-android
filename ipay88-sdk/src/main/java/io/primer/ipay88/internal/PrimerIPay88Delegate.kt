@@ -5,15 +5,15 @@ import com.ipay.obj.MCTokenizationRet
 import java.io.Serializable
 
 internal class PrimerIPay88Delegate :
-    IPayIHResultDelegate, Serializable {
-
+    IPayIHResultDelegate,
+    Serializable {
     override fun onPaymentSucceeded(
         transId: String?,
         refNo: String?,
         amount: String?,
         remark: String?,
         authCode: String?,
-        tokenizationRet: MCTokenizationRet?
+        tokenizationRet: MCTokenizationRet?,
     ) {
         IPayStateHolder.currentState = IPayPaymentState.Success
     }
@@ -24,7 +24,7 @@ internal class PrimerIPay88Delegate :
         amount: String?,
         remark: String?,
         errorDescription: String?,
-        tokenizationRet: MCTokenizationRet?
+        tokenizationRet: MCTokenizationRet?,
     ) {
         IPayStateHolder.currentState =
             IPayPaymentState.Failed(transId, tokenizationRet?.tokenId, refNo, errorDescription)
@@ -36,7 +36,7 @@ internal class PrimerIPay88Delegate :
         amount: String?,
         remark: String?,
         errorDescription: String?,
-        tokenizationRet: MCTokenizationRet?
+        tokenizationRet: MCTokenizationRet?,
     ) {
         IPayStateHolder.currentState = IPayPaymentState.Cancelled(transId, refNo, errorDescription)
     }
@@ -45,7 +45,7 @@ internal class PrimerIPay88Delegate :
         merchantCode: String?,
         refNo: String?,
         amount: String?,
-        result: String?
+        result: String?,
     ) {
         IPayStateHolder.currentState = IPayPaymentState.Success
     }
@@ -56,25 +56,30 @@ internal class PrimerIPay88Delegate :
         amount: String?,
         remark: String?,
         lang: String?,
-        country: String?
+        country: String?,
     ) {
         IPayStateHolder.currentState = IPayPaymentState.ConnectionError(refNo)
+    }
+
+    private companion object {
+        private const val serialVersionUID: Long = 1L
     }
 }
 
 internal sealed class IPayPaymentState {
-    object Success : IPayPaymentState()
+    data object Success : IPayPaymentState()
+
     data class Failed(
         val transId: String?,
         val tokenId: String?,
         val refNo: String?,
-        val errorDescription: String?
+        val errorDescription: String?,
     ) : IPayPaymentState()
 
     data class Cancelled(
         val transId: String?,
         val refNo: String?,
-        val errorDescription: String?
+        val errorDescription: String?,
     ) : IPayPaymentState()
 
     data class ConnectionError(val refNo: String?) : IPayPaymentState()

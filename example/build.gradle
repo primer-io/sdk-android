@@ -96,7 +96,7 @@ dependencies {
     implementation "io.github.pilgr:paperdb:2.7.2"
 
     implementation project(":klarna-sdk")
-    implementation libs.primer.ipay88
+    implementation project(":ipay88-sdk")
     implementation libs.primer.nol.pay
     implementation project(":stripe-sdk")
 
