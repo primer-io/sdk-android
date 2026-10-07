@@ -90,7 +90,7 @@ dependencies {
     implementation libs.android.constraintlayout
     implementation "androidx.navigation:navigation-fragment-ktx:2.9.6"
     implementation "androidx.navigation:navigation-ui-ktx:2.9.6"
-    implementation libs.primer.threeds
+    implementation project(":threeds-sdk")
     implementation libs.android.lifecycle.livedata.ktx
     implementation libs.android.lifecycle.viewmodel.ktx
     implementation "io.github.pilgr:paperdb:2.7.2"

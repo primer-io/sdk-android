@@ -17,7 +17,6 @@ dependencies {
         }
 
         // 3rd party wrappers
-        api(libs.primer.threeds)
     }
 }
 

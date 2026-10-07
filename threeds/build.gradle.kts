@@ -19,8 +19,8 @@ dependencies {
     implementation(libs.android.appcompat)
     implementation(libs.android.lifecycle.viewmodel.ktx)
 
-    compileOnly(libs.primer.threeds)
-    testImplementation(libs.primer.threeds)
+    compileOnly(project(":threeds-sdk"))
+    testImplementation(project(":threeds-sdk"))
 
     implementation(project(":payments-core"))
     implementation(project(":errors-core"))

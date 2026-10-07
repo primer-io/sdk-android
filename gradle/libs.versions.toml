@@ -20,8 +20,10 @@ stripe = "20.53.0"
 spongyCastle = "1.58.0.0"
 gson = "2.10.1"
 securityCrypto = "1.1.0-alpha06"
+slf4j = "1.7.36"
+logback = "1.3.0-3"
+playServicesBase = "17.6.0"
 
-primer-3ds = "1.9.0"
 
 junit5 = "5.13.4"
 androidJunit5TestRunner = "1.12.0.0"
@@ -74,8 +76,10 @@ spongycastle-core = { group = "com.madgag.spongycastle", name = "core", version.
 spongycastle-prov = { group = "com.madgag.spongycastle", name = "prov", version.ref = "spongyCastle" }
 spongycastle-bcpkix = { group = "com.madgag.spongycastle", name = "bcpkix-jdk15on", version.ref = "spongyCastle" }
 gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
+slf4j-api = { group = "org.slf4j", name = "slf4j-api", version.ref = "slf4j" }
+logback-android = { group = "com.github.tony19", name = "logback-android", version.ref = "logback" }
+play-services-base = { group = "com.google.android.gms", name = "play-services-base", version.ref = "playServicesBase" }
 
-primer-threeds = { group = "io.primer", name = "3ds-android", version.ref = "primer-3ds" }
 
 junit-jupiter-api = { group = "org.junit.jupiter", name = "junit-jupiter-api", version.ref = "junit5" }
 junit-jupiter-engine = { group = "org.junit.jupiter", name = "junit-jupiter-engine", version.ref = "junit5" }
