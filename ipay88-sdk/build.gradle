@@ -1,0 +1,53 @@
+plugins {
+    alias libs.plugins.android.library
+    alias libs.plugins.kotlin.android
+    alias libs.plugins.ktlint
+    alias libs.plugins.maven.publish
+}
+
+android {
+    // in order not to crash their SDK, we can use their namespace to correctly find R class
+    namespace 'com.androids.ipay'
+    compileSdk 34
+
+    defaultConfig {
+        minSdkVersion 21
+        targetSdk 34
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled true
+            consumerProguardFiles 'consumer-rules.pro'
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
+    }
+    kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_11.toString()
+    }
+
+    sourceSets {
+        main.java.srcDirs += 'src/main/java'
+    }
+
+    buildTypes.each {
+        it.buildConfigField 'String', 'SDK_VERSION_STRING', "\"$VERSION_NAME\""
+    }
+}
+
+tasks.configureEach { task ->
+    if (task.name == "generateReleaseBuildConfig") {
+        task.enabled = false
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation libs.android.appcompat
+}
+
+apply from: "$rootDir/config/publish.gradle"
