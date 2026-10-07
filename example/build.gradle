@@ -97,7 +97,7 @@ dependencies {
 
     implementation project(":klarna-sdk")
     implementation project(":ipay88-sdk")
-    implementation libs.primer.nol.pay
+    implementation project(":nol-pay-sdk")
     implementation project(":stripe-sdk")
 
     debugImplementation "com.squareup.leakcanary:leakcanary-android:2.14"

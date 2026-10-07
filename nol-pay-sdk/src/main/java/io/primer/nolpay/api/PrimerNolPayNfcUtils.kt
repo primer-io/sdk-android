@@ -7,16 +7,13 @@ import com.snowballtech.transit.rta.TransitNfcStatus
 import io.primer.nolpay.api.models.NfcStatus
 
 object PrimerNolPayNfcUtils {
-
     // region NFC toggling
     fun enableForegroundDispatch(
         activity: Activity,
-        requestCode: Int
+        requestCode: Int,
     ) = Transit.getPaymentInstance().enableForegroundDispatch(activity, requestCode)
 
-    fun disableForegroundDispatch(
-        activity: Activity
-    ) = Transit.getPaymentInstance().disableForegroundDispatch(activity)
+    fun disableForegroundDispatch(activity: Activity) = Transit.getPaymentInstance().disableForegroundDispatch(activity)
     // endregion NFC toggling
 
     // region Tag conversion
@@ -24,12 +21,11 @@ object PrimerNolPayNfcUtils {
     // endregion Tag conversion
 
     // region NFC status
-    fun getNfcStatus() = Transit.getTransitInstance().getNfcStatus().let { transitNfcStatus ->
-        when (transitNfcStatus) {
+    fun getNfcStatus() =
+        when (Transit.getTransitInstance().getNfcStatus()) {
             TransitNfcStatus.NFC_ENABLE -> NfcStatus.NFC_ENABLED
             TransitNfcStatus.NFC_DISABLE -> NfcStatus.NFC_DISABLED
             TransitNfcStatus.NFC_UNSUPPORTED -> NfcStatus.NFC_UNSUPPORTED
         }
-    }
     // endregion NFC status
 }

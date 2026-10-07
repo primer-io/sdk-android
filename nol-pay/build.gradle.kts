@@ -22,8 +22,8 @@ android {
 }
 
 dependencies {
-    compileOnly(libs.primer.nol.pay)
-    testImplementation(libs.primer.nol.pay)
+    compileOnly(project(":nol-pay-sdk"))
+    testImplementation(project(":nol-pay-sdk"))
 
     implementation(libs.android.lifecycle.viewmodel.state)
     implementation(libs.android.lifecycle.viewmodel.ktx)

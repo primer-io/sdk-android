@@ -18,7 +18,6 @@ dependencies {
 
         // 3rd party wrappers
         api(libs.primer.threeds)
-        api(libs.primer.nol.pay)
     }
 }
 

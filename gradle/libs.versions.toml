@@ -17,9 +17,11 @@ browser = "1.9.0"
 okhttp = "4.12.0"
 klarna = "2.11.3"
 stripe = "20.53.0"
+spongyCastle = "1.58.0.0"
+gson = "2.10.1"
+securityCrypto = "1.1.0-alpha06"
 
 primer-3ds = "1.9.0"
-primer-nol-pay = "1.0.3"
 
 junit5 = "5.13.4"
 androidJunit5TestRunner = "1.12.0.0"
@@ -67,9 +69,13 @@ logging-interceptor-okhttp = { module = "com.squareup.okhttp3:logging-intercepto
 klarna = { group = "com.klarna.mobile", name = "sdk", version.ref = "klarna" }
 stripe-payments-core = { group = "com.stripe", name = "payments-core", version.ref = "stripe" }
 stripe-financial-connections = { group = "com.stripe", name = "financial-connections", version.ref = "stripe" }
+security-crypto = { group = "androidx.security", name = "security-crypto", version.ref = "securityCrypto" }
+spongycastle-core = { group = "com.madgag.spongycastle", name = "core", version.ref = "spongyCastle" }
+spongycastle-prov = { group = "com.madgag.spongycastle", name = "prov", version.ref = "spongyCastle" }
+spongycastle-bcpkix = { group = "com.madgag.spongycastle", name = "bcpkix-jdk15on", version.ref = "spongyCastle" }
+gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
 
 primer-threeds = { group = "io.primer", name = "3ds-android", version.ref = "primer-3ds" }
-primer-nol-pay = { group = "io.primer", name = "nol-pay-android", version.ref = "primer-nol-pay" }
 
 junit-jupiter-api = { group = "org.junit.jupiter", name = "junit-jupiter-api", version.ref = "junit5" }
 junit-jupiter-engine = { group = "org.junit.jupiter", name = "junit-jupiter-engine", version.ref = "junit5" }

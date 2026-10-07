@@ -20,7 +20,6 @@ import io.primer.nolpay.api.models.PrimerNolPaymentCard
 import io.primer.nolpay.api.models.PrimerUnlinkCardMetadata
 
 object PrimerNolPay {
-
     // region SDK initialization
     @MainThread
     @Throws(NolPaySdkException::class)
@@ -28,14 +27,15 @@ object PrimerNolPay {
         enableSandbox: Boolean,
         enableDebug: Boolean,
         merchantAppId: String,
-        handler: TransitAppSecretKeyHandler
+        handler: TransitAppSecretKeyHandler,
     ) = try {
         TransitConfiguration.Builder()
             .enableSandbox(enableSandbox)
             .enableDebug(enableDebug)
             .setAppID(merchantAppId)
             .setAppSecretKeyHandler(handler)
-            .build().apply {
+            .build()
+            .apply {
                 Transit.initSDK(this)
             }
     } catch (e: TransitException) {
@@ -46,43 +46,51 @@ object PrimerNolPay {
     // region link payment card
     @WorkerThread
     @Throws(NolPaySdkException::class)
-    fun getLinkPaymentCardToken(tag: Tag) = try {
-        Transit.getPaymentInstance().getLinkPaymentCardToken(
-            TransitLinkPaymentCardTokenRequest.Builder()
-                .setTag(tag).build()
-        ).let { linkResponse ->
-            PrimerLinkCardMetadata(
-                requireNotNull(linkResponse.linkToken),
-                linkResponse.cardNumber
-            )
-        }
-    } catch (e: TransitException) {
-        throw NolPaySdkException(e.code, e.message)
-    }
-
-    @WorkerThread
-    @Throws(NolPaySdkException::class)
-    fun getLinkPaymentCardOTP(mobileNumber: String, countryCallingCode: String, linkToken: String) =
+    fun getLinkPaymentCardToken(tag: Tag) =
         try {
-            Transit.getPaymentInstance().getLinkPaymentCardOTP(
-                TransitLinkPaymentCardOTPRequest.Builder()
-                    .setMobile(mobileNumber)
-                    .setLinkPaymentCardToken(linkToken)
-                    .setRegionCode(countryCallingCode)
-                    .build()
-            )
+            Transit.getPaymentInstance().getLinkPaymentCardToken(
+                TransitLinkPaymentCardTokenRequest.Builder()
+                    .setTag(tag)
+                    .build(),
+            ).let { linkResponse ->
+                PrimerLinkCardMetadata(
+                    requireNotNull(linkResponse.linkToken),
+                    linkResponse.cardNumber,
+                )
+            }
         } catch (e: TransitException) {
             throw NolPaySdkException(e.code, e.message)
         }
 
     @WorkerThread
     @Throws(NolPaySdkException::class)
-    fun linkPaymentCard(linkToken: String, otpCode: String) = try {
+    fun getLinkPaymentCardOTP(
+        mobileNumber: String,
+        countryCallingCode: String,
+        linkToken: String,
+    ) = try {
+        Transit.getPaymentInstance().getLinkPaymentCardOTP(
+            TransitLinkPaymentCardOTPRequest.Builder()
+                .setMobile(mobileNumber)
+                .setLinkPaymentCardToken(linkToken)
+                .setRegionCode(countryCallingCode)
+                .build(),
+        )
+    } catch (e: TransitException) {
+        throw NolPaySdkException(e.code, e.message)
+    }
+
+    @WorkerThread
+    @Throws(NolPaySdkException::class)
+    fun linkPaymentCard(
+        linkToken: String,
+        otpCode: String,
+    ) = try {
         Transit.getPaymentInstance().linkPaymentCard(
             TransitLinkPaymentCardRequest.Builder()
                 .setOTPCode(otpCode)
                 .setLinkPaymentCardToken(linkToken)
-                .build()
+                .build(),
         )
     } catch (e: TransitException) {
         throw NolPaySdkException(e.code, e.message)
@@ -95,18 +103,18 @@ object PrimerNolPay {
     fun getUnlinkPaymentCardOTP(
         mobileNumber: String,
         countryCallingCode: String,
-        cardNumber: String
+        cardNumber: String,
     ) = try {
         Transit.getPaymentInstance().getUnlinkPaymentCardOTP(
             TransitUnlinkPaymentCardOTPRequest.Builder()
                 .setMobile(mobileNumber)
                 .setRegionCode(countryCallingCode)
                 .setCardNumber(cardNumber)
-                .build()
+                .build(),
         ).let { unlinkResponse ->
             PrimerUnlinkCardMetadata(
                 requireNotNull(unlinkResponse.unlinkToken),
-                requireNotNull(unlinkResponse.cardNumber)
+                requireNotNull(unlinkResponse.cardNumber),
             )
         }
     } catch (e: TransitException) {
@@ -115,13 +123,17 @@ object PrimerNolPay {
 
     @WorkerThread
     @Throws(NolPaySdkException::class)
-    fun unlinkPaymentCard(cardNumber: String, otpCode: String, unlinkToken: String) = try {
+    fun unlinkPaymentCard(
+        cardNumber: String,
+        otpCode: String,
+        unlinkToken: String,
+    ) = try {
         Transit.getPaymentInstance().unlinkPaymentCard(
             TransitUnlinkPaymentCardRequest.Builder()
                 .setCardNumber(cardNumber)
                 .setOTPCode(otpCode)
                 .setUnlinkPaymentCardToken(unlinkToken)
-                .build()
+                .build(),
         )
     } catch (e: TransitException) {
         throw NolPaySdkException(e.code, e.message)
@@ -131,24 +143,32 @@ object PrimerNolPay {
     // region retrieve linked cards
     @Throws(NolPaySdkException::class)
     @WorkerThread
-    fun getLinkedPaymentCards(mobileNumber: String, countryCallingCode: String) = try {
+    fun getLinkedPaymentCards(
+        mobileNumber: String,
+        countryCallingCode: String,
+    ) = try {
         Transit.getPaymentInstance().getPaymentCardList(
-            TransitPaymentCardListRequest.Builder().setMobile(mobileNumber)
-                .setRegionCode(countryCallingCode).build()
-        ).cardList.orEmpty()
+            TransitPaymentCardListRequest.Builder()
+                .setMobile(mobileNumber)
+                .setRegionCode(countryCallingCode)
+                .build(),
+        ).cardList
+            .orEmpty()
             .map { transitPaymentCard -> PrimerNolPaymentCard(transitPaymentCard.cardNumber) }
     } catch (e: TransitException) {
         throw NolPaySdkException(e.code, e.message)
     }
-
     // endregion retrieve linked cards
 
     // region create payment
     @WorkerThread
     @Throws(NolPaySdkException::class)
-    fun createPayment(tag: Tag, transactionNumber: String) = try {
+    fun createPayment(
+        tag: Tag,
+        transactionNumber: String,
+    ) = try {
         Transit.getPaymentInstance().requestPayment(
-            TransitPayRequest.Builder().setTransactionNo(transactionNumber).setTag(tag).build()
+            TransitPayRequest.Builder().setTransactionNo(transactionNumber).setTag(tag).build(),
         )
     } catch (e: TransitException) {
         throw NolPaySdkException(e.code, e.message)
