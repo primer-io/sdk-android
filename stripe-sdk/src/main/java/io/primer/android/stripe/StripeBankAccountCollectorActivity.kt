@@ -29,23 +29,23 @@ class StripeBankAccountCollectorActivity : AppCompatActivity() {
 
         PaymentConfiguration.init(
             context = applicationContext,
-            publishableKey = params.publishableKey
+            publishableKey = params.publishableKey,
         )
 
         val collectBankAccountLauncher =
             CollectBankAccountLauncher.create(
                 activity = this,
-                callback = createBankAccountResultCallback()
+                callback = createBankAccountResultCallback(),
             )
 
         collectBankAccountLauncher.presentWithPaymentIntent(
             publishableKey = params.publishableKey,
             clientSecret = params.clientSecret,
             configuration =
-                CollectBankAccountConfiguration.USBankAccount(
-                    name = params.fullName,
-                    email = params.emailAddress
-                )
+            CollectBankAccountConfiguration.USBankAccount(
+                name = params.fullName,
+                email = params.emailAddress,
+            ),
         )
     }
 
@@ -71,7 +71,7 @@ class StripeBankAccountCollectorActivity : AppCompatActivity() {
                     } else if (resultIntent.status === StripeIntent.Status.RequiresConfirmation) {
                         setResult(
                             RESULT_OK,
-                            Intent().apply { putExtra(PAYMENT_METHOD_ID, result.response.intent.paymentMethodId) }
+                            Intent().apply { putExtra(PAYMENT_METHOD_ID, resultIntent.paymentMethodId) },
                         )
                     } else {
                         // no-op
@@ -91,9 +91,9 @@ class StripeBankAccountCollectorActivity : AppCompatActivity() {
                                     StripePublishableKeyMismatchException(stripeError.message)
                                 } else {
                                     StripeSdkException(result.error.message)
-                                }
+                                },
                             )
-                        }
+                        },
                     )
                 }
             }
@@ -107,16 +107,16 @@ class StripeBankAccountCollectorActivity : AppCompatActivity() {
     // region Utils
     private fun requireParams() =
         requireNotNull(
-            intent.extras?.getSerializableExtraCompat<Params>(PARAMS_KEY)
+            intent.extras?.getSerializableExtraCompat<Params>(PARAMS_KEY),
         )
 
     private fun disableEnterAnimations() {
-        if (Build.VERSION.SDK_INT >= 34) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
             overrideActivityTransition(
                 OVERRIDE_TRANSITION_OPEN,
                 0,
                 0,
-                Color.TRANSPARENT
+                Color.TRANSPARENT,
             )
         } else {
             @Suppress("DEPRECATION")
@@ -125,12 +125,12 @@ class StripeBankAccountCollectorActivity : AppCompatActivity() {
     }
 
     private fun disableExitAnimations() {
-        if (Build.VERSION.SDK_INT >= 34) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
             overrideActivityTransition(
                 OVERRIDE_TRANSITION_CLOSE,
                 0,
                 0,
-                Color.TRANSPARENT
+                Color.TRANSPARENT,
             )
         } else {
             @Suppress("DEPRECATION")
@@ -143,8 +143,12 @@ class StripeBankAccountCollectorActivity : AppCompatActivity() {
         val fullName: String,
         val emailAddress: String,
         val publishableKey: String,
-        val clientSecret: String
-    ) : Serializable
+        val clientSecret: String,
+    ) : Serializable {
+        private companion object {
+            private const val serialVersionUID: Long = 1L
+        }
+    }
 
     companion object {
         const val RESULT_ERROR = RESULT_FIRST_USER + 1
@@ -159,11 +163,11 @@ class StripeBankAccountCollectorActivity : AppCompatActivity() {
         @JvmStatic
         fun getLaunchIntent(
             context: Context,
-            params: Params
+            params: Params,
         ): Intent =
             Intent(
                 context,
-                StripeBankAccountCollectorActivity::class.java
+                StripeBankAccountCollectorActivity::class.java,
             ).apply {
                 putExtra(PARAMS_KEY, params)
             }
