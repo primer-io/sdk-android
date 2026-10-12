@@ -15,11 +15,17 @@ import io.primer.android.configuration.data.model.PaymentMethodCapability
 import io.primer.android.configuration.data.model.PaymentMethodConfigDataResponse
 import io.primer.android.configuration.data.model.PaymentMethodImplementationType
 import io.primer.android.core.logging.internal.LogReporter
+import io.primer.checkout.orchestrator.data.ClientCapabilitiesProvider
 import io.primer.checkout.orchestrator.data.datasource.ClientRequirementsDataSource
 import io.primer.checkout.orchestrator.data.model.ClientCapabilities
+import io.primer.checkout.orchestrator.data.model.ProbeRequest
 import io.primer.checkout.orchestrator.domain.SdkContextProvider
 import io.primer.checkout.orchestrator.domain.model.ClientRequirementsCheck
+import io.primer.executionengine.domain.probe.ProbeOutcome
+import io.primer.executionengine.domain.probe.ProbeResult
+import io.primer.executionengine.domain.registry.ProbeRegistry
 import io.primer.executionengine.domain.registry.StepExecutorRegistry
+import io.primer.executionengine.domain.registry.UiComponentRegistry
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.awaitCancellation
 import kotlinx.coroutines.delay
@@ -49,14 +55,23 @@ internal class ClientRequirementsDataRepositoryTest {
     @MockK
     lateinit var stepExecutorRegistry: StepExecutorRegistry
 
+    @MockK
+    lateinit var uiComponentRegistry: UiComponentRegistry
+
+    @MockK
+    lateinit var probeRegistry: ProbeRegistry
+
     private val logReporter = mockk<LogReporter>(relaxed = true)
 
     @BeforeEach
     fun setUp() {
         givenPaymentMethods(twint, card, legacyIdeal)
-        coEvery { clientRequirementsDataSource.check(any(), any(), any(), any()) } returns VERDICTS
+        coEvery { clientRequirementsDataSource.probesToRun(any(), any(), any(), any()) } returns emptyList()
+        coEvery { clientRequirementsDataSource.check(any(), any(), any(), any(), any()) } returns VERDICTS
         every { sdkContextProvider.provide(null, null) } returns CONTEXT
         every { stepExecutorRegistry.declaredVersions } returns STEP_TYPES
+        every { uiComponentRegistry.declaredVersions } returns UI_COMPONENTS
+        every { probeRegistry.declaredVersions } returns PROBES
     }
 
     @Test
@@ -64,8 +79,48 @@ internal class ClientRequirementsDataRepositoryTest {
         assertEquals(VERDICTS, repository().getVerdicts().getOrThrow())
 
         val capabilities =
-            ClientCapabilities(stepTypes = STEP_TYPES, uiComponents = emptyMap(), dependencies = emptyMap())
-        coVerify { clientRequirementsDataSource.check("sandbox", listOf(twint, legacyIdeal), capabilities, CONTEXT) }
+            ClientCapabilities(stepTypes = STEP_TYPES, uiComponents = UI_COMPONENTS, probes = PROBES)
+        coVerify {
+            clientRequirementsDataSource.check("sandbox", listOf(twint, legacyIdeal), capabilities, CONTEXT, emptyMap())
+        }
+    }
+
+    @Test
+    fun `runs the probes the processor asks for and checks with their results by key`() = runTest {
+        val request = ProbeRequest(KLARNA_KEY, "klarna.sdk", mapOf("version" to "^2.16.0"))
+        val found = ProbeResult(ProbeOutcome.SUCCESS, mapOf("version" to "2.16.0"))
+        coEvery { clientRequirementsDataSource.probesToRun(any(), any(), any(), any()) } returns listOf(request)
+        coEvery { probeRegistry.run("klarna.sdk", mapOf("version" to "^2.16.0")) } returns found
+
+        repository().getVerdicts()
+
+        coVerify { clientRequirementsDataSource.check(any(), any(), any(), any(), mapOf(KLARNA_KEY to found)) }
+    }
+
+    @Test
+    fun `declares the UI components the host registered by the time the check runs`() = runTest {
+        every { uiComponentRegistry.declaredVersions } returns emptyMap()
+        val sut = repository()
+        every { uiComponentRegistry.declaredVersions } returns UI_COMPONENTS
+
+        sut.getVerdicts()
+
+        coVerify {
+            clientRequirementsDataSource.check(any(), any(), match { it.uiComponents == UI_COMPONENTS }, any(), any())
+        }
+    }
+
+    @Test
+    fun `declares the probes the modules registered by the time the check runs`() = runTest {
+        every { probeRegistry.declaredVersions } returns emptyMap()
+        val sut = repository()
+        every { probeRegistry.declaredVersions } returns PROBES
+
+        sut.getVerdicts()
+
+        coVerify {
+            clientRequirementsDataSource.check(any(), any(), match { it.probes == PROBES }, any(), any())
+        }
     }
 
     @Test
@@ -75,18 +130,19 @@ internal class ClientRequirementsDataRepositoryTest {
         sut.getVerdicts()
         sut.getVerdicts()
 
-        coVerify(exactly = 1) { clientRequirementsDataSource.check(any(), any(), any(), any()) }
+        coVerify(exactly = 1) { clientRequirementsDataSource.check(any(), any(), any(), any(), any()) }
     }
 
     @Test
     fun `holds a failed check for the configuration`() = runTest {
-        coEvery { clientRequirementsDataSource.check(any(), any(), any(), any()) } throws IllegalStateException("boom")
+        coEvery { clientRequirementsDataSource.check(any(), any(), any(), any(), any()) } throws
+            IllegalStateException("boom")
         val sut = repository()
 
         assertTrue(sut.getVerdicts().isFailure)
         assertTrue(sut.getVerdicts().isFailure)
 
-        coVerify(exactly = 1) { clientRequirementsDataSource.check(any(), any(), any(), any()) }
+        coVerify(exactly = 1) { clientRequirementsDataSource.check(any(), any(), any(), any(), any()) }
     }
 
     @Test
@@ -97,12 +153,12 @@ internal class ClientRequirementsDataRepositoryTest {
         givenPaymentMethods(twint)
         sut.getVerdicts()
 
-        coVerify(exactly = 2) { clientRequirementsDataSource.check(any(), any(), any(), any()) }
+        coVerify(exactly = 2) { clientRequirementsDataSource.check(any(), any(), any(), any(), any()) }
     }
 
     @Test
     fun `fails once the check overruns its time`() = runTest {
-        coEvery { clientRequirementsDataSource.check(any(), any(), any(), any()) } coAnswers {
+        coEvery { clientRequirementsDataSource.check(any(), any(), any(), any(), any()) } coAnswers {
             delay(10_000)
             VERDICTS
         }
@@ -114,7 +170,7 @@ internal class ClientRequirementsDataRepositoryTest {
 
     @Test
     fun `checks again after a check cancelled with its caller`() = runTest {
-        coEvery { clientRequirementsDataSource.check(any(), any(), any(), any()) } coAnswers
+        coEvery { clientRequirementsDataSource.check(any(), any(), any(), any(), any()) } coAnswers
             { awaitCancellation() } andThen VERDICTS
         val sut = repository()
 
@@ -131,14 +187,19 @@ internal class ClientRequirementsDataRepositoryTest {
 
         assertTrue(repository().getVerdicts().getOrThrow().isEmpty())
 
-        coVerify(exactly = 0) { clientRequirementsDataSource.check(any(), any(), any(), any()) }
+        coVerify(exactly = 0) { clientRequirementsDataSource.check(any(), any(), any(), any(), any()) }
     }
 
     private fun repository(timeout: Long = 5_000) = ClientRequirementsDataRepository(
         clientRequirementsDataSource = clientRequirementsDataSource,
         configurationDataSource = configurationDataSource,
         sdkContextProvider = sdkContextProvider,
-        stepExecutorRegistry = stepExecutorRegistry,
+        capabilitiesProvider = ClientCapabilitiesProvider(
+            stepExecutorRegistry = stepExecutorRegistry,
+            uiComponentRegistry = uiComponentRegistry,
+            probeRegistry = probeRegistry,
+        ),
+        probeRegistry = probeRegistry,
         logReporter = logReporter,
         timeout = timeout.milliseconds,
     )
@@ -151,8 +212,11 @@ internal class ClientRequirementsDataRepositoryTest {
     }
 
     private companion object {
+        const val KLARNA_KEY = """klarna.sdk#{"version":"^2.16.0"}"""
         const val CONTEXT = """{"sdk":{"type":"ANDROID_NATIVE"}}"""
         val STEP_TYPES = mapOf("url.open" to "1.0.0")
+        val UI_COMPONENTS = mapOf("SelectionGroup" to "1.0.0", "klarna.widget" to "1.0.0")
+        val PROBES = mapOf("klarna.sdk" to "1.0.0")
         val VERDICTS = mapOf("TWINT" to ClientRequirementsCheck(satisfied = true, unmet = "[]"))
 
         val twint = method("pm_twint", "TWINT", PaymentMethodImplementationType.BACKEND_DRIVEN)

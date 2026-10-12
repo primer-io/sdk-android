@@ -5,12 +5,17 @@ import io.primer.android.configuration.data.model.ConfigurationData
 import io.primer.android.configuration.data.model.PaymentMethodConfigDataResponse
 import io.primer.android.core.extensions.runSuspendCatching
 import io.primer.android.core.logging.internal.LogReporter
+import io.primer.checkout.orchestrator.data.ClientCapabilitiesProvider
 import io.primer.checkout.orchestrator.data.datasource.ClientRequirementsDataSource
-import io.primer.checkout.orchestrator.data.model.ClientCapabilities
+import io.primer.checkout.orchestrator.data.model.ProbeRequest
 import io.primer.checkout.orchestrator.domain.SdkContextProvider
 import io.primer.checkout.orchestrator.domain.model.ClientRequirementsCheck
 import io.primer.checkout.orchestrator.domain.repository.ClientRequirementsRepository
-import io.primer.executionengine.domain.registry.StepExecutorRegistry
+import io.primer.executionengine.domain.probe.ProbeResult
+import io.primer.executionengine.domain.registry.ProbeRegistry
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withTimeoutOrNull
@@ -29,7 +34,8 @@ internal class ClientRequirementsDataRepository(
     private val clientRequirementsDataSource: ClientRequirementsDataSource,
     private val configurationDataSource: CacheConfigurationDataSource,
     private val sdkContextProvider: SdkContextProvider,
-    private val stepExecutorRegistry: StepExecutorRegistry,
+    private val capabilitiesProvider: ClientCapabilitiesProvider,
+    private val probeRegistry: ProbeRegistry,
     private val logReporter: LogReporter,
     private val timeout: Duration = TIMEOUT,
 ) : ClientRequirementsRepository {
@@ -52,24 +58,24 @@ internal class ClientRequirementsDataRepository(
 
             logReporter.info("BDC: checking client requirements for ${methods.joinToString { it.summary }}")
             val startedAt = TimeSource.Monotonic.markNow()
+            val environment = configuration.environment.environment
+            val capabilities = capabilitiesProvider.provide()
+            val context = sdkContextProvider.provide(paymentMethodType = null, paymentId = null)
             val verdicts = withTimeoutOrNull(timeout) {
-                clientRequirementsDataSource.check(
-                    environment = configuration.environment.environment,
-                    methods = methods,
-                    capabilities = capabilities(),
-                    context = sdkContextProvider.provide(paymentMethodType = null, paymentId = null),
-                )
+                val requests = clientRequirementsDataSource.probesToRun(environment, methods, capabilities, context)
+                clientRequirementsDataSource.check(environment, methods, capabilities, context, runProbes(requests))
             } ?: throw ClientRequirementsTimeoutException(timeout)
             logReporter.info("BDC: client requirements settled in ${startedAt.elapsedNow()}: $verdicts")
             verdicts
         }
 
-    // No backend-driven UI components or dependencies yet, so a method that requires one is filtered out.
-    private fun capabilities() = ClientCapabilities(
-        stepTypes = stepExecutorRegistry.declaredVersions,
-        uiComponents = emptyMap(),
-        dependencies = emptyMap(),
-    )
+    // All at once, each result under its request's key.
+    private suspend fun runProbes(requests: List<ProbeRequest>): Map<String, ProbeResult> =
+        coroutineScope {
+            requests.map { request -> async { request.key to probeRegistry.run(request.probe, request.params) } }
+                .awaitAll()
+                .toMap()
+        }
 
     private val PaymentMethodConfigDataResponse.summary: String
         get() = "$type ($id): ${clientRequirements ?: "none sent, legacy defaults apply"}"

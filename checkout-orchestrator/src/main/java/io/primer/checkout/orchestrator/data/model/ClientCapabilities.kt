@@ -4,5 +4,5 @@ package io.primer.checkout.orchestrator.data.model
 internal data class ClientCapabilities(
     val stepTypes: Map<String, String>,
     val uiComponents: Map<String, String>,
-    val dependencies: Map<String, String>,
+    val probes: Map<String, String>,
 )

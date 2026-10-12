@@ -24,8 +24,11 @@ interface JsExecutor {
         response: String,
     ): Result<String>
 
-    /** Each item's verdict by type; [items] are `{ id, type, clientRequirements }`, both arguments JSON. */
-    suspend fun checkClientRequirements(items: String, client: String): Result<String>
+    /** The probes [items] ask for, as `[{ key, probe, params }]`. All JSON. */
+    suspend fun probesToRun(items: String, client: String): Result<String>
+
+    /** Each item's verdict by type, given the probes' [results] by key. All JSON. */
+    suspend fun checkClientRequirements(items: String, client: String, results: String): Result<String>
 
     fun destroy()
 }

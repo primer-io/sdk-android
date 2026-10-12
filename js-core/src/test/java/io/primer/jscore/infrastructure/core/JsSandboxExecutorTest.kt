@@ -45,7 +45,7 @@ internal class JsSandboxExecutorTest {
         executor.initialize(emptyList()).getOrThrow()
         givenEvaluationsFail(IsolateTerminatedException("memory limit exceeded"))
 
-        assertTrue(executor.checkClientRequirements("[]", "{}").isFailure)
+        assertTrue(executor.checkClientRequirements("[]", "{}", "{}").isFailure)
 
         assertFalse(executor.isAlive)
         coVerify(exactly = 0) { sandboxProvider.drop(any()) }
@@ -56,7 +56,7 @@ internal class JsSandboxExecutorTest {
         executor.initialize(emptyList()).getOrThrow()
         givenEvaluationsFail(SandboxDeadException("sandbox dead"))
 
-        assertTrue(executor.checkClientRequirements("[]", "{}").isFailure)
+        assertTrue(executor.checkClientRequirements("[]", "{}", "{}").isFailure)
 
         assertFalse(executor.isAlive)
         coVerify { sandboxProvider.drop(sandbox) }
@@ -67,7 +67,7 @@ internal class JsSandboxExecutorTest {
         executor.initialize(emptyList()).getOrThrow()
         givenEvaluationsFail(EvaluationFailedException("TypeError"))
 
-        assertTrue(executor.checkClientRequirements("[]", "{}").isFailure)
+        assertTrue(executor.checkClientRequirements("[]", "{}", "{}").isFailure)
 
         assertTrue(executor.isAlive)
     }

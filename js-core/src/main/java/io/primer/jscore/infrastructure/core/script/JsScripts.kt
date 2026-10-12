@@ -2,11 +2,19 @@ package io.primer.jscore.infrastructure.core.script
 
 internal object JsScripts {
 
-    val CHECK_CLIENT_REQUIREMENTS = """
+    // A processor older than probes asks for none.
+    val PROBES_TO_RUN = """
         (async (items, client) => {
+            if (typeof StateProcessor.probesToRun !== 'function') return JSON.stringify([]);
+            return JSON.stringify(await StateProcessor.probesToRun(items, client));
+        })
+    """.trimIndent()
+
+    val CHECK_CLIENT_REQUIREMENTS = """
+        (async (items, client, results) => {
             const result = {};
             for (const item of items) {
-                result[item.type] = await StateProcessor.checkClientRequirements(item.clientRequirements, client);
+                result[item.type] = await StateProcessor.checkClientRequirements(item.clientRequirements, client, results);
             }
             return JSON.stringify(result);
         })

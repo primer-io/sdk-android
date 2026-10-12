@@ -6,6 +6,7 @@ import io.primer.android.core.di.DependencyContainer
 import io.primer.android.core.di.SdkContainer
 import io.primer.android.paymentmethods.common.utils.Constants
 import io.primer.checkout.orchestrator.BackendDrivenPaymentMethodChecker
+import io.primer.checkout.orchestrator.data.ClientCapabilitiesProvider
 import io.primer.checkout.orchestrator.data.DefaultCheckoutOrchestrator
 import io.primer.checkout.orchestrator.data.DefaultSdkContextProvider
 import io.primer.checkout.orchestrator.data.datasource.ClientRequirementsDataSource
@@ -96,6 +97,14 @@ class CheckoutOrchestratorContainer(
             )
         }
 
+        registerSingleton {
+            ClientCapabilitiesProvider(
+                stepExecutorRegistry = sdk().resolve(),
+                uiComponentRegistry = sdk().resolve(),
+                probeRegistry = sdk().resolve(),
+            )
+        }
+
         registerSingleton<ClientRequirementsRepository> {
             ClientRequirementsDataRepository(
                 clientRequirementsDataSource = resolve(),
@@ -103,7 +112,8 @@ class CheckoutOrchestratorContainer(
                     ConfigurationCoreContainer.CACHED_CONFIGURATION_DI_KEY,
                 ),
                 sdkContextProvider = resolve(),
-                stepExecutorRegistry = sdk().resolve(),
+                capabilitiesProvider = resolve(),
+                probeRegistry = sdk().resolve(),
                 logReporter = sdk().resolve(),
             )
         }
