@@ -1,9 +1,9 @@
 package io.primer.executionengine.domain.probe
 
 /** A device check a payment method's client requirements can ask for, such as whether a library is present. */
-fun interface Probe {
+interface Probe {
     /** The version of the probe contract this implements. */
-    val version: String get() = "1.0.0"
+    val version: String
 
     suspend fun run(params: Map<String, Any?>): ProbeResult
 }

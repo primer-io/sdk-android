@@ -35,10 +35,13 @@ internal class DefaultProbeRegistryTest {
     @Test
     fun `runs a probe with the check's params`() = runTest {
         var received: Map<String, Any?>? = null
-        registry.register("klarna.sdk") { params ->
-            received = params
-            ProbeResult(ProbeOutcome.SUCCESS, mapOf("version" to "2.16.0"))
-        }
+        registry.register(
+            "klarna.sdk",
+            probe { params ->
+                received = params
+                ProbeResult(ProbeOutcome.SUCCESS, mapOf("version" to "2.16.0"))
+            },
+        )
 
         val result = registry.run("klarna.sdk", mapOf("version" to "^2.16.0"))
 
@@ -48,11 +51,18 @@ internal class DefaultProbeRegistryTest {
 
     @Test
     fun `answers error for a probe that is not there, or throws`() = runTest {
-        registry.register("klarna.sdk") { error("no SDK") }
+        registry.register("klarna.sdk", probe { error("no SDK") })
 
         assertEquals(ProbeOutcome.ERROR, registry.run("klarna.sdk", emptyMap()).outcome)
         assertEquals(ProbeOutcome.ERROR, registry.run("applePay.canMakePayments", emptyMap()).outcome)
     }
 
-    private fun found(version: String) = Probe { ProbeResult(ProbeOutcome.SUCCESS, mapOf("version" to version)) }
+    private fun found(sdkVersion: String) = probe { ProbeResult(ProbeOutcome.SUCCESS, mapOf("version" to sdkVersion)) }
+
+    private fun probe(answer: suspend (Map<String, Any?>) -> ProbeResult) =
+        object : Probe {
+            override val version = "1.0.0"
+
+            override suspend fun run(params: Map<String, Any?>) = answer(params)
+        }
 }
