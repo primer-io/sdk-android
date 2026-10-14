@@ -17,11 +17,6 @@ dependencies {
         }
 
         // 3rd party wrappers
-        api(libs.primer.threeds)
-        api(libs.primer.ipay88)
-        api(libs.primer.klarna)
-        api(libs.primer.stripe)
-        api(libs.primer.nol.pay)
     }
 }
 

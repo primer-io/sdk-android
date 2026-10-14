@@ -17,8 +17,8 @@ android {
 
 dependencies {
 
-    compileOnly(libs.primer.stripe)
-    testImplementation(libs.primer.stripe)
+    compileOnly(project(":stripe-sdk"))
+    testImplementation(project(":stripe-sdk"))
 
     implementation(libs.android.lifecycle.viewmodel.ktx)
     implementation(project(":errors-core"))

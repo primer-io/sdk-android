@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="transit_sdk_error_init">SDK initialization error. Please check that the initialization is in
+        Application and that the parameters are correct
+    </string>
+    <string name="transit_sdk_error_init_main_process">Please initialize the SDK in the main process</string>
+    <string name="transit_sdk_error_init_main_thread">Please initialize the SDK in the non-main thread</string>
+    <string name="transit_sdk_error_init_preferences_create_general_security_exception">Failed to create a preferences file. Because GeneralSecurityException was thrown</string>
+    <string name="transit_sdk_error_init_preferences_create_io_exception">"Failed to create a preferences file. Because IOException was thrown"</string>
+    <string name="transit_sdk_error_nfc_tag_invalid">Tag is invalid</string>
+    <string name="transit_sdk_error_nfc_tag_lost">Tag was lost</string>
+    <string name="transit_sdk_error_param_account_blank">Account is blank</string>
+    <string name="transit_sdk_error_param_amount_invalid">The amount is invalid</string>
+    <string name="transit_sdk_error_param_app_id_blank">App ID is blank</string>
+    <string name="transit_sdk_error_param_app_key_blank">App key is blank</string>
+    <string name="transit_sdk_error_param_app_secret_key_blank">App secret key is blank</string>
+    <string name="transit_sdk_error_param_birthday_invalid">The birthday is invalid</string>
+    <string name="transit_sdk_error_param_card_design_fee_invalid">Card design fee is invalid</string>
+    <string name="transit_sdk_error_param_card_design_invalid">Card design is invalid</string>
+    <string name="transit_sdk_error_param_card_fee_invalid">Card fee is invalid</string>
+    <string name="transit_sdk_error_param_card_number_blank">Card number is blank</string>
+    <string name="transit_sdk_error_param_card_pin_invalid">The card PIN is invalid</string>
+    <string name="transit_sdk_error_param_expiry_time_invalid">Expiry time is invalid</string>
+    <string name="transit_sdk_error_param_image_category_invalid">Image Category is invalid</string>
+    <string name="transit_sdk_error_param_image_invalid">Image is invalid</string>
+    <string name="transit_sdk_error_param_nfc_tag_null">Tag is null</string>
+    <string name="transit_sdk_error_param_order_number_blank">OrderNumber is blank</string>
+    <string name="transit_sdk_error_param_order_number_invalid">The order number is invalid</string>
+    <string name="transit_sdk_error_param_payment_channel_invalid">Payment channel is invalid</string>
+    <string name="transit_sdk_error_param_payment_url_invalid">Payment url is invalid</string>
+    <string name="transit_sdk_error_param_refund_channel_invalid">Refund channel is invalid</string>
+    <string name="transit_sdk_error_preferences_read_file">error occurs while reading storage</string>
+    <string name="transit_sdk_error_request_null">Request is null</string>
+    <string name="transit_sdk_error_response_null">Response is null</string>
+    <string name="transit_sdk_warning_label_init_check">Transit SDK check init params:</string>
+    <string name="transit_sdk_warning_label_value">Value:</string>
+    <string name="transit_sdk_warning_params_is_null">Error: the parameter cannot be null.</string>
+    <string name="transit_sdk_warning_params_use_advise">Warning: please set this parameter to \'false\' in
+        production.
+    </string>
+</resources>

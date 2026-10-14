@@ -19,8 +19,8 @@ android {
 }
 
 dependencies {
-    compileOnly(libs.primer.klarna)
-    testImplementation(libs.primer.klarna)
+    compileOnly(project(":klarna-sdk"))
+    testImplementation(project(":klarna-sdk"))
 
     api(project(":analytics"))
 

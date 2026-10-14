@@ -33,6 +33,9 @@ headless-vault-manager/  # Stored/vaulted payment methods
 payment-methods-core/     # Interfaces every payment-method module implements
 payment-methods-core-ui/  # Shared payment-method UI
 threeds/ processor-3ds/   # 3DS 2.0 support
+<name>-sdk/           # Third-party wrapper modules (klarna-sdk, stripe-sdk, ...): the vendor SDK plus a thin
+                      # bridging layer, published at the SDK version under the historical coordinates
+                      # (io.primer:klarna-android, io.primer:stripe-android, ...)
 <payment-method>/     # One module per method: google-pay, paypal, klarna, stripe-ach, ipay88, ...
 example/              # Bundled sample app (io.primer.sample) — dev/demo only, not shipped
 bom/                  # BOM for cross-module version alignment
@@ -72,20 +75,17 @@ cron + manual `workflow_dispatch`). They are not a per-PR gate.
 
 ## Before you merge (acceptance gates)
 
-CI (GitHub Actions, on every PR) runs and **must pass**:
+CI (GitLab, on every MR) runs and **must pass**:
 
 ```bash
 ./gradlew clean lint                # Android Lint (per-module baselines)
 ./gradlew clean detekt              # Detekt static analysis (tooling/code-analysis/detekt.yml)
 ```
 
-Also run per PR (review their output when relevant):
-
-- **Excluded-optional-dependencies build** — `assembleRelease` with each optional payment-method
-  dependency removed (`klarna`, `ipay88`, `threeds`, `stripe`); the SDK must still build without them.
-- **Local publish check** — publishes the SDK to Maven Local and builds a consuming app against it.
-- **AAR analyze** — dex method count + dependency/size diff on `:drop-in`.
-- SonarCloud runs coverage + quality (`./gradlew lint koverXmlReportRelease sonar`); don't regress coverage.
+Retired on purpose in July 2026 (do not reintroduce without asking): the excluded-optional-dependencies
+build, the local publish check and the AAR analyze job. When you touch a glue module or a `<name>-sdk`
+wrapper module, verify manually instead: `./gradlew publishToMavenLocal`, then build and run Primer Studio
+against Maven Local with and without the wrapper artifact.
 
 ## Conventions & guardrails
 
@@ -93,8 +93,9 @@ Also run per PR (review their output when relevant):
   manual DI via `SdkComponent` / `DISdkComponent`.
 - New payment methods are separate modules implementing `:payment-methods-core` interfaces;
   register in `:drop-in`/`:headless-core` and add to `:bom`.
-- **Optional payment-method dependencies** (Klarna, iPay88, 3DS, Stripe) must stay optional — the
-  SDK has to compile and run when a merchant excludes them (enforced by the CI build above).
+- **Optional payment-method dependencies** (Klarna, iPay88, 3DS, Stripe, Nol Pay) must stay optional:
+  glue modules depend on the `<name>-sdk` wrapper modules `compileOnly` and detect them at runtime
+  through the `*SdkClassValidator` classes. The SDK has to compile and run when a merchant excludes them.
 - Validation uses the composable `ValidationRule` / `ValidationRulesChain` framework in `:arch-core`.
 - **PCI / security:** never log or persist card data or PII; network calls use certificate pinning;
   keep per-module ProGuard rules intact.

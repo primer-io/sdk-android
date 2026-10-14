@@ -11,8 +11,8 @@ android {
 
 dependencies {
 
-    compileOnly(libs.primer.ipay88)
-    testImplementation(libs.primer.ipay88)
+    compileOnly(project(":ipay88-sdk"))
+    testImplementation(project(":ipay88-sdk"))
 
     implementation(libs.android.appcompat)
 
