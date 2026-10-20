@@ -46,6 +46,11 @@ android {
 }
 
 dependencies {
+    // Every published module depends on the BOM as a platform (Gradle "version alignment"): consumer builds
+    // that pin any io.primer:* artifact, e.g. a hand-pinned wrapper, resolve all io.primer:* artifacts to the
+    // highest io.primer version in the graph instead of drifting from the main SDK. Do not remove.
+    api platform(project(':bom'))
+
     testRuntimeOnly(libs.junit.jupiter.api)
     testImplementation(libs.junit.jupiter.engine)
     testImplementation(libs.junit.jupiter.params)
