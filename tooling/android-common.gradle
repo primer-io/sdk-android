@@ -40,6 +40,8 @@ android {
         unitTests.all {
             useJUnitPlatform()
             systemProperty("junit.jupiter.execution.parallel.enabled", "false")
+            // A hung test fails after 5 minutes with its stack trace instead of stalling the CI job.
+            systemProperty("junit.jupiter.execution.timeout.default", "5m")
         }
         unitTests.returnDefaultValues = true
     }
