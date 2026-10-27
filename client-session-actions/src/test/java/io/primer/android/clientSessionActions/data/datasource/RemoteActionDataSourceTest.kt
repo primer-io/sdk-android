@@ -8,7 +8,7 @@ import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
 import io.mockk.mockkObject
 import io.mockk.slot
-import io.mockk.unmockkAll
+import io.mockk.unmockkObject
 import io.mockk.verify
 import io.primer.android.clientSessionActions.data.models.ClientSessionActionsDataRequest
 import io.primer.android.core.data.datasource.PrimerApiVersion
@@ -27,7 +27,10 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
+import okhttp3.mockwebserver.SocketPolicy
 import okio.Buffer
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
@@ -35,7 +38,6 @@ import org.junit.jupiter.api.parallel.ResourceLock
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.EnumSource
 import java.net.SocketTimeoutException
-import java.util.concurrent.TimeUnit
 import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
@@ -45,6 +47,20 @@ import kotlin.time.Duration.Companion.seconds
 @ExtendWith(MockKExtension::class)
 @ResourceLock("PrimerTimeouts")
 internal class RemoteActionDataSourceTest {
+    private val mockWebServer = MockWebServer()
+
+    @BeforeEach
+    fun setUp() {
+        PrimerHttpClient.clearCustomTimeoutInstances()
+    }
+
+    @AfterEach
+    fun tearDown() {
+        mockWebServer.shutdown()
+        unmockkObject(PrimerTimeouts)
+        PrimerHttpClient.clearCustomTimeoutInstances()
+    }
+
     private val dataRequest = ClientSessionActionsDataRequest(actions = emptyList())
 
     private val input =
@@ -100,13 +116,10 @@ internal class RemoteActionDataSourceTest {
     @Test
     fun `response is processed when the server responds in time`() =
         runTest {
-            mockkObject(PrimerTimeouts)
-            every { PRIMER_15S_TIMEOUT } returns 200.milliseconds
-            val mockWebServer =
-                MockWebServer().apply {
-                    enqueue(MockResponse().setHeadersDelay(100, TimeUnit.MILLISECONDS))
-                    start()
-                }
+            mockWebServer.apply {
+                enqueue(MockResponse())
+                start()
+            }
             every { input.host } returns mockWebServer.url("/").toString()
 
             val tested =
@@ -118,9 +131,6 @@ internal class RemoteActionDataSourceTest {
                     ),
                 ) { PrimerApiVersion.LATEST }
             assertThrows<JsonDecodingException> { tested.execute(input) }
-
-            mockWebServer.shutdown()
-            unmockkAll()
         }
 
     @Test
@@ -128,11 +138,11 @@ internal class RemoteActionDataSourceTest {
         runTest {
             mockkObject(PrimerTimeouts)
             every { PRIMER_15S_TIMEOUT } returns 100.milliseconds
-            val mockWebServer =
-                MockWebServer().apply {
-                    enqueue(MockResponse().setHeadersDelay(200, TimeUnit.MILLISECONDS))
-                    start()
-                }
+            // The server never answers, so the timeout fires however slow the machine is.
+            mockWebServer.apply {
+                enqueue(MockResponse().setSocketPolicy(SocketPolicy.NO_RESPONSE))
+                start()
+            }
             every { input.host } returns mockWebServer.url("/").toString()
 
             val tested =
@@ -144,8 +154,5 @@ internal class RemoteActionDataSourceTest {
                     ),
                 ) { PrimerApiVersion.LATEST }
             assertThrows<SocketTimeoutException> { tested.execute(input) }
-
-            mockWebServer.shutdown()
-            unmockkAll()
         }
 }
