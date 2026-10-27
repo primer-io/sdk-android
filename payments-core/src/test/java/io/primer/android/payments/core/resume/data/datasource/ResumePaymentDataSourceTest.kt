@@ -5,7 +5,7 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkObject
 import io.mockk.slot
-import io.mockk.unmockkAll
+import io.mockk.unmockkObject
 import io.mockk.verify
 import io.primer.android.core.data.datasource.PrimerApiVersion
 import io.primer.android.core.data.datasource.toHeaderMap
@@ -24,13 +24,15 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
+import okhttp3.mockwebserver.SocketPolicy
 import okio.Buffer
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.EnumSource
 import java.net.SocketTimeoutException
-import java.util.concurrent.TimeUnit
 import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
@@ -38,6 +40,20 @@ import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
 
 class ResumePaymentDataSourceTest {
+    private val mockWebServer = MockWebServer()
+
+    @BeforeEach
+    fun setUp() {
+        PrimerHttpClient.clearCustomTimeoutInstances()
+    }
+
+    @AfterEach
+    fun tearDown() {
+        mockWebServer.shutdown()
+        unmockkObject(PrimerTimeouts)
+        PrimerHttpClient.clearCustomTimeoutInstances()
+    }
+
     @ParameterizedTest
     @EnumSource(value = PrimerApiVersion::class)
     fun `request is made with correct endpoint, method, request body and headers`(apiVersion: PrimerApiVersion): Unit =
@@ -94,13 +110,10 @@ class ResumePaymentDataSourceTest {
     @Test
     fun `response is processed when the server responds in time`() =
         runTest {
-            mockkObject(PrimerTimeouts)
-            every { PRIMER_60S_TIMEOUT } returns 200.milliseconds
-            val mockWebServer =
-                MockWebServer().apply {
-                    enqueue(MockResponse().setHeadersDelay(100, TimeUnit.MILLISECONDS))
-                    start()
-                }
+            mockWebServer.apply {
+                enqueue(MockResponse())
+                start()
+            }
             val dataRequest = ResumePaymentDataRequest(resumeToken = "resumeToken")
             val input =
                 mockk<BaseRemoteHostRequest<Pair<String, ResumePaymentDataRequest>>> {
@@ -122,9 +135,6 @@ class ResumePaymentDataSourceTest {
                     idempotencyKeyHolder,
                 )
             assertThrows<JsonDecodingException> { tested.execute(input) }
-
-            mockWebServer.shutdown()
-            unmockkAll()
         }
 
     @Test
@@ -132,11 +142,11 @@ class ResumePaymentDataSourceTest {
         runTest {
             mockkObject(PrimerTimeouts)
             every { PRIMER_60S_TIMEOUT } returns 100.milliseconds
-            val mockWebServer =
-                MockWebServer().apply {
-                    enqueue(MockResponse().setHeadersDelay(200, TimeUnit.MILLISECONDS))
-                    start()
-                }
+            // The server never answers, so the timeout fires however slow the machine is.
+            mockWebServer.apply {
+                enqueue(MockResponse().setSocketPolicy(SocketPolicy.NO_RESPONSE))
+                start()
+            }
             val dataRequest = ResumePaymentDataRequest(resumeToken = "resumeToken")
             val input =
                 mockk<BaseRemoteHostRequest<Pair<String, ResumePaymentDataRequest>>> {
@@ -158,8 +168,5 @@ class ResumePaymentDataSourceTest {
                     idempotencyKeyHolder,
                 )
             assertThrows<SocketTimeoutException> { tested.execute(input) }
-
-            mockWebServer.shutdown()
-            unmockkAll()
         }
 }
