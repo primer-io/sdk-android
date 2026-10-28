@@ -6,14 +6,16 @@ import io.primer.jscore.domain.core.models.JsResourceUrl
 import org.json.JSONObject
 
 /**
- * Represents a remote resource with its download URL and integrity hash.
+ * Represents a remote resource with its download URL, integrity hash, and compressed variant.
  *
  * @property url The URL to download the resource from.
  * @property sha256 The SHA-256 hash for verifying resource integrity.
+ * @property gz The URL to the gzip-compressed variant of the resource.
  */
 internal data class ResourceInfo(
     val url: String,
     val sha256: String,
+    val gz: String,
 )
 
 /**
@@ -97,6 +99,7 @@ internal data class StateProcessorManifest(
         private fun parseResourceInfo(json: JSONObject) = ResourceInfo(
             url = json.getString(URL_FIELD),
             sha256 = json.getString(SHA256_FIELD),
+            gz = json.getString(GZ_FIELD),
         )
 
         private fun parseWasmResourceInfo(json: JSONObject) = WasmResourceInfo(
@@ -122,10 +125,13 @@ internal data class StateProcessorManifest(
     }
 }
 
-/** The bundle, and the CEL runtime its expressions are evaluated with. */
+/**
+ * The bundle, and the CEL runtime its expressions are evaluated with, each from its gzip copy:
+ * OkHttp decodes gzip transparently (it has no brotli decoder), so the uncompressed sha256 applies.
+ */
 internal val StateProcessorManifest.jsResources: List<JsResourceUrl>
     get() = listOf(
-        JsResourceUrl(url = stateProcessor.umd.url, expectedSha256 = stateProcessor.umd.sha256),
+        JsResourceUrl(url = stateProcessor.umd.gz, expectedSha256 = stateProcessor.umd.sha256),
         JsResourceUrl(url = cel.noModules.wasm.gz, expectedSha256 = cel.noModules.wasm.sha256),
-        JsResourceUrl(url = cel.noModules.js.url, expectedSha256 = cel.noModules.js.sha256),
+        JsResourceUrl(url = cel.noModules.js.gz, expectedSha256 = cel.noModules.js.sha256),
     )

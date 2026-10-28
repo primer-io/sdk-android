@@ -132,12 +132,20 @@ internal class StateProcessorLoaderTest {
         val manifest = StateProcessorManifest(
             stateProcessor = StateProcessorInfo(
                 version = "1.0.0",
-                umd = ResourceInfo(url = "https://example.com/sp.js", sha256 = "sp-sha"),
+                umd = ResourceInfo(
+                    url = "https://example.com/sp.js",
+                    sha256 = "sp-sha",
+                    gz = "https://example.com/sp.js.gz",
+                ),
             ),
             cel = CelInfo(
                 version = "1.0.0",
                 noModules = CelTarget(
-                    js = ResourceInfo(url = "https://example.com/cel.js", sha256 = "cel-js-sha"),
+                    js = ResourceInfo(
+                        url = "https://example.com/cel.js",
+                        sha256 = "cel-js-sha",
+                        gz = "https://example.com/cel.js.gz",
+                    ),
                     wasm = WasmResourceInfo(
                         url = "https://example.com/cel.wasm",
                         sha256 = "cel-wasm-sha",
