@@ -106,11 +106,22 @@ internal class ManifestRemoteDataSourceTest {
         const val SIGNATURE = "signature"
         const val MANIFEST = """
             {
-                "stateProcessor": {"version": "1.0.0", "umd": {"url": "https://example.com/sp.js", "sha256": "sp"}},
+                "stateProcessor": {
+                    "version": "1.0.0",
+                    "umd": {
+                        "url": "https://example.com/sp.js",
+                        "sha256": "sp",
+                        "gz": "https://example.com/sp.js.gz"
+                    }
+                },
                 "cel": {
                     "version": "1.0.0",
                     "noModules": {
-                        "js": {"url": "https://example.com/cel.js", "sha256": "js"},
+                        "js": {
+                            "url": "https://example.com/cel.js",
+                            "sha256": "js",
+                            "gz": "https://example.com/cel.js.gz"
+                        },
                         "wasm": {
                             "url": "https://example.com/cel.wasm",
                             "sha256": "wasm",

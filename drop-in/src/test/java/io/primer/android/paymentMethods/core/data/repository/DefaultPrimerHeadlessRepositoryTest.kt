@@ -73,7 +73,7 @@ class DefaultPrimerHeadlessRepositoryTest {
 
     @AfterEach
     fun tearDown() {
-        unmockkObject(PrimerHeadlessUniversalCheckout)
+        unmockkObject(PrimerHeadlessUniversalCheckout, Primer.current)
     }
 
     @Test

@@ -1,5 +1,6 @@
 package io.primer.checkout.orchestrator.data.model
 
+import io.primer.jscore.domain.core.models.JsResourceUrl
 import org.json.JSONObject
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertThrows
@@ -16,9 +17,11 @@ internal class StateProcessorManifestTest {
         assertEquals("1.2.3", result.stateProcessor.version)
         assertEquals("https://cdn.example.com/sp.js", result.stateProcessor.umd.url)
         assertEquals("sp-sha256", result.stateProcessor.umd.sha256)
+        assertEquals("https://cdn.example.com/sp.js.gz", result.stateProcessor.umd.gz)
         assertEquals("2.0.0", result.cel.version)
         assertEquals("https://cdn.example.com/cel.js", result.cel.noModules.js.url)
         assertEquals("cel-js-sha256", result.cel.noModules.js.sha256)
+        assertEquals("https://cdn.example.com/cel.js.gz", result.cel.noModules.js.gz)
         assertEquals("https://cdn.example.com/cel.wasm", result.cel.noModules.wasm.url)
         assertEquals("cel-wasm-sha256", result.cel.noModules.wasm.sha256)
         assertEquals("https://cdn.example.com/cel.wasm.gz", result.cel.noModules.wasm.gz)
@@ -33,6 +36,7 @@ internal class StateProcessorManifestTest {
                 JSONObject().apply {
                     put("url", "https://cdn.example.com/bundle.js")
                     put("sha256", "bundle-hash")
+                    put("gz", "https://cdn.example.com/bundle.js.gz")
                 },
             )
         }
@@ -42,6 +46,7 @@ internal class StateProcessorManifestTest {
         assertEquals("3.0.0", result.version)
         assertEquals("https://cdn.example.com/bundle.js", result.umd.url)
         assertEquals("bundle-hash", result.umd.sha256)
+        assertEquals("https://cdn.example.com/bundle.js.gz", result.umd.gz)
     }
 
     @Test
@@ -56,6 +61,7 @@ internal class StateProcessorManifestTest {
                         JSONObject().apply {
                             put("url", "https://cdn.example.com/cel-nomod.js")
                             put("sha256", "js-hash")
+                            put("gz", "https://cdn.example.com/cel-nomod.js.gz")
                         },
                     )
                     put(
@@ -75,6 +81,7 @@ internal class StateProcessorManifestTest {
         assertEquals("4.0.0", result.version)
         assertEquals("https://cdn.example.com/cel-nomod.js", result.noModules.js.url)
         assertEquals("js-hash", result.noModules.js.sha256)
+        assertEquals("https://cdn.example.com/cel-nomod.js.gz", result.noModules.js.gz)
         assertEquals("https://cdn.example.com/cel-nomod.wasm", result.noModules.wasm.url)
         assertEquals("wasm-hash", result.noModules.wasm.sha256)
         assertEquals("https://cdn.example.com/cel-nomod.wasm.gz", result.noModules.wasm.gz)
@@ -113,6 +120,7 @@ internal class StateProcessorManifestTest {
                         JSONObject().apply {
                             put("url", "https://cdn.example.com/sp.js")
                             put("sha256", "hash")
+                            put("gz", "https://cdn.example.com/sp.js.gz")
                         },
                     )
                 },
@@ -141,6 +149,7 @@ internal class StateProcessorManifestTest {
                                 JSONObject().apply {
                                     put("url", "https://cdn.example.com/cel.js")
                                     put("sha256", "hash")
+                                    put("gz", "https://cdn.example.com/cel.js.gz")
                                 },
                             )
                             put(
@@ -161,6 +170,42 @@ internal class StateProcessorManifestTest {
         }
     }
 
+    @Test
+    fun `deserialize should throw when js gz field is missing`() {
+        val json = buildManifestJson().apply {
+            getJSONObject("cel").getJSONObject("noModules").getJSONObject("js").remove("gz")
+        }
+
+        assertThrows(Exception::class.java) {
+            StateProcessorManifest.deserializer.deserialize(json)
+        }
+    }
+
+    @Test
+    fun `deserialize should throw when umd gz field is missing`() {
+        val json = buildManifestJson().apply {
+            getJSONObject("stateProcessor").getJSONObject("umd").remove("gz")
+        }
+
+        assertThrows(Exception::class.java) {
+            StateProcessorManifest.deserializer.deserialize(json)
+        }
+    }
+
+    @Test
+    fun `jsResources should load every resource from its gzip copy`() {
+        val manifest = StateProcessorManifest.deserializer.deserialize(buildManifestJson())
+
+        assertEquals(
+            listOf(
+                JsResourceUrl(url = "https://cdn.example.com/sp.js.gz", expectedSha256 = "sp-sha256"),
+                JsResourceUrl(url = "https://cdn.example.com/cel.wasm.gz", expectedSha256 = "cel-wasm-sha256"),
+                JsResourceUrl(url = "https://cdn.example.com/cel.js.gz", expectedSha256 = "cel-js-sha256"),
+            ),
+            manifest.jsResources,
+        )
+    }
+
     private fun buildManifestJson() = JSONObject().apply {
         put("stateProcessor", buildStateProcessorJson())
         put("cel", buildCelJson())
@@ -173,6 +218,7 @@ internal class StateProcessorManifestTest {
             JSONObject().apply {
                 put("url", "https://cdn.example.com/sp.js")
                 put("sha256", "sp-sha256")
+                put("gz", "https://cdn.example.com/sp.js.gz")
             },
         )
     }
@@ -187,6 +233,7 @@ internal class StateProcessorManifestTest {
                     JSONObject().apply {
                         put("url", "https://cdn.example.com/cel.js")
                         put("sha256", "cel-js-sha256")
+                        put("gz", "https://cdn.example.com/cel.js.gz")
                     },
                 )
                 put(
