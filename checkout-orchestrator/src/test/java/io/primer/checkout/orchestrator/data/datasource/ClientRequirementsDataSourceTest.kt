@@ -18,6 +18,7 @@ import org.json.JSONArray
 import org.json.JSONObject
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -87,6 +88,21 @@ internal class ClientRequirementsDataSourceTest {
         val result = JSONObject(results.captured).getJSONObject(KLARNA_KEY)
         assertEquals("success", result.getString("outcome"))
         assertEquals("2.16.0", result.getJSONObject("data").getString("version"))
+    }
+
+    @Test
+    fun `sends a probe's nested data as JSON`() = runTest {
+        val library = mapOf("version" to "2.16.0", "features" to listOf("a", null))
+        check(
+            results = mapOf(
+                KLARNA_KEY to ProbeResult(ProbeOutcome.SUCCESS, mapOf("library" to library, "note" to null)),
+            ),
+        )
+
+        val data = JSONObject(results.captured).getJSONObject(KLARNA_KEY).getJSONObject("data")
+        assertEquals("2.16.0", data.getJSONObject("library").getString("version"))
+        assertEquals(2, data.getJSONObject("library").getJSONArray("features").length())
+        assertTrue(data.isNull("note"))
     }
 
     @Test

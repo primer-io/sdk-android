@@ -1,6 +1,7 @@
 package io.primer.checkout.orchestrator.data.datasource
 
 import io.primer.android.configuration.data.model.PaymentMethodConfigDataResponse
+import io.primer.android.core.data.serialization.json.extensions.toJSONObject
 import io.primer.android.core.data.serialization.json.extensions.toMap
 import io.primer.checkout.orchestrator.data.StateProcessorLoader
 import io.primer.checkout.orchestrator.data.model.ClientCapabilities
@@ -64,7 +65,7 @@ internal class ClientRequirementsDataSource(
                     key,
                     JSONObject().apply {
                         put(OUTCOME_FIELD, result.outcome.value)
-                        if (result.data.isNotEmpty()) put(DATA_FIELD, JSONObject(result.data))
+                        if (result.data.isNotEmpty()) put(DATA_FIELD, result.data.toJSONObject())
                     },
                 )
             }
@@ -86,9 +87,9 @@ internal class ClientRequirementsDataSource(
             put(
                 CAPABILITIES_FIELD,
                 JSONObject().apply {
-                    put(STEP_TYPES_FIELD, JSONObject(capabilities.stepTypes))
-                    put(UI_COMPONENTS_FIELD, JSONObject(capabilities.uiComponents))
-                    put(PROBES_FIELD, JSONObject(capabilities.probes))
+                    put(STEP_TYPES_FIELD, capabilities.stepTypes.toJSONObject())
+                    put(UI_COMPONENTS_FIELD, capabilities.uiComponents.toJSONObject())
+                    put(PROBES_FIELD, capabilities.probes.toJSONObject())
                 },
             )
             put(CONTEXT_FIELD, JSONObject(context))
