@@ -6,11 +6,15 @@ import io.primer.executionengine.data.executors.analytics.PlatformLogStepExecuto
 import io.primer.executionengine.data.executors.http.HttpRequestStepExecutor
 import io.primer.executionengine.data.executors.urlopen.UrlOpenStepExecutor
 import io.primer.executionengine.data.handler.DefaultUrlOpenHandler
+import io.primer.executionengine.data.registry.DefaultProbeRegistry
 import io.primer.executionengine.data.registry.DefaultStepExecutorRegistry
+import io.primer.executionengine.data.registry.DefaultUiComponentRegistry
 import io.primer.executionengine.domain.handler.UrlOpenHandler
 import io.primer.executionengine.domain.models.Outcome
 import io.primer.executionengine.domain.models.StepResult
+import io.primer.executionengine.domain.registry.ProbeRegistry
 import io.primer.executionengine.domain.registry.StepExecutorRegistry
+import io.primer.executionengine.domain.registry.UiComponentRegistry
 import java.util.UUID
 
 class ExecutionEngineContainer(
@@ -20,6 +24,8 @@ class ExecutionEngineContainer(
         registerSingleton<UrlOpenHandler> {
             DefaultUrlOpenHandler()
         }
+
+        registerDeclarations()
 
         registerSingleton<StepExecutorRegistry> {
             DefaultStepExecutorRegistry(logReporter = sdk().resolve()).apply {
@@ -54,6 +60,16 @@ class ExecutionEngineContainer(
                     )
                 }
             }
+        }
+    }
+
+    /** What the client requirements check reads. */
+    private fun registerDeclarations() {
+        registerSingleton<UiComponentRegistry> {
+            DefaultUiComponentRegistry()
+        }
+        registerSingleton<ProbeRegistry> {
+            DefaultProbeRegistry()
         }
     }
 

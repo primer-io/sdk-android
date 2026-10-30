@@ -106,22 +106,26 @@ internal class StateProcessorLoaderTest {
 
     @Test
     fun `runs a call again on a new load when the engine died during it`() = runTest {
-        coEvery { jsExecutor.checkClientRequirements(any(), any()) } answers {
+        coEvery { jsExecutor.checkClientRequirements(any(), any(), any()) } answers {
             alive = false
             Result.failure(IllegalStateException("sandbox dead"))
         } andThen Result.success(VERDICTS)
 
-        assertEquals(VERDICTS, loader.execute(SANDBOX) { checkClientRequirements("[]", "{}") })
+        assertEquals(VERDICTS, loader.execute(SANDBOX) { checkClientRequirements("[]", "{}", "{}") })
         coVerify(exactly = 2) { jsExecutor.initialize(any()) }
     }
 
     @Test
     fun `does not run a call again when it failed on a live engine`() = runTest {
-        coEvery { jsExecutor.checkClientRequirements(any(), any()) } returns
+        coEvery { jsExecutor.checkClientRequirements(any(), any(), any()) } returns
             Result.failure(IllegalStateException("TypeError"))
 
-        assertThrows<IllegalStateException> { loader.execute<String>(SANDBOX) { checkClientRequirements("[]", "{}") } }
-        coVerify(exactly = 1) { jsExecutor.checkClientRequirements(any(), any()) }
+        assertThrows<IllegalStateException> {
+            loader.execute<String>(
+                SANDBOX,
+            ) { checkClientRequirements("[]", "{}", "{}") }
+        }
+        coVerify(exactly = 1) { jsExecutor.checkClientRequirements(any(), any(), any()) }
     }
 
     private companion object {

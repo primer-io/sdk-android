@@ -29,6 +29,8 @@ import java.util.concurrent.ExecutionException
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 
+// One override per processor script, and the sandbox plumbing they share.
+@Suppress("TooManyFunctions")
 internal class JsSandboxExecutor(
     private val sandboxProvider: JavaScriptSandboxProvider,
     private val logReporter: LogReporter,
@@ -134,9 +136,14 @@ internal class JsSandboxExecutor(
         isolate.evaluateJsAsync(script)
     }
 
-    override suspend fun checkClientRequirements(items: String, client: String): Result<String> =
+    override suspend fun probesToRun(items: String, client: String): Result<String> =
         runSuspendCatching {
-            isolate.evaluateJsAsync("${JsScripts.CHECK_CLIENT_REQUIREMENTS}($items, $client)")
+            isolate.evaluateJsAsync("${JsScripts.PROBES_TO_RUN}($items, $client)")
+        }
+
+    override suspend fun checkClientRequirements(items: String, client: String, results: String): Result<String> =
+        runSuspendCatching {
+            isolate.evaluateJsAsync("${JsScripts.CHECK_CLIENT_REQUIREMENTS}($items, $client, $results)")
         }
 
     override fun destroy() {

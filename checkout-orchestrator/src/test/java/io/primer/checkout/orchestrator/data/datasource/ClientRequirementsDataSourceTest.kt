@@ -8,13 +8,17 @@ import io.primer.android.configuration.data.model.PaymentMethodConfigDataRespons
 import io.primer.android.configuration.data.model.PaymentMethodImplementationType
 import io.primer.checkout.orchestrator.data.StateProcessorLoader
 import io.primer.checkout.orchestrator.data.model.ClientCapabilities
+import io.primer.checkout.orchestrator.data.model.ProbeRequest
 import io.primer.checkout.orchestrator.domain.model.ClientRequirementsCheck
+import io.primer.executionengine.domain.probe.ProbeOutcome
+import io.primer.executionengine.domain.probe.ProbeResult
 import io.primer.jscore.domain.core.JsExecutor
 import kotlinx.coroutines.test.runTest
 import org.json.JSONArray
 import org.json.JSONObject
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -30,6 +34,7 @@ internal class ClientRequirementsDataSourceTest {
 
     private val items = slot<String>()
     private val client = slot<String>()
+    private val results = slot<String>()
     private lateinit var dataSource: ClientRequirementsDataSource
 
     @BeforeEach
@@ -37,7 +42,8 @@ internal class ClientRequirementsDataSourceTest {
         coEvery { stateProcessorLoader.execute<String>(SANDBOX, any()) } coAnswers {
             secondArg<suspend JsExecutor.() -> Result<String>>().invoke(jsExecutor).getOrThrow()
         }
-        coEvery { jsExecutor.checkClientRequirements(capture(items), capture(client)) } returns
+        coEvery { jsExecutor.probesToRun(any(), any()) } returns Result.success("[]")
+        coEvery { jsExecutor.checkClientRequirements(capture(items), capture(client), capture(results)) } returns
             Result.success(VERDICTS)
         dataSource = ClientRequirementsDataSource(stateProcessorLoader)
     }
@@ -59,11 +65,51 @@ internal class ClientRequirementsDataSourceTest {
         val capabilities = JSONObject(client.captured).getJSONObject("capabilities")
         assertEquals("1.0.0", capabilities.getJSONObject("stepTypes").getString("url.open"))
         assertEquals("1.0.0", capabilities.getJSONObject("uiComponents").getString("qr.code"))
-        assertEquals(0, capabilities.getJSONObject("dependencies").length())
+        assertEquals("1.0.0", capabilities.getJSONObject("probes").getString("klarna.sdk"))
         assertEquals(
             "ANDROID_NATIVE",
             JSONObject(client.captured).getJSONObject("context").getJSONObject("sdk").getString("type"),
         )
+    }
+
+    @Test
+    fun `reads the probes the processor asks for`() = runTest {
+        coEvery { jsExecutor.probesToRun(any(), any()) } returns Result.success(KLARNA_PROBE)
+
+        val requests = dataSource.probesToRun(SANDBOX, listOf(twint, legacyIdeal), capabilities, CONTEXT)
+
+        assertEquals(listOf(ProbeRequest(KLARNA_KEY, "klarna.sdk", mapOf("version" to "^2.16.0"))), requests)
+    }
+
+    @Test
+    fun `checks with each probe's result under its key`() = runTest {
+        check(results = mapOf(KLARNA_KEY to ProbeResult(ProbeOutcome.SUCCESS, mapOf("version" to "2.16.0"))))
+
+        val result = JSONObject(results.captured).getJSONObject(KLARNA_KEY)
+        assertEquals("success", result.getString("outcome"))
+        assertEquals("2.16.0", result.getJSONObject("data").getString("version"))
+    }
+
+    @Test
+    fun `sends a probe's nested data as JSON`() = runTest {
+        val library = mapOf("version" to "2.16.0", "features" to listOf("a", null))
+        check(
+            results = mapOf(
+                KLARNA_KEY to ProbeResult(ProbeOutcome.SUCCESS, mapOf("library" to library, "note" to null)),
+            ),
+        )
+
+        val data = JSONObject(results.captured).getJSONObject(KLARNA_KEY).getJSONObject("data")
+        assertEquals("2.16.0", data.getJSONObject("library").getString("version"))
+        assertEquals(2, data.getJSONObject("library").getJSONArray("features").length())
+        assertTrue(data.isNull("note"))
+    }
+
+    @Test
+    fun `checks with no results when no probe ran`() = runTest {
+        check()
+
+        assertEquals(0, JSONObject(results.captured).length())
     }
 
     @Test
@@ -75,19 +121,21 @@ internal class ClientRequirementsDataSourceTest {
         assertEquals("url.open", JSONArray(verdicts.getValue("ADYEN_IDEAL").unmet).getJSONObject(0).getString("name"))
     }
 
-    private suspend fun check() = dataSource.check(
-        environment = SANDBOX,
-        methods = listOf(twint, legacyIdeal),
-        capabilities = ClientCapabilities(
-            stepTypes = mapOf("url.open" to "1.0.0"),
-            uiComponents = mapOf("qr.code" to "1.0.0"),
-            dependencies = emptyMap(),
-        ),
-        context = """{"sdk":{"type":"ANDROID_NATIVE"}}""",
-    )
+    private suspend fun check(results: Map<String, ProbeResult> = emptyMap()) =
+        dataSource.check(SANDBOX, listOf(twint, legacyIdeal), capabilities, CONTEXT, results)
 
     private companion object {
         const val SANDBOX = "sandbox"
+        const val CONTEXT = """{"sdk":{"type":"ANDROID_NATIVE"}}"""
+        val capabilities = ClientCapabilities(
+            stepTypes = mapOf("url.open" to "1.0.0"),
+            uiComponents = mapOf("qr.code" to "1.0.0"),
+            probes = mapOf("klarna.sdk" to "1.0.0"),
+        )
+        const val KLARNA_KEY = """klarna.sdk#{"version":"^2.16.0"}"""
+        const val KLARNA_PROBE =
+            """[{"key": "klarna.sdk#{\"version\":\"^2.16.0\"}", "probe": "klarna.sdk", """ +
+                """"params": {"version": "^2.16.0"}}]"""
         const val VERDICTS = """
             {
                 "TWINT": {"satisfied": true, "unmet": []},
