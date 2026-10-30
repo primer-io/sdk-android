@@ -42,7 +42,7 @@ import io.primer.android.paymentmethods.core.composer.composable.ComposerUiEvent
 import io.primer.android.payments.core.create.domain.model.PaymentDecision
 import io.primer.android.processor3ds.domain.model.Processor3DS
 import io.primer.android.processor3ds.ui.Processor3dsWebViewActivity
-import io.primer.android.threeds.ui.ThreeDsActivity
+import io.primer.android.threeds.ui.NativeThreeDsActivity
 import io.primer.cardShared.binData.domain.CardDataMetadataRetriever
 import io.primer.cardShared.binData.domain.CardMetadataStateRetriever
 import io.primer.paymentMethodCoreUi.core.ui.navigation.launchers.PaymentMethodLauncherParams
@@ -173,7 +173,7 @@ class CardComponentTest {
             }
         val intent =
             mockk<Intent> {
-                every { getStringExtra(ThreeDsActivity.RESUME_TOKEN_EXTRA_KEY) } returns resumeToken
+                every { getStringExtra(NativeThreeDsActivity.RESUME_TOKEN_EXTRA_KEY) } returns resumeToken
             }
 
         val payment = mockk<Payment>()
@@ -223,7 +223,7 @@ class CardComponentTest {
             }
         val intent =
             mockk<Intent> {
-                every { getStringExtra(ThreeDsActivity.RESUME_TOKEN_EXTRA_KEY) } returns resumeToken
+                every { getStringExtra(NativeThreeDsActivity.RESUME_TOKEN_EXTRA_KEY) } returns resumeToken
             }
 
         val payment = mockk<Payment>()

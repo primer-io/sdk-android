@@ -4,10 +4,17 @@
     <application>
         <activity
             android:name="io.primer.paymentMethodCoreUi.core.ui.HeadlessActivity"
-            android:exported="true"
+            android:exported="false"
             android:label=""
             android:launchMode="singleTask"
-            android:theme="@style/Theme.AppCompat.WebView">
+            android:theme="@style/Theme.AppCompat.WebView" />
+
+        <activity
+            android:name="io.primer.paymentMethodCoreUi.core.ui.HeadlessRedirectActivity"
+            android:excludeFromRecents="true"
+            android:exported="true"
+            android:label=""
+            android:theme="@android:style/Theme.Translucent.NoTitleBar">
             <intent-filter>
                 <data
                     android:host="requestor.${applicationId}"

@@ -10,7 +10,7 @@
 
         <activity
             android:name=".CheckoutSheetActivity"
-            android:exported="true"
+            android:exported="false"
             android:label=""
             android:launchMode="singleTask"
             android:theme="@style/Theme.AppCompat.PrimerUniversalCheckout"

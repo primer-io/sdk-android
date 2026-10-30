@@ -7,7 +7,7 @@
 
         <activity
             android:name="StripeBankAccountCollectorActivity"
-            android:exported="true"
+            android:exported="false"
             android:launchMode="singleTop"
             android:theme="@style/Theme.AppCompat.Translucent" />
     </application>
