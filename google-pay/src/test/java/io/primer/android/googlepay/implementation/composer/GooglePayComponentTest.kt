@@ -50,7 +50,7 @@ import io.primer.android.googlepay.implementation.validation.GooglePayValidation
 import io.primer.android.paymentmethods.core.composer.composable.ComposerUiEvent
 import io.primer.android.processor3ds.domain.model.Processor3DS
 import io.primer.android.processor3ds.ui.Processor3dsWebViewActivity
-import io.primer.android.threeds.ui.ThreeDsActivity
+import io.primer.android.threeds.ui.NativeThreeDsActivity
 import io.primer.paymentMethodCoreUi.core.ui.navigation.launchers.PaymentMethodLauncherParams
 import io.primer.paymentMethodCoreUi.core.ui.webview.WebViewActivity
 import kotlinx.coroutines.CancellationException
@@ -206,7 +206,7 @@ internal class GooglePayComponentTest {
         val resultCode = Activity.RESULT_OK
         val intent =
             mockk<Intent>(relaxed = true) {
-                every { getStringExtra(ThreeDsActivity.RESUME_TOKEN_EXTRA_KEY) } returns resumeToken
+                every { getStringExtra(NativeThreeDsActivity.RESUME_TOKEN_EXTRA_KEY) } returns resumeToken
             }
 
         // When

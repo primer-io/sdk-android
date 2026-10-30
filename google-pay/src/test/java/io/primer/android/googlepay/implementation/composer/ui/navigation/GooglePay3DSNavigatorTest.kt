@@ -12,7 +12,7 @@ import io.mockk.slot
 import io.mockk.verify
 import io.primer.android.configuration.data.model.CardNetwork
 import io.primer.android.paymentmethods.core.ui.navigation.NavigationParams
-import io.primer.android.threeds.ui.ThreeDsActivity
+import io.primer.android.threeds.ui.NativeThreeDsActivity
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
@@ -31,11 +31,11 @@ internal class GooglePay3DSNavigatorTest {
         navigator = GooglePay3DSNavigator(activity, launcher)
 
         // Mock the getLaunchIntent method
-        mockkObject(ThreeDsActivity.Companion)
+        mockkObject(NativeThreeDsActivity.Companion)
     }
 
     @Test
-    fun `navigate() should launch ThreeDsActivity with correct parameters`() {
+    fun `navigate() should launch NativeThreeDsActivity with correct parameters`() {
         // Given
         val supportedThreeDsVersions = listOf("1.0.0", "2.1.0", "2.2.0")
         val params =
@@ -46,7 +46,7 @@ internal class GooglePay3DSNavigatorTest {
                 cardNetwork = CardNetwork.Type.MASTERCARD,
             )
         val expectedIntent = mockk<Intent>()
-        every { ThreeDsActivity.Companion.getLaunchIntent(any(), any()) } returns expectedIntent
+        every { NativeThreeDsActivity.Companion.getLaunchIntent(any(), any()) } returns expectedIntent
 
         // Capture the intent passed to launcher.launch
         val slot = slot<Intent>()

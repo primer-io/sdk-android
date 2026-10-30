@@ -14,7 +14,7 @@ import io.mockk.unmockkAll
 import io.mockk.verify
 import io.primer.android.configuration.data.model.CardNetwork
 import io.primer.android.paymentmethods.core.ui.navigation.NavigationParams
-import io.primer.android.threeds.ui.ThreeDsActivity
+import io.primer.android.threeds.ui.NativeThreeDsActivity
 import io.primer.android.threeds.ui.launcher.ThreeDsActivityLauncherParams
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -31,7 +31,7 @@ internal class Card3DSNavigatorTest {
         activityContext = mockk(relaxed = true)
         launcher = mockk(relaxed = true)
         navigator = Card3DSNavigator(activityContext, launcher)
-        mockkObject(ThreeDsActivity.Companion)
+        mockkObject(NativeThreeDsActivity.Companion)
     }
 
     @AfterEach
@@ -51,7 +51,7 @@ internal class Card3DSNavigatorTest {
             )
         val intent = mockk<Intent>()
         every {
-            ThreeDsActivity.Companion.getLaunchIntent(
+            NativeThreeDsActivity.Companion.getLaunchIntent(
                 context = activityContext,
                 params =
                 ThreeDsActivityLauncherParams(
@@ -73,7 +73,7 @@ internal class Card3DSNavigatorTest {
     }
 
     @Test
-    fun `navigate should launch ThreeDsActivity with specified parameters`() {
+    fun `navigate should launch NativeThreeDsActivity with specified parameters`() {
         // Arrange
         val params =
             CardNative3DSActivityLauncherParams(
@@ -91,7 +91,7 @@ internal class Card3DSNavigatorTest {
         val expectedIntent = mockk<Intent>(relaxed = true)
 
         every {
-            ThreeDsActivity.Companion.getLaunchIntent(
+            NativeThreeDsActivity.Companion.getLaunchIntent(
                 activityContext,
                 threeDsLauncherParams,
             )
@@ -111,7 +111,7 @@ internal class Card3DSNavigatorTest {
         every { launcher.launch(capture(slot)) } just Runs
 
         verify {
-            ThreeDsActivity.getLaunchIntent(
+            NativeThreeDsActivity.getLaunchIntent(
                 eq(activityContext),
                 eq(threeDsLauncherParams),
             )

@@ -16,7 +16,7 @@ import io.primer.android.paymentmethods.core.composer.VaultedPaymentMethodCompon
 import io.primer.android.paymentmethods.core.composer.composable.ComposerUiEvent
 import io.primer.android.paymentmethods.core.composer.composable.UiEventable
 import io.primer.android.processor3ds.ui.Processor3dsWebViewActivity
-import io.primer.android.threeds.ui.ThreeDsActivity
+import io.primer.android.threeds.ui.NativeThreeDsActivity
 import io.primer.paymentMethodCoreUi.core.ui.composable.ActivityResultIntentHandler
 import io.primer.paymentMethodCoreUi.core.ui.composable.ActivityStartIntentHandler
 import io.primer.paymentMethodCoreUi.core.ui.navigation.launchers.PaymentMethodLauncherParams
@@ -74,7 +74,7 @@ internal class VaultedGooglePayComponent(
                     is ThreeDsInitialLauncherParams ->
                         composerScope.launch {
                             paymentDelegate.resumePayment(
-                                intent?.getStringExtra(ThreeDsActivity.RESUME_TOKEN_EXTRA_KEY).orEmpty(),
+                                intent?.getStringExtra(NativeThreeDsActivity.RESUME_TOKEN_EXTRA_KEY).orEmpty(),
                             )
                         }
 

@@ -4,10 +4,17 @@
     <application>
         <activity
             android:name="io.primer.android.webRedirectShared.implementation.composer.ui.activity.WebRedirectActivity"
-            android:exported="true"
+            android:exported="false"
             android:label=""
             android:launchMode="singleTop"
-            android:theme="@style/Theme.AppCompat.WebView">
+            android:theme="@style/Theme.AppCompat.WebView" />
+
+        <activity
+            android:name="io.primer.android.webRedirectShared.implementation.composer.ui.activity.WebRedirectReturnActivity"
+            android:excludeFromRecents="true"
+            android:exported="true"
+            android:label=""
+            android:theme="@android:style/Theme.Translucent.NoTitleBar">
             <intent-filter>
                 <data
                     android:host="requestor.${applicationId}"

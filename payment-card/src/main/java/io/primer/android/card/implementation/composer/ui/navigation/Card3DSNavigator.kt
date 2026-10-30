@@ -6,7 +6,7 @@ import androidx.activity.result.ActivityResultLauncher
 import io.primer.android.PrimerSessionIntent
 import io.primer.android.configuration.data.model.CardNetwork
 import io.primer.android.paymentmethods.core.ui.navigation.NavigationParams
-import io.primer.android.threeds.ui.ThreeDsActivity
+import io.primer.android.threeds.ui.NativeThreeDsActivity
 import io.primer.android.threeds.ui.launcher.ThreeDsActivityLauncherParams
 import io.primer.paymentMethodCoreUi.core.ui.navigation.StartActivityForResultNavigator
 import io.primer.paymentMethodCoreUi.core.ui.navigation.launchers.PaymentMethodRedirectLauncherParams
@@ -27,7 +27,7 @@ internal data class Card3DSNavigator(
 ) : StartActivityForResultNavigator<CardNative3DSActivityLauncherParams>(launcher) {
     override fun navigate(params: CardNative3DSActivityLauncherParams) {
         launcher.launch(
-            ThreeDsActivity.getLaunchIntent(
+            NativeThreeDsActivity.getLaunchIntent(
                 context = context,
                 params =
                 ThreeDsActivityLauncherParams(

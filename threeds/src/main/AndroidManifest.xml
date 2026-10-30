@@ -3,10 +3,17 @@
 
     <application>
         <activity
-            android:name="io.primer.android.threeds.ui.ThreeDsActivity"
-            android:exported="true"
+            android:name="io.primer.android.threeds.ui.NativeThreeDsActivity"
+            android:exported="false"
             android:label=""
             android:launchMode="singleTask"
             android:theme="@style/Theme.AppCompat.PrimerUniversalCheckout.NonTransparent" />
+
+        <activity
+            android:name="io.primer.android.threeds.ui.ThreeDsActivity"
+            android:excludeFromRecents="true"
+            android:exported="true"
+            android:label=""
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
     </application>
 </manifest>

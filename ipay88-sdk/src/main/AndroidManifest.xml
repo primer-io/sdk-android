@@ -8,10 +8,17 @@
     <application>
         <activity
             android:name="io.primer.ipay88.api.ui.NativeIPay88Activity"
-            android:exported="true"
+            android:exported="false"
             android:label=""
             android:launchMode="singleTask"
-            android:theme="@style/Theme.AppCompat.NoActionBar.FullScreen.IPay"
+            android:theme="@style/Theme.AppCompat.NoActionBar.FullScreen.IPay" />
+
+        <activity
+            android:name="io.primer.ipay88.api.ui.IPay88RedirectActivity"
+            android:excludeFromRecents="true"
+            android:exported="true"
+            android:label=""
+            android:theme="@android:style/Theme.Translucent.NoTitleBar"
             tools:ignore="AppLinkUrlError">
 
             <intent-filter>
