@@ -5,6 +5,25 @@ All notable changes to `primer-sdk-android` are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 2.54.0 (2026-10-30)
+
+### Feat
+
+- **bdc**: client requirement probes and declared UI components
+- **bdc**: handle client requirements
+
+### Fix
+
+- stop SDK activities from reading Serializable intent extras (ORC-9028)
+- **bdc**: probe results and capabilities go to the processor through toJSONObject
+- **bdc**: load the state processor and CEL glue from their gzip copies
+- **di**: scope registry to container
+- **drop-in**: keep leading zeros in saved card last four digits (ORC-8701)
+
+### Refactor
+
+- **bdc**: every probe declares its version
+
 ## 2.53.1 (2026-09-28)
 
 ### Fix
