@@ -6,9 +6,11 @@ import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import java.time.Year
 
 internal class CardExpiryDateValidatorTest {
     private lateinit var cardExpiryDateValidator: CardExpiryDateValidator
+    private val nextYear = Year.now().value + 1
 
     @BeforeEach
     fun setUp() {
@@ -66,7 +68,7 @@ internal class CardExpiryDateValidatorTest {
     @Test
     fun `validate should return null when expiry date format is valid`() =
         runTest {
-            val validExpiryDates = listOf("01/2028", "12/2030", "10/2027")
+            val validExpiryDates = listOf("01/$nextYear", "12/${nextYear + 3}", "10/$nextYear")
 
             validExpiryDates.forEach { expiryDate ->
                 val result = cardExpiryDateValidator.validate(expiryDate)
@@ -77,7 +79,7 @@ internal class CardExpiryDateValidatorTest {
     @Test
     fun `validate should pad single digit month with leading zero and consider it valid`() =
         runTest {
-            val result = cardExpiryDateValidator.validate("1/2027")
+            val result = cardExpiryDateValidator.validate("1/$nextYear")
 
             assertEquals(null, result)
         }
