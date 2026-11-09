@@ -38,7 +38,7 @@
     <string name="cityLabel">城市</string>
     <!-- Complete your payment - Account info payment title label -->
     <string name="completeYourPayment">完成付款</string>
-    <string name="completeYourPaymentInTheApp">使用 {appName} 來完成付款</string>
+    <string name="completeYourPaymentInTheApp">使用 %s 來完成付款</string>
     <string name="confirm">確定</string>
     <string name="confirm_dd_mandate">確定授權</string>
     <string name="confirmToPayButtonTitle">確認付款</string>
@@ -53,7 +53,7 @@
     <string name="dd_cancel_message">是否取消增加銀行帳戶?</string>
     <string name="dd_mandate_error">請確認所有資料正確</string>
     <!-- Legal -->
-    <string name="dd_mandate_legal">簽訂此授權協議，代表你同意授權 (A) {companyName} 發送指示去銀行從你的帳戶扣款，及 (B) 讓銀行根據 {companyName} 的指示從你的銀行戶口中扣款</string>
+    <string name="dd_mandate_legal">簽訂此授權協議，代表你同意授權 (A) %1$s 發送指示去銀行從你的帳戶扣款，及 (B) 讓銀行根據 %1$s 的指示從你的銀行戶口中扣款</string>
     <string name="delete">刪除</string>
     <string name="done">完成</string>
     <!-- The prefix copy we put before the expiration date -->
