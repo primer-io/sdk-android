@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Not in strings.xml: Phrase sync owns that file. The Int last-four value loses leading zeros, so pad back to 4 digits. -->
+    <!-- A display format, not text, so it is not translated. The Int last-four value loses leading zeros, so pad back to 4 digits. -->
     <string name="last_four_padded" translatable="false">•••• %04d</string>
 </resources>
