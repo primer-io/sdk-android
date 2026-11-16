@@ -39,6 +39,8 @@ android {
 
         unitTests.all {
             useJUnitPlatform()
+            // Without a cap a test JVM may take a quarter of the machine's memory, and several run at once.
+            maxHeapSize = "1024m"
             systemProperty("junit.jupiter.execution.parallel.enabled", "false")
             // A hung test fails after 5 minutes with its stack trace instead of stalling the CI job.
             systemProperty("junit.jupiter.execution.timeout.default", "5m")
