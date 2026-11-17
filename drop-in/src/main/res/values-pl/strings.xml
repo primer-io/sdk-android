@@ -7,7 +7,7 @@
     <string name="additional_fees_may_apply">Mogą mieć zastosowanie dodatkowe opłaty</string>
     <string name="addressLine1">Adres — wiersz 1</string>
     <!-- State, Region or County is required - Form Validation -->
-    <string name="addressLine1ErrorRequired">Wymagana jest 1. linia adresowa</string>
+    <string name="addressLine1ErrorRequired">Adres (linia 1) jest wymagany</string>
     <string name="addressLine2">Adres — wiersz 2</string>
     <string name="available_payment_methods">Dostępne metody płatności</string>
     <string name="bank_account">Konto bankowe</string>
@@ -78,8 +78,8 @@
     <string name="firstNameErrorRequired">Imię jest wymagane</string>
     <!-- The billing address First name container view label -->
     <string name="firstNameLabel">Imię</string>
-    <string name="form_error_card_holder_name_length">Nazwa musi zawierać od 2 do 45 znaków</string>
-    <string name="form_error_card_type_not_supported">Nieobsługiwane typy kart</string>
+    <string name="form_error_card_holder_name_length">Wpisz od 2 do 45 znaków</string>
+    <string name="form_error_card_type_not_supported">Nieobsługiwany typ karty</string>
     <string name="form_error_invalid">%1$s jest nieprawidłowe</string>
     <string name="form_error_required">Wymagane jest %1$s</string>
     <!-- Accessibility -->
@@ -87,7 +87,7 @@
     <string name="iban">Numer IBAN</string>
     <string name="icon_showing_state">ikona pokazująca stan</string>
     <!-- Get the code from your banking app - Blik descriptor -->
-    <string name="input_description_otp">Otrymaj kod z aplikacji bankowej</string>
+    <string name="input_description_otp">Wpisz kod z aplikacji bankowej</string>
     <!-- 6 digit code - Text field top placeholder -->
     <string name="input_hint_form_blik_otp">6-cyfrowy kod</string>
     <string name="input_hint_form_phone_number">Numer telefonu</string>
@@ -139,7 +139,7 @@
         została dodana!
     "</string>
     <!-- Enter your one time password - Text field placeholder -->
-    <string name="payment_method_blik_loading_placeholder">Dokończ płatność w aplikacji Blik</string>
+    <string name="payment_method_blik_loading_placeholder">Dokończ płatność w aplikacji BLIK</string>
     <string name="payment_method_deletion_message">Czy na pewno chcesz usunąć tę metodę płatności?</string>
     <string name="payment_method_error">Wybierz inną metodę płatności</string>
     <string name="payment_method_icon">ikona metody płatności</string>
@@ -176,7 +176,7 @@
     <string name="session_complete_payment_failure_title">Payment failed</string>
     <string name="session_complete_payment_success_title">Payment authorized</string>
     <!-- State, Region or County is required - Form Validation -->
-    <string name="stateErrorRequired">Stan, region lub województwo jest wymagane</string>
+    <string name="stateErrorRequired">Region jest wymagany</string>
     <!-- The billing address state container view label -->
     <string name="stateLabel">Stan / Region / Województwo</string>
     <string name="stripe_ach_mandate_accept_button">Accept</string>
