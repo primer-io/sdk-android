@@ -3,7 +3,9 @@ package io.primer.android.clientToken.core.token.data.datasource
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkObject
+import io.mockk.unmockkAll
 import io.primer.android.clientToken.core.token.data.model.ClientToken
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -21,6 +23,11 @@ internal class LocalClientTokenDataSourceTest {
                 every { accessToken } returns "initialToken"
             }
         localClientTokenDataSource = LocalClientTokenDataSource()
+    }
+
+    @AfterEach
+    fun tearDown() {
+        unmockkAll()
     }
 
     @Test

@@ -3,6 +3,7 @@ package io.primer.android.clientToken.core.token.data.model
 import android.util.Base64
 import io.primer.android.clientToken.core.errors.data.exception.ExpiredClientTokenException
 import io.primer.android.clientToken.core.errors.data.exception.InvalidClientTokenException
+import io.primer.android.core.data.network.utils.isPrimerUrl
 import io.primer.android.core.data.serialization.json.JSONDeserializable
 import io.primer.android.core.data.serialization.json.JSONObjectDeserializer
 import io.primer.android.core.data.serialization.json.JSONSerializationUtils
@@ -40,12 +41,25 @@ data class ClientToken(
 
                     if (isExpired) throw ExpiredClientTokenException()
 
+                    if (!token.hasPrimerEndpoints()) {
+                        throw InvalidClientTokenException(
+                            message = "The client token provided points to a host that is not primer.io",
+                        )
+                    }
+
                     return token
                 }
             }
 
             throw InvalidClientTokenException()
         }
+
+        // The signature is not checked on the device (ORC-9032), so endpoints taken from the payload
+        // must be Primer hosts before anything is sent to them.
+        private fun ClientToken.hasPrimerEndpoints() =
+            listOfNotNull(configurationUrl, analyticsUrlV2)
+                .filter { it.isNotBlank() }
+                .all { it.isPrimerUrl() }
 
         private const val CONFIGURATION_URL_FIELD = "configurationUrl"
         private const val ANALYTICS_URL_V2_FIELD = "analyticsUrlV2"

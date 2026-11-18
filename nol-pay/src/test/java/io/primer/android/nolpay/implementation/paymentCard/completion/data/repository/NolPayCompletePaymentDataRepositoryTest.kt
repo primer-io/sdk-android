@@ -5,6 +5,7 @@ import io.mockk.coVerify
 import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
 import io.primer.android.core.data.model.EmptyDataResponse
+import io.primer.android.core.data.network.exception.InvalidUrlException
 import io.primer.android.core.data.network.exception.JsonDecodingException
 import io.primer.android.nolpay.implementation.paymentCard.completion.data.datasource.RemoteNolPayCompletePaymentDataSource
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -29,7 +30,7 @@ internal class NolPayCompletePaymentDataRepositoryTest {
     @Test
     fun `completePayment should execute successfully`() {
         // Given
-        val completeUrl = "https://example.com/complete"
+        val completeUrl = "https://api.sandbox.primer.io/complete"
         coEvery { completePaymentDataSource.execute(completeUrl) } returns EmptyDataResponse()
 
         // When/Then
@@ -45,7 +46,7 @@ internal class NolPayCompletePaymentDataRepositoryTest {
     @Test
     fun `completePayment should handle JsonDecodingException gracefully`() {
         // Given
-        val completeUrl = "https://example.com/complete"
+        val completeUrl = "https://api.sandbox.primer.io/complete"
         coEvery { completePaymentDataSource.execute(completeUrl) } throws JsonDecodingException(Exception())
 
         // When/Then
@@ -61,7 +62,7 @@ internal class NolPayCompletePaymentDataRepositoryTest {
     @Test
     fun `completePayment should rethrow other exceptions`() {
         // Given
-        val completeUrl = "https://example.com/complete"
+        val completeUrl = "https://api.sandbox.primer.io/complete"
         val exception = RuntimeException("Unexpected error")
         coEvery { completePaymentDataSource.execute(completeUrl) } throws exception
 
@@ -75,5 +76,20 @@ internal class NolPayCompletePaymentDataRepositoryTest {
         assert(thrownException.message == "Unexpected error")
 
         coVerify(exactly = 1) { completePaymentDataSource.execute(completeUrl) }
+    }
+
+    @Test
+    fun `completePayment should fail without a request when the url is not a Primer url`() {
+        // Given
+        val completeUrl = "https://attacker.example/complete"
+
+        // When/Then
+        assertThrows<InvalidUrlException> {
+            runTest {
+                repository.completePayment(completeUrl).getOrThrow()
+            }
+        }
+
+        coVerify(exactly = 0) { completePaymentDataSource.execute(any()) }
     }
 }

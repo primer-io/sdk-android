@@ -1,6 +1,7 @@
 package io.primer.android.nolpay.implementation.paymentCard.completion.data.repository
 
 import io.primer.android.core.data.network.exception.JsonDecodingException
+import io.primer.android.core.data.network.utils.requirePrimerUrl
 import io.primer.android.core.extensions.runSuspendCatching
 import io.primer.android.nolpay.implementation.common.domain.repository.NolPayCompletePaymentRepository
 import io.primer.android.nolpay.implementation.paymentCard.completion.data.datasource.RemoteNolPayCompletePaymentDataSource
@@ -11,7 +12,7 @@ internal class NolPayCompletePaymentDataRepository(
     override suspend fun completePayment(completeUrl: String) =
         runSuspendCatching {
             completePaymentDataSource.execute(
-                completeUrl,
+                completeUrl.requirePrimerUrl(),
             ).let { }
         }.recover { throwable: Throwable ->
             when (throwable) {
