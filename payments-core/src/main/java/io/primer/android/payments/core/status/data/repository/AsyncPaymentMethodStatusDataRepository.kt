@@ -1,5 +1,6 @@
 package io.primer.android.payments.core.status.data.repository
 
+import io.primer.android.core.data.network.utils.requirePrimerUrl
 import io.primer.android.payments.core.errors.data.exception.AsyncFlowIncompleteException
 import io.primer.android.payments.core.status.data.datasource.RemoteAsyncPaymentMethodStatusDataSource
 import io.primer.android.payments.core.status.data.models.AsyncMethodStatus
@@ -16,7 +17,7 @@ internal class AsyncPaymentMethodStatusDataRepository(
 ) : AsyncPaymentMethodStatusRepository {
     override fun getAsyncStatus(url: String): Flow<AsyncStatus> {
         return flow {
-            emit(asyncPaymentMethodStatusDataSource.execute(url))
+            emit(asyncPaymentMethodStatusDataSource.execute(url.requirePrimerUrl()))
         }.map { statusResponse ->
             if (statusResponse.status != AsyncMethodStatus.COMPLETE) throw AsyncFlowIncompleteException()
             AsyncStatus(resumeToken = statusResponse.id)

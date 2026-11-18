@@ -1,9 +1,11 @@
 package io.primer.android.payments.core.status.data.repository
 
 import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
 import io.primer.android.core.InstantExecutorExtension
+import io.primer.android.core.data.network.exception.InvalidUrlException
 import io.primer.android.core.toListDuring
 import io.primer.android.payments.core.errors.data.exception.AsyncFlowIncompleteException
 import io.primer.android.payments.core.status.data.datasource.RemoteAsyncPaymentMethodStatusDataSource
@@ -38,7 +40,7 @@ class AsyncPaymentMethodStatusDataRepositoryTest {
     fun `getAsyncStatus should return AsyncStatus when status is COMPLETE`() =
         runTest {
             // Given
-            val url = "http://test.url"
+            val url = "https://api.sandbox.primer.io/status"
             val response =
                 AsyncPaymentMethodStatusDataResponse(
                     id = "test_id",
@@ -54,12 +56,25 @@ class AsyncPaymentMethodStatusDataRepositoryTest {
             assertEquals(AsyncStatus(resumeToken = "test_id"), result)
         }
 
+    @Test
+    fun `getAsyncStatus should fail without a request when the url is not a Primer url`() =
+        runTest {
+            // Given
+            val url = "https://attacker.example/status"
+
+            // When / Then
+            assertThrows<InvalidUrlException> {
+                repository.getAsyncStatus(url).first()
+            }
+            coVerify(exactly = 0) { dataSource.execute(any()) }
+        }
+
     @Disabled
     @Test
     fun `getAsyncStatus should retry when status is not COMPLETE`() =
         runTest {
             // Given
-            val url = "http://test.url"
+            val url = "https://api.sandbox.primer.io/status"
             val incompleteResponse =
                 AsyncPaymentMethodStatusDataResponse(
                     id = "test_id",
@@ -86,7 +101,7 @@ class AsyncPaymentMethodStatusDataRepositoryTest {
     fun `getAsyncStatus should throw exception for invalid status`() =
         runTest {
             // Given
-            val url = "http://test.url"
+            val url = "https://api.sandbox.primer.io/status"
             val response =
                 AsyncPaymentMethodStatusDataResponse(
                     id = "test_id",

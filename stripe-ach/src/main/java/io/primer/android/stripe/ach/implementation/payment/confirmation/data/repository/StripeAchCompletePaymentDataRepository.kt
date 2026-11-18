@@ -1,6 +1,7 @@
 package io.primer.android.stripe.ach.implementation.payment.confirmation.data.repository
 
 import io.primer.android.core.data.model.BaseRemoteUrlRequest
+import io.primer.android.core.data.network.utils.requirePrimerUrl
 import io.primer.android.core.extensions.runSuspendCatching
 import io.primer.android.stripe.ach.implementation.payment.confirmation.data.datasource.RemoteStripeAchCompletePaymentDataSource
 import io.primer.android.stripe.ach.implementation.payment.confirmation.data.model.StripeAchCompletePaymentDataRequest
@@ -16,7 +17,7 @@ internal class StripeAchCompletePaymentDataRepository(
     ) = runSuspendCatching {
         completePaymentDataSource.execute(
             BaseRemoteUrlRequest(
-                url = completeUrl,
+                url = completeUrl.requirePrimerUrl(),
                 StripeAchCompletePaymentDataRequest(
                     mandateTimestamp = mandateTimestamp,
                     paymentMethodId = paymentMethodId,
