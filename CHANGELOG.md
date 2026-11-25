@@ -5,6 +5,18 @@ All notable changes to `primer-sdk-android` are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 2.55.0 (2026-11-25)
+
+### Feat
+
+- **klarna**: upgrade bundled Klarna SDK to 2.16.0
+
+### Fix
+
+- reject client tokens and persisted analytics outside primer.io
+- **drop-in**: use Android placeholders in the Chinese strings
+- **drop-in**: use the iOS Polish texts
+
 ## 2.54.0 (2026-10-30)
 
 ### Feat
