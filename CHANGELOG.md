@@ -14,8 +14,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fix
 
 - reject client tokens and persisted analytics outside primer.io
-- **drop-in**: use Android placeholders in the Chinese strings (ORC-9160)
-- **drop-in**: use the iOS Polish texts from ESC-1105 (ORC-9160)
+- **drop-in**: use Android placeholders in the Chinese strings
+- **drop-in**: use the iOS Polish texts
 
 ## 2.54.0 (2026-10-30)
 
